@@ -381,6 +381,12 @@ class RivetRunnerBridgeApplication:
             code = str(getattr(error, "code", "RIVET_MCP_CALL_FAILED"))
             if not code.startswith("RIVET_"):
                 code = "RIVET_MCP_CALL_FAILED"
+            logger.warning(
+                "rivet_runner_bridge_call_failed",
+                error_type=type(error).__name__,
+                error_code=code,
+                error_message=str(error),
+            )
             await self._event(
                 writer,
                 {

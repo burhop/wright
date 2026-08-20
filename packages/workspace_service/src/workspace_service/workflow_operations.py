@@ -1,4 +1,4 @@
-"""Review-gated workflow operations over Wright-owned workspace boundaries."""
+"""Revision-checked workflow operations over Wright-owned workspace boundaries."""
 
 from __future__ import annotations
 
@@ -110,7 +110,7 @@ class WorkflowMcpBindingPreview:
 
 
 class WorkspaceWorkflowOperations:
-    """Makes approval a durable prerequisite without storing authored content."""
+    """Runs exact saved workflow revisions within the current workspace scope."""
 
     def __init__(
         self,
@@ -152,6 +152,16 @@ class WorkspaceWorkflowOperations:
             )
         return self._mcp_capabilities, self._mcp_repository
 
+    def discover_mcp_capabilities(
+        self, *, workspace_id: str, session_id: str
+    ) -> RivetDiscoverySnapshot:
+        """Return the current workspace catalog without requiring a saved graph."""
+        capabilities, _repository = self._mcp_enabled()
+        return capabilities.discover(
+            session_id=session_id,
+            workspace_id=workspace_id,
+        )
+
     @staticmethod
     def _selected_graph(document, graph: str | None) -> str:
         validation = validate_rivet_project(
@@ -177,14 +187,14 @@ class WorkspaceWorkflowOperations:
         graph: str | None = None,
     ) -> WorkflowMcpCapabilityRecord:
         self._enabled()
-        capabilities, _repository = self._mcp_enabled()
         document = WorkspaceWorkflowStore(workspace_dir).read(slug)
         graph_id = self._selected_graph(document, graph)
         requirements = extract_rivet_mcp_requirements(
             document.project, selected_graph=graph_id
         )
-        snapshot = capabilities.discover(
-            session_id=session_id, workspace_id=workspace_id
+        snapshot = self.discover_mcp_capabilities(
+            session_id=session_id,
+            workspace_id=workspace_id,
         )
         return WorkflowMcpCapabilityRecord(
             document.workflow_id,
@@ -562,6 +572,9 @@ class WorkspaceWorkflowOperations:
         progress_callback=None,
     ) -> WorkflowRun:
         self._enabled()
+        # Retained for API compatibility with older clients. Workflow-level
+        # approval is no longer part of the run contract.
+        _ = expected_review_digest
         document = WorkspaceWorkflowStore(workspace_dir).read(slug)
         if expected_revision is not None and document.revision != expected_revision:
             raise WorkflowOperationsError(
@@ -571,38 +584,96 @@ class WorkspaceWorkflowOperations:
             raise WorkflowOperationsError(
                 "RIVET_WORKFLOW_REVISION_CONFLICT", "Workflow contents changed"
             )
-        review = self._reviews.get(workspace_id, document.workflow_id)
         requirements = extract_rivet_mcp_requirements(document.project)
         has_mcp_node = bool(requirements.nodes)
-        if (
-            review is None
-            or review.state != "approved"
-            or review.revision != document.revision
-        ):
-            raise WorkflowOperationsError(
-                "RIVET_WORKFLOW_REVIEW_REQUIRED",
-                "The current workflow revision has not been approved",
-            )
+        run_authorization_digest: str | None = None
+        resolved_binding_set_digest: str | None = None
         if has_mcp_node:
+            if requirements.errors:
+                raise WorkflowOperationsError(
+                    requirements.errors[0].code,
+                    requirements.errors[0].message,
+                )
+            capabilities, repository = self._mcp_enabled()
+            graph_id = self._selected_graph(document, graph)
+            binding_set = (
+                repository.get_binding_set_by_digest(binding_set_digest)
+                if binding_set_digest
+                else None
+            )
+            if binding_set is None and binding_set_digest:
+                raise WorkflowOperationsError(
+                    "RIVET_BINDING_MISSING",
+                    "The selected MCP tool connection is unavailable",
+                )
+            if binding_set is None:
+                preview = await self.preview_mcp_bindings(
+                    workspace_id=workspace_id,
+                    session_id=session_id,
+                    workspace_dir=workspace_dir,
+                    slug=slug,
+                    expected_revision=document.revision,
+                    expected_digest=document.digest,
+                    graph=graph_id,
+                    selections={},
+                )
+                binding_set = preview.binding_set
+                if binding_set is None:
+                    blockers = sorted(
+                        {blocker for node in preview.nodes for blocker in node.blockers}
+                    )
+                    detail = ", ".join(blockers) if blockers else "binding_missing"
+                    raise WorkflowOperationsError(
+                        "RIVET_BINDING_MISSING",
+                        "Configure one static workspace tool for each MCP node: "
+                        + detail,
+                    )
             if (
-                review.workflow_digest != document.digest
-                or review.binding_set_digest != binding_set_digest
-                or review.review_digest != expected_review_digest
+                binding_set.workspace_id != workspace_id
+                or binding_set.workflow_id != document.workflow_id
+                or binding_set.workflow_revision != document.revision
+                or binding_set.workflow_digest != document.digest
+                or binding_set.graph_id != graph_id
             ):
                 raise WorkflowOperationsError(
-                    "RIVET_REVIEW_STALE", "The exact MCP workflow review is stale"
+                    "RIVET_BINDING_STALE", "The selected MCP tool connection is stale"
                 )
-            stale = self._stale_review_reasons(
-                workspace_id=workspace_id,
-                session_id=session_id,
-                document=document,
-                review=review,
+            current = capabilities.discover(
+                session_id=session_id, workspace_id=workspace_id
+            )
+            stale = tuple(
+                dict.fromkeys(
+                    [
+                        reason
+                        for binding in binding_set.bindings
+                        for reason in capabilities.stale_reasons(binding, current)
+                    ]
+                    + (
+                        ["policy_snapshot_changed"]
+                        if current.policy_snapshot_digest
+                        != binding_set.policy_snapshot_digest
+                        else []
+                    )
+                )
             )
             if stale:
                 raise WorkflowOperationsError(
-                    "RIVET_REVIEW_STALE",
-                    "The current MCP binding scope changed: " + ", ".join(stale),
+                    "RIVET_BINDING_STALE",
+                    "The current MCP tool connection changed: " + ", ".join(stale),
                 )
+            resolved_binding_set_digest = binding_set.binding_set_digest
+            run_authorization_digest = canonical_digest(
+                {
+                    "kind": "workspace-run",
+                    "workspace_id": workspace_id,
+                    "workflow_id": document.workflow_id,
+                    "workflow_revision": document.revision,
+                    "workflow_digest": document.digest,
+                    "graph_id": graph_id,
+                    "binding_set_digest": binding_set.binding_set_digest,
+                    "policy_snapshot_digest": binding_set.policy_snapshot_digest,
+                }
+            )
         return await self._runner.start(
             workspace_id=workspace_id,
             session_id=session_id,
@@ -611,8 +682,8 @@ class WorkspaceWorkflowOperations:
             expected_generation=expected_generation,
             expected_revision=expected_revision,
             expected_digest=expected_digest,
-            expected_review_digest=expected_review_digest,
-            binding_set_digest=binding_set_digest,
+            expected_review_digest=run_authorization_digest,
+            binding_set_digest=resolved_binding_set_digest,
             graph=graph,
             inputs=inputs,
             context=context,
@@ -703,7 +774,7 @@ class WorkspaceWorkflowOperations:
         return self._runner.manifest(run_id)
 
     def run_evidence(self, *, workspace_id: str, session_id: str, run_id: str) -> dict:
-        run = self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
         if self._mcp_repository is None:
             raise WorkflowOperationsError(
                 "RIVET_MCP_EVIDENCE_UNAVAILABLE", "Run evidence is unavailable"
@@ -714,14 +785,11 @@ class WorkspaceWorkflowOperations:
                 "RIVET_MCP_EVIDENCE_UNAVAILABLE", "Run evidence is unavailable"
             )
         child_calls, approvals = self._mcp_repository.run_evidence_documents(run_id)
-        review = self._reviews.get(workspace_id, run.workflow_id)
         current: dict[str, object] = {
-            "workflow_digest": review.workflow_digest if review else None,
-            "review_digest": review.review_digest if review else None,
-            "binding_set_digest": review.binding_set_digest if review else None,
-            "policy_snapshot_digest": (
-                review.policy_snapshot_digest if review else None
-            ),
+            "workflow_digest": manifest.get("workflow_digest"),
+            "review_digest": manifest.get("review_digest"),
+            "binding_set_digest": manifest.get("binding_set_digest"),
+            "policy_snapshot_digest": manifest.get("policy_snapshot_digest"),
         }
         runtime = self._runner.runtime_identity()
         if runtime is not None:

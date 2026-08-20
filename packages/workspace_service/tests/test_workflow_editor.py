@@ -216,6 +216,37 @@ def test_manual_surface_manifest_is_verified_and_collision_safe(tmp_path):
         editor.manual_surface_manifest(str(workspace))
 
 
+def test_manual_surface_manifest_writes_bounded_workspace_tool_catalog(tmp_path):
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "assets"),
+    )
+    workspace = tmp_path / "workspace"
+    tool = {
+        "qualified_tool_name": "server__inspect",
+        "server_id": "server",
+        "tool_name": "inspect",
+        "title": "Inspect",
+        "description": "Inspect a model",
+        "input": {"required": [], "properties": {}},
+    }
+
+    editor.manual_surface_manifest(str(workspace), workspace_tools=[tool])
+
+    catalog = json.loads(
+        (workspace / ".wright" / "apps" / "rivet-editor.tools.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert catalog == {"schemaVersion": 1, "tools": [tool]}
+    with pytest.raises(WorkflowEditorError, match="safe limit"):
+        editor.manual_surface_manifest(
+            str(workspace),
+            workspace_tools=[{**tool, "description": "x" * (33 * 1024)}],
+        )
+
+
 def test_manual_surface_manifest_refreshes_installed_runtime_paths(tmp_path):
     workspace = tmp_path / "workspace"
     first_editor = WorkspaceWorkflowEditor(

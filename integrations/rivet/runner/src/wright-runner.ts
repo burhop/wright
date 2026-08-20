@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { isAbsolute } from "node:path";
 import { readFile } from "node:fs/promises";
+import { format } from "node:util";
 
 import {
   createProcessor,
@@ -27,6 +28,23 @@ const MAX_BRIDGE_RESPONSE_BYTES = 1024 * 1024;
 const MAX_BRIDGE_EVENTS = 2_000;
 const STABLE_RIVET_ERROR = /^RIVET_[A-Z0-9_]{1,64}$/;
 const OUTPUT_SECRETS = new Set<string>();
+
+function writeDiagnostic(...values: unknown[]): void {
+  let encoded = format(...values);
+  for (const secret of OUTPUT_SECRETS) {
+    if (secret.length >= 8) encoded = encoded.split(secret).join("[REDACTED]");
+  }
+  process.stderr.write(`${encoded}\n`);
+}
+
+// Stdout is the Wright JSONL protocol channel. Rivet and its dependencies
+// occasionally log node failures through console.log(), so route every console
+// diagnostic to stderr before a graph can execute.
+console.log = writeDiagnostic;
+console.info = writeDiagnostic;
+console.debug = writeDiagnostic;
+console.warn = writeDiagnostic;
+console.error = writeDiagnostic;
 
 const CAPABILITY_NODE_TYPES: Readonly<Record<string, ReadonlySet<string>>> = {
   ai: new Set([
@@ -107,6 +125,36 @@ function failure(code: string, message: string): RunnerError {
   const error = new Error(message) as RunnerError;
   error.code = code;
   return error;
+}
+
+function stableRunnerError(caught: unknown): RunnerError | undefined {
+  const pending: unknown[] = [caught];
+  const visited = new Set<unknown>();
+  while (pending.length > 0) {
+    const current = pending.shift();
+    if (
+      current == null ||
+      (typeof current !== "object" && typeof current !== "function") ||
+      visited.has(current)
+    ) {
+      continue;
+    }
+    visited.add(current);
+    const candidate = current as RunnerError;
+    if (
+      typeof candidate.code === "string" &&
+      STABLE_RIVET_ERROR.test(candidate.code)
+    ) {
+      return candidate;
+    }
+    if (current instanceof AggregateError) {
+      pending.push(...current.errors);
+    }
+    if ("cause" in candidate) {
+      pending.push(candidate.cause);
+    }
+  }
+  return undefined;
 }
 
 function writeEvent(event: Record<string, unknown>): void {
@@ -808,7 +856,11 @@ function createWrightMcpProvider(
           type: "wright-structured",
           value: terminal.structuredContent,
         });
-      return { content, isError: terminal.isError };
+      return {
+        content,
+        structuredContent: terminal.structuredContent,
+        isError: terminal.isError,
+      };
     },
     stdioToolCall: denyStdio,
     getHTTPrompt: denyPrompts,
@@ -882,14 +934,21 @@ async function execute(request: WrightRunnerRequest): Promise<void> {
         phase: "node-finish",
         ...nodeLabel(event),
       }),
-    onNodeError: (event) =>
+    onNodeError: (event) => {
+      const eventError = stableRunnerError(event.error) ??
+        (event.error instanceof Error
+          ? event.error
+          : new Error(String(event.error)));
       writeEvent({
         type: "progress",
         runId: request.runId,
         state: "running",
         phase: "node-error",
+        errorCode: eventError.code,
+        errorMessage: eventError.message,
         ...nodeLabel(event),
-      }),
+      });
+    },
   });
 
   try {
@@ -923,7 +982,8 @@ async function main(): Promise<void> {
     runId = request.runId;
     await execute(request);
   } catch (caught) {
-    const error = caught as RunnerError;
+    const outerError = caught as RunnerError;
+    const error = stableRunnerError(caught) ?? outerError;
     const code =
       error.code ??
       (error.name === "AbortError"

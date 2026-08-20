@@ -386,7 +386,19 @@ def extract_rivet_mcp_requirements(
                 errors.append(
                     _issue(
                         "RIVET_MCP_DYNAMIC_TOOL_DENIED",
-                        "Reviewed MCP tool identity must be static",
+                        "MCP tool identity must be static",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            if node_type == "mcpToolCall" and not (
+                isinstance(node_data.get("toolName"), str)
+                and str(node_data.get("toolName")).strip()
+            ):
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_TOOL_REQUIRED",
+                        "Choose the exact workspace MCP tool for this node",
                         graph_id=graph_id,
                         node_id=node_id,
                     )

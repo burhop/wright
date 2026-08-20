@@ -24,6 +24,33 @@ from agent_adapters.hermes_openai_bridge import (
 )
 
 
+_WORKSPACE_TOOL_CATALOG = Path(".wright/apps/rivet-editor.tools.json")
+_MAXIMUM_TOOL_CATALOG_BYTES = 32 * 1024
+
+
+def _load_workspace_translation_context(workspace_root: Path) -> str:
+    """Load Wright's bounded workspace tool catalog as untrusted JSON data."""
+    target = workspace_root / _WORKSPACE_TOOL_CATALOG
+    try:
+        raw = target.read_bytes()
+    except OSError:
+        return ""
+    if not raw or len(raw) > _MAXIMUM_TOOL_CATALOG_BYTES:
+        return ""
+    try:
+        document = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return ""
+    if (
+        not isinstance(document, dict)
+        or document.get("schemaVersion") != 1
+        or not isinstance(document.get("tools"), list)
+        or len(document["tools"]) > 200
+    ):
+        return ""
+    return json.dumps(document, separators=(",", ":"), sort_keys=True)
+
+
 @dataclass(slots=True)
 class RivetAiHost:
     bridge: HermesOpenAICompatibilityBridge | None
@@ -393,6 +420,9 @@ def main() -> None:
                 base_url=hermes.base_url,
                 api_key=hermes.api_key,
                 timeout_seconds=args.ai_timeout,
+                translation_context=_load_workspace_translation_context(
+                    Path.cwd().resolve()
+                ),
             )
         )
         if bridge.available:

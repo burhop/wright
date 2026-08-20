@@ -10,6 +10,7 @@ from typing import Mapping
 @dataclass(frozen=True, slots=True)
 class RivetMcpGatewaySettings:
     enabled: bool = False
+    automatic_call_approvals: bool = True
     authority_grace_seconds: float = 5.0
     approval_ttl_seconds: float = 300.0
     maximum_request_bytes: int = 1024 * 1024
@@ -33,6 +34,12 @@ class RivetMcpGatewaySettings:
         source = env or os.environ
         return cls(
             enabled=source.get("WRIGHT_RIVET_MCP_GATEWAY_ENABLED", "0").strip().lower()
+            in {"1", "true", "yes"},
+            automatic_call_approvals=source.get(
+                "WRIGHT_RIVET_MCP_AUTOMATIC_CALL_APPROVALS", "1"
+            )
+            .strip()
+            .lower()
             in {"1", "true", "yes"},
             authority_grace_seconds=float(
                 source.get("WRIGHT_RIVET_MCP_AUTHORITY_GRACE_SECONDS", "5")

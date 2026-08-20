@@ -112,7 +112,7 @@ export function RivetScenarioReport({
               ? "review evidence and recovery"
               : report.state === "cancelling"
                 ? "cancelling and checking cleanup"
-                : "running reviewed workflow"}
+                : "running saved workflow"}
           . <strong>Progress:</strong>{" "}
           {report && TERMINAL.has(report.state)
             ? "terminal"

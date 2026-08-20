@@ -97,6 +97,17 @@ class RivetCapabilityService:
 
     def discover(self, *, session_id: str, workspace_id: str) -> RivetDiscoverySnapshot:
         resolved_session_id = self._session_resolver(session_id, workspace_id)
+        return self.discover_gateway_session(
+            session_id=resolved_session_id,
+            workspace_id=workspace_id,
+        )
+
+    def discover_gateway_session(
+        self, *, session_id: str, workspace_id: str
+    ) -> RivetDiscoverySnapshot:
+        """Discover from an already-resolved private gateway session."""
+
+        resolved_session_id = session_id
         projections = tuple(
             sorted(
                 (
@@ -310,6 +321,8 @@ class RivetCapabilityService:
                 "qualified_tool_name": qualified_tool_name,
                 "schema_digest": capability.schema_digest,
                 "server_revision": capability.server_revision,
+                "discovery_snapshot_digest": snapshot.snapshot_digest,
+                "policy_snapshot_digest": snapshot.policy_snapshot_digest,
             }
         )
         annotations = capability.annotations
@@ -366,6 +379,10 @@ class RivetCapabilityService:
         if candidate is None:
             return ("workspace_grant_removed",)
         reasons: list[str] = []
+        # Validation and provider evidence identify the latest healthy observation,
+        # so a server lifecycle refresh may legitimately change both during one run.
+        # Eligibility below still blocks failed evidence; stable authority is carried
+        # by the server, revision, schema, and workspace-grant comparisons.
         comparisons = (
             (candidate.server_id, binding.server_id, "server_changed"),
             (
@@ -375,23 +392,9 @@ class RivetCapabilityService:
             ),
             (candidate.schema_digest, binding.schema_digest, "tool_schema_changed"),
             (
-                candidate.validation_evidence_id,
-                binding.validation_evidence_id,
-                "validation_evidence_changed",
-            ),
-            (
                 candidate.workspace_grant_digest,
                 binding.workspace_grant_digest,
                 "workspace_grant_changed",
-            ),
-            (
-                candidate.provider.provider_evidence_digest,
-                (
-                    binding.provider.provider_evidence_digest
-                    if binding.provider is not None
-                    else ""
-                ),
-                "provider_evidence_changed",
             ),
         )
         for actual, expected, code in comparisons:

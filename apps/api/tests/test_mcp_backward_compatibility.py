@@ -134,3 +134,40 @@ def test_migrated_v12_legacy_endpoints_keep_shapes_and_user_rows(
         "type",
     }
     assert stopped.json()["is_active"] is False
+
+
+@pytest.mark.asyncio
+async def test_explicit_activation_reuses_recorded_server_approvals(
+    monkeypatch,
+) -> None:
+    captured = {}
+    server = SimpleNamespace(
+        server_id="remote",
+        approval_gates=("network_access_approval", "cloud_data_approval"),
+    )
+
+    async def toggle(engine, server_id, is_active, *, approval_context=None):
+        captured["context"] = approval_context
+        return SimpleNamespace(
+            server_id=server_id,
+            is_active=is_active,
+            status="active",
+            error_message=None,
+            type="sse",
+        )
+
+    monkeypatch.setattr("api.services.mcp_services.get_server", lambda *_: server)
+    monkeypatch.setattr(
+        "api.services.mcp_services.registry_services.toggle_server_activation", toggle
+    )
+    monkeypatch.setattr(
+        "api.services.mcp_services.sync_mcp_server_to_wright_gateway", lambda *_: None
+    )
+    service = McpApiService(SimpleNamespace(db_path="state.db"), SimpleNamespace())
+
+    await service.toggle_server_activation("remote", True)
+
+    assert captured["context"].machine_approvals == {
+        "network_access_approval",
+        "cloud_data_approval",
+    }

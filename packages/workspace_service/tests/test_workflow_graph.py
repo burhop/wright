@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+import yaml
 
 from data_vault import WorkflowRepository
 from workspace_service.executor import BoundedExecutor
@@ -8,7 +9,9 @@ from workspace_service.use_cases.workflows import WorkspaceWorkflowUseCases
 from workspace_service.workflow_graph import (
     WorkflowGraphError,
     WorkspaceWorkflowGraphOperations,
+    lint_project,
 )
+from workspace_service.rivet_project import normalize_graph_output_ids
 
 
 PROJECT = """version: 4
@@ -48,6 +51,93 @@ data:
     title: Fixture
     mainGraphId: main
 """
+
+INCOMPLETE_MCP_PROJECT = """version: 4
+data:
+  graphs:
+    main:
+      metadata:
+        id: main
+        name: Main
+      nodes:
+        '[mcp-call]:mcpToolCall "MCP Tool Call"':
+          data:
+            serverId: ''
+            toolName: ''
+            useToolNameInput: true
+            useToolArgumentsInput: true
+          outgoingConnections: []
+          visualData: 0/0/250/0
+  metadata:
+    id: project
+    title: MCP Fixture
+    mainGraphId: main
+"""
+
+DUPLICATE_OUTPUT_PROJECT = """version: 4
+data:
+  graphs:
+    main:
+      metadata:
+        id: main
+        name: Main
+      nodes:
+        '[output-a]:graphOutput "First"':
+          data:
+            id: output
+            dataType: object
+        '[output-b]:graphOutput "Second"':
+          data:
+            id: output
+            dataType: object
+  metadata:
+    id: project
+    title: Duplicate outputs
+    mainGraphId: main
+"""
+
+
+def test_graph_output_ids_are_normalized_before_editor_save() -> None:
+    original = yaml.safe_load(DUPLICATE_OUTPUT_PROJECT)
+    assert {issue.get("code") for issue in lint_project(original)} == {
+        "RIVET_GRAPH_OUTPUT_ID_DUPLICATE"
+    }
+
+    normalized_text = normalize_graph_output_ids(DUPLICATE_OUTPUT_PROJECT)
+    normalized = yaml.safe_load(normalized_text)
+    nodes = normalized["data"]["graphs"]["main"]["nodes"]
+
+    assert [node["data"]["id"] for node in nodes.values()] == ["output", "output_2"]
+    assert lint_project(normalized) == ()
+    assert normalized_text.count("dataType: object") == 2
+
+
+@pytest.mark.asyncio
+async def test_workflow_save_persists_unique_graph_output_ids(tmp_path) -> None:
+    executor = BoundedExecutor()
+    workflows = WorkspaceWorkflowUseCases(
+        executor, WorkflowRepository(str(tmp_path / "state.db"))
+    )
+    try:
+        created = await workflows.create(
+            "workspace-a", str(tmp_path), "flow", DUPLICATE_OUTPUT_PROJECT
+        )
+
+        saved = await workflows.save(
+            "workspace-a",
+            str(tmp_path),
+            "flow",
+            created.revision,
+            DUPLICATE_OUTPUT_PROJECT,
+        )
+
+        nodes = yaml.safe_load(saved.project)["data"]["graphs"]["main"]["nodes"]
+        assert [node["data"]["id"] for node in nodes.values()] == [
+            "output",
+            "output_2",
+        ]
+    finally:
+        await executor.close()
 
 
 @pytest.mark.asyncio
@@ -125,5 +215,27 @@ async def test_graph_lint_accepts_terminal_node_without_outgoing_connections(
         )
         assert output.outgoing_connections == ()
         assert result.issues == ()
+    finally:
+        await executor.close()
+
+
+@pytest.mark.asyncio
+async def test_graph_lint_rejects_an_unbound_dynamic_mcp_tool(tmp_path) -> None:
+    executor = BoundedExecutor()
+    workflows = WorkspaceWorkflowUseCases(
+        executor, WorkflowRepository(str(tmp_path / "state.db"))
+    )
+    graph = WorkspaceWorkflowGraphOperations(workflows)
+    try:
+        await workflows.create(
+            "workspace-a", str(tmp_path), "flow", INCOMPLETE_MCP_PROJECT
+        )
+
+        result = await graph.lint(workspace_dir=str(tmp_path), slug="flow")
+
+        assert {issue.get("code") for issue in result.issues} == {
+            "RIVET_MCP_DYNAMIC_TOOL_DENIED",
+            "RIVET_MCP_TOOL_REQUIRED",
+        }
     finally:
         await executor.close()

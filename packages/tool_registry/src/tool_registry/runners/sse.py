@@ -547,18 +547,21 @@ class SseRunner(BaseRunner):
                 if "application/json" in content_type:
                     try:
                         data = response.json()
-                        if "id" in data and data["id"] == req_id:
-                            self._pending_requests.pop(req_id, None)
-                            if "error" in data:
-                                raise RuntimeError(
-                                    "RPC Error: "
-                                    + redact_text(
-                                        redact_mapping({"error": data["error"]})
-                                    )
+                    except ValueError as error:
+                        self._pending_requests.pop(req_id, None)
+                        raise RuntimeError(
+                            "Streamable HTTP returned invalid JSON"
+                        ) from error
+                    if "id" in data and data["id"] == req_id:
+                        self._pending_requests.pop(req_id, None)
+                        if "error" in data:
+                            raise RuntimeError(
+                                "RPC Error: "
+                                + redact_text(
+                                    redact_mapping({"error": data["error"]})
                                 )
-                            return data.get("result", {})
-                    except Exception:
-                        pass
+                            )
+                        return data.get("result", {})
                 elif "text/event-stream" in content_type:
                     # Read and parse response body as SSE event
                     try:
@@ -577,10 +580,14 @@ class SseRunner(BaseRunner):
                                         )
                                     return data.get("result", {})
                     except Exception as sse_err:
+                        self._pending_requests.pop(req_id, None)
                         logger.error(
                             "Failed to parse SSE response in POST request: %s",
                             redact_text(sse_err),
                         )
+                        raise RuntimeError(
+                            "Streamable HTTP returned an invalid SSE response"
+                        ) from sse_err
         except asyncio.CancelledError:
             self._pending_requests.pop(req_id, None)
             try:

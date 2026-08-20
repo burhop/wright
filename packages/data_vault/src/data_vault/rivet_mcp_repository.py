@@ -90,6 +90,7 @@ class RivetMcpRepository:
 
     def save_binding_set(self, binding_set: WorkflowBindingSet) -> None:
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            connection.execute("BEGIN IMMEDIATE")
             existing = connection.execute(
                 "SELECT binding_set_digest FROM workspace_workflow_binding_sets WHERE binding_set_id=?",
                 (binding_set.binding_set_id,),

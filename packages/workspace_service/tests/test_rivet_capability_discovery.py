@@ -112,6 +112,104 @@ def test_binding_is_exact_stable_and_schema_change_is_stale():
     assert service.stale_reasons(first, changed) == ("tool_schema_changed",)
 
 
+def test_healthy_validation_evidence_refresh_does_not_stale_a_binding():
+    gateway = Gateway()
+    service = RivetCapabilityService(gateway)
+    snapshot = service.discover(session_id="session-1", workspace_id="workspace-1")
+    binding = service.bind(
+        snapshot=snapshot,
+        requirement=RivetMcpNodeRequirement(
+            "Main", "node-1", "mcpToolCall", None
+        ),
+        qualified_tool_name="alpha__inspect",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest="a" * 64,
+        units_policy={},
+        material_defaults={},
+        created_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+    gateway.tools = (
+        GatewayTool(
+            "alpha__inspect",
+            "alpha",
+            "inspect",
+            "Inspect with Alpha",
+            {"type": "object", "properties": {"value": {"type": "number"}}},
+            output_schema={"type": "object"},
+            annotations={"readOnlyHint": True},
+            provenance={
+                "server_revision": "alpha-v1",
+                "validation_evidence_id": "alpha-evidence-refreshed",
+            },
+        ),
+    )
+
+    refreshed = service.discover(
+        session_id="session-1", workspace_id="workspace-1"
+    )
+
+    assert refreshed.tools[0].validation_evidence_id != binding.validation_evidence_id
+    assert (
+        refreshed.tools[0].provider.provider_evidence_digest
+        != binding.provider.provider_evidence_digest
+    )
+    assert service.stale_reasons(binding, refreshed) == ()
+
+
+def test_binding_identity_changes_with_its_discovery_snapshot():
+    gateway = Gateway()
+    service = RivetCapabilityService(gateway)
+    first_snapshot = service.discover(
+        session_id="session-1", workspace_id="workspace-1"
+    )
+    requirement = RivetMcpNodeRequirement("Main", "node-1", "mcpToolCall", None)
+    first = service.bind(
+        snapshot=first_snapshot,
+        requirement=requirement,
+        qualified_tool_name="alpha__inspect",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest="a" * 64,
+        units_policy={},
+        material_defaults={},
+        created_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+    gateway.tools = (
+        *gateway.tools,
+        GatewayTool(
+            "gamma__status",
+            "gamma",
+            "status",
+            "Unrelated current capability",
+            {"type": "object"},
+            provenance={
+                "server_revision": "gamma-v1",
+                "validation_evidence_id": "gamma-evidence",
+            },
+        ),
+    )
+    second_snapshot = service.discover(
+        session_id="session-1", workspace_id="workspace-1"
+    )
+    second = service.bind(
+        snapshot=second_snapshot,
+        requirement=requirement,
+        qualified_tool_name="alpha__inspect",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest="a" * 64,
+        units_policy={},
+        material_defaults={},
+        created_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+
+    assert first_snapshot.snapshot_digest != second_snapshot.snapshot_digest
+    assert first.node_handle != second.node_handle
+    assert first.binding_digest != second.binding_digest
+    assert service.stale_reasons(first, second_snapshot) == ()
+
+
 def test_unqualified_collision_remains_distinct_and_oversized_schema_is_blocked():
     gateway = Gateway()
     gateway.tools = (
@@ -152,3 +250,22 @@ def test_session_resolver_confines_discovery_to_the_workspace_session():
     )
     snapshot = service.discover(session_id="public", workspace_id="workspace-1")
     assert snapshot.session_id == "session-1"
+
+
+def test_already_resolved_gateway_session_is_not_resolved_twice():
+    gateway = Gateway()
+    resolved = []
+    service = RivetCapabilityService(
+        gateway,
+        session_resolver=lambda session_id, workspace_id: (
+            resolved.append((session_id, workspace_id)) or "denied"
+        ),
+    )
+
+    snapshot = service.discover_gateway_session(
+        session_id="session-1",
+        workspace_id="workspace-1",
+    )
+
+    assert snapshot.session_id == "session-1"
+    assert resolved == []

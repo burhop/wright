@@ -528,7 +528,7 @@ def build_rivet_mcp_application(
         validate_current=lambda binding, session_id, workspace_id: (
             capabilities.stale_reasons(
                 binding,
-                capabilities.discover(
+                capabilities.discover_gateway_session(
                     session_id=session_id,
                     workspace_id=workspace_id,
                 ),
@@ -537,6 +537,7 @@ def build_rivet_mcp_application(
         approvals=approvals,
         repository=repository,
         approval_ttl_seconds=settings.approval_ttl_seconds,
+        automatic_call_approvals=settings.automatic_call_approvals,
     )
     runner_bridge = RivetRunnerBridgeApplication(
         bridge=bridge,

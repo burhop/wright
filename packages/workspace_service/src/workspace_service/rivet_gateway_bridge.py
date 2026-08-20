@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from datetime import UTC, datetime
 import uuid
@@ -111,6 +112,7 @@ class RivetGatewayBridge:
         approvals: RivetApprovalService | None = None,
         repository: ChildCallRepository | None = None,
         approval_ttl_seconds: float = 300.0,
+        automatic_call_approvals: bool = False,
     ) -> None:
         self._gateway = gateway
         self._run_scope = run_scope or {}
@@ -122,6 +124,7 @@ class RivetGatewayBridge:
         self._approvals = approvals
         self._repository = repository
         self._approval_ttl_seconds = max(1.0, approval_ttl_seconds)
+        self._automatic_call_approvals = automatic_call_approvals
         self._active: dict[tuple[str, str], tuple[str, str]] = {}
 
     async def invoke(
@@ -245,15 +248,32 @@ class RivetGatewayBridge:
                     requested_by=f"runner:{invocation.run_id}",
                     ttl_seconds=self._approval_ttl_seconds,
                 )
-                await project_progress(
-                    {
-                        "type": "approval_required",
-                        "phase": "approval-required",
-                        "approvalId": approval.approval_id,
-                        "approvalDigest": approval.approval_digest,
-                    }
-                )
-                decision = await self._approvals.wait(approval.approval_id)
+                if self._automatic_call_approvals:
+                    decision = self._approvals.decide(
+                        approval.approval_id,
+                        expected_digest=approval.approval_digest,
+                        actor="wright-workflow-run",
+                        approved=True,
+                        reason="User launched this reviewed workspace workflow run.",
+                    )
+                    await project_progress(
+                        {
+                            "type": "progress",
+                            "phase": "approval-satisfied",
+                            "approvalId": approval.approval_id,
+                            "approvalDigest": approval.approval_digest,
+                        }
+                    )
+                else:
+                    await project_progress(
+                        {
+                            "type": "approval_required",
+                            "phase": "approval-required",
+                            "approvalId": approval.approval_id,
+                            "approvalDigest": approval.approval_digest,
+                        }
+                    )
+                    decision = await self._approvals.wait(approval.approval_id)
                 if decision.state is not ApprovalState.APPROVED:
                     raise RivetApprovalError(
                         "RIVET_CALL_APPROVAL_DENIED",
@@ -327,7 +347,16 @@ class RivetGatewayBridge:
             return RivetBridgeResult(
                 sanitized, binding, artifacts, redactions, call_record
             )
-        except Exception as error:
+        except (Exception, asyncio.CancelledError) as error:
+            original_error = error
+            if isinstance(error, asyncio.CancelledError):
+                task = asyncio.current_task()
+                if task is not None and task.cancelling():
+                    raise
+                error = RivetGatewayBridgeError(
+                    "RIVET_MCP_CALL_CANCELLED", "retry_after_server_restart"
+                )
+            assert isinstance(error, Exception)
             projected_error: Exception = error
             lifecycle_kind = str(getattr(error, "lifecycle_kind", ""))
             if lifecycle_kind == "panel":
@@ -371,8 +400,8 @@ class RivetGatewayBridge:
                         reason_code=reason_code[:128],
                     )
                 )
-            if projected_error is not error:
-                raise projected_error from error
+            if projected_error is not original_error:
+                raise projected_error from original_error
             raise
         finally:
             self._active.pop(active_key, None)

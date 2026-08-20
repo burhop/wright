@@ -15,11 +15,23 @@
     },
     {
       "path": "patches/rivet2-graph-builder-recovery.patch",
-      "sha256": "c09d35c3a292da5c38d62ffe1b4cc29b99cad484bcf37410ab41475b05e84c11"
+      "sha256": "c9d9367fd8dd6f34edb1b5716f344c45c540bdbbcb306e1d82f5e4c501d3f784"
     },
     {
       "path": "patches/rivet2-legacy-node-catalog.patch",
-      "sha256": "e57f5d19745a6ff89b94871fbc3a23bb8f7c49c27281b798354beb49c37b2907"
+      "sha256": "b7a26777c9322385c7f71bb160904a678e1ea4539fe48a88d34ea347e98c7b9e"
+    },
+    {
+      "path": "patches/rivet2-atomic-workflow-plan.patch",
+      "sha256": "d443f9bd9e2d1805bc4c15027b2ecd21b0ed89854e65fe168e33ac27fe5398ed"
+    },
+    {
+      "path": "patches/rivet2-composition-adapters.patch",
+      "sha256": "e90ef9a7d71e9619d6162653c06ec83dc3ad1d0f81118b5f5d0da15f32053e10"
+    },
+    {
+      "path": "patches/rivet2-mcp-structured-content.patch",
+      "sha256": "c2bd225405f6655dc26b94445a9c12af8f45e00475b0cc5e6a352af082eddc18"
     }
   ],
   "wrapper": [
@@ -41,8 +53,8 @@
     }
   ],
   "entrypoint": "dist/index.html",
-  "sha256": "e2ac15d7add6973d9d174884aeda44da51fe0a076e3410f0b765789f7a3152f8",
-  "tree_sha256": "631272faf7d6880f929ff98aafbf5fcb3f6d5b60567a9f08d55234a65f853ae4",
+  "sha256": "70e44f8bd6bfb4492344c60702c0be068302dce1da9a94ea01478e41b567175b",
+  "tree_sha256": "1f18d78de5d07cf872762216f97004469f19ac460b2f42086fc49477140d8e2c",
   "files": [
     {
       "path": "dist/assets/_rivet-cspell-words-browser-DvCv-XVQ.js",
@@ -235,9 +247,9 @@
       "sha256": "36225dad8c8cd08bd3c6b6559af0b2298da1a085f1607b0b15131415346d7fe3"
     },
     {
-      "path": "dist/assets/CodeEditor-3peyopit.js",
+      "path": "dist/assets/CodeEditor-CUwmHcRf.js",
       "bytes": 21505,
-      "sha256": "f320ff8f2b22906b5a9999d33676e4345ed0dbfc70691a00ee1e1f48cfed627e"
+      "sha256": "fa33336aad086516907324b36b2a7a3a8c726e30ff1095d5317c826623701c33"
     },
     {
       "path": "dist/assets/codeEditorModelCache-0CJKNP2F.js",
@@ -335,9 +347,9 @@
       "sha256": "2e1ad78ba0f41ec89c0c857e9b2ba859741646d4c14b6efbe4772c3ae23b550c"
     },
     {
-      "path": "dist/assets/deserializeProject.worker-Bs1j6f8F.js",
-      "bytes": 2117878,
-      "sha256": "3c3a15eea60e19557ff24e3dec45ad879a098aeb562741607ff1f9f8ab8fac21"
+      "path": "dist/assets/deserializeProject.worker-DBGOLt7w.js",
+      "bytes": 2118120,
+      "sha256": "67503ef273047b111d0c13e0b6cc695a767e7c21022a052fa2dab0ac1c4499a7"
     },
     {
       "path": "dist/assets/destructure_node-C4LEy0JA.png",
@@ -560,6 +572,11 @@
       "sha256": "d30d83dcc47a8c4018a2fe48a29788822cb6b81346ac5746dcbbb96d7c27c849"
     },
     {
+      "path": "dist/assets/index-BwnQdwg_.js",
+      "bytes": 3478924,
+      "sha256": "cfbad22ce3b6a9694b59f7a73d50b9e7a2906184442dc2f50f2bb8b204e4ef9d"
+    },
+    {
       "path": "dist/assets/index-CH2Xv5mA.js",
       "bytes": 18416,
       "sha256": "fee8a410fb00378514019c481d80ec563f18f365c9027808f9d9643f5242b037"
@@ -573,11 +590,6 @@
       "path": "dist/assets/index-D5vriNiE.js",
       "bytes": 3877,
       "sha256": "79e87b570727ce7480015f4ffc1a138637894f07236e18e1ed4da30bfac66499"
-    },
-    {
-      "path": "dist/assets/index-DP_wohYo.js",
-      "bytes": 3468381,
-      "sha256": "5546843ce351f8753bdae630010eb0aaa70acb69a6562482e3246519dd70d770"
     },
     {
       "path": "dist/assets/index-HS6HcUVZ.js",
@@ -800,9 +812,9 @@
       "sha256": "1465ff33654eaba792d8f8f196286214c194aaaf6234f59d865a8901a93b38ee"
     },
     {
-      "path": "dist/assets/ProjectComparisonDiffEditor-C3f89CkO.js",
+      "path": "dist/assets/ProjectComparisonDiffEditor-iAi9kNca.js",
       "bytes": 3996,
-      "sha256": "5ff5d2059d2fd4e71ab1c231b20bdf8628857908277400a248d1d2437643723b"
+      "sha256": "12b923836e8c2ba2dd69d4c1d53c8feaa25f3191320b623b323f0038a6ff4099"
     },
     {
       "path": "dist/assets/prompt_node-Cn8HseuB.png",
@@ -1132,7 +1144,7 @@
     {
       "path": "dist/index.html",
       "bytes": 2272,
-      "sha256": "e2ac15d7add6973d9d174884aeda44da51fe0a076e3410f0b765789f7a3152f8"
+      "sha256": "70e44f8bd6bfb4492344c60702c0be068302dce1da9a94ea01478e41b567175b"
     },
     {
       "path": "dist/manifest.json",

@@ -673,8 +673,17 @@ class McpApiService:
         return registry_services.register_server(self.db_path, body)
 
     async def toggle_server_activation(self, server_id: str, is_active: bool):
+        server = get_server(self.db_path, server_id)
+        approval_context = (
+            ApprovalContext(machine_approvals=set(server.approval_gates))
+            if is_active and server is not None
+            else None
+        )
         updated = await registry_services.toggle_server_activation(
-            self.engine, server_id, is_active
+            self.engine,
+            server_id,
+            is_active,
+            approval_context=approval_context,
         )
         sync_mcp_server_to_wright_gateway(updated)
         self._notify_gateway_changes()

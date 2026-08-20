@@ -39,12 +39,13 @@ def _tool(name="create_graph"):
     }
 
 
-def _bridge(handler, *, timeout=5.0):
+def _bridge(handler, *, timeout=5.0, translation_context=""):
     return HermesOpenAICompatibilityBridge(
         HermesOpenAIBridgeSettings(
             base_url="http://127.0.0.1:8642",
             api_key="test-secret-hermes-key",
             timeout_seconds=timeout,
+            translation_context=translation_context,
         ),
         transport=httpx.MockTransport(handler),
     )
@@ -166,6 +167,152 @@ async def test_tool_request_translates_and_validates_one_call():
         "name": "create_graph",
         "arguments": '{"title":"Greeting"}',
     }
+
+
+@pytest.mark.asyncio
+async def test_tool_translation_includes_bounded_workspace_mcp_catalog():
+    qualified = "server-id__brep.app.status"
+    context = json.dumps(
+        {
+            "schemaVersion": 1,
+            "tools": [
+                {
+                    "qualified_tool_name": qualified,
+                    "tool_name": "brep.app.status",
+                    "title": "BREP status",
+                    "input": {"required": [], "properties": {}},
+                }
+            ],
+        }
+    )
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        prompt = json.loads(request.content)["messages"][-1]["content"]
+        assert qualified in prompt
+        assert "The user must never supply an internal qualified name" in prompt
+        assert "useToolNameInput to false" in prompt
+        assert "useToolArgumentsInput to true" in prompt
+        assert "connect structuredContent and apply catalog paths" in prompt
+        assert "do not append [0] after that property" in prompt
+        assert "Preserve requested dependencies between MCP nodes" in prompt
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": '{"kind":"tool_call","name":"create_graph","arguments":{"title":"Greeting"}}'
+                        }
+                    }
+                ]
+            },
+        )
+
+    await _bridge(handler, translation_context=context).complete(
+        _request(tools=[_tool()], tool_choice="required")
+    )
+
+
+@pytest.mark.asyncio
+async def test_tool_translation_deduplicates_repeated_graph_builder_authority():
+    authority = "Use the graph editing tools safely and call one function per turn."
+    messages = [{"role": "system", "content": authority} for _ in range(40)]
+    messages.extend(
+        [
+            {"role": "user", "content": "Build the BREP status workflow."},
+            {
+                "role": "tool",
+                "tool_call_id": "current",
+                "content": "CURRENT_GRAPH has one configured BREP MCP node.",
+            },
+        ]
+    )
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        prompt = json.loads(request.content)["messages"][-1]["content"]
+        assert prompt.count(authority) == 1
+        assert "CURRENT_GRAPH has one configured BREP MCP node" in prompt
+        assert "prefer it for a new multi-node workflow" in prompt
+        assert "validated and applied atomically" in prompt
+        assert len(prompt.encode("utf-8")) <= 60_000
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": '{"kind":"tool_call","name":"create_graph","arguments":{"title":"BREP"}}'
+                        }
+                    }
+                ]
+            },
+        )
+
+    await _bridge(handler).complete(
+        _request(messages=messages, tools=[_tool()], tool_choice="required")
+    )
+
+
+@pytest.mark.asyncio
+async def test_tool_translation_compacts_protocol_amplified_message_count():
+    authority = "Use the graph editing tools safely."
+    objective = "Build a connected provider status workflow."
+    messages = []
+    for index in range(65):
+        call_id = f"call-{index}"
+        messages.extend(
+            [
+                {"role": "system", "content": authority},
+                {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": call_id,
+                            "type": "function",
+                            "function": {
+                                "name": "create_graph",
+                                "arguments": '{"title":"chain"}',
+                            },
+                        }
+                    ],
+                },
+                {
+                    "role": "tool",
+                    "tool_call_id": call_id,
+                    "content": f"result-{index}",
+                },
+                {"role": "user", "content": objective},
+            ]
+        )
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        prompt = json.loads(request.content)["messages"][-1]["content"]
+        assert prompt.count(authority) == 1
+        assert prompt.count(objective) == 1
+        assert "result-64" in prompt
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": (
+                                '{"kind":"tool_call","name":"create_graph",'
+                                '"arguments":{"title":"connected"}}'
+                            )
+                        }
+                    }
+                ]
+            },
+        )
+
+    result = await _bridge(handler).complete(
+        _request(messages=messages, tools=[_tool()], tool_choice="required")
+    )
+
+    call = result["choices"][0]["message"]["tool_calls"][0]
+    assert call["function"]["arguments"] == '{"title":"connected"}'
 
 
 @pytest.mark.asyncio

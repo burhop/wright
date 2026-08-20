@@ -421,7 +421,7 @@ class WorkspaceWorkflowRunner:
         ):
             raise WorkflowRunnerError(
                 "RIVET_MCP_GATEWAY_DISABLED",
-                "The reviewed Rivet MCP execution boundary is unavailable",
+                "The Rivet MCP execution boundary is unavailable",
             )
         binding_set = self._mcp_repository.get_binding_set_by_digest(binding_set_digest)
         if binding_set is None or (
@@ -438,7 +438,7 @@ class WorkspaceWorkflowRunner:
             graph_id,
         ):
             raise WorkflowRunnerError(
-                "RIVET_REVIEW_STALE", "The reviewed MCP binding set is stale"
+                "RIVET_BINDING_STALE", "The MCP tool connection is stale"
             )
         audience = await self._mcp_bridge.ensure_started()
         now = datetime.now(UTC)

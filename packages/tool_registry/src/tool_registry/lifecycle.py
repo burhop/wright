@@ -130,8 +130,7 @@ class McpLifecycleCoordinator:
             runner = await candidate if isinstance(candidate, Awaitable) else candidate
             try:
                 startup_timeout = (
-                    getattr(runner, "startup_timeout", None)
-                    or self._operation_timeout
+                    getattr(runner, "startup_timeout", None) or self._operation_timeout
                 )
                 await asyncio.wait_for(runner.start(), startup_timeout)
                 tools = await asyncio.wait_for(
@@ -206,10 +205,21 @@ class McpLifecycleCoordinator:
                 progress_callback=progress_callback,
             )
         )
-        result = await asyncio.wait_for(
-            operation,
-            min(timeout or self._operation_timeout, self._operation_timeout),
+        timeout_budget = min(
+            timeout or self._operation_timeout, self._operation_timeout
         )
+        # GatewayService applies the same outer deadline. Finish this lifecycle
+        # deadline slightly earlier so we can retire a transport whose request
+        # timed out instead of leaving a poisoned remote session marked active.
+        lifecycle_timeout = max(
+            0.001,
+            timeout_budget - min(0.05, timeout_budget * 0.1),
+        )
+        try:
+            result = await asyncio.wait_for(operation, lifecycle_timeout)
+        except TimeoutError:
+            await self._retire_runner(slot, runner, generation)
+            raise
         if not self._current(slot, generation):
             raise asyncio.CancelledError("MCP server generation was superseded")
         return result
@@ -341,6 +351,18 @@ class McpLifecycleCoordinator:
                 generation=generation,
                 error=redact_text(exc),
             )
+
+    async def _retire_runner(
+        self, slot: LifecycleSlot, runner: Runner, generation: int
+    ) -> None:
+        """Remove a timed-out runner so the next call starts a clean transport."""
+
+        async with slot.lock:
+            if slot.runner is not runner or slot.generation != generation:
+                return
+            slot.generation += 1
+            slot.runner = None
+            await self._bounded_stop(runner, slot.server_id, slot.generation)
 
 
 async def _noop_tools(

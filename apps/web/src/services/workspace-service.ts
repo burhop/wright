@@ -783,7 +783,7 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       let message =
-        "Workflow could not start; approve its current revision and enable the runner.";
+        "Workflow could not start; check the saved graph, workspace tools, and runner.";
       try {
         const failure = await response.json();
         message = failure?.detail?.message || failure?.detail || message;
@@ -956,7 +956,6 @@ export class WorkspaceService {
   async startEngineeringScenario(
     sessionId: string,
     preflight: EngineeringScenarioPreflight,
-    workflow: RivetWorkflowOperation,
   ): Promise<{
     scenario_run_id: string;
     workflow_run: RivetWorkflowRun;
@@ -965,10 +964,9 @@ export class WorkspaceService {
     if (
       !preflight.workflow_revision ||
       !preflight.workflow_digest ||
-      !workflow.review_digest ||
-      !workflow.binding_set_digest
+      !preflight.binding_set_digest
     ) {
-      throw new Error("Review the exact prepared scenario workflow first");
+      throw new Error("Prepare the exact scenario workflow first");
     }
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(preflight.scenario_id)}/runs`,
@@ -980,8 +978,7 @@ export class WorkspaceService {
           manifest_digest: preflight.manifest_digest,
           workflow_revision: preflight.workflow_revision,
           workflow_digest: preflight.workflow_digest,
-          review_digest: workflow.review_digest,
-          binding_set_digest: workflow.binding_set_digest,
+          binding_set_digest: preflight.binding_set_digest,
           seed: 0,
         }),
       },

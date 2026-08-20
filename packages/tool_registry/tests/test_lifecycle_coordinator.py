@@ -109,6 +109,38 @@ async def test_restart_invalidates_in_flight_tool_result() -> None:
 
 
 @pytest.mark.asyncio
+async def test_tool_timeout_retires_runner_for_clean_retry() -> None:
+    runners: list[FakeRunner] = []
+
+    def factory(server_id: str, workspace_path: str | None, approval_context):
+        runner = FakeRunner(f"runner-{len(runners) + 1}")
+        if not runners:
+
+            async def stalled_call(tool_name: str, arguments: dict) -> dict:
+                await asyncio.Event().wait()
+                return {}
+
+            runner.call_tool = stalled_call  # type: ignore[method-assign]
+        runners.append(runner)
+        return runner
+
+    coordinator = McpLifecycleCoordinator(factory, operation_timeout=0.02)
+    await coordinator.start("remote")
+
+    with pytest.raises(TimeoutError):
+        await coordinator.call_tool("remote", "search", {})
+
+    assert runners[0].stop_count == 1
+    assert coordinator.runner_for("remote") is None
+
+    await coordinator.start("remote")
+    assert await coordinator.call_tool("remote", "search", {"topic": "cad"}) == {
+        "runner": "runner-2",
+        "topic": "cad",
+    }
+
+
+@pytest.mark.asyncio
 async def test_shutdown_is_bounded_and_rejects_new_starts() -> None:
     runner = FakeRunner("runner")
     coordinator = McpLifecycleCoordinator(lambda *_: runner, shutdown_timeout=0.1)

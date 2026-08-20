@@ -46,6 +46,38 @@ async def test_gateway_rejects_output_that_does_not_match_advertised_schema() ->
 
 
 @pytest.mark.asyncio
+async def test_gateway_supplies_omitted_required_nullable_output_field() -> None:
+    instance, lifecycle, _ = service()
+    tool = instance.catalog.tools("cad")[0]
+    object.__setattr__(
+        tool,
+        "output_schema",
+        {
+            "type": "object",
+            "required": ["providerId", "activeDocument"],
+            "properties": {
+                "providerId": {"type": "string"},
+                "activeDocument": {"type": ["object", "null"]},
+            },
+        },
+    )
+    instance.catalog.tools = lambda _: [tool]
+    lifecycle.result = {
+        "content": [{"type": "text", "text": "Solid Edge is not connected."}],
+        "structuredContent": {"providerId": "solid_edge"},
+        "isError": False,
+    }
+
+    result = await instance.call_tool("s1", "r1", "cad__run", {})
+
+    assert result.is_error is False
+    assert result.structured_content == {
+        "providerId": "solid_edge",
+        "activeDocument": None,
+    }
+
+
+@pytest.mark.asyncio
 async def test_gateway_preserves_child_error_that_does_not_match_success_schema() -> (
     None
 ):

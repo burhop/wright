@@ -276,7 +276,9 @@ test("protocol v2 injects the Wright provider and submits no tool namespace", as
     const project = readFileSync(
       resolve(fixtures, "valid-bound-mcp.rivet-project"),
       "utf8",
-    );
+    )
+      .replace('- response->"Output"', '- structuredContent->"Output"')
+      .replace("dataType: object[]", "dataType: object");
     const result = await invokeAsync(project, {
       mcp: mcpGrant(bridge.baseUrl),
     });
@@ -297,7 +299,44 @@ test("protocol v2 injects the Wright provider and submits no tool namespace", as
       true,
     );
     assert.equal(events.at(-1).state, "succeeded");
+    assert.deepEqual(events.at(-1).outputs.output, {
+      type: "object",
+      value: { server: "alpha", value: 2 },
+    });
     assert.equal(result.stdout.includes(mcpGrant(bridge.baseUrl).token), false);
+  } finally {
+    await bridge.close();
+  }
+});
+
+test("MCP node diagnostics stay off the JSONL protocol channel", async () => {
+  const bridge = await loopbackBridge((request, response) => {
+    request.resume();
+    request.on("end", () => {
+      response.writeHead(200, { "Content-Type": "application/x-ndjson" });
+      response.end(
+        `${JSON.stringify({ type: "result", error: { code: "RIVET_MCP_PANEL_UNAVAILABLE", message: "Vendor application is not ready." } })}\n`,
+      );
+    });
+  });
+  try {
+    const project = readFileSync(
+      resolve(fixtures, "valid-bound-mcp.rivet-project"),
+      "utf8",
+    );
+    const result = await invokeAsync(project, {
+      mcp: mcpGrant(bridge.baseUrl),
+    });
+    assert.notEqual(result.status, 0);
+    const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
+    assert.equal(events.at(-1).type, "result");
+    assert.equal(events.at(-1).state, "failed");
+    assert.equal(
+      events.at(-1).error.code,
+      "RIVET_MCP_PANEL_UNAVAILABLE",
+    );
+    assert.match(result.stderr, /Wright MCP call failed/);
+    assert.match(events.at(-1).error.message, /Wright MCP call failed/);
   } finally {
     await bridge.close();
   }

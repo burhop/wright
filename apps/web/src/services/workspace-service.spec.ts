@@ -9,7 +9,6 @@ vi.mock("./host-adapter", () => ({
 import {
   workspaceService,
   type EngineeringScenarioPreflight,
-  type RivetWorkflowOperation,
   type SupportDiagnosticPreview,
 } from "./workspace-service";
 
@@ -56,18 +55,6 @@ describe("engineering scenario workspace client", () => {
       blockers: [],
       expires_at: "2099-01-01T00:00:00Z",
     };
-    const workflow: RivetWorkflowOperation = {
-      workflow_id: "workflow",
-      slug: preflight.workflow_slug,
-      revision: 1,
-      etag: digest,
-      review_state: "approved",
-      reviewer: "local-user",
-      reviewed_at: 1,
-      review_digest: "r".repeat(64),
-      binding_set_digest: "b".repeat(64),
-      stale_reasons: [],
-    };
     const report = {
       scenario_run_id: "scenario-run",
       workflow_run_id: "workflow-run",
@@ -109,9 +96,9 @@ describe("engineering scenario workspace client", () => {
           expect(body).toMatchObject({
             session_id: "session",
             manifest_digest: digest,
-            review_digest: workflow.review_digest,
-            binding_set_digest: workflow.binding_set_digest,
+            binding_set_digest: preflight.binding_set_digest,
           });
+          expect(body).not.toHaveProperty("review_digest");
           return response(
             {
               scenario_run_id: "scenario-run",
@@ -149,7 +136,6 @@ describe("engineering scenario workspace client", () => {
       await workspaceService.startEngineeringScenario(
         "session",
         preflight,
-        workflow,
       ),
     ).toMatchObject({ scenario_run_id: "scenario-run" });
     expect(
@@ -190,7 +176,7 @@ describe("engineering scenario workspace client", () => {
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:scenario-report");
   });
 
-  it("does not start without exact reviewed workflow identities", async () => {
+  it("does not start without an exact prepared tool binding", async () => {
     await expect(
       workspaceService.startEngineeringScenario(
         "session",
@@ -210,17 +196,8 @@ describe("engineering scenario workspace client", () => {
           blockers: [],
           expires_at: "2099-01-01T00:00:00Z",
         },
-        {
-          workflow_id: "workflow",
-          slug: "scenario-structural-bracket",
-          revision: 1,
-          etag: digest,
-          review_state: null,
-          reviewer: null,
-          reviewed_at: null,
-        },
       ),
-    ).rejects.toThrow("Review the exact prepared scenario workflow first");
+    ).rejects.toThrow("Prepare the exact scenario workflow first");
     expect(mocks.fetch).not.toHaveBeenCalled();
   });
 });

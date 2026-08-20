@@ -10,11 +10,9 @@ import {
 export function RivetWorkflowCapabilities({
   sessionId,
   workflow,
-  onReviewed,
 }: {
   sessionId: string;
   workflow: RivetWorkflowOperation;
-  onReviewed: () => void | Promise<void>;
 }) {
   const [capabilities, setCapabilities] = useState<RivetMcpCapabilities | null>(
     null,
@@ -68,7 +66,7 @@ export function RivetWorkflowCapabilities({
     [capabilities],
   );
 
-  const reviewBindings = async () => {
+  const prepareBindings = async () => {
     if (!capabilities) return;
     try {
       const next = await workspaceService.previewRivetMcpBindings(
@@ -87,45 +85,14 @@ export function RivetWorkflowCapabilities({
       setPreview(next);
       setMessage(
         next.ready
-          ? "Exact binding scope is ready for review."
-          : "Resolve every blocker before review.",
+          ? "Tool connections are ready and will be applied when the workflow runs."
+          : "Resolve every blocker before running the workflow.",
       );
     } catch (error) {
       setPreview(null);
       setMessage(
         error instanceof Error ? error.message : "Binding preview failed.",
       );
-    }
-  };
-
-  const approve = async () => {
-    try {
-      if (toolRequirements.length === 0) {
-        await workspaceService.reviewRivetWorkflow(
-          sessionId,
-          workflow.slug,
-          "approved",
-          "local-user",
-        );
-      } else {
-        if (!capabilities || !preview?.ready || !preview.binding_set_digest)
-          return;
-        await workspaceService.reviewRivetWorkflow(
-          sessionId,
-          workflow.slug,
-          "approved",
-          "local-user",
-          {
-            expectedDigest: workflow.etag,
-            graph: capabilities.graph_id,
-            bindingSetDigest: preview.binding_set_digest,
-          },
-        );
-      }
-      setMessage("The exact workflow scope is approved.");
-      await onReviewed();
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Review failed.");
     }
   };
 
@@ -150,12 +117,8 @@ export function RivetWorkflowCapabilities({
     return (
       <div data-testid="workflow-capabilities-tab">
         <p>
-          This workflow has no MCP tool-call nodes. Its existing review flow is
-          unchanged.
+          This workflow has no MCP tool-call nodes and is ready to run.
         </p>
-        <button type="button" onClick={() => void approve()}>
-          Approve revision
-        </button>
         <p role="status" aria-live="polite">
           {message}
         </p>
@@ -166,8 +129,8 @@ export function RivetWorkflowCapabilities({
   return (
     <div data-testid="workflow-capabilities-tab">
       <p>
-        Bind each MCP node to one namespaced tool. Workflow review does not
-        approve later destructive tool calls.
+        Bind each MCP node to one namespaced tool. Wright applies a unique match
+        automatically at run time; use this panel only when a node is ambiguous.
       </p>
       {capabilities.issues.map((issue) => (
         <p key={`${issue.code}-${issue.node_id || "project"}`} role="alert">
@@ -236,7 +199,7 @@ export function RivetWorkflowCapabilities({
                 <details
                   data-testid={`workflow-binding-details-${requirement.node_id}`}
                 >
-                  <summary>Reviewed identity and risk</summary>
+                  <summary>Tool identity and risk</summary>
                   <dl>
                     <dt>Tool</dt>
                     <dd>{binding.selected_tool}</dd>
@@ -268,30 +231,16 @@ export function RivetWorkflowCapabilities({
         Refresh current capabilities
       </button>{" "}
       <button
-        data-testid="workflow-review-binding-summary"
+        data-testid="workflow-prepare-binding-summary"
         type="button"
         disabled={toolRequirements.some((item) => !selections[item.node_id])}
-        onClick={() => void reviewBindings()}
+        onClick={() => void prepareBindings()}
       >
-        Preview exact review scope
-      </button>{" "}
-      <button
-        data-testid="workflow-review-approve"
-        type="button"
-        disabled={!preview?.ready}
-        onClick={() => void approve()}
-      >
-        Approve exact workflow
+        Prepare tool connections
       </button>
-      <p data-testid="workflow-review-policy-summary">
-        Policy snapshot: {preview?.policy_snapshot_digest || "Preview required"}
+      <p data-testid="workflow-binding-policy-summary">
+        Tool snapshot: {preview?.policy_snapshot_digest || "Prepared at run time"}
       </p>
-      {(workflow.stale_reasons || []).map((reason) => (
-        <p key={reason} data-testid="workflow-review-stale-reason" role="alert">
-          Review is stale: {reason.replaceAll("_", " ")}. Refresh capabilities
-          and review again.
-        </p>
-      ))}
       <p role="status" aria-live="polite">
         {message}
       </p>

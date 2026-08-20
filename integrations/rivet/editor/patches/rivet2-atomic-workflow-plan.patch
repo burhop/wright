@@ -1,0 +1,482 @@
+diff --git a/packages/app/graphs/graph-creator.rivet-project b/packages/app/graphs/graph-creator.rivet-project
+index 1452e2a..ec3514e 100644
+--- a/packages/app/graphs/graph-creator.rivet-project
++++ b/packages/app/graphs/graph-creator.rivet-project
+@@ -281,6 +281,48 @@ data:
+             dataType: string
+             id: output
+           visualData: 1050/400/330/3//
++    WrightApplyWorkflowPlan01:
++      metadata:
++        description: ""
++        id: WrightApplyWorkflowPlan01
++        name: "Function: applyWorkflowPlan"
++      nodes:
++        '[WrightPlanNodesIn01]:graphInput "Graph Input"':
++          data:
++            dataType: object[]
++            id: nodes
++            useDefaultValueInput: false
++          outgoingConnections:
++            - data->"Array" WrightPlanArgs01/input1
++          visualData: 100/200/330/1//
++        '[WrightPlanConnectionsIn01]:graphInput "Graph Input"':
++          data:
++            dataType: object[]
++            id: connections
++            useDefaultValueInput: false
++          outgoingConnections:
++            - data->"Array" WrightPlanArgs01/input2
++          visualData: 100/500/330/1//
++        '[WrightPlanArgs01]:array "Array"':
++          data:
++            flatten: false
++            flattenDeep: false
++          outgoingConnections:
++            - output->"External Call" WrightPlanExternal01/arguments
++          visualData: 550/350/230/2//
++        '[WrightPlanExternal01]:externalCall "External Call"':
++          data:
++            functionName: applyWorkflowPlan
++            useErrorOutput: false
++            useFunctionNameInput: false
++          outgoingConnections:
++            - result->"Graph Output" WrightPlanOutput01/value
++          visualData: 900/350/230/2//
++        '[WrightPlanOutput01]:graphOutput "Graph Output"':
++          data:
++            dataType: object
++            id: output
++          visualData: 1250/350/330/3//
+     K8xT505hvFD7lGCIfcjTf:
+       metadata:
+         description: ""
+@@ -308,6 +350,52 @@ data:
+           outgoingConnections:
+             - function->"Array" sAnxJ1k5aqXR_fckQIop5/input13
+           visualData: -695/1108/280/68//
++        '[WrightApplyPlanToolDef01]:gptFunction "GPT Function"':
++          data:
++            description: Creates, configures, and connects an entire safe workflow atomically. Prefer this for new multi-node workflows. Use stable aliases and exact port IDs. Optional display titles belong in title, not settings. Exact settings are mcpToolCall={toolName,toolArguments,useToolNameInput,useToolArgumentsInput,useToolCallIdInput}, extractObjectPath={path,usePathInput}, object={jsonTemplate}, and graphOutput={id,dataType}. MCP Tool Call output is response; its dynamic argument input is toolArguments; Extract Object Path uses object->match; Object uses interpolation-name inputs->output; Graph Output input is value.
++            name: applyWorkflowPlan
++            schema: |-
++              {
++                "type": "object",
++                "properties": {
++                  "nodes": {
++                    "type": "array",
++                    "minItems": 1,
++                    "maxItems": 24,
++                    "items": {
++                      "type": "object",
++                      "properties": {
++                        "alias": {"type": "string"},
++                        "nodeType": {"type": "string"},
++                        "title": {"type": "string", "maxLength": 120, "description": "Optional display title; never put this in settings."},
++                        "settings": {"type": "object", "description": "Use only the exact safe settings listed in the function description."}
++                      },
++                      "required": ["alias", "nodeType", "settings"],
++                      "additionalProperties": false
++                    }
++                  },
++                  "connections": {
++                    "type": "array",
++                    "maxItems": 64,
++                    "items": {
++                      "type": "object",
++                      "properties": {
++                        "sourceAlias": {"type": "string"},
++                        "sourcePortId": {"type": "string"},
++                        "destAlias": {"type": "string"},
++                        "destPortId": {"type": "string"}
++                      },
++                      "required": ["sourceAlias", "sourcePortId", "destAlias", "destPortId"],
++                      "additionalProperties": false
++                    }
++                  }
++                },
++                "required": ["nodes", "connections"],
++                "additionalProperties": false
++              }
++          outgoingConnections:
++            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input14
++          visualData: -695/1308/280/68//
+         '[0fSAlrZUgERZRoRLQn5FU]:gptFunction "GPT Function"':
+           data:
+             description: Edits one allowlisted setting on a built-in node. getNodeData lists
+@@ -1166,6 +1254,8 @@ data:
+             handlers:
+               - key: listNodeTypes
+                 value: WrightListNodeTypes01
++              - key: applyWorkflowPlan
++                value: WrightApplyWorkflowPlan01
+               - key: createNode
+                 value: DNpnkEaXvzD3ZbRxQEg-d
+               - key: finished
+@@ -1340,6 +1430,10 @@ data:
+ 
+               - Make one function call per assistant turn.
+ 
++              - Prefer applyWorkflowPlan to create and connect a new multi-node
++                workflow in one atomic action. Use lower-level functions only to
++                inspect or repair a rejected plan.
++
+               - Call listNodeTypes before createNode. Copy an exact returned
+                 createNodeArguments object into createNode; never invent a node
+                 type or argument name.
+
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+index 99cc287..42ca83b 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+@@ -256,6 +256,107 @@ test('legacy draft runner can configure a static workspace MCP tool call', async
+   assert.deepEqual(lintResult, { type: 'string[]', value: ['Node ' + toolCall.id + ' has no connections.'] });
+ });
+ 
++test('legacy draft runner applies a connected workflow plan atomically', async () => {
++  let planResult: unknown;
++  const result = await runLegacyGraphBuilderDraft(
++    options(async ({ externalFunctions, onUserEvent }) => {
++      planResult = await externalFunctions.applyWorkflowPlan!({} as ExternalFunctionProcessContext, {
++        nodes: [
++          {
++            alias: 'providers',
++            nodeType: 'registered:mcpToolCall',
++            settings: {
++              title: 'List providers',
++              toolName: 'solid-edge-mcp__cad.list_providers',
++              toolArguments: '{}',
++              useToolNameInput: false,
++              useToolArgumentsInput: false,
++              useToolCallIdInput: false,
++            },
++          },
++          {
++            alias: 'providerId',
++            nodeType: 'registered:extractObjectPath',
++            settings: { path: '$.providerId', usePathInput: false },
++          },
++          {
++            alias: 'arguments',
++            nodeType: 'registered:object',
++            settings: { jsonTemplate: '{"providerId":"{{providerId}}"}' },
++          },
++          {
++            alias: 'status',
++            nodeType: 'registered:mcpToolCall',
++            title: 'Get provider status',
++            settings: {
++              toolName: 'solid-edge-mcp__cad.get_status',
++              toolArguments: '{}',
++              useToolNameInput: false,
++              useToolArgumentsInput: true,
++              useToolCallIdInput: false,
++            },
++          },
++          {
++            alias: 'result',
++            nodeType: 'registered:graphOutput',
++            settings: { dataType: 'object', id: 'result' },
++          },
++        ],
++        connections: [
++          {
++            sourceAlias: 'providers',
++            sourcePortId: 'response',
++            destAlias: 'providerId',
++            destPortId: 'object',
++          },
++          {
++            sourceAlias: 'providerId',
++            sourcePortId: 'match',
++            destAlias: 'arguments',
++            destPortId: 'providerId',
++          },
++          {
++            sourceAlias: 'arguments',
++            sourcePortId: 'output',
++            destAlias: 'status',
++            destPortId: 'toolArguments',
++          },
++          {
++            sourceAlias: 'status',
++            sourcePortId: 'response',
++            destAlias: 'result',
++            destPortId: 'value',
++          },
++        ],
++      });
++      onUserEvent.finalMessage?.({ type: 'string', value: 'Applied a connected workflow plan.' });
++    }),
++  );
++
++  assert.equal(result.status, 'ready-for-preview');
++  if (result.status !== 'ready-for-preview') return;
++  assert.equal(result.draft.graphs[graphId]!.nodes.length, 5);
++  assert.equal(result.draft.graphs[graphId]!.connections.length, 4);
++  assert.equal(
++    result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'mcpToolCall')!.title,
++    'List providers',
++  );
++  assert.deepEqual(planResult, {
++    type: 'object',
++    value: {
++      aliases: {
++        providers: result.draft.graphs[graphId]!.nodes.find((node) => node.title === 'List providers')!.id,
++        providerId: result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'extractObjectPath')!.id,
++        arguments: result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'object')!.id,
++        status: result.draft.graphs[graphId]!.nodes.find((node) => node.title === 'Get provider status')!.id,
++        result: result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'graphOutput')!.id,
++      },
++      connectionCount: 4,
++      nodeCount: 5,
++    },
++  });
++});
++
+ test('legacy draft runner rejects an MCP call that has no static tool identity', async () => {
+   let lintResult: unknown;
+   await assert.rejects(
+
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+index 00f2a95..c44a502 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+@@ -148,6 +148,7 @@ export async function runLegacyGraphBuilderDraft(
+     });
+ 
+   const mutationFunctions = new Set([
++    'applyWorkflowPlan',
+     'connectNodes',
+     'createNode',
+     'deleteNode',
+
+diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.ts b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+index 7b94c99..0f81f41 100644
+--- a/packages/app/src/hooks/aiGraphBuilderHelpers.ts
++++ b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+@@ -11,6 +11,10 @@ import {
+   type Project,
+   newId,
+ } from '@valerypopoff/rivet2-core';
++import {
++  parsePortableJson,
++  type PortableJsonObject,
++} from '../domain/graphBuilder/index.js';
+ import { getPortCompatibilityStatus } from '../domain/graphEditing/portCompatibility.js';
+ import type { GraphBuilderAuthoringCatalogSnapshot } from '../features/graphBuilder/authoringCatalog.js';
+ 
+@@ -346,6 +350,57 @@ export function buildAiGraphBuilderExternalFunctions(options: {
+   const setWorkingGraph = options.setWorkingGraph;
+   const getProject = () => (typeof options.project === 'function' ? options.project() : options.project);
+ 
++  const appendConnection = (graph: NodeGraph, rawOptions: unknown): NodeGraph => {
++    const { sourceNodeId, destNodeId, sourcePortId, destPortId } = parseConnectionOptions(rawOptions);
++    const sourceNode = graph.nodes.find((node) => node.id === sourceNodeId);
++    const destNode = graph.nodes.find((node) => node.id === destNodeId);
++    if (!sourceNode) throw new Error(`Node with ID ${sourceNodeId} not found`);
++    if (!destNode) throw new Error(`Node with ID ${destNodeId} not found`);
++    if (!options.catalog.canResolveNodeType(sourceNode.type) || !options.catalog.canResolveNodeType(destNode.type)) {
++      throw new Error('Connections to opaque plugin nodes are unavailable in the legacy Graph Builder.');
++    }
++
++    const project = getProject();
++    const sourcePorts = resolveAiGraphBuilderNodePorts({
++      graph,
++      node: sourceNode,
++      project,
++      referencedProjects: options.referencedProjects,
++      registry: options.registry,
++    });
++    const destPorts = resolveAiGraphBuilderNodePorts({
++      graph,
++      node: destNode,
++      project,
++      referencedProjects: options.referencedProjects,
++      registry: options.registry,
++    });
++    const sourcePort = sourcePorts.outputs.find((port) => port.id === sourcePortId);
++    const destPort = destPorts.inputs.find((port) => port.id === destPortId);
++    if (!sourcePort) throw new Error(`Output port with ID ${sourcePortId} not found on node ${sourceNodeId}`);
++    if (!destPort) throw new Error(`Input port with ID ${destPortId} not found on node ${destNodeId}`);
++
++    const compatibility = getPortCompatibilityStatus({
++      draggingDataType: sourcePort.dataType,
++      portDataType: destPort.dataType,
++      canCoerce: destPort.coerced ?? true,
++      isInput: true,
++    });
++    if (compatibility === 'incompatible' || compatibility === 'none') {
++      throw new Error(`Output ${sourceNodeId}.${sourcePortId} is not compatible with input ${destNodeId}.${destPortId}.`);
++    }
++    if (graph.connections.some((connection) => connection.inputNodeId === destNodeId && connection.inputId === destPortId)) {
++      throw new Error(`Node ${destNodeId} already has a connection to this input. Disconnect it first.`);
++    }
++    return {
++      ...graph,
++      connections: [
++        ...graph.connections,
++        { outputNodeId: sourceNodeId, outputId: sourcePortId, inputNodeId: destNodeId, inputId: destPortId },
++      ],
++    };
++  };
++
+   return {
+     listNodeTypes: async (_ctx: unknown, rawQuery: unknown) => ({
+       type: 'string',
+@@ -371,82 +426,87 @@ export function buildAiGraphBuilderExternalFunctions(options: {
+         value: newNode.id,
+       };
+     },
+-    connectNodes: async (_ctx: unknown, rawOptions: unknown) => {
+-      const { sourceNodeId, destNodeId, sourcePortId, destPortId } = parseConnectionOptions(rawOptions);
+-      const graph = getWorkingGraph();
+-      const sourceNode = graph.nodes.find((node) => node.id === sourceNodeId);
+-      const destNode = graph.nodes.find((node) => node.id === destNodeId);
+-      options.onLog?.(`Connecting ${sourceNodeId}.${sourcePortId} -> ${destNodeId}.${destPortId}.`);
+-
+-      if (!sourceNode) {
+-        throw new Error(`Node with ID ${sourceNodeId} not found`);
++    applyWorkflowPlan: async (_ctx: unknown, rawPlan: unknown, rawConnections?: unknown) => {
++      if (Array.isArray(rawPlan) && Array.isArray(rawConnections)) {
++        rawPlan = { nodes: rawPlan, connections: rawConnections };
+       }
+-
+-      if (!destNode) {
+-        throw new Error(`Node with ID ${destNodeId} not found`);
++      if (!isRecord(rawPlan) || !Array.isArray(rawPlan.nodes) || !Array.isArray(rawPlan.connections)) {
++        throw new Error('Workflow plan requires nodes and connections arrays.');
+       }
+-      if (!options.catalog.canResolveNodeType(sourceNode.type) || !options.catalog.canResolveNodeType(destNode.type)) {
+-        throw new Error('Connections to opaque plugin nodes are unavailable in the legacy Graph Builder.');
++      if (rawPlan.nodes.length < 1 || rawPlan.nodes.length > 24 || rawPlan.connections.length > 64) {
++        throw new Error('Workflow plan exceeds the safe node or connection limit.');
+       }
+ 
+-      const project = getProject();
+-      const sourcePorts = resolveAiGraphBuilderNodePorts({
+-        graph,
+-        node: sourceNode,
+-        project,
+-        referencedProjects: options.referencedProjects,
+-        registry: options.registry,
+-      });
+-      const destPorts = resolveAiGraphBuilderNodePorts({
+-        graph,
+-        node: destNode,
+-        project,
+-        referencedProjects: options.referencedProjects,
+-        registry: options.registry,
+-      });
+-      const sourcePort = sourcePorts.outputs.find((port) => port.id === sourcePortId);
+-      const destPort = destPorts.inputs.find((port) => port.id === destPortId);
+-
+-      if (!sourcePort) {
+-        throw new Error(`Output port with ID ${sourcePortId} not found on node ${sourceNodeId}`);
+-      }
+-
+-      if (!destPort) {
+-        throw new Error(`Input port with ID ${destPortId} not found on node ${destNodeId}`);
+-      }
+-
+-      const compatibility = getPortCompatibilityStatus({
+-        draggingDataType: sourcePort.dataType,
+-        portDataType: destPort.dataType,
+-        canCoerce: destPort.coerced ?? true,
+-        isInput: true,
+-      });
+-      if (compatibility === 'incompatible' || compatibility === 'none') {
+-        throw new Error(
+-          `Output ${sourceNodeId}.${sourcePortId} is not compatible with input ${destNodeId}.${destPortId}.`,
+-        );
++      const aliases = new Map<string, NodeId>();
++      let nextGraph = getWorkingGraph();
++      for (const rawNode of rawPlan.nodes) {
++        if (!isRecord(rawNode)) throw new Error('Workflow plan contains an invalid node.');
++        const alias = readStringField(rawNode, 'alias')?.trim();
++        const nodeType = readStringField(rawNode, 'nodeType')?.trim();
++        if (!alias || !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(alias) || aliases.has(alias)) {
++          throw new Error('Workflow node aliases must be unique safe identifiers.');
++        }
++        if (!nodeType) throw new Error(`Workflow node ${alias} has no nodeType.`);
++        const settingsValue = rawNode.settings ?? {};
++        if (!isRecord(settingsValue)) throw new Error(`Workflow node ${alias} settings must be an object.`);
++        const explicitTitle = Object.hasOwn(rawNode, 'title') ? rawNode.title : undefined;
++        const nestedTitle = Object.hasOwn(settingsValue, 'title') ? settingsValue.title : undefined;
++        if (explicitTitle !== undefined && typeof explicitTitle !== 'string') {
++          throw new Error(`Workflow node ${alias} title must be a string.`);
++        }
++        if (nestedTitle !== undefined && typeof nestedTitle !== 'string') {
++          throw new Error(`Workflow node ${alias} settings.title must be a string.`);
++        }
++        const title = ((explicitTitle as string | undefined) ?? (nestedTitle as string | undefined))?.trim();
++        if (title && (title.length > 120 || /[\u0000-\u001f\u007f]/.test(title))) {
++          throw new Error(`Workflow node ${alias} title is invalid.`);
++        }
++        const settings = parsePortableJson(
++          Object.fromEntries(Object.entries(settingsValue).filter(([key]) => key !== 'title')),
++        ) as PortableJsonObject;
++        const authoringChoiceId = resolveLegacyGraphBuilderAuthoringChoice(options.catalog, nodeType);
++        let node = options.catalog.createNode({
++          authoringChoiceId,
++          allocatedNodeId: newId<NodeId>(),
++          project: getProject(),
++          settings,
++        });
++        if (title) node = { ...node, title };
++        aliases.set(alias, node.id);
++        nextGraph = { ...nextGraph, nodes: [...nextGraph.nodes, node] };
+       }
+ 
+-      const alreadyConnectedToDest = graph.connections.find(
+-        (connection) => connection.inputNodeId === destNodeId && connection.inputId === destPortId,
+-      );
+-
+-      if (alreadyConnectedToDest) {
+-        throw new Error(`Node ${destNodeId} already has a connection to this input. Disconnect it first.`);
++      for (const rawConnection of rawPlan.connections) {
++        if (!isRecord(rawConnection)) throw new Error('Workflow plan contains an invalid connection.');
++        const sourceAlias = readStringField(rawConnection, 'sourceAlias');
++        const destAlias = readStringField(rawConnection, 'destAlias');
++        const sourcePortId = readStringField(rawConnection, 'sourcePortId');
++        const destPortId = readStringField(rawConnection, 'destPortId');
++        const sourceNodeId = sourceAlias ? aliases.get(sourceAlias) : undefined;
++        const destNodeId = destAlias ? aliases.get(destAlias) : undefined;
++        if (!sourceNodeId || !destNodeId || !sourcePortId || !destPortId) {
++          throw new Error('Workflow connection must reference known aliases and exact port IDs.');
++        }
++        nextGraph = appendConnection(nextGraph, { sourceNodeId, destNodeId, sourcePortId, destPortId });
+       }
+ 
+-      setWorkingGraph({
+-        ...graph,
+-        connections: [
+-          ...graph.connections,
+-          {
+-            outputNodeId: sourceNodeId,
+-            outputId: sourcePortId,
+-            inputNodeId: destNodeId,
+-            inputId: destPortId,
+-          },
+-        ],
+-      });
++      setWorkingGraph(nextGraph);
++      options.showChanges();
++      options.onLog?.(`Applied workflow plan with ${rawPlan.nodes.length} nodes and ${rawPlan.connections.length} connections.`);
++      return {
++        type: 'object',
++        value: {
++          aliases: Object.fromEntries(aliases),
++          connectionCount: rawPlan.connections.length,
++          nodeCount: rawPlan.nodes.length,
++        },
++      };
++    },
++    connectNodes: async (_ctx: unknown, rawOptions: unknown) => {
++      const { sourceNodeId, destNodeId, sourcePortId, destPortId } = parseConnectionOptions(rawOptions);
++      const graph = getWorkingGraph();
++      options.onLog?.(`Connecting ${sourceNodeId}.${sourcePortId} -> ${destNodeId}.${destPortId}.`);
++      setWorkingGraph(appendConnection(graph, rawOptions));
+       options.showChanges();
+       options.onLog?.(`Connected ${sourceNodeId}.${sourcePortId} -> ${destNodeId}.${destPortId}.`);
+ 

@@ -1,18 +1,53 @@
 diff --git a/packages/app/src/features/graphBuilder/authoringCatalog.ts b/packages/app/src/features/graphBuilder/authoringCatalog.ts
-index 137f6f94..82f585bd 100644
+index 137f6f94..23c09579 100644
 --- a/packages/app/src/features/graphBuilder/authoringCatalog.ts
 +++ b/packages/app/src/features/graphBuilder/authoringCatalog.ts
-@@ -233,6 +233,21 @@ const STATIC_BUILT_IN_SETTINGS: Readonly<Record<string, readonly GraphBuilderSet
+@@ -123,6 +123,36 @@ const SETTING_VALUE_KINDS = new Set<GraphBuilderSettingValueKind>([
+   'string-enum',
+ ]);
+
++const WRIGHT_MCP_NODE_TYPES = new Set(['mcpDiscovery', 'mcpToolCall']);
++const WRIGHT_OWNED_MCP_CONNECTION_DEFAULTS: Readonly<Record<string, PortableJsonValue>> = {
++  serverId: '',
++  serverUrl: '',
++  command: '',
++  args: [],
++  env: {},
++  environment: {},
++  headers: {},
++  authorization: '',
++};
++
++function applyWrightMcpNodeDefaults(node: ChartNode): ChartNode {
++  if (!WRIGHT_MCP_NODE_TYPES.has(node.type)) {
++    return node;
++  }
++
++  const nextNode = cloneDeep(node);
++  const data = nextNode.data as Record<string, unknown>;
++  for (const [key, value] of Object.entries(WRIGHT_OWNED_MCP_CONNECTION_DEFAULTS)) {
++    if (Object.hasOwn(data, key)) {
++      data[key] = cloneDeep(value);
++    }
++  }
++  if (node.type === 'mcpToolCall') {
++    data.useToolNameInput = false;
++  }
++  return nextNode;
++}
++
+ const BUILT_IN_DESCRIPTIONS: Readonly<Record<string, string>> = {
+   array: 'Collects variadic inputs into an array.',
+   boolean: 'Provides or converts a boolean value.',
+@@ -233,6 +233,19 @@ const STATIC_BUILT_IN_SETTINGS: Readonly<Record<string, readonly GraphBuilderSet
      setting('id', 'string', 'Stable graph output identifier.'),
      setting('dataType', 'string-enum', 'Graph output data type.', { allowedValues: dataTypes }),
    ],
 +  mcpDiscovery: [
-+    setting('serverId', 'string', 'Configured MCP server identifier.'),
 +    setting('useToolsOutput', 'boolean', 'Expose discovered tools.'),
 +    setting('usePromptsOutput', 'boolean', 'Expose discovered prompts.'),
 +  ],
 +  mcpToolCall: [
-+    setting('serverId', 'string', 'Configured MCP server identifier.'),
 +    setting('toolName', 'string', 'Exact MCP tool name to call.'),
 +    setting('toolArguments', 'string', 'JSON object containing the static MCP tool arguments.', {
 +      projection: 'on-demand',
@@ -24,11 +59,46 @@ index 137f6f94..82f585bd 100644
    number: [
      setting('value', 'number', 'The constant numeric value.'),
      setting('useValueInput', 'boolean', 'Read the value from an input port.'),
+@@ -998,14 +1028,14 @@ export class GraphBuilderAuthoringCatalogSnapshot {
+       const authoringChoiceId = `registered:${nodeType}`;
+       let defaultNode: ChartNode;
+       try {
+-        defaultNode = createAddedNode({
++        defaultNode = applyWrightMcpNodeDefaults(createAddedNode({
+           nodeType,
+           position: { x: 0, y: 0 },
+           registry: options.registry,
+           referencedProjects: this.#referencedProjects,
+           project: options.project as Project,
+           applyDefaultColor: this.authoringPreferences.applyDefaultNodeColors,
+-        });
++        }));
+       } catch {
+         continue;
+       }
+@@ -1231,7 +1261,7 @@ export class GraphBuilderAuthoringCatalogSnapshot {
+         : entry.family === 'node-prefab'
+           ? `${NODE_PREFAB_INSTANCE_TYPE}:${entry.nodePrefabId}`
+           : entry.nodeType;
+-    let node = createAddedNode({
++    let node = applyWrightMcpNodeDefaults(createAddedNode({
+       nodeType,
+       position: { x: 0, y: 0 },
+       registry: this.#registry,
+@@ -1239,7 +1269,7 @@ export class GraphBuilderAuthoringCatalogSnapshot {
+       project: input.project as Project,
+       appliedId: input.allocatedNodeId,
+       applyDefaultColor: this.authoringPreferences.applyDefaultNodeColors,
+-    });
++    }));
+     assertGraphBuilderAuthoringValue(node);
+
+     if (input.settings && Object.keys(input.settings).length > 0) {
 diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
-index c6445085..98fe6529 100644
+index c6445085..385c3743 100644
 --- a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
 +++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
-@@ -172,6 +172,82 @@ test('legacy draft runner propagates agent failures without changing the base pr
+@@ -172,6 +172,106 @@ test('legacy draft runner propagates agent failures without changing the base pr
    assert.deepEqual(baseProject, original);
  });
 
@@ -57,20 +127,27 @@ index c6445085..98fe6529 100644
 +  });
 +});
 +
-+test('legacy draft runner can configure MCP discovery and static tool calls', async () => {
++test('legacy draft runner can configure a static workspace MCP tool call', async () => {
++  let lintResult: unknown;
 +  const result = await runLegacyGraphBuilderDraft(
 +    options(async ({ externalFunctions, onUserEvent }) => {
-+      const discovery = await externalFunctions.createNode!(
-+        {} as ExternalFunctionProcessContext,
-+        'MCP Discovery',
-+      );
 +      const toolCall = await externalFunctions.createNode!({} as ExternalFunctionProcessContext, 'MCP Tool Call');
-+      const discoveryId = (discovery.value as { result: string }).result;
 +      const toolCallId = (toolCall.value as { result: string }).result;
++      const createdToolCall = await externalFunctions.getNodeData!(
++        {} as ExternalFunctionProcessContext,
++        toolCallId,
++      );
++      assert.equal(
++        (createdToolCall.value as { safeSettings: Record<string, unknown> }).safeSettings.useToolNameInput,
++        false,
++      );
 +
-+      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, discoveryId, 'serverId', 'brep-server');
-+      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, toolCallId, 'serverId', 'brep-server');
-+      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, toolCallId, 'toolName', 'create_model');
++      await externalFunctions.editNode!(
++        {} as ExternalFunctionProcessContext,
++        toolCallId,
++        'toolName',
++        'onshape-labs-featurescript-mcp__create_geometry',
++      );
 +      await externalFunctions.editNode!(
 +        {} as ExternalFunctionProcessContext,
 +        toolCallId,
@@ -89,32 +166,60 @@ index c6445085..98fe6529 100644
 +        'useToolArgumentsInput',
 +        false,
 +      );
-+      onUserEvent.finalMessage?.({ type: 'string', value: 'Configured the BREP MCP nodes.' });
++      lintResult = await externalFunctions.lintGraph!({} as ExternalFunctionProcessContext);
++      onUserEvent.finalMessage?.({ type: 'string', value: 'Configured the Onshape MCP node.' });
 +    }),
 +  );
 +
 +  assert.equal(result.status, 'ready-for-preview');
 +  if (result.status !== 'ready-for-preview') return;
-+  const discovery = result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'mcpDiscovery')!;
 +  const toolCall = result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'mcpToolCall')!;
-+  assert.equal((discovery.data as { serverId?: string }).serverId, 'brep-server');
 +  assert.deepEqual(toolCall.data, {
 +    ...(toolCall.data as Record<string, unknown>),
-+    serverId: 'brep-server',
-+    toolName: 'create_model',
++    serverId: '',
++    toolName: 'onshape-labs-featurescript-mcp__create_geometry',
 +    toolArguments: '{"width":40,"height":20,"depth":10}',
 +    useToolNameInput: false,
 +    useToolArgumentsInput: false,
 +  });
++  assert.equal((toolCall.data as Record<string, unknown>).serverUrl, '');
++  assert.deepEqual(lintResult, { type: 'string[]', value: ['Node ' + toolCall.id + ' has no connections.'] });
++});
++
++test('legacy draft runner rejects an MCP call that has no static tool identity', async () => {
++  let lintResult: unknown;
++  await assert.rejects(
++    runLegacyGraphBuilderDraft(
++      options(async ({ externalFunctions, onUserEvent }) => {
++        await externalFunctions.createNode!({} as ExternalFunctionProcessContext, 'MCP Tool Call');
++        lintResult = await externalFunctions.lintGraph!({} as ExternalFunctionProcessContext);
++        onUserEvent.finalMessage?.({ type: 'string', value: 'Checked the incomplete MCP node.' });
++      }),
++    ),
++    /left an MCP node incomplete.*has no toolName/i,
++  );
++
++  assert.match(JSON.stringify(lintResult), /has no toolName/);
 +});
 +
  test('legacy production layout terminates for a source-reachable cycle and preserves existing positions', async () => {
    const sourceId = 'source' as NodeId;
    const leftCycleId = 'left-cycle' as NodeId;
 diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
-index 066f2ac8..a017e6c2 100644
+index 066f2ac8..b25156b8 100644
 --- a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
 +++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+@@ -347,6 +347,10 @@ export async function runLegacyGraphBuilderDraft(
+     return { status: 'canceled' };
+   }
+   assertLegacyGraphBuilderFinished(receivedFinalEvent);
++  const incompleteMcpNodes = lintLegacyMcpConfiguration(workingGraph);
++  if (incompleteMcpNodes.length > 0) {
++    throw new Error(`Graph Builder left an MCP node incomplete. ${incompleteMcpNodes.join(' ')}`);
++  }
+
+   const initialNodeIds = new Set(initialGraph.nodes.map((node) => node.id));
+   const createdNodeIds = workingGraph.nodes.filter((node) => !initialNodeIds.has(node.id)).map((node) => node.id);
 @@ -439,8 +439,19 @@ function wrapLoggedExternalFunctions(
            log(`OK ${name} -> ${summarizeLegacyGraphBuilderResult(versionedResult)}`);
            return versionedResult;
@@ -137,6 +242,62 @@ index 066f2ac8..a017e6c2 100644
          }
        },
      ]),
+@@ -496,6 +511,8 @@ function lintLegacyGraph(options: {
+     }
+   }
+
++  warnings.push(...lintLegacyMcpConfiguration(options.graph));
++
+   const visited = new Set<NodeId>();
+   const islands: NodeId[][] = [];
+   const visit = (nodeId: NodeId, island: NodeId[]) => {
+@@ -542,6 +559,46 @@ function lintLegacyGraph(options: {
+   return warnings;
+ }
+
++function lintLegacyMcpConfiguration(graph: NodeGraph): string[] {
++  const warnings: string[] = [];
++  for (const node of graph.nodes) {
++    if (node.type !== 'mcpToolCall') continue;
++    const data = node.data as Record<string, unknown>;
++    const hasConnectionSettings = [
++      'serverId',
++      'serverUrl',
++      'command',
++      'args',
++      'env',
++      'environment',
++      'headers',
++      'authorization',
++    ].some((key) => {
++      const value = data[key];
++      if (Array.isArray(value)) return value.length > 0;
++      if (value && typeof value === 'object') return Object.keys(value).length > 0;
++      return value !== undefined && value !== null && value !== '';
++    });
++    if (hasConnectionSettings) {
++      warnings.push(
++        `MCP Tool Call ${node.id} contains connection settings. Leave server connection settings empty; Wright binds the workspace tool at run time.`,
++      );
++    }
++    if (data.useToolNameInput !== false) {
++      warnings.push(
++        `MCP Tool Call ${node.id} has a dynamic tool identity. Set useToolNameInput to false and configure one exact toolName.`,
++      );
++    }
++    if (typeof data.toolName !== 'string' || !data.toolName.trim()) {
++      warnings.push(
++        `MCP Tool Call ${node.id} has no toolName. Configure the exact workspace tool name before finishing.`,
++      );
++    }
++  }
++
++  return warnings;
++}
++
+ function isEmptyDelta(delta: GraphDraftDelta): boolean {
+   return (
+     (delta.addedNodeCount ?? delta.addedNodes.length) === 0 &&
 diff --git a/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts b/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts
 index a45f9f2a..8c37e1ca 100644
 --- a/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts

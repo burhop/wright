@@ -50,6 +50,8 @@ class HermesOpenAIBridgeSettings:
     maximum_text_bytes: int = 1024 * 1024
     maximum_output_bytes: int = 1024 * 1024
     maximum_translation_prompt_bytes: int = 60_000
+    translation_context: str = ""
+    maximum_translation_context_bytes: int = 32_000
 
     def __post_init__(self) -> None:
         if not self.base_url.startswith(("http://", "https://")):
@@ -63,10 +65,16 @@ class HermesOpenAIBridgeSettings:
                 self.maximum_text_bytes,
                 self.maximum_output_bytes,
                 self.maximum_translation_prompt_bytes,
+                self.maximum_translation_context_bytes,
             )
             < 1
         ):
             raise ValueError("Hermes bridge limits must be positive")
+        if (
+            len(self.translation_context.encode("utf-8"))
+            > self.maximum_translation_context_bytes
+        ):
+            raise ValueError("Hermes bridge translation context exceeds its safe limit")
 
 
 class HermesBridgeError(RuntimeError):
@@ -142,11 +150,7 @@ class HermesOpenAICompatibilityBridge:
                 "invalid_request", "The requested model alias is not supported."
             )
         messages = payload.get("messages")
-        if (
-            not isinstance(messages, list)
-            or not messages
-            or len(messages) > self.settings.maximum_messages
-        ):
+        if not isinstance(messages, list) or not messages:
             raise HermesBridgeError(
                 "invalid_request", "Messages must be a bounded non-empty array."
             )
@@ -248,12 +252,59 @@ class HermesOpenAICompatibilityBridge:
                 "unsupported_tool_contract",
                 "Parallel tool calls are not supported by the Rivet compatibility bridge.",
             )
+        if len(normalized_messages) > self.settings.maximum_messages:
+            if not tools:
+                raise HermesBridgeError(
+                    "invalid_request", "Messages must be a bounded non-empty array."
+                )
+            normalized_messages = self._compact_tool_transcript(
+                normalized_messages,
+                maximum_messages=self.settings.maximum_messages,
+            )
         return _ValidatedRequest(
             normalized_messages,
             tuple(tools),
             choice,
             payload.get("stream") is True,
         )
+
+    @staticmethod
+    def _compact_tool_transcript(
+        messages: list[dict[str, Any]], *, maximum_messages: int
+    ) -> list[dict[str, Any]]:
+        """Bound Rivet's amplified transcript without losing its active objective.
+
+        Legacy Graph Builder repeats the same authority and task objective before
+        every one-tool turn. Keep the first copy of those stable messages, then
+        retain the newest unique action history. The translated conversation is
+        JSON data rather than an upstream native tool transcript, so retaining an
+        assistant/tool pair boundary is not required for protocol validity.
+        """
+
+        stable: list[dict[str, Any]] = []
+        history: list[dict[str, Any]] = []
+        seen_stable: set[str] = set()
+        for message in messages:
+            role = message.get("role")
+            if role in {"system", "developer", "user"}:
+                identity = _compact(
+                    {
+                        "role": role,
+                        "content": message.get("content"),
+                        "name": message.get("name"),
+                    }
+                )
+                if identity in seen_stable:
+                    continue
+                seen_stable.add(identity)
+                stable.append(message)
+                continue
+            history.append(message)
+
+        if len(stable) >= maximum_messages:
+            return stable[:maximum_messages]
+        remaining = maximum_messages - len(stable)
+        return [*stable, *history[-remaining:]]
 
     def _headers(self, request_id: str) -> dict[str, str]:
         headers = {
@@ -283,7 +334,30 @@ class HermesOpenAICompatibilityBridge:
                 if optional
                 else "A tool call is required. "
             )
-            + "Never return multiple calls. The arguments must satisfy the selected JSON schema.\n"
+            + "Never return multiple calls. The arguments must satisfy the selected JSON schema. "
+            "When wright_workspace_context contains an MCP tool catalog, choose the matching "
+            "catalog entry from the user's plain-language intent. The user must never supply an "
+            "internal qualified name. When applyWorkflowPlan is available, prefer it for a new "
+            "multi-node workflow so creation, safe settings, and exact connections are validated "
+            "and applied atomically. Use stable aliases and exact registered node types and port "
+            "IDs in that plan. Fall back to lower-level tools only to inspect or repair a rejected "
+            "plan. After createNode creates an MCP Tool Call, immediately use "
+            "editNode once per setting to set toolName to the exact qualified_tool_name, "
+            "and useToolNameInput to false. For arguments that are fixed when the workflow is "
+            "authored, set toolArguments to a compact JSON object string satisfying required "
+            "inputs and useToolArgumentsInput to false. When a downstream MCP call depends on "
+            "upstream data, set useToolArgumentsInput to true and connect a node that produces "
+            "the complete argument object to the toolArguments input. Use extraction and object "
+            "construction nodes to select and reshape upstream data; the catalog output.paths "
+            "describe available structured fields. MCP Tool Call exposes response for its "
+            "human-readable content array and structuredContent for its machine-readable object. "
+            "For MCP-to-MCP dependencies, connect structuredContent and apply catalog paths from "
+            "that object root. When a JSONPath filters an array and then selects a scalar property, "
+            "do not append [0] after that property because it indexes the scalar. Leave serverId, "
+            "serverUrl, command, args, env, headers, and authorization empty; Wright owns the "
+            "connection. Preserve requested dependencies between MCP nodes. Connect terminal "
+            "results to visible graph outputs; do not add separate outputs for intermediate MCP "
+            "responses unless the user asks for them.\n"
         )
         tools = [
             {
@@ -293,6 +367,15 @@ class HermesOpenAICompatibilityBridge:
             }
             for tool in request.tools
         ]
+        workspace_context: object = {}
+        if self.settings.translation_context:
+            try:
+                workspace_context = json.loads(self.settings.translation_context)
+            except json.JSONDecodeError as error:
+                raise HermesBridgeError(
+                    "unsupported_tool_contract",
+                    "Wright's workspace tool context is invalid.",
+                ) from error
 
         def render(messages: list[dict[str, Any]]) -> str:
             return preamble + _compact(
@@ -300,12 +383,30 @@ class HermesOpenAICompatibilityBridge:
                     "conversation": messages,
                     "tools": tools,
                     "tool_choice": choice,
+                    "wright_workspace_context": workspace_context,
                 }
             )
 
-        messages = [self._compact_translation_message(message) for message in request.messages]
+        messages: list[dict[str, Any]] = []
+        seen_authority_messages: set[str] = set()
+        for message in request.messages:
+            compacted_message = self._compact_translation_message(message)
+            if compacted_message.get("role") in {"system", "developer"}:
+                identity = _compact(
+                    {
+                        "role": compacted_message.get("role"),
+                        "content": compacted_message.get("content"),
+                    }
+                )
+                if identity in seen_authority_messages:
+                    continue
+                seen_authority_messages.add(identity)
+            messages.append(compacted_message)
         prompt = render(messages)
-        if len(prompt.encode("utf-8")) <= self.settings.maximum_translation_prompt_bytes:
+        if (
+            len(prompt.encode("utf-8"))
+            <= self.settings.maximum_translation_prompt_bytes
+        ):
             return prompt
 
         pinned: set[int] = set()
@@ -316,7 +417,10 @@ class HermesOpenAICompatibilityBridge:
             if message.get("role") == "user":
                 pinned.add(index)
                 next_index = index + 1
-                while next_index < len(messages) and messages[next_index].get("role") == "user":
+                while (
+                    next_index < len(messages)
+                    and messages[next_index].get("role") == "user"
+                ):
                     pinned.add(next_index)
                     next_index += 1
                 break
@@ -327,11 +431,17 @@ class HermesOpenAICompatibilityBridge:
                 continue
             candidate_indexes = sorted({*selected, index})
             candidate = render([messages[item] for item in candidate_indexes])
-            if len(candidate.encode("utf-8")) <= self.settings.maximum_translation_prompt_bytes:
+            if (
+                len(candidate.encode("utf-8"))
+                <= self.settings.maximum_translation_prompt_bytes
+            ):
                 selected.add(index)
 
         compacted = render([messages[index] for index in sorted(selected)])
-        if len(compacted.encode("utf-8")) > self.settings.maximum_translation_prompt_bytes:
+        if (
+            len(compacted.encode("utf-8"))
+            > self.settings.maximum_translation_prompt_bytes
+        ):
             raise HermesBridgeError(
                 "unsupported_tool_contract",
                 "The tool contract leaves insufficient room for a bounded current transcript.",

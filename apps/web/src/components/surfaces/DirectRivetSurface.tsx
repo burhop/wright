@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   BookOpenIcon,
+  ChevronDownIcon,
   CloseIcon,
   OpenExternalIcon,
   PlayIcon,
@@ -297,7 +298,9 @@ export function DirectRivetSurface({
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       if (readyRef.current) return;
-      setStatus("Rivet graph canvas did not finish connecting. Reconnecting...");
+      setStatus(
+        "Rivet graph canvas did not finish connecting. Reconnecting...",
+      );
       onEditorUnavailableRef.current?.("RIVET_PREVIEW_READY_TIMEOUT");
     }, 20_000);
     return () => window.clearTimeout(timeout);
@@ -542,11 +545,12 @@ export function DirectRivetSurface({
         sessionId,
         saved.slug,
       );
+      await sendProjectToFrame(reloaded);
       postOpenStatusRef.current = `Workflow saved at revision ${reloaded.revision}.`;
       setDocument(reloaded);
       setRunNotice({
-        tone: "info",
-        message: `Revision ${reloaded.revision} was saved and now needs approval before it can run.`,
+        tone: "success",
+        message: `Revision ${reloaded.revision} was saved and is ready to run.`,
       });
       if (reloaded.slug !== initialSlug) {
         onWorkflowLoadedRef.current?.(reloaded);
@@ -563,47 +567,10 @@ export function DirectRivetSurface({
     }
   };
 
-  const approveWorkflow = async () => {
-    if (!document) return;
-    setBusy(true);
-    try {
-      const currentProject = await requestProjectFromFrame();
-      if (currentProject !== document.project) {
-        const message =
-          "Save the current canvas changes before approving this workflow.";
-        setStatus(message);
-        setRunNotice({ tone: "error", message });
-        return;
-      }
-      const reviewed = await workspaceService.reviewRivetWorkflow(
-        sessionId,
-        document.slug,
-        "approved",
-        "local-user",
-      );
-      setDocument((current) =>
-        current &&
-        current.slug === reviewed.slug &&
-        current.revision === reviewed.revision
-          ? { ...current, ...reviewed }
-          : current,
-      );
-      const message = `Revision ${reviewed.revision} approved. It is ready to run.`;
-      setStatus(message);
-      setRunNotice({ tone: "success", message });
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unable to approve this workflow revision.";
-      setStatus(message);
-      setRunNotice({ tone: "error", message });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const runWorkflow = async () => {
+  const runWorkflow = async (options?: {
+    readonly graph?: string;
+    readonly inputs?: string;
+  }) => {
     if (!document) return;
     setBusy(true);
     try {
@@ -615,7 +582,9 @@ export function DirectRivetSurface({
         setRunNotice({ tone: "error", message });
         return;
       }
-      const parsedInputs = JSON.parse(runInputs);
+      const graph = options?.graph ?? runGraph;
+      const inputs = options?.inputs ?? runInputs;
+      const parsedInputs = JSON.parse(inputs);
       if (
         !parsedInputs ||
         typeof parsedInputs !== "object" ||
@@ -629,7 +598,7 @@ export function DirectRivetSurface({
         {
           expectedRevision: document.revision,
           expectedDigest: document.etag,
-          graph: runGraph.trim() || undefined,
+          graph: graph.trim() || undefined,
           inputs: parsedInputs,
         },
       );
@@ -881,18 +850,32 @@ export function DirectRivetSurface({
             <CloseIcon size={16} />
           </button>
         ) : (
-          <button
-            type="button"
-            data-testid="direct-rivet-run"
-            aria-label="Run Rivet workflow"
-            title="Run Rivet workflow"
-            aria-expanded={runPanelOpen}
-            disabled={busy || !document || !editorReady}
-            onClick={() => setRunPanelOpen((open) => !open)}
-            style={iconButtonStyle}
-          >
-            <PlayIcon size={16} />
-          </button>
+          <>
+            <button
+              type="button"
+              data-testid="direct-rivet-run"
+              aria-label="Run Rivet workflow"
+              title="Run Rivet workflow"
+              disabled={busy || !document || !editorReady}
+              onClick={() => void runWorkflow({ graph: "", inputs: "{}" })}
+              style={iconButtonStyle}
+            >
+              <PlayIcon size={16} />
+            </button>
+            <button
+              type="button"
+              data-testid="direct-rivet-run-options"
+              aria-label="Run Rivet workflow with options"
+              title="Choose graph or inputs before running"
+              aria-haspopup="dialog"
+              aria-expanded={runPanelOpen}
+              disabled={busy || !document || !editorReady}
+              onClick={() => setRunPanelOpen((open) => !open)}
+              style={{ ...iconButtonStyle, width: 24 }}
+            >
+              <ChevronDownIcon size={12} />
+            </button>
+          </>
         )}
         {runPanelOpen && document && (
           <div
@@ -926,40 +909,14 @@ export function DirectRivetSurface({
             >
               <strong style={{ fontSize: "0.8rem" }}>Run Rivet workflow</strong>
               <span
-                data-testid="direct-rivet-review-state"
                 style={{
-                  borderRadius: 999,
-                  padding: "2px 7px",
-                  background:
-                    document.review_state === "approved"
-                      ? "rgba(16, 185, 129, 0.16)"
-                      : "rgba(245, 158, 11, 0.16)",
-                  color:
-                    document.review_state === "approved"
-                      ? "var(--color-success, #10b981)"
-                      : "var(--color-warning, #f59e0b)",
+                  color: "var(--color-text-muted, #aab3c5)",
                   fontSize: "0.66rem",
-                  fontWeight: 600,
                 }}
               >
-                {document.review_state === "approved"
-                  ? `Revision ${document.revision} approved`
-                  : `Revision ${document.revision} needs approval`}
+                Revision {document.revision}
               </span>
             </div>
-            {document.review_state !== "approved" && (
-              <p
-                style={{
-                  margin: "0 0 10px",
-                  color: "var(--color-text-muted, #aab3c5)",
-                  fontSize: "0.7rem",
-                  lineHeight: 1.4,
-                }}
-              >
-                Review and approve this saved revision before running it. Saving
-                later changes will require a new approval.
-              </p>
-            )}
             <label style={{ display: "block", fontSize: "0.72rem" }}>
               Graph (blank uses project main graph)
               <input
@@ -1000,21 +957,10 @@ export function DirectRivetSurface({
                 }}
               />
             </label>
-            {document.review_state !== "approved" && (
-              <button
-                type="button"
-                data-testid="direct-rivet-run-approve"
-                disabled={busy}
-                onClick={() => void approveWorkflow()}
-                style={{ marginTop: 8, marginRight: 8 }}
-              >
-                Approve revision {document.revision}
-              </button>
-            )}
             <button
               type="button"
               data-testid="direct-rivet-run-start"
-              disabled={busy || document.review_state !== "approved"}
+              disabled={busy}
               onClick={() => void runWorkflow()}
               style={{ marginTop: 8 }}
             >

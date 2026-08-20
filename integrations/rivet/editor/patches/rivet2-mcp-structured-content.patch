@@ -1,0 +1,202 @@
+diff --git a/packages/core/src/integrations/mcp/MCPProvider.ts b/packages/core/src/integrations/mcp/MCPProvider.ts
+--- a/packages/core/src/integrations/mcp/MCPProvider.ts
++++ b/packages/core/src/integrations/mcp/MCPProvider.ts
+@@ -49,6 +49,7 @@ export namespace MCP {
+ 
+   export interface ToolCallResponse {
+     content: ResponseContent[];
++    structuredContent?: Record<string, unknown>;
+     isError?: boolean;
+   }
+ 
+diff --git a/packages/core/src/model/nodes/MCPToolCallNode.ts b/packages/core/src/model/nodes/MCPToolCallNode.ts
+--- a/packages/core/src/model/nodes/MCPToolCallNode.ts
++++ b/packages/core/src/model/nodes/MCPToolCallNode.ts
+@@ -113,7 +113,14 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
+       id: 'response' as PortId,
+       title: 'Response',
+       dataType: 'object',
+-      description: 'Response from the Tool Call',
++      description: 'Human-readable content returned by the Tool Call',
++    });
++
++    outputDefinitions.push({
++      id: 'structuredContent' as PortId,
++      title: 'Structured Content',
++      dataType: 'object',
++      description: 'Machine-readable structured content returned by the Tool Call',
+     });
+ 
+     outputDefinitions.push({
+@@ -213,6 +220,11 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
+         value: toolResponse?.content as unknown as Record<string, unknown>[],
+       };
+ 
++      output['structuredContent' as PortId] = {
++        type: 'object',
++        value: toolResponse?.structuredContent ?? {},
++      };
++
+       output['toolCallId' as PortId] = {
+         type: 'string',
+         value: toolCallId,
+diff --git a/packages/core/test/integrations/mcp/MCPBase.test.ts b/packages/core/test/integrations/mcp/MCPBase.test.ts
+--- a/packages/core/test/integrations/mcp/MCPBase.test.ts
++++ b/packages/core/test/integrations/mcp/MCPBase.test.ts
+@@ -184,6 +184,40 @@ void describe('MCP base behavior', () => {
+     });
+   });
+ 
++  void it('exposes MCP structured content without changing the human-readable response output', async () => {
++    const provider = createProvider({
++      httpToolCall: async () => ({
++        content: [{ type: 'text', text: 'Provider list attached.' }],
++        structuredContent: { result: [{ providerId: 'solid_edge', isDefault: true }] },
++      }),
++    });
++    const node = MCPToolCallNodeImpl.create();
++    Object.assign(node.data, {
++      transportType: 'http',
++      serverUrl: 'https://example.test/mcp',
++      toolName: 'cad.list_providers',
++      toolArguments: '{}',
++      toolCallId: 'call-structured',
++      useToolNameInput: false,
++      useToolArgumentsInput: false,
++      useToolCallIdInput: false,
++    });
++
++    const outputs = await new MCPToolCallNodeImpl(node).process({} as Inputs, {
++      ...createContext(),
++      mcpProvider: provider,
++    });
++
++    assert.deepEqual(outputs.response, {
++      type: 'object[]',
++      value: [{ type: 'text', text: 'Provider list attached.' }],
++    });
++    assert.deepEqual(outputs.structuredContent, {
++      type: 'object',
++      value: { result: [{ providerId: 'solid_edge', isDefault: true }] },
++    });
++  });
++
+   void it('keeps MCP Get Prompt on the shared STDIO resolver', async () => {
+     let invocation: unknown;
+     const provider = createProvider({
+diff --git a/packages/node/src/native/NodeMCPProvider.ts b/packages/node/src/native/NodeMCPProvider.ts
+--- a/packages/node/src/native/NodeMCPProvider.ts
++++ b/packages/node/src/native/NodeMCPProvider.ts
+@@ -124,7 +124,11 @@ export class NodeMCPProvider implements MCPProvider {
+       () => this.#createHTTPClient(clientConfig, serverUrl),
+       async (client) => {
+         const response = await client.callTool(toolCall);
+-        return { content: response.content, isError: response.isError } as MCP.ToolCallResponse;
++        return {
++          content: response.content,
++          structuredContent: response.structuredContent,
++          isError: response.isError,
++        } as MCP.ToolCallResponse;
+       },
+     );
+   }
+@@ -157,7 +161,11 @@ export class NodeMCPProvider implements MCPProvider {
+       () => this.#createStdioClient(clientConfig, serverConfig),
+       async (client) => {
+         const response = await client.callTool(toolCall);
+-        return { content: response.content, isError: response.isError } as MCP.ToolCallResponse;
++        return {
++          content: response.content,
++          structuredContent: response.structuredContent,
++          isError: response.isError,
++        } as MCP.ToolCallResponse;
+       },
+     );
+   }
+diff --git a/packages/node/test/nodeMcpProvider.test.ts b/packages/node/test/nodeMcpProvider.test.ts
+--- a/packages/node/test/nodeMcpProvider.test.ts
++++ b/packages/node/test/nodeMcpProvider.test.ts
+@@ -7,6 +7,11 @@ type ClientStubOptions = {
+   connectError?: Error;
+   operationError?: Error;
+   closeError?: Error;
++  toolCallResponse?: {
++    content: [];
++    structuredContent?: Record<string, unknown>;
++    isError?: boolean;
++  };
+ };
+ 
+ function createClientStub(events: string[], name: string, options: ClientStubOptions = {}): Client {
+@@ -31,7 +36,7 @@ function createClientStub(events: string[], name: string, options: ClientStubOpt
+       return { messages: [] };
+     },
+     async callTool() {
+-      return { content: [] };
++      return options.toolCallResponse ?? { content: [] };
+     },
+   } as unknown as Client;
+ }
+@@ -129,6 +134,29 @@ void describe('NodeMCPProvider', () => {
+     });
+   });
+ 
++  void it('preserves structured content from MCP tool calls', async () => {
++    const provider = new NodeMCPProvider(
++      createDependencies([
++        createClientStub([], 'stdio', {
++          toolCallResponse: {
++            content: [],
++            structuredContent: { result: [{ providerId: 'solid_edge' }] },
++          },
++        }),
++      ]),
++    );
++
++    const result = await provider.stdioToolCall(
++      { name: 'test', version: '1' },
++      { serverId: 'server', config: { command: 'server-command' } },
++      { name: 'cad.list_providers', arguments: {} },
++    );
++
++    assert.deepEqual(result.structuredContent, {
++      result: [{ providerId: 'solid_edge' }],
++    });
++  });
++
+   void it('preserves the operation error when closing also fails', async () => {
+     const operationError = new Error('operation failed');
+     const closeError = new Error('close failed');
+diff --git a/packages/app/graphs/graph-creator.rivet-project b/packages/app/graphs/graph-creator.rivet-project
+--- a/packages/app/graphs/graph-creator.rivet-project
++++ b/packages/app/graphs/graph-creator.rivet-project
+@@ -352,7 +352,7 @@ data:
+           visualData: -695/1108/280/68//
+         '[WrightApplyPlanToolDef01]:gptFunction "GPT Function"':
+           data:
+-            description: Creates, configures, and connects an entire safe workflow atomically. Prefer this for new multi-node workflows. Use stable aliases and exact port IDs. Optional display titles belong in title, not settings. Exact settings are mcpToolCall={toolName,toolArguments,useToolNameInput,useToolArgumentsInput,useToolCallIdInput}, extractObjectPath={path,usePathInput}, object={jsonTemplate}, and graphOutput={id,dataType}. MCP Tool Call output is response; its dynamic argument input is toolArguments; Extract Object Path uses object->match; Object uses interpolation-name inputs->output; Graph Output input is value.
++            description: Creates, configures, and connects an entire safe workflow atomically. Prefer this for new multi-node workflows. Use stable aliases and exact port IDs. Optional display titles belong in title, not settings. Exact settings are mcpToolCall={toolName,toolArguments,useToolNameInput,useToolArgumentsInput,useToolCallIdInput}, extractObjectPath={path,usePathInput}, object={jsonTemplate}, and graphOutput={id,dataType}. MCP Tool Call outputs response for human-readable content and structuredContent for machine-readable chaining; its dynamic argument input is toolArguments. Prefer structuredContent for MCP-to-MCP dependencies. Extract Object Path uses object->match; when a JSONPath filters an array and then selects a scalar property, do not append [0] after that property because it indexes the scalar. Object uses interpolation-name inputs->output; Graph Output input is value.
+             name: applyWorkflowPlan
+             schema: |-
+               {
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+@@ -276,7 +276,7 @@ test('legacy draft runner applies a connected workflow plan atomically', async (
+           {
+             alias: 'providerId',
+             nodeType: 'registered:extractObjectPath',
+-            settings: { path: '$.providerId', usePathInput: false },
++            settings: { path: '$.result[?(@.isDefault == true)].providerId', usePathInput: false },
+           },
+           {
+             alias: 'arguments',
+@@ -300,7 +300,7 @@ test('legacy draft runner applies a connected workflow plan atomically', async (
+         connections: [
+           {
+             sourceAlias: 'providers',
+-            sourcePortId: 'response',
++            sourcePortId: 'structuredContent',
+             destAlias: 'providerId',
+             destPortId: 'object',
+           },

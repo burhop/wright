@@ -283,3 +283,35 @@ async def test_long_stream_rechecks_revocation_without_checking_every_chunk() ->
         assert raised.value.code == "SURFACE_PRESENTATION_REVOKED"
         assert route_checks == 3
         await proxy.aclose()
+
+
+async def test_ai_completion_gets_longer_first_byte_window_and_stable_timeout(
+    monkeypatch,
+) -> None:
+    observed_timeouts: list[float] = []
+
+    async def timeout(awaitable, *, timeout: float):
+        observed_timeouts.append(timeout)
+        awaitable.close()
+        raise TimeoutError
+
+    monkeypatch.setattr("api.surface_http_proxy.asyncio.wait_for", timeout)
+    proxy = SurfaceHttpProxy()
+    ordinary = ProxyHttpRequest.get("/asset.js", presentation_id="p-1")
+    ai_completion = ProxyHttpRequest(
+        method="POST",
+        raw_path="/wright-ai/v1/chat/completions",
+        raw_query="",
+        headers=(),
+        body=_body(b"{}"),
+        presentation_id="p-1",
+    )
+
+    for request in (ordinary, ai_completion):
+        with pytest.raises(HttpProxyError) as raised:
+            await proxy.forward(request, pin=_pin(8123), limits=_limits())
+        assert raised.value.code == "SURFACE_LIMIT_FIRST_BYTE"
+        assert raised.value.status_code == 504
+
+    assert observed_timeouts == [30.0, 300.0]
+    await proxy.aclose()

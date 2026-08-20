@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+import hashlib
+import json
 from typing import Any
 
 from .db import get_servers, get_tools
@@ -12,6 +14,34 @@ from .wright_managed_servers import (
     RIVET_WORKFLOW_MUTATION_APPROVAL,
     RIVET_WORKFLOWS_SERVER_ID,
 )
+
+
+def _server_authority_revision(server: Any) -> str:
+    """Digest executable authority without including mutable runtime health."""
+
+    env_vars = server.env_vars
+    if isinstance(env_vars, list):
+        env_vars = [
+            item.model_dump(mode="json") if hasattr(item, "model_dump") else item
+            for item in env_vars
+        ]
+    material = {
+        "type": server.type,
+        "transport_variant": server.transport_variant,
+        "command": server.command,
+        "source_url": server.source_url,
+        "installed_version": server.installed_version,
+        "env_vars": env_vars,
+        "launch_env": server.launch_env,
+    }
+    encoded = json.dumps(
+        material,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        default=str,
+    ).encode("utf-8")
+    return f"config-{hashlib.sha256(encoded).hexdigest()}"
 
 
 class DatabaseGatewayWorkspace:
@@ -85,9 +115,7 @@ class DatabaseGatewayCatalog:
                     "server_id": server.server_id,
                     "source_url": server.source_url,
                     "installed_version": server.installed_version,
-                    "server_revision": (
-                        server.installed_version or f"registry-{server.updated_at}"
-                    ),
+                    "server_revision": _server_authority_revision(server),
                     "validation_status": server.validation_result.status,
                     "validation_evidence_id": (
                         f"gateway-validation:{server.server_id}:"

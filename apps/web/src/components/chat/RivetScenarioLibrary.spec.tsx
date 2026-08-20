@@ -6,7 +6,6 @@ import {
   workspaceService,
   type EngineeringScenarioEntry,
   type EngineeringScenarioPreflight,
-  type RivetWorkflowOperation,
 } from "../../services/workspace-service";
 import { RivetScenarioLibrary } from "./RivetScenarioLibrary";
 
@@ -93,19 +92,6 @@ const preflight: EngineeringScenarioPreflight = {
   expires_at: "2099-01-01T00:00:00Z",
 };
 
-const workflow: RivetWorkflowOperation = {
-  workflow_id: "workflow",
-  slug: preflight.workflow_slug,
-  revision: 1,
-  etag: preflight.workflow_digest!,
-  review_state: "approved",
-  reviewer: "local-user",
-  reviewed_at: 1,
-  review_digest: "e".repeat(64),
-  binding_set_digest: preflight.binding_set_digest,
-  stale_reasons: [],
-};
-
 describe("RivetScenarioLibrary", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -153,13 +139,12 @@ describe("RivetScenarioLibrary", () => {
     });
   });
 
-  it("shows domains, tier, resources, safety, exact capabilities, and starts only after review", async () => {
+  it("shows domains, tier, resources, safety, exact capabilities, and starts after preflight", async () => {
     const user = userEvent.setup();
     const onPrepared = vi.fn();
     render(
       <RivetScenarioLibrary
         sessionId="session"
-        workflows={[workflow]}
         onPrepared={onPrepared}
       />,
     );
@@ -175,7 +160,9 @@ describe("RivetScenarioLibrary", () => {
     await user.click(
       screen.getByTestId("scenario-preflight-structural-bracket"),
     );
-    await waitFor(() => expect(onPrepared).toHaveBeenCalledWith(workflow.slug));
+    await waitFor(() =>
+      expect(onPrepared).toHaveBeenCalledWith(preflight.workflow_slug),
+    );
     expect(
       screen.getByText(/node-cad: cad__build_bracket/),
     ).toBeInTheDocument();
@@ -192,7 +179,6 @@ describe("RivetScenarioLibrary", () => {
       expect(workspaceService.startEngineeringScenario).toHaveBeenCalledWith(
         "session",
         preflight,
-        workflow,
       ),
     );
     expect(await screen.findByText(/Engineering report/)).toBeInTheDocument();
@@ -215,7 +201,6 @@ describe("RivetScenarioLibrary", () => {
     render(
       <RivetScenarioLibrary
         sessionId="session"
-        workflows={[workflow]}
         onPrepared={vi.fn()}
       />,
     );

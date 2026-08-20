@@ -31,7 +31,7 @@ export function RivetWorkflowsPanel({
   const [message, setMessage] = useState(
     "Workflows remain inside this workspace.",
   );
-  const [reviewingSlug, setReviewingSlug] = useState<string | null>(null);
+  const [toolsSlug, setToolsSlug] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!sessionId) return;
@@ -53,23 +53,6 @@ export function RivetWorkflowsPanel({
     void refresh();
   }, [refresh]);
 
-  const approveLegacy = async (workflow: RivetWorkflowOperation) => {
-    if (!sessionId) return;
-    try {
-      await workspaceService.reviewRivetWorkflow(
-        sessionId,
-        workflow.slug,
-        "approved",
-        "local-user",
-      );
-      await refresh();
-    } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Workflow review failed.",
-      );
-    }
-  };
-
   const run = async (workflow: RivetWorkflowOperation) => {
     if (!sessionId) return;
     try {
@@ -79,8 +62,6 @@ export function RivetWorkflowsPanel({
         {
           expectedRevision: workflow.revision,
           expectedDigest: workflow.etag,
-          expectedReviewDigest: workflow.review_digest || undefined,
-          bindingSetDigest: workflow.binding_set_digest || undefined,
         },
       );
       setRuns((current) => ({ ...current, [workflow.workflow_id]: result }));
@@ -232,10 +213,7 @@ export function RivetWorkflowsPanel({
         >
           <strong>{workflow.slug}</strong>
           <br />
-          <small>
-            Revision {workflow.revision} ·{" "}
-            {workflow.review_state || "needs review"}
-          </small>
+          <small>Revision {workflow.revision} · Saved</small>
           <br />
           <button
             data-testid={`rivet-workflow-open-${workflow.slug}`}
@@ -245,31 +223,20 @@ export function RivetWorkflowsPanel({
             Open
           </button>{" "}
           <button
-            data-testid={`rivet-workflow-approve-${workflow.slug}`}
+            data-testid={`rivet-workflow-tools-${workflow.slug}`}
             type="button"
-            onClick={() => void approveLegacy(workflow)}
-          >
-            Approve revision
-          </button>{" "}
-          <button
-            data-testid={`rivet-workflow-review-${workflow.slug}`}
-            type="button"
-            aria-expanded={reviewingSlug === workflow.slug}
+            aria-expanded={toolsSlug === workflow.slug}
             onClick={() =>
-              setReviewingSlug((current) =>
+              setToolsSlug((current) =>
                 current === workflow.slug ? null : workflow.slug,
               )
             }
           >
-            Capabilities &amp; review
+            Tool connections
           </button>{" "}
           <button
             data-testid={`rivet-workflow-run-${workflow.slug}`}
             type="button"
-            disabled={
-              workflow.review_state !== "approved" ||
-              Boolean(workflow.stale_reasons?.length)
-            }
             onClick={() => void run(workflow)}
           >
             Run
@@ -299,11 +266,10 @@ export function RivetWorkflowsPanel({
               )}
             </>
           )}
-          {reviewingSlug === workflow.slug && sessionId && (
+          {toolsSlug === workflow.slug && sessionId && (
             <RivetWorkflowCapabilities
               sessionId={sessionId}
               workflow={workflow}
-              onReviewed={refresh}
             />
           )}
         </div>
@@ -311,12 +277,11 @@ export function RivetWorkflowsPanel({
       {sessionId ? (
         <RivetScenarioLibrary
           sessionId={sessionId}
-          workflows={workflows}
           onPrepared={async (slug) => {
             await refresh();
-            setReviewingSlug(slug);
+            setToolsSlug(slug);
             setMessage(
-              `Scenario workflow ${slug} is prepared for capability review.`,
+              `Scenario workflow ${slug} is prepared for tool configuration.`,
             );
           }}
         />

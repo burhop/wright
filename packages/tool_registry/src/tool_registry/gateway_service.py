@@ -81,6 +81,55 @@ def _sanitize_model_result(
     )
 
 
+def _schema_allows_null(schema: object) -> bool:
+    if not isinstance(schema, Mapping):
+        return False
+    declared_type = schema.get("type")
+    if declared_type == "null":
+        return True
+    if isinstance(declared_type, list) and "null" in declared_type:
+        return True
+    if isinstance(schema.get("enum"), list) and None in schema["enum"]:
+        return True
+    return any(
+        _schema_allows_null(option)
+        for keyword in ("anyOf", "oneOf")
+        for option in (schema.get(keyword) if isinstance(schema.get(keyword), list) else [])
+    )
+
+
+def _supply_missing_nullable_fields(value: Any, schema: object) -> Any:
+    """Repair a common MCP omission without weakening output validation."""
+
+    if not isinstance(schema, Mapping):
+        return value
+    if isinstance(value, Mapping):
+        repaired = {str(key): item for key, item in value.items()}
+        properties = schema.get("properties")
+        properties = properties if isinstance(properties, Mapping) else {}
+        required = schema.get("required")
+        required = required if isinstance(required, list) else []
+        for name in required:
+            property_schema = properties.get(name)
+            if (
+                isinstance(name, str)
+                and name not in repaired
+                and _schema_allows_null(property_schema)
+            ):
+                repaired[name] = None
+        for name, property_schema in properties.items():
+            if isinstance(name, str) and name in repaired:
+                repaired[name] = _supply_missing_nullable_fields(
+                    repaired[name], property_schema
+                )
+        return repaired
+    if isinstance(value, list) and isinstance(schema.get("items"), Mapping):
+        return [
+            _supply_missing_nullable_fields(item, schema["items"]) for item in value
+        ]
+    return value
+
+
 def _safe_lifecycle_projection(
     lifecycle: GatewayLifecyclePort, server_id: str
 ) -> dict[str, Any]:
@@ -971,12 +1020,22 @@ class GatewayService:
                         raise ValidationError(
                             "Child omitted structuredContent required by outputSchema"
                         )
+                    structured = _supply_missing_nullable_fields(
+                        structured, tool.output_schema
+                    )
                     validate(instance=structured, schema=dict(tool.output_schema))
                 except ValidationError as exc:
                     raise GatewayError(
                         GatewayErrorCode.INVALID_OUTPUT,
                         f"Invalid output from tool: {name}",
                     ) from exc
+                normalized = GatewayToolResult(
+                    content=normalized.content,
+                    structured_content=structured,
+                    meta=normalized.meta,
+                    is_error=normalized.is_error,
+                    error_code=normalized.error_code,
+                )
             normalized = _sanitize_model_result(tool, normalized)
             structured = normalized.structured_content
             request.transition(RequestState.SUCCEEDED)

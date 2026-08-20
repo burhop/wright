@@ -1,4 +1,4 @@
-"""Application service joining curated scenarios to reviewed Rivet runs."""
+"""Application service joining curated scenarios to revision-checked Rivet runs."""
 
 from __future__ import annotations
 
@@ -526,7 +526,6 @@ class EngineeringScenarioService:
         manifest_digest: str,
         workflow_revision: int,
         workflow_digest: str,
-        review_digest: str,
         binding_set_digest: str,
         seed: int = 0,
     ) -> tuple[str, WorkflowRun]:
@@ -556,7 +555,6 @@ class EngineeringScenarioService:
             slug=document.slug,
             expected_revision=workflow_revision,
             expected_digest=workflow_digest,
-            expected_review_digest=review_digest,
             binding_set_digest=binding_set_digest,
             graph=str(manifest.document["workflow"]["graph_id"]),
             context={
@@ -567,6 +565,17 @@ class EngineeringScenarioService:
                     "seed": seed,
                 }
             },
+        )
+        run_identity_digest = canonical_digest(
+            {
+                "kind": "engineering-scenario-run",
+                "scenario_id": scenario_id,
+                "scenario_revision": manifest.document["revision"],
+                "manifest_digest": manifest.digest,
+                "workflow_revision": workflow_revision,
+                "workflow_digest": workflow_digest,
+                "binding_set_digest": binding_set_digest,
+            }
         )
         scenario_run_id = f"scenario-run-{uuid.uuid4()}"
         self._repository.create_draft(
@@ -613,7 +622,9 @@ class EngineeringScenarioService:
                         )
                     }
                 ),
-                "review_digest": review_digest,
+                # Legacy evidence field; this is a machine-generated run
+                # identity, not a user approval.
+                "review_digest": run_identity_digest,
                 "seed": seed,
             },
             environment={

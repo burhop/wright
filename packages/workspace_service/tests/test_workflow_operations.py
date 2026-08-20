@@ -73,32 +73,17 @@ def _operations(tmp_path) -> WorkspaceWorkflowOperations:
 
 
 @pytest.mark.asyncio
-async def test_operations_require_current_approved_review_and_preserve_scope(tmp_path):
+async def test_operations_run_saved_revision_without_review_and_preserve_scope(tmp_path):
     WorkspaceWorkflowStore(str(tmp_path)).create("sample", '{"nodes": []}')
     operations = _operations(tmp_path)
 
-    with pytest.raises(WorkflowOperationsError, match="not been approved"):
-        await operations.start(
-            workspace_id="workspace-a",
-            session_id="session-a",
-            workspace_dir=str(tmp_path),
-            slug="sample",
-        )
-    detail = await operations.review(
-        workspace_id="workspace-a",
-        workspace_dir=str(tmp_path),
-        slug="sample",
-        state="approved",
-        reviewer="owner",
-    )
-    assert detail.review and detail.review.revision == 1
     run = await operations.start(
         workspace_id="workspace-a",
         session_id="session-a",
         workspace_dir=str(tmp_path),
         slug="sample",
     )
-    assert run.workflow_id == detail.workflow_id
+    assert run.workflow_id
     with pytest.raises(WorkflowOperationsError, match="not found"):
         await operations.history(
             workspace_id="workspace-b", session_id="session-a", run_id=run.run_id
@@ -106,26 +91,19 @@ async def test_operations_require_current_approved_review_and_preserve_scope(tmp
 
 
 @pytest.mark.asyncio
-async def test_saved_workflow_invalidates_previous_review(tmp_path):
+async def test_saved_workflow_does_not_require_a_new_review(tmp_path):
     store = WorkspaceWorkflowStore(str(tmp_path))
     store.create("sample", '{"nodes": []}')
     operations = _operations(tmp_path)
-    await operations.review(
-        workspace_id="workspace-a",
-        workspace_dir=str(tmp_path),
-        slug="sample",
-        state="approved",
-        reviewer="owner",
-    )
     store.save("sample", 1, '{"nodes": ["changed"]}')
 
-    with pytest.raises(WorkflowOperationsError, match="not been approved"):
-        await operations.start(
-            workspace_id="workspace-a",
-            session_id="session-a",
-            workspace_dir=str(tmp_path),
-            slug="sample",
-        )
+    run = await operations.start(
+        workspace_id="workspace-a",
+        session_id="session-a",
+        workspace_dir=str(tmp_path),
+        slug="sample",
+    )
+    assert run.revision == 2
 
 
 @pytest.mark.asyncio

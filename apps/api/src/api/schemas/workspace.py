@@ -427,7 +427,6 @@ class EngineeringScenarioStartRequest(BaseModel):
     manifest_digest: str = Field(pattern="^[a-f0-9]{64}$")
     workflow_revision: int = Field(ge=1)
     workflow_digest: str = Field(pattern="^[a-f0-9]{64}$")
-    review_digest: str = Field(pattern="^[a-f0-9]{64}$")
     binding_set_digest: str = Field(pattern="^[a-f0-9]{64}$")
     seed: int = Field(default=0, ge=0, le=2147483647)
 

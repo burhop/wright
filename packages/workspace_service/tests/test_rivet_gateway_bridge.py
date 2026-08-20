@@ -1,8 +1,9 @@
+import asyncio
 from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from core.rivet_mcp import CapabilityBinding
+from core.rivet_mcp import ApprovalState, CapabilityBinding
 from tool_registry.gateway_models import GatewayToolResult
 from workspace_service.rivet_authority import (
     AuthorityClaims,
@@ -13,6 +14,7 @@ from workspace_service.rivet_approvals import RivetApprovalService
 from workspace_service.rivet_gateway_bridge import (
     RivetBoundInvocation,
     RivetGatewayBridge,
+    RivetGatewayBridgeError,
     RivetNodeInvocation,
 )
 
@@ -89,6 +91,19 @@ class BoundGateway:
     def cancel(self, session_id, request_id, reason=None):
         self.cancelled.append((session_id, request_id, reason))
         return True
+
+
+class CancelledGateway(BoundGateway):
+    async def call_tool(self, *args, **kwargs):
+        raise asyncio.CancelledError("remote transport request was cancelled")
+
+
+class ChildCallRepository:
+    def __init__(self) -> None:
+        self.records = []
+
+    def append_child_call(self, record) -> None:
+        self.records.append(record)
 
 
 def _binding():
@@ -208,6 +223,59 @@ async def test_bound_bridge_resolves_tool_from_authority_and_projects_progress()
 
 
 @pytest.mark.asyncio
+async def test_bound_bridge_projects_orphan_transport_cancellation() -> None:
+    now = datetime(2026, 8, 13, tzinfo=UTC)
+    authority_service = RivetRunAuthorityService(
+        clock=lambda: now, id_factory=lambda: "authority"
+    )
+    binding = _binding()
+    grant = authority_service.mint(
+        AuthorityClaims(
+            run_id="run",
+            generation=1,
+            workspace_id="workspace",
+            session_id="session",
+            workflow_id="workflow",
+            workflow_revision=1,
+            workflow_digest="a" * 64,
+            graph_id="Main",
+            review_digest="d" * 64,
+            binding_set_digest="e" * 64,
+            audience="http://127.0.0.1:43123/internal/rivet-mcp/v1",
+            node_bindings={binding.node_handle: binding.binding_digest},
+            issued_at=now,
+            expires_at=now + timedelta(minutes=5),
+        )
+    )
+    repository = ChildCallRepository()
+    bridge = RivetGatewayBridge(
+        CancelledGateway(),
+        authorities=authority_service,
+        resolve_binding=lambda _: binding,
+        repository=repository,
+    )
+
+    with pytest.raises(RivetGatewayBridgeError) as captured:
+        await bridge.invoke_bound(
+            grant.token,
+            grant.claims.audience,
+            RivetBoundInvocation(
+                "run",
+                1,
+                "authority",
+                binding.node_handle,
+                binding.binding_digest,
+                "request",
+                {},
+            ),
+        )
+
+    assert captured.value.code == "RIVET_MCP_CALL_CANCELLED"
+    assert repository.records[0].reason_code == "RIVET_MCP_CALL_CANCELLED"
+    assert repository.records[0].child_received is True
+
+
+@pytest.mark.asyncio
 async def test_bound_bridge_rejects_stale_binding_before_child():
     now = datetime(2026, 8, 13, tzinfo=UTC)
     authority_service = RivetRunAuthorityService(
@@ -321,4 +389,63 @@ async def test_bound_bridge_waits_for_exact_one_shot_wright_approval():
     )
     await pending_call
     assert progress[0]["type"] == "approval_required"
+    assert gateway.calls[0][4] is False
+
+
+@pytest.mark.asyncio
+async def test_bound_bridge_uses_user_run_as_exact_one_shot_approval():
+    now = datetime(2026, 8, 13, tzinfo=UTC)
+    authority_service = RivetRunAuthorityService(
+        clock=lambda: now, id_factory=lambda: "authority"
+    )
+    binding = _approval_binding()
+    grant = authority_service.mint(
+        AuthorityClaims(
+            run_id="run",
+            generation=1,
+            workspace_id="workspace",
+            session_id="session",
+            workflow_id="workflow",
+            workflow_revision=1,
+            workflow_digest="a" * 64,
+            graph_id="Main",
+            review_digest="d" * 64,
+            binding_set_digest="e" * 64,
+            audience="http://127.0.0.1:43123/internal/rivet-mcp/v1",
+            node_bindings={binding.node_handle: binding.binding_digest},
+            issued_at=now,
+            expires_at=now + timedelta(minutes=5),
+        )
+    )
+    approvals = RivetApprovalService(clock=lambda: now, id_factory=lambda: "approval")
+    gateway = BoundGateway()
+    progress = []
+    bridge = RivetGatewayBridge(
+        gateway,
+        authorities=authority_service,
+        resolve_binding=lambda _: binding,
+        approvals=approvals,
+        automatic_call_approvals=True,
+    )
+
+    await bridge.invoke_bound(
+        grant.token,
+        grant.claims.audience,
+        RivetBoundInvocation(
+            "run",
+            1,
+            "authority",
+            binding.node_handle,
+            binding.binding_digest,
+            "request",
+            {"value": 2},
+        ),
+        progress_callback=lambda event: progress.append(event),
+    )
+
+    approval = approvals.get("approval")
+    assert approval.state is ApprovalState.CONSUMED
+    assert approval.decided_by == "wright-workflow-run"
+    assert progress[0]["type"] == "progress"
+    assert progress[0]["phase"] == "approval-satisfied"
     assert gateway.calls[0][4] is False

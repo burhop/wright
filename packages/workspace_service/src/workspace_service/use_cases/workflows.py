@@ -6,6 +6,7 @@ import time
 from data_vault import WorkflowIndexRecord, WorkflowRepository
 
 from ..executor import BoundedExecutor
+from ..rivet_project import normalize_graph_output_ids
 from ..workflows import WorkflowDocument, WorkspaceWorkflowStore
 
 
@@ -65,7 +66,10 @@ class WorkspaceWorkflowUseCases:
     ) -> WorkflowDocument:
         def work() -> WorkflowDocument:
             document = self._store_factory(workspace_dir).save(
-                slug, expected_revision, project, datasets
+                slug,
+                expected_revision,
+                normalize_graph_output_ids(project),
+                datasets,
             )
             self._index_document(workspace_id, document)
             return document

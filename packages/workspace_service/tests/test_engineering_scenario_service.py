@@ -195,7 +195,6 @@ async def test_started_scenario_finalizes_deterministic_engineering_report(
         manifest_digest=preflight.manifest_digest,
         workflow_revision=preflight.workflow_revision,
         workflow_digest=preflight.workflow_digest,
-        review_digest="c" * 64,
         binding_set_digest=preflight.binding_set_digest,
     )
     report = service.finalize_with_fixture_evidence(scenario_run_id)
@@ -227,7 +226,6 @@ async def test_stale_manifest_is_blocked_before_workflow_start(tmp_path) -> None
             manifest_digest="0" * 64,
             workflow_revision=preflight.workflow_revision,
             workflow_digest=preflight.workflow_digest,
-            review_digest="c" * 64,
             binding_set_digest=preflight.binding_set_digest,
         )
     assert getattr(error.value, "code") == "scenario_preflight_stale"
@@ -258,7 +256,6 @@ async def test_model_enabled_scenario_reports_provider_evidence_and_advisory(
         manifest_digest=preflight.manifest_digest,
         workflow_revision=preflight.workflow_revision,
         workflow_digest=preflight.workflow_digest,
-        review_digest="c" * 64,
         binding_set_digest=preflight.binding_set_digest,
     )
     report = service.finalize_with_fixture_evidence(scenario_run_id)

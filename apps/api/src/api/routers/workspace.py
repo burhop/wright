@@ -205,6 +205,63 @@ def _editor_feature_enabled() -> None:
         )
 
 
+def _rivet_schema_type(schema: object) -> str:
+    if not isinstance(schema, dict):
+        return "unknown"
+    declared = schema.get("type")
+    if isinstance(declared, str):
+        return declared
+    if isinstance(declared, list):
+        values = [value for value in declared if isinstance(value, str)]
+        if values:
+            return "|".join(values[:4])
+    alternatives = schema.get("anyOf") or schema.get("oneOf")
+    if isinstance(alternatives, list):
+        values = [
+            _rivet_schema_type(option)
+            for option in alternatives[:4]
+            if isinstance(option, dict)
+        ]
+        values = [value for value in values if value != "unknown"]
+        if values:
+            return "|".join(dict.fromkeys(values))
+    return "unknown"
+
+
+def _project_rivet_output_schema(
+    schema: object, *, maximum_paths: int = 12
+) -> dict[str, object] | None:
+    """Describe useful result paths without copying an unbounded child schema."""
+
+    if not isinstance(schema, dict):
+        return None
+    paths: list[dict[str, str]] = []
+
+    def walk(current: object, path: str, depth: int) -> None:
+        if len(paths) >= maximum_paths or not isinstance(current, dict):
+            return
+        properties = current.get("properties")
+        if depth < 4 and isinstance(properties, dict) and properties:
+            for name, child in list(properties.items())[:32]:
+                if not isinstance(name, str) or not isinstance(child, dict):
+                    continue
+                walk(child, f"{path}.{name}" if path else name, depth + 1)
+                if len(paths) >= maximum_paths:
+                    break
+            return
+        items = current.get("items")
+        if depth < 4 and isinstance(items, dict):
+            walk(items, f"{path}[]" if path else "[]", depth + 1)
+            return
+        paths.append({"path": path or "$", "type": _rivet_schema_type(current)})
+
+    walk(schema, "", 0)
+    return {
+        "type": _rivet_schema_type(schema),
+        "paths": paths,
+    }
+
+
 def _operations_feature_enabled() -> None:
     if not rivet_workflow_operations_enabled():
         raise HTTPException(
@@ -551,7 +608,6 @@ async def start_engineering_scenario_endpoint(
             manifest_digest=body.manifest_digest,
             workflow_revision=body.workflow_revision,
             workflow_digest=body.workflow_digest,
-            review_digest=body.review_digest,
             binding_set_digest=body.binding_set_digest,
             seed=body.seed,
         )
@@ -763,13 +819,71 @@ async def workflow_editor_surface_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     _editor_feature_enabled()
-    _workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
+    workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
     availability, detail = service.workflow_editor.availability()
     if availability.value != "available":
         return WorkflowEditorSurfaceResponse(availability=availability, detail=detail)
     try:
-        manifest = service.workflow_editor.manual_surface_manifest(workspace_dir)
-    except WorkflowEditorError as error:
+        snapshot = service.workflow_operations.discover_mcp_capabilities(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+        )
+        workspace_tools = []
+        for item in snapshot.tools:
+            if not item.binding_eligible or item.server_id in {
+                "rivet-workflows",
+                "wright",
+            }:
+                continue
+            schema = item.input_schema
+            raw_properties = schema.get("properties", {})
+            properties = {}
+            if isinstance(raw_properties, dict):
+                for name, value in list(raw_properties.items())[:32]:
+                    if not isinstance(name, str) or not isinstance(value, dict):
+                        continue
+                    projected = {
+                        key: value[key]
+                        for key in ("type", "format", "default")
+                        if key in value
+                        and isinstance(value[key], (str, int, float, bool, type(None)))
+                    }
+                    description = value.get("description")
+                    if isinstance(description, str):
+                        projected["description"] = description[:96]
+                    enum = value.get("enum")
+                    if isinstance(enum, list):
+                        projected["enum"] = [
+                            option
+                            for option in enum[:20]
+                            if isinstance(option, (str, int, float, bool, type(None)))
+                        ]
+                    properties[name] = projected
+            required = schema.get("required", [])
+            projected_tool = {
+                "qualified_tool_name": item.qualified_tool_name,
+                "server_id": item.server_id,
+                "tool_name": item.tool_name,
+                "title": item.title,
+                "description": item.description[:192],
+                "input": {
+                    "required": [
+                        name for name in required[:32] if isinstance(name, str)
+                    ]
+                    if isinstance(required, list)
+                    else [],
+                    "properties": properties,
+                },
+            }
+            projected_output = _project_rivet_output_schema(item.output_schema)
+            if projected_output is not None:
+                projected_tool["output"] = projected_output
+            workspace_tools.append(projected_tool)
+        manifest = service.workflow_editor.manual_surface_manifest(
+            workspace_dir,
+            workspace_tools=workspace_tools,
+        )
+    except (WorkflowEditorError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(error)
         ) from error

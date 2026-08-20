@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -17,7 +17,6 @@ vi.mock("../../services/workspace-service", async (loadOriginal) => {
     workspaceService: {
       getRivetMcpCapabilities: vi.fn(),
       previewRivetMcpBindings: vi.fn(),
-      reviewRivetWorkflow: vi.fn(),
     },
   };
 });
@@ -108,52 +107,36 @@ describe("RivetWorkflowCapabilities", () => {
         },
       ],
     });
-    vi.mocked(workspaceService.reviewRivetWorkflow).mockResolvedValue({
-      ...workflow,
-      review_state: "approved",
-      review_digest: "9".repeat(64),
-    });
   });
 
-  it("resolves an ambiguous node by keyboard and reviews the exact binding", async () => {
+  it("resolves an ambiguous node by keyboard and prepares the exact binding", async () => {
     const user = userEvent.setup();
-    const onReviewed = vi.fn();
     const { container } = render(
       <RivetWorkflowCapabilities
         sessionId="session-a"
         workflow={workflow}
-        onReviewed={onReviewed}
       />,
     );
 
     const select = await screen.findByTestId("workflow-binding-select-node-a");
     expect(select).toHaveValue("");
     expect(
-      screen.getByTestId("workflow-review-binding-summary"),
+      screen.getByTestId("workflow-prepare-binding-summary"),
     ).toBeDisabled();
     await user.selectOptions(select, "beta__inspect");
-    await user.click(screen.getByTestId("workflow-review-binding-summary"));
+    await user.click(screen.getByTestId("workflow-prepare-binding-summary"));
     expect(
       await screen.findByTestId("workflow-binding-details-node-a"),
     ).toBeInTheDocument();
     expect(screen.getByText("engineering.write")).toBeInTheDocument();
     expect(container.querySelector("div[style*='auto-fit']")).toBeTruthy();
-    await user.click(screen.getByTestId("workflow-review-approve"));
-    expect(workspaceService.reviewRivetWorkflow).toHaveBeenCalledWith(
-      "session-a",
-      "multi-mcp",
-      "approved",
-      "local-user",
-      {
-        expectedDigest: "d".repeat(64),
-        graph: "graph-a",
-        bindingSetDigest: "8".repeat(64),
-      },
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Tool connections are ready",
     );
-    await waitFor(() => expect(onReviewed).toHaveBeenCalledOnce());
+    expect(screen.queryByText(/approve exact workflow/i)).not.toBeInTheDocument();
   });
 
-  it("shows stale recovery with text and never renders secret-like fields", async () => {
+  it("never renders review blockers or secret-like fields", async () => {
     render(
       <RivetWorkflowCapabilities
         sessionId="session-a"
@@ -162,20 +145,17 @@ describe("RivetWorkflowCapabilities", () => {
           review_state: "approved",
           stale_reasons: ["tool_schema_changed"],
         }}
-        onReviewed={vi.fn()}
       />,
     );
-    expect(
-      await screen.findByTestId("workflow-review-stale-reason"),
-    ).toHaveTextContent("tool schema changed");
+    await screen.findByTestId("workflow-binding-select-node-a");
+    expect(screen.queryByText(/review is stale/i)).not.toBeInTheDocument();
     expect(document.body.textContent?.toLowerCase()).not.toContain("token");
     expect(document.body.textContent?.toLowerCase()).not.toContain(
       "authorization",
     );
   });
 
-  it("preserves the legacy review action for a non-MCP workflow", async () => {
-    const user = userEvent.setup();
+  it("shows a non-MCP workflow as ready without an approval action", async () => {
     vi.mocked(workspaceService.getRivetMcpCapabilities).mockResolvedValue({
       ...capabilities,
       requirements: [],
@@ -185,17 +165,13 @@ describe("RivetWorkflowCapabilities", () => {
       <RivetWorkflowCapabilities
         sessionId="session-a"
         workflow={workflow}
-        onReviewed={vi.fn()}
       />,
     );
-    await user.click(
-      await screen.findByRole("button", { name: "Approve revision" }),
-    );
-    expect(workspaceService.reviewRivetWorkflow).toHaveBeenCalledWith(
-      "session-a",
-      "multi-mcp",
-      "approved",
-      "local-user",
-    );
+    expect(
+      await screen.findByText(/has no MCP tool-call nodes and is ready to run/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /approve/i }),
+    ).not.toBeInTheDocument();
   });
 });

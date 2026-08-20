@@ -79,9 +79,9 @@ index da671ed6..8f0eb633 100644
 -              Use createNode, getNodeData, getNodePorts, editNode, connectNodes,
 -              disconnectNodes, deleteNode, toggleSplitting, reviewGraph,
 -              updateUser, and finished.
-+              Use listNodeTypes, createNode, getNodeData, getNodePorts, editNode,
-+              connectNodes, disconnectNodes, deleteNode, toggleSplitting,
-+              reviewGraph, updateUser, and finished.
++              Use listNodeTypes, applyWorkflowPlan, createNode, getNodeData,
++              getNodePorts, editNode, connectNodes, disconnectNodes, deleteNode,
++              toggleSplitting, reviewGraph, updateUser, and finished.
 
 
 -              Node types are resolved deterministically from the live project

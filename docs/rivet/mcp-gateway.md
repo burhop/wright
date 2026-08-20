@@ -1,14 +1,14 @@
 # Rivet MCP gateway
 
-Rivet workflows can use the MCP capabilities enabled in their Wright workspace. Rivet does not start, connect to, or configure child MCP servers itself. Wright gives one reviewed run a short-lived private provider, resolves each node to an exact reviewed binding, and sends the call through the same Gateway used by chat and agent clients.
+Rivet workflows can use the MCP capabilities enabled in their Wright workspace. Rivet does not start, connect to, or configure child MCP servers itself. Wright gives each exact saved run a short-lived private provider, resolves every node to an exact workspace binding, and sends the call through the same Gateway used by chat and agent clients.
 
 ## Execution path
 
 1. Wright discovers namespaced tools already visible in the workspace, such as `cad__inspect` and `fea__solve`.
-2. The engineer selects one exact tool for every MCP node and reviews the workflow, graph, server revision, schemas, validation evidence, policy effects, units, and material assumptions.
-3. On Start, Wright verifies that review again, starts an ephemeral `127.0.0.1` bridge, and mints a memory-only authority for that run and generation.
+2. Each MCP node stores one static namespaced tool name. Wright automatically resolves it against the tools enabled in that workspace.
+3. On Start, Wright verifies the exact saved revision, tool schemas, validation evidence, workspace grants, and policy snapshot, then starts an ephemeral `127.0.0.1` bridge and mints a memory-only authority for that run and generation.
 4. The pinned Node runner receives opaque node handles, binding digests, the exact bridge address, and the one-run token. It receives no child command, endpoint, environment, header, credential, or application lifecycle configuration.
-5. A Rivet MCP node calls the private provider. Wright resolves the reviewed binding, applies exact-call approval when required, and delegates to `GatewayService`.
+5. A Rivet MCP node calls the private provider. Wright resolves the run-bound tool, applies exact-call confirmation only when that tool's policy explicitly requires it, and delegates to `GatewayService`.
 6. Wright records bounded progress, approvals, child receipts, artifacts, cancellation truth, and the immutable terminal Run Manifest.
 
 This is how Rivet drives BREP, Solid Edge-style host bridges, and ordinary stdio/HTTP MCPs without owning those applications. The child still receives the governed call; Wright remains responsible for starting it, presenting its panel when applicable, cancelling it, and reporting cleanup truthfully.
@@ -35,14 +35,13 @@ The defaults are a 300-second exact-call approval lifetime, 1 MiB request limit,
 
 In the workspace Workflows pane:
 
-1. Open **Capabilities & Review**.
-2. Resolve every MCP node to one namespaced, compatible workspace tool.
-3. Inspect revisions, schemas, validation evidence, risk gates, units, and assumptions; then approve the exact revision and graph.
-4. Start the workflow. A destructive or otherwise gated child call pauses at **Approve this exact MCP call?** The decision is single-use and bound to the displayed argument digest.
-5. Use **Cancel run** when needed. Wright revokes the authority before cancelling active Gateway requests and stopping its runner.
-6. Open **Run evidence** to inspect the timeline, accounting, authorized artifacts, reproducibility differences, and recovery guidance. Exported evidence is bounded to 2 MiB and marked `no-store`.
+1. Open **Tool connections** to inspect the exact workspace tools available to each MCP node.
+2. Resolve any ambiguous node to one namespaced, compatible workspace tool. A unique static match is selected automatically when the run starts.
+3. Start the saved workflow. No workflow approval is required. A child call pauses only if that specific tool's policy requires a one-time confirmation bound to the displayed arguments.
+4. Use **Cancel run** when needed. Wright revokes the authority before cancelling active Gateway requests and stopping its runner.
+5. Open **Run evidence** to inspect the timeline, accounting, authorized artifacts, reproducibility differences, and recovery guidance. Exported evidence is bounded to 2 MiB and marked `no-store`.
 
-A workflow edit, schema or server-revision change, validation change, policy change, or workspace grant change makes the review stale. Wright requires a new review; it never silently rebinds.
+A workflow edit creates a new saved revision. A schema, server revision, validation, policy, or workspace-grant change invalidates an older prepared binding. Wright refreshes a unique exact match at run time and stops with a clear tool-connection error when the match is missing or ambiguous.
 
 ## Security boundary
 
@@ -61,22 +60,22 @@ Specialized application failures retain stable boundaries:
 - `RIVET_MCP_PANEL_UNAVAILABLE`: reopen the BREP panel and inspect its status.
 - `RIVET_MCP_HOST_BRIDGE_UNAVAILABLE`: inspect the host application and its separately managed bridge.
 
-Other stale/restart reports identify the changed workflow, review, binding set, policy snapshot, runner artifact, or validation evidence and name the required review or verification action.
+Other stale/restart reports identify the changed workflow, binding set, policy snapshot, runner artifact, or validation evidence and name the required refresh or verification action.
 
 ## Troubleshooting
 
 | Symptom | Check | Safe recovery |
 | --- | --- | --- |
-| Start is disabled | Workflow review, exact bindings, workspace grants, validation and runner status | Refresh capabilities and review the current graph |
-| Authority unavailable, expired, or revoked | Whether the run was cancelled, completed, restarted, or exceeded its lifetime | Start a new reviewed run; never reuse an old token |
-| Binding mismatch or stale binding | Node handle, schema/server revision, validation evidence, policy and enabled tools | Re-open Capabilities & Review and approve the new identity |
-| Exact call awaits approval | Displayed node, tool, argument summary/digest and gates | Approve once or deny; changed arguments require another decision |
+| Start is disabled | Exact saved revision, tool connections, workspace grants, validation and runner status | Save the workflow and refresh Tool connections |
+| Authority unavailable, expired, or revoked | Whether the run was cancelled, completed, restarted, or exceeded its lifetime | Start a new run; never reuse an old token |
+| Binding mismatch or stale binding | Node handle, schema/server revision, validation evidence, policy and enabled tools | Re-open Tool connections and refresh the exact identity |
+| Exact call awaits confirmation | Displayed node, tool, argument summary/digest and gates | Confirm once or deny; changed arguments require another decision |
 | Panel or host bridge unavailable | Visible application status and its Wright-owned diagnostics | Follow the stable recovery code; do not add child configuration to Rivet |
-| Residue possible after cancellation | Child application/process state and authorized artifacts | Inspect and clean the application before a new reviewed run |
+| Residue possible after cancellation | Child application/process state and authorized artifacts | Inspect and clean the application before a new run |
 
 ## Rollback
 
-Set `WRIGHT_RIVET_MCP_GATEWAY_ENABLED=0` and restart Wright to stop new MCP authority issuance. If necessary, also disable real execution with `WRIGHT_RIVET_REAL_EXECUTION_ENABLED=0`. Existing non-MCP workflows remain available according to their own feature settings. Historical reviews, manifests, and evidence remain readable, but restart invalidates every old in-memory authority. Do not delete the database as a rollback step.
+Set `WRIGHT_RIVET_MCP_GATEWAY_ENABLED=0` and restart Wright to stop new MCP authority issuance. If necessary, also disable real execution with `WRIGHT_RIVET_REAL_EXECUTION_ENABLED=0`. Existing non-MCP workflows remain available according to their own feature settings. Historical manifests and evidence remain readable, but restart invalidates every old in-memory authority. Do not delete the database as a rollback step.
 
 ## Optional live validation
 

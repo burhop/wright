@@ -90,7 +90,7 @@ WRIGHT_MANAGED_TOOLS: tuple[dict[str, Any], ...] = (
     ),
     _tool(
         "run_workflow",
-        "Run an exact, durably reviewed workflow revision through Wright's Rivet runtime.",
+        "Run an exact saved workflow revision through Wright's Rivet runtime.",
         {
             "slug": _SLUG,
             "expectedRevision": {"type": "integer", "minimum": 1},

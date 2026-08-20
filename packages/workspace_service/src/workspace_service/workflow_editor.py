@@ -8,7 +8,7 @@ import os
 import secrets
 import sys
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -272,7 +272,12 @@ class WorkspaceWorkflowEditor:
         status, _manifest, detail = self._catalog.status()
         return status, detail
 
-    def manual_surface_manifest(self, workspace_dir: str) -> dict[str, object] | None:
+    def manual_surface_manifest(
+        self,
+        workspace_dir: str,
+        *,
+        workspace_tools: Sequence[Mapping[str, object]] = (),
+    ) -> dict[str, object] | None:
         """Provision the sole Wright-owned manual editor surface manifest."""
         availability, _detail = self.availability()
         if availability is not EditorAvailability.AVAILABLE:
@@ -359,6 +364,21 @@ class WorkspaceWorkflowEditor:
         paths = WorkspacePath(workspace_dir)
         apps_directory = paths.resolve(".wright/apps")
         apps_directory.mkdir(parents=True, exist_ok=True)
+        tool_catalog = paths.resolve(".wright/apps/rivet-editor.tools.json")
+        tool_catalog_document = {
+            "schemaVersion": 1,
+            "tools": [dict(item) for item in workspace_tools],
+        }
+        tool_catalog_encoded = (
+            json.dumps(tool_catalog_document, separators=(",", ":"), sort_keys=True)
+            + "\n"
+        )
+        if len(tool_catalog_encoded.encode("utf-8")) > 32 * 1024:
+            raise WorkflowEditorError(
+                "RIVET_EDITOR_TOOL_CATALOG_TOO_LARGE",
+                "Rivet editor workspace tool catalog exceeds its safe limit",
+            )
+        self._atomic_replace(tool_catalog, tool_catalog_encoded)
         target = paths.resolve(".wright/apps/rivet-editor.surface.json")
         encoded = json.dumps(document, indent=2, sort_keys=True) + "\n"
         try:

@@ -20,6 +20,8 @@ from workspace_service.surfaces.target_policy import ResolvedTargetPin
 
 _STREAM_ROUTE_RECHECK_SECONDS = 0.25
 _STREAM_ACTIVITY_SECONDS = 1.0
+_WRIGHT_AI_COMPLETIONS_PATH = "/wright-ai/v1/chat/completions"
+_WRIGHT_AI_FIRST_BYTE_TIMEOUT_SECONDS = 300.0
 
 
 class HttpProxyError(RuntimeError):
@@ -152,6 +154,18 @@ def _target_path(pin: ResolvedTargetPin, raw_path: str, raw_query: str) -> str:
         )
     path = raw_path if base == "/" else f"{base.rstrip('/')}/{raw_path.lstrip('/')}"
     return f"{path}?{raw_query}" if raw_query else path
+
+
+def _first_byte_timeout_seconds(
+    request: ProxyHttpRequest, limits: EffectiveSurfaceLimits
+) -> float:
+    configured = float(limits.first_byte_timeout_seconds)
+    if (
+        request.method.upper() == "POST"
+        and request.raw_path == _WRIGHT_AI_COMPLETIONS_PATH
+    ):
+        return max(configured, _WRIGHT_AI_FIRST_BYTE_TIMEOUT_SECONDS)
+    return configured
 
 
 class SurfaceHttpProxy:
@@ -315,10 +329,17 @@ class SurfaceHttpProxy:
         await semaphore.acquire()
         response: httpx.Response | None = None
         try:
-            response = await asyncio.wait_for(
-                self._client.send(upstream, stream=True, follow_redirects=False),
-                timeout=float(limits.first_byte_timeout_seconds),
-            )
+            try:
+                response = await asyncio.wait_for(
+                    self._client.send(upstream, stream=True, follow_redirects=False),
+                    timeout=_first_byte_timeout_seconds(request, limits),
+                )
+            except TimeoutError as error:
+                raise HttpProxyError(
+                    "SURFACE_LIMIT_FIRST_BYTE",
+                    "Upstream response first-byte timeout exceeded",
+                    status_code=504,
+                ) from error
             raw_headers = tuple(
                 (name.decode("latin-1"), value.decode("latin-1"))
                 for name, value in response.headers.raw

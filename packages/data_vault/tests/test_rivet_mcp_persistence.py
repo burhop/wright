@@ -156,3 +156,39 @@ def test_binding_set_and_manifest_finalize_round_trip(tmp_path):
     assert document is not None
     assert document["terminal_state"] == "succeeded"
     assert document["manifest_digest"] == manifest.manifest_digest
+
+
+def test_binding_set_insert_rolls_back_if_a_child_binding_conflicts(tmp_path):
+    path = _database(tmp_path)
+    repository = RivetMcpRepository(str(path))
+    binding = _binding()
+    first = WorkflowBindingSet.build(
+        binding_set_id="set-1",
+        workspace_id="workspace-1",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest=HEX,
+        graph_id="Main",
+        bindings=(binding,),
+        discovery_snapshot_digest=HEX,
+        policy_snapshot_digest=HEX,
+        created_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+    conflicting = WorkflowBindingSet.build(
+        binding_set_id="set-2",
+        workspace_id="workspace-1",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest=HEX,
+        graph_id="Main",
+        bindings=(binding,),
+        discovery_snapshot_digest="d" * 64,
+        policy_snapshot_digest=HEX,
+        created_at=datetime(2026, 8, 13, tzinfo=UTC),
+    )
+    repository.save_binding_set(first)
+
+    with pytest.raises(sqlite3.IntegrityError):
+        repository.save_binding_set(conflicting)
+
+    assert repository.get_binding_set("set-2") is None

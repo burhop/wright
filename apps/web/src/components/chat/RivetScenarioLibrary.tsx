@@ -4,17 +4,14 @@ import {
   workspaceService,
   type EngineeringScenarioEntry,
   type EngineeringScenarioPreflight,
-  type RivetWorkflowOperation,
 } from "../../services/workspace-service";
 import { RivetScenarioReport } from "./RivetScenarioReport";
 
 export function RivetScenarioLibrary({
   sessionId,
-  workflows,
   onPrepared,
 }: {
   sessionId: string;
-  workflows: RivetWorkflowOperation[];
   onPrepared: (workflowSlug: string) => void | Promise<void>;
 }) {
   const [scenarios, setScenarios] = useState<EngineeringScenarioEntry[]>([]);
@@ -57,7 +54,7 @@ export function RivetScenarioLibrary({
       await onPrepared(next.workflow_slug);
       setMessage(
         next.state === "ready"
-          ? `Preflight is ready. Review ${next.workflow_slug}, then start the scenario.`
+          ? `Preflight is ready. ${next.workflow_slug} can be started.`
           : `Preflight found ${next.blockers.length} blockers.`,
       );
     } catch (error) {
@@ -70,13 +67,11 @@ export function RivetScenarioLibrary({
   const start = async (
     scenario: EngineeringScenarioEntry,
     exact: EngineeringScenarioPreflight,
-    workflow: RivetWorkflowOperation,
   ) => {
     try {
       const result = await workspaceService.startEngineeringScenario(
         sessionId,
         exact,
-        workflow,
       );
       setRuns((current) => ({
         ...current,
@@ -98,7 +93,7 @@ export function RivetScenarioLibrary({
     >
       <h3 id="engineering-scenario-library-title">Engineering scenarios</h3>
       <p>
-        Curated Rivet examples call reviewed workspace capabilities, including
+        Curated Rivet examples call validated workspace capabilities, including
         MCP tools and local engineering models, and check engineering meaning,
         units, provenance, resources, and cleanup. Tier 1 stays local and never
         controls physical equipment.
@@ -108,21 +103,12 @@ export function RivetScenarioLibrary({
       </p>
       {scenarios.map((scenario) => {
         const exact = preflights[scenario.scenario_id];
-        const workflow = exact
-          ? workflows.find((value) => value.slug === exact.workflow_slug)
-          : undefined;
-        const reviewed = Boolean(
-          workflow?.review_state === "approved" &&
-          workflow.review_digest &&
-          workflow.binding_set_digest &&
-          !workflow.stale_reasons?.length,
-        );
         const scenarioRunId = runs[scenario.scenario_id];
         const firstBlocker = exact?.blockers[0];
         const blockerOrigin = firstBlocker
           ? /credential|license|host|tier|resource/i.test(firstBlocker.code)
             ? "optional external prerequisite"
-            : "local reviewed workspace state"
+            : "local workspace state"
           : null;
         const nextAction = scenarioRunId
           ? "Review the terminal evidence, cleanup, and recovery below."
@@ -130,9 +116,7 @@ export function RivetScenarioLibrary({
             ? "Check and prepare. This is read-only and does not run providers."
             : exact.state !== "ready"
               ? `Resolve the blocker from ${blockerOrigin}, then create a fresh preflight.`
-              : !reviewed
-                ? "Review the exact prepared workflow and binding identities; no run starts during review."
-                : "Run the reviewed scenario. This starts only the displayed Tier 1 provider fixtures.";
+              : "Run the prepared scenario. This starts only the displayed Tier 1 provider fixtures.";
         return (
           <article
             key={scenario.scenario_id}
@@ -173,16 +157,12 @@ export function RivetScenarioLibrary({
             <button
               data-testid={`scenario-start-${scenario.scenario_id}`}
               type="button"
-              disabled={
-                !exact || exact.state !== "ready" || !workflow || !reviewed
-              }
+              disabled={!exact || exact.state !== "ready"}
               onClick={() =>
-                exact && workflow
-                  ? void start(scenario, exact, workflow)
-                  : undefined
+                exact ? void start(scenario, exact) : undefined
               }
             >
-              Run reviewed scenario
+              Run scenario
             </button>
             {exact ? (
               <div
@@ -219,12 +199,6 @@ export function RivetScenarioLibrary({
                     )}
                   </div>
                 ))}
-                {!reviewed && exact.state === "ready" ? (
-                  <p>
-                    Review the exact prepared workflow capabilities above before
-                    run.
-                  </p>
-                ) : null}
               </div>
             ) : null}
             {scenarioRunId ? (

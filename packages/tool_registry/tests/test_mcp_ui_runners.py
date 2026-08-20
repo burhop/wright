@@ -4,6 +4,7 @@ import asyncio
 from types import SimpleNamespace
 from typing import Any
 
+import httpx
 import pytest
 from mcp.types import LATEST_PROTOCOL_VERSION
 
@@ -14,6 +15,33 @@ from tool_registry.runners.protocol import (
 )
 from tool_registry.runners.sse import _OAuthCallbackServer, SseRunner
 from tool_registry.runners.stdio import StdioRunner
+
+
+@pytest.mark.asyncio
+async def test_streamable_http_direct_rpc_error_is_not_discarded() -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            headers={"content-type": "application/json"},
+            json={
+                "jsonrpc": "2.0",
+                "id": 1,
+                "error": {"code": -32001, "message": "publisher entitlement missing"},
+            },
+            request=request,
+        )
+
+    runner = SseRunner("https://example.test/mcp", oauth_enabled=False)
+    runner.client = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    runner._message_endpoint = runner.sse_url
+    runner._is_streamable_http = True
+
+    try:
+        with pytest.raises(RuntimeError, match="publisher entitlement missing"):
+            await asyncio.wait_for(runner._send_request("tools/call", {}), timeout=1)
+        assert runner._pending_requests == {}
+    finally:
+        await runner.client.aclose()
 
 
 def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabled() -> (
