@@ -30,9 +30,7 @@ def test_rivet_output_projection_exposes_bounded_nested_result_paths() -> None:
 def test_rivet_output_projection_limits_child_schema_size() -> None:
     schema = {
         "type": "object",
-        "properties": {
-            f"field{index}": {"type": "string"} for index in range(100)
-        },
+        "properties": {f"field{index}": {"type": "string"} for index in range(100)},
     }
 
     projected = _project_rivet_output_schema(schema, maximum_paths=5)

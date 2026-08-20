@@ -430,9 +430,7 @@ class SurfaceHttpProxy:
                         authority_valid=authority_valid, target_valid=target_valid
                     )
                     last_route_check = now
-                if now - started > float(
-                    limits.live_connection_lifetime_seconds
-                ):
+                if now - started > float(limits.live_connection_lifetime_seconds):
                     raise HttpProxyError(
                         "SURFACE_LIMIT_LIFETIME",
                         "HTTP response lifetime limit exceeded",

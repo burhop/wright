@@ -267,7 +267,9 @@ async def test_templates_create_inspect_validate_and_list_round_trip(tmp_path) -
 
 
 @pytest.mark.asyncio
-async def test_run_tool_requires_exact_identity_but_not_workflow_review(tmp_path) -> None:
+async def test_run_tool_requires_exact_identity_but_not_workflow_review(
+    tmp_path,
+) -> None:
     service = RivetWorkflowMcpService(
         RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     )

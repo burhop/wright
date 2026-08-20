@@ -92,7 +92,10 @@ class _OAuthCallbackServer:
             if not opened:
                 logger.warning("Could not open the MCP OAuth authorization page")
         except Exception as error:
-            logger.warning("Could not open the MCP OAuth authorization page: %s", redact_text(error))
+            logger.warning(
+                "Could not open the MCP OAuth authorization page: %s",
+                redact_text(error),
+            )
 
     async def wait_for_callback(self) -> tuple[str, str | None]:
         if self.future is None:
@@ -112,7 +115,9 @@ class _OAuthCallbackServer:
         error: Exception | None = None
         notify_waiter = True
         try:
-            request = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), timeout=10.0)
+            request = await asyncio.wait_for(
+                reader.readuntil(b"\r\n\r\n"), timeout=10.0
+            )
             request_line = request.splitlines()[0].decode("ascii", errors="replace")
             parts = request_line.split(" ", 2)
             if len(parts) < 2:
@@ -131,7 +136,9 @@ class _OAuthCallbackServer:
                 raise RuntimeError(f"OAuth authorization failed: {oauth_error}")
             code = query.get("code", [None])[0]
             if not code:
-                raise RuntimeError("OAuth callback did not include an authorization code")
+                raise RuntimeError(
+                    "OAuth callback did not include an authorization code"
+                )
             result = (code, state)
         except Exception as caught:
             error = caught
@@ -220,11 +227,11 @@ class SseRunner(BaseRunner):
         oauth_enabled: bool = True,
     ):
         self.sse_url = sse_url
-        self.server_id = server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
-        self.oauth_enabled = oauth_enabled
-        self.startup_timeout = (
-            _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
+        self.server_id = (
+            server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         )
+        self.oauth_enabled = oauth_enabled
+        self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
         self._oauth_callback: _OAuthCallbackServer | None = None
         self._oauth_provider: OAuthClientProvider | None = None
@@ -266,7 +273,10 @@ class SseRunner(BaseRunner):
                 and redirect.port
             ):
                 return redirect.port
-        return 8700 + int(hashlib.sha256(self.server_id.encode()).hexdigest()[:4], 16) % 1000
+        return (
+            8700
+            + int(hashlib.sha256(self.server_id.encode()).hexdigest()[:4], 16) % 1000
+        )
 
     async def start(self) -> None:
         async with self._lock:
@@ -557,9 +567,7 @@ class SseRunner(BaseRunner):
                         if "error" in data:
                             raise RuntimeError(
                                 "RPC Error: "
-                                + redact_text(
-                                    redact_mapping({"error": data["error"]})
-                                )
+                                + redact_text(redact_mapping({"error": data["error"]}))
                             )
                         return data.get("result", {})
                 elif "text/event-stream" in content_type:

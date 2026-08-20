@@ -94,7 +94,9 @@ def _schema_allows_null(schema: object) -> bool:
     return any(
         _schema_allows_null(option)
         for keyword in ("anyOf", "oneOf")
-        for option in (schema.get(keyword) if isinstance(schema.get(keyword), list) else [])
+        for option in (
+            schema.get(keyword) if isinstance(schema.get(keyword), list) else []
+        )
     )
 
 

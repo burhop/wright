@@ -118,9 +118,7 @@ def test_healthy_validation_evidence_refresh_does_not_stale_a_binding():
     snapshot = service.discover(session_id="session-1", workspace_id="workspace-1")
     binding = service.bind(
         snapshot=snapshot,
-        requirement=RivetMcpNodeRequirement(
-            "Main", "node-1", "mcpToolCall", None
-        ),
+        requirement=RivetMcpNodeRequirement("Main", "node-1", "mcpToolCall", None),
         qualified_tool_name="alpha__inspect",
         workflow_id="workflow-1",
         workflow_revision=1,
@@ -145,9 +143,7 @@ def test_healthy_validation_evidence_refresh_does_not_stale_a_binding():
         ),
     )
 
-    refreshed = service.discover(
-        session_id="session-1", workspace_id="workspace-1"
-    )
+    refreshed = service.discover(session_id="session-1", workspace_id="workspace-1")
 
     assert refreshed.tools[0].validation_evidence_id != binding.validation_evidence_id
     assert (

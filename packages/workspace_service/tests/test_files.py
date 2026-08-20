@@ -36,9 +36,7 @@ def test_workspace_manager_allows_file_workspace_when_git_is_unavailable(
     assert not (workspace / ".git").exists()
 
 
-def test_workspace_manager_does_not_repeat_repository_bootstrap(
-    tmp_path, monkeypatch
-):
+def test_workspace_manager_does_not_repeat_repository_bootstrap(tmp_path, monkeypatch):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     WorkspaceManager(str(workspace))

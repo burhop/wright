@@ -301,9 +301,10 @@ def lint_project(
                             "node_id": str(node_id),
                         }
                     )
-                if not isinstance(data.get("toolName"), str) or not str(
-                    data.get("toolName")
-                ).strip():
+                if (
+                    not isinstance(data.get("toolName"), str)
+                    or not str(data.get("toolName")).strip()
+                ):
                     issues.append(
                         {
                             "level": "error",

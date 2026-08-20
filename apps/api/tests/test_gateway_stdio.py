@@ -40,7 +40,9 @@ async def test_stdio_gateway_installs_secret_provider_before_runtime(
     )
     monkeypatch.setattr(gateway_stdio, "run_migrations", lambda: None)
     monkeypatch.setattr(gateway_stdio, "reconcile_engineering_catalog", lambda _db: 0)
-    monkeypatch.setattr(gateway_stdio, "reconcile_wright_managed_servers", lambda _db: 0)
+    monkeypatch.setattr(
+        gateway_stdio, "reconcile_wright_managed_servers", lambda _db: 0
+    )
     monkeypatch.setattr(
         gateway_stdio.McpTransportSettings,
         "from_env",

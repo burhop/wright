@@ -236,8 +236,7 @@ async def test_enabled_catalog_server_grants_declared_approvals_to_model_call(
 
     workspaces.enabled = {"rivet-workflows"}
     assert (
-        service.workspace_approvals_for_model_call("session-1", "other__ping")
-        == set()
+        service.workspace_approvals_for_model_call("session-1", "other__ping") == set()
     )
 
 
