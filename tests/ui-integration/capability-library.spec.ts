@@ -256,7 +256,7 @@ test.describe("Offline Capability Library", () => {
   }) => {
     await page.goto("/tool-registry");
     const details = page.getByRole("button", {
-      name: "View details for Onshape Labs FeatureScript MCP",
+      name: "View MCP server details for Onshape Labs FeatureScript MCP",
     });
     await details.focus();
     await page.keyboard.press("Enter");
@@ -264,7 +264,7 @@ test.describe("Offline Capability Library", () => {
     await expect(dialog).toContainText("App Store subscription");
     await expect(dialog).toContainText("Wright has not contacted the endpoint");
     await dialog
-      .getByRole("button", { name: "Check this machine again" })
+      .getByRole("button", { name: "Check this computer" })
       .click();
     await expect(dialog).toContainText("Network access was not confirmed");
   });
@@ -324,7 +324,7 @@ test.describe("Offline Capability Library", () => {
     await page.getByLabel("Search MCP servers").fill("no result");
     await expect(page.getByTestId("capability-empty-state")).toBeVisible();
     await page
-      .getByRole("button", { name: "Report this missing capability" })
+      .getByRole("button", { name: "Report this missing MCP server" })
       .click();
     const form = page.getByRole("dialog", {
       name: "Report a missing MCP server",
