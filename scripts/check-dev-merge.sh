@@ -50,6 +50,9 @@ echo "Running Wright dev merge gate from $ROOT_DIR"
 echo "Set SKIP_PLAYWRIGHT=1 only for a documented local browser/runtime limitation."
 
 run git diff --check
+# Rivet assets are force-included from integrations/, outside the Python package root.
+run uv sync --all-packages --all-groups --reinstall-package wright-engineering
+
 run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
 run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
 

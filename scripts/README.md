@@ -45,6 +45,8 @@ Runs the heavyweight local gate before merging a feature branch to `dev`. It is
 intended to mirror the checks that have previously caught branch integration
 drift in CI:
 
+Before its test stages, the gate refreshes `wright-engineering` so the Rivet editor and runner bundles force-included from `integrations/rivet/` cannot remain stale in an editable environment.
+
 1. `git diff --check`
 2. Ruff lint and format checks for Wright-owned Python workspaces
 3. ESLint, Prettier, TypeScript, Vitest, and frontend build checks
