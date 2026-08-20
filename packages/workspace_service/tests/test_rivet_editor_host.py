@@ -76,6 +76,8 @@ def test_editor_host_serves_health_and_spa_routes_from_supplied_root(tmp_path) -
     root.mkdir()
     (root / "index.html").write_text("<main>Rivet editor</main>", encoding="utf-8")
     port = _unused_port()
+    outside_secret = tmp_path / "outside-secret.txt"
+    outside_secret.write_text("must-not-be-served", encoding="utf-8")
     process = subprocess.Popen(
         [
             sys.executable,
@@ -109,6 +111,11 @@ def test_editor_host_serves_health_and_spa_routes_from_supplied_root(tmp_path) -
         assert b"wright-minimal-mode" not in content
         assert b"showOpenFilePicker" not in content
     finally:
+        traversal_status, _, traversal_body = _request(
+            f"{base_url}/%2e%2e/outside-secret.txt"
+        )
+        assert traversal_status == 404
+        assert b"must-not-be-served" not in traversal_body
         process.terminate()
         process.wait(timeout=5)
 

@@ -41,9 +41,7 @@ export class LiveHealthService {
     if (this.checksInFlight.has(svc.serviceId)) return;
     this.checksInFlight.add(svc.serviceId);
 
-    const fetchWithRetry = async (
-      retries = 1,
-    ): Promise<HealthCheckResult> => {
+    const fetchWithRetry = async (retries = 1): Promise<HealthCheckResult> => {
       try {
         const response = await hostAdapter.fetch(`${API_BASE}${svc.endpoint}`);
         if (response.ok) {

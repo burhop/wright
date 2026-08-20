@@ -143,10 +143,7 @@ describe("RivetScenarioLibrary", () => {
     const user = userEvent.setup();
     const onPrepared = vi.fn();
     render(
-      <RivetScenarioLibrary
-        sessionId="session"
-        onPrepared={onPrepared}
-      />,
+      <RivetScenarioLibrary sessionId="session" onPrepared={onPrepared} />,
     );
 
     expect(await screen.findByText("Structural bracket")).toBeInTheDocument();
@@ -198,12 +195,7 @@ describe("RivetScenarioLibrary", () => {
         },
       ],
     });
-    render(
-      <RivetScenarioLibrary
-        sessionId="session"
-        onPrepared={vi.fn()}
-      />,
-    );
+    render(<RivetScenarioLibrary sessionId="session" onPrepared={vi.fn()} />);
     await user.click(
       await screen.findByTestId("scenario-preflight-structural-bracket"),
     );

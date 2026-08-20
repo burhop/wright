@@ -51,18 +51,23 @@ export function RivetWorkflowRun({
 
   const refresh = useCallback(async () => {
     try {
-      const [current, currentApprovals, history, durableEvidence, currentInspection] =
-        await Promise.all([
-          workspaceService.getRivetWorkflowRun(sessionId, run.run_id),
-          workspaceService.getRivetCallApprovals(sessionId, run.run_id),
-          workspaceService.getRivetWorkflowHistory(sessionId, run.run_id),
-          workspaceService
-            .getRivetRunEvidence(sessionId, run.run_id)
-            .catch(() => null),
-          workspaceService
-            .getRivetRunInspection(sessionId, run.run_id)
-            .catch(() => null),
-        ]);
+      const [
+        current,
+        currentApprovals,
+        history,
+        durableEvidence,
+        currentInspection,
+      ] = await Promise.all([
+        workspaceService.getRivetWorkflowRun(sessionId, run.run_id),
+        workspaceService.getRivetCallApprovals(sessionId, run.run_id),
+        workspaceService.getRivetWorkflowHistory(sessionId, run.run_id),
+        workspaceService
+          .getRivetRunEvidence(sessionId, run.run_id)
+          .catch(() => null),
+        workspaceService
+          .getRivetRunInspection(sessionId, run.run_id)
+          .catch(() => null),
+      ]);
       onRunUpdateRef.current(current);
       setApprovals(currentApprovals);
       setEvents(history);

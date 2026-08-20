@@ -133,10 +133,7 @@ describe("engineering scenario workspace client", () => {
       ),
     ).toEqual(preflight);
     expect(
-      await workspaceService.startEngineeringScenario(
-        "session",
-        preflight,
-      ),
+      await workspaceService.startEngineeringScenario("session", preflight),
     ).toMatchObject({ scenario_run_id: "scenario-run" });
     expect(
       await workspaceService.getEngineeringScenarioReport(
@@ -178,25 +175,22 @@ describe("engineering scenario workspace client", () => {
 
   it("does not start without an exact prepared tool binding", async () => {
     await expect(
-      workspaceService.startEngineeringScenario(
-        "session",
-        {
-          preflight_id: "preflight",
-          scenario_id: "structural-bracket",
-          scenario_revision: 1,
-          manifest_digest: digest,
-          workflow_slug: "scenario-structural-bracket",
-          workflow_revision: 1,
-          workflow_digest: digest,
-          graph_id: "Main",
-          binding_set_digest: null,
-          state: "ready",
-          capabilities: [],
-          environment: {},
-          blockers: [],
-          expires_at: "2099-01-01T00:00:00Z",
-        },
-      ),
+      workspaceService.startEngineeringScenario("session", {
+        preflight_id: "preflight",
+        scenario_id: "structural-bracket",
+        scenario_revision: 1,
+        manifest_digest: digest,
+        workflow_slug: "scenario-structural-bracket",
+        workflow_revision: 1,
+        workflow_digest: digest,
+        graph_id: "Main",
+        binding_set_digest: null,
+        state: "ready",
+        capabilities: [],
+        environment: {},
+        blockers: [],
+        expires_at: "2099-01-01T00:00:00Z",
+      }),
     ).rejects.toThrow("Prepare the exact scenario workflow first");
     expect(mocks.fetch).not.toHaveBeenCalled();
   });
@@ -322,7 +316,9 @@ describe("Rivet run inspection workspace client", () => {
       workspaceService.getRivetRunInspection("session 1", "run/1", 7),
     ).resolves.toEqual(inspection);
     expect(mocks.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/workflows/runs/run%2F1/inspection?session_id=session%201&after_sequence=7"),
+      expect.stringContaining(
+        "/workflows/runs/run%2F1/inspection?session_id=session%201&after_sequence=7",
+      ),
       { cache: "no-store" },
     );
   });
@@ -334,7 +330,9 @@ describe("Rivet run inspection workspace client", () => {
       workspaceService.getRecentRivetRuns("session 1", "my workflow", 500),
     ).resolves.toEqual(recent);
     expect(mocks.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/workflows/my%20workflow/runs?session_id=session%201&limit=50"),
+      expect.stringContaining(
+        "/workflows/my%20workflow/runs?session_id=session%201&limit=50",
+      ),
       { cache: "no-store" },
     );
   });

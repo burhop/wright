@@ -8,7 +8,9 @@ interface RivetRunResultProps {
 }
 
 function downloadJson(result: RivetRunResultItem) {
-  const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(result, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -17,29 +19,63 @@ function downloadJson(result: RivetRunResultItem) {
   URL.revokeObjectURL(url);
 }
 
-export function RivetRunResult({ result, onOpenArtifact }: RivetRunResultProps) {
+export function RivetRunResult({
+  result,
+  onOpenArtifact,
+}: RivetRunResultProps) {
   const [expanded, setExpanded] = useState(false);
-  const rendered = result.value === null ? result.preview : typeof result.value === "string" ? result.value : JSON.stringify(result.value, null, 2);
+  const rendered =
+    result.value === null
+      ? result.preview
+      : typeof result.value === "string"
+        ? result.value
+        : JSON.stringify(result.value, null, 2);
   const copy = async () => {
     if (navigator.clipboard) await navigator.clipboard.writeText(rendered);
   };
   return (
-    <article className="rivet-run-result" data-testid={`rivet-run-result-${result.name}`}>
+    <article
+      className="rivet-run-result"
+      data-testid={`rivet-run-result-${result.name}`}
+    >
       <header>
         <strong>{result.name}</strong>
         <span>{result.kind}</span>
-        {!result.complete && <span className="rivet-run-warning">Incomplete</span>}
-        {result.redaction_count > 0 && <span className="rivet-run-warning">Redacted</span>}
-      </header>
-      <pre className={expanded ? "is-expanded" : ""}>{rendered || "No value"}</pre>
-      <div className="rivet-run-actions">
-        {rendered.length > 240 && <button type="button" onClick={() => setExpanded((value) => !value)}>{expanded ? "Collapse" : "Expand"}</button>}
-        <button type="button" onClick={() => void copy()}>Copy</button>
-        <button type="button" onClick={() => downloadJson(result)}>Export JSON</button>
-        {result.kind === "link" && typeof result.value === "string" && (
-          <a href={result.value} target="_blank" rel="noreferrer">Open link</a>
+        {!result.complete && (
+          <span className="rivet-run-warning">Incomplete</span>
         )}
-        {result.artifact && onOpenArtifact && <button type="button" onClick={() => onOpenArtifact(result.artifact!)}>Open artifact</button>}
+        {result.redaction_count > 0 && (
+          <span className="rivet-run-warning">Redacted</span>
+        )}
+      </header>
+      <pre className={expanded ? "is-expanded" : ""}>
+        {rendered || "No value"}
+      </pre>
+      <div className="rivet-run-actions">
+        {rendered.length > 240 && (
+          <button type="button" onClick={() => setExpanded((value) => !value)}>
+            {expanded ? "Collapse" : "Expand"}
+          </button>
+        )}
+        <button type="button" onClick={() => void copy()}>
+          Copy
+        </button>
+        <button type="button" onClick={() => downloadJson(result)}>
+          Export JSON
+        </button>
+        {result.kind === "link" && typeof result.value === "string" && (
+          <a href={result.value} target="_blank" rel="noreferrer">
+            Open link
+          </a>
+        )}
+        {result.artifact && onOpenArtifact && (
+          <button
+            type="button"
+            onClick={() => onOpenArtifact(result.artifact!)}
+          >
+            Open artifact
+          </button>
+        )}
       </div>
     </article>
   );

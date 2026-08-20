@@ -112,10 +112,7 @@ describe("RivetWorkflowCapabilities", () => {
   it("resolves an ambiguous node by keyboard and prepares the exact binding", async () => {
     const user = userEvent.setup();
     const { container } = render(
-      <RivetWorkflowCapabilities
-        sessionId="session-a"
-        workflow={workflow}
-      />,
+      <RivetWorkflowCapabilities sessionId="session-a" workflow={workflow} />,
     );
 
     const select = await screen.findByTestId("workflow-binding-select-node-a");
@@ -133,7 +130,9 @@ describe("RivetWorkflowCapabilities", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "Tool connections are ready",
     );
-    expect(screen.queryByText(/approve exact workflow/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/approve exact workflow/i),
+    ).not.toBeInTheDocument();
   });
 
   it("never renders review blockers or secret-like fields", async () => {
@@ -162,13 +161,12 @@ describe("RivetWorkflowCapabilities", () => {
       capabilities: [],
     });
     render(
-      <RivetWorkflowCapabilities
-        sessionId="session-a"
-        workflow={workflow}
-      />,
+      <RivetWorkflowCapabilities sessionId="session-a" workflow={workflow} />,
     );
     expect(
-      await screen.findByText(/has no MCP tool-call nodes and is ready to run/i),
+      await screen.findByText(
+        /has no MCP tool-call nodes and is ready to run/i,
+      ),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /approve/i }),

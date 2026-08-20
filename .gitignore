@@ -11,6 +11,11 @@ __pycache__/
 build/
 develop-eggs/
 dist/
+# The Rivet runner is a pinned release artifact. Its source, revision, and
+# checksum are recorded in integrations/rivet/runner/manifest.json so clean
+# source checkouts can build the same self-contained Wright wheel.
+!integrations/rivet/runner/dist/
+!integrations/rivet/runner/dist/wright-runner.mjs
 downloads/
 eggs/
 .eggs/

@@ -44,7 +44,13 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
     assert values["WRIGHT_SURFACES_LIVE_APPS_ENABLED"] == "1"
     assert values["WRIGHT_SURFACE_PREVIEW_DOMAIN"] == "wright.localhost"
     assert values["WRIGHT_SURFACE_PREVIEW_PORT"] == "8000"
-    assert "http://wright.localhost:8000" in values["WRIGHT_ALLOWED_ORIGINS"]
+    assert values["WRIGHT_ALLOWED_ORIGINS"] == ",".join(
+        (
+            "http://127.0.0.1:8000",
+            "http://localhost:8000",
+            "http://wright.localhost:8000",
+        )
+    )
     assert values["WRIGHT_WORKSPACE_ROOT"] == str(layout.workspaces)
     assert values["WRIGHT_WORKSPACES_DIR"] == str(layout.workspaces)
     assert environment == values

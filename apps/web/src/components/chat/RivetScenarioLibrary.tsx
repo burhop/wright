@@ -158,9 +158,7 @@ export function RivetScenarioLibrary({
               data-testid={`scenario-start-${scenario.scenario_id}`}
               type="button"
               disabled={!exact || exact.state !== "ready"}
-              onClick={() =>
-                exact ? void start(scenario, exact) : undefined
-              }
+              onClick={() => (exact ? void start(scenario, exact) : undefined)}
             >
               Run scenario
             </button>

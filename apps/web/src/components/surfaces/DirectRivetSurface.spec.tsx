@@ -100,13 +100,19 @@ describe("DirectRivetSurface", () => {
     events: [],
     steps: [],
     final_outputs: Object.entries(
-      (run.outputs as Record<string, { type: string; value: unknown }> | null) || {},
+      (run.outputs as Record<
+        string,
+        { type: string; value: unknown }
+      > | null) || {},
     ).map(([name, output]) => ({
       result_id: name,
       name,
       kind: output.type,
       value: output.value,
-      preview: typeof output.value === "string" ? output.value : JSON.stringify(output.value),
+      preview:
+        typeof output.value === "string"
+          ? output.value
+          : JSON.stringify(output.value),
       media_type: null,
       size_bytes: null,
       digest: null,
@@ -696,11 +702,15 @@ describe("DirectRivetSurface", () => {
     expect(
       screen.queryByTestId("direct-rivet-run-panel"),
     ).not.toBeInTheDocument();
-    expect(await screen.findByTestId("rivet-run-state-succeeded")).toBeVisible();
+    expect(
+      await screen.findByTestId("rivet-run-state-succeeded"),
+    ).toBeVisible();
     await waitFor(() =>
       expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open"),
     );
-    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent("done");
+    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent(
+      "done",
+    );
   });
 
   it("opens an opaque run-options dialog without workflow approval", async () => {
@@ -821,11 +831,15 @@ describe("DirectRivetSurface", () => {
         },
       ),
     );
-    expect(await screen.findByTestId("rivet-run-state-succeeded")).toBeVisible();
+    expect(
+      await screen.findByTestId("rivet-run-state-succeeded"),
+    ).toBeVisible();
     await waitFor(() =>
       expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open"),
     );
-    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent("hello");
+    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent(
+      "hello",
+    );
     expect(screen.getByTestId("rivet-run-result-cost")).toHaveTextContent("0");
     expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open");
   });
@@ -874,6 +888,8 @@ describe("DirectRivetSurface", () => {
         running,
       ),
     );
-    expect(screen.getByTestId("direct-rivet-run-feedback")).toHaveTextContent("cancelled");
+    expect(screen.getByTestId("direct-rivet-run-feedback")).toHaveTextContent(
+      "cancelled",
+    );
   });
 });

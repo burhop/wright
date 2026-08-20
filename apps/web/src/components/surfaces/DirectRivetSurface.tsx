@@ -288,7 +288,10 @@ export function DirectRivetSurface({
         onEditorUnavailableRef.current?.(message.reason);
       } else if (message.type === "wright-rivet:ready") {
         readyRef.current = true;
-        const version = typeof message.protocolVersion === "number" ? message.protocolVersion : 2;
+        const version =
+          typeof message.protocolVersion === "number"
+            ? message.protocolVersion
+            : 2;
         protocolVersionRef.current = version;
         setBridgeProtocolVersion(version);
         setEditorReady(true);
@@ -509,7 +512,8 @@ export function DirectRivetSurface({
     setStatus(
       inspection.run.state === "succeeded"
         ? `Run ${inspection.run.run_id} succeeded.`
-        : inspection.run.state === "failed" || inspection.run.state === "cancelled"
+        : inspection.run.state === "failed" ||
+            inspection.run.state === "cancelled"
           ? `Run ${inspection.run.run_id} ${inspection.run.state}: ${inspection.run.reason_code || "see Run Inspector"}.`
           : `Run ${inspection.run.run_id}: ${phase}.`,
     );
@@ -520,7 +524,10 @@ export function DirectRivetSurface({
     const frameWindow = iframeRef.current?.contentWindow;
     if (!frameWindow) return;
     if (!inspection) {
-      frameWindow.postMessage({ type: "wright-rivet:clear-run-state" }, targetOrigin);
+      frameWindow.postMessage(
+        { type: "wright-rivet:clear-run-state" },
+        targetOrigin,
+      );
       return;
     }
     frameWindow.postMessage(
@@ -661,18 +668,32 @@ export function DirectRivetSurface({
     if (!step.node_id) return;
     if (protocolVersionRef.current < 3) {
       focusWorkflow();
-      setStatus("This editor version cannot focus an individual historical node.");
+      setStatus(
+        "This editor version cannot focus an individual historical node.",
+      );
       return;
     }
     try {
       const id = requestId();
       const response = await bridgeRequest<{ found?: unknown }>(
-        { type: "wright-rivet:focus-node", requestId: id, nodeId: step.node_id },
+        {
+          type: "wright-rivet:focus-node",
+          requestId: id,
+          nodeId: step.node_id,
+        },
         "wright-rivet:node-focused",
       );
-      setStatus(response.found === false ? "That node is not present in the loaded workflow revision." : `Focused ${step.label}.`);
+      setStatus(
+        response.found === false
+          ? "That node is not present in the loaded workflow revision."
+          : `Focused ${step.label}.`,
+      );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to focus the workflow step.");
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : "Unable to focus the workflow step.",
+      );
     }
   };
 

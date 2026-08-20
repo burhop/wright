@@ -3,10 +3,24 @@ interface RunStateBadgeProps {
 }
 
 const stateLabel = (state: string) =>
-  ({ queued: "Queued", running: "Running", cancelling: "Cancelling", cancelled: "Cancelled", succeeded: "Succeeded", failed: "Failed" })[state] || state;
+  ({
+    queued: "Queued",
+    running: "Running",
+    cancelling: "Cancelling",
+    cancelled: "Cancelled",
+    succeeded: "Succeeded",
+    failed: "Failed",
+  })[state] || state;
 
 export function RunStateBadge({ state }: RunStateBadgeProps) {
-  const symbol = state === "succeeded" ? "✓" : state === "failed" ? "!" : state === "cancelled" ? "■" : "●";
+  const symbol =
+    state === "succeeded"
+      ? "✓"
+      : state === "failed"
+        ? "!"
+        : state === "cancelled"
+          ? "■"
+          : "●";
   return (
     <span
       className={`rivet-run-state rivet-run-state--${state}`}

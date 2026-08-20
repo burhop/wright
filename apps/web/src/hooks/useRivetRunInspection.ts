@@ -40,7 +40,8 @@ export function useRivetRunInspection({
     setRecent(value);
     setSelectedRunId((current) => {
       if (runId) return runId;
-      if (current && value.runs.some((item) => item.run_id === current)) return current;
+      if (current && value.runs.some((item) => item.run_id === current))
+        return current;
       return (
         value.runs.find((item) => ACTIVE_STATES.has(item.state))?.run_id ||
         value.runs[0]?.run_id ||
@@ -59,7 +60,11 @@ export function useRivetRunInspection({
     }
     void refreshRecent().catch((caught) => {
       if (!cancelled) {
-        setError(caught instanceof Error ? caught.message : "Recent workflow runs are unavailable");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : "Recent workflow runs are unavailable",
+        );
       }
     });
     return () => {
@@ -84,13 +89,24 @@ export function useRivetRunInspection({
         );
         if (cancelled) return;
         failures = 0;
-        cursorRef.current = Math.max(cursorRef.current, next.progress.last_sequence);
+        cursorRef.current = Math.max(
+          cursorRef.current,
+          next.progress.last_sequence,
+        );
         setInspection((current) => {
           if (!current || current.run.run_id !== next.run.run_id) return next;
           const merged = new Map(
-            [...current.events, ...next.events].map((event) => [event.sequence, event]),
+            [...current.events, ...next.events].map((event) => [
+              event.sequence,
+              event,
+            ]),
           );
-          return { ...next, events: [...merged.values()].sort((a, b) => a.sequence - b.sequence) };
+          return {
+            ...next,
+            events: [...merged.values()].sort(
+              (a, b) => a.sequence - b.sequence,
+            ),
+          };
         });
         setError(null);
         if (ACTIVE_STATES.has(next.run.state)) {
@@ -101,7 +117,11 @@ export function useRivetRunInspection({
       } catch (caught) {
         if (cancelled) return;
         failures += 1;
-        setError(caught instanceof Error ? caught.message : "Workflow run inspection is unavailable");
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : "Workflow run inspection is unavailable",
+        );
         timer = window.setTimeout(poll, Math.min(4000, 500 * 2 ** failures));
       }
     };
@@ -113,7 +133,10 @@ export function useRivetRunInspection({
   }, [selectedRunId, sessionId, refreshRecent]);
 
   useEffect(() => {
-    if (!inspection?.run.started_at || !ACTIVE_STATES.has(inspection.run.state)) {
+    if (
+      !inspection?.run.started_at ||
+      !ACTIVE_STATES.has(inspection.run.state)
+    ) {
       setElapsedMs(inspection?.run.duration_ms || 0);
       return;
     }
@@ -122,7 +145,11 @@ export function useRivetRunInspection({
     update();
     const timer = window.setInterval(update, 250);
     return () => window.clearInterval(timer);
-  }, [inspection?.run.duration_ms, inspection?.run.started_at, inspection?.run.state]);
+  }, [
+    inspection?.run.duration_ms,
+    inspection?.run.started_at,
+    inspection?.run.state,
+  ]);
 
   const selectRun = useCallback((nextRunId: string) => {
     refreshTokenRef.current += 1;

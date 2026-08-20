@@ -27,8 +27,18 @@ def test_workspace_surface_packages_and_assets_are_declared() -> None:
     assert project["project"]["scripts"]["wright-rivet-mcp"] == (
         "workspace_service.rivet_mcp:main"
     )
-    assert (ROOT / "integrations/rivet/runner/manifest.json").is_file()
+    runner_manifest_path = ROOT / "integrations/rivet/runner/manifest.json"
+    runner_artifact = ROOT / "integrations/rivet/runner/dist/wright-runner.mjs"
+    assert runner_manifest_path.is_file()
+    assert runner_artifact.is_file()
     assert (ROOT / "integrations/rivet/runner/src/wright-runner.ts").is_file()
+    runner_manifest = json.loads(runner_manifest_path.read_text(encoding="utf-8"))
+    assert runner_manifest["entrypoint"] == "dist/wright-runner.mjs"
+    assert runner_manifest["bytes"] == runner_artifact.stat().st_size
+    assert (
+        runner_manifest["sha256"]
+        == hashlib.sha256(runner_artifact.read_bytes()).hexdigest()
+    )
     assert {
         "/integrations/rivet/editor/dist",
         "/integrations/rivet/runner/dist",
@@ -61,6 +71,12 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
             archive.read("workspace_service/_rivet/editor/manifest.json")
         )
 
+        runner_manifest = json.loads(
+            archive.read("workspace_service/_rivet/runner/manifest.json")
+        )
+        runner_artifact = archive.read(
+            "workspace_service/_rivet/runner/dist/wright-runner.mjs"
+        )
         for category in ("patches", "wrapper"):
             for entry in editor_manifest[category]:
                 content = archive.read(
@@ -68,6 +84,8 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
                 )
                 assert hashlib.sha256(content).hexdigest() == entry["sha256"]
 
+        assert runner_manifest["bytes"] == len(runner_artifact)
+        assert runner_manifest["sha256"] == hashlib.sha256(runner_artifact).hexdigest()
     required = {
         "wright/__init__.py",
         "core/surfaces/schemas/v1/display-envelope.schema.json",

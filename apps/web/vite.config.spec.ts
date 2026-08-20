@@ -60,9 +60,7 @@ describe("surface development proxy rewriting", () => {
       "rivet_session=value; Path=/editor; SameSite=Lax",
     ];
 
-    expect(extractSurfaceSessionCookie(upstream)).toBe(
-      "wright_surface=secret",
-    );
+    expect(extractSurfaceSessionCookie(upstream)).toBe("wright_surface=secret");
   });
 
   it("isolates preview cookies by tunneled surface authority", () => {

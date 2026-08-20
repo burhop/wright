@@ -207,7 +207,8 @@ export class HermesAgentService {
     { abortController: AbortController; abort: () => void }
   >();
   private activeAgentRequest: Promise<string> | null = null;
-  private modelOptionsRequest: Promise<HermesModelOptionsResponse> | null = null;
+  private modelOptionsRequest: Promise<HermesModelOptionsResponse> | null =
+    null;
   private modelOptionsCache: HermesModelOptionsResponse | null = null;
   private commandsRequest: Promise<AgentCommand[]> | null = null;
   private commandsCache: AgentCommand[] | null = null;

@@ -67,9 +67,7 @@ describe("WorkspacePage", () => {
     );
 
     render(
-      <MemoryRouter
-        initialEntries={["/workspace/unsafe-workspace"]}
-      >
+      <MemoryRouter initialEntries={["/workspace/unsafe-workspace"]}>
         <Routes>
           <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
         </Routes>
@@ -77,7 +75,9 @@ describe("WorkspacePage", () => {
     );
 
     expect(await screen.findByText("Workspace Blocked")).toBeInTheDocument();
-    expect(screen.getByText(/overlaps Wright application files/i)).toBeVisible();
+    expect(
+      screen.getByText(/overlaps Wright application files/i),
+    ).toBeVisible();
     expect(activateWorkspace).not.toHaveBeenCalled();
   });
 });

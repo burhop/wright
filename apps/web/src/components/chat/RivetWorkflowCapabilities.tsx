@@ -116,9 +116,7 @@ export function RivetWorkflowCapabilities({
   if (toolRequirements.length === 0) {
     return (
       <div data-testid="workflow-capabilities-tab">
-        <p>
-          This workflow has no MCP tool-call nodes and is ready to run.
-        </p>
+        <p>This workflow has no MCP tool-call nodes and is ready to run.</p>
         <p role="status" aria-live="polite">
           {message}
         </p>
@@ -239,7 +237,8 @@ export function RivetWorkflowCapabilities({
         Prepare tool connections
       </button>
       <p data-testid="workflow-binding-policy-summary">
-        Tool snapshot: {preview?.policy_snapshot_digest || "Prepared at run time"}
+        Tool snapshot:{" "}
+        {preview?.policy_snapshot_digest || "Prepared at run time"}
       </p>
       <p role="status" aria-live="polite">
         {message}

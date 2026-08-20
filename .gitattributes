@@ -15,6 +15,10 @@ src/wright_engineering/static/web/** -text -whitespace
 # significant trailing spaces inside generated JavaScript template literals.
 integrations/rivet/editor/dist/** -text -whitespace
 
+# The pinned Rivet runner is likewise verified byte-for-byte during packaging.
+# Its generated dependencies contain significant whitespace.
+integrations/rivet/runner/dist/** -text -whitespace
+
 # Rivet patches and Wright's editor wrapper are also covered by the pinned
 # manifest. Force their canonical LF bytes on every platform so a Windows
 # checkout and the packaged wheel verify against the same recorded digests.

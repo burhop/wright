@@ -162,7 +162,16 @@ export interface RivetRunResultItem {
   result_id: string;
   name: string;
   origin: string;
-  kind: "null" | "boolean" | "number" | "text" | "structured" | "list" | "link" | "artifact" | string;
+  kind:
+    | "null"
+    | "boolean"
+    | "number"
+    | "text"
+    | "structured"
+    | "list"
+    | "link"
+    | "artifact"
+    | string;
   value: unknown;
   preview: string;
   complete: boolean;
