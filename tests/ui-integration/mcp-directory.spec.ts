@@ -29,11 +29,11 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     await page.getByLabel("Literal executable").fill("python");
     await page.getByLabel("Literal arguments").fill("scripts/dummy.py");
 
-    // 5. Preflight is read-only and imported sources remain blocked until the
-    // independent publisher/license review is complete.
-    await page.getByRole("button", { name: "Continue" }).click();
-    await liveExpect(page.getByText("Review exact plan")).toBeVisible();
-    await liveExpect(page.getByText("Plan is blocked")).toBeVisible();
+    // 5. Preflight is read-only. Review the exact local command without
+    // registering it or requiring an irrelevant publisher acknowledgement.
+    await page.getByRole("button", { name: "Review install plan" }).click();
+    await liveExpect(page.getByText("Confirm this installation")).toBeVisible();
+    await liveExpect(page.getByText("What Wright will do")).toBeVisible();
 
     // 6. The preview did not register a server row.
     await page.getByRole("button", { name: "Close onboarding" }).click();

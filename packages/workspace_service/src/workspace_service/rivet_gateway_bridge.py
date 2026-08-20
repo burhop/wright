@@ -364,24 +364,13 @@ class RivetGatewayBridge:
             return RivetBridgeResult(
                 sanitized, binding, artifacts, redactions, call_record
             )
-        except (Exception, asyncio.CancelledError) as error:
+        # Gateway cancellation is a normal terminal control-flow state.  Do
+        # not reclassify it as an unavailable engineering application: the
+        # runner needs the cancellation to persist the run as cancelled.
+        except asyncio.CancelledError:
+            raise
+        except Exception as error:
             original_error = error
-            if isinstance(error, asyncio.CancelledError):
-                task = asyncio.current_task()
-                if task is not None and task.cancelling():
-                    raise
-                message = str(error).lower()
-                if "generation" in message or "superseded" in message:
-                    code = "RIVET_MCP_GENERATION_REPLACED"
-                    recovery = "refresh_tool_connections_and_rerun"
-                elif "transport" in message or "connection" in message:
-                    code = "RIVET_MCP_TRANSPORT_CANCELLED"
-                    recovery = "reconnect_server_and_rerun"
-                else:
-                    code = "RIVET_MCP_CALL_CANCELLED"
-                    recovery = "rerun_saved_revision"
-                error = RivetGatewayBridgeError(code, recovery)
-            assert isinstance(error, Exception)
             projected_error: Exception = error
             lifecycle_kind = str(getattr(error, "lifecycle_kind", ""))
             if lifecycle_kind == "panel":
