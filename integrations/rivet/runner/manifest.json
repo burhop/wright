@@ -14,7 +14,7 @@
   "bytes": 13511098,
   "build_input": {
     "path": "src/wright-runner.ts",
-    "sha256": "d2164e262790eb34a1bb30d43cbd34ee231eb05c4f2ca9d1f7d12ee9775478d8"
+    "sha256": "52e14089912aa610c53c0d6d17bfff93f38ad24264798ba2fff0bd238133c471"
   },
   "runtime_network_policy": "wright-bridge-only"
 }
