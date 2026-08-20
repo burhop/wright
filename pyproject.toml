@@ -70,6 +70,15 @@ wright-engineering = { workspace = true }
 wright-workspace-service = { workspace = true }
 wright-model-registry = { workspace = true }
 
+[tool.uv]
+# The packaged Rivet editor and runner are force-included from outside the
+# Python source root. Make asset changes invalidate UV's editable-install cache
+# so CI and local syncs execute the matching trusted bundle and manifest.
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "integrations/rivet/**" },
+]
+
 [tool.uv.workspace]
 members = [
     "apps/api",
