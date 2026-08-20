@@ -198,7 +198,7 @@ export async function mockWorkspaceShell(
       json: { sessions: [{ session_id: "session-1", title: "Default" }] },
     }),
   );
-  await page.route("**/api/workspace/by-id/ws-1/sessions", (route) =>
+  await page.route("**/api/workspace/by-id/ws-1/sessions*", (route) =>
     route.fulfill({
       json: { sessions: [{ session_id: "session-1", title: "Default" }] },
     }),

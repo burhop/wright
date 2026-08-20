@@ -207,11 +207,13 @@ def _remove_tree(path: Path) -> None:
         path.rglob("*"), key=lambda value: len(value.parts), reverse=True
     ):
         try:
-            item.chmod(stat.S_IWRITE | stat.S_IREAD)
+            item.chmod(
+                stat.S_IWRITE | stat.S_IREAD | (stat.S_IEXEC if item.is_dir() else 0)
+            )
         except OSError:
             pass
     try:
-        path.chmod(stat.S_IWRITE | stat.S_IREAD)
+        path.chmod(stat.S_IWRITE | stat.S_IREAD | stat.S_IEXEC)
     except OSError:
         pass
     shutil.rmtree(path)

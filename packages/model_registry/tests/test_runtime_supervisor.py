@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import stat
 
 import pytest
 
@@ -92,6 +93,7 @@ async def test_verify_load_infer_unload_and_shutdown_are_bounded_and_idempotent(
 async def test_missing_corrupt_and_unsafe_artifacts_fail_closed(tmp_path) -> None:
     _, missing_session = await opened(tmp_path)
     missing = missing_session.scratch / "artifacts" / "model" / "coefficients.json"
+    missing.parent.chmod(stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
     missing.chmod(0o600)
     missing.unlink()
     with pytest.raises(RuntimeFailure) as caught:
@@ -101,6 +103,7 @@ async def test_missing_corrupt_and_unsafe_artifacts_fail_closed(tmp_path) -> Non
 
     _, corrupt_session = await opened(tmp_path / "corrupt")
     corrupt = corrupt_session.scratch / "artifacts" / "model" / "coefficients.json"
+    corrupt.parent.chmod(stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
     corrupt.chmod(0o600)
     corrupt.write_text("{}", encoding="utf-8")
     with pytest.raises(RuntimeFailure) as caught:
