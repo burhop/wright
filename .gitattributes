@@ -7,6 +7,10 @@ docker/mcp/brep-mcp-launcher.cjs text eol=lf
 specs/053-workspace-surfaces/contracts/** text eol=lf
 packages/core/src/core/surfaces/schemas/** text eol=lf
 
+# Qualification evidence is byte-addressed by the catalog. Preserve the
+# canonical UTF-8/LF bytes used to calculate each recorded evidence digest.
+docs/mcp-catalog/evidence/** text eol=lf
+
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace

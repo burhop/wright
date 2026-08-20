@@ -56,6 +56,11 @@ uv run python -m tool_registry.windows_qualification_cli preview brep-mcp --evid
 Then supply a safety decision bound to the current recipe digest and use only a
 dedicated ignored root:
 
+Qualification evidence JSON is byte-addressed by its recorded digest. Git keeps
+these files in canonical UTF-8/LF form through `.gitattributes`; do not change
+their line endings independently of regenerating the corresponding catalog
+summary.
+
 ```powershell
 uv run python -m tool_registry.windows_qualification_cli qualify brep-mcp --evidence-dir docs/mcp-catalog/evidence/windows-qualification-2026-08-13 --work-root .local-run/windows-mcp-qualification --safety-decision .local-run/windows-mcp-qualification/decisions/brep-mcp.json
 ```
