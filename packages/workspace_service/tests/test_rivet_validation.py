@@ -59,6 +59,7 @@ def test_validation_reports_missing_main_and_selected_graph():
     assert selected.main_graph.name == "Passthrough"
     assert [port.id for port in selected.main_graph.inputs] == ["input"]
     assert [port.id for port in selected.main_graph.outputs] == ["output"]
+    assert selected.requirements == ()
 
 
 def test_validation_handles_malformed_projects_and_bounds_issues():

@@ -861,7 +861,14 @@ export function WorkspacePanel({
       const customEvent = e as CustomEvent;
       const { type, content } = customEvent.detail || {};
       if (type === "create-prompt" && content) {
-        sendMessageRef.current(content);
+        // Viewer actions belong to this workspace's bound conversation even
+        // when the global session list has not refreshed yet.
+        sendMessageRef.current(
+          content,
+          undefined,
+          false,
+          workspaceFileSessionId || undefined,
+        );
       }
     };
     container?.addEventListener("viewer-message", handleViewerMessage);

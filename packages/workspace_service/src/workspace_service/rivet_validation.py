@@ -88,6 +88,30 @@ def _node_id(serialized_id: object, node: object) -> str:
     return match.group(1) if match else str(serialized_id)
 
 
+def _referenced_graph_ids(node_type: str, node: dict[str, Any]) -> set[str]:
+    data = node.get("data")
+    if not isinstance(data, dict):
+        return set()
+
+    if node_type in {"subGraph", "loopUntil"}:
+        key = "graphId" if node_type == "subGraph" else "targetGraph"
+        target = data.get(key)
+        return {target.strip()} if isinstance(target, str) and target.strip() else set()
+
+    if node_type != "delegateFunctionCall":
+        return set()
+    handlers = data.get("handlers")
+    if not isinstance(handlers, list):
+        return set()
+    return {
+        str(handler["value"]).strip()
+        for handler in handlers
+        if isinstance(handler, dict)
+        and isinstance(handler.get("value"), str)
+        and handler["value"].strip()
+    }
+
+
 def _nodes(graph: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
     raw = graph.get("nodes")
     if isinstance(raw, dict):
@@ -212,7 +236,8 @@ def validate_rivet_project(
         )
 
     graph_summaries: list[GraphSummary] = []
-    all_node_types: set[str] = set()
+    node_types_by_graph: dict[str, set[str]] = {}
+    referenced_graphs_by_graph: dict[str, set[str]] = {}
     for serialized_graph_id, raw_graph in list(raw_graphs.items())[:_MAX_GRAPHS]:
         if not isinstance(raw_graph, dict):
             errors.append(
@@ -229,9 +254,12 @@ def validate_rivet_project(
         name = str(metadata.get("name") or graph_id)
         inputs: list[GraphPortSummary] = []
         outputs: list[GraphPortSummary] = []
+        node_types: set[str] = set()
+        referenced_graph_ids: set[str] = set()
         for serialized_node_id, node in _nodes(raw_graph):
             node_type = _node_type(serialized_node_id, node)
-            all_node_types.add(node_type)
+            node_types.add(node_type)
+            referenced_graph_ids.update(_referenced_graph_ids(node_type, node))
             port = _port(node)
             if port is None:
                 continue
@@ -247,6 +275,8 @@ def validate_rivet_project(
                 tuple(sorted(outputs, key=lambda value: value.id)),
             )
         )
+        node_types_by_graph[graph_id] = node_types
+        referenced_graphs_by_graph[graph_id] = referenced_graph_ids
 
     metadata = data.get("metadata")
     metadata = metadata if isinstance(metadata, dict) else {}
@@ -275,6 +305,26 @@ def validate_rivet_project(
             )
         )
 
+    # Runtime services are started only for the graph that will execute. We
+    # still validate every graph above, so malformed inactive graphs remain
+    # visible without making a no-AI graph depend on Hermes.
+    execution_node_types: set[str] = set()
+    if main_graph is not None:
+        reachable_graph_ids: set[str] = set()
+        pending_graph_ids = [main_graph.id]
+        while pending_graph_ids:
+            graph_id = pending_graph_ids.pop()
+            if graph_id in reachable_graph_ids:
+                continue
+            reachable_graph_ids.add(graph_id)
+            execution_node_types.update(node_types_by_graph.get(graph_id, set()))
+            pending_graph_ids.extend(
+                target
+                for target in referenced_graphs_by_graph.get(graph_id, set())
+                if target in node_types_by_graph and target not in reachable_graph_ids
+            )
+    else:
+        execution_node_types = set().union(*node_types_by_graph.values())
     return WorkflowValidationResult(
         workflow_id,
         revision,
@@ -282,7 +332,7 @@ def validate_rivet_project(
         not errors,
         main_graph,
         tuple(graph_summaries),
-        _requirements(all_node_types),
+        _requirements(execution_node_types),
         tuple(errors[:_MAX_ISSUES]),
         tuple(warnings[:_MAX_ISSUES]),
     )
