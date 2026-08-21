@@ -311,7 +311,7 @@ describe("WorkspacePanel session selection", () => {
     expect(mockEnsureDefaultRivetWorkflow).toHaveBeenCalledWith("new-session");
   });
 
-  it("maximizes the active surface and restores the agent pane", async () => {
+  it("keeps the agent pane live while maximizing the active surface", async () => {
     vi.stubEnv("VITE_WORKSPACE_SURFACES_ENABLED", "true");
     Object.defineProperty(window, "innerWidth", {
       configurable: true,
@@ -336,7 +336,7 @@ describe("WorkspacePanel session selection", () => {
       ),
     );
     expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-      display: "none",
+      display: "flex",
     });
     expect(
       screen.getByRole("button", { name: "Restore workspace layout" }),
