@@ -1,0 +1,189 @@
+{
+  "attempted_server_ids": [
+    "brep-mcp"
+  ],
+  "cleanup_events": [
+    "owned_process_check_complete",
+    "removed_disposable_server_root"
+  ],
+  "credential_binding_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "evidence_id": "brep-mcp-windows-20260814T031343Z",
+  "follow_ups": [],
+  "installed_items": [
+    "brepjs-cad@0.103.0"
+  ],
+  "limitations": [],
+  "machine_digest": "cff7b45ee81f951a43245697237f3223154d02f4f2175c7555131a7c6b8c0342",
+  "maximum_age_hours": 24,
+  "non_allowlist_actions": [],
+  "observed_at": "2026-08-14T03:13:43.976756Z",
+  "package_digest": null,
+  "package_version": "0.103.0",
+  "policy_version": "windows-allowlist-v1",
+  "protocol_version": "2025-11-25",
+  "recipe_digest": "91b5ad49a4a5b7003163da5f7322f49de94246e3634d7655a0cdba240b32204f",
+  "residual_risks": [],
+  "safety_preflight": {
+    "decision": "approved",
+    "material_concerns": [
+      "run_program executes JavaScript and may write geometry files"
+    ],
+    "reason_code": "pinned_install_protocol_and_unit_cube_probe",
+    "residual_risks": [
+      "Only the source-controlled 1 mm cube program may execute in the disposable root"
+    ],
+    "reviewed_at": "2026-08-13T22:30:00-04:00"
+  },
+  "schema_version": "1.0",
+  "server_id": "brep-mcp",
+  "server_identity": "brepjs-cad",
+  "server_version": "0.103.0",
+  "source_revision": "4c9d787842351de388e77b16444f581b2205a646",
+  "stages": [
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:13:31.013986Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "reviewed_source_identity_loaded",
+      "recovery": "",
+      "result": "passed",
+      "stage": "source_current",
+      "started_at": "2026-08-14T03:13:31.013986Z",
+      "summary": "The pinned source identity passed recipe validation."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": 6939,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "exit_code": 0,
+        "output_bytes": 26,
+        "output_truncated": false,
+        "timed_out": false
+      },
+      "operation_digest": null,
+      "output_digest": "7a9e4ee6f8997d13292fa20570135ec59e0a2e50e9d0f8050e69f43d8770a06a",
+      "reason_code": "pinned_npm_package_installed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "windows_install_passed",
+      "started_at": null,
+      "summary": "The pinned MCP package installed in the disposable root."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "protocol_version": "2025-11-25",
+        "server_identity": "brepjs-cad",
+        "server_version": "0.103.0",
+        "tool_count": 2,
+        "tool_schema_digest": "0ba5401001f4fd862561a2453ffc4a4847729590b1b13ee17cda01f30b018c0f"
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_initialized",
+      "recovery": "",
+      "result": "passed",
+      "stage": "mcp_started",
+      "started_at": null,
+      "summary": "The MCP server completed initialization."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "tool_count": 2
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_tools_listed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "protocol_passed",
+      "started_at": null,
+      "summary": "Initialization and tool discovery completed through MCP."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "safe_probe_upstream_entrypoint_defect",
+      "recovery": "Upstream must resolve its data-URL/file-URL entry-point handling; do not patch the installed third-party package during qualification.",
+      "result": "failed",
+      "stage": "safe_probe_passed",
+      "started_at": null,
+      "summary": "The approved BREP call reached an upstream entry-point defect before the deterministic geometry result was produced."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "stage_not_run",
+      "recovery": "Review prerequisites and rerun qualification.",
+      "result": "not_tested",
+      "stage": "wright_install_passed",
+      "started_at": null,
+      "summary": "This stage was not attempted."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "stage_not_run",
+      "recovery": "Review prerequisites and rerun qualification.",
+      "result": "not_tested",
+      "stage": "wright_gateway_passed",
+      "started_at": null,
+      "summary": "This stage was not attempted."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:13:41.972394Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "isolated_root_removed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "cleanup_passed",
+      "started_at": "2026-08-14T03:13:41.972394Z",
+      "summary": "Disposable server root was removed."
+    }
+  ],
+  "stale_reasons": [],
+  "terminal_classification": "failed",
+  "tool_count": 2,
+  "tool_schema_digest": "0ba5401001f4fd862561a2453ffc4a4847729590b1b13ee17cda01f30b018c0f"
+}

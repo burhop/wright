@@ -7,7 +7,8 @@ import json
 import os
 import secrets
 import sys
-from collections.abc import Mapping
+import tempfile
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -271,7 +272,12 @@ class WorkspaceWorkflowEditor:
         status, _manifest, detail = self._catalog.status()
         return status, detail
 
-    def manual_surface_manifest(self, workspace_dir: str) -> dict[str, object] | None:
+    def manual_surface_manifest(
+        self,
+        workspace_dir: str,
+        *,
+        workspace_tools: Sequence[Mapping[str, object]] = (),
+    ) -> dict[str, object] | None:
         """Provision the sole Wright-owned manual editor surface manifest."""
         availability, _detail = self.availability()
         if availability is not EditorAvailability.AVAILABLE:
@@ -358,18 +364,80 @@ class WorkspaceWorkflowEditor:
         paths = WorkspacePath(workspace_dir)
         apps_directory = paths.resolve(".wright/apps")
         apps_directory.mkdir(parents=True, exist_ok=True)
+        tool_catalog = paths.resolve(".wright/apps/rivet-editor.tools.json")
+        tool_catalog_document = {
+            "schemaVersion": 1,
+            "tools": [dict(item) for item in workspace_tools],
+        }
+        tool_catalog_encoded = (
+            json.dumps(tool_catalog_document, separators=(",", ":"), sort_keys=True)
+            + "\n"
+        )
+        if len(tool_catalog_encoded.encode("utf-8")) > 32 * 1024:
+            raise WorkflowEditorError(
+                "RIVET_EDITOR_TOOL_CATALOG_TOO_LARGE",
+                "Rivet editor workspace tool catalog exceeds its safe limit",
+            )
+        self._atomic_replace(tool_catalog, tool_catalog_encoded)
         target = paths.resolve(".wright/apps/rivet-editor.surface.json")
         encoded = json.dumps(document, indent=2, sort_keys=True) + "\n"
         try:
             with target.open("x", encoding="utf-8") as stream:
                 stream.write(encoded)
         except FileExistsError:
-            if target.read_text(encoding="utf-8") != encoded:
+            existing = target.read_text(encoding="utf-8")
+            if existing == encoded:
+                return document
+            if not self._is_refreshable_managed_manifest(existing, encoded):
                 raise WorkflowEditorError(
                     "RIVET_EDITOR_MANIFEST_CONFLICT",
                     "Rivet editor manifest conflicts with an existing workspace file",
                 ) from None
+            self._atomic_replace(target, encoded)
         return document
+
+    @staticmethod
+    def _is_refreshable_managed_manifest(existing: str, desired: str) -> bool:
+        """Recognize a prior Wright manifest whose installed runtime moved.
+
+        Native runtime updates install into a new immutable directory. The Python
+        executable, editor host, and editor asset root therefore change even when
+        the managed Rivet manifest is otherwise identical. Only those three
+        Wright-owned runtime paths may be refreshed automatically; any other
+        workspace edit remains a collision.
+        """
+        try:
+            current_document = json.loads(existing)
+            desired_document = json.loads(desired)
+            current_argv = current_document["launch"]["argv"]
+            desired_argv = desired_document["launch"]["argv"]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return False
+        if (
+            not isinstance(current_argv, list)
+            or not isinstance(desired_argv, list)
+            or len(current_argv) != len(desired_argv)
+            or len(current_argv) < 4
+        ):
+            return False
+        for index in (0, 1, 3):
+            current_argv[index] = desired_argv[index]
+        return current_document == desired_document
+
+    @staticmethod
+    def _atomic_replace(target: Path, content: str) -> None:
+        descriptor, temporary_name = tempfile.mkstemp(
+            prefix=".wright-rivet-editor-", dir=target.parent
+        )
+        temporary = Path(temporary_name)
+        try:
+            with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+                stream.write(content)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, target)
+        finally:
+            temporary.unlink(missing_ok=True)
 
     async def bootstrap(
         self, *, workspace_id: str, session_id: str, workspace_dir: str, slug: str

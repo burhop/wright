@@ -7,6 +7,10 @@ docker/mcp/brep-mcp-launcher.cjs text eol=lf
 specs/053-workspace-surfaces/contracts/** text eol=lf
 packages/core/src/core/surfaces/schemas/** text eol=lf
 
+# Qualification evidence is byte-addressed by the catalog. Preserve the
+# canonical UTF-8/LF bytes used to calculate each recorded evidence digest.
+docs/mcp-catalog/evidence/** text eol=lf
+
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace
@@ -15,9 +19,14 @@ src/wright_engineering/static/web/** -text -whitespace
 # significant trailing spaces inside generated JavaScript template literals.
 integrations/rivet/editor/dist/** -text -whitespace
 
+# The pinned Rivet runner is likewise verified byte-for-byte during packaging.
+# Its generated dependencies contain significant whitespace.
+integrations/rivet/runner/dist/** -text -whitespace
+
 # Rivet patches and Wright's editor wrapper are also covered by the pinned
 # manifest. Force their canonical LF bytes on every platform so a Windows
 # checkout and the packaged wheel verify against the same recorded digests.
-integrations/rivet/editor/patches/** text eol=lf
+# Unified-diff blank context lines intentionally contain one leading space.
+integrations/rivet/editor/patches/** text eol=lf -whitespace
 integrations/rivet/editor/wrapper/** text eol=lf
 integrations/rivet/runner/src/** text eol=lf

@@ -14,7 +14,7 @@ from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
 from data_vault import (
     WorkflowRunEventRecord,
@@ -30,9 +30,19 @@ from core.workflow_runs import (
     WorkflowRunnerUnavailable,
     WorkflowRunState,
 )
+from core.rivet_mcp import (
+    ArtifactReference,
+    ProviderEvidence,
+    RunManifestDraft,
+    WorkflowBindingSet,
+)
 
 from .surfaces.process_supervisor import ProcessSupervisor, ProcessSupervisorError
+from .rivet_approvals import RivetApprovalService
+from .rivet_authority import AuthorityClaims, RivetRunAuthorityService
+from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import validate_rivet_project
+from .rivet_evidence import project_output_summary
 from .workflows import WorkspaceWorkflowStore
 
 if TYPE_CHECKING:
@@ -113,6 +123,63 @@ class RunnerArtifactManifest:
     entrypoint: Path
     sha256: str
     bytes: int
+    source_revision: str
+
+
+@dataclass(frozen=True, slots=True)
+class RivetMcpRuntimeGrant:
+    authority_id: str
+    bridge_base_url: str
+    token: str
+    expires_at: datetime
+    binding_set_digest: str
+    discovery_handle: str
+    bindings: tuple[dict[str, str], ...]
+
+
+class RivetRunnerBridgePort(Protocol):
+    async def ensure_started(self) -> str: ...
+
+    async def close(self) -> None: ...
+
+    async def cancel_authority(
+        self, authority_id: str, *, reason: str, timeout_seconds: float
+    ) -> tuple[int, bool]: ...
+
+
+class RivetManifestRepositoryPort(Protocol):
+    def get_binding_set_by_digest(
+        self, binding_set_digest: str
+    ) -> WorkflowBindingSet | None: ...
+
+    def create_manifest_draft(
+        self, manifest_id: str, draft: RunManifestDraft
+    ) -> None: ...
+
+    def set_manifest_state(self, manifest_id: str, state: str) -> None: ...
+
+    def set_manifest_cancellation(
+        self, manifest_id: str, draft: RunManifestDraft
+    ) -> None: ...
+
+    def finalize_manifest(self, manifest_id: str, manifest) -> None: ...
+
+    def get_manifest_document(self, run_id: str) -> dict[str, Any] | None: ...
+
+    def run_evidence_documents(
+        self, run_id: str
+    ) -> tuple[tuple[dict[str, Any], ...], tuple[dict[str, Any], ...]]: ...
+
+    def finalize_orphaned_manifests(
+        self, *, reason_code: str = "runner_restarted"
+    ) -> int: ...
+
+
+@dataclass(slots=True)
+class _RivetMcpRunContext:
+    manifest_id: str
+    draft: RunManifestDraft
+    grant: RivetMcpRuntimeGrant
 
 
 class RunnerAssetCatalog:
@@ -165,7 +232,7 @@ class RunnerAssetCatalog:
             ):
                 raise ValueError("Unsupported runner manifest")
             if (
-                raw.get("protocol_version") != 1
+                raw.get("protocol_version") != 2
                 or raw.get("rivet_version") != self._RIVET_VERSION
             ):
                 raise ValueError("Unexpected runner version")
@@ -186,12 +253,13 @@ class RunnerAssetCatalog:
             if entrypoint is None or build_input is None:
                 raise ValueError("Unconfined runner path")
             manifest = RunnerArtifactManifest(
-                protocol_version=1,
+                protocol_version=2,
                 rivet_version=self._RIVET_VERSION,
                 package_version=self._PACKAGE_VERSION,
                 entrypoint=entrypoint,
                 sha256=str(raw["sha256"]),
                 bytes=int(raw["bytes"]),
+                source_revision=str(source["revision"]),
             )
             expected_input = str(build_input_entry["sha256"])
         except (OSError, KeyError, TypeError, ValueError):
@@ -256,6 +324,31 @@ class WorkspaceWorkflowRunner:
         self._events: dict[str, list[WorkflowRunEvent]] = {}
         self._next_sequence: dict[str, int] = {}
         self._tasks: dict[str, asyncio.Task[None]] = {}
+        self._mcp_repository: RivetManifestRepositoryPort | None = None
+        self._mcp_authorities: RivetRunAuthorityService | None = None
+        self._mcp_approvals: RivetApprovalService | None = None
+        self._mcp_bridge: RivetRunnerBridgePort | None = None
+        self._mcp_session_resolver: Callable[[str, str], str] | None = None
+        self._mcp_settings = RivetMcpGatewaySettings()
+        self._mcp_runs: dict[str, _RivetMcpRunContext] = {}
+
+    def configure_mcp(
+        self,
+        *,
+        repository: RivetManifestRepositoryPort,
+        authorities: RivetRunAuthorityService,
+        approvals: RivetApprovalService,
+        bridge: RivetRunnerBridgePort,
+        session_resolver: Callable[[str, str], str],
+        settings: RivetMcpGatewaySettings,
+    ) -> None:
+        self._mcp_repository = repository
+        self._mcp_authorities = authorities
+        self._mcp_approvals = approvals
+        self._mcp_bridge = bridge
+        self._mcp_session_resolver = session_resolver
+        self._mcp_settings = settings
+        repository.finalize_orphaned_manifests(reason_code="runner_restarted")
 
     def status(self) -> RunnerStatus:
         if not self._settings.enabled:
@@ -306,6 +399,261 @@ class WorkspaceWorkflowRunner:
                 )
             )
 
+    async def _prepare_mcp_run(
+        self,
+        *,
+        run: WorkflowRun,
+        document,
+        graph_id: str,
+        public_session_id: str,
+        review_digest: str | None,
+        binding_set_digest: str | None,
+        timeout_seconds: float | None,
+    ) -> RivetMcpRuntimeGrant:
+        if (
+            not self._mcp_settings.enabled
+            or self._mcp_repository is None
+            or self._mcp_authorities is None
+            or self._mcp_approvals is None
+            or self._mcp_bridge is None
+            or self._mcp_session_resolver is None
+            or not review_digest
+            or not binding_set_digest
+        ):
+            raise WorkflowRunnerError(
+                "RIVET_MCP_GATEWAY_DISABLED",
+                "The Rivet MCP execution boundary is unavailable",
+            )
+        binding_set = self._mcp_repository.get_binding_set_by_digest(binding_set_digest)
+        if binding_set is None or (
+            binding_set.workspace_id,
+            binding_set.workflow_id,
+            binding_set.workflow_revision,
+            binding_set.workflow_digest,
+            binding_set.graph_id,
+        ) != (
+            run.workspace_id,
+            document.workflow_id,
+            document.revision,
+            document.digest,
+            graph_id,
+        ):
+            raise WorkflowRunnerError(
+                "RIVET_BINDING_STALE", "The MCP tool connection is stale"
+            )
+        audience = await self._mcp_bridge.ensure_started()
+        now = datetime.now(UTC)
+        lifetime = min(
+            float(timeout_seconds or self._settings.run_timeout_seconds),
+            self._settings.run_timeout_seconds,
+        )
+        gateway_session_id = self._mcp_session_resolver(
+            public_session_id, run.workspace_id
+        )
+        issued = self._mcp_authorities.mint(
+            AuthorityClaims(
+                run_id=run.run_id,
+                generation=run.generation,
+                workspace_id=run.workspace_id,
+                session_id=gateway_session_id,
+                workflow_id=document.workflow_id,
+                workflow_revision=document.revision,
+                workflow_digest=document.digest,
+                graph_id=graph_id,
+                review_digest=review_digest,
+                binding_set_digest=binding_set.binding_set_digest,
+                audience=audience,
+                node_bindings={
+                    binding.node_handle: binding.binding_digest
+                    for binding in binding_set.bindings
+                },
+                issued_at=now,
+                expires_at=now
+                + timedelta(
+                    seconds=lifetime + self._mcp_settings.authority_grace_seconds
+                ),
+            )
+        )
+        grant = RivetMcpRuntimeGrant(
+            authority_id=issued.authority_id,
+            bridge_base_url=audience,
+            token=issued.token,
+            expires_at=issued.claims.expires_at,
+            binding_set_digest=binding_set.binding_set_digest,
+            discovery_handle="wright-workspace",
+            bindings=tuple(
+                {
+                    "nodeId": binding.node_id,
+                    "handle": binding.node_handle,
+                    "qualifiedToolName": binding.qualified_tool_name,
+                    "bindingDigest": binding.binding_digest,
+                }
+                for binding in binding_set.bindings
+            ),
+        )
+        availability, runner_manifest, _detail = self._artifact_catalog.status()
+        if availability is not RunnerAvailability.AVAILABLE or runner_manifest is None:
+            raise WorkflowRunnerError(
+                "RIVET_RUNNER_UNAVAILABLE",
+                "The verified Rivet runtime is unavailable",
+            )
+        manifest_id = f"manifest-{run.run_id}"
+        manifest_schema_version = (
+            2
+            if binding_set.bindings
+            and all(binding.provider is not None for binding in binding_set.bindings)
+            else 1
+        )
+        draft = RunManifestDraft(
+            run_id=run.run_id,
+            generation=run.generation,
+            workspace_id=run.workspace_id,
+            session_id=public_session_id,
+            workflow_id=document.workflow_id,
+            workflow_revision=document.revision,
+            workflow_digest=document.digest,
+            graph_id=graph_id,
+            review_digest=review_digest,
+            binding_set_digest=binding_set.binding_set_digest,
+            policy_snapshot_digest=binding_set.policy_snapshot_digest,
+            authority_id=issued.authority_id,
+            authority_digest=issued.token_digest,
+            started_at=now,
+            trace_id=uuid.uuid4().hex,
+            runtime_identity={
+                "protocol_version": runner_manifest.protocol_version,
+                "rivet_version": runner_manifest.rivet_version,
+                "package_version": runner_manifest.package_version,
+                "runner_sha256": runner_manifest.sha256,
+                "source_revision": runner_manifest.source_revision,
+            },
+            authority_expires_at=issued.claims.expires_at,
+            bindings=tuple(
+                {
+                    "node_id": binding.node_id,
+                    "qualified_tool_name": binding.qualified_tool_name,
+                    "server_revision": binding.server_revision,
+                    "schema_digest": binding.schema_digest,
+                    "validation_evidence_id": binding.validation_evidence_id,
+                    "binding_digest": binding.binding_digest,
+                    **(
+                        {"provider": binding.provider.canonical()}
+                        if manifest_schema_version == 2 and binding.provider is not None
+                        else {}
+                    ),
+                }
+                for binding in binding_set.bindings
+            ),
+            schema_version=manifest_schema_version,
+        )
+        try:
+            self._mcp_repository.create_manifest_draft(manifest_id, draft)
+            self._mcp_repository.set_manifest_state(manifest_id, "running")
+        except Exception:
+            self._mcp_authorities.revoke(
+                issued.authority_id, reason="manifest_prepare_failed"
+            )
+            raise
+        self._mcp_runs[run.run_id] = _RivetMcpRunContext(manifest_id, draft, grant)
+        return grant
+
+    def _finalize_mcp_run(
+        self,
+        run_id: str,
+        *,
+        terminal_state: str,
+        reason_code: str | None,
+    ) -> None:
+        context = self._mcp_runs.pop(run_id, None)
+        if context is None or self._mcp_repository is None:
+            return
+        child_documents, approval_documents = (
+            self._mcp_repository.run_evidence_documents(run_id)
+        )
+        context.draft.child_call_ids.extend(
+            str(item["call_id"]) for item in child_documents[:1000]
+        )
+        context.draft.approval_ids.extend(
+            str(item["approval_id"]) for item in approval_documents[:1000]
+        )
+        if len(child_documents) > 1000 or len(approval_documents) > 1000:
+            context.draft.event_truncated = True
+        context.draft.redaction_count += sum(
+            max(0, int(item.get("redaction_count") or 0)) for item in child_documents
+        )
+        if context.draft.schema_version == 2:
+            providers = {
+                str(item["binding_digest"]): ProviderEvidence.parse(item["provider"])
+                for item in context.draft.bindings
+            }
+            terminal_states = {
+                "succeeded": "succeeded",
+                "cancelled": "cancelled",
+            }
+            context.draft.child_calls = tuple(
+                {
+                    "call_id": str(child["call_id"]),
+                    "node_id": str(child["node_id"]),
+                    "qualified_tool_name": str(child["qualified_tool_name"]),
+                    "binding_digest": str(child["binding_digest"]),
+                    "provider_evidence_digest": providers[
+                        str(child["binding_digest"])
+                    ].provider_evidence_digest,
+                    "terminal_state": terminal_states.get(
+                        str(child.get("state")), "failed"
+                    ),
+                    **(
+                        {"input_digest": str(child["argument_digest"])}
+                        if child.get("argument_digest")
+                        else {}
+                    ),
+                }
+                for child in child_documents[:1000]
+                if str(child.get("binding_digest")) in providers
+            )
+        artifacts: list[ArtifactReference] = []
+        seen_artifacts: set[str] = set()
+        for child in child_documents:
+            for value in child.get("artifacts") or ():
+                if not isinstance(value, dict):
+                    continue
+                try:
+                    artifact = ArtifactReference(**value)
+                except (TypeError, ValueError):
+                    continue
+                if artifact.artifact_id not in seen_artifacts:
+                    artifacts.append(artifact)
+                    seen_artifacts.add(artifact.artifact_id)
+        manifest = context.draft.finalize(
+            terminal_state=terminal_state,
+            completed_at=datetime.now(UTC),
+            reason_code=reason_code,
+            artifacts=artifacts[:1000],
+        )
+        self._mcp_repository.finalize_manifest(context.manifest_id, manifest)
+        if self._mcp_authorities is not None:
+            self._mcp_authorities.terminal(
+                context.grant.authority_id, reason=reason_code or terminal_state
+            )
+
+    def manifest(self, run_id: str) -> dict[str, Any] | None:
+        self.get(run_id)
+        if self._mcp_repository is None:
+            return None
+        return self._mcp_repository.get_manifest_document(run_id)
+
+    def runtime_identity(self) -> dict[str, Any] | None:
+        availability, manifest, _detail = self._artifact_catalog.status()
+        if availability is not RunnerAvailability.AVAILABLE or manifest is None:
+            return None
+        return {
+            "protocol_version": manifest.protocol_version,
+            "rivet_version": manifest.rivet_version,
+            "package_version": manifest.package_version,
+            "runner_sha256": manifest.sha256,
+            "source_revision": manifest.source_revision,
+        }
+
     async def start(
         self,
         *,
@@ -316,6 +664,8 @@ class WorkspaceWorkflowRunner:
         expected_generation: int | None = None,
         expected_revision: int | None = None,
         expected_digest: str | None = None,
+        expected_review_digest: str | None = None,
+        binding_set_digest: str | None = None,
         graph: str | None = None,
         inputs: Mapping[str, Any] | None = None,
         context: Mapping[str, Any] | None = None,
@@ -385,6 +735,7 @@ class WorkspaceWorkflowRunner:
                     "RIVET_WORKFLOW_INVALID", "Workflow is not executable"
                 )
             selected_graph = graph or validation.main_graph.name
+            selected_graph_id = validation.main_graph.id
             if self._run_repository is not None:
                 self._run_repository.create(
                     WorkflowRunRecord(
@@ -402,8 +753,31 @@ class WorkspaceWorkflowRunner:
                         reason_code=None,
                         output_summary=None,
                         output_truncated=False,
+                        trace_id=uuid.uuid4().hex,
                     )
                 )
+            mcp_grant: RivetMcpRuntimeGrant | None = None
+            if "mcp" in validation.requirements:
+                try:
+                    mcp_grant = await self._prepare_mcp_run(
+                        run=run,
+                        document=document,
+                        graph_id=selected_graph_id,
+                        public_session_id=session_id,
+                        review_digest=expected_review_digest,
+                        binding_set_digest=binding_set_digest,
+                        timeout_seconds=timeout_seconds,
+                    )
+                except Exception:
+                    self._runs.pop(run_id, None)
+                    if self._run_repository is not None:
+                        self._run_repository.transition(
+                            run_id,
+                            "failed",
+                            completed_at=int(time.time()),
+                            reason_code="RIVET_MCP_GRANT_REQUIRED",
+                        )
+                    raise
         self._append_event(
             run_id, "queued", revision=document.revision, digest=document.digest
         )
@@ -422,6 +796,7 @@ class WorkspaceWorkflowRunner:
                     inputs=inputs or {},
                     context=context or {},
                     requirements=validation.requirements,
+                    mcp_grant=mcp_grant,
                     timeout_seconds=timeout_seconds,
                     progress_callback=progress_callback,
                 ),
@@ -473,6 +848,7 @@ class WorkspaceWorkflowRunner:
         inputs: Mapping[str, Any],
         context: Mapping[str, Any],
         requirements: tuple[str, ...],
+        mcp_grant: RivetMcpRuntimeGrant | None,
         timeout_seconds: float | None,
         progress_callback: ProgressCallback | None,
     ) -> None:
@@ -503,12 +879,23 @@ class WorkspaceWorkflowRunner:
                 inputs=inputs,
                 context=context,
                 requirements=requirements,
+                mcp_grant=mcp_grant,
                 timeout_seconds=timeout_seconds,
                 progress_callback=progress,
                 generation=run.generation,
             )
             state = WorkflowRunState(result.state)
             reason = result.error["code"] if result.error else None
+            mcp_context = self._mcp_runs.get(run.run_id)
+            if mcp_context is not None and reason in {
+                "RIVET_MCP_PANEL_UNAVAILABLE",
+                "RIVET_MCP_HOST_BRIDGE_UNAVAILABLE",
+            }:
+                mcp_context.draft.recovery_code = (
+                    "reopen_panel_and_inspect"
+                    if reason == "RIVET_MCP_PANEL_UNAVAILABLE"
+                    else "inspect_host_application"
+                )
             updated = replace(
                 self._runs[run.run_id],
                 state=state,
@@ -516,10 +903,11 @@ class WorkspaceWorkflowRunner:
                 reason=reason,
             )
             self._runs[run.run_id] = updated
-            output = {
-                "outputs": result.outputs or {},
-                "durationMs": result.duration_ms,
-            }
+            output, output_truncated = project_output_summary(
+                result.outputs or {},
+                duration_ms=result.duration_ms,
+                maximum_bytes=self._settings.captured_output_bytes,
+            )
             if self._run_repository is not None:
                 self._run_repository.transition(
                     run.run_id,
@@ -527,6 +915,7 @@ class WorkspaceWorkflowRunner:
                     completed_at=int(time.time()),
                     reason_code=reason,
                     output_summary=output,
+                    output_truncated=output_truncated,
                 )
             self._append_event(
                 run.run_id,
@@ -536,13 +925,21 @@ class WorkspaceWorkflowRunner:
             )
         except asyncio.CancelledError:
             current = self._runs.get(run.run_id, run)
+            mcp_context = self._mcp_runs.get(run.run_id)
+            cancellation_reason = (
+                "RIVET_MCP_RESIDUE_POSSIBLE"
+                if mcp_context is not None and mcp_context.draft.residue_possible
+                else "cancelled"
+            )
             if current.state not in {
                 WorkflowRunState.CANCELLED,
                 WorkflowRunState.SUCCEEDED,
                 WorkflowRunState.FAILED,
             }:
                 self._runs[run.run_id] = replace(
-                    current, state=WorkflowRunState.CANCELLED, reason="cancelled"
+                    current,
+                    state=WorkflowRunState.CANCELLED,
+                    reason=cancellation_reason,
                 )
                 if self._run_repository is not None:
                     record = self._run_repository.get(run.run_id)
@@ -554,9 +951,23 @@ class WorkspaceWorkflowRunner:
                             run.run_id,
                             "cancelled",
                             completed_at=int(time.time()),
-                            reason_code="cancelled",
+                            reason_code=cancellation_reason,
                         )
-                self._append_event(run.run_id, "cancelled", code="cancelled")
+                self._append_event(
+                    run.run_id,
+                    "cancelled",
+                    code=cancellation_reason,
+                    cancellation_acknowledged=(
+                        mcp_context.draft.cancellation_acknowledged
+                        if mcp_context is not None
+                        else None
+                    ),
+                    residue_possible=(
+                        mcp_context.draft.residue_possible
+                        if mcp_context is not None
+                        else False
+                    ),
+                )
             raise
         except RivetRuntimeError as error:
             self._runs[run.run_id] = replace(
@@ -573,15 +984,42 @@ class WorkspaceWorkflowRunner:
                 )
             self._append_event(run.run_id, "failed", code=error.code)
         finally:
+            current = self._runs.get(run.run_id)
+            if current is not None and current.state in {
+                WorkflowRunState.CANCELLED,
+                WorkflowRunState.SUCCEEDED,
+                WorkflowRunState.FAILED,
+            }:
+                self._finalize_mcp_run(
+                    run.run_id,
+                    terminal_state=current.state.value,
+                    reason_code=current.reason,
+                )
             self._tasks.pop(run.run_id, None)
 
     def get(self, run_id: str) -> WorkflowRun:
         try:
             run = self._runs[run_id]
         except KeyError as error:
-            raise WorkflowRunnerError(
-                "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
-            ) from error
+            record = self._run_repository.get(run_id) if self._run_repository else None
+            if record is None:
+                raise WorkflowRunnerError(
+                    "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
+                ) from error
+            run = WorkflowRun(
+                run_id=record.run_id,
+                workspace_id=record.workspace_id,
+                session_id=record.session_id,
+                workflow_id=record.workflow_id,
+                revision=record.revision,
+                generation=record.generation,
+                state=WorkflowRunState(record.state),
+                reason=record.reason_code,
+            )
+            self._runs[run_id] = run
+            persisted = self._run_repository.events(run_id, limit=256)
+            if persisted:
+                self._next_sequence[run_id] = persisted[-1].sequence
         if (
             not self._settings.real_execution_enabled
             and run.runtime_id
@@ -613,6 +1051,28 @@ class WorkspaceWorkflowRunner:
         self.get(run_id)
         return self._run_repository.get(run_id) if self._run_repository else None
 
+    def recent_records(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        workflow_id: str,
+        limit: int = 20,
+    ) -> tuple[WorkflowRunRecord, ...]:
+        if self._run_repository is None:
+            return ()
+        return self._run_repository.recent(
+            workspace_id=workspace_id,
+            session_id=session_id,
+            workflow_id=workflow_id,
+            limit=limit,
+        )
+
+    def latest_sequence(self, run_id: str) -> int:
+        if self._run_repository is not None:
+            return self._run_repository.latest_sequence(run_id)
+        return self._next_sequence.get(run_id, 0)
+
     async def cancel(self, run_id: str, *, generation: int) -> WorkflowRun:
         run = self.get(run_id)
         if run.generation != generation:
@@ -627,6 +1087,33 @@ class WorkspaceWorkflowRunner:
             return run
         if self._settings.real_execution_enabled:
             self._runs[run_id] = replace(run, state=WorkflowRunState.CANCELLING)
+            mcp_context = self._mcp_runs.get(run_id)
+            if mcp_context is not None:
+                if self._mcp_authorities is not None:
+                    self._mcp_authorities.revoke(
+                        mcp_context.grant.authority_id, reason="run_cancelled"
+                    )
+                if self._mcp_approvals is not None:
+                    self._mcp_approvals.cancel_run(run_id)
+                issued = 0
+                acknowledged = True
+                if self._mcp_bridge is not None:
+                    issued, acknowledged = await self._mcp_bridge.cancel_authority(
+                        mcp_context.grant.authority_id,
+                        reason="run_cancelled",
+                        timeout_seconds=self._settings.cancellation_seconds,
+                    )
+                mcp_context.draft.cancellation_acknowledged = acknowledged
+                mcp_context.draft.residue_possible = bool(issued and not acknowledged)
+                mcp_context.draft.recovery_code = (
+                    "RIVET_MCP_RESIDUE_POSSIBLE"
+                    if mcp_context.draft.residue_possible
+                    else "RIVET_MCP_CANCELLED_CLEAN"
+                )
+                if self._mcp_repository is not None:
+                    self._mcp_repository.set_manifest_cancellation(
+                        mcp_context.manifest_id, mcp_context.draft
+                    )
             if self._run_repository is not None:
                 record = self._run_repository.get(run_id)
                 if record and record.state == "running":
@@ -639,7 +1126,14 @@ class WorkspaceWorkflowRunner:
             current = self._runs[run_id]
             if current.state is WorkflowRunState.CANCELLING:
                 current = replace(
-                    current, state=WorkflowRunState.CANCELLED, reason="cancelled"
+                    current,
+                    state=WorkflowRunState.CANCELLED,
+                    reason=(
+                        "RIVET_MCP_RESIDUE_POSSIBLE"
+                        if mcp_context is not None
+                        and mcp_context.draft.residue_possible
+                        else "cancelled"
+                    ),
                 )
                 self._runs[run_id] = current
                 if self._run_repository is not None:
@@ -649,9 +1143,23 @@ class WorkspaceWorkflowRunner:
                             run_id,
                             "cancelled",
                             completed_at=int(time.time()),
-                            reason_code="cancelled",
+                            reason_code=current.reason,
                         )
-                self._append_event(run_id, "cancelled", code="cancelled")
+                self._append_event(
+                    run_id,
+                    "cancelled",
+                    code=current.reason,
+                    cancellation_acknowledged=(
+                        mcp_context.draft.cancellation_acknowledged
+                        if mcp_context is not None
+                        else None
+                    ),
+                    residue_possible=(
+                        mcp_context.draft.residue_possible
+                        if mcp_context is not None
+                        else False
+                    ),
+                )
             return current
         if not run.runtime_id:
             updated = replace(
@@ -689,6 +1197,19 @@ class WorkspaceWorkflowRunner:
         self, run_id: str, *, after_sequence: int = 0
     ) -> tuple[WorkflowRunEvent, ...]:
         self.get(run_id)
+        if self._run_repository is not None:
+            return tuple(
+                WorkflowRunEvent(
+                    event.run_id,
+                    event.sequence,
+                    event.kind,
+                    event.payload,
+                    event.occurred_at,
+                )
+                for event in self._run_repository.events(
+                    run_id, after_sequence=after_sequence, limit=256
+                )
+            )
         return tuple(
             event
             for event in self._events.get(run_id, ())
@@ -697,6 +1218,19 @@ class WorkspaceWorkflowRunner:
 
     async def reconcile(self) -> tuple[WorkflowRun, ...]:
         self._generation += 1
+        for run_id, context in tuple(self._mcp_runs.items()):
+            if self._mcp_authorities is not None:
+                self._mcp_authorities.revoke(
+                    context.grant.authority_id, reason="runner_restarted"
+                )
+            if self._mcp_approvals is not None:
+                self._mcp_approvals.cancel_run(run_id)
+            if self._mcp_bridge is not None:
+                await self._mcp_bridge.cancel_authority(
+                    context.grant.authority_id,
+                    reason="runner_restarted",
+                    timeout_seconds=self._settings.cancellation_seconds,
+                )
         tasks = tuple(self._tasks.values())
         for task in tasks:
             task.cancel()
@@ -729,4 +1263,7 @@ class WorkspaceWorkflowRunner:
                     await self.cancel(run.run_id, generation=run.generation)
                 except WorkflowRunnerError:
                     continue
-        return await self.reconcile()
+        result = await self.reconcile()
+        if self._mcp_bridge is not None:
+            await self._mcp_bridge.close()
+        return result

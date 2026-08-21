@@ -5,12 +5,12 @@ import { describe, expect, it, vi } from "vitest";
 import { WorkspaceActivityBar } from "./WorkspaceActivityBar";
 
 describe("WorkspaceActivityBar", () => {
-  it("places BREP third and opens its Wright panel", async () => {
+  it("opens BREP without selecting a sidebar", async () => {
     const user = userEvent.setup();
     const onOpenBrepPanel = vi.fn();
     const onSelectSidebar = vi.fn();
 
-    const { container } = render(
+    render(
       <WorkspaceActivityBar
         activeSidebar="files"
         isSidebarCollapsed={false}
@@ -22,23 +22,29 @@ describe("WorkspaceActivityBar", () => {
       />,
     );
 
-    expect(
-      Array.from(container.querySelectorAll("button.activity-bar-icon"))
-        .slice(1)
-        .map((button) => button.getAttribute("data-testid")),
-    ).toEqual([
-      "activity-bar-explorer-btn",
-      "activity-bar-workflows-btn",
-      "activity-bar-brep-btn",
-      "activity-bar-mcp-btn",
-      "activity-bar-git-btn",
-      "activity-bar-settings-btn",
-      "activity-bar-docs-btn",
-    ]);
-
     await user.click(screen.getByTestId("activity-bar-brep-btn"));
 
     expect(onOpenBrepPanel).toHaveBeenCalledOnce();
+    expect(onSelectSidebar).not.toHaveBeenCalled();
+  });
+
+  it("opens Rivet without selecting a sidebar", async () => {
+    const user = userEvent.setup();
+    const onOpenRivetEditor = vi.fn();
+    const onSelectSidebar = vi.fn();
+    render(
+      <WorkspaceActivityBar
+        activeSidebar="files"
+        isSidebarCollapsed={false}
+        onBack={vi.fn()}
+        onSelectSidebar={onSelectSidebar}
+        onOpenRivetEditor={onOpenRivetEditor}
+        onOpenBrepPanel={vi.fn()}
+        workflowsEnabled
+      />,
+    );
+    await user.click(screen.getByTestId("activity-bar-workflows-btn"));
+    expect(onOpenRivetEditor).toHaveBeenCalledOnce();
     expect(onSelectSidebar).not.toHaveBeenCalled();
   });
 });

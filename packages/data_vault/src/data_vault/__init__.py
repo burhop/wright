@@ -2,6 +2,8 @@
 
 from .backup import create_backup, restore_backup
 from .migrations import MIGRATIONS, database_status, upgrade_database
+from .model_repository import ModelRepository as ModelRepository
+from .model_artifact_store import ModelArtifactStore as ModelArtifactStore
 from .models import (
     BackupResult,
     DatabaseLifecycleError,
@@ -18,6 +20,8 @@ from .workflow_runs import (
     WorkflowRunRecord,
     WorkflowRunRepository,
 )
+from .rivet_mcp_repository import RivetMcpRepository
+from .engineering_scenario_repository import EngineeringScenarioRepository
 from .gateway_repository import GatewayBindingError, GatewayRepository
 from .file_vault import FileVault, StoredVaultFile, VaultPathError
 from .surface_repository import (
@@ -63,8 +67,12 @@ __all__ = [
     "WorkflowRunEventRecord",
     "WorkflowRunRecord",
     "WorkflowRunRepository",
+    "RivetMcpRepository",
+    "EngineeringScenarioRepository",
     "GatewayBindingError",
     "GatewayRepository",
+    "ModelArtifactStore",
+    "ModelRepository",
     "FileVault",
     "StoredVaultFile",
     "VaultPathError",

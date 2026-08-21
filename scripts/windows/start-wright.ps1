@@ -95,12 +95,18 @@ if (-not $SkipDocker) {
 # The workstation runs Wright's complete local feature profile. These flags
 # expose the routes and lifecycle controller; they do not eagerly launch the
 # Rivet editor or its runner.
+if ([string]::IsNullOrWhiteSpace($env:WRIGHT_AUTH_MODE)) {
+    # This launcher binds only to loopback, so the normal local UI does not
+    # require a Docker-style access token. Explicit enforced mode is preserved.
+    $env:WRIGHT_AUTH_MODE = "compat"
+}
 $env:WRIGHT_RIVET_WORKFLOWS_ENABLED = "1"
 $env:WRIGHT_RIVET_EDITOR_ENABLED = "1"
 $env:WRIGHT_RIVET_AI_ENABLED = "1"
 $env:WRIGHT_RIVET_RUNNER_ENABLED = "1"
 $env:WRIGHT_RIVET_REAL_EXECUTION_ENABLED = "1"
 $env:WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED = "1"
+$env:WRIGHT_RIVET_MCP_GATEWAY_ENABLED = "1"
 $env:WRIGHT_SURFACES_ENABLED = "1"
 $env:WRIGHT_SURFACES_LIVE_APPS_ENABLED = "1"
 

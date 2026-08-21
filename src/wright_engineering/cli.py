@@ -60,6 +60,20 @@ def main(argv: list[str] | None = None) -> int:
     serve.add_argument("--session-id", default="wright-engineering")
     serve.add_argument("--workspace-id", default="wright-engineering")
     serve.add_argument("--token-env", default="WRIGHT_API_TOKEN")
+    models = subcommands.add_parser(
+        "models", help="Validate engineering-model extension contracts locally."
+    )
+    model_subcommands = models.add_subparsers(dest="models_command", required=True)
+    validate_catalog = model_subcommands.add_parser(
+        "validate-catalog",
+        help="Statically validate one model package manifest without acquiring bytes.",
+    )
+    validate_catalog.add_argument("manifest", type=Path)
+    validate_adapter = model_subcommands.add_parser(
+        "validate-adapter",
+        help="Statically validate one adapter declaration without starting it.",
+    )
+    validate_adapter.add_argument("descriptor", type=Path)
     native = subcommands.add_parser(
         "native", help="Operate the manager-neutral native Wright runtime."
     )
@@ -123,6 +137,19 @@ def main(argv: list[str] | None = None) -> int:
             workspace_id=args.workspace_id,
             token_env=args.token_env,
         )
+    if args.command == "models":
+        from model_registry.conformance import (
+            validate_adapter_file,
+            validate_package_file,
+        )
+
+        report = (
+            validate_package_file(args.manifest)
+            if args.models_command == "validate-catalog"
+            else validate_adapter_file(args.descriptor)
+        )
+        print(json.dumps(report.projection(), sort_keys=True))
+        return 0 if report.passed else 1
     if args.command == "native":
         from .runtime.lifecycle import NativeLifecycle
 

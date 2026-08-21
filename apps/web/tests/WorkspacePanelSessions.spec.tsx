@@ -20,6 +20,7 @@ const mockGetWorkspaceFiles = vi.fn();
 const mockGetWorkspaceTools = vi.fn();
 const mockGetWorkspaceToolsById = vi.fn();
 const mockListHermesModels = vi.fn();
+const mockEnsureDefaultRivetWorkflow = vi.fn();
 
 vi.mock("../src/store/sessions", () => ({
   useChat: () => mockUseChat(),
@@ -70,6 +71,9 @@ vi.mock("../src/services/workspace-service", () => ({
     getWorkspaceTools: (...args: unknown[]) => mockGetWorkspaceTools(...args),
     getWorkspaceToolsById: (...args: unknown[]) =>
       mockGetWorkspaceToolsById(...args),
+    ensureDefaultRivetWorkflow: (...args: unknown[]) =>
+      mockEnsureDefaultRivetWorkflow(...args),
+    readRivetWorkflow: vi.fn(),
     toggleWorkspaceTool: vi.fn().mockResolvedValue(true),
     toggleWorkspaceToolById: vi.fn().mockResolvedValue(true),
     getWorkspaceMcpStatus: (...args: unknown[]) =>
@@ -78,9 +82,22 @@ vi.mock("../src/services/workspace-service", () => ({
   MergeConflictError: class MergeConflictError extends Error {},
 }));
 
+vi.mock("../src/components/surfaces/SurfaceWorkspace", () => ({
+  SurfaceWorkspace: () => null,
+}));
+
+vi.mock("../src/components/surfaces/ManagedRivetSurface", () => ({
+  ManagedRivetSurface: () => <div data-testid="managed-rivet-fixture" />,
+}));
+
+vi.mock("../src/components/surfaces/DirectBrepSurface", () => ({
+  DirectBrepSurface: () => <div data-testid="direct-brep-fixture" />,
+}));
+
 describe("WorkspacePanel session selection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
     mockSendMessage.mockResolvedValue(undefined);
     mockUpdateWorkspaceSession.mockResolvedValue("new-session");
     mockSelectSession.mockResolvedValue(undefined);
@@ -100,6 +117,10 @@ describe("WorkspacePanel session selection", () => {
     });
     mockGetWorkspaceTools.mockResolvedValue([]);
     mockGetWorkspaceToolsById.mockResolvedValue([]);
+    mockEnsureDefaultRivetWorkflow.mockResolvedValue({
+      slug: "rivet",
+      title: "Rivet",
+    });
     mockListHermesModels.mockResolvedValue({
       current_value: "local:hermes",
       current_provider: "local",
@@ -221,9 +242,119 @@ describe("WorkspacePanel session selection", () => {
     await waitFor(() => {
       expect(mockGetWorkspaceToolsById).toHaveBeenCalledWith("workspace-1");
     });
+    expect(fetch).toHaveBeenCalledWith("/api/mcp/servers/installed");
     expect(mockGetWorkspaceTools).not.toHaveBeenCalled();
 
     vi.unstubAllGlobals();
+  });
+
+  it("keeps built-in Rivet out of the workspace MCP selector", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          servers: [
+            {
+              server_id: "rivet-workflows",
+              name: "Rivet Workflows",
+              type: "stdio",
+              is_active: true,
+              is_installed: true,
+            },
+            {
+              server_id: "solid-edge-mcp",
+              name: "Solid Edge MCP",
+              type: "stdio",
+              is_active: true,
+              is_installed: true,
+            },
+          ],
+        }),
+      }),
+    );
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-mcp-btn"));
+    expect(
+      await screen.findByTestId("mcp-server-item-solid edge mcp"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("mcp-server-item-rivet workflows"),
+    ).not.toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
+  it("opens a Rivet tab immediately while its workflow is prepared", async () => {
+    mockEnsureDefaultRivetWorkflow.mockReturnValue(new Promise(() => {}));
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+
+    expect(await screen.findByText("rivet.rivet-project")).toBeInTheDocument();
+    expect(screen.getByTestId("managed-rivet-fixture")).toBeInTheDocument();
+    expect(mockEnsureDefaultRivetWorkflow).toHaveBeenCalledWith("new-session");
+  });
+
+  it("keeps the agent pane live while maximizing the active surface", async () => {
+    vi.stubEnv("VITE_WORKSPACE_SURFACES_ENABLED", "true");
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 1440,
+    });
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-brep-btn"));
+    fireEvent.click(await screen.findByTestId("workspace-tab-focus"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace-panel")).toHaveAttribute(
+        "data-wide-layout-mode",
+        "focus",
+      ),
+    );
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+      display: "flex",
+    });
+    expect(
+      screen.getByRole("button", { name: "Restore workspace layout" }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Restore workspace layout" }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace-panel")).toHaveAttribute(
+        "data-wide-layout-mode",
+        "normal",
+      ),
+    );
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+      display: "flex",
+    });
   });
 
   it("does not show another session's busy stream on the selected session", async () => {

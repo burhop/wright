@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/contracts/state-inventory.schema.json",
+  "title": "Wright Engineering Program State Inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "data_schema", "catalog_snapshot", "counts", "digests", "storage"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "data_schema": {"type": "integer", "minimum": 0},
+    "catalog_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "sequence", "digest", "state"],
+      "properties": {
+        "channel": {"type": "string", "maxLength": 32},
+        "sequence": {"type": "integer", "minimum": 0},
+        "digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "state": {"enum": ["bundled", "active", "rollback", "unavailable"]}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 1000000},
+      "maxProperties": 16
+    },
+    "digests": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+      "maxProperties": 16
+    },
+    "storage": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["root", "persistence", "available", "writable"],
+        "properties": {
+          "root": {"enum": ["data", "config", "workspaces", "models", "catalog", "reports", "manager"]},
+          "persistence": {"enum": ["native-data-root", "docker-named-volume", "bundled-read-only"]},
+          "available": {"type": "boolean"},
+          "writable": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}
+

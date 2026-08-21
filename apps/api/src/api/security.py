@@ -131,7 +131,7 @@ def _host_name(value: str) -> str:
 
 def _loopback_host(value: str) -> bool:
     host = _host_name(value)
-    if host == "localhost":
+    if host in {"localhost", "wright.localhost"}:
         return True
     try:
         return ipaddress.ip_address(host).is_loopback

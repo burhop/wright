@@ -16,7 +16,10 @@ def test_docker_smoke_script_matches_entrypoint_llm_contract() -> None:
     assert "WRIGHT_DOCKER_SKIP_BUILD" in script
     assert "Testing setup-pending warning with missing LLM provider" in script
     assert "Warning: no LLM provider is configured" in script
-    assert "Container warned and continued when LLM provider settings were missing" in script
+    assert (
+        "Container warned and continued when LLM provider settings were missing"
+        in script
+    )
     assert "did not fail-fast" not in script
     assert "correctly failed-fast" not in script
     assert "Warning: no LLM provider is configured" in entrypoint
@@ -75,7 +78,10 @@ def test_docker_smoke_script_keeps_gateway_process_name() -> None:
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
-    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert (
+        "python:3.13-slim@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a"
+        in dockerfile
+    )
     assert "hermes-agent==0.19.0" in dockerfile
 
 
@@ -92,7 +98,9 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
-    assert "COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node" in dockerfile
+    assert (
+        "COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node" in dockerfile
+    )
     assert "COPY --from=web-builder /usr/local/lib/node_modules" in dockerfile
     assert "integrations/rivet/editor/ integrations/rivet/editor/" in dockerfile
     assert "integrations/rivet/runner/ integrations/rivet/runner/" in dockerfile
@@ -108,8 +116,14 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
         "WRIGHT_SURFACES_LIVE_APPS_ENABLED=1",
     ):
         assert f"ENV {feature_flag}" in dockerfile
-    assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in dockerfile
-    assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in mcp_dockerfile
+    assert (
+        "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share"
+        in dockerfile
+    )
+    assert (
+        "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share"
+        in mcp_dockerfile
+    )
     assert 'FRONTEND_DIST_DIR="%(ENV_FRONTEND_DIST_DIR)s"' in supervisor
     assert 'WRIGHT_WORKSPACES_DIR="%(ENV_WRIGHT_WORKSPACES_DIR)s"' in supervisor
     assert 'WRIGHT_WORKSPACE_PATH="%(ENV_WRIGHT_WORKSPACE_PATH)s"' in supervisor
@@ -118,16 +132,31 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert 'WRIGHT_MCP_STATUS="%(ENV_WRIGHT_MCP_STATUS)s"' in supervisor
     assert "-e WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in mcp_run
     assert "-e WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in mcp_run
-    assert '-e FRONTEND_DIST_DIR="${FRONTEND_DIST_DIR:-/workspace/apps/web/dist}"' in mcp_run
+    assert (
+        '-e FRONTEND_DIST_DIR="${FRONTEND_DIST_DIR:-/workspace/apps/web/dist}"'
+        in mcp_run
+    )
 
 
 def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     dockerfile = read_text("docker/Dockerfile")
     smoke = read_text("scripts/docker-smoke-test.sh")
 
-    assert '"cryptography==49.0.0"' in dockerfile
+    assert '"cryptography==50.0.0"' in dockerfile
     assert '"pillow==12.3.0"' in dockerfile
+    assert '"msgpack==1.2.1"' in dockerfile
+    assert (
+        "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
+        in dockerfile
+    )
+    assert '"setuptools==84.0.0"' in dockerfile
+    assert "pip/_vendor" in dockerfile
+    assert "setuptools@78.1.1" in dockerfile
+    assert "brace-expansion@5.0.9" in dockerfile
+    assert "ip-address@10.3.1" in dockerfile
     assert "libssl3t64" in dockerfile
+    assert "npm install --global npm@12.0.2" in dockerfile
+    assert "util-linux" in dockerfile
     assert "openssl-provider-legacy" in dockerfile
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke

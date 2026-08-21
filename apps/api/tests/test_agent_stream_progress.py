@@ -66,6 +66,9 @@ class _DisconnectedLlmEngine:
 
 
 class _AttachFailureJob:
+    stream_id = "attach-failure-stream"
+    started_at_ms = 0
+
     async def stream_from(self, index=0):
         if False:
             yield

@@ -68,6 +68,21 @@ describe("AuthGate", () => {
     expect(await screen.findByText("Unlock Wright")).toBeInTheDocument();
   });
 
+  it("keeps retrying during startup instead of showing a token prompt", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("starting")));
+
+    render(
+      <AuthGate>
+        <div>Dashboard</div>
+      </AuthGate>,
+    );
+
+    expect(
+      await screen.findByText("Connecting to Wright…"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Unlock Wright")).not.toBeInTheDocument();
+  });
+
   it("exchanges the entered token and hides the prompt", async () => {
     const fetchMock = vi
       .fn()

@@ -1,0 +1,39 @@
+version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-mcp:
+      metadata:
+        id: graph-mcp
+        name: Main
+        description: ""
+      nodes:
+        '[node-alpha]:mcpToolCall "Bound Inspect"':
+          data:
+            name: wright-rivet
+            version: 2.0.0
+            transportType: http
+            toolName: alpha__inspect
+            toolArguments: '{"value":2}'
+            toolCallId: call-alpha
+            useNameInput: false
+            useVersionInput: false
+            useServerUrlInput: false
+            useServerIdInput: false
+            useToolNameInput: false
+            useToolArgumentsInput: false
+            useToolCallIdInput: false
+          outgoingConnections:
+            - response->"Output" output-node/value
+          visualData: 0/0/280/null//
+        '[output-node]:graphOutput "Output"':
+          data:
+            id: output
+            dataType: object[]
+          visualData: 400/0/280/null//
+  metadata:
+    id: project-mcp
+    title: Bound MCP Contract
+    description: ""
+    mainGraphId: graph-mcp
+  plugins: []

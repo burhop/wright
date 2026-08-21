@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-artifact-envelope-1.json",
+  "title": "Wright Engineering Artifact Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_id", "domain", "kind", "source_schema", "producer", "upstream_digests", "content_digest", "validation_state"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "artifact_id": {"type": "string", "pattern": "^[a-z0-9_-]+$", "maxLength": 80},
+    "domain": {"type": "string", "maxLength": 40},
+    "kind": {"type": "string", "maxLength": 80},
+    "source_schema": {"type": "object", "additionalProperties": false, "required": ["name", "version", "media_type"], "properties": {"name": {"type": "string", "maxLength": 100}, "version": {"type": "string", "maxLength": 40}, "media_type": {"type": "string", "maxLength": 120}}},
+    "producer": {"type": "object", "additionalProperties": false, "required": ["run_id", "node_id", "call_id", "capability"], "properties": {"run_id": {"type": "string", "maxLength": 160}, "node_id": {"type": "string", "maxLength": 160}, "call_id": {"type": "string", "maxLength": 160}, "capability": {"type": "string", "maxLength": 200}}},
+    "upstream_digests": {"type": "array", "maxItems": 100, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "units": {"type": "object", "maxProperties": 100},
+    "coordinate_system": {"type": "object", "maxProperties": 20},
+    "content": {"type": ["object", "array", "string", "number", "boolean", "null"]},
+    "vault_reference": {"type": "object", "additionalProperties": false, "required": ["artifact_id", "media_type", "digest"], "properties": {"artifact_id": {"type": "string", "maxLength": 160}, "media_type": {"type": "string", "maxLength": 120}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}},
+    "content_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "validation_state": {"enum": ["unvalidated", "valid", "invalid", "unsupported"]}
+  },
+  "oneOf": [
+    {"required": ["content"], "not": {"required": ["vault_reference"]}},
+    {"required": ["vault_reference"], "not": {"required": ["content"]}}
+  ]
+}

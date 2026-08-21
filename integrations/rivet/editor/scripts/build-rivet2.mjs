@@ -24,6 +24,10 @@ const patchPaths = [
   resolve(editorRoot, 'patches', 'rivet2-canvas-only.patch'),
   resolve(editorRoot, 'patches', 'rivet2-graph-builder-recovery.patch'),
   resolve(editorRoot, 'patches', 'rivet2-legacy-node-catalog.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-atomic-workflow-plan.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-composition-adapters.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-mcp-structured-content.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-run-state-overlay.patch'),
 ];
 const wrappers = ['App.tsx', 'WrightAiRuntime.ts', 'WrightEditorBridge.tsx', 'index.html'];
 const output = resolve(editorRoot, 'dist');
@@ -48,6 +52,14 @@ function sha256(input) {
 
 function sha256File(path) {
   return sha256(readFileSync(path));
+}
+
+function canonicalizePinnedTextInput(path) {
+  const content = readFileSync(path, 'utf8');
+  const canonical = content.replace(/\r\n?/g, '\n');
+  if (canonical !== content) {
+    writeFileWithRetry(path, canonical);
+  }
 }
 
 function writeFileWithRetry(path, content) {
@@ -76,6 +88,13 @@ function walkFiles(directory) {
     .sort((left, right) => left.localeCompare(right));
 }
 
+for (const path of [
+  ...patchPaths,
+  ...wrappers.map((name) => resolve(editorRoot, 'wrapper', name)),
+]) {
+  canonicalizePinnedTextInput(path);
+}
+
 if (!existsSync(resolve(checkout, '.git'))) {
   throw new Error('Pinned checkout is missing. Run acquire-rivet2.mjs first.');
 }
@@ -98,8 +117,20 @@ const expectedChangedPaths = new Set([
   'packages/app/src/features/graphBuilder/legacyDraftRunner.ts',
   'packages/app/src/hooks/aiGraphBuilderHelpers.test.ts',
   'packages/app/src/hooks/aiGraphBuilderHelpers.ts',
+  'packages/app/src/hooks/legacyGraphBuilderLogging.test.ts',
+  'packages/app/src/hooks/legacyGraphBuilderLogging.ts',
+  'packages/app/src/hooks/useAiGraphBuilder.ts',
+  'packages/app/src/hooks/useRivetWorkspaceHost.ts',
+  'packages/app/src/hooks/workspaceHost/types.ts',
   'packages/app/src/providers/HostCallbacksContext.tsx',
   'packages/app/src/providers/HostUiConfigContext.tsx',
+  'packages/app/src/components/VisualNode.tsx',
+  'packages/app/src/state/graphBuilder.ts',
+  'packages/core/src/integrations/mcp/MCPProvider.ts',
+  'packages/core/src/model/nodes/MCPToolCallNode.ts',
+  'packages/core/test/integrations/mcp/MCPBase.test.ts',
+  'packages/node/src/native/NodeMCPProvider.ts',
+  'packages/node/test/nodeMcpProvider.test.ts',
 ]);
 const wrapperTargets = new Map([
   ['App.tsx', resolve(checkout, 'packages', 'app', 'src', 'App.tsx')],

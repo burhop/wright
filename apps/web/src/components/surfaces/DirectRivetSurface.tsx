@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   BookOpenIcon,
+  ChevronDownIcon,
   CloseIcon,
+  MaximizeIcon,
   OpenExternalIcon,
   PlayIcon,
   PlusIcon,
@@ -14,8 +16,11 @@ import {
   type RivetWorkflowDocument,
   type RivetWorkflowRun,
   type RivetWorkflowTemplate,
+  type RivetRunStep,
 } from "../../services/workspace-service";
 import { directRivetCanvasFrameUrl } from "../../services/rivet-editor";
+import { useRivetRunInspection } from "../../hooks/useRivetRunInspection";
+import { RivetRunInspector } from "../workflows/RivetRunInspector";
 
 const requestId = () =>
   typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -89,6 +94,7 @@ export function DirectRivetSurface({
 }: DirectRivetSurfaceProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const readyRef = useRef(false);
+  const protocolVersionRef = useRef(2);
   const postOpenStatusRef = useRef<string | null>(null);
   const onWorkflowLoadedRef = useRef(onWorkflowLoaded);
   const onEditorReadyRef = useRef(onEditorReady);
@@ -105,12 +111,26 @@ export function DirectRivetSurface({
   const [status, setStatus] = useState("Loading Rivet 2 graph canvas...");
   const [busy, setBusy] = useState(false);
   const [editorReady, setEditorReady] = useState(false);
+  const [bridgeProtocolVersion, setBridgeProtocolVersion] = useState(2);
   const [aiStatus, setAiStatus] = useState<
     "checking" | "available" | "unavailable"
   >("checking");
 
   const targetOrigin = new URL(url).origin;
   const frameUrl = directRivetCanvasFrameUrl(url, window.location.origin);
+  const {
+    inspection,
+    recentRuns,
+    currentRevision,
+    selectRun,
+    error: inspectionError,
+    elapsedMs,
+    refreshRecent,
+  } = useRivetRunInspection({
+    sessionId,
+    workflowSlug: document?.slug || null,
+    runId: activeRun?.run_id || null,
+  });
 
   useEffect(() => {
     onWorkflowLoadedRef.current = onWorkflowLoaded;
@@ -259,8 +279,21 @@ export function DirectRivetSurface({
         return;
       }
       const message = event.data || {};
-      if (message.type === "wright-rivet:ready") {
+      if (
+        message.type === "wright-surface:authorization-failed" &&
+        typeof message.reason === "string" &&
+        /^SURFACE_PREVIEW_(?:UNAUTHORIZED|GONE)$/.test(message.reason)
+      ) {
+        setStatus("Rivet preview authorization expired. Reconnecting...");
+        onEditorUnavailableRef.current?.(message.reason);
+      } else if (message.type === "wright-rivet:ready") {
         readyRef.current = true;
+        const version =
+          typeof message.protocolVersion === "number"
+            ? message.protocolVersion
+            : 2;
+        protocolVersionRef.current = version;
+        setBridgeProtocolVersion(version);
         setEditorReady(true);
         setStatus("Rivet 2 graph canvas is ready.");
         onEditorReadyRef.current?.();
@@ -286,6 +319,17 @@ export function DirectRivetSurface({
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [targetOrigin]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (readyRef.current) return;
+      setStatus(
+        "Rivet graph canvas did not finish connecting. Reconnecting...",
+      );
+      onEditorUnavailableRef.current?.("RIVET_PREVIEW_READY_TIMEOUT");
+    }, 20_000);
+    return () => window.clearTimeout(timeout);
+  }, [frameUrl]);
 
   useEffect(() => {
     if (!editorReady || !document) return;
@@ -441,74 +485,64 @@ export function DirectRivetSurface({
   }, [initialSlug, openWorkflow, refreshCatalog]);
 
   useEffect(() => {
-    const runId = activeRun?.run_id;
-    const runState = activeRun?.state;
-    if (
-      !runId ||
-      !runState ||
-      !["queued", "running", "cancelling"].includes(runState)
-    ) {
+    if (!inspection) return;
+    const projected: RivetWorkflowRun = {
+      run_id: inspection.run.run_id,
+      workflow_id: inspection.run.workflow_id,
+      revision: inspection.run.revision,
+      digest: inspection.run.digest,
+      graph: inspection.run.graph,
+      generation: inspection.run.generation,
+      state: inspection.run.state,
+      reason: inspection.run.reason_code,
+      outputs: Object.fromEntries(
+        inspection.final_outputs.map((item) => [item.name, item.value]),
+      ),
+      duration_ms: inspection.run.duration_ms,
+      output_truncated: inspection.run.output_truncated,
+    };
+    setActiveRun((current) =>
+      current?.run_id === projected.run_id &&
+      current.state === projected.state &&
+      current.duration_ms === projected.duration_ms
+        ? current
+        : projected,
+    );
+    const phase = inspection.progress.phase.replaceAll("-", " ");
+    setStatus(
+      inspection.run.state === "succeeded"
+        ? `Run ${inspection.run.run_id} succeeded.`
+        : inspection.run.state === "failed" ||
+            inspection.run.state === "cancelled"
+          ? `Run ${inspection.run.run_id} ${inspection.run.state}: ${inspection.run.reason_code || "see Run Inspector"}.`
+          : `Run ${inspection.run.run_id}: ${phase}.`,
+    );
+  }, [inspection]);
+
+  useEffect(() => {
+    if (!editorReady || bridgeProtocolVersion < 3) return;
+    const frameWindow = iframeRef.current?.contentWindow;
+    if (!frameWindow) return;
+    if (!inspection) {
+      frameWindow.postMessage(
+        { type: "wright-rivet:clear-run-state" },
+        targetOrigin,
+      );
       return;
     }
-    let cancelled = false;
-    let timer = 0;
-    const poll = async () => {
-      try {
-        const [run, history] = await Promise.all([
-          workspaceService.getRivetWorkflowRun(sessionId, runId),
-          workspaceService.getRivetWorkflowHistory(sessionId, runId),
-        ]);
-        if (cancelled) return;
-        setActiveRun(run);
-        const latest = history.at(-1);
-        const phase =
-          typeof latest?.payload?.phase === "string"
-            ? latest.payload.phase.replaceAll("-", " ")
-            : null;
-        setStatus(
-          run.state === "succeeded"
-            ? `Run ${run.run_id} succeeded.`
-            : run.state === "failed" || run.state === "cancelled"
-              ? `Run ${run.run_id} ${run.state}${run.reason ? `: ${run.reason}` : "."}`
-              : phase
-                ? `Run ${run.run_id}: ${phase}.`
-                : `Run ${run.run_id} is ${run.state}.`,
-        );
-        setRunNotice({
-          tone:
-            run.state === "succeeded"
-              ? "success"
-              : run.state === "failed" || run.state === "cancelled"
-                ? "error"
-                : "info",
-          message: runSummary(run),
-        });
-        if (["queued", "running", "cancelling"].includes(run.state)) {
-          timer = window.setTimeout(poll, 250);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setStatus(
-            error instanceof Error
-              ? error.message
-              : "Workflow run status is unavailable.",
-          );
-          setRunNotice({
-            tone: "error",
-            message:
-              error instanceof Error
-                ? error.message
-                : "Workflow run status is unavailable.",
-          });
-        }
-      }
-    };
-    timer = window.setTimeout(poll, 50);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [activeRun?.run_id, activeRun?.state, sessionId]);
+    frameWindow.postMessage(
+      {
+        type: "wright-rivet:set-run-state",
+        runId: inspection.run.run_id,
+        steps: inspection.steps.slice(0, 500).map((step) => ({
+          nodeId: step.node_id,
+          state: step.state,
+          label: step.label,
+        })),
+      },
+      targetOrigin,
+    );
+  }, [bridgeProtocolVersion, editorReady, inspection, targetOrigin]);
 
   const saveWorkflow = async () => {
     if (!document) return;
@@ -526,11 +560,12 @@ export function DirectRivetSurface({
         sessionId,
         saved.slug,
       );
+      await sendProjectToFrame(reloaded);
       postOpenStatusRef.current = `Workflow saved at revision ${reloaded.revision}.`;
       setDocument(reloaded);
       setRunNotice({
-        tone: "info",
-        message: `Revision ${reloaded.revision} was saved and now needs approval before it can run.`,
+        tone: "success",
+        message: `Revision ${reloaded.revision} was saved and is ready to run.`,
       });
       if (reloaded.slug !== initialSlug) {
         onWorkflowLoadedRef.current?.(reloaded);
@@ -547,47 +582,10 @@ export function DirectRivetSurface({
     }
   };
 
-  const approveWorkflow = async () => {
-    if (!document) return;
-    setBusy(true);
-    try {
-      const currentProject = await requestProjectFromFrame();
-      if (currentProject !== document.project) {
-        const message =
-          "Save the current canvas changes before approving this workflow.";
-        setStatus(message);
-        setRunNotice({ tone: "error", message });
-        return;
-      }
-      const reviewed = await workspaceService.reviewRivetWorkflow(
-        sessionId,
-        document.slug,
-        "approved",
-        "local-user",
-      );
-      setDocument((current) =>
-        current &&
-        current.slug === reviewed.slug &&
-        current.revision === reviewed.revision
-          ? { ...current, ...reviewed }
-          : current,
-      );
-      const message = `Revision ${reviewed.revision} approved. It is ready to run.`;
-      setStatus(message);
-      setRunNotice({ tone: "success", message });
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unable to approve this workflow revision.";
-      setStatus(message);
-      setRunNotice({ tone: "error", message });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const runWorkflow = async () => {
+  const runWorkflow = async (options?: {
+    readonly graph?: string;
+    readonly inputs?: string;
+  }) => {
     if (!document) return;
     setBusy(true);
     try {
@@ -599,7 +597,9 @@ export function DirectRivetSurface({
         setRunNotice({ tone: "error", message });
         return;
       }
-      const parsedInputs = JSON.parse(runInputs);
+      const graph = options?.graph ?? runGraph;
+      const inputs = options?.inputs ?? runInputs;
+      const parsedInputs = JSON.parse(inputs);
       if (
         !parsedInputs ||
         typeof parsedInputs !== "object" ||
@@ -613,14 +613,15 @@ export function DirectRivetSurface({
         {
           expectedRevision: document.revision,
           expectedDigest: document.etag,
-          graph: runGraph.trim() || undefined,
+          graph: graph.trim() || undefined,
           inputs: parsedInputs,
         },
       );
       setActiveRun(run);
+      await refreshRecent().catch(() => null);
       setRunPanelOpen(false);
       setStatus(`Run ${run.run_id} is ${run.state}.`);
-      setRunNotice({ tone: "info", message: runSummary(run) });
+      setRunNotice(null);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to run workflow.";
@@ -654,23 +655,73 @@ export function DirectRivetSurface({
     }
   };
 
+  const focusWorkflow = () => {
+    iframeRef.current?.focus();
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: "wright-rivet:focus-canvas" },
+      targetOrigin,
+    );
+    setStatus("Workflow canvas focused.");
+  };
+
+  const focusRunStep = async (step: RivetRunStep) => {
+    if (!step.node_id) return;
+    if (protocolVersionRef.current < 3) {
+      focusWorkflow();
+      setStatus(
+        "This editor version cannot focus an individual historical node.",
+      );
+      return;
+    }
+    try {
+      const id = requestId();
+      const response = await bridgeRequest<{ found?: unknown }>(
+        {
+          type: "wright-rivet:focus-node",
+          requestId: id,
+          nodeId: step.node_id,
+        },
+        "wright-rivet:node-focused",
+      );
+      setStatus(
+        response.found === false
+          ? "That node is not present in the loaded workflow revision."
+          : `Focused ${step.label}.`,
+      );
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : "Unable to focus the workflow step.",
+      );
+    }
+  };
+
   const lintWorkflow = async () => {
     if (!document) return;
     setBusy(true);
+    setRunNotice({ tone: "info", message: "Checking the graph…" });
     try {
       const result = await workspaceService.lintRivetWorkflowGraph(
         sessionId,
         document.slug,
       );
-      setStatus(
-        result.issues.length
-          ? `${result.issues.length} graph issue(s) found.`
-          : "Graph lint passed.",
-      );
+      const message = result.issues.length
+        ? `${result.issues.length} graph issue${result.issues.length === 1 ? "" : "s"} found: ${result.issues
+            .slice(0, 2)
+            .map((issue) => issue.message)
+            .join("; ")}`
+        : "Graph checked · no problems found.";
+      setStatus(message);
+      setRunNotice({
+        tone: result.issues.length ? "error" : "success",
+        message,
+      });
     } catch (error) {
-      setStatus(
-        error instanceof Error ? error.message : "Unable to lint workflow.",
-      );
+      const message =
+        error instanceof Error ? error.message : "Unable to check the graph.";
+      setStatus(message);
+      setRunNotice({ tone: "error", message });
     } finally {
       setBusy(false);
     }
@@ -835,8 +886,8 @@ export function DirectRivetSurface({
         <button
           type="button"
           data-testid="direct-rivet-lint"
-          aria-label="Lint Rivet graph"
-          title="Lint Rivet graph"
+          aria-label="Check Rivet graph"
+          title="Check graph for problems"
           disabled={busy || !document}
           onClick={() => void lintWorkflow()}
           style={iconButtonStyle}
@@ -857,18 +908,32 @@ export function DirectRivetSurface({
             <CloseIcon size={16} />
           </button>
         ) : (
-          <button
-            type="button"
-            data-testid="direct-rivet-run"
-            aria-label="Run Rivet workflow"
-            title="Run Rivet workflow"
-            aria-expanded={runPanelOpen}
-            disabled={busy || !document || !editorReady}
-            onClick={() => setRunPanelOpen((open) => !open)}
-            style={iconButtonStyle}
-          >
-            <PlayIcon size={16} />
-          </button>
+          <>
+            <button
+              type="button"
+              data-testid="direct-rivet-run"
+              aria-label="Run Rivet workflow"
+              title="Run Rivet workflow"
+              disabled={busy || !document || !editorReady}
+              onClick={() => void runWorkflow({ graph: "", inputs: "{}" })}
+              style={iconButtonStyle}
+            >
+              <PlayIcon size={16} />
+            </button>
+            <button
+              type="button"
+              data-testid="direct-rivet-run-options"
+              aria-label="Run Rivet workflow with options"
+              title="Choose graph or inputs before running"
+              aria-haspopup="dialog"
+              aria-expanded={runPanelOpen}
+              disabled={busy || !document || !editorReady}
+              onClick={() => setRunPanelOpen((open) => !open)}
+              style={{ ...iconButtonStyle, width: 24 }}
+            >
+              <ChevronDownIcon size={12} />
+            </button>
+          </>
         )}
         {runPanelOpen && document && (
           <div
@@ -902,40 +967,14 @@ export function DirectRivetSurface({
             >
               <strong style={{ fontSize: "0.8rem" }}>Run Rivet workflow</strong>
               <span
-                data-testid="direct-rivet-review-state"
                 style={{
-                  borderRadius: 999,
-                  padding: "2px 7px",
-                  background:
-                    document.review_state === "approved"
-                      ? "rgba(16, 185, 129, 0.16)"
-                      : "rgba(245, 158, 11, 0.16)",
-                  color:
-                    document.review_state === "approved"
-                      ? "var(--color-success, #10b981)"
-                      : "var(--color-warning, #f59e0b)",
+                  color: "var(--color-text-muted, #aab3c5)",
                   fontSize: "0.66rem",
-                  fontWeight: 600,
                 }}
               >
-                {document.review_state === "approved"
-                  ? `Revision ${document.revision} approved`
-                  : `Revision ${document.revision} needs approval`}
+                Revision {document.revision}
               </span>
             </div>
-            {document.review_state !== "approved" && (
-              <p
-                style={{
-                  margin: "0 0 10px",
-                  color: "var(--color-text-muted, #aab3c5)",
-                  fontSize: "0.7rem",
-                  lineHeight: 1.4,
-                }}
-              >
-                Review and approve this saved revision before running it. Saving
-                later changes will require a new approval.
-              </p>
-            )}
             <label style={{ display: "block", fontSize: "0.72rem" }}>
               Graph (blank uses project main graph)
               <input
@@ -976,21 +1015,10 @@ export function DirectRivetSurface({
                 }}
               />
             </label>
-            {document.review_state !== "approved" && (
-              <button
-                type="button"
-                data-testid="direct-rivet-run-approve"
-                disabled={busy}
-                onClick={() => void approveWorkflow()}
-                style={{ marginTop: 8, marginRight: 8 }}
-              >
-                Approve revision {document.revision}
-              </button>
-            )}
             <button
               type="button"
               data-testid="direct-rivet-run-start"
-              disabled={busy || document.review_state !== "approved"}
+              disabled={busy}
               onClick={() => void runWorkflow()}
               style={{ marginTop: 8 }}
             >
@@ -998,33 +1026,17 @@ export function DirectRivetSurface({
             </button>
           </div>
         )}
-        {activeRun && (
-          <span
-            data-testid="direct-rivet-run-result"
-            title={
-              activeRun.outputs
-                ? JSON.stringify(activeRun.outputs)
-                : activeRun.reason || `Run ${activeRun.state}`
-            }
-            style={{
-              maxWidth: 360,
-              marginLeft: 6,
-              overflow: "hidden",
-              color: "var(--color-secondary)",
-              fontSize: "0.68rem",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {activeRun.state}
-            {activeRun.duration_ms != null
-              ? ` · ${activeRun.duration_ms} ms`
-              : ""}
-            {runOutputPreview(activeRun.outputs)
-              ? ` · ${runOutputPreview(activeRun.outputs)}`
-              : ""}
-          </span>
-        )}
+        <button
+          type="button"
+          data-testid="direct-rivet-focus-workflow"
+          aria-label="Focus workflow canvas"
+          title="Focus workflow canvas"
+          disabled={!editorReady}
+          onClick={focusWorkflow}
+          style={iconButtonStyle}
+        >
+          <MaximizeIcon size={16} />
+        </button>
         <div style={{ flex: 1 }} />
         <span
           data-testid="direct-rivet-ai-status"
@@ -1162,6 +1174,25 @@ export function DirectRivetSurface({
           border: 0,
           background: "#fff",
         }}
+      />
+      <RivetRunInspector
+        inspection={inspection}
+        recentRuns={recentRuns}
+        currentRevision={currentRevision}
+        elapsedMs={elapsedMs}
+        error={inspectionError}
+        onSelectRun={selectRun}
+        onFocusStep={(step) => void focusRunStep(step)}
+        onRerun={() => void runWorkflow({ graph: "", inputs: "{}" })}
+        onExportEvidence={
+          inspection
+            ? () =>
+                void workspaceService.exportRivetRunEvidence(
+                  sessionId,
+                  inspection.run.run_id,
+                )
+            : undefined
+        }
       />
     </div>
   );

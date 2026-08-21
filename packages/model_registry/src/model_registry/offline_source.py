@@ -1,0 +1,308 @@
+"""Safe inspection of deterministic offline engineering-model packages."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import stat
+import unicodedata
+import zipfile
+from dataclasses import dataclass
+from pathlib import Path
+
+from pydantic import ValidationError
+
+from .chatter_contracts import (
+    CHATTER_FORMAT,
+    validate_schema,
+    validate_serving_metadata,
+)
+from .models import ModelPackage, ModelRegistryError, canonical_json
+from .policy import validate_artifact_path
+
+_MANIFEST = "engineering-model-package.json"
+_ARCHIVE_SUFFIXES = (".zip", ".tar", ".tgz", ".gz", ".bz2", ".xz", ".7z")
+
+
+class OfflinePackageError(ValueError):
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+
+
+@dataclass(frozen=True, slots=True)
+class InspectedOfflinePackage:
+    package: ModelPackage
+    artifacts: dict[str, bytes]
+    manifest_digest: str
+
+
+@dataclass(frozen=True, slots=True)
+class OfflineExportResult:
+    archive_sha256: str
+    size: int
+    artifact_count: int
+
+
+def _safe_entry(info: zipfile.ZipInfo) -> str:
+    name = unicodedata.normalize("NFC", info.filename)
+    if name != info.filename or name != _MANIFEST:
+        try:
+            validate_artifact_path(name)
+        except ValueError as error:
+            raise OfflinePackageError(
+                "path_unsafe", "Archive path is unsafe"
+            ) from error
+    if name.lower().endswith(_ARCHIVE_SUFFIXES):
+        raise OfflinePackageError("path_unsafe", "Nested archives are prohibited")
+    mode = (info.external_attr >> 16) & 0xFFFF
+    if stat.S_ISLNK(mode) or (mode and mode & 0o111):
+        raise OfflinePackageError(
+            "path_unsafe", "Links and executable archive entries are prohibited"
+        )
+    if info.is_dir():
+        raise OfflinePackageError("path_unsafe", "Archive directories are not accepted")
+    return name
+
+
+def inspect_offline_package(
+    archive_path: str | Path,
+    *,
+    maximum_archive_bytes: int = 256 * 1024 * 1024,
+    maximum_expanded_bytes: int = 512 * 1024 * 1024,
+) -> InspectedOfflinePackage:
+    path = Path(archive_path)
+    if (
+        maximum_archive_bytes <= 0
+        or maximum_expanded_bytes <= 0
+        or not path.is_file()
+        or path.stat().st_size > maximum_archive_bytes
+    ):
+        raise OfflinePackageError(
+            "size_exceeded", "Offline package exceeds its ceiling"
+        )
+    try:
+        archive = zipfile.ZipFile(path)
+    except (OSError, zipfile.BadZipFile) as error:
+        raise OfflinePackageError(
+            "manifest_invalid", "Offline package is not a valid ZIP"
+        ) from error
+    with archive:
+        infos = archive.infolist()
+        if not infos or len(infos) > 1001:
+            raise OfflinePackageError(
+                "size_exceeded", "Offline package entry count is invalid"
+            )
+        if sum(item.file_size for item in infos) > maximum_expanded_bytes:
+            raise OfflinePackageError(
+                "size_exceeded", "Offline package expands beyond its ceiling"
+            )
+        names: dict[str, zipfile.ZipInfo] = {}
+        folded: set[str] = set()
+        for info in infos:
+            name = _safe_entry(info)
+            key = name.casefold()
+            if key in folded:
+                raise OfflinePackageError(
+                    "path_collision", "Archive paths collide after normalization"
+                )
+            folded.add(key)
+            names[name] = info
+        if _MANIFEST not in names:
+            raise OfflinePackageError(
+                "manifest_invalid", "Offline package manifest is missing"
+            )
+        try:
+            manifest_bytes = archive.read(names[_MANIFEST])
+            if len(manifest_bytes) > 64 * 1024:
+                raise OfflinePackageError(
+                    "size_exceeded", "Offline manifest exceeds 64 KiB"
+                )
+            package = ModelPackage.model_validate(json.loads(manifest_bytes))
+        except OfflinePackageError:
+            raise
+        except (
+            json.JSONDecodeError,
+            ValidationError,
+            ModelRegistryError,
+            UnicodeDecodeError,
+        ) as error:
+            raise OfflinePackageError(
+                "manifest_invalid", "Offline package manifest is invalid"
+            ) from error
+        declarations = {
+            item.path: item
+            for variant in package.variants
+            for item in variant.artifacts
+        }
+        expected = {_MANIFEST, *declarations}
+        if set(names) != expected:
+            raise OfflinePackageError(
+                "undeclared_file", "Offline package files do not match the manifest"
+            )
+        artifacts: dict[str, bytes] = {}
+        for relative, declaration in declarations.items():
+            value = archive.read(names[relative])
+            if len(value) != declaration.size:
+                raise OfflinePackageError(
+                    "digest_mismatch", "Offline artifact size did not match"
+                )
+            if hashlib.sha256(value).hexdigest() != declaration.sha256:
+                raise OfflinePackageError(
+                    "digest_mismatch", "Offline artifact digest did not match"
+                )
+            artifacts[relative] = value
+        license_paths = {
+            item.location
+            for item in package.license.evidence
+            if item.kind == "artifact"
+        }
+        if not license_paths or not license_paths <= set(artifacts):
+            raise OfflinePackageError(
+                "license_unapproved", "License evidence is missing"
+            )
+        if any(variant.format == CHATTER_FORMAT for variant in package.variants):
+            required = {
+                "INTERNAL-USE-NOTICE.txt",
+                "evidence/conversion-parity.json",
+                "model/forest.npz",
+                "model/serving-metadata.json",
+            }
+            if set(artifacts) != required:
+                raise OfflinePackageError(
+                    "artifact_invalid", "Chatter package artifact set is invalid"
+                )
+            try:
+                metadata = validate_serving_metadata(
+                    json.loads(artifacts["model/serving-metadata.json"])
+                )
+                parity = json.loads(artifacts["evidence/conversion-parity.json"])
+                validate_schema(parity, "conversion-parity-evidence.schema.json")
+                parity_material = dict(parity)
+                parity_material.pop("material_digest")
+                parity_material.pop("observation_digest")
+                if (
+                    hashlib.sha256(artifacts["model/forest.npz"]).hexdigest()
+                    != metadata["classifier"]["forest_sha256"]
+                ):
+                    raise ValueError
+                package_material_digest = hashlib.sha256(
+                    canonical_json(
+                        {
+                            "notice": hashlib.sha256(
+                                artifacts["INTERNAL-USE-NOTICE.txt"]
+                            ).hexdigest(),
+                            "metadata": hashlib.sha256(
+                                artifacts["model/serving-metadata.json"]
+                            ).hexdigest(),
+                            "forest": hashlib.sha256(
+                                artifacts["model/forest.npz"]
+                            ).hexdigest(),
+                        }
+                    ).encode()
+                ).hexdigest()
+                serving = parity["serving_identity"]
+                source = parity["source_identity"]
+                if (
+                    parity["status"] != "passed"
+                    or parity["material_digest"]
+                    != hashlib.sha256(
+                        canonical_json(parity_material).encode()
+                    ).hexdigest()
+                    or serving["package_material_digest"] != package_material_digest
+                    or serving["metadata_digest"] != metadata["metadata_digest"]
+                    or serving["forest_digest"]
+                    != metadata["classifier"]["forest_sha256"]
+                    or source["source_revision"]
+                    != metadata["source"]["source_revision"]
+                    or source["dataset_digest"] != metadata["source"]["dataset_digest"]
+                    or source["membership_digest"]
+                    != metadata["source"]["membership_digest"]
+                    or source["recipe_digest"] != metadata["source"]["recipe_digest"]
+                    or source["environment_lock_digest"]
+                    != metadata["source"]["environment_lock_digest"]
+                ):
+                    raise ValueError
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+                raise OfflinePackageError(
+                    "parity_invalid", "Chatter conversion evidence is invalid or stale"
+                ) from error
+        return InspectedOfflinePackage(package, artifacts, package.digest)
+
+
+def export_offline_package(
+    package: ModelPackage,
+    artifacts: dict[str, bytes],
+    destination: str | Path,
+) -> OfflineExportResult:
+    """Write one deterministic public, redistributable, data-only archive."""
+
+    target = Path(destination)
+    if target.parent == target:
+        raise OfflinePackageError("path_unsafe", "Export destination is unsafe")
+    if package.source.access in {"gated", "private"}:
+        raise OfflinePackageError(
+            "export_forbidden", "Private or gated model material cannot be exported"
+        )
+    if package.license.redistribution != "allowed":
+        raise OfflinePackageError(
+            "export_forbidden", "The model license does not allow redistribution"
+        )
+    declarations = {
+        item.path: item for variant in package.variants for item in variant.artifacts
+    }
+    if set(artifacts) != set(declarations):
+        raise OfflinePackageError(
+            "undeclared_file", "Export artifacts do not match the package manifest"
+        )
+    for path, declaration in declarations.items():
+        value = artifacts[path]
+        if not declaration.redistributable:
+            raise OfflinePackageError(
+                "export_forbidden", "One declared artifact is not redistributable"
+            )
+        if (
+            len(value) != declaration.size
+            or hashlib.sha256(value).hexdigest() != declaration.sha256
+        ):
+            raise OfflinePackageError(
+                "digest_mismatch", "One export artifact failed exact verification"
+            )
+    manifest = canonical_json(
+        package.model_dump(mode="json", exclude_none=True)
+    ).encode("utf-8")
+    if len(manifest) > 64 * 1024:
+        raise OfflinePackageError("size_exceeded", "Export manifest exceeds 64 KiB")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(f".{target.name}.tmp")
+    temporary.unlink(missing_ok=True)
+    try:
+        with zipfile.ZipFile(
+            temporary, "w", compression=zipfile.ZIP_STORED, strict_timestamps=True
+        ) as archive:
+            for name, value in sorted({**artifacts, _MANIFEST: manifest}.items()):
+                info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_STORED
+                info.create_system = 3
+                info.external_attr = 0o100644 << 16
+                archive.writestr(info, value)
+        with temporary.open("r+b") as stream:
+            os.fsync(stream.fileno())
+        os.replace(temporary, target)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
+    value = target.read_bytes()
+    return OfflineExportResult(
+        hashlib.sha256(value).hexdigest(), len(value), len(artifacts)
+    )
+
+
+__all__ = [
+    "InspectedOfflinePackage",
+    "OfflineExportResult",
+    "OfflinePackageError",
+    "export_offline_package",
+    "inspect_offline_package",
+]

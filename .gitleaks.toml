@@ -23,3 +23,10 @@ regexes = ['''wright-local-dev''']
 [[allowlists]]
 description = "Workspace Surface contract-set values are public SHA-256 integrity hashes, not credentials."
 paths = ['''packages/core/src/core/surfaces/schemas/contract-set\.json''']
+
+[[allowlists]]
+description = "Rivet editor index bundles are immutable upstream-generated assets guarded by the editor manifest integrity check; the default scanner matches are minified keyboard-handler identifiers, not credentials."
+paths = [
+  '''integrations/rivet/editor/dist/assets/index-[A-Za-z0-9_-]+\.js''',
+  '''integrations/rivet/runner/artifacts/rivet-node-[0-9.]+\.cjs''',
+]

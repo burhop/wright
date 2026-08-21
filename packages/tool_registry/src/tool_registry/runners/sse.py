@@ -1,23 +1,240 @@
 import asyncio
 import json
 import logging
+import hashlib
+import webbrowser
 from typing import List, Dict, Any, Optional
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, urljoin, urlsplit
+
 import httpx
 from httpx_sse import aconnect_sse, EventSource
+from mcp.client.auth import OAuthClientProvider
+from mcp.shared.auth import (
+    OAuthClientInformationFull,
+    OAuthClientMetadata,
+    OAuthToken,
+)
 from core.redaction import redact_mapping, redact_text
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
+from ..secrets import read_secrets, write_secrets
 
 logger = logging.getLogger(__name__)
+_OAUTH_CALLBACK_TIMEOUT = 300.0
+
+
+class _WrightOAuthTokenStorage:
+    """Persist MCP OAuth state in Wright's server-scoped secret bundle."""
+
+    def __init__(self, server_id: str) -> None:
+        self.server_id = server_id
+
+    def _read_model(self, key: str, model_type):
+        raw = read_secrets(self.server_id).get(key)
+        if not raw:
+            return None
+        try:
+            return model_type.model_validate_json(raw)
+        except Exception:
+            logger.warning("Ignoring invalid stored OAuth state for %s", self.server_id)
+            return None
+
+    def _write_model(self, key: str, value) -> None:
+        credentials = read_secrets(self.server_id)
+        credentials[key] = value.model_dump_json()
+        write_secrets(self.server_id, credentials)
+
+    def clear_oauth_state(self) -> None:
+        credentials = read_secrets(self.server_id)
+        changed = False
+        for key in ("MCP_OAUTH_TOKEN", "MCP_OAUTH_CLIENT"):
+            if key in credentials:
+                del credentials[key]
+                changed = True
+        if changed:
+            write_secrets(self.server_id, credentials)
+
+    async def get_tokens(self) -> OAuthToken | None:
+        return self._read_model("MCP_OAUTH_TOKEN", OAuthToken)
+
+    async def set_tokens(self, tokens: OAuthToken) -> None:
+        self._write_model("MCP_OAUTH_TOKEN", tokens)
+
+    async def get_client_info(self) -> OAuthClientInformationFull | None:
+        return self._read_model("MCP_OAUTH_CLIENT", OAuthClientInformationFull)
+
+    async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
+        self._write_model("MCP_OAUTH_CLIENT", client_info)
+
+
+class _OAuthCallbackServer:
+    """Small loopback receiver for an interactive OAuth authorization code."""
+
+    def __init__(self, *, timeout: float = _OAUTH_CALLBACK_TIMEOUT) -> None:
+        self.timeout = timeout
+        self.server: asyncio.AbstractServer | None = None
+        self.future: asyncio.Future[tuple[str, str | None]] | None = None
+
+    async def start(self, *, port: int | None = None) -> str:
+        self.future = asyncio.get_running_loop().create_future()
+        self.server = await asyncio.start_server(
+            self._handle_connection,
+            host="127.0.0.1",
+            port=port or 0,
+        )
+        socket = self.server.sockets[0]
+        port = socket.getsockname()[1]
+        return f"http://127.0.0.1:{port}/oauth/callback"
+
+    async def open_authorization_url(self, url: str) -> None:
+        try:
+            opened = webbrowser.open(url, new=2)
+            if not opened:
+                logger.warning("Could not open the MCP OAuth authorization page")
+        except Exception as error:
+            logger.warning(
+                "Could not open the MCP OAuth authorization page: %s",
+                redact_text(error),
+            )
+
+    async def wait_for_callback(self) -> tuple[str, str | None]:
+        if self.future is None:
+            raise RuntimeError("OAuth callback server is not started")
+        try:
+            result = await asyncio.wait_for(self.future, timeout=self.timeout)
+        except BaseException:
+            await self.close()
+            raise
+        self.future = asyncio.get_running_loop().create_future()
+        return result
+
+    async def _handle_connection(
+        self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+    ) -> None:
+        result: tuple[str, str | None] | None = None
+        error: Exception | None = None
+        notify_waiter = True
+        try:
+            request = await asyncio.wait_for(
+                reader.readuntil(b"\r\n\r\n"), timeout=10.0
+            )
+            request_line = request.splitlines()[0].decode("ascii", errors="replace")
+            parts = request_line.split(" ", 2)
+            if len(parts) < 2:
+                raise ValueError("Invalid OAuth callback request")
+            target = urlsplit(parts[1])
+            if target.path != "/oauth/callback":
+                # Browsers commonly request /favicon.ico after the successful
+                # callback page. That unrelated request must not poison the next
+                # authorization wait or leave an unobserved Future exception.
+                notify_waiter = False
+                raise ValueError("Invalid OAuth callback path")
+            query = parse_qs(target.query, keep_blank_values=True)
+            state = query.get("state", [None])[0]
+            oauth_error = query.get("error", [None])[0]
+            if oauth_error:
+                raise RuntimeError(f"OAuth authorization failed: {oauth_error}")
+            code = query.get("code", [None])[0]
+            if not code:
+                raise RuntimeError(
+                    "OAuth callback did not include an authorization code"
+                )
+            result = (code, state)
+        except Exception as caught:
+            error = caught
+
+        if notify_waiter and self.future is not None and not self.future.done():
+            if error is not None:
+                self.future.set_exception(error)
+            elif result is not None:
+                self.future.set_result(result)
+
+        body = (
+            """<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <title>Wright MCP sign-in</title>
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+             background: #080d18; color: #edf2ff; }
+      main { width: min(34rem, calc(100% - 3rem)); padding: 2rem;
+             border: 1px solid #1e769d; border-radius: 1rem;
+             background: #0d1422; box-shadow: 0 1rem 3rem #0008; }
+      h1 { margin: 0 0 .75rem; font-size: 1.5rem; }
+      p { margin: .5rem 0; color: #aeb8ca; line-height: 1.5; }
+      .success { color: #34d399; }
+      .failure { color: #fbbf24; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="success">Wright MCP sign-in complete</h1>
+      <p>Your account response was received securely by Wright.</p>
+      <p>You can close this tab and return to Wright.</p>
+    </main>
+  </body>
+</html>"""
+            if error is None
+            else """<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wright MCP sign-in</title></head>
+  <body style="font-family:system-ui,sans-serif;background:#080d18;color:#edf2ff;padding:3rem">
+    <h1 style="color:#fbbf24">Wright could not complete MCP sign-in</h1>
+    <p>Return to Wright for the connection details, then try again.</p>
+  </body>
+</html>"""
+        )
+        status_line = "HTTP/1.1 200 OK" if error is None else "HTTP/1.1 400 Bad Request"
+        response = (
+            f"{status_line}\r\n"
+            "Content-Type: text/html; charset=utf-8\r\n"
+            "Cache-Control: no-store\r\n"
+            "X-Content-Type-Options: nosniff\r\n"
+            f"Content-Length: {len(body.encode('utf-8'))}\r\n"
+            "Connection: close\r\n\r\n"
+            f"{body}"
+        )
+        writer.write(response.encode("utf-8"))
+        try:
+            await writer.drain()
+        finally:
+            writer.close()
+            await writer.wait_closed()
+
+    async def close(self) -> None:
+        if self.server is not None:
+            self.server.close()
+            await self.server.wait_closed()
+            self.server = None
+        if self.future is not None and not self.future.done():
+            self.future.cancel()
 
 
 class SseRunner(BaseRunner):
     """MCP Runner implementing SSE (Server-Sent Events) and Streamable HTTP transport with remote MCP servers."""
 
-    def __init__(self, sse_url: str, *, ui_enabled: bool = False):
+    def __init__(
+        self,
+        sse_url: str,
+        *,
+        ui_enabled: bool = False,
+        server_id: str | None = None,
+        oauth_enabled: bool = True,
+    ):
         self.sse_url = sse_url
+        self.server_id = (
+            server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
+        )
+        self.oauth_enabled = oauth_enabled
+        self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
+        self._oauth_callback: _OAuthCallbackServer | None = None
+        self._oauth_provider: OAuthClientProvider | None = None
         self._message_endpoint: Optional[str] = None
         self._read_task: Optional[asyncio.Task] = None
         self._pending_requests: Dict[int, asyncio.Future] = {}
@@ -44,6 +261,23 @@ class SseRunner(BaseRunner):
             headers["mcp-protocol-version"] = self._protocol_version
         return headers
 
+    def _preferred_oauth_callback_port(
+        self, client_info: OAuthClientInformationFull | None
+    ) -> int:
+        if client_info and client_info.redirect_uris:
+            redirect = urlsplit(str(client_info.redirect_uris[0]))
+            if (
+                redirect.scheme == "http"
+                and redirect.hostname == "127.0.0.1"
+                and redirect.path == "/oauth/callback"
+                and redirect.port
+            ):
+                return redirect.port
+        return (
+            8700
+            + int(hashlib.sha256(self.server_id.encode()).hexdigest()[:4], 16) % 1000
+        )
+
     async def start(self) -> None:
         async with self._lock:
             if self.client is not None:
@@ -54,10 +288,42 @@ class SseRunner(BaseRunner):
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 "Cache-Control": "no-cache",
             }
+            auth = None
+            if self.oauth_enabled:
+                self._oauth_callback = _OAuthCallbackServer()
+                oauth_storage = _WrightOAuthTokenStorage(self.server_id)
+                stored_client = await oauth_storage.get_client_info()
+                try:
+                    redirect_uri = await self._oauth_callback.start(
+                        port=self._preferred_oauth_callback_port(stored_client)
+                    )
+                except OSError:
+                    if stored_client is not None:
+                        oauth_storage.clear_oauth_state()
+                    await self._oauth_callback.close()
+                    self._oauth_callback = _OAuthCallbackServer()
+                    redirect_uri = await self._oauth_callback.start()
+                metadata = OAuthClientMetadata(
+                    redirect_uris=[redirect_uri],
+                    client_name="Wright",
+                    software_id="wright",
+                    software_version="0.1.0",
+                )
+                self._oauth_provider = OAuthClientProvider(
+                    self.sse_url,
+                    metadata,
+                    oauth_storage,
+                    redirect_handler=self._oauth_callback.open_authorization_url,
+                    callback_handler=self._oauth_callback.wait_for_callback,
+                    timeout=self._oauth_callback.timeout,
+                )
+                auth = self._oauth_provider
+
             self.client = httpx.AsyncClient(
                 timeout=60.0,
                 headers=headers,
                 follow_redirects=True,
+                auth=auth,
             )
 
             # Probe for Streamable HTTP by sending a POST initialize payload
@@ -160,6 +426,11 @@ class SseRunner(BaseRunner):
         if self.client:
             await self.client.aclose()
             self.client = None
+
+        if self._oauth_callback:
+            await self._oauth_callback.close()
+            self._oauth_callback = None
+        self._oauth_provider = None
 
         self._message_endpoint = None
         self._endpoint_ready.clear()
@@ -286,18 +557,19 @@ class SseRunner(BaseRunner):
                 if "application/json" in content_type:
                     try:
                         data = response.json()
-                        if "id" in data and data["id"] == req_id:
-                            self._pending_requests.pop(req_id, None)
-                            if "error" in data:
-                                raise RuntimeError(
-                                    "RPC Error: "
-                                    + redact_text(
-                                        redact_mapping({"error": data["error"]})
-                                    )
-                                )
-                            return data.get("result", {})
-                    except Exception:
-                        pass
+                    except ValueError as error:
+                        self._pending_requests.pop(req_id, None)
+                        raise RuntimeError(
+                            "Streamable HTTP returned invalid JSON"
+                        ) from error
+                    if "id" in data and data["id"] == req_id:
+                        self._pending_requests.pop(req_id, None)
+                        if "error" in data:
+                            raise RuntimeError(
+                                "RPC Error: "
+                                + redact_text(redact_mapping({"error": data["error"]}))
+                            )
+                        return data.get("result", {})
                 elif "text/event-stream" in content_type:
                     # Read and parse response body as SSE event
                     try:
@@ -316,10 +588,14 @@ class SseRunner(BaseRunner):
                                         )
                                     return data.get("result", {})
                     except Exception as sse_err:
+                        self._pending_requests.pop(req_id, None)
                         logger.error(
                             "Failed to parse SSE response in POST request: %s",
                             redact_text(sse_err),
                         )
+                        raise RuntimeError(
+                            "Streamable HTTP returned an invalid SSE response"
+                        ) from sse_err
         except asyncio.CancelledError:
             self._pending_requests.pop(req_id, None)
             try:

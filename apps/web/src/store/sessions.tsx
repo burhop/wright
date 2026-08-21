@@ -13,6 +13,7 @@ import type { AgentUiContext } from "../services/agent-service";
 
 export interface ChatStreamState {
   isStreaming: boolean;
+  startedAt: number | null;
   activeTool: { name: string; preview: string; percentage?: number } | null;
   streamActivity: StreamActivityEntry[];
   streamedText: string;
@@ -50,7 +51,12 @@ type ChatAction =
   | { type: "ADD_MESSAGE"; sessionId: string; message: ChatMessage }
   | { type: "LOAD_SESSION_HISTORY"; sessionId: string; messages: ChatMessage[] }
   | { type: "UPDATE_SESSION_TITLE"; sessionId: string; title: string }
-  | { type: "START_STREAMING"; sessionId: string; streamId?: string }
+  | {
+      type: "START_STREAMING";
+      sessionId: string;
+      streamId?: string;
+      startedAt?: number;
+    }
   | {
       type: "ADD_STREAM_ACTIVITY";
       sessionId: string;
@@ -96,6 +102,7 @@ const initialState: ChatState = {
 function emptyStreamState(): ChatStreamState {
   return {
     isStreaming: false,
+    startedAt: null,
     activeTool: null,
     streamActivity: [],
     streamedText: "",
@@ -452,6 +459,9 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         (streamState) => ({
           ...streamState,
           isStreaming: true,
+          startedAt: streamState.isStreaming
+            ? streamState.startedAt
+            : action.startedAt || Date.now(),
           streamedText: action.streamId ? streamState.streamedText : "",
           streamActivity: action.streamId ? streamState.streamActivity : [],
           activeStreamId: action.streamId || null,
@@ -565,6 +575,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         (streamState) => ({
           ...streamState,
           isStreaming: false,
+          startedAt: null,
           activeTool: null,
           streamedText: "",
           streamActivity: [],
@@ -665,6 +676,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     null,
   );
   const steeringSessionsRef = useRef<Set<string>>(new Set());
+  const resumedStreamIdsRef = useRef<Set<string>>(new Set());
+  const providerMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      providerMountedRef.current = false;
+    };
+  }, []);
 
   const refreshSessions = useCallback(async (workspaceId?: string) => {
     try {
@@ -736,35 +755,242 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshSessions();
+    // Workspace pages immediately request their scoped, locally persisted
+    // sessions. Avoid a duplicate global Hermes request during startup.
+    if (!window.location.pathname.startsWith("/workspace/")) {
+      void refreshSessions();
+    }
   }, [refreshSessions]);
 
   useEffect(() => {
     if (!state.activeSessionId) return;
 
-    let isMounted = true;
-    const fetchHistory = async () => {
+    const sessionId = state.activeSessionId;
+    const restoreSession = async () => {
       try {
-        const history = await agentService.getSessionHistory(
-          state.activeSessionId!,
-        );
-        if (isMounted) {
+        const [historyResult, statusResult] = await Promise.allSettled([
+          agentService.getSessionHistory(sessionId),
+          agentService.getStreamStatus(sessionId),
+        ]);
+        if (!providerMountedRef.current) return;
+
+        const cachedHistory =
+          readCachedSessions().find(
+            (session) => session.sessionId === sessionId,
+          )?.messages || [];
+        const history =
+          historyResult.status === "fulfilled"
+            ? historyResult.value
+            : cachedHistory;
+        if (historyResult.status === "fulfilled") {
           dispatch({
             type: "LOAD_SESSION_HISTORY",
-            sessionId: state.activeSessionId!,
+            sessionId,
             messages: history,
           });
+        } else {
+          console.error(
+            "Failed to load history for active session",
+            historyResult.reason,
+          );
+        }
+
+        if (statusResult.status === "rejected") {
+          console.error(
+            "Failed to check for active agent work",
+            statusResult.reason,
+          );
+          return;
+        }
+        const streamStatus = statusResult.value;
+        if (!streamStatus.active) return;
+
+        const recoveryKey = `${sessionId}:${streamStatus.streamId || "active"}`;
+        if (resumedStreamIdsRef.current.has(recoveryKey)) return;
+        resumedStreamIdsRef.current.add(recoveryKey);
+
+        const prompt = streamStatus.message?.trim();
+        const promptAlreadyPresent = Boolean(
+          prompt &&
+          history.some(
+            (message) =>
+              message.role === "user" &&
+              stripWorkspaceContext(message.content) === prompt,
+          ),
+        );
+        if (prompt && !promptAlreadyPresent) {
+          dispatch({
+            type: "ADD_MESSAGE",
+            sessionId,
+            message: {
+              id: `recovered-user-${streamStatus.streamId || Date.now()}`,
+              role: "user",
+              content: prompt,
+              timestamp: streamStatus.startedAt || Date.now(),
+              traceId: streamStatus.streamId || null,
+            },
+          });
+        }
+
+        dispatch({
+          type: "START_STREAMING",
+          sessionId,
+          streamId: streamStatus.streamId,
+          startedAt: streamStatus.startedAt,
+        });
+        dispatch({
+          type: "ADD_STREAM_ACTIVITY",
+          sessionId,
+          entry: {
+            kind: "status",
+            title: "Reconnected to running work",
+            detail: "The agent continued while this page was reloading.",
+          },
+        });
+
+        let accumulatedText = "";
+        let streamError: string | null = null;
+        try {
+          for await (const event of agentService.attachStream(sessionId)) {
+            if (!providerMountedRef.current) return;
+            if (event.type === "stream_start") {
+              dispatch({
+                type: "START_STREAMING",
+                sessionId,
+                streamId: event.streamId || streamStatus.streamId,
+                startedAt: event.startedAt || streamStatus.startedAt,
+              });
+            } else if (event.type === "token") {
+              accumulatedText += event.text;
+              dispatch({
+                type: "APPEND_STREAM_TOKEN",
+                sessionId,
+                text: event.text,
+              });
+            } else if (event.type === "tool") {
+              if (event.name.toLowerCase().includes("rivet")) {
+                dispatch({ type: "MARK_RIVET_MUTATION", sessionId });
+              }
+              dispatch({
+                type: "SET_ACTIVE_TOOL",
+                sessionId,
+                name: event.name,
+                preview: event.preview,
+                percentage: event.percentage,
+              });
+              dispatch({
+                type: "ADD_STREAM_ACTIVITY",
+                sessionId,
+                entry: {
+                  kind: "tool",
+                  title: event.name
+                    ? `Calling ${event.name}`
+                    : "Calling a tool",
+                  detail: event.preview || undefined,
+                  percentage: event.percentage,
+                  tool: event.name,
+                },
+              });
+            } else if (event.type === "progress") {
+              dispatch({
+                type: "SET_TOOL_PROGRESS",
+                sessionId,
+                percentage: event.percentage,
+                message: event.detail || event.message,
+              });
+              dispatch({
+                type: "ADD_STREAM_ACTIVITY",
+                sessionId,
+                entry: {
+                  kind: "progress",
+                  title: event.title,
+                  detail: event.detail,
+                  percentage: event.percentage,
+                  server: event.server,
+                  tool: event.tool,
+                  status: event.status,
+                  correlationId: event.correlationId,
+                },
+              });
+            } else if (event.type === "error") {
+              streamError = event.message;
+              dispatch({
+                type: "ADD_STREAM_ACTIVITY",
+                sessionId,
+                entry: {
+                  kind: "error",
+                  title: "Stream error",
+                  detail: event.message,
+                },
+              });
+            }
+          }
+
+          const completedHistory = await agentService
+            .getSessionHistory(sessionId)
+            .catch(() => history);
+          const finalMessages = [...completedHistory];
+          if (
+            prompt &&
+            !finalMessages.some(
+              (message) =>
+                message.role === "user" &&
+                stripWorkspaceContext(message.content) === prompt,
+            )
+          ) {
+            finalMessages.push({
+              id: `recovered-user-${streamStatus.streamId || Date.now()}`,
+              role: "user",
+              content: prompt,
+              timestamp: streamStatus.startedAt || Date.now(),
+              traceId: streamStatus.streamId || null,
+            });
+          }
+          if (
+            accumulatedText.trim() &&
+            !finalMessages.some(
+              (message) =>
+                message.role === "assistant" &&
+                message.content.trim() === accumulatedText.trim(),
+            )
+          ) {
+            finalMessages.push({
+              id: `recovered-assistant-${streamStatus.streamId || Date.now()}`,
+              role: "assistant",
+              content: accumulatedText.trim(),
+              timestamp: Date.now(),
+              traceId: streamStatus.streamId || null,
+            });
+          } else if (
+            streamError &&
+            !finalMessages.some(
+              (message) =>
+                message.role === "assistant" && message.content === streamError,
+            )
+          ) {
+            finalMessages.push({
+              id: `recovered-error-${streamStatus.streamId || Date.now()}`,
+              role: "assistant",
+              content: streamError,
+              timestamp: Date.now(),
+              traceId: streamStatus.streamId || null,
+            });
+          }
+          dispatch({
+            type: "LOAD_SESSION_HISTORY",
+            sessionId,
+            messages: finalMessages,
+          });
+          dispatch({ type: "END_STREAMING", sessionId });
+        } finally {
+          resumedStreamIdsRef.current.delete(recoveryKey);
         }
       } catch (err) {
-        console.error("Failed to load history for active session", err);
+        console.error("Failed to restore active session", err);
       }
     };
 
-    fetchHistory();
-
-    return () => {
-      isMounted = false;
-    };
+    void restoreSession();
   }, [state.activeSessionId]);
 
   const createSession = useCallback(
@@ -895,6 +1121,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               type: "START_STREAMING",
               sessionId,
               streamId: event.streamId,
+              startedAt: event.startedAt,
             });
             dispatch({
               type: "ADD_STREAM_ACTIVITY",

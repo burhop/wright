@@ -3,13 +3,16 @@ import { useCallback, useEffect, useState } from "react";
 import {
   workspaceService,
   type RivetWorkflowOperation,
-  type RivetWorkflowRun,
+  type RivetWorkflowRun as RivetWorkflowRunRecord,
 } from "../../services/workspace-service";
 import {
   declareLiveApp,
   operateLiveApp,
   type LiveAppOperation,
 } from "../../services/surfaces/surface-client";
+import { RivetWorkflowCapabilities } from "./RivetWorkflowCapabilities";
+import { RivetWorkflowRun } from "./RivetWorkflowRun";
+import { RivetScenarioLibrary } from "./RivetScenarioLibrary";
 
 export function RivetWorkflowsPanel({
   sessionId,
@@ -23,11 +26,12 @@ export function RivetWorkflowsPanel({
   onCreateWorkflow?: () => void | Promise<void>;
 }) {
   const [workflows, setWorkflows] = useState<RivetWorkflowOperation[]>([]);
-  const [runs, setRuns] = useState<Record<string, RivetWorkflowRun>>({});
+  const [runs, setRuns] = useState<Record<string, RivetWorkflowRunRecord>>({});
   const [history, setHistory] = useState<Record<string, string>>({});
   const [message, setMessage] = useState(
     "Workflows remain inside this workspace.",
   );
+  const [toolsSlug, setToolsSlug] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!sessionId) return;
@@ -49,16 +53,6 @@ export function RivetWorkflowsPanel({
     void refresh();
   }, [refresh]);
 
-  const approve = async (workflow: RivetWorkflowOperation) => {
-    if (!sessionId) return;
-    await workspaceService.reviewRivetWorkflow(
-      sessionId,
-      workflow.slug,
-      "approved",
-      "local-user",
-    );
-    await refresh();
-  };
   const run = async (workflow: RivetWorkflowOperation) => {
     if (!sessionId) return;
     try {
@@ -219,10 +213,7 @@ export function RivetWorkflowsPanel({
         >
           <strong>{workflow.slug}</strong>
           <br />
-          <small>
-            Revision {workflow.revision} ·{" "}
-            {workflow.review_state || "needs review"}
-          </small>
+          <small>Revision {workflow.revision} · Saved</small>
           <br />
           <button
             data-testid={`rivet-workflow-open-${workflow.slug}`}
@@ -232,44 +223,69 @@ export function RivetWorkflowsPanel({
             Open
           </button>{" "}
           <button
-            data-testid={`rivet-workflow-approve-${workflow.slug}`}
+            data-testid={`rivet-workflow-tools-${workflow.slug}`}
             type="button"
-            onClick={() => void approve(workflow)}
+            aria-expanded={toolsSlug === workflow.slug}
+            onClick={() =>
+              setToolsSlug((current) =>
+                current === workflow.slug ? null : workflow.slug,
+              )
+            }
           >
-            Approve revision
+            Tool connections
           </button>{" "}
           <button
             data-testid={`rivet-workflow-run-${workflow.slug}`}
             type="button"
-            disabled={workflow.review_state !== "approved"}
             onClick={() => void run(workflow)}
           >
             Run
           </button>
-          {runs[workflow.workflow_id] && (
+          {runs[workflow.workflow_id] && sessionId && (
             <>
-              <small> {runs[workflow.workflow_id].state}</small>{" "}
+              <RivetWorkflowRun
+                sessionId={sessionId}
+                run={runs[workflow.workflow_id]}
+                onRunUpdate={(updated) =>
+                  setRuns((current) => ({
+                    ...current,
+                    [workflow.workflow_id]: updated,
+                  }))
+                }
+                onCancel={() => cancel(workflow.workflow_id)}
+              />
               <button
                 data-testid={`rivet-workflow-history-${workflow.slug}`}
                 type="button"
                 onClick={() => void showHistory(workflow.workflow_id)}
               >
-                History
-              </button>{" "}
-              <button
-                data-testid={`rivet-workflow-cancel-${workflow.slug}`}
-                type="button"
-                onClick={() => void cancel(workflow.workflow_id)}
-              >
-                Cancel
+                Refresh run timeline
               </button>
               {history[workflow.workflow_id] && (
                 <small> {history[workflow.workflow_id]}</small>
               )}
             </>
           )}
+          {toolsSlug === workflow.slug && sessionId && (
+            <RivetWorkflowCapabilities
+              sessionId={sessionId}
+              workflow={workflow}
+            />
+          )}
         </div>
       ))}
+      {sessionId ? (
+        <RivetScenarioLibrary
+          sessionId={sessionId}
+          onPrepared={async (slug) => {
+            await refresh();
+            setToolsSlug(slug);
+            setMessage(
+              `Scenario workflow ${slug} is prepared for tool configuration.`,
+            );
+          }}
+        />
+      ) : null}
       <p
         style={{
           color: "var(--color-secondary)",

@@ -28,6 +28,15 @@ not a synthetic Python plugin capability.
 The rehearsal performs no TestPyPI, PyPI, registry, tag, documentation, or
 GitHub Release mutation.
 
+For engineering-program rehearsal, also validate the exact compatibility-
+evidence schema and record artifact digest, platform, architecture, manager and
+storage profiles, source isolation, forbidden-executable audit, complete
+lifecycle/persistence/offline checks, and whether the result is supporting.
+Unavailable hosts are recorded as skipped/non-supporting. Do not substitute
+fixture, contract, another architecture, or an installed source checkout for
+candidate-bound evidence. Support-diagnostic exports used during rehearsal
+remain local and must pass the proprietary-data/reusable-authority scan.
+
 ## Protected production order
 
 1. Preflight and required CI.

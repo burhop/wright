@@ -1,0 +1,30 @@
+schema_version: "1.0"
+scenario_id: electronics-enclosure-cooling
+revision: 1
+title: Electronics enclosure cooling
+summary: Transfer an ECAD board envelope into a CAD enclosure and verify deterministic thermal-flow margin.
+domains: [ecad, cad, cfd, python]
+tier: tier1
+resource: {class: small, expected_duration_seconds: 25, memory_mib: 256}
+workflow: {resource: workflows/electronics-enclosure-cooling.rivet-project, graph_id: graph-electronics, revision: 1}
+capabilities:
+  - {requirement_id: board-envelope, node_id: node-ecad, domain: ecad, tool_name: ecad__board_envelope, risk: read}
+  - {requirement_id: enclosure-build, node_id: node-cad, domain: cad, tool_name: cad__build_enclosure, risk: compute}
+  - {requirement_id: thermal-flow, node_id: node-cfd, domain: cfd, tool_name: cfd__solve_thermal, risk: compute}
+  - {requirement_id: thermal-margin, node_id: node-python, domain: python, tool_name: python__thermal_margin, risk: compute}
+inputs: {ambient: {value: 25, unit: degC}, power: {value: 12, unit: W}, required_clearance: {value: 2, unit: mm}}
+artifacts:
+  - {artifact_id: board-envelope, producer_node_id: node-ecad, domain: ecad, kind: ecad-board, schema_version: "1.0"}
+  - {artifact_id: enclosure-geometry, producer_node_id: node-cad, domain: cad, kind: mesh, schema_version: "1.0"}
+  - {artifact_id: thermal-result, producer_node_id: node-cfd, domain: cfd, kind: cfd-result, schema_version: "1.0"}
+  - {artifact_id: thermal-margin, producer_node_id: node-python, domain: python, kind: numeric-table, schema_version: "1.0"}
+assertions:
+  - {assertion_id: board-valid, plugin: ecad, plugin_version: "1.0", artifact_ids: [board-envelope], rule: {kind: board_valid}, severity: error, guidance: "Inspect board schema, units, layers, nets, and component envelopes."}
+  - {assertion_id: enclosure-clearance, plugin: ecad, plugin_version: "1.0", artifact_ids: [board-envelope, enclosure-geometry], rule: {kind: minimum_clearance, minimum: 2, unit: mm, require_coordinate_match: true}, severity: error, guidance: "Increase enclosure clearance or correct coordinate frames."}
+  - {assertion_id: cfd-converged, plugin: cfd, plugin_version: "1.0", artifact_ids: [thermal-result], rule: {kind: converged, maximum_residual: 0.0001}, severity: error, guidance: "Inspect mesh, boundary conditions, and residual history."}
+  - {assertion_id: temperature-limit, plugin: cfd, plugin_version: "1.0", artifact_ids: [thermal-result], rule: {kind: range, path: maximum_temperature, maximum: 70, unit: degC}, severity: error, guidance: "Improve airflow or reduce power."}
+  - {assertion_id: positive-margin, plugin: numeric, plugin_version: "1.0", artifact_ids: [thermal-margin], rule: {kind: range, path: margin, minimum: 5, unit: delta_degC}, severity: error, guidance: "Inspect thermal limit and maximum temperature inputs."}
+environment: {network: false, credentials: false, proprietary_application: false, gpu: false, hardware: false, large_download: false, platforms: [windows-amd64, linux-amd64, linux-arm64, macos]}
+safety: {physical_actuation: false, static_outputs_only: true, notes: "Deterministic board, enclosure, and thermal summaries only."}
+cleanup: {timeout_seconds: 5, residue_policy: fail}
+provenance: {owner: Wright Project, fixture_origin: wright-generated, license: MIT}

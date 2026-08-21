@@ -153,6 +153,26 @@ def test_rate_stream_buffer_log_and_time_limits_are_independent() -> None:
     effective.admit_request("presentation")
 
 
+def test_stream_rate_uses_burst_capacity_and_refills_at_sustained_rate() -> None:
+    clock = [NOW]
+    effective = SurfaceLimitPolicy(SurfacePolicySettings()).compose(
+        administrator={
+            "stream_bytes_per_second": 10,
+            "stream_burst_bytes": 20,
+        },
+        clock=lambda: clock[0],
+    )
+
+    effective.admit_stream_bytes("presentation", 20)
+    with pytest.raises(SurfaceLimitError, match="stream rate"):
+        effective.admit_stream_bytes("presentation", 1)
+
+    clock[0] += timedelta(seconds=0.5)
+    effective.admit_stream_bytes("presentation", 5)
+    with pytest.raises(SurfaceLimitError, match="stream rate"):
+        effective.admit_stream_bytes("presentation", 1)
+
+
 def test_runtime_demands_and_degraded_enforcement_are_denied_with_code() -> None:
     effective = SurfaceLimitPolicy(SurfacePolicySettings()).compose(
         administrator={

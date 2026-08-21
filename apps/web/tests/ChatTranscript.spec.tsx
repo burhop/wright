@@ -15,6 +15,20 @@ function makeSession(): ChatSession {
 }
 
 describe("ChatTranscript", () => {
+  it("shows how long the active response has been running", () => {
+    render(
+      <ChatTranscript
+        session={makeSession()}
+        isStreaming
+        streamStartedAt={Date.now() - 65_000}
+      />,
+    );
+
+    expect(screen.getByTestId("stream-elapsed-time")).toHaveTextContent(
+      "1m 05s",
+    );
+  });
+
   it("renders expandable stream activity details", () => {
     const entries: StreamActivityEntry[] = [
       {

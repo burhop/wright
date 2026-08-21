@@ -37,9 +37,9 @@ test.describe("Capability Library navigation", () => {
 
     await page.goto("/tool-registry");
     await expect(
-      page.getByRole("heading", { name: "Engineering Capability Library" }),
+      page.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeVisible();
-    await expect(page.getByLabel("Capability filters")).toBeVisible();
+    await expect(page.getByLabel("MCP server filters")).toBeVisible();
     await expect(page.getByTestId("capability-empty-state")).toBeVisible();
   });
 });

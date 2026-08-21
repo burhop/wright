@@ -6,6 +6,12 @@ test.describe("Global Settings Flow", () => {
   test.beforeEach(async ({ page }) => {
     savedSettings = null;
 
+    await page.route("**/api/auth/session/status", async (route) => {
+      await route.fulfill({
+        json: { auth_required: false, authenticated: true },
+      });
+    });
+
     // App startup still reads setup status for the active theme, but setup
     // status no longer gates access to the dashboard or settings page.
     await page.route("**/api/setup/status", async (route) => {

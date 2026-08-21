@@ -1,0 +1,43 @@
+{
+  "artifact-envelope.schema.json": [
+    {
+      "schema_version": "1.0",
+      "artifact_id": "mesh",
+      "domain": "cad",
+      "kind": "mesh",
+      "source_schema": {
+        "name": "mesh",
+        "version": "1",
+        "media_type": "application/json"
+      },
+      "producer": {
+        "run_id": "run",
+        "node_id": "node",
+        "call_id": "call",
+        "capability": "cad__mesh"
+      },
+      "upstream_digests": [],
+      "content_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "validation_state": "valid",
+      "content": {}
+    }
+  ],
+  "assertion-result.schema.json": [
+    {
+      "schema_version": "1.0",
+      "assertion_id": "mesh-present",
+      "plugin": "geometry",
+      "plugin_version": "1",
+      "state": "pass",
+      "category": "geometry",
+      "reason_code": "assertion_passed",
+      "artifact_digests": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "producer": {
+        "node_id": "node",
+        "capability": "cad__mesh"
+      }
+    }
+  ]
+}

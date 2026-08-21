@@ -76,10 +76,11 @@ def test_mirror_scripts_respect_explicit_python_interpreter() -> None:
         assert "python3 - " not in script
 
 
-def test_dev_merge_gate_bootstraps_package_build_frontend() -> None:
+def test_dev_merge_gate_reproducibly_bootstraps_package_build_frontend() -> None:
     gate = (ROOT / "scripts" / "check-dev-merge.sh").read_text(encoding="utf-8")
 
-    assert "uv pip install mypy build --quiet" in gate
+    assert "uv sync --all-packages --all-groups --reinstall-package wright-engineering" in gate
+    assert "uv run --with mypy mypy" in gate
     assert "scripts/build-python-distributions.sh --dist-root" in gate
     assert "WRIGHT_API_MCP_AUTOSTART=1" in gate
 

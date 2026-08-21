@@ -74,6 +74,18 @@ branch to `dev`, run the CI-equivalent merge gate:
 make check-dev-merge
 ```
 
+For every push to a pull request targeting `dev`, follow the
+[development push runbook](dev-push-runbook.md) and run the diff-aware native
+fast gate:
+
+```powershell
+scripts/check-dev-push.ps1
+```
+
+```bash
+scripts/check-dev-push.sh
+```
+
 Before merging `dev` to `main`, run the production merge gate:
 
 ```bash

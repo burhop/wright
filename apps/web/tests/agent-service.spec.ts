@@ -1,5 +1,12 @@
-import { describe, expect, it } from "vitest";
-import { summarizeProgressPayload } from "../src/services/agent-service";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  HermesAgentService,
+  summarizeProgressPayload,
+} from "../src/services/agent-service";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("summarizeProgressPayload", () => {
   it("uses generic advertised fields and computes bounded progress", () => {
@@ -42,5 +49,28 @@ describe("summarizeProgressPayload", () => {
       correlationId: undefined,
       heartbeat: undefined,
     });
+  });
+
+  it("shares and caches the static command catalog request", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          commands: [{ name: "wright", description: "Wright", prefix: "/" }],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const service = new HermesAgentService();
+
+    const [first, second] = await Promise.all([
+      service.getCommands(),
+      service.getCommands(),
+    ]);
+    const third = await service.getCommands();
+
+    expect(first).toEqual(second);
+    expect(third).toEqual(first);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

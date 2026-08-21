@@ -26,12 +26,12 @@ def test_one_public_distribution_carries_the_complete_native_application() -> No
         item.split("[", 1)[0].split("<", 1)[0].split(">", 1)[0] for item in runtime
     }
     assert normalized.isdisjoint(PRIVATE_DISTRIBUTIONS)
-    assert any(item.startswith("cryptography>=45,<50") for item in runtime)
+    assert any(item.startswith("cryptography>=45,<51") for item in runtime)
 
     tool_registry = tomllib.loads(
         (ROOT / "packages/tool_registry/pyproject.toml").read_text(encoding="utf-8")
     )
-    assert "cryptography>=45,<50" in tool_registry["project"]["dependencies"]
+    assert "cryptography>=45,<51" in tool_registry["project"]["dependencies"]
 
     wheel_packages = set(
         project["tool"]["hatch"]["build"]["targets"]["wheel"]["packages"]

@@ -6,6 +6,8 @@ from enum import StrEnum
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from core.rivet_mcp import ProviderEvidence
+
 from .models import McpUiResourceMetadata, McpUiToolMetadata
 
 
@@ -27,6 +29,21 @@ class GatewayError(RuntimeError):
     def __init__(self, code: GatewayErrorCode, message: str) -> None:
         super().__init__(message)
         self.code = code
+
+
+class GatewayLifecycleError(GatewayError):
+    """Safe provider-neutral failure for a specialized application lifecycle."""
+
+    def __init__(
+        self,
+        *,
+        lifecycle_kind: str,
+        recovery_action: str | None,
+        message: str = "Specialized application is unavailable",
+    ) -> None:
+        super().__init__(GatewayErrorCode.CHILD_UNAVAILABLE, message)
+        self.lifecycle_kind = lifecycle_kind
+        self.recovery_action = recovery_action
 
 
 class SessionState(StrEnum):
@@ -204,6 +221,17 @@ class GatewayTool:
     ui: McpUiToolMetadata = field(default_factory=McpUiToolMetadata)
     required_approvals: frozenset[str] = field(default_factory=frozenset)
     provenance: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        raw = self.provenance.get("provider")
+        if raw is None:
+            return
+        if not isinstance(raw, Mapping):
+            raise ValueError("Gateway provider evidence is invalid")
+        provider = ProviderEvidence.parse(raw)
+        claimed = self.provenance.get("provider_evidence_digest")
+        if claimed not in {None, provider.provider_evidence_digest}:
+            raise ValueError("Gateway provider evidence digest changed")
 
 
 @dataclass(frozen=True, slots=True)

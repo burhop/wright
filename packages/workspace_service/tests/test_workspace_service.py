@@ -10,6 +10,7 @@ from agent_adapters import AgentSessionInfo
 from workspace_service import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
+    WorkspaceProtectedPathError,
     WorkspaceService,
     default_workspace_parent_dir,
 )
@@ -168,6 +169,69 @@ def test_authorize_session_workspace_accepts_registered_existing_path(
     assert authorized.created is False
 
 
+def test_authorize_session_workspace_rejects_registered_application_source(
+    tmp_path, db_path
+):
+    application_root = tmp_path / "wright-application"
+    application_root.mkdir()
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(application_root),
+        workspace_name="Unsafe Legacy Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="access blocked"):
+        service.authorize_session_workspace(str(application_root))
+
+
+@pytest.mark.asyncio
+async def test_activate_workspace_rejects_legacy_path_containing_application_source(
+    tmp_path, db_path
+):
+    application_root = tmp_path / "installation" / "wright"
+    application_root.mkdir(parents=True)
+    unsafe_parent = application_root.parent
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(unsafe_parent),
+        workspace_name="Unsafe Parent Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="application files"):
+        await service.activate_workspace("session-1", FakeEngine())
+
+
+def test_workspace_tool_access_rejects_legacy_application_workspace(tmp_path, db_path):
+    application_root = tmp_path / "wright-application"
+    application_root.mkdir()
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(application_root),
+        workspace_name="Unsafe Legacy Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="access blocked"):
+        service.list_workspace_tools_by_workspace("workspace-1")
+
+
 def test_authorize_session_workspace_rejects_unregistered_path_without_creating(
     tmp_path, db_path
 ):
@@ -304,6 +368,11 @@ async def test_resolve_workspace_uses_persisted_binding_when_agent_disagrees(
         workspace=str(tmp_path / "agent-controlled-path"),
     )
 
+    async def unexpected_agent_lookup(_session_id: str) -> str | None:
+        raise AssertionError("persisted workspace binding queried the agent")
+
+    engine.get_session_workspace = unexpected_agent_lookup
+
     resolved = await service.resolve_workspace_dir(record.session_id, engine)
 
     assert resolved == record.local_path
@@ -311,6 +380,54 @@ async def test_resolve_workspace_uses_persisted_binding_when_agent_disagrees(
         service.repository.get_by_session(record.session_id)["local_path"]
         == record.local_path
     )
+
+
+@pytest.mark.asyncio
+async def test_bound_workspace_activation_can_skip_agent_session_verification(
+    tmp_path, db_path
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Active Workspace", str(tmp_path / "active-workspace"), engine
+    )
+
+    async def unexpected_session_list():
+        raise AssertionError("workspace refresh queried agent sessions")
+
+    engine.list_sessions = unexpected_session_list
+
+    activation = await service.activate_workspace(
+        record.session_id,
+        engine,
+        verify_agent_session=False,
+    )
+
+    assert activation.session_id == record.session_id
+
+
+@pytest.mark.asyncio
+async def test_workspace_session_list_can_use_local_records_without_agent_refresh(
+    tmp_path, db_path
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Session Workspace", str(tmp_path / "session-workspace"), engine
+    )
+
+    async def unexpected_session_list():
+        raise AssertionError("local workspace session list queried the agent")
+
+    engine.list_sessions = unexpected_session_list
+
+    sessions = await service.list_workspace_sessions(
+        record.workspace_id,
+        engine,
+        refresh_agent=False,
+    )
+
+    assert [session.session_id for session in sessions] == [record.session_id]
 
 
 @pytest.mark.asyncio

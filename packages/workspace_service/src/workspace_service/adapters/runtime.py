@@ -28,6 +28,18 @@ UUID_SESSION_PATTERN = re.compile(
 )
 HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
 GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
+RIVET_WORKFLOWS_SERVER_ID = "rivet-workflows"
+RIVET_WORKFLOWS_SERVER_NAME = "Rivet Workflows"
+
+
+def _with_builtin_workspace_tools(tools: list[str]) -> list[str]:
+    enabled = [
+        tool
+        for tool in tools
+        if tool not in {RIVET_WORKFLOWS_SERVER_ID, RIVET_WORKFLOWS_SERVER_NAME}
+    ]
+    enabled.append(RIVET_WORKFLOWS_SERVER_ID)
+    return enabled
 
 
 class _ClosingConnection(sqlite3.Connection):
@@ -504,7 +516,9 @@ def get_workspace_enabled_tools_by_workspace(
         row = cursor.fetchone()
         if row and row["enabled_tools"] is not None:
             try:
-                return json.loads(row["enabled_tools"])
+                enabled_tools = json.loads(row["enabled_tools"])
+                if isinstance(enabled_tools, list):
+                    return _with_builtin_workspace_tools(enabled_tools)
             except Exception:
                 pass
     return None
@@ -557,7 +571,7 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
         if not requires_creds:
             enabled.append(s.name)
 
-    return enabled
+    return _with_builtin_workspace_tools(enabled)
 
 
 def update_workspace_enabled_tools_by_workspace(
@@ -898,16 +912,18 @@ class WorkspaceManager:
         self._paths = WorkspacePath(base_dir)
         self.base_dir = str(self._paths.root)
 
-        # `git init` is idempotent, so initialization needs no path existence
-        # probe. The workspace path is passed only as a process capability (cwd),
-        # while every command argument remains server-owned and fixed.
+        # WorkspaceManager is also constructed by the two-second file refresh.
+        # Avoid spawning Git and Python on every read once these fixed workspace
+        # children already exist; on Windows those repeated processes can hold
+        # up unrelated UI requests for several seconds.
+        repository_path = Path(self.base_dir) / ".git"
         git_executable = shutil.which("git")
         if git_executable is None:
             logger.warning(
                 "Git is unavailable; workspace created without a local repository",
                 workspace=self.base_dir,
             )
-        else:
+        elif not repository_path.exists():
             try:
                 subprocess.run(
                     [git_executable, "init"],
@@ -932,31 +948,33 @@ class WorkspaceManager:
 
         # Create the fixed-name default without probing a path derived from the
         # workspace identifier. Exclusive mode preserves an existing user file.
-        gitignore_script = (
-            "from pathlib import Path\n"
-            "try:\n"
-            "    with Path('.gitignore').open('x', encoding='utf-8', newline='\\n') as f:\n"
-            "        f.write('# Auto-generated .gitignore for Engineering Workspace\\n'"
-            "+ '*.log\\n*.tmp\\ntmp/\\n/tmp/\\n')\n"
-            "except FileExistsError:\n"
-            "    pass\n"
-        )
-        try:
-            subprocess.run(
-                [sys.executable, "-c", gitignore_script],
-                cwd=self.base_dir,
-                capture_output=True,
-                check=True,
-                text=True,
+        gitignore_path = Path(self.base_dir) / ".gitignore"
+        if not gitignore_path.exists():
+            gitignore_script = (
+                "from pathlib import Path\n"
+                "try:\n"
+                "    with Path('.gitignore').open('x', encoding='utf-8', newline='\\n') as f:\n"
+                "        f.write('# Auto-generated .gitignore for Engineering Workspace\\n'"
+                "+ '*.log\\n*.tmp\\ntmp/\\n/tmp/\\n')\n"
+                "except FileExistsError:\n"
+                "    pass\n"
             )
-        except (FileNotFoundError, NotADirectoryError) as error:
-            raise FileNotFoundError(self.base_dir) from error
-        except Exception as e:
-            logger.error(
-                "Failed to create default .gitignore in workspace %s: %s",
-                self.base_dir,
-                e,
-            )
+            try:
+                subprocess.run(
+                    [sys.executable, "-c", gitignore_script],
+                    cwd=self.base_dir,
+                    capture_output=True,
+                    check=True,
+                    text=True,
+                )
+            except (FileNotFoundError, NotADirectoryError) as error:
+                raise FileNotFoundError(self.base_dir) from error
+            except Exception as e:
+                logger.error(
+                    "Failed to create default .gitignore in workspace %s: %s",
+                    self.base_dir,
+                    e,
+                )
 
     def _get_lock_path(self, rel_path: str) -> str:
         import hashlib

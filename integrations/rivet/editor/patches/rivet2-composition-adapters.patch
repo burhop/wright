@@ -1,0 +1,26 @@
+diff --git a/packages/app/src/features/graphBuilder/authoringCatalog.ts b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+--- a/packages/app/src/features/graphBuilder/authoringCatalog.ts
++++ b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+@@ -237,6 +237,10 @@ const STATIC_BUILT_IN_SETTINGS: Readonly<Record<string, readonly GraphBuilderSett
+     setting('useFunctionNameInput', 'boolean', 'Read the function name from an input.'),
+     setting('useErrorOutput', 'boolean', 'Expose an error output instead of failing immediately.'),
+   ],
++  extractObjectPath: [
++    setting('path', 'string', 'JSONPath expression used to select the value.', { projection: 'on-demand' }),
++    setting('usePathInput', 'boolean', 'Read the JSONPath expression from an input port.'),
++  ],
+   gptFunction: [
+     setting('name', 'string', 'Tool name exposed to the language model.'),
+     setting('description', 'string', 'Tool description exposed to the language model.', {
+@@ -910,7 +914,10 @@ function applySettings(
+   for (const [key, value] of Object.entries(rawSettings)) {
+     const descriptor = descriptors.get(key);
+     if (!descriptor) {
+-      throw new Error(`Setting "${key}" is not supported for node type "${node.type}".`);
++      const available = [...descriptors.keys()].join(', ') || '(none)';
++      throw new Error(
++        `Setting "${key}" is not supported for node type "${node.type}". Available settings: ${available}.`,
++      );
+     }
+     settings[key] = validateSettingValue(descriptor, value);
+   }

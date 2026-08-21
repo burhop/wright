@@ -15,7 +15,7 @@ Docker Hub as a required byte-identical distribution target.
 | `frontend-quality.yml`          | Push or pull request to `main` or `dev`                                  | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`.                                                                                                                                                           |
 | `test-windows.yml`              | Push or pull request to `main` or `dev`, or manual run                   | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow.                                                                                                                                                                         |
 | `public-alpha-safety.yml`       | Push, pull request, or manual run                                        | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan.                                                                                                                                                                                                      |
-| `codeql.yml`                    | Push or pull request to `main` or `dev`, plus weekly schedule            | Runs CodeQL for Python and JavaScript/TypeScript.                                                                                                                                                                                                                                            |
+| `codeql.yml`                    | Push or pull request to `main` or `dev`, plus weekly schedule            | Runs CodeQL for Python and JavaScript/TypeScript, cancelling superseded runs and excluding only pinned/generated bundles listed in `.github/codeql/codeql-config.yml`.                                                                                                                        |
 | `dependency-review.yml`         | Pull request to `main` or `dev`                                          | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories.                                                                                                                                                                                      |
 | `docker-pr.yml`                 | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images.                                                                                                         |
 | `docker-build.yml`              | Reusable `workflow_call` from `release.yml`                              | Builds one amd64 OCI candidate, smokes and scans that exact subject, enforces vulnerability policy, records evidence, and optionally pushes and attests the candidate digest.                                                                                                                |
@@ -45,6 +45,12 @@ pull requests and branch pushes but deploys only from `main`. The Docker PR gate
 does not publish public images.
 
 ## Local Merge Gates
+
+Read the [development push runbook](dev-push-runbook.md) before every push to a
+pull request targeting `dev`. Use `scripts/check-dev-push.ps1` on Windows or
+`scripts/check-dev-push.sh` on Unix for the diff-aware fast gate. Frontend unit
+and Playwright jobs run independently so one CI run reports both failure classes,
+and superseded PR runs are cancelled.
 
 Routine development can use targeted tests and `make check`. Before integrating
 branches, use the heavier merge gates so local validation matches CI closely

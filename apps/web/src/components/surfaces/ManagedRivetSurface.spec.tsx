@@ -143,4 +143,26 @@ describe("ManagedRivetSurface", () => {
     );
     expect(screen.queryByTestId("managed-rivet-retry")).not.toBeInTheDocument();
   });
+
+  it("does not create a presentation after its startup mount is retired", async () => {
+    let finishStartup: ((surfaceId: string) => void) | undefined;
+    mocks.ensureRivetEditorRunning.mockReturnValue(
+      new Promise<string>((resolve) => {
+        finishStartup = resolve;
+      }),
+    );
+
+    const view = render(
+      <ManagedRivetSurface
+        workspaceId="workspace-1"
+        sessionId="session-1"
+        initialSlug="rivet"
+      />,
+    );
+    view.unmount();
+    finishStartup?.("surface-rivet");
+
+    await Promise.resolve();
+    expect(mocks.createPresentation).not.toHaveBeenCalled();
+  });
 });

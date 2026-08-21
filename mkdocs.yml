@@ -45,6 +45,7 @@ nav:
       - Overview: getting-started/overview.md
       - Prerequisites: getting-started/prerequisites.md
       - Install Matrix: getting-started/install-matrix.md
+      - Engineering Program State Lifecycle: getting-started/program-state-lifecycle.md
       - Docker Appliance: getting-started/quickstart-docker.md
       - Windows 11: getting-started/windows-11.md
       - Linux and GB10: getting-started/linux-gb10.md
@@ -60,6 +61,11 @@ nav:
   - User Guide:
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
+      - Rivet MCP Workflows: rivet/mcp-gateway.md
+      - Rivet Engineering Scenarios: rivet/engineering-scenarios.md
+      - Model-enabled Rivet Scenarios: rivet/model-enabled-scenarios.md
+      - Rivet Workflow Testing: rivet/testing.md
+      - Local Chatter Model: models/chatter-local-model.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md
       - Makefile Targets: user-guide/makefile.md
@@ -80,6 +86,7 @@ nav:
       - Container Hardening: security/container-hardening.md
   - Operations:
       - Database Migration and Recovery: operations/database-recovery.md
+      - Engineering Support Diagnostics: operations/engineering-support-diagnostics.md
       - MCP Gateway: operations/mcp-gateway.md
       - Solid Edge Diagnostics: operations/solid-edge-diagnostics.md
   - Integrations:
@@ -87,9 +94,11 @@ nav:
       - Solid Edge Creation: integrations/solid-edge-creation.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
+      - Development Push Runbook: contributing/dev-push-runbook.md
       - Spec-Kit Workflow: contributing/spec-kit.md
       - Code Style: contributing/code-style.md
       - Testing Guidelines: contributing/testing.md
+      - Engineering Program Usability: testing/engineering-program-usability.md
       - CI/CD Workflows: contributing/ci-cd-workflows.md
       - Pull Requests: contributing/pull-requests.md
       - Public Launch Checklist: public-launch-checklist.md

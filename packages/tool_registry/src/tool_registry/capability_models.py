@@ -5,6 +5,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from .windows_qualification_models import WindowsQualificationSummary
+
 Digest = str
 EvidenceClass = Literal[
     "official_production",
@@ -230,6 +232,7 @@ class CapabilityView(StrictModel):
     requirements: dict[str, Any] = Field(default_factory=dict)
     validation_result: dict[str, Any] = Field(default_factory=dict)
     local_validation: dict[str, Any] | None = None
+    windows_qualification: WindowsQualificationSummary | None = None
     user_state: CapabilityUserState = Field(default_factory=CapabilityUserState)
     custom: bool = False
     available_actions: list[str] = Field(default_factory=list)

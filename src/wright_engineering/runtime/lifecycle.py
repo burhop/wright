@@ -44,6 +44,7 @@ from .models import (
 from .process import ProcessError, ProcessManager
 from .purge import PurgeManager
 from .state import LifecycleBusy, ManifestStore, StateError
+from .server import native_ui_url
 
 
 HealthProbe = Callable[[ProcessIdentity], bool]
@@ -372,7 +373,7 @@ class NativeLifecycle:
             "operation_id": manifest.current_operation.operation_id
             if manifest.current_operation
             else None,
-            "ui_url": f"http://{self.host}:{self.port}/",
+            "ui_url": native_ui_url(self.host, self.port),
             "api_healthy": False,
             "ui_healthy": False,
         }
@@ -509,6 +510,43 @@ class NativeLifecycle:
             with self.store.lock(operation_id=operation_id, timeout=self.lock_timeout):
                 manifest = self.store.load()
                 if manifest.process is None:
+                    if (
+                        manifest.lifecycle_state is LifecycleState.RECOVERY_REQUIRED
+                        and manifest.current_operation is None
+                        and manifest.active_runtime_id in manifest.runtimes
+                    ):
+                        runtime = manifest.runtimes[manifest.active_runtime_id]
+                        if runtime.status in {
+                            RuntimeStatus.ACTIVE,
+                            RuntimeStatus.VERIFIED,
+                        }:
+                            manifest.transition(LifecycleState.STOPPING)
+                            manifest.current_operation = OperationRecord(
+                                operation_id=operation_id,
+                                kind=OperationKind.STOP,
+                                requested_by=requested_by or self.manager_id,
+                                started_at=started_at,
+                                from_state=LifecycleState.RECOVERY_REQUIRED,
+                                target_state=LifecycleState.STOPPED,
+                                candidate_runtime_id=runtime.runtime_id,
+                                recovery_action=(
+                                    "Normalize the verified active runtime to a "
+                                    "safely stopped state."
+                                ),
+                            )
+                            self.store.save(manifest)
+                            runtime.status = RuntimeStatus.VERIFIED
+                            manifest.transition(LifecycleState.STOPPED)
+                            manifest.current_operation = None
+                            return self._result(
+                                manifest,
+                                operation_id,
+                                "stop",
+                                True,
+                                ResultCode.OK,
+                                "Wright recovered to a safely stopped state.",
+                                started_at,
+                            )
                     if manifest.lifecycle_state in {
                         LifecycleState.HEALTHY,
                         LifecycleState.DEGRADED,
@@ -535,8 +573,8 @@ class NativeLifecycle:
                         started_at,
                     )
                 runtime_id = manifest.process.runtime_id
-                runtime = manifest.runtimes.get(runtime_id)
-                if runtime is None or manifest.active_runtime_id != runtime_id:
+                active_runtime = manifest.runtimes.get(runtime_id)
+                if active_runtime is None or manifest.active_runtime_id != runtime_id:
                     manifest.lifecycle_state = LifecycleState.RECOVERY_REQUIRED
                     return self._result(
                         manifest,
@@ -564,10 +602,29 @@ class NativeLifecycle:
                 try:
                     self.process_manager.stop(
                         manifest.process,
-                        Path(runtime.environment_path),
+                        Path(active_runtime.environment_path),
                         expected_runtime_id=runtime_id,
                     )
                 except Exception as exc:
+                    if (
+                        from_state is LifecycleState.RECOVERY_REQUIRED
+                        and isinstance(exc, ProcessError)
+                        and str(exc) == "process_not_found"
+                    ):
+                        manifest.process = None
+                        active_runtime.status = RuntimeStatus.VERIFIED
+                        manifest.transition(LifecycleState.STOPPED)
+                        manifest.current_operation = None
+                        return self._result(
+                            manifest,
+                            operation_id,
+                            "stop",
+                            True,
+                            ResultCode.OK,
+                            "Wright cleared a stale process record and recovered "
+                            "to a safely stopped state.",
+                            started_at,
+                        )
                     manifest.lifecycle_state = LifecycleState.RECOVERY_REQUIRED
                     manifest.current_operation = None
                     return self._result(
@@ -584,7 +641,7 @@ class NativeLifecycle:
                         ],
                     )
                 manifest.process = None
-                runtime.status = RuntimeStatus.VERIFIED
+                active_runtime.status = RuntimeStatus.VERIFIED
                 manifest.transition(LifecycleState.STOPPED)
                 manifest.current_operation = None
                 return self._result(
@@ -661,7 +718,10 @@ class NativeLifecycle:
                         ],
                     )
                 current = manifest.runtimes[current_id]
-                if current.version == artifact.version:
+                if (
+                    current.version == artifact.version
+                    and current.artifact_sha256 == artifact.sha256
+                ):
                     return self._result(
                         manifest,
                         operation_id,
@@ -749,6 +809,19 @@ class NativeLifecycle:
                         expected_runtime_id=current.runtime_id,
                     )
                     manifest.process = None
+                previous_predecessor_id = manifest.predecessor_runtime_id
+                if (
+                    previous_predecessor_id is not None
+                    and previous_predecessor_id != current_id
+                ):
+                    previous_predecessor = manifest.runtimes.get(
+                        previous_predecessor_id
+                    )
+                    if (
+                        previous_predecessor is not None
+                        and previous_predecessor.status is RuntimeStatus.PREDECESSOR
+                    ):
+                        previous_predecessor.status = RuntimeStatus.VERIFIED
                 current.status = RuntimeStatus.PREDECESSOR
                 candidate.status = RuntimeStatus.ACTIVE
                 manifest.predecessor_runtime_id = current_id
@@ -763,7 +836,17 @@ class NativeLifecycle:
                         candidate.failure_code = "health_failed"
                         current.status = RuntimeStatus.ACTIVE
                         manifest.active_runtime_id = current_id
-                        manifest.predecessor_runtime_id = None
+                        manifest.predecessor_runtime_id = previous_predecessor_id
+                        if previous_predecessor_id is not None:
+                            previous_predecessor = manifest.runtimes.get(
+                                previous_predecessor_id
+                            )
+                            if (
+                                previous_predecessor is not None
+                                and previous_predecessor.status
+                                is RuntimeStatus.VERIFIED
+                            ):
+                                previous_predecessor.status = RuntimeStatus.PREDECESSOR
                         recovered = self._launch_runtime(current, operation_id)
                         manifest.current_operation = None
                         if recovered is not None:
@@ -887,6 +970,11 @@ class NativeLifecycle:
                 target = manifest.runtimes[target_id]
                 schema = self.migration_manager.current_schema(self.layout.data)
                 if not target.data_schema_min <= schema <= target.data_schema_max:
+                    quarantine = self.store.record_newer_state_quarantine(
+                        data_schema=schema,
+                        candidate_runtime_id=target.runtime_id,
+                        supported_max=target.data_schema_max,
+                    )
                     return self._result(
                         manifest,
                         operation_id,
@@ -899,6 +987,7 @@ class NativeLifecycle:
                             "current_schema": schema,
                             "supported_min": target.data_schema_min,
                             "supported_max": target.data_schema_max,
+                            "newer_state": quarantine,
                         },
                         remediation=[
                             "Use the documented explicit backup recovery procedure."
@@ -930,6 +1019,20 @@ class NativeLifecycle:
                         expected_runtime_id=current_id,
                     )
                     manifest.process = None
+                previous_predecessor_id = manifest.predecessor_runtime_id
+                target_previous_status = target.status
+                if (
+                    previous_predecessor_id is not None
+                    and previous_predecessor_id not in {current_id, target_id}
+                ):
+                    previous_predecessor = manifest.runtimes.get(
+                        previous_predecessor_id
+                    )
+                    if (
+                        previous_predecessor is not None
+                        and previous_predecessor.status is RuntimeStatus.PREDECESSOR
+                    ):
+                        previous_predecessor.status = RuntimeStatus.VERIFIED
                 current.status = RuntimeStatus.PREDECESSOR
                 target.status = RuntimeStatus.ACTIVE
                 manifest.active_runtime_id = target_id
@@ -937,10 +1040,20 @@ class NativeLifecycle:
                 if was_running:
                     identity = self._launch_runtime(target, operation_id)
                     if identity is None:
-                        target.status = RuntimeStatus.PREDECESSOR
+                        target.status = target_previous_status
                         current.status = RuntimeStatus.ACTIVE
                         manifest.active_runtime_id = current_id
-                        manifest.predecessor_runtime_id = target_id
+                        manifest.predecessor_runtime_id = previous_predecessor_id
+                        if previous_predecessor_id is not None:
+                            previous_predecessor = manifest.runtimes.get(
+                                previous_predecessor_id
+                            )
+                            if (
+                                previous_predecessor is not None
+                                and previous_predecessor.status
+                                is RuntimeStatus.VERIFIED
+                            ):
+                                previous_predecessor.status = RuntimeStatus.PREDECESSOR
                         restored = self._launch_runtime(current, operation_id)
                         manifest.current_operation = None
                         if restored is not None:
@@ -1426,7 +1539,7 @@ class NativeLifecycle:
         return {
             "runtime_version": runtime.version,
             "runtime_id": runtime.runtime_id,
-            "ui_url": f"http://{self.host}:{self.port}/",
+            "ui_url": native_ui_url(self.host, self.port),
             "data_root": manifest.data_root,
             "pid": manifest.process.pid if manifest.process else None,
         }

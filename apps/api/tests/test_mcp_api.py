@@ -101,6 +101,35 @@ def test_list_servers(client):
     assert data["servers"][0]["name"] == "Calcul mesh"
 
 
+def test_list_installed_servers_returns_compact_projection(client, test_db_path):
+    connection = sqlite3.connect(test_db_path)
+    try:
+        connection.execute(
+            "UPDATE mcp_servers SET is_installed = 1 WHERE server_id = ?",
+            ("calc-id-123",),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+    response = client.get("/api/mcp/servers/installed")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "servers": [
+            {
+                "server_id": "calc-id-123",
+                "name": "Calcul mesh",
+                "type": "stdio",
+                "is_active": False,
+                "is_installed": True,
+                "description": None,
+                "source_url": None,
+            }
+        ]
+    }
+
+
 def test_register_server(client):
     payload = {
         "name": "Custom SSE Link",

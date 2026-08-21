@@ -255,7 +255,7 @@ class McpEngine:
         elif server.type == "sse":
             if not server.command or not isinstance(server.command, str):
                 raise ValueError("Valid SSE URL string is required for sse server.")
-            runner = SseRunner(server.command)
+            runner = SseRunner(server.command, server_id=server_id)
         elif server.type == "webmcp":
             # webmcp servers represent client-side DOM connections managed via websockets in apps/web.
             # They do not use a backend subprocess runner, but we update status to active.

@@ -42,8 +42,8 @@ index da671ed6..8f0eb633 100644
 +        '[WrightListToolDef01]:gptFunction "GPT Function"':
 +          data:
 +            description: Searches the live safe node catalog. Call this before createNode;
-+              use a short capability query such as "input output text" and pass
-+              the returned authoringChoiceId to createNode.
++              use a short capability query such as "input output text", then copy
++              the returned createNodeArguments object into createNode.
 +            name: listNodeTypes
 +            schema: |-
 +              {
@@ -68,8 +68,8 @@ index da671ed6..8f0eb633 100644
            data:
              description: Creates a deterministically resolved node type and returns its node
 -              ID. Use getNodePorts and getNodeData after creation.
-+              ID. Call listNodeTypes first, pass its authoringChoiceId here, then
-+              use getNodePorts and getNodeData after creation.
++              ID. Call listNodeTypes first and copy a returned createNodeArguments
++              object here, then use getNodePorts and getNodeData after creation.
              name: createNode
              schema: |-
 @@ -983,16 +1032,17 @@ data:
@@ -79,15 +79,15 @@ index da671ed6..8f0eb633 100644
 -              Use createNode, getNodeData, getNodePorts, editNode, connectNodes,
 -              disconnectNodes, deleteNode, toggleSplitting, reviewGraph,
 -              updateUser, and finished.
-+              Use listNodeTypes, createNode, getNodeData, getNodePorts, editNode,
-+              connectNodes, disconnectNodes, deleteNode, toggleSplitting,
-+              reviewGraph, updateUser, and finished.
++              Use listNodeTypes, applyWorkflowPlan, createNode, getNodeData,
++              getNodePorts, editNode, connectNodes, disconnectNodes, deleteNode,
++              toggleSplitting, reviewGraph, updateUser, and finished.
 
 
 -              Node types are resolved deterministically from the live project
 -              catalog. getNodeData returns only settings that the legacy
 +              Call listNodeTypes before createNode to search the live project
-+              catalog, then pass an exact returned authoringChoiceId to
++              catalog, then copy a returned createNodeArguments object into
 +              createNode. getNodeData returns only settings that the legacy
                assistant is authorized to inspect and edit. getNodePorts reports
 -              the live project-aware port definitions, including conditional and
@@ -106,12 +106,13 @@ index da671ed6..8f0eb633 100644
                - key: createNode
                  value: DNpnkEaXvzD3ZbRxQEg-d
                - key: finished
-@@ -1288,6 +1340,9 @@ data:
+@@ -1288,6 +1340,10 @@ data:
 
                - Make one function call per assistant turn.
 
-+              - Call listNodeTypes before createNode. Pass an exact returned
-+              authoringChoiceId to createNode; never invent a node type.
++              - Call listNodeTypes before createNode. Copy an exact returned
++                createNodeArguments object into createNode; never invent a node
++                type or argument name.
 +
                - Use getNodePorts before connecting unfamiliar or dynamically
                configured nodes.
@@ -120,7 +121,7 @@ diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts b/packages/app
 index 42fa92e6..8a0a0f7b 100644
 --- a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
 +++ b/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
-@@ -85,6 +85,46 @@ test('createNode normalizes model-friendly node type labels before creating node
+@@ -85,6 +85,53 @@ test('createNode normalizes model-friendly node type labels before creating node
    assert.equal(workingGraph.nodes[0]?.type, 'text');
  });
 
@@ -152,7 +153,11 @@ index 42fa92e6..8a0a0f7b 100644
 +    query: 'input output text',
 +  })) as { type: 'string'; value: string };
 +  const catalogResult = JSON.parse(result.value) as {
-+    choices: Array<{ authoringChoiceId: string; nodeType: string }>;
++    choices: Array<{
++      authoringChoiceId: string;
++      nodeType: string;
++      createNodeArguments: { nodeType: string };
++    }>;
 +    guidance: string;
 +  };
 +
@@ -161,7 +166,10 @@ index 42fa92e6..8a0a0f7b 100644
 +  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'graphInput'));
 +  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'graphOutput'));
 +  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'text'));
-+  assert.match(catalogResult.guidance, /authoringChoiceId/);
++  assert.ok(
++    catalogResult.choices.every((entry) => entry.createNodeArguments.nodeType === entry.authoringChoiceId),
++  );
++  assert.match(catalogResult.guidance, /createNodeArguments/);
 +});
 +
  test('createNode keeps working after app state freezes a published graph snapshot', async () => {
@@ -171,7 +179,7 @@ diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.ts b/packages/app/src/
 index 5f97bc3a..46ca1a0e 100644
 --- a/packages/app/src/hooks/aiGraphBuilderHelpers.ts
 +++ b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
-@@ -74,6 +74,76 @@ function readStringField(record: Record<string, unknown>, key: string): string |
+@@ -74,6 +74,77 @@ function readStringField(record: Record<string, unknown>, key: string): string |
    return typeof value === 'string' ? value : undefined;
  }
 
@@ -237,18 +245,19 @@ index 5f97bc3a..46ca1a0e 100644
 +      displayName: entry.displayName,
 +      description: entry.description,
 +      aliases: entry.aliases,
++      createNodeArguments: { nodeType: entry.authoringChoiceId },
 +    })),
 +    guidance:
 +      scoredEntries.length === 0 && queryTokens.length > 0
 +        ? 'No direct matches were found. The choices include safe starter nodes; try a shorter capability query if needed.'
-+        : 'Pass authoringChoiceId to createNode. Use getNodePorts and getNodeData after creation.',
++        : 'Copy one returned createNodeArguments object into createNode. Use getNodePorts and getNodeData after creation.',
 +  });
 +}
 +
  export function resolveAiGraphBuilderNodeId(rawNodeId: unknown): NodeId {
    const nodeId = isRecord(rawNodeId) ? readStringField(rawNodeId, 'nodeId') : rawNodeId;
 
-@@ -276,6 +346,10 @@ export function buildAiGraphBuilderExternalFunctions(options: {
+@@ -276,6 +347,10 @@ export function buildAiGraphBuilderExternalFunctions(options: {
    const getProject = () => (typeof options.project === 'function' ? options.project() : options.project);
 
    return {

@@ -420,7 +420,11 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    fetchServersAndTools();
+    // Workspace pages load only their compact, enabled tool list. Fetching the
+    // entire catalog here competes with workspace activation and editor startup.
+    if (!window.location.pathname.startsWith("/workspace/")) {
+      void fetchServersAndTools();
+    }
   }, []);
 
   return (

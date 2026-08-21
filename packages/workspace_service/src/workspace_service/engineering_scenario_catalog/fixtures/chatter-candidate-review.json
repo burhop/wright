@@ -1,0 +1,89 @@
+[
+  {
+    "schema_version": "1.0",
+    "artifact_id": "chatter-cad-context",
+    "domain": "cad",
+    "kind": "mesh",
+    "source_schema": {"name": "wright-mesh-summary", "version": "1.0", "media_type": "application/vnd.wright.mesh+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cad-context", "call_id": "chatter-cad-context", "capability": "fixture_cad__inspect_setup"},
+    "upstream_digests": [],
+    "units": {"bounds": "mm", "volume": "mm3"},
+    "coordinate_system": {"name": "wright-right-handed-z-up", "handedness": "right", "length_unit": "mm"},
+    "content": {"vertex_count": 48, "face_count": 92, "bounds": [-40, 40, -25, 25, 0, 60], "degenerate_faces": 0, "manifold": true, "volume": 48000},
+    "content_digest": "4f1d13ac04e56d6c46f1eccc60900f85d990d31023524300114e243a3a989821",
+    "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0",
+    "artifact_id": "chatter-candidates",
+    "domain": "cam",
+    "kind": "candidate-batch",
+    "source_schema": {"name": "wright-chatter-candidate-batch", "version": "1.0", "media_type": "application/vnd.wright.chatter-candidates+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cam-candidates", "call_id": "chatter-candidates", "capability": "fixture_cam__generate_candidates"},
+    "upstream_digests": ["4f1d13ac04e56d6c46f1eccc60900f85d990d31023524300114e243a3a989821"],
+    "units": {},
+    "content": {
+      "schema_version": "1.0",
+      "feature_order": ["fntx", "ktx", "zetatx", "fnty", "kty", "zetaty", "fnwx", "kwx", "zetawx", "fnwy", "kwy", "zetawy", "ktc", "knc", "kte", "kne", "Cn", "d", "m", "beta_mean", "et", "ud", "a", "ft_mean", "omega", "b", "tooth_passing_freq", "frf_ratio_xy", "stiffness_ratio_tw", "radial_immersion", "chip_load", "speed_ratio_to_nat", "has_process_damping", "has_runout", "has_edge_coeffs", "n_modes", "tooth_spacing_std"],
+      "units": ["Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "N/m^2", "N/m^2", "N/m", "N/m", "N/m", "m", "1", "deg", "1", "1", "m", "m", "rpm", "m", "Hz", "1", "1", "1", "m^2", "1", "1", "1", "1", "1", "deg"],
+      "candidates": [
+        {"candidate_id": "candidate-a", "values": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "origins": ["simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated"], "source_artifact_id": "chatter-cad-context", "engineering_invariants": [{"invariant_id": "fixture-clearance", "state": "pass", "evidence_artifact_id": "chatter-cad-context"}]},
+        {"candidate_id": "candidate-b", "values": [4.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "origins": ["simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated"], "source_artifact_id": "chatter-cad-context", "engineering_invariants": [{"invariant_id": "fixture-clearance", "state": "pass", "evidence_artifact_id": "chatter-cad-context"}]},
+        {"candidate_id": "candidate-c", "values": [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "origins": ["simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated"], "source_artifact_id": "chatter-cad-context", "engineering_invariants": [{"invariant_id": "fixture-clearance", "state": "pass", "evidence_artifact_id": "chatter-cad-context"}]}
+      ],
+      "batch_provenance": {"simulation_only": true, "producer_tool": "fixture_cam__generate_candidates", "producer_artifact_id": "chatter-candidates", "producer_schema_digest": "1111111111111111111111111111111111111111111111111111111111111111"}
+    },
+    "content_digest": "9a7918cc259170f180ebd465f8728e0d017505297bfec3222e3fc22bfd07a2c8",
+    "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0",
+    "artifact_id": "chatter-results",
+    "domain": "python",
+    "kind": "model-result-batch",
+    "source_schema": {"name": "wright-chatter-result-batch", "version": "1.0", "media_type": "application/vnd.wright.chatter-results+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-chatter-model", "call_id": "chatter-model", "capability": "wright_model__wright_chatter_generated_test__screen_chatter_candidates"},
+    "upstream_digests": ["9a7918cc259170f180ebd465f8728e0d017505297bfec3222e3fc22bfd07a2c8"],
+    "units": {"chatter_score": "1"},
+    "content": {
+      "schema_version": "1.0",
+      "results": [
+        {"candidate_id": "candidate-a", "position": 0, "predicted_state": "stable", "chatter_score": 0.1, "decision_threshold": 0.5, "threshold_margin": -0.4, "calibration_status": "uncalibrated_model_score", "applicability": "in_population", "review_required": true, "eligible_for_preference": true, "warnings": [], "limitations": ["screening_only", "uncalibrated_score"]},
+        {"candidate_id": "candidate-b", "position": 1, "predicted_state": "stable", "chatter_score": 0.1, "decision_threshold": 0.5, "threshold_margin": -0.4, "calibration_status": "uncalibrated_model_score", "applicability": "in_population", "review_required": true, "eligible_for_preference": true, "warnings": [], "limitations": ["screening_only", "uncalibrated_score"]},
+        {"candidate_id": "candidate-c", "position": 2, "predicted_state": "chatter", "chatter_score": 0.9, "decision_threshold": 0.5, "threshold_margin": 0.4, "calibration_status": "uncalibrated_model_score", "applicability": "in_population", "review_required": true, "eligible_for_preference": true, "warnings": [], "limitations": ["screening_only", "uncalibrated_score"]}
+      ],
+      "model_evidence": {"model_id": "wright-chatter-generated-test", "package_revision": 1, "variant_id": "generated-forest-cpu-f64", "artifact_set_digest": "2222222222222222222222222222222222222222222222222222222222222222", "installation_digest": "3333333333333333333333333333333333333333333333333333333333333333", "adapter_id": "wright-chatter-forest-numpy", "adapter_version": "1.0.0", "runtime_version": "numpy-compatible-1", "test_evidence_id": "generated-vector-pass", "task_id": "screen_chatter_candidates", "input_schema_digest": "4444444444444444444444444444444444444444444444444444444444444444", "output_schema_digest": "5555555555555555555555555555555555555555555555555555555555555555", "threshold": 0.5},
+      "input_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+      "output_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+      "material_digest": "8888888888888888888888888888888888888888888888888888888888888888"
+    },
+    "content_digest": "0bf03a981600028042278ddfdac6eb7e63e7c2f28caa44fd2e062974c1b90dd7",
+    "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0",
+    "artifact_id": "chatter-advisory",
+    "domain": "cam",
+    "kind": "chatter-advisory-report",
+    "source_schema": {"name": "wright-chatter-advisory-report", "version": "1.0", "media_type": "application/vnd.wright.chatter-advisory+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-advisory", "call_id": "chatter-advisory", "capability": "fixture_report__compose_advisory"},
+    "upstream_digests": ["9a7918cc259170f180ebd465f8728e0d017505297bfec3222e3fc22bfd07a2c8", "0bf03a981600028042278ddfdac6eb7e63e7c2f28caa44fd2e062974c1b90dd7"],
+    "units": {"chatter_score": "1"},
+    "content": {
+      "schema_version": "1.0",
+      "simulation_only": true,
+      "machine_authority": false,
+      "score_semantics": "uncalibrated_screening_score",
+      "selected_candidate_id": "candidate-a",
+      "candidate_outcomes": [
+        {"candidate_id": "candidate-a", "review_status": "selected_for_review", "chatter_score": 0.1, "predicted_state": "stable", "applicability": "in_population", "invariants": "pass", "reason": "Lowest eligible uncalibrated score; tie resolved by immutable candidate identity."},
+        {"candidate_id": "candidate-b", "review_status": "not_selected", "chatter_score": 0.1, "predicted_state": "stable", "applicability": "in_population", "invariants": "pass", "reason": "Equal score; deterministic identity tie-break selected candidate-a."},
+        {"candidate_id": "candidate-c", "review_status": "rejected", "chatter_score": 0.9, "predicted_state": "chatter", "applicability": "in_population", "invariants": "pass", "reason": "Generated model classified this simulated candidate as chatter at the reviewed threshold."}
+      ],
+      "notices": ["Human engineering review is required.", "Scores are uncalibrated screening values, not probabilities.", "This report cannot control or instruct a machine."],
+      "provider_evidence": [{"provider_kind": "mcp", "provider_id": "fixture_cad"}, {"provider_kind": "mcp", "provider_id": "fixture_cam"}, {"provider_kind": "engineering_model", "provider_id": "wright-chatter-generated-test"}]
+    },
+    "content_digest": "68892a63bd8b0794ebb93ed6c18c1e7423312e2f29cb6d2b92dddb32f8b1b918",
+    "validation_state": "valid"
+  }
+]

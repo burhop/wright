@@ -185,11 +185,28 @@ async def test_chat_stream_registry_queues_turns_for_same_session(workspace_setu
 
     registry = ChatStreamRegistry()
     engine = SlowAgentEngine(workspace_setup)
-    first_request = AgentChatRequest(session_id="test-session", message="first")
+    first_request = AgentChatRequest(
+        session_id="test-session", message="first", trace_id="stream-first"
+    )
     second_request = AgentChatRequest(session_id="test-session", message="second")
 
     first_job = await registry.start(first_request, engine)
     await asyncio.wait_for(engine.first_turn_started.wait(), timeout=1)
+    first_status = await first_job.status()
+    assert first_status == {
+        "active": True,
+        "session_id": "test-session",
+        "stream_id": "stream-first",
+        "message": "first",
+        "started_at": first_job.started_at_ms,
+        "event_count": 1,
+    }
+    assert first_job.started_at_ms > 0
+    detached_stream = first_job.stream_from(0)
+    first_event = await anext(detached_stream)
+    assert first_event[0] == "progress"
+    await detached_stream.aclose()
+    assert first_job.is_running is True
 
     second_task = asyncio.create_task(registry.start(second_request, engine))
     await asyncio.sleep(0)
@@ -198,6 +215,7 @@ async def test_chat_stream_registry_queues_turns_for_same_session(workspace_setu
     engine.release_first_turn.set()
     first_events = [event async for event in first_job.stream_from(0)]
     assert ("token", {"text": "first"}) in first_events
+    assert (await first_job.status())["active"] is False
 
     second_job = await asyncio.wait_for(second_task, timeout=1)
     second_events = [event async for event in second_job.stream_from(0)]
@@ -682,6 +700,22 @@ def test_workspace_tools_endpoints(client):
     tools = response_get.json()["enabled_tools"]
     assert "OpenSCAD Geometry" not in tools
 
+    # Rivet is part of Wright itself and cannot be disabled per workspace.
+    response_rivet = client.post(
+        "/api/workspace/tools/toggle",
+        json={
+            "session_id": "test-session",
+            "server_id": "rivet-workflows",
+            "is_enabled": False,
+        },
+    )
+    assert response_rivet.status_code == 200
+    assert response_rivet.json()["is_enabled"] is True
+    response_get = client.get(
+        "/api/workspace/tools", params={"session_id": "test-session"}
+    )
+    assert "rivet-workflows" in response_get.json()["enabled_tools"]
+
 
 def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
     client, tmp_path, monkeypatch
@@ -709,8 +743,7 @@ def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
 
     response = client.get("/api/workspace/tools", params={"session_id": session_id})
 
-    assert response.status_code == 200
-    assert "enabled_tools" in response.json()
+    assert response.status_code == 404
     assert not fallback_path.exists()
 
     conn = sqlite3.connect(DATABASE_PATH)
@@ -794,6 +827,8 @@ async def test_rivet_run_api_forwards_exact_identity_graph_inputs_and_projects_o
             "expected_generation": None,
             "expected_revision": 3,
             "expected_digest": "a" * 64,
+            "expected_review_digest": None,
+            "binding_set_digest": None,
             "graph": "Passthrough",
             "inputs": {"input": "hello"},
             "context": {"mode": "test"},
@@ -1095,6 +1130,35 @@ def test_workspace_sessions_endpoint_uses_current_agent_title(client):
     assert titles["test-session"] == "Test Session"
 
 
+def test_workspace_sessions_endpoint_can_use_local_records_without_agent_refresh(
+    client,
+):
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+    engine = client.app.state.agent_engine
+    original_list_sessions = engine.list_sessions
+
+    async def unexpected_list_sessions():
+        raise AssertionError("local session projection queried the agent")
+
+    engine.list_sessions = unexpected_list_sessions
+    try:
+        response_sessions = client.get(
+            f"/api/workspace/by-id/{workspace_id}/sessions",
+            params={"refresh": "false"},
+        )
+    finally:
+        engine.list_sessions = original_list_sessions
+
+    assert response_sessions.status_code == 200
+    assert "test-session" in {
+        session["session_id"] for session in response_sessions.json()["sessions"]
+    }
+
+
 def test_title_command_persists_workspace_session_title_when_agent_title_is_untitled(
     client,
 ):
@@ -1196,10 +1260,15 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
     response_status = client.get(f"/api/workspace/by-id/{workspace_id}/mcp-status")
     assert response_status.status_code == 200
     running = response_status.json()["running_mcps"]
-    assert {item["name"] for item in running} == {"Workspace Scoped Onshape MCP"}
+    assert {item["name"] for item in running} == {
+        "Workspace Scoped Onshape MCP",
+        "Rivet Workflows",
+    }
 
 
-def test_workspace_activate_session_fallback(client):
+def test_workspace_activate_preserves_persisted_session_without_remote_verification(
+    client,
+):
     from api.config import DATABASE_PATH
     from workspace_service.adapters.runtime import create_workspace
     import tempfile
@@ -1216,33 +1285,23 @@ def test_workspace_activate_session_fallback(client):
             workspace_name="Fallback Test",
         )
 
-        # Override mock engine's list_sessions to return an active session matching temp_dir
+        # Browser refresh must not replace a persisted session while Hermes may
+        # still be working under that identity.
         original_list_sessions = app.state.agent_engine.list_sessions
 
         async def mock_list_sessions():
-            return [
-                AgentSessionInfo(
-                    session_id="matching-active-session",
-                    title="Active Session",
-                    created_at=1000,
-                    updated_at=1000,
-                    message_count=0,
-                    workspace=temp_dir,
-                )
-            ]
+            raise AssertionError("activation should not query Hermes sessions")
 
         app.state.agent_engine.list_sessions = mock_list_sessions
 
         try:
-            # Activate workspace using the missing session ID
             response = client.post(
                 "/api/workspace/activate", json={"session_id": missing_session_id}
             )
             assert response.status_code == 200
             data = response.json()
             assert data["success"] is True
-            # It should have successfully fallen back to the active matching-active-session
-            assert data["session_id"] == "matching-active-session"
+            assert data["session_id"] == missing_session_id
             assert data["workspace_path"] == temp_dir
         finally:
             app.state.agent_engine.list_sessions = original_list_sessions
@@ -1684,6 +1743,8 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
     finally:
         conn.close()
 
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
     try:
         response = client.get(
             "/api/workspace/mcp-status", params={"session_id": "test-session"}
@@ -1697,9 +1758,15 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
                 "name": "Inactive Test MCP",
                 "status": "active",
                 "error_message": None,
-            }
+            },
+            {
+                "name": "Rivet Workflows",
+                "status": "active",
+                "error_message": None,
+            },
         ]
     finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
         conn = sqlite3.connect(DATABASE_PATH)
         try:
             conn.execute(
@@ -1932,10 +1999,15 @@ def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):
 
     monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
 
-    response = client.post(
-        "/api/agent/chat",
-        json={"session_id": "test-session", "message": "hello"},
-    )
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
+    try:
+        response = client.post(
+            "/api/agent/chat",
+            json={"session_id": "test-session", "message": "hello"},
+        )
+    finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
 
     assert response.status_code == 200
     assert started == [(server_id, client.app.state.agent_engine.workspace_path)]
@@ -1968,9 +2040,21 @@ def test_agent_chat_stream_can_be_reattached_after_completion(client):
         params={"session_id": "test-session"},
     )
     assert response_attach.status_code == 200
+    assert "event: stream_start" in response_attach.text
+    assert '"resumed": true' in response_attach.text
     assert "event: token" in response_attach.text
     assert "hello" in response_attach.text
     assert "event: stream_end" in response_attach.text
+
+    response_status = client.get(
+        "/api/agent/chat/stream/status",
+        params={"session_id": "test-session"},
+    )
+    assert response_status.status_code == 200
+    assert response_status.json() == {
+        "active": False,
+        "session_id": "test-session",
+    }
 
 
 def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
@@ -2016,10 +2100,15 @@ def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
 
     monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
 
-    response = client.post(
-        "/api/agent/chat",
-        json={"session_id": "test-session", "message": "hello"},
-    )
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
+    try:
+        response = client.post(
+            "/api/agent/chat",
+            json={"session_id": "test-session", "message": "hello"},
+        )
+    finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
 
     assert response.status_code == 503
     assert "Failed to start workspace MCP server(s)" in response.text
@@ -2035,6 +2124,28 @@ def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
         conn.commit()
     finally:
         conn.close()
+
+
+@pytest.mark.asyncio
+async def test_hermes_gateway_is_the_only_workspace_mcp_lifecycle_owner() -> None:
+    from types import SimpleNamespace
+
+    from api.routers.agent import ensure_workspace_mcp_servers_active
+
+    class UnexpectedEngine:
+        async def start_server(self, *_args, **_kwargs):
+            raise AssertionError("API process attempted to start a Hermes MCP server")
+
+    request = SimpleNamespace(
+        app=SimpleNamespace(
+            state=SimpleNamespace(
+                agent_sync_manager=SimpleNamespace(active_agent="hermes"),
+                mcp_engine=UnexpectedEngine(),
+            )
+        )
+    )
+
+    await ensure_workspace_mcp_servers_active(request, "session-1")
 
 
 @pytest.mark.asyncio

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/rivet-capability-binding-v1.json",
+  "title": "Rivet Capability Binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding_id",
+    "workspace_id",
+    "workflow_id",
+    "workflow_revision",
+    "workflow_digest",
+    "graph_id",
+    "node_id",
+    "node_handle",
+    "qualified_tool_name",
+    "server_id",
+    "server_revision",
+    "capability_digest",
+    "validation_evidence_id",
+    "workspace_grant_digest",
+    "input_schema",
+    "schema_digest",
+    "risk",
+    "units_policy",
+    "material_defaults",
+    "argument_constraints",
+    "binding_digest",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "binding_id": { "$ref": "#/$defs/nonempty" },
+    "workspace_id": { "$ref": "#/$defs/nonempty" },
+    "workflow_id": { "$ref": "#/$defs/nonempty" },
+    "workflow_revision": { "type": "integer", "minimum": 1 },
+    "workflow_digest": { "$ref": "#/$defs/digest" },
+    "graph_id": { "$ref": "#/$defs/nonempty" },
+    "node_id": { "$ref": "#/$defs/nonempty" },
+    "node_handle": {
+      "type": "string",
+      "pattern": "^wright:[A-Za-z0-9_-]{16,128}$"
+    },
+    "requirement_id": {
+      "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }]
+    },
+    "qualified_tool_name": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}__[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "server_id": { "$ref": "#/$defs/nonempty" },
+    "server_revision": { "$ref": "#/$defs/nonempty" },
+    "capability_digest": { "$ref": "#/$defs/digest" },
+    "validation_evidence_id": { "$ref": "#/$defs/nonempty" },
+    "workspace_grant_digest": { "$ref": "#/$defs/digest" },
+    "input_schema": { "type": "object" },
+    "output_schema": {
+      "oneOf": [{ "type": "object" }, { "type": "null" }]
+    },
+    "schema_digest": { "$ref": "#/$defs/digest" },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_classes", "effect_classes", "required_approvals", "idempotency"],
+      "properties": {
+        "data_classes": { "type": "array", "items": { "$ref": "#/$defs/nonempty" }, "uniqueItems": true },
+        "effect_classes": { "type": "array", "items": { "$ref": "#/$defs/nonempty" }, "uniqueItems": true },
+        "required_approvals": { "type": "array", "items": { "$ref": "#/$defs/nonempty" }, "uniqueItems": true },
+        "idempotency": { "enum": ["idempotent", "non_idempotent", "unknown"] },
+        "annotations_untrusted": { "type": "boolean", "const": true }
+      }
+    },
+    "units_policy": { "type": "object" },
+    "material_defaults": { "type": "object" },
+    "argument_constraints": { "type": "object" },
+    "binding_digest": { "$ref": "#/$defs/digest" },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "nonempty": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

@@ -48,6 +48,15 @@ def _isolated_python(target: Path, program: str) -> subprocess.CompletedProcess[
         "PYTHONPATH": str(target),
         "PYTHONIOENCODING": "utf-8",
     }
+    if os.name == "nt":
+        # Windows standard-library imports can initialize Winsock-backed
+        # modules such as ``_overlapped``. Preserve only the OS bootstrap and
+        # temporary-root variables they require; package discovery remains
+        # confined to the extracted wheel through ``-I`` and the inserted path.
+        for key in ("SYSTEMROOT", "WINDIR", "TEMP", "TMP"):
+            value = os.environ.get(key)
+            if value:
+                environment[key] = value
     return subprocess.run(
         [
             sys.executable,

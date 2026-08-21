@@ -9,7 +9,7 @@ import { hostAdapter } from "./host-adapter";
 const agentLogger = logger.child("HermesAgentService");
 
 export type AgentEvent =
-  | { type: "stream_start"; streamId: string }
+  | { type: "stream_start"; streamId: string; startedAt?: number }
   | { type: "token"; text: string }
   | { type: "tool"; name: string; preview: string; percentage?: number }
   | {
@@ -31,6 +31,15 @@ export type AgentEvent =
 
 export interface AgentUiContext {
   activeRivetSlug?: string | null;
+}
+
+export interface AgentStreamStatus {
+  active: boolean;
+  sessionId: string;
+  streamId?: string;
+  message?: string;
+  startedAt?: number;
+  eventCount?: number;
 }
 
 interface ServiceHealthResult {
@@ -197,6 +206,12 @@ export class HermesAgentService {
     string,
     { abortController: AbortController; abort: () => void }
   >();
+  private activeAgentRequest: Promise<string> | null = null;
+  private modelOptionsRequest: Promise<HermesModelOptionsResponse> | null =
+    null;
+  private modelOptionsCache: HermesModelOptionsResponse | null = null;
+  private commandsRequest: Promise<AgentCommand[]> | null = null;
+  private commandsCache: AgentCommand[] | null = null;
 
   async checkHealth(): Promise<ServiceHealthResult> {
     try {
@@ -247,7 +262,7 @@ export class HermesAgentService {
 
   async listSessions(workspaceId?: string): Promise<ChatSessionCompact[]> {
     const url = workspaceId
-      ? `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`
+      ? `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions?refresh=false`
       : `${API_BASE}/api/agent/sessions`;
     const response = await fetch(url);
     if (!response.ok) {
@@ -399,20 +414,51 @@ export class HermesAgentService {
   }
 
   async *attachStream(sessionId: string, after = 0): AsyncIterable<AgentEvent> {
-    const response = await fetch(
-      `${API_BASE}/api/agent/chat/stream?session_id=${encodeURIComponent(sessionId)}&after=${after}`,
-    );
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
+    try {
+      const response = await fetch(
+        `${API_BASE}/api/agent/chat/stream?session_id=${encodeURIComponent(sessionId)}&after=${after}`,
+      );
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        yield {
+          type: "error",
+          message:
+            errData.message || errData.detail || "No stream is available.",
+        };
+        return;
+      }
+      for await (const eventYield of this.readSSEEvents(response, sessionId)) {
+        yield eventYield;
+      }
+    } catch (err) {
       yield {
         type: "error",
-        message: errData.message || errData.detail || "No stream is available.",
+        message:
+          err instanceof Error
+            ? err.message
+            : "The agent response could not be reconnected.",
       };
-      return;
     }
-    for await (const eventYield of this.readSSEEvents(response, sessionId)) {
-      yield eventYield;
+  }
+
+  async getStreamStatus(sessionId: string): Promise<AgentStreamStatus> {
+    const response = await fetch(
+      `${API_BASE}/api/agent/chat/stream/status?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to check agent work: ${response.statusText}`);
     }
+    const data = await response.json();
+    return {
+      active: data.active === true,
+      sessionId: data.session_id || sessionId,
+      streamId: data.stream_id || undefined,
+      message: data.message || undefined,
+      startedAt:
+        typeof data.started_at === "number" ? data.started_at : undefined,
+      eventCount:
+        typeof data.event_count === "number" ? data.event_count : undefined,
+    };
   }
 
   private parseSSEEvent(
@@ -426,6 +472,12 @@ export class HermesAgentService {
         return {
           type: "stream_start",
           streamId: data.streamId || data.stream_id || data.id || "",
+          startedAt:
+            typeof data.startedAt === "number"
+              ? data.startedAt
+              : typeof data.started_at === "number"
+                ? data.started_at
+                : undefined,
         };
       } catch (err) {
         return { type: "stream_start", streamId: dataStr };
@@ -532,12 +584,20 @@ export class HermesAgentService {
   }
 
   async getActiveAgent(): Promise<string> {
-    const response = await fetch(`${API_BASE}/api/agent/active`);
-    if (!response.ok) {
-      throw new Error(`Failed to get active agent: ${response.statusText}`);
+    if (this.activeAgentRequest) return this.activeAgentRequest;
+    this.activeAgentRequest = (async () => {
+      const response = await fetch(`${API_BASE}/api/agent/active`);
+      if (!response.ok) {
+        throw new Error(`Failed to get active agent: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.agent;
+    })();
+    try {
+      return await this.activeAgentRequest;
+    } finally {
+      this.activeAgentRequest = null;
     }
-    const data = await response.json();
-    return data.agent;
   }
 
   async setActiveAgent(
@@ -562,13 +622,25 @@ export class HermesAgentService {
   }
 
   async listHermesModels(refresh = false): Promise<HermesModelOptionsResponse> {
-    const response = await fetch(
-      `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+    if (!refresh && this.modelOptionsCache) return this.modelOptionsCache;
+    if (!refresh && this.modelOptionsRequest) return this.modelOptionsRequest;
+    const request = (async () => {
+      const response = await fetch(
+        `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+      }
+      const options = (await response.json()) as HermesModelOptionsResponse;
+      this.modelOptionsCache = options;
+      return options;
+    })();
+    if (!refresh) this.modelOptionsRequest = request;
+    try {
+      return await request;
+    } finally {
+      if (!refresh) this.modelOptionsRequest = null;
     }
-    return response.json();
   }
 
   async setHermesModel(
@@ -593,6 +665,7 @@ export class HermesAgentService {
         data.detail || `Failed to set Hermes model: ${response.statusText}`,
       );
     }
+    this.modelOptionsCache = null;
     return response.json();
   }
 
@@ -659,16 +732,26 @@ export class HermesAgentService {
   }
 
   async getCommands(): Promise<AgentCommand[]> {
+    if (this.commandsCache) return this.commandsCache;
+    if (this.commandsRequest) return this.commandsRequest;
     agentLogger.info("Fetching commands");
-    const response = await fetch(`${API_BASE}/api/agent/commands`);
-    if (!response.ok) {
-      agentLogger.error("Failed to fetch commands", {
-        statusText: response.statusText,
-      });
-      throw new Error(`Failed to fetch commands: ${response.statusText}`);
+    this.commandsRequest = (async () => {
+      const response = await fetch(`${API_BASE}/api/agent/commands`);
+      if (!response.ok) {
+        agentLogger.error("Failed to fetch commands", {
+          statusText: response.statusText,
+        });
+        throw new Error(`Failed to fetch commands: ${response.statusText}`);
+      }
+      const data = await response.json();
+      this.commandsCache = data.commands;
+      return data.commands;
+    })();
+    try {
+      return await this.commandsRequest;
+    } finally {
+      this.commandsRequest = null;
     }
-    const data = await response.json();
-    return data.commands;
   }
 
   async uploadFile(file: File): Promise<VaultFile> {

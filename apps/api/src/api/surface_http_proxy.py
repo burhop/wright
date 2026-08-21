@@ -18,6 +18,11 @@ from api.surface_proxy_security import (
 from workspace_service.surfaces.limits import EffectiveSurfaceLimits, SurfaceLimitError
 from workspace_service.surfaces.target_policy import ResolvedTargetPin
 
+_STREAM_ROUTE_RECHECK_SECONDS = 0.25
+_STREAM_ACTIVITY_SECONDS = 1.0
+_WRIGHT_AI_COMPLETIONS_PATH = "/wright-ai/v1/chat/completions"
+_WRIGHT_AI_FIRST_BYTE_TIMEOUT_SECONDS = 300.0
+
 
 class HttpProxyError(RuntimeError):
     def __init__(self, code: str, message: str, *, status_code: int = 502) -> None:
@@ -149,6 +154,18 @@ def _target_path(pin: ResolvedTargetPin, raw_path: str, raw_query: str) -> str:
         )
     path = raw_path if base == "/" else f"{base.rstrip('/')}/{raw_path.lstrip('/')}"
     return f"{path}?{raw_query}" if raw_query else path
+
+
+def _first_byte_timeout_seconds(
+    request: ProxyHttpRequest, limits: EffectiveSurfaceLimits
+) -> float:
+    configured = float(limits.first_byte_timeout_seconds)
+    if (
+        request.method.upper() == "POST"
+        and request.raw_path == _WRIGHT_AI_COMPLETIONS_PATH
+    ):
+        return max(configured, _WRIGHT_AI_FIRST_BYTE_TIMEOUT_SECONDS)
+    return configured
 
 
 class SurfaceHttpProxy:
@@ -312,10 +329,17 @@ class SurfaceHttpProxy:
         await semaphore.acquire()
         response: httpx.Response | None = None
         try:
-            response = await asyncio.wait_for(
-                self._client.send(upstream, stream=True, follow_redirects=False),
-                timeout=float(limits.first_byte_timeout_seconds),
-            )
+            try:
+                response = await asyncio.wait_for(
+                    self._client.send(upstream, stream=True, follow_redirects=False),
+                    timeout=_first_byte_timeout_seconds(request, limits),
+                )
+            except TimeoutError as error:
+                raise HttpProxyError(
+                    "SURFACE_LIMIT_FIRST_BYTE",
+                    "Upstream response first-byte timeout exceeded",
+                    status_code=504,
+                ) from error
             raw_headers = tuple(
                 (name.decode("latin-1"), value.decode("latin-1"))
                 for name, value in response.headers.raw
@@ -397,13 +421,16 @@ class SurfaceHttpProxy:
             tracker = _DecodedTracker(response.headers.get("content-encoding"))
             encoded = 0
             source = response.aiter_raw().__aiter__()
+            last_route_check = started
+            last_activity = started
             while True:
-                self._require_current_route(
-                    authority_valid=authority_valid, target_valid=target_valid
-                )
-                if self._monotonic() - started > float(
-                    limits.live_connection_lifetime_seconds
-                ):
+                now = self._monotonic()
+                if now - last_route_check >= _STREAM_ROUTE_RECHECK_SECONDS:
+                    self._require_current_route(
+                        authority_valid=authority_valid, target_valid=target_valid
+                    )
+                    last_route_check = now
+                if now - started > float(limits.live_connection_lifetime_seconds):
                     raise HttpProxyError(
                         "SURFACE_LIMIT_LIFETIME",
                         "HTTP response lifetime limit exceeded",
@@ -433,8 +460,15 @@ class SurfaceHttpProxy:
                     limits.admit_stream_bytes(rate_key, len(chunk))
                 except SurfaceLimitError as error:
                     raise self._translate_limit(error) from error
-                activity()
+                now = self._monotonic()
+                if now - last_activity >= _STREAM_ACTIVITY_SECONDS:
+                    activity()
+                    last_activity = now
                 yield chunk
+            self._require_current_route(
+                authority_valid=authority_valid, target_valid=target_valid
+            )
+            activity()
             decoded = tracker.finish()
             try:
                 limits.validate_response(encoded_bytes=encoded, decoded_bytes=decoded)

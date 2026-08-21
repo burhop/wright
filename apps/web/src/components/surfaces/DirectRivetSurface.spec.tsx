@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -39,6 +45,8 @@ const mocks = vi.hoisted(() => ({
   runRivetWorkflow: vi.fn(),
   getRivetWorkflowRun: vi.fn(),
   getRivetWorkflowHistory: vi.fn(),
+  getRivetRunInspection: vi.fn(),
+  getRecentRivetRuns: vi.fn(),
   cancelRivetWorkflow: vi.fn(),
 }));
 
@@ -51,6 +59,93 @@ describe("DirectRivetSurface", () => {
     vi.clearAllMocks();
     mocks.listRivetWorkflowTemplates.mockResolvedValue([]);
     mocks.getRivetWorkflowHistory.mockResolvedValue([]);
+    mocks.getRecentRivetRuns.mockResolvedValue({
+      workflow_id: "workflow-1",
+      current_revision: 1,
+      runs: [],
+    });
+  });
+
+  const inspectionFor = (run: Record<string, unknown>) => ({
+    schema_version: 1,
+    run: {
+      run_id: run.run_id,
+      workspace_id: "workspace-1",
+      session_id: "session-1",
+      workflow_id: run.workflow_id,
+      revision: run.revision,
+      digest: run.digest,
+      graph: run.graph,
+      generation: run.generation,
+      state: run.state,
+      started_at: "2026-08-20T14:00:00Z",
+      completed_at: run.state === "running" ? null : "2026-08-20T14:00:01Z",
+      duration_ms: run.duration_ms,
+      reason_code: run.reason,
+      trace_id: "trace-1",
+      latest_sequence: 1,
+      has_outputs: Boolean(run.outputs),
+      has_diagnostic: run.state === "failed" || run.state === "cancelled",
+      output_truncated: false,
+      output_redaction_count: 0,
+    },
+    progress: {
+      phase: run.state,
+      current_step_id: null,
+      completed_steps: run.state === "running" ? 0 : 1,
+      total_steps: 1,
+      last_sequence: 1,
+      updated_at: "2026-08-20T14:00:01Z",
+    },
+    events: [],
+    steps: [],
+    final_outputs: Object.entries(
+      (run.outputs as Record<
+        string,
+        { type: string; value: unknown }
+      > | null) || {},
+    ).map(([name, output]) => ({
+      result_id: name,
+      name,
+      kind: output.type,
+      value: output.value,
+      preview:
+        typeof output.value === "string"
+          ? output.value
+          : JSON.stringify(output.value),
+      media_type: null,
+      size_bytes: null,
+      digest: null,
+      artifact_path: null,
+      safe_link: null,
+      redacted: false,
+      truncated: false,
+      complete: true,
+    })),
+    diagnostic:
+      run.state === "cancelled"
+        ? {
+            code: "RIVET_RUN_CANCELLED",
+            summary: "Workflow run was cancelled.",
+            recovery_action: "Run the saved revision again when ready.",
+            failed_step_id: null,
+            node_id: null,
+            qualified_tool_name: null,
+            request_id: null,
+            trace_id: "trace-1",
+            residue_possible: false,
+            retry_step_available: false,
+            full_rerun_available: true,
+            technical_details: {},
+          }
+        : null,
+    completeness: {
+      outputs_complete: true,
+      steps_complete: true,
+      events_complete: true,
+      evidence_available: true,
+      reasons: [],
+    },
   });
 
   const dispatchFrameMessage = (
@@ -60,7 +155,7 @@ describe("DirectRivetSurface", () => {
   ) => {
     const event = new MessageEvent("message", { data, origin });
     Object.defineProperty(event, "source", { value: frame.contentWindow });
-    window.dispatchEvent(event);
+    act(() => window.dispatchEvent(event));
   };
 
   const connectBridge = (
@@ -95,11 +190,62 @@ describe("DirectRivetSurface", () => {
     return { frame, postMessage };
   };
 
+  it("shows a visible, actionable result after checking the graph", async () => {
+    const user = userEvent.setup();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+    mocks.lintRivetWorkflowGraph.mockResolvedValue({
+      ...workflow,
+      graph_id: "graph-1",
+      snapshot_digest: "snapshot-1",
+      policy_snapshot_digest: "policy-1",
+      requirements: [],
+      capabilities: [],
+      issues: [],
+      next_after: null,
+    });
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?wrightMinimal=1&workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+      />,
+    );
+    await waitFor(() =>
+      expect(mocks.readRivetWorkflow).toHaveBeenCalledWith(
+        "session-1",
+        "rivet",
+      ),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Check Rivet graph" }));
+
+    expect(mocks.lintRivetWorkflowGraph).toHaveBeenCalledWith(
+      "session-1",
+      "rivet",
+    );
+    expect(
+      await screen.findByTestId("direct-rivet-run-feedback"),
+    ).toHaveTextContent("Graph checked · no problems found.");
+  });
+
   it("opens and saves Rivet workflows through Wright workspace APIs", async () => {
     const user = userEvent.setup();
     const loaded = vi.fn();
+    const canonicalProject =
+      "version: 4\ndata:\n  graphs:\n    canonical: {}\n";
+    const canonicalDocument = {
+      ...document,
+      revision: 2,
+      etag: "etag-2",
+      project: canonicalProject,
+    };
     mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
-    mocks.readRivetWorkflow.mockResolvedValue(document);
+    mocks.readRivetWorkflow
+      .mockResolvedValueOnce(document)
+      .mockResolvedValueOnce(canonicalDocument);
     mocks.saveRivetWorkflow.mockResolvedValue({ ...workflow, revision: 2 });
 
     render(
@@ -145,6 +291,16 @@ describe("DirectRivetSurface", () => {
         1,
         editedProject,
         {},
+      ),
+    );
+    await waitFor(() =>
+      expect(postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "wright-rivet:set-project",
+          project: canonicalProject,
+          path: "rivet.rivet-project",
+        }),
+        "http://127.0.0.1:9180",
       ),
     );
   });
@@ -397,6 +553,63 @@ describe("DirectRivetSurface", () => {
     );
   });
 
+  it("renews a cross-origin preview when its verified frame reports lost authority", async () => {
+    const unavailable = vi.fn();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+        onEditorUnavailable={unavailable}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    const frame = screen.getByTitle("Rivet graph canvas") as HTMLIFrameElement;
+
+    dispatchFrameMessage(frame, {
+      type: "wright-surface:authorization-failed",
+      reason: "SURFACE_PREVIEW_UNAUTHORIZED",
+    });
+
+    expect(unavailable).toHaveBeenCalledWith("SURFACE_PREVIEW_UNAUTHORIZED");
+    expect(screen.getByTestId("direct-rivet-status")).toHaveTextContent(
+      "Rivet preview authorization expired. Reconnecting",
+    );
+  });
+
+  it("ignores preview authorization messages from another origin", async () => {
+    const unavailable = vi.fn();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+        onEditorUnavailable={unavailable}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    const frame = screen.getByTitle("Rivet graph canvas") as HTMLIFrameElement;
+
+    dispatchFrameMessage(
+      frame,
+      {
+        type: "wright-surface:authorization-failed",
+        reason: "SURFACE_PREVIEW_UNAUTHORIZED",
+      },
+      "http://malicious.invalid",
+    );
+
+    expect(unavailable).not.toHaveBeenCalled();
+  });
+
   it("shows Hermes AI availability and saves an AI-applied canvas revision", async () => {
     const user = userEvent.setup();
     mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
@@ -441,11 +654,25 @@ describe("DirectRivetSurface", () => {
     );
   });
 
-  it("shows an opaque run dialog and requires explicit approval", async () => {
+  it("runs the main graph with default inputs immediately from the toolbar", async () => {
     const user = userEvent.setup();
+    const succeeded = {
+      run_id: "run-default",
+      workflow_id: "workflow-1",
+      revision: 1,
+      digest: "etag-1",
+      graph: null,
+      generation: 1,
+      state: "succeeded",
+      reason: null,
+      outputs: { output: { type: "string", value: "done" } },
+      duration_ms: 21,
+      output_truncated: false,
+    };
     mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
     mocks.readRivetWorkflow.mockResolvedValue(document);
-    mocks.reviewRivetWorkflow.mockResolvedValue(approvedWorkflow);
+    mocks.runRivetWorkflow.mockResolvedValue(succeeded);
+    mocks.getRivetRunInspection.mockResolvedValue(inspectionFor(succeeded));
 
     render(
       <DirectRivetSurface
@@ -459,30 +686,56 @@ describe("DirectRivetSurface", () => {
     connectBridge();
 
     await user.click(screen.getByTestId("direct-rivet-run"));
+
+    await waitFor(() =>
+      expect(mocks.runRivetWorkflow).toHaveBeenCalledWith(
+        "session-1",
+        "rivet",
+        {
+          expectedRevision: 1,
+          expectedDigest: "etag-1",
+          graph: undefined,
+          inputs: {},
+        },
+      ),
+    );
+    expect(
+      screen.queryByTestId("direct-rivet-run-panel"),
+    ).not.toBeInTheDocument();
+    expect(
+      await screen.findByTestId("rivet-run-state-succeeded"),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open"),
+    );
+    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent(
+      "done",
+    );
+  });
+
+  it("opens an opaque run-options dialog without workflow approval", async () => {
+    const user = userEvent.setup();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?wrightMinimal=1&workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    connectBridge();
+
+    await user.click(screen.getByTestId("direct-rivet-run-options"));
     const panel = screen.getByTestId("direct-rivet-run-panel");
     expect(panel.getAttribute("style")).toContain("--color-surface-elevated");
     expect(panel).toHaveStyle({ opacity: "1" });
-    expect(screen.getByTestId("direct-rivet-review-state")).toHaveTextContent(
-      "Revision 1 needs approval",
-    );
-    expect(screen.getByTestId("direct-rivet-run-start")).toBeDisabled();
-
-    await user.click(screen.getByTestId("direct-rivet-run-approve"));
-    await waitFor(() =>
-      expect(mocks.reviewRivetWorkflow).toHaveBeenCalledWith(
-        "session-1",
-        "rivet",
-        "approved",
-        "local-user",
-      ),
-    );
-    expect(screen.getByTestId("direct-rivet-review-state")).toHaveTextContent(
-      "Revision 1 approved",
-    );
     expect(screen.getByTestId("direct-rivet-run-start")).toBeEnabled();
-    expect(screen.getByTestId("direct-rivet-run-feedback")).toHaveTextContent(
-      "Revision 1 approved. It is ready to run.",
-    );
+    expect(screen.queryByText(/approve revision/i)).not.toBeInTheDocument();
+    expect(mocks.reviewRivetWorkflow).not.toHaveBeenCalled();
   });
 
   it("blocks an unsaved canvas draft before exact-revision execution", async () => {
@@ -501,7 +754,6 @@ describe("DirectRivetSurface", () => {
     connectBridge("version: 4\ndata:\n  graphs:\n    unsaved: {}\n");
 
     await user.click(screen.getByTestId("direct-rivet-run"));
-    await user.click(screen.getByTestId("direct-rivet-run-start"));
 
     await waitFor(() =>
       expect(screen.getByTestId("direct-rivet-status")).toHaveTextContent(
@@ -542,6 +794,7 @@ describe("DirectRivetSurface", () => {
     mocks.readRivetWorkflow.mockResolvedValue(document);
     mocks.runRivetWorkflow.mockResolvedValue(running);
     mocks.getRivetWorkflowRun.mockResolvedValue(succeeded);
+    mocks.getRivetRunInspection.mockResolvedValue(inspectionFor(succeeded));
     mocks.getRivetWorkflowHistory.mockResolvedValue([
       { sequence: 1, kind: "progress", payload: { phase: "node-finish" } },
     ]);
@@ -556,7 +809,7 @@ describe("DirectRivetSurface", () => {
     await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
     connectBridge();
 
-    await user.click(screen.getByTestId("direct-rivet-run"));
+    await user.click(screen.getByTestId("direct-rivet-run-options"));
     await user.type(
       screen.getByTestId("direct-rivet-run-graph"),
       "Passthrough",
@@ -578,24 +831,17 @@ describe("DirectRivetSurface", () => {
         },
       ),
     );
+    expect(
+      await screen.findByTestId("rivet-run-state-succeeded"),
+    ).toBeVisible();
     await waitFor(() =>
-      expect(screen.getByTestId("direct-rivet-run-result")).toHaveTextContent(
-        "succeeded · 42 ms",
-      ),
+      expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open"),
     );
-    expect(screen.getByTestId("direct-rivet-run-result")).toHaveTextContent(
-      'output: "hello"',
+    expect(screen.getByTestId("rivet-run-result-output")).toHaveTextContent(
+      "hello",
     );
-    expect(screen.getByTestId("direct-rivet-run-result")).not.toHaveTextContent(
-      "cost",
-    );
-    expect(screen.getByTestId("direct-rivet-run-feedback")).toHaveTextContent(
-      'Run succeeded in 42 ms. Output: output: "hello"',
-    );
-    expect(screen.getByTestId("direct-rivet-run-result")).toHaveAttribute(
-      "title",
-      JSON.stringify(succeeded.outputs),
-    );
+    expect(screen.getByTestId("rivet-run-result-cost")).toHaveTextContent("0");
+    expect(screen.getByTestId("rivet-run-inspector")).toHaveClass("is-open");
   });
 
   it("offers a correlated cancel control while a workflow is running", async () => {
@@ -617,6 +863,7 @@ describe("DirectRivetSurface", () => {
     mocks.readRivetWorkflow.mockResolvedValue(document);
     mocks.runRivetWorkflow.mockResolvedValue(running);
     mocks.getRivetWorkflowRun.mockImplementation(() => new Promise(() => {}));
+    mocks.getRivetRunInspection.mockResolvedValue(inspectionFor(running));
     mocks.cancelRivetWorkflow.mockResolvedValue({
       ...running,
       state: "cancelled",
@@ -633,7 +880,6 @@ describe("DirectRivetSurface", () => {
     await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
     connectBridge();
     await user.click(screen.getByTestId("direct-rivet-run"));
-    await user.click(screen.getByTestId("direct-rivet-run-start"));
     await user.click(await screen.findByTestId("direct-rivet-cancel"));
 
     await waitFor(() =>
@@ -642,7 +888,7 @@ describe("DirectRivetSurface", () => {
         running,
       ),
     );
-    expect(screen.getByTestId("direct-rivet-run-result")).toHaveTextContent(
+    expect(screen.getByTestId("direct-rivet-run-feedback")).toHaveTextContent(
       "cancelled",
     );
   });

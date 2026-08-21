@@ -9,6 +9,7 @@ import type {
 interface ChatTranscriptProps {
   session: ChatSession | null;
   isStreaming?: boolean;
+  streamStartedAt?: number | null;
   streamedText?: string;
   activeTool?: { name: string; preview: string; percentage?: number } | null;
   streamActivity?: StreamActivityEntry[];
@@ -25,16 +26,34 @@ function formatActivityTime(timestamp: number): string {
   });
 }
 
+function formatElapsedTime(elapsedMilliseconds: number): string {
+  const totalSeconds = Math.max(0, Math.floor(elapsedMilliseconds / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0
+    ? `${minutes}m ${seconds.toString().padStart(2, "0")}s`
+    : `${seconds}s`;
+}
+
 function ActivityPanel({
   isStreaming,
+  streamStartedAt,
   activeTool,
   entries,
 }: {
   isStreaming: boolean;
+  streamStartedAt: number | null;
   activeTool: { name: string; preview: string; percentage?: number } | null;
   entries: StreamActivityEntry[];
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!isStreaming || streamStartedAt === null) return;
+    setNow(Date.now());
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, [isStreaming, streamStartedAt]);
   const latestEntry = entries[entries.length - 1];
   const summary = activeTool
     ? activeTool.name
@@ -113,14 +132,29 @@ function ActivityPanel({
             <span style={{ marginLeft: "0.35rem" }}>{summary}</span>
           </span>
         </span>
-        <span
-          style={{
-            color: "var(--color-secondary)",
-            flex: "0 0 auto",
-            fontSize: "0.75rem",
-          }}
-        >
-          {expanded ? "Hide" : "Show"}
+        <span style={{ display: "inline-flex", gap: "var(--space-sm)" }}>
+          {isStreaming && streamStartedAt !== null && (
+            <span
+              data-testid="stream-elapsed-time"
+              aria-label="Elapsed time"
+              style={{
+                color: "var(--color-primary)",
+                fontFamily: "var(--font-mono)",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              {formatElapsedTime(now - streamStartedAt)}
+            </span>
+          )}
+          <span
+            style={{
+              color: "var(--color-secondary)",
+              flex: "0 0 auto",
+              fontSize: "0.75rem",
+            }}
+          >
+            {expanded ? "Hide" : "Show"}
+          </span>
         </span>
       </button>
 
@@ -240,6 +274,7 @@ function ActivityPanel({
 export function ChatTranscript({
   session,
   isStreaming = false,
+  streamStartedAt = null,
   streamedText = "",
   activeTool = null,
   streamActivity = [],
@@ -338,6 +373,7 @@ export function ChatTranscript({
       {(isStreaming || streamActivity.length > 0 || activeTool) && (
         <ActivityPanel
           isStreaming={isStreaming}
+          streamStartedAt={streamStartedAt}
           activeTool={activeTool}
           entries={streamActivity}
         />

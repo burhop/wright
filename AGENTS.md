@@ -1,12 +1,16 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/068-capability-library/plan.md
+at specs/075-rivet-run-inspector/plan.md
 <!-- SPECKIT END -->
 
 
-Before merging a feature branch to `dev`, run `scripts/check-dev-merge.sh` or
-document why a local host limitation prevented a specific gate. Before merging
+Before every push to a branch with a pull request targeting `dev`, read
+`docs/contributing/dev-push-runbook.md` and run `scripts/check-dev-push.ps1`
+on Windows or `scripts/check-dev-push.sh` on Unix. Direct pushes to `dev` are
+not supported. Before merging a feature branch to `dev`, run
+`scripts/check-dev-merge.ps1` on Windows or `scripts/check-dev-merge.sh` on Unix,
+or document why a local host limitation prevented a specific gate. Before merging
 `dev` to `main`, run `scripts/check-prod-merge.sh`. These scripts are the
 merge-gate source of truth; when CI catches a failure that the scripts miss,
 update the scripts and contributor docs in the same fix.

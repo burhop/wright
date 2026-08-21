@@ -21,6 +21,7 @@ from workspace_service.adapters.runtime import (
     set_active_gateway_session,
 )
 from tool_registry import McpServer
+from workspace_service import workspace_path_overlaps_application
 
 logger = structlog.get_logger(__name__)
 
@@ -188,6 +189,13 @@ def sync_workspace_tools_to_wright_gateway(
     if not workspace:
         return False
     workspace_path = workspace["local_path"]
+    if workspace_path_overlaps_application(workspace_path):
+        logger.error(
+            "workspace_gateway_sync_blocked_application_path",
+            workspace_id=workspace.get("workspace_id"),
+            workspace_path=workspace_path,
+        )
+        return False
     tmp_dir = os.path.join(workspace_path, "tmp")
     os.makedirs(tmp_dir, exist_ok=True)
 

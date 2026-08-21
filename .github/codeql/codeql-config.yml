@@ -1,0 +1,7 @@
+# These byte-addressed bundles are generated or pinned release inputs. Analyze
+# their maintained source and wrappers instead of minified/vendor output.
+paths-ignore:
+  - integrations/rivet/editor/dist/**
+  - integrations/rivet/runner/dist/**
+  - integrations/rivet/runner/artifacts/**
+  - src/wright_engineering/static/web/**

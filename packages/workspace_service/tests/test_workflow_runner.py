@@ -179,7 +179,7 @@ def test_real_runner_catalog_verifies_pinned_inventory(tmp_path):
     manifest = {
         "schema_version": 1,
         "runner": "wright-rivet2-node",
-        "protocol_version": 1,
+        "protocol_version": 2,
         "rivet_version": "2.8.9",
         "source": {
             "repository": "https://github.com/valerypopoff/rivet2.0.git",

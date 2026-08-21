@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 import yaml
 
@@ -201,6 +202,22 @@ def test_workspace_sync_writes_exact_gateway_binding(tmp_path):
     config = yaml.safe_load(config_path.read_text())
     assert config["terminal"]["cwd"] == str(workspace_path)
     assert gateway["args"][2] == "/wright"
+
+
+def test_workspace_sync_rejects_wright_application_source(tmp_path):
+    application_root = Path(__file__).resolve().parents[3]
+    db_path = _create_workspace_context_db(tmp_path, application_root)
+    config_path = tmp_path / "config.yaml"
+
+    changed = wright_gateway_sync.sync_workspace_tools_to_wright_gateway(
+        "session1",
+        db_path,
+        profile=wright_gateway_sync.default_hermes_gateway_profile("/wright"),
+        config_paths=[str(config_path)],
+    )
+
+    assert changed is False
+    assert not config_path.exists()
 
 
 def test_workspace_sync_reuses_binding_for_another_session_in_same_workspace(tmp_path):

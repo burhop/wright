@@ -3,6 +3,7 @@ from .errors import (
     WorkspaceExecutionError,
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
+    WorkspaceProtectedPathError,
     WorkspaceServiceError,
 )
 from .models import (
@@ -16,6 +17,7 @@ from .service import (
     SessionWorkspaceAuthorization,
     WorkspaceService,
     default_workspace_parent_dir,
+    workspace_path_overlaps_application,
 )
 from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
@@ -35,6 +37,22 @@ from .workflow_operations import (
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
 )
+from .engineering_scenario_artifacts import (
+    EngineeringArtifactNormalizerRegistry,
+    artifact_content_digest,
+    normalize_artifact,
+)
+from .engineering_scenario_assertions import EngineeringAssertionRegistry
+from .engineering_scenario_catalog_service import EngineeringScenarioCatalog
+from .engineering_scenario_service import EngineeringScenarioService
+from .engineering_model_service import EngineeringModelService, observe_local_model_host
+from .support_diagnostics import SupportDiagnosticSnapshot
+from .support_diagnostic_service import (
+    SupportDiagnosticError,
+    SupportDiagnosticExport,
+    SupportDiagnosticPreview,
+    SupportDiagnosticService,
+)
 from .rivet_validation import (
     GraphPortSummary,
     GraphSummary,
@@ -43,6 +61,20 @@ from .rivet_validation import (
     WorkflowValidationResult,
     validate_rivet_project,
 )
+from .rivet_approvals import RivetApprovalError, RivetApprovalService
+from .rivet_authority import (
+    AuthorityClaims,
+    IssuedAuthority,
+    RivetAuthorityError,
+    RivetRunAuthorityService,
+)
+from .rivet_capabilities import RivetCapabilityService, RivetDiscoverySnapshot
+from .rivet_gateway_bridge import (
+    RivetBoundInvocation,
+    RivetGatewayBridge,
+    RivetGatewayBridgeError,
+)
+from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_mcp import (
     RivetMcpBinding,
     RivetMcpError,
@@ -76,6 +108,7 @@ __all__ = [
     "WorkspaceExecutionError",
     "WorkspaceInvalidRequestError",
     "WorkspaceNotFoundError",
+    "WorkspaceProtectedPathError",
     "WorkspaceRecord",
     "WorkspaceManager",
     "WorkspaceService",
@@ -83,6 +116,7 @@ __all__ = [
     "WorkspaceServiceError",
     "WorkspaceToolState",
     "default_workspace_parent_dir",
+    "workspace_path_overlaps_application",
     "build_workspace_service",
     "WorkflowDocument",
     "WorkflowPersistenceError",
@@ -108,12 +142,37 @@ __all__ = [
     "WorkflowOperationsError",
     "WorkflowOperationsSettings",
     "WorkspaceWorkflowOperations",
+    "EngineeringArtifactNormalizerRegistry",
+    "EngineeringAssertionRegistry",
+    "EngineeringScenarioCatalog",
+    "EngineeringScenarioService",
+    "EngineeringModelService",
+    "observe_local_model_host",
+    "SupportDiagnosticError",
+    "SupportDiagnosticExport",
+    "SupportDiagnosticPreview",
+    "SupportDiagnosticService",
+    "SupportDiagnosticSnapshot",
+    "artifact_content_digest",
+    "normalize_artifact",
     "GraphPortSummary",
     "GraphSummary",
     "ValidationIssue",
     "WorkflowIdentityMismatch",
     "WorkflowValidationResult",
     "validate_rivet_project",
+    "RivetApprovalError",
+    "RivetApprovalService",
+    "AuthorityClaims",
+    "IssuedAuthority",
+    "RivetAuthorityError",
+    "RivetRunAuthorityService",
+    "RivetCapabilityService",
+    "RivetDiscoverySnapshot",
+    "RivetBoundInvocation",
+    "RivetGatewayBridge",
+    "RivetGatewayBridgeError",
+    "RivetMcpGatewaySettings",
     "RivetMcpBinding",
     "RivetMcpError",
     "RivetWorkflowMcpService",

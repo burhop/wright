@@ -1,7 +1,7 @@
 # Wright Engineering Capability Program Progress
 
 **Last updated**: 2026-08-13
-**Current loop**: 068 - Capability Library and MCP onboarding
+**Current loop**: 071 - Safe local engineering model library
 **Program state**: Active; Gate E closed; no `main` merge or release authorized.
 
 ## Completed foundation
@@ -143,16 +143,16 @@ Rollback proof is deterministic: signed catalog activation restores the named pr
 
 ### Quickstart acceptance rerun
 
-| Quickstart section | Evidence status | Result |
-|---|---|---|
-| 1. Bundled catalog | Deterministic | Passed offline discovery, source labeling, compatibility/recovery reasons, and zero-process/zero-user-state mutation tests. |
-| 2. Signed update and rollback | Deterministic | Passed activation, restart, rollback, adversarial-envelope, interrupted-write, and user-state preservation tests. |
-| 3. Onshape evidence | Deterministic metadata | Passed distinct identity, vendor source, official-preview, prerequisite, and unvalidated-limitation checks; no endpoint contact occurred. |
-| 4. Safe configuration import | Deterministic | Passed Claude, VS Code, plain-server, malformed, mixed, duplicate, secret-bearing, shell-like, and oversized input coverage with zero preview effects. |
-| 5. Exact preflights | Deterministic | Passed local-package, remote-endpoint, host-bridge, missing-requirement, stale-observation, blocked-record, digest, and material-change coverage. |
-| 6. Apply, validate, workspace | Deterministic | Passed all three backends through ordered effects, MCP lifecycle validation, workspace-A-only availability, no invocation authority, and rollback/residue checks. |
-| 7. User journey/accessibility | Deterministic | Passed component states, keyboard journeys, focus behavior, live regions, non-color status text, and serious/critical automated accessibility scans. |
-| Optional Onshape live validation | Deferred external | Requires the user to accept external terms and provide permitted credentials. It remains explicitly unvalidated and is not a normal gate. |
+| Quickstart section               | Evidence status        | Result                                                                                                                                                            |
+| -------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Bundled catalog               | Deterministic          | Passed offline discovery, source labeling, compatibility/recovery reasons, and zero-process/zero-user-state mutation tests.                                       |
+| 2. Signed update and rollback    | Deterministic          | Passed activation, restart, rollback, adversarial-envelope, interrupted-write, and user-state preservation tests.                                                 |
+| 3. Onshape evidence              | Deterministic metadata | Passed distinct identity, vendor source, official-preview, prerequisite, and unvalidated-limitation checks; no endpoint contact occurred.                         |
+| 4. Safe configuration import     | Deterministic          | Passed Claude, VS Code, plain-server, malformed, mixed, duplicate, secret-bearing, shell-like, and oversized input coverage with zero preview effects.            |
+| 5. Exact preflights              | Deterministic          | Passed local-package, remote-endpoint, host-bridge, missing-requirement, stale-observation, blocked-record, digest, and material-change coverage.                 |
+| 6. Apply, validate, workspace    | Deterministic          | Passed all three backends through ordered effects, MCP lifecycle validation, workspace-A-only availability, no invocation authority, and rollback/residue checks. |
+| 7. User journey/accessibility    | Deterministic          | Passed component states, keyboard journeys, focus behavior, live regions, non-color status text, and serious/critical automated accessibility scans.              |
+| Optional Onshape live validation | Deferred external      | Requires the user to accept external terms and provide permitted credentials. It remains explicitly unvalidated and is not a normal gate.                         |
 
 SC-009's five-person moderated usability target also remains unvalidated until the study occurs. Automated journey and accessibility evidence is not represented as a substitute for human study evidence.
 
@@ -168,9 +168,351 @@ SC-009's five-person moderated usability target also remains unvalidated until t
 - Gate evidence: 1,592 Python tests collected with 1,540 passed and 52 skipped; 86 release tests passed; 140 native/release tests passed and 9 skipped; 206 coverage tests passed and 9 skipped at 85.48%; 44 security-boundary tests passed and 2 skipped; standalone wheel and source distributions built and clean-installed; 285 web tests and 13 Hermes plugin tests passed; production web build and strict documentation passed; 135 live Playwright tests passed and 1 skipped.
 - The broad mypy pass retained its established warning-mode duplicate `conftest` diagnostic. Focused release-source mypy passed, and the authoritative gate treats the broad diagnostic as a warning rather than a failure.
 
+### Integration checkpoint (completed)
+
+The documentation-complete exact tree was gated again before publication. The feature was pushed and merged only after the final `origin/dev` race check, and its feature/merged tree hashes were required to match.
+
+### Integration result
+
+- Exact-tree confirmation gate passed on feature tip `538ede1` with the same authoritative suite profile recorded above.
+- Pushed `origin/068-capability-library` at `538ede1`.
+- Merged with `--no-ff` into `dev` as `7093b55` (`Merge capability library and MCP onboarding`) and pushed GitHub.
+- Local/remote feature commit identities matched, local/remote `dev` commit identities matched, and the feature and merged tree hashes both equaled `87f8e70cd3de2d21e58aeee62a2c66bff4867645`.
+- Worktree was clean after integration; no `main` merge or release action occurred.
+
+## Loop 069
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: branch `069-rivet-mcp-gateway` created from clean synchronized `dev` at `7093b55`.
+- [x] `speckit-specify`: five prioritized user journeys, 35 functional requirements, five non-functional requirements, ten measurable outcomes, and a 16/16 specification-quality checklist completed and subsequently strengthened by checklist/analysis remediation.
+- [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
+- [x] `speckit-plan` and Gate B decision: native Rivet MCP nodes use an injected Wright provider over an exact-origin loopback bridge; opaque authority is memory-only and bound to one run/workspace/review/binding set; exact external bindings invalidate on workflow, graph, node, schema, server, validation, grant, or policy change; approval remains exact-call and Wright-owned; cancellation revokes authority and explicitly reaches the gateway child request; bounded Run Manifest evidence records truth without credentials.
+- [x] `speckit-checklist`: 42/42 security, authority, binding, approval, cancellation, lifecycle, evidence, UX, dependency, and recovery requirements-quality checks passed after adding explicit authority lifetime, performance, evidence-bound, and accessibility NFRs plus a deterministic performance outcome.
+- [x] `speckit-tasks`: 89 dependency-ordered tasks cover shared authority/persistence/runner foundations; all five user stories with tests-first checkpoints; deterministic two-child, cancellation, BREP/host lifecycle, evidence, performance, security, accessibility, packaging, exact-tree gate, and merge work. All tasks pass the required checkbox/ID/story/path format.
+- [x] `speckit-analyze` and remediation: all 49 buildable FR/NFR/SC items map to the 89-task graph; the separate five-engineer SC-009 remains explicitly deferred, with zero unmapped tasks and no constitution conflict. Repaired the stable API path, runner-supplied tool-name contradiction, actual gateway cancellation API, explicit tracing/logging work, authorized artifact boundary, exactly-once terminal manifest lifecycle, dedicated loopback isolation, and fail-closed MCP prompt scope.
+- [x] `speckit-implement`
+- [x] Focused, integration, UI, packaging, and documentation verification
+- [ ] Final program exact-tree dev gate after loops 070-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Implementation checkpoint 1 - authority, persistence, and runner protocol
+
+- Added migration 14 with additive immutable binding-set/binding, Run Manifest, child-call, and exact-call approval storage while preserving schema-13 workflow reviews and runs.
+- Added canonical secret-rejecting models for exact bindings, binding sets, pending approvals, child evidence, authorized artifacts, and exactly-once terminal manifests.
+- Added memory-only 256-bit run authority with exact loopback audience, run/generation/node/binding scope, expiry, revocation, terminal, and restart invalidation.
+- Added workspace-scoped capability discovery and deterministic binding projection, current-state stale comparison, bounded result/evidence redaction, authorized Wright artifact enforcement, and exact one-shot approval waiting in the governed gateway bridge.
+- Upgraded the pinned Rivet worker to protocol v2 while retaining protocol-v1 non-MCP execution. It validates exact loopback grants, transforms MCP nodes only in memory, injects a Wright provider, sends no server/tool namespace as call authority, rejects project child configuration/dynamic names/prompts/missing-or-extra bindings, and redacts run tokens from output.
+- Added the API composition graph for feature settings, repository, authority, approvals, discovery, and the gateway bridge. The feature defaults off until a reviewed MCP execution path is issued.
+- Rebuilt and integrity-pinned the 12.9 MiB Node worker at Rivet source revision `4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053`, package `2.1.9`, protocol `2`.
+- Focused evidence: 47 Python migration/model/authority/discovery/evidence/bridge/validation/runtime tests and eight Node runner contract tests passed; runner manifest integrity reported `available`; Ruff, Python formatting, Prettier, and `git diff --check` passed.
+
+### Implementation checkpoint 2 - exact capability binding and review
+
+- Added selected-graph MCP requirement extraction with duplicate-node, prompt-operation, dynamic-tool-name, project-child-configuration, and secret-bearing configuration rejection.
+- Discovery now opens a deterministic workspace-confined internal gateway session and projects only policy-visible namespaced tools. Each projection binds bounded schemas, server revision, validation evidence, workspace grant, capability, schema, approval, and policy identities without starting a child.
+- Added deterministic binding previews that keep unqualified collisions ambiguous, accept one explicit namespaced selection per tool-call node, bind engineering units/material assumptions, reject extra/missing/blocked selections, and persist an immutable set only when every node resolves exactly.
+- Added v2 review comparison and storage. Workflow, graph, node, schema, server revision, validation, workspace grant, policy, or workspace scope changes produce stable stale reasons and block Start before execution. Legacy non-MCP review remains supported.
+- Added typed discovery/preview/review APIs and TypeScript clients plus an accessible responsive Capabilities & Review step with native keyboard selection, risk/schema identity details, non-color blocker/stale text, live status, and explicit separation between workflow review and destructive-call approval.
+- The Workflows activity action now keeps the workflow-management sidebar visible while also opening Rivet, preserving editor behavior and making the new review step reachable.
+- Focused evidence: 84 Python capability/review/persistence/API/gateway regression tests passed; five web component tests passed; the production TypeScript/Vite build passed; one mocked Chromium authoring/review journey passed with zero child receipts and zero serious/critical accessibility findings. Ruff, Python formatting, Prettier, and `git diff --check` passed.
+
+### Implementation checkpoint 3 - governed multi-MCP execution
+
+- Added a separately owned, lazily started `127.0.0.1` ephemeral-port bridge that is not mounted in the public API, exposes no CORS surface, accepts only its exact bearer audience and paths, bounds headers/bodies/events, and streams safe NDJSON.
+- Rivet discovery uses one reserved handle and returns only the reviewed workspace binding set. Calls submit no server/tool namespace; Wright resolves the node handle and binding digest, revalidates current Gateway state, and delegates through the existing `GatewayService` with client approval hints disabled.
+- The shared workflow runner now re-verifies binding identity, opens the private bridge, mints a 256-bit memory-only run authority, registers the token as a process secret, issues MCP capability only to MCP graphs, persists a credential-free manifest draft, terminalizes exactly once, and reconciles orphan drafts as interrupted without recreating authority.
+- Exact-call approvals bind the run, authority, node, binding, arguments, gates, child request, expiry, and actor. Changed arguments/digests are rejected, denials and expiry wake waiters, and approval is consumed once before the Gateway receives the call.
+- Added scoped approval APIs and a keyboard-accessible approval/timeline UI. The public response omits authority, internal Gateway session, runner token, raw child paths, and credentials; terminal responses can include the bounded Run Manifest.
+- A real pinned Node worker executed one graph containing colliding `inspect` tools from deterministic Alpha and Beta children. Both calls crossed the Gateway, Beta paused for an exact Wright approval, progress and structured results returned, two child receipts and Gateway audits were recorded, and the run token appeared in no output/evidence.
+- Focused evidence: nine Node worker contract tests passed; 92 Python persistence/authority/capability/bridge/approval/real-worker/API/workspace tests passed; seven capability/run/activity component tests passed; production TypeScript/Vite build passed.
+
+### Implementation checkpoint 4 - authority-first cancellation and residue truth
+
+- Cancellation now revokes the run authority first, cancels pending approvals, sends explicit cancellation to every active Gateway request, waits only the configured bounded acknowledgement interval, and then terminates the owned Rivet worker.
+- A child result that races or arrives after revocation is rejected by a second exact authority check and can never become a successful Rivet result. Active bridge entries are removed in all terminal paths, and an old/restarted authority remains unusable.
+- The immutable Run Manifest records whether Gateway cancellation cleared, whether partial child residue is possible, and a stable recovery code. Acknowledged cleanup records `RIVET_MCP_CANCELLED_CLEAN`; unconfirmed cleanup records `RIVET_MCP_RESIDUE_POSSIBLE` without pretending the external application rolled back.
+- Run status/cancel APIs retain generation conflicts and idempotent terminal cancellation while projecting the safe manifest. The UI presents acknowledged cleanup in ordinary text and possible residue as an alert with an inspect-before-retry instruction.
+- Deterministic evidence exercised both acknowledgement variants, verified revocation-before-cancel ordering, rejected a released late success, cleared the active request, and proved the Node provider fetch ends without a late success. On Windows, process ownership supplies the terminal cancellation because POSIX signal aliases terminate rather than enter Node's handler.
+- Focused evidence: 20 Python cancellation/bridge/runner/manifest/API tests, ten Node runner contract tests, and three cancellation/approval UI tests passed; the production web build passed.
+
+### Implementation checkpoint 5 - specialized application lifecycle parity
+
+- Added a bounded provider-neutral lifecycle projection with only application kind, visible-application status, cancellation support, and a stable recovery action. Gateway progress and audit evidence carry this safe projection; child commands, endpoints, environment, credentials, and private host configuration remain Wright-owned.
+- BREP calls originating in Rivet now traverse the same exact binding and Gateway path while Wright's existing panel API retains concurrent preparation coalescing, visible-panel progress, loopback-only ownership, cancellation, and cleanup. Panel startup/call failures map to `RIVET_MCP_PANEL_UNAVAILABLE` with `reopen_panel_and_inspect` recovery.
+- Added a proprietary-free Solid Edge-style host-bridge double with the same provider result/progress/cancellation contract. Host startup/call failures map to `RIVET_MCP_HOST_BRIDGE_UNAVAILABLE` with `inspect_host_application` recovery, and both codes persist in the terminal Run Manifest without exposing private diagnostics.
+- Added opt-in live BREP and available-host probes. Both are skipped by default and require explicit environment authorization plus an already installed/configured application; no proprietary app, license acceptance, credential, or installation entered the normal gate.
+- Focused evidence: 24 deterministic Python lifecycle, Gateway, BREP API, cancellation, and Run Manifest checks passed; two live probes skipped as designed. Ruff and `git diff --check` passed.
+
+### Implementation checkpoint 6 - durable diagnosis and reproducibility
+
+- Reconciled the durable Run Manifest implementation with its published JSON Schema: the exact workflow/graph, pinned runner protocol/version/hash/source revision, reviewed binding summaries, policy identity, non-reusable authority identity/expiry, bounded call/approval/artifact references, terminal reason, cancellation/residue, redaction/truncation facts, trace identity, and canonical manifest digest now form one schema-valid immutable document.
+- Draft creation is idempotent only for the same immutable identity; conflicting reuse fails. Finalization remains exactly once, caps bindings/calls/approvals/artifacts to contract limits with explicit truncation, and startup terminalizes orphaned drafts as `runner_restarted` without recreating authority.
+- Historical runs and ordered events are restored from SQLite after process restart. A bounded evidence builder correlates bindings, run events, exact approvals, child receipts, trace/request identities, authorized artifacts, denials before child receipt, and stable recovery codes while removing internal Gateway sessions/authority linkage and re-redacting safe summaries.
+- Reproducibility comparison reports exact workflow, review, binding-set, policy, runner-artifact, and current validation differences. Every difference carries a stable review/verification recovery action; no silent rebinding occurs.
+- Added workspace-scoped manifest/evidence/export APIs with 2 MiB export enforcement, `no-store`, download-safe JSON, and cross-session concealment. The responsive UI shows up to 50 correlated timeline entries, complete accounting, artifact labels, stale differences, recovery guidance, residue truth, and keyboard-focus-safe exact approvals.
+- Acceptance evidence: 24 focused Python manifest/persistence/evidence/runner/bridge/API checks passed; four component tests and the production web build passed; four mocked Chromium journeys covered exact review, successful evidence/export, denied-before-child, restart/stale recovery, narrow layout, serious/critical accessibility, and browser text secret scans. All manifest-referenced calls and approvals in the fixtures were accounted for, all artifact references were authorized IDs/digests, and zero reusable authority or secret values were found.
+
+### Implementation checkpoint 7 - cross-cutting acceptance and operator readiness
+
+- Added deterministic performance budgets for 500-tool discovery (under 500 ms), authority issuance (under 100 ms), governed bridge p95 (under 100 ms), first progress projection (under 250 ms), and cancellation delivery (under one second). All measurements passed on the development host.
+- Added cross-surface secret scans covering binding rejection, arguments, progress, results, run evidence, structured logs, events/traces, API/export-shaped documents, workflow files, SQLite, environment-name projection, runner output, and UI source. This exposed and fixed progress-field redaction; redacted progress now contributes to durable evidence accounting.
+- Hardened the private runner bridge with exact Host and no-Origin enforcement and hostile method/path/content-type, duplicate header, transfer-encoding, malformed/truncated body, oversized request, terminal replay, and concurrent revocation tests.
+- Proved compatibility for ordinary non-MCP workflows, independent agent-manager/chat Gateway clients, Wright-owned BREP panel behavior, and additive schema-13-to-14 upgrade with legacy run preservation.
+- The standalone wheel and sdist now include the pinned protocol-v2 Node manifest/bundle/source, capability-binding and Run Manifest JSON Schemas, and Rivet migration/repository modules. The clean build/distribution assertions passed.
+- Added a full system smoke that boots local FastAPI, runs the integrity-pinned Node artifact, and calls two actual MCP stdio subprocesses representing CAD and FEA through the private bridge and shared Gateway. Both child receipts and Wright-principal audits were recorded; no token entered outputs.
+- Expanded Chromium acceptance to five journeys, including keyboard-only exact approval, focus trap/restoration, cancellation residue/recovery, and workflow visibility at narrow width with 200% zoom. The responsive workspace now preserves an active workflow pane rather than switching it out mid-decision; serious/critical scoped accessibility findings were zero.
+- Published the Rivet MCP operator/security/troubleshooting/rollback guide, expanded deterministic versus optional-live testing instructions, added docs navigation, and recorded all quickstart outcomes. Optional proprietary live probes remain skipped by design, and the separate five-engineer usability study remains deferred rather than inferred from automation.
+- Broad acceptance passed: 110 Rivet-focused Python tests with one expected live skip; ten pinned Node runner tests; 293 web tests across 76 files; production TypeScript/Vite build; ESLint with zero errors and three pre-existing hook/chunk warnings; five Chromium journeys; three wheel/sdist checks; strict MkDocs build; all Linux x64, Linux ARM64, and Windows AMD64 catalog-aware bundle verifiers; Ruff lint/format, Prettier, and `git diff --check`.
+
+### Integration strategy update and final Loop 069 evidence
+
+- On 2026-08-13 the user approved consolidating loops 069-073 on `codex/rivet-engineering-program` and running one final authoritative dev gate/merge after Loop 073. Loop 068 remains independently merged in `dev`; no Loop 069 commit has been merged to `dev` yet.
+- Fetched `origin/dev` at `7093b55`; it remained an ancestor of the Loop 069 tree, so no conflict resolution or catalog reintegration was required.
+- Authoritative-gate remediation corrected the native schema ceiling for migration 14, moved shipped Rivet JSON contracts out of the private `specs/` archive path into the public runtime package, refreshed the embedded web/runtime lock, marked deterministic security fixtures explicitly synthetic, and narrowed ambiguous live-region selectors without weakening product assertions.
+- Release/native evidence passed: 86 release tests; 140 native/release tests with 9 platform skips; 206 coverage tests with 9 skips at 85.48%; policy-clean wheel and sdist builds, validation, and isolated clean installs; 44 dedicated security-boundary tests with 2 skips.
+- The repository-wide Python suite reached 1,612 passed and 54 skipped before the synthetic-fixture remediation; the failing public leak scan then passed independently with all 10 runner contracts and 9 focused leak/compatibility tests. The next full gate progressed through the complete Python, Hermes, web, production-build, and strict-docs stages and stopped only on the two subsequently repaired Playwright locator ambiguities.
+- Final UI evidence passed on the corrected tree: all five Rivet MCP journeys passed together, followed by the complete live suite with 140 passed and 1 expected skip across Chromium, Firefox, WebKit, and desktop-surface profiles.
+- Current Loop 069 integration tip is `5e8b627`. The final exact-tree gate, integration-branch push, no-ff `dev` merge, remote synchronization, and tree-hash evidence are intentionally deferred to the single program closeout after Loop 073.
+
 ### Next checkpoint
 
-Run the authoritative dev gate once more on this documentation-complete exact tree. Only after it passes, push the feature, merge it into the then-current `dev` with `--no-ff`, require matching feature and merged tree hashes, push `dev`, and verify local/remote commit identities. If `origin/dev` advances first, integrate it and repeat the exact-tree gate.
+Begin Loop 070, the deterministic multi-domain engineering scenario harness, on the same integration branch. Run the full Spec Kit artifact workflow and focused loop gates; do not repeat the repository-wide dev merge gate until program closeout.
+
+## Loop 070
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `070-engineering-scenario-harness` continues on the user-approved `codex/rivet-engineering-program` integration branch.
+- [x] `speckit-specify` and `speckit-clarify`: five prioritized stories, 37 functional requirements, deterministic Tier 1 boundaries, explicit Tier 2/3 classification, engineering-valid artifact/assertion evidence, restart/compare behavior, and closed Gate E.
+- [x] `speckit-plan` and Gate B: package-owned scenario manifests, three multi-domain Rivet graphs, existing Loop 069 gateway/run authority, SI-aware artifact normalization, versioned assertion plugins, additive report persistence, existing Rivet panel integration, and evidence-only clean-container adapters.
+- [x] `speckit-checklist`: 40/40 UX, safety, security, compatibility, recovery, testability, evidence, and extension requirements-quality checks passed.
+- [x] `speckit-tasks`: 79 dependency-ordered contract, foundation, scenario, diagnosis, evidence, extension, Tier 2, UI, and focused-gate tasks generated and analyzed.
+- [x] Initial `speckit-analyze`: no critical/high cross-artifact findings; implementation-path naming was reconciled after the catalog package/module collision was discovered.
+- [x] `speckit-implement`: all 79 tasks are implemented or intentionally deferred to the approved program closeout boundary; focused acceptance, packaging, docs, and repeat analysis are complete.
+- [ ] Final program exact-tree dev gate after loops 071-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Implementation checkpoint - deterministic engineering scenarios
+
+- Added three package-owned Tier 1 scenarios: structural CAD/Python/FEA, electronics ECAD/CAD/CFD/Python, and parametric Grasshopper/CAD/additive/slicer/static-CAM. Together they cover all nine requested engineering domains with exact static Rivet MCP node names and no direct child configuration.
+- Added public manifest, artifact-envelope, and assertion-result contracts; resource-confining catalog validation; Wright-generated fixture provenance; deterministic content digests; explicit units/coordinates; and 64 KiB artifact/1 MiB report bounds.
+- Added dimensional SI conversion with absolute-versus-delta temperature rules and plugins for numeric relationships, geometry, ECAD, solver convergence/correlation, data-tree topology, additive/3MF, slicer summaries, and physical-actuation-rejecting static CAM lint.
+- Added migration 15 and immutable/idempotent scenario report persistence linked to existing workflow runs. Reports survive restart, reject rebuild after material identity drift, compare scenario/workflow/binding/assertion/environment identities, and export only bounded metadata/hashes.
+- Added thin authenticated list/detail/preflight/start/report/export/compare/cancel APIs and typed web clients. The existing Rivet panel now provides scenario cards, exact-capability preflight, reviewed start, polling/cancel, engineering assertion details, cleanup/residue truth, and evidence export without changing ordinary workflow cards.
+- Added fail-closed Tier 2 environment planning for platform, network, credentials, proprietary apps, GPU, hardware, large downloads, license review, interactive prompts, host mutation, disposable containers, and catalog state. NVIDIA Elements and official Ansys PyFluent remain evidence-only partial adapters; no network install or live solver action was run in Loop 070.
+- Deterministic gateway evidence: all three packaged graphs ran through the integrity-pinned real Rivet Node worker, Wright loopback bridge, run authority, GatewayService, and independent stdio MCP subprocesses; every expected artifact/assertion passed and the three E2E cases completed in about 17 seconds.
+- Final focused evidence: 134 Python tests passed across core units/contracts, migrations and backward compatibility, catalog/artifact/assertion/service/API behavior, extension/environment/failure/restart/compare/performance coverage, packaging, real MCP protocol faults, and all three real Rivet/gateway/multi-process fixture scenarios. Five web client/component tests, the production TypeScript/Vite build, and four Chromium journeys passed; the journeys cover pass/export/accessibility, blocked recovery at narrow width with keyboard and 200% zoom, exact engineering failure recovery, and cancellation/residue. ESLint reported zero errors and the same three unrelated hook warnings. Strict MkDocs, all three catalog-aware bundle verifiers, Ruff lint/format, schema/catalog/security validation, and `git diff --check` passed.
+- Repeat `speckit-analyze` found and remediated artifact-lineage placeholders, incomplete MCP fixture fault/progress/cancel behavior, missing generic assertion variants, incomplete public extension registries, under-specified terminal failure categories/material run comparison, absent UI artifact provenance, and missing reusable contract-boundary fixtures. The final cross-artifact pass has no unresolved critical or high findings.
+- Loop 070 implementation is committed at `d557b92`; all 79 tasks and both requirements checklists are complete. The integration branch remains intentionally unmerged and unpushed until the single Loop 073 program closeout gate.
+
+### Deferred external evidence
+
+- NVIDIA Elements retains the recorded GB10 protocol/tool evidence, but its catalog license metadata is still unknown and Wright gateway proxy evidence is absent. New unattended execution remains blocked.
+- PyFluent retains the recorded GB10 `session_status` evidence. Wright gateway proxy validation is pending, and live solver calls remain blocked without an explicitly authorized licensed Fluent environment.
+- No proprietary application, credential, paid service, GPU, hardware, large download, license acceptance, host mutation, or physical actuation entered normal tests.
+
+### Next checkpoint
+
+Commit the complete Loop 070 evidence on the integration branch. Then begin Loop 071, the safe local engineering model library, without running the authoritative dev gate until program closeout.
+
+## Loop 071
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `071-local-engineering-model-library` continues on the user-approved `codex/rivet-engineering-program` integration branch; the default new-branch hook was an expected no-op because this shared branch already exists.
+- [x] `speckit-specify`: five prioritized lifecycle/extensibility stories, 43 functional requirements, eight non-functional requirements, twelve measurable outcomes, and a 17/17 specification-quality checklist completed.
+- [x] `speckit-clarify`: public/offline acquisition first; no automated gated access; separate runtime plans; uninstall versus reference-safe purge; actual-artifact Gate D evidence; and user-root-scoped deduplication are explicit.
+- [x] `speckit-plan` and Gate D: separate model domain/UI, immutable manifests and plans, strict data-only policy, content-addressed atomic storage, supervised typed runtime adapters, gateway-mediated workspace capabilities, deterministic generated fixtures, and conditional external-model approval are specified.
+- [x] `speckit-checklist`: 40/40 identity, source/license, artifact safety, runtime/gateway, lifecycle/recovery, UX, compatibility, and extension requirements-quality checks pass.
+- [x] `speckit-tasks`: 113 dependency-ordered setup, foundation, five-story, cross-story hardening, external-evidence, and focused-gate tasks generated with tests-first checkpoints.
+- [x] `speckit-analyze` and remediation: all 63 buildable FR/NFR/SC items map to 113 unique tasks with no placeholders, unmapped tasks, or constitution conflicts. Repaired the external-model completion condition, `BaseTool` and API-port boundaries, structured logging/tracing coverage, adapter verify/progress, seeded limitation-aware vectors, complete plan effects, cache-cleanup recovery, 1,000-entry performance scale, and deterministic material-versus-observation evidence digests; repeat analysis has no critical/high findings.
+- [x] `speckit-implement`: all T001-T113 are complete. Public schemas, immutable domain/policy values, migration 16, transaction-safe persistence, content-addressed artifact storage/recovery, generated fixtures, boundary observability, offline catalog/UI, exact effect plans, safe acquisition/import/export, durable atomic installation and maintenance, isolated runtime verification, mandatory evidence, workspace-scoped gateway projection, real Rivet execution, semantic update/rollback, reference-safe removal, duplicate-safe extension/conformance interfaces, cross-story journeys, Gate D external evidence, and hardening are implemented.
+- [x] Focused, integration, UI, packaging, and documentation verification
+- [ ] Final program exact-tree dev gate after loops 072-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Gate D planning decision
+
+- Approved provider-neutral package, artifact, plan, operation, adapter, test-vector, evidence, reference, and workspace-binding contracts plus additive SQLite/content-vault implementation.
+- Rivet discovers and invokes exact enabled typed model tasks through a generic GatewayCapabilityProvider. It never launches or contacts a model runtime directly, and models are not represented as fake MCP servers.
+- Model install cannot silently install TensorFlow, PyTorch, CUDA, drivers, compilers, services, containers, or global dependencies. Adapters have their own reviewed lifecycle.
+- Generated deterministic affine artifacts exercise the entire normal lifecycle without network, model weights in Git, or an ML framework.
+- `keras-io/PointNet` at exact revision `308acfe5d36d9bb34215d1766f13fac612abe18c` remains evaluation-only: standalone selected-artifact license evidence, the legacy TensorFlow SavedModel boundary, runtime footprint, and deterministic vector material did not close safely. The general contracts were not weakened to admit it.
+- `neuralfoil-medium` is approved as the safer first public external package only at `peterdsharpe/NeuralFoil` revision `bb8a775199d1dafb5f410e68e027ba6eca1af9bc`, with the exact 1,074-byte MIT license, 103,467-byte medium NPZ, 7,696-byte input-distribution NPZ, reviewed optional `wright-neuralfoil-numpy` 1.0.0 adapter, declared resource ceiling, limitations, and official golden vector.
+
+### Implementation checkpoints
+
+- Setup/contracts commit `1649e32` established the separately packaged model registry, package-resource JSON Schemas, bounded contract fixtures, and dependency guard; 11 focused contract tests passed without adding an ML framework, model-hub SDK, driver, compiler, unsafe serializer, or model weights.
+- Foundation commit `a9ce872` completed T008-T024: `BaseTool`, immutable model identities and canonical digests, fail-closed source/license/path/format/resource/actuation policy, additive migration 16, optimistic SQLite repository transitions, immutable content-addressed storage, crash reconciliation, deterministic fixture helpers, and redacted structured boundary telemetry. The focused foundation gate passed 71 tests plus Ruff check/format.
+- The T025-T040 offline catalog slice now exposes five bounded representative entries, including the approved generated affine fixture and exact-revision evaluation-only PointNet record. Catalog readiness, evidence facets, blockers, compatibility, filtering, sorting, cursor pagination, RBAC, and no-source/no-runtime startup behavior are covered by 14 Python tests.
+- The dedicated Engineering Models page remains separate from conversational model setup and shows task, trust, license, resources, evidence, limitations, generated-recipe digests, external provenance, and exact recovery without offering an install action prematurely. Four focused Vitest files passed 13 tests; targeted ESLint, Prettier, TypeScript build, Ruff check/format, and a real composed API probe returning HTTP 200 with all five entries also passed.
+- T041-T058 add immutable expiring principal-bound plans, complete effect/blocker/runtime/license/access/rollback/cleanup previews, one-time current-condition confirmation, pinned HTTPS streaming and redirect/auth stripping, strong-validator range resume, cache reuse, safe ZIP inspection, content-addressed deduplication, concurrent-installer convergence, disk reservation, cancellation/fault cleanup, atomic activation, bounded offline upload/import, durable operations/SSE, typed clients, and explicit UI confirmation. The complete implementation-to-date gate passed 116 Python tests and 18 Vitest tests plus Ruff, Prettier, ESLint, and TypeScript compilation.
+- A composed FastAPI probe against an ignored temporary Wright data root returned HTTP 200 for catalog detail and a confirmable install plan, then installed the generated affine package with a succeeded/clean operation and `installed_unverified` readiness. This proves install does not claim runtime readiness before the mandatory standard-test phase.
+- Gate D remains conservative: no source download, gated access, license acceptance, model weights, unreviewed remote code, runtime framework, credential, GPU, proprietary application, paid service, hardware, host mutation, or physical actuation occurred. Rollback for the read-only slice is to disable the API composition and navigation entries; migration 16 remains additive and inert for workspaces with no model state.
+- User Story 2 rollback removes the API/UI lifecycle composition and any unreferenced generated-fixture installation view; shared verified content remains immutable and reference-safe. Offline upload staging is deleted after confirmation, cancelled/failed operations never become active, and externally sourced PointNet remains blocked and untouched.
+- Commit `9065875` records the complete T041-T058 acquisition/install slice. User Story 3 then added an exact-version adapter registry and private stdio supervisor with clean environment, read-only artifact confinement, bounded JSON, deadlines, monotonic redacted progress, cooperative cancellation/termination, late-result suppression, idempotent unload/shutdown, and residue reporting. The production built-in adapter contains only reviewed deterministic affine logic; the richer fault-profile adapter remains test-only.
+- Mandatory vectors now bind deterministic seed, schemas, units, coordinates, declared limitations, declarative predicates, exact installation/artifact/adapter/environment identities, and finite bounded outputs. Stable material evidence excludes trace/timing/resource observations; a separate observation digest preserves those facts. An installation becomes `ready` only after this exact evidence is durably linked.
+- `GatewayService` now accepts collision-checked provider-neutral capability providers with an empty backward-compatible default. Existing MCP/management discovery and execution retain the same lifecycle; model tools inherit `BaseTool`, re-resolve the exact ready workspace binding at call time, and delegate to the private supervisor only after existing gateway policy, input validation, audit, deadline, and cancellation setup. Rivet sees schema/evidence/binding/install/policy identities, never runtime commands, endpoints, paths, handles, or process authority.
+- A real integrity-pinned Rivet worker executed `wright_model__wright_affine_test__predict` through the private run bridge and `GatewayService`, producing the deterministic result from the tested installation. A separate gateway cancellation case reached the provider and cancelled without a late success. The broad compatibility gate passed 436 Python tests across the model registry, data vault, workspace service, all tool-registry/MCP gateway tests, API, security, and real-worker E2E; 19 focused Vitest tests plus ESLint, TypeScript, Ruff, formatting, lock, and diff checks passed.
+- A real FastAPI probe in an ignored `.local-run/` root returned HTTP 200 for plan, install, mandatory standard test, workspace binding, and evidence reads. It ended with `ready`, one passed evidence record, the exact namespaced model tool, clean runtime scratch, and structured `structlog`/OpenTelemetry boundary events containing only safe identities/digests. Cross-workspace binding-header mismatch and physical-actuation task requests fail closed.
+- User Story 3 rollback removes the dynamic provider from API composition and disables/removes workspace model bindings; no MCP server registration changes are required. Runtime processes are short-lived Wright children, and shutdown/cancellation cleanup is explicit. Gate D remains unchanged: no external candidate, model weights, ML framework, credentials, license acceptance, GPU, proprietary app, paid service, hardware, host mutation, or physical actuation entered this slice.
+- Commit `fa8d0eb` records T059-T078. User Story 4 adds ten-facet semantic revision comparison across license, redistribution, artifacts, adapter, schemas, units, coordinates, resources, vectors, and limitations. A tested successor takes the active slot in one transaction; failed readiness preserves the current revision, and rollback invalidates prior readiness before reusing exact cached content.
+- Disable removes capability use, uninstall retains reproducibility bytes, and purge computes exact reclaimable bytes from durable installation/content references, other installations, and unexpired leases. Reference detach/archive is explicit, cancellation occurs before deletion, and restart cleanup reconciles operation staging. Deterministic offline exports contain only exact public redistributable manifest/artifact bytes and re-import through the existing hostile-archive boundary; private, gated, non-redistributable, undeclared, or digest-changed content fails closed.
+- User Story 5 exposes duplicate-safe package, source, adapter, and predicate registries plus a generated-fixture conformance report. Static `wright models validate-catalog` and `wright models validate-adapter` commands never acquire bytes or start the declared adapter. The authoring guide records data-only format, exact license, no-weight fixture, adapter supervision, update/removal, and Gateway-to-Rivet requirements.
+- The T079-T096 checkpoint passed 203 Python tests across the complete model registry plus persistence, workspace composition, Gateway compatibility, API, and public CLI; 17 focused Vitest tests, TypeScript compilation, Prettier, Ruff, dependency lock, public leak, and diff checks also passed. ESLint reports only three pre-existing unrelated hook warnings after the new maintenance hook warning was removed.
+- User Story 4 rollback disables the maintenance routes/UI and archives any generated export reference before removing its opaque export file; verified model content remains reference-safe. User Story 5 rollback removes the optional registries/conformance commands without changing the core lifecycle or existing built-in adapter. Gate D remains conservative and no external content or executable adapter entered this checkpoint.
+
+### Implementation checkpoint 8 - cross-story hardening and Gate D closure
+
+- Every update, rollback, export, disable, uninstall, and purge mutation now requires a durable one-use effect plan that revalidates exact current installation/reference state at confirmation. The prior healthy revision remains active until a separately confirmed tested successor is activated; export authorization and installed-package manifests survive restart, and direct legacy mutation methods fail closed.
+- The Engineering Models UI rehydrates durable installations after reopen and presents exact effects, blockers, rollback, cleanup, explicit confirmation, focus trap/restore, live status, non-color state, narrow-width layout, and 200% zoom behavior. Three Chromium journeys cover offline no-download evaluation, cancellation/recovery through maintenance, and keyboard/accessibility behavior with no serious/critical Axe findings.
+- The local system test composes real FastAPI routes, catalog, durable plans, deterministic acquisition, isolated child adapter, workspace binding, `GatewayService`, and the integrity-pinned Rivet worker. Security, compatibility, performance, packaging, and distribution tests cover hostile manifests/archives/redirects/paths, redaction, concurrency, physical-actuation rejection, migration 15-to-16, existing MCP/Rivet/conversational behavior, 1,000-entry/1,000-artifact budgets, cancellation, bounded evidence, wheel/sdist resources, and absence of shipped payloads.
+- Gate D rejected PointNet for the first approved package and selected NeuralFoil 0.3.3. The opt-in ignored `.local-run/` probe acquired only three immutable raw files totaling 112,237 bytes, rejected a line-ending-mutated license representation by digest, installed and verified through content-addressed storage, matched the publisher's official golden values through Wright's independent NumPy adapter, reused cache with zero network effects, invoked the typed workspace capability, inspected export, disabled/uninstalled, proved the export reference blocked purge, archived that reference, purged exactly 112,237 bytes, and left no content or runtime scratch. No downloaded byte, checkout, export, or environment is tracked.
+- Focused Python evidence: model-registry/data-vault 257 passed and 1 skipped; workspace/tool-registry 643 passed and 7 skipped; API/system/security/compatibility/packaging 34 passed; schema/resource/distribution 50 passed; the explicit external lifecycle probe 1 passed. All 322 web tests, the production build, and three Chromium journeys passed. Full ESLint has zero errors and the same three unrelated warnings.
+- Ruff lint/format, Prettier, strict MkDocs, JSON Schema/resource checks, all three catalog-aware bundle verifiers, `uv lock --check`, untracked-aware public leak scan, and `git diff --check` pass. Repeat Spec Kit analysis maps all 63 buildable requirements to 113 tasks and has no critical/high findings or constitution conflict.
+- Rollback disables the model-library composition/navigation and dynamic model provider, then uses the exact planned disable/uninstall/reference archive/purge paths for user-selected state. Migration 16 remains additive and inert; existing conversational provider, MCP catalog, Gateway, and Rivet paths remain unchanged. The authoritative dev gate, integration-branch push, and no-ff merge remain intentionally deferred to Loop 073.
+
+### Next checkpoint
+
+Commit the verified Loop 071 closeout on the integration branch, then begin Loop 072 Chatter and model-enabled Rivet scenarios. Keep the authoritative dev gate, integration-branch push, and merge deferred to Loop 073 program closeout.
+
+## Loop 072
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `072-chatter-rivet-scenarios` continues on `codex/rivet-engineering-program` under the approved shared-branch strategy.
+- [x] `speckit-specify` and `speckit-clarify`: five stories define private Chatter qualification, typed screening, model-enabled Rivet composition, failure/recovery, and provider-neutral reproduction with Gate E closed.
+- [x] `speckit-plan` and Gate D: exact source/data/recipe boundaries, numeric NPZ serving, explicit local qualification, provider evidence v2, scenario manifest 1.1, resource/cancellation semantics, and generated normal-gate proof are approved.
+- [x] `speckit-checklist`: 60/60 trust/security, scenario engineering, usability, accessibility, recovery, and extension requirements-quality checks pass.
+- [x] `speckit-tasks`: 130 dependency-ordered tasks cover contracts, qualification, runtime, model-enabled scenarios, diagnosis, reproduction, UI, security, packaging, and closeout.
+- [x] Initial `speckit-analyze`: no unresolved critical/high requirement or design finding before implementation.
+- [x] `speckit-implement` and focused Loop 072 acceptance
+- [ ] Final program exact-tree dev gate after Loop 073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Implementation checkpoint - Chatter and provider-neutral Rivet models
+
+- Added a visible but inert private Chatter source record pinned to source revision `4eeb36dbfede3c194c43b3d2039abd5860a675f6`, Dataset 2 digest `1d7880d3fd321a86885c825003bfc8c1ba3ccd15cf0e0e7b9c283a48b0d51d5f`, the 37-feature grouped seed-42 recipe, internal-use terms, and exact parity requirements. It offers no remote acquisition or fabricated package identity.
+- Added strict public candidate/result/serving/parity schemas, an exact NumPy-only binary-forest adapter using `allow_pickle=False`, a tiny generated package, supervised lifecycle, typed gateway projection, mandatory vector proof, and private-package parity binding/export prohibition.
+- Added an explicit trusted qualification command that validates the caller-owned source/data/evidence/environment boundary, retrains/exports only after acknowledgement, binds frozen-population and boundary parity, writes a non-redistributable offline archive transactionally, and removes partial state on failure. Real inputs remain outside Git and normal tests.
+- Added provider-neutral MCP/model evidence, Capability Binding v2 and Run Manifest v2 while preserving v1 resources, provider-aware staleness and scenario preflight, and material-versus-observation reproduction projections.
+- Added scenario manifest 1.1 and the statically bound `chatter-candidate-review` CAD/CAM/model/report workflow, normalized artifacts, advisory assertion, provider-aware UI/API contracts, exact human-review advisory, atomic RAM/disk reservations, and a second generated affine extension proof.
+- The integrity-pinned real Rivet worker installed/tested the generated Chatter package and invoked its typed task through Wright's private bridge and Gateway. The simulated CAM MCP's structured response is connected through Rivet into the model node; the test captures all three exact candidates at the model boundary and verifies the persisted child receipt's argument digest. The initial failure was confined to an invalid inline YAML scalar; after quoting `object[]`, the connected end-to-end path passed with no direct runtime contact from Rivet.
+- Normal-gate security/compatibility/packaging checks reject object arrays, changed dtype/shape/topology/index/finiteness, changed schema/units, incompatible hosts, dynamic tool binding, machine authority, private paths, tracked payload suffixes, qualification state, and Chatter-ID branches in generic orchestration.
+
+### Loop 072 acceptance evidence
+
+- Repeat Spec Kit analysis covered 56 requirements/success criteria and 130 unique tasks. It found and remediated the CAM-to-model data-flow gap, conditional-private-qualification wording, and three stale test-path references; no critical/high finding remains.
+- Focused Python evidence includes 214 model/API/security tests with one expected private qualification skip, 100 scenario/Rivet/API/E2E tests, 29 tool-registry/Gateway/capability tests, 24 final catalog/contract/real-worker checks, and 21 final performance/Gateway/real-worker checks. The generated package lifecycle, one- and 100-candidate performance cases, resource conflict/release, cancellation, provider evidence, reproduction, extension, security, compatibility, packaging, and distribution paths pass.
+- Eleven focused component tests and two real Chromium journeys pass. The browser proof covers keyboard use, 320 CSS pixels, 200% zoom, focus/recovery, and zero serious/critical Axe findings. The production web build, wheel/sdist package-resource proof, strict MkDocs, JSON Schema validation, Ruff lint/format, Prettier, dependency lock, and `git diff --check` pass.
+- The real private qualification is an explicit opt-in external test and was skipped transparently because the reviewed private inputs were unavailable. Generated evidence is not represented as private-model parity or approval; no source/data/model/archive byte entered Git.
+
+### Gate and probe status
+
+- Gate E remains closed: no G-code, machine endpoint, controller instruction, physical actuation, paid service, proprietary application, credential, GPU, hardware, or global runtime mutation is authorized.
+- The private source path was not reachable on this host within the bounded probe, so the real qualification lifecycle remains explicitly skipped rather than being inferred from generated evidence.
+- The authoritative repository-wide dev gate, push, and merge remain deferred until Loop 073 as approved.
+
+## Loop 073
+
+### Baseline and Spec Kit scope
+
+- Loop 073 is the non-publishing program hardening/closeout loop on the
+  user-approved shared `codex/rivet-engineering-program` branch. It preserves
+  Loops 069-072 for one final no-fast-forward merge to `dev`; it authorizes no
+  `main` merge or release action.
+- The baseline exposed a shipped data-schema ceiling of 14 while the additive
+  migration registry already ended at schema 16. It also lacked a bounded
+  user-previewed support export, exact whole-program retained-state inventory,
+  newer-state quarantine record, complete platform-evidence contract, and a
+  dedicated deterministic program tranche in the development gate.
+- Spec Kit specification, clarification, plan, research, data model, quickstart,
+  contracts, 48/48 requirements/hardening checklist checks, 67 tasks, and final
+  cross-artifact analysis are recorded in `specs/073-program-hardening/`.
+  Analysis covers 40 functional requirements, ten non-functional requirements,
+  and eleven success criteria with no unresolved critical/high/medium finding.
+
+### Implemented hardening evidence
+
+- Compatibility now declares schema 16. Native activation records exact-plan
+  receipts, is idempotent for the same plan, rejects mixed operation identity,
+  captures bounded catalog/model/workflow/scenario inventories, creates the
+  required backup, and preserves an explicit newer-state quarantine record when
+  an older rollback runtime cannot read current data.
+- Local support diagnostics use allowlisted typed projections, recursive
+  redaction, exact catalog/model/binding/report material digests, current
+  read-only WAL-aware state, five-minute principal/workspace/scope-bound
+  single-use grants, state-change invalidation, safe logs/traces/errors, a 2 MiB
+  ceiling, and no upload destination or executable authority. The Rivet report
+  supplies accessible preview, confirmation, expiry, one-use export, and fresh-
+  preview recovery.
+- The Capability Library presents one primary next action, consequence, and
+  blocker origin. Workspace handoff survives refresh without replay. Rivet
+  reports separate material evidence from observations and show honest phase,
+  elapsed observation, cancellation availability, cleanup, terminal recovery,
+  and scoped support diagnostics.
+- The focused hardening tranche passes 74 Python tests with two transparent
+  non-supporting host skips. Seventeen focused web client/component tests and
+  the production web build pass. Two automated Chromium program journeys and
+  the validated human-repeatable continuation pass; each journey used six
+  primary interactions, stayed below five minutes, ran keyboard-only at 320
+  CSS pixels and 200% zoom with reduced motion, and reported zero serious or
+  critical scoped Axe findings. The walkthrough preserves two earlier harness-
+  isolation stops before the 15.2-second passing continuation.
+- The offline restart drill retained an active catalog, model package/content/
+  workspace binding, and scenario report with zero network calls. Deterministic
+  Compose contracts continue to require named volumes for data, workspaces,
+  config, and Hermes across every supported profile. Host/container lifecycle
+  evidence remains non-supporting wherever the exact artifact/platform host is
+  unavailable.
+- Gate E remains closed: distribution and diagnostic scans prohibit credentials,
+  private paths/payloads, reusable authority, commands, and physical-actuation
+  configuration. Normal evidence uses no paid/proprietary service, credential,
+  GPU, hardware, large download, license acceptance, or production mutation.
+
+### Local non-publishing candidate rehearsal
+
+- The final Windows-host local rehearsal built and inspected
+  `wright_engineering-0.1.9-py3-none-any.whl` (15,837,433 bytes,
+  SHA-256 `971d9ac104bc7dcbd8f03118d0cae62c3a0be0c89fab6518728bcb80079b9afa`)
+  and `wright_engineering-0.1.9.tar.gz` (15,480,503 bytes, SHA-256
+  `936db124be787d993a11b9baf9987d4a338999bd6b0b8114a91efc64a28d0e32`).
+- Both candidates contain the native application modules and the staged
+  production UI. The inspected compatibility digest is
+  `0d2cddae96c0d608bc5b82504c1165ece027794358d3e160fdcfaae089f2fc1a`,
+  UI-manifest digest is
+  `1ad6382a3bb3c740df8661ef3e266331e4884e237f930b90643dcfa283f1a211`,
+  and runtime-extra lock digest is
+  `cb951e989ebbbbce4a294d14afc14fba3a1fb1ccf8dd031147176580b882ac07`.
+  The artifacts and machine-readable rehearsal record remain under ignored
+  `.local-run/`; nothing was published.
+
+### Remaining closeout
+
+- Run the complete quickstart, documentation, packaging, release/native
+  rehearsal, and authoritative development gate on the exact clean integration
+  tree. Then fetch/reconcile latest `origin/dev` and the engineering catalog
+  branch, rerun the gate, push the integration branch, merge once into `dev`,
+  push `dev`, and verify matching local/remote tree hashes.
+
+## Loop 074
+
+### Native Windows engineering MCP qualification
+
+- Added a hard-allowlisted, fixed-order Windows qualification harness for only BREP MCP, SolidEdgeMCP, Autodesk APS, Autodesk Product Help, Autodesk Fusion desktop, Autodesk Fusion Data, and Onshape Labs FeatureScript. Recipes pin downloadable identities, constrain network destinations and operations, require reviewed safety decisions, cap output and time, redact evidence, and clean only validated disposable roots.
+- Added current, digest-bound evidence and separate catalog/UI statuses for source, package or registration, startup, protocol, host or backend, Wright setup, Wright gateway, and cleanup. The UI says whether a result is current for this Windows setup without turning a partial or failed run into a compatibility claim.
+- BREP MCP 0.103.0 installed and started, negotiated MCP 2025-11-25, and listed 2 tools, but its approved disposable tool probe exposed an upstream data-URL entrypoint defect. SolidEdgeMCP built and started, negotiated MCP 2025-11-25, and listed 12 tools, but its read-only status result omits a schema-required nullable property when no document is open. Neither is described as fully working.
+- Autodesk Product Help's exact public endpoint started, listed 2 tools, and passed its read-only product-list probe. Wright's production onboarding planner correctly stopped because publisher terms were not recorded; no plan was approved or applied.
+- The archived APS server, unavailable clean Fusion desktop session, OAuth-gated Fusion Data service, and not-yet-generally-available Onshape Labs preview stopped at documented safety or availability boundaries. They were not installed or contacted.
+- No credential was requested or supplied, no publisher terms were accepted, no commercial application was installed or configured, no engineering document was opened or changed, and no non-allowlisted MCP was installed or contacted. The pre-existing Solid Edge process remained running unchanged.
+
+### Loop 074 unresolved risks
+
+- BREP and SolidEdgeMCP require upstream fixes before Wright setup and gateway qualification can continue.
+- Autodesk Product Help requires a user-owned publisher-terms decision before Wright may apply an onboarding plan and test the gateway route.
+- Autodesk Fusion desktop needs a user-preconfigured clean MCP-enabled session; Fusion Data needs an approved OAuth flow and exact endpoint; Onshape Labs must become available under independently completed publisher terms.
+- None of the seven currently qualifies for the unqualified statement `Installs on Windows with no problems`.
 
 ## Program guardrails
 

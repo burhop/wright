@@ -12,7 +12,7 @@ import {
 } from "../common/Icons";
 
 export type WorkspaceSidebarId =
-  "marketplace" | "files" | "git" | "settings" | "docs" | "workflows";
+  "marketplace" | "files" | "git" | "settings" | "docs";
 
 interface WorkspaceActivityBarProps {
   activeSidebar: WorkspaceSidebarId;
@@ -25,7 +25,7 @@ interface WorkspaceActivityBarProps {
 }
 
 const items: Array<{
-  id: WorkspaceSidebarId | "brep";
+  id: WorkspaceSidebarId | "workflows" | "brep";
   testId: string;
   title: string;
   icon: (size: number) => ReactElement;
@@ -129,8 +129,8 @@ export function WorkspaceActivityBar({
               key={item.id}
               data-testid={item.testId}
               onClick={() => {
-                if (item.id === "workflows" && onOpenRivetEditor) {
-                  onOpenRivetEditor();
+                if (item.id === "workflows") {
+                  onOpenRivetEditor?.();
                   return;
                 }
                 if (item.id === "brep") {

@@ -59,6 +59,7 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
         "brep-mcp",
         "solid-edge-mcp",
         "playwright-mcp",
+        "onshape-labs-featurescript-mcp",
     }
     assert "opencad" not in serialized
     assert "opencascade" not in serialized
@@ -71,9 +72,10 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
         "openscad-mcp": "openscad-mcp",
         "freecad-mcp": "freecad-mcp-nekanat",
         "brep-mcp": "brep-mcp",
-        "solid-edge-mcp": "solid-edge-mcp-burhop",
-        "playwright-mcp": "playwright-mcp",
-    }
+            "solid-edge-mcp": "solid-edge-mcp-burhop",
+            "playwright-mcp": "playwright-mcp",
+            "onshape-labs-featurescript-mcp": "onshape-labs-featurescript-mcp",
+        }
 
 
 def test_arm64_bundle_uses_platform_native_freecad_source() -> None:
@@ -120,6 +122,7 @@ def test_validator_accepts_default_bundle() -> None:
         "brep-mcp": "accepted",
         "solid-edge-mcp": "blocked",
         "playwright-mcp": "accepted",
+        "onshape-labs-featurescript-mcp": "remote_only",
     }
 
 

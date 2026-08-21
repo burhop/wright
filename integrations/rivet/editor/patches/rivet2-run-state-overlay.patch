@@ -1,0 +1,161 @@
+diff --git a/packages/app/src/components/VisualNode.tsx b/packages/app/src/components/VisualNode.tsx
+index d5e8e8ec..6ed51000 100644
+--- a/packages/app/src/components/VisualNode.tsx
++++ b/packages/app/src/components/VisualNode.tsx
+@@ -40,6 +40,7 @@ import { getDuplicateGraphOutputIdWarning } from '../domain/graphEditing/graphOu
+ import { duplicateGraphOutputIdsState } from '../state/selectors/graphOutputs.js';
+ import { getRecursiveSubGraphWarning } from '../domain/graphEditing/subGraphs.js';
+ import { projectState } from '../state/savedGraphs.js';
++import { wrightRunStateByNodeState } from '../state/graphBuilder.js';
+ 
+ export type VisualNodeProps = {
+   node: ChartNode;
+@@ -112,6 +113,7 @@ const VisualNodeImpl = memo(
+       const executorSession = useExecutorSessionState();
+       const nodeColor = node.visualData.color;
+       const isOutputPreviewHovered = Boolean(isHovered || shouldShowHoverControls);
++      const wrightRunState = useAtomValue(wrightRunStateByNodeState)[node.id];
+ 
+       useDependsOnPlugins();
+ 
+@@ -196,6 +198,7 @@ const VisualNodeImpl = memo(
+               conditional: !!node.isConditional,
+               hasPrefabIndicator: isNodePrefabInstance,
+               hasHeaderWarning: Boolean(headerWarning),
++              [`wright-run-${wrightRunState?.state}`]: Boolean(wrightRunState),
+               hasCompareChange: compareChangeKind === 'changed',
+               [`compare-${compareChangeKind}`]: compareChangeKind && compareChangeKind !== 'unchanged',
+             },
+@@ -206,6 +209,8 @@ const VisualNodeImpl = memo(
+           {...nodeAttributes}
+           data-nodeid={node.id}
+           data-contextmenutype={`node-${node.type}`}
++          data-wright-run-state={wrightRunState?.state}
++          aria-label={wrightRunState ? `${node.title || node.type}: ${wrightRunState.state}` : nodeAttributes?.['aria-label']}
+           onMouseEnter={(event: MouseEvent<HTMLElement>) => {
+             onNodeMouseEnter?.(event, node.id);
+           }}
+@@ -219,6 +224,27 @@ const VisualNodeImpl = memo(
+             }
+           }}
+         >
++          {wrightRunState && (
++            <span
++              aria-hidden="true"
++              style={{
++                position: 'absolute',
++                right: 6,
++                top: 6,
++                zIndex: 20,
++                padding: '2px 6px',
++                borderRadius: 999,
++                border: '1px solid currentColor',
++                background: 'var(--node-bg)',
++                color: 'inherit',
++                fontSize: 10,
++                fontWeight: 700,
++                textTransform: 'uppercase',
++              }}
++            >
++              {wrightRunState.state}
++            </span>
++          )}
+           {effectiveIsZoomedOut ? (
+             <ZoomedOutVisualNodeContent
+               node={node}
+diff --git a/packages/app/src/hooks/useRivetWorkspaceHost.ts b/packages/app/src/hooks/useRivetWorkspaceHost.ts
+index 88bae4f7..db3612ee 100644
+--- a/packages/app/src/hooks/useRivetWorkspaceHost.ts
++++ b/packages/app/src/hooks/useRivetWorkspaceHost.ts
+@@ -1,4 +1,10 @@
+ import { useMemo } from 'react';
++import type { NodeId } from '@valerypopoff/rivet2-core';
++import { useAtomValue, useSetAtom } from 'jotai';
++import { graphState } from '../state/graph.js';
++import { projectState } from '../state/savedGraphs.js';
++import { selectedNodesState, wrightRunStateByNodeState } from '../state/graphBuilder.js';
++import { useGoToNode } from './useGoToNode.js';
+ import { useWorkspaceHostCleanBaseline } from './workspaceHost/useWorkspaceHostCleanBaseline.js';
+ import { useWorkspaceHostCloseProject } from './workspaceHost/useWorkspaceHostCloseProject.js';
+ import { useWorkspaceHostCompare } from './workspaceHost/useWorkspaceHostCompare.js';
+@@ -26,6 +32,11 @@ export type {
+ } from './workspaceHost/types.js';
+ 
+ export function useRivetWorkspaceHost(): RivetWorkspaceHost {
++  const currentGraph = useAtomValue(graphState);
++  const project = useAtomValue(projectState);
++  const setSelectedNodes = useSetAtom(selectedNodesState);
++  const setWrightRunStateByNode = useSetAtom(wrightRunStateByNodeState);
++  const goToNode = useGoToNode();
+   const { openProjectSnapshot, openProjectPath, replaceCurrent } = useWorkspaceHostOpenProject();
+   const closeProject = useWorkspaceHostCloseProject();
+   const { startOpeningProjectTab, finishOpeningProjectTab, cancelOpeningProjectTab } =
+@@ -34,10 +45,27 @@ export function useRivetWorkspaceHost(): RivetWorkspaceHost {
+   const { markCurrentProjectClean, markProjectClean } = useWorkspaceHostCleanBaseline();
+   const { startProjectCompare, stopProjectCompare } = useWorkspaceHostCompare();
+   const setProjectTabUiState = useWorkspaceHostTabUi();
++  const setWrightRunState = (steps: Array<{ nodeId: string; state: string; label?: string }>) => {
++    setWrightRunStateByNode(Object.fromEntries(steps.map((step) => [step.nodeId, { state: step.state, label: step.label }])));
++  };
++  const clearWrightRunState = () => setWrightRunStateByNode({});
++  const focusWrightNode = (nodeId: string) => {
++    const graph = [currentGraph, ...Object.values(project.graphs)].find((candidate) => candidate.nodes.some((node) => node.id === nodeId));
++    if (!graph) return false;
++    const typedNodeId = nodeId as NodeId;
++    goToNode(typedNodeId, { graphId: graph.metadata?.id });
++    setSelectedNodes([typedNodeId]);
++    return true;
++  };
++  const focusWrightCanvas = () => window.focus();
+ 
+   return useMemo(
+     () => ({
+       openProjectSnapshot,
++      setWrightRunState,
++      clearWrightRunState,
++      focusWrightNode,
++      focusWrightCanvas,
+       openProjectPath,
+       closeProject,
+       moveProjectPaths,
+@@ -67,6 +95,11 @@ export function useRivetWorkspaceHost(): RivetWorkspaceHost {
+       startProjectCompare,
+       stopProjectCompare,
+       updateProjectMetadata,
++      currentGraph,
++      project.graphs,
++      goToNode,
++      setSelectedNodes,
++      setWrightRunStateByNode,
+     ],
+   );
+ }
+diff --git a/packages/app/src/hooks/workspaceHost/types.ts b/packages/app/src/hooks/workspaceHost/types.ts
+index 69c42dfb..1ddb84b5 100644
+--- a/packages/app/src/hooks/workspaceHost/types.ts
++++ b/packages/app/src/hooks/workspaceHost/types.ts
+@@ -69,6 +69,10 @@ export type WorkspaceHostOpenProjectSnapshot = (
+ ) => Promise<boolean>;
+ 
+ export type RivetWorkspaceHost = {
++  setWrightRunState(steps: Array<{ nodeId: string; state: string; label?: string }>): void;
++  clearWrightRunState(): void;
++  focusWrightNode(nodeId: string): boolean;
++  focusWrightCanvas(): void;
+   openProjectSnapshot(snapshot: RivetProjectSnapshotInput, options?: RivetProjectOpenOptions): Promise<boolean>;
+   openProjectPath(path: string): Promise<boolean>;
+   closeProject(projectId?: ProjectId): Promise<boolean>;
+diff --git a/packages/app/src/state/graphBuilder.ts b/packages/app/src/state/graphBuilder.ts
+index ca8d03e1..6c9417e2 100644
+--- a/packages/app/src/state/graphBuilder.ts
++++ b/packages/app/src/state/graphBuilder.ts
+@@ -22,6 +22,9 @@ export const viewingNodeChangesState = atom<NodeId | undefined>(undefined);
+ 
+ export const selectedNodesState = atom<NodeId[]>([]);
+ 
++export type WrightRunNodeState = { state: string; label?: string };
++export const wrightRunStateByNodeState = atom<Record<string, WrightRunNodeState>>({});
++
+ export const editingNodeState = atom<NodeId | null>(null);
+ 
+ export const fullscreenOutputNodeState = atom<NodeId | null>(null);

@@ -88,6 +88,55 @@ _BOOTSTRAP_HTML = (
     + "</script></body></html>"
 )
 
+_PREVIEW_RECONNECT_CODES = frozenset(
+    {"SURFACE_PREVIEW_UNAUTHORIZED", "SURFACE_PREVIEW_GONE"}
+)
+
+
+def _preview_reconnect_document(
+    request: Request, error: SurfaceRouteAuthorizationError
+) -> Response | None:
+    """Notify Wright when an isolated preview document needs fresh authority."""
+
+    if (
+        request.method != "GET"
+        or error.code not in _PREVIEW_RECONNECT_CODES
+        or "parentOrigin" not in request.query_params
+    ):
+        return None
+    payload = json.dumps(
+        {
+            "type": "wright-surface:authorization-failed",
+            "reason": error.code,
+        },
+        separators=(",", ":"),
+    )
+    script = f"window.parent.postMessage({payload}, '*');"
+    digest = base64.b64encode(hashlib.sha256(script.encode("utf-8")).digest()).decode(
+        "ascii"
+    )
+    document = (
+        "<!doctype html><html><head><meta charset='utf-8'>"
+        "<meta name='referrer' content='no-referrer'><title>Reconnecting preview</title>"
+        "</head><body>Reconnecting preview…<script>"
+        + script
+        + "</script></body></html>"
+    )
+    return Response(
+        content=document,
+        status_code=error.status_code,
+        media_type="text/html",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Security-Policy": (
+                "default-src 'none'; base-uri 'none'; form-action 'none'; "
+                f"script-src 'sha256-{digest}'"
+            ),
+            "Referrer-Policy": "no-referrer",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
 
 class BootstrapExchange(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -375,6 +424,9 @@ async def proxy_application(application_path: str, request: Request) -> Response
             close=response.aclose,
         )
     except SurfaceRouteAuthorizationError as error:
+        reconnect = _preview_reconnect_document(request, error)
+        if reconnect is not None:
+            return reconnect
         raise _route_error(error) from error
     except (HttpProxyError, SseProxyError) as error:
         raise HTTPException(status_code=error.status_code, detail=error.code) from error

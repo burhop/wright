@@ -25,8 +25,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+engineering-models = [
+    "numpy>=1.26,<3",
+]
 runtime = [
-    "cryptography>=45,<50",
+    "cryptography>=45,<51",
     "fastapi>=0.115,<1",
     "uvicorn[standard]>=0.30,<1",
     "python-jose[cryptography]>=3.3,<4",
@@ -65,6 +68,16 @@ wright-rivet-mcp = "workspace_service.rivet_mcp:main"
 [tool.uv.sources]
 wright-engineering = { workspace = true }
 wright-workspace-service = { workspace = true }
+wright-model-registry = { workspace = true }
+
+[tool.uv]
+# The packaged Rivet editor and runner are force-included from outside the
+# Python source root. Make asset changes invalidate UV's editable-install cache
+# so CI and local syncs execute the matching trusted bundle and manifest.
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "integrations/rivet/**" },
+]
 
 [tool.uv.workspace]
 members = [
@@ -74,6 +87,7 @@ members = [
     "packages/agent_adapters",
     "packages/tool_registry",
     "packages/data_vault",
+    "packages/model_registry",
     "packages/workspace_service",
 ]
 
@@ -83,14 +97,18 @@ testpaths = [
     "packages/agent_adapters/tests",
     "packages/core/tests",
     "packages/data_vault/tests",
+    "packages/model_registry/tests",
     "packages/tool_registry/tests",
     "packages/workspace_service/tests",
     "tests",
 ]
 markers = [
+    "external_model: explicit opt-in exact-revision public engineering-model validation under .local-run",
     "gateway: provider-neutral GatewayService contract and isolation tests",
     "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
     "rivet_live_ai: explicit opt-in tests that use the local Hermes/Codex subscription; also requires WRIGHT_RIVET_LIVE_AI=1",
+    "rivet_live_brep: explicit opt-in BREP application test; also requires WRIGHT_RIVET_LIVE_BREP=1 and a current workspace-enabled server",
+    "rivet_live_host: explicit opt-in Solid Edge or available host-bridge test; also requires WRIGHT_RIVET_LIVE_HOST=1 and an already installed proprietary host",
     "release: exact-artifact release identity, supply-chain, and recovery contracts",
     "workspace_surfaces: Workspace Surfaces contract, lifecycle, security, and presentation tests",
 ]
@@ -126,6 +144,7 @@ packages = [
     "packages/agent_adapters/src/agent_adapters",
     "packages/tool_registry/src/tool_registry",
     "packages/data_vault/src/data_vault",
+    "packages/model_registry/src/model_registry",
     "packages/workspace_service/src/workspace_service",
 ]
 
@@ -140,9 +159,9 @@ packages = [
 "integrations/rivet/runner/src" = "workspace_service/_rivet/runner/src"
 
 [tool.hatch.build.targets.sdist]
-# Rivet's generated runtime bundles are intentionally gitignored. Mark them as
-# build artifacts so the sdist can rebuild the same self-contained wheel rather
-# than retaining force-include paths whose sources disappeared from the archive.
+# Rivet's pinned runtime bundles are version-controlled release artifacts. The
+# manifests record their exact source revisions and integrity digests so source,
+# wheel, and sdist builds remain self-contained in clean environments.
 artifacts = [
     "/integrations/rivet/editor/dist",
     "/integrations/rivet/runner/dist",
@@ -155,6 +174,7 @@ include = [
     "/packages/agent_adapters/src/agent_adapters",
     "/packages/tool_registry/src/tool_registry",
     "/packages/data_vault/src/data_vault",
+    "/packages/model_registry/src/model_registry",
     "/packages/workspace_service/src/workspace_service",
     "/integrations/rivet/editor/host.py",
     "/integrations/rivet/editor/manifest.json",

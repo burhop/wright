@@ -1442,7 +1442,7 @@ export function ToolCard({
                   border: "none",
                 }}
               >
-                âœ•
+                ✕
               </button>
             </div>
           )}

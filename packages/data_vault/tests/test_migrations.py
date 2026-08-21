@@ -87,6 +87,9 @@ def test_workflow_review_migration_preserves_prior_workflow_metadata(tmp_path):
         {"version": 11, "name": "workspace_workflow_reviews"},
         {"version": 12, "name": "workspace_workflow_runs"},
         {"version": 13, "name": "capability_library_onboarding"},
+        {"version": 14, "name": "rivet_workspace_mcp_gateway"},
+        {"version": 15, "name": "rivet_engineering_scenario_reports"},
+        {"version": 16, "name": "local_engineering_model_library"},
     )
     with sqlite3.connect(path) as connection:
         assert connection.execute(
@@ -143,7 +146,12 @@ def test_capability_library_migration_is_additive_and_complete(tmp_path):
 
     result = upgrade_database(path)
 
-    assert result.applied == ({"version": 13, "name": "capability_library_onboarding"},)
+    assert result.applied == (
+        {"version": 13, "name": "capability_library_onboarding"},
+        {"version": 14, "name": "rivet_workspace_mcp_gateway"},
+        {"version": 15, "name": "rivet_engineering_scenario_reports"},
+        {"version": 16, "name": "local_engineering_model_library"},
+    )
     with sqlite3.connect(path) as connection:
         tables = {
             row[0]

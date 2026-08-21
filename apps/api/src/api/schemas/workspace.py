@@ -154,6 +154,8 @@ class WorkflowRunStartRequest(BaseModel):
     expected_generation: int | None = Field(default=None, ge=1)
     expected_revision: int = Field(ge=1)
     expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    expected_review_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    binding_set_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     graph: str | None = Field(default=None, max_length=256)
     inputs: Dict[str, Any] = Field(default_factory=dict)
     context: Dict[str, Any] = Field(default_factory=dict)
@@ -179,12 +181,149 @@ class WorkflowRunResponse(BaseModel):
     outputs: Dict[str, Any] | None = None
     duration_ms: int | None = None
     output_truncated: bool = False
+    manifest: Dict[str, Any] | None = None
+
+
+class RivetRunSummaryResponse(BaseModel):
+    run_id: str
+    workspace_id: str
+    session_id: str
+    workflow_id: str
+    revision: int
+    digest: str
+    graph: str
+    generation: int
+    state: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    duration_ms: int | None = None
+    reason_code: str | None = None
+    trace_id: str | None = None
+    latest_sequence: int = 0
+    has_outputs: bool = False
+    has_diagnostic: bool = False
+    output_truncated: bool = False
+    output_redaction_count: int = 0
+
+
+class RivetRunProgressResponse(BaseModel):
+    phase: str
+    current_step_id: str | None = None
+    completed_steps: int = 0
+    total_steps: int = 0
+    last_sequence: int = 0
+    updated_at: str | None = None
+
+
+class RivetRunResultResponse(BaseModel):
+    result_id: str
+    name: str
+    origin: str
+    kind: str
+    value: Any = None
+    preview: str
+    complete: bool
+    truncation_reason: str | None = None
+    original_bytes: int
+    retained_bytes: int
+    digest: str
+    redaction_count: int = 0
+    artifact: Dict[str, Any] | None = None
+
+
+class RivetRunStepResponse(BaseModel):
+    step_id: str
+    sequence: int
+    node_id: str | None = None
+    label: str
+    kind: str
+    qualified_tool_name: str | None = None
+    request_id: str | None = None
+    trace_id: str | None = None
+    state: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    duration_ms: int | None = None
+    reason_code: str | None = None
+    result: Dict[str, Any] | None = None
+    artifacts: List[Dict[str, Any]] = Field(default_factory=list)
+    redaction_count: int = 0
+    complete: bool = True
+
+
+class RivetRunDiagnosticResponse(BaseModel):
+    code: str
+    summary: str
+    recovery_action: str
+    failed_step_id: str | None = None
+    failed_node_id: str | None = None
+    qualified_tool_name: str | None = None
+    trace_id: str | None = None
+    full_rerun_available: bool
+    partial_retry_available: bool = False
+    residue_possible: bool = False
+
+
+class RivetRunCompletenessResponse(BaseModel):
+    outputs_complete: bool
+    steps_complete: bool
+    events_complete: bool
+    evidence_available: bool
+    reasons: List[str] = Field(default_factory=list)
+
+
+class RivetRunInspectionResponse(BaseModel):
+    schema_version: Literal[1]
+    run: RivetRunSummaryResponse
+    progress: RivetRunProgressResponse
+    events: List[Dict[str, Any]] = Field(default_factory=list)
+    steps: List[RivetRunStepResponse] = Field(default_factory=list)
+    final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    diagnostic: RivetRunDiagnosticResponse | None = None
+    completeness: RivetRunCompletenessResponse
+
+
+class RivetRecentRunsResponse(BaseModel):
+    workflow_id: str
+    current_revision: int
+    runs: List[RivetRunSummaryResponse] = Field(default_factory=list)
+
+
+class RivetCallApprovalResponse(BaseModel):
+    approval_id: str
+    run_id: str
+    node_id: str
+    qualified_tool_name: str
+    binding_digest: str
+    argument_digest: str
+    argument_summary: Dict[str, Any]
+    required_gates: list[str]
+    state: str
+    expires_at: str
+    approval_digest: str
+    decided_by: str | None = None
+    decision_reason: str | None = None
+
+
+class RivetCallApprovalListResponse(BaseModel):
+    approvals: list[RivetCallApprovalResponse]
+
+
+class RivetCallApprovalDecisionRequest(BaseModel):
+    session_id: str
+    expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    decision: Literal["approved", "denied"]
+    actor: str = Field(min_length=1, max_length=200)
+    reason: str | None = Field(default=None, max_length=512)
 
 
 class WorkflowReviewRequest(BaseModel):
     session_id: str
     state: Literal["approved", "rejected"]
     reviewer: str = Field(min_length=1, max_length=200)
+    expected_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    graph: str | None = Field(default=None, max_length=256)
+    binding_set_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class WorkflowReviewResponse(BaseModel):
@@ -195,6 +334,106 @@ class WorkflowReviewResponse(BaseModel):
     review_state: str | None = None
     reviewer: str | None = None
     reviewed_at: int | None = None
+    workflow_digest: str | None = None
+    graph_id: str | None = None
+    binding_set_id: str | None = None
+    binding_set_digest: str | None = None
+    policy_snapshot_digest: str | None = None
+    review_digest: str | None = None
+    stale_reasons: list[str] = Field(default_factory=list)
+
+
+class RivetMcpRequirementResponse(BaseModel):
+    graph_id: str
+    node_id: str
+    node_type: str
+    static_tool_name: str | None = None
+
+
+class RivetMcpCapabilityResponse(BaseModel):
+    qualified_tool_name: str
+    server_id: str
+    tool_name: str
+    title: str
+    description: str
+    server_revision: str
+    capability_digest: str
+    validation_evidence_id: str
+    workspace_grant_digest: str
+    input_schema: Dict[str, Any]
+    output_schema: Dict[str, Any] | None = None
+    schema_digest: str
+    annotations: Dict[str, Any]
+    required_approvals: list[str]
+    compatibility: str
+    binding_eligible: bool
+    blocking_reasons: list[str]
+
+
+class RivetMcpCapabilitiesResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    graph_id: str
+    snapshot_digest: str
+    policy_snapshot_digest: str
+    requirements: list[RivetMcpRequirementResponse]
+    issues: list[dict]
+    capabilities: list[RivetMcpCapabilityResponse]
+    next_after: int | None = None
+
+
+class RivetMcpBindingSelectionRequest(BaseModel):
+    node_id: str = Field(min_length=1, max_length=256)
+    qualified_tool_name: str = Field(
+        min_length=3,
+        max_length=257,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}__[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+    )
+    units_policy: Dict[str, Any] = Field(default_factory=dict)
+    material_defaults: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RivetMcpBindingPreviewRequest(BaseModel):
+    session_id: str
+    expected_revision: int = Field(ge=1)
+    expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    graph: str | None = Field(default=None, max_length=256)
+    selections: list[RivetMcpBindingSelectionRequest] = Field(
+        default_factory=list, max_length=1000
+    )
+
+
+class RivetMcpBindingResponse(BaseModel):
+    node_id: str
+    node_handle: str | None = None
+    selected_tool: str | None = None
+    binding_digest: str | None = None
+    server_id: str | None = None
+    server_revision: str | None = None
+    schema_digest: str | None = None
+    validation_evidence_id: str | None = None
+    workspace_grant_digest: str | None = None
+    risk: Dict[str, Any] | None = None
+    units_policy: Dict[str, Any] | None = None
+    material_defaults: Dict[str, Any] | None = None
+    blockers: list[str] = Field(default_factory=list)
+
+
+class RivetMcpBindingPreviewResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    graph_id: str
+    snapshot_digest: str
+    policy_snapshot_digest: str
+    binding_set_id: str | None = None
+    binding_set_digest: str | None = None
+    expires_at: str
+    ready: bool
+    bindings: list[RivetMcpBindingResponse]
 
 
 class WorkflowOperationsListResponse(BaseModel):
@@ -204,6 +443,134 @@ class WorkflowOperationsListResponse(BaseModel):
 class WorkflowRunHistoryResponse(BaseModel):
     run_id: str
     events: list[dict]
+
+
+class WorkflowRunEvidenceResponse(BaseModel):
+    schema_version: Literal[1]
+    run_id: str
+    manifest: Dict[str, Any]
+    bindings: list[dict]
+    child_calls: list[dict]
+    approvals: list[dict]
+    artifacts: list[dict]
+    timeline: list[dict]
+    reproducibility: Dict[str, Any]
+    accounting: Dict[str, Any]
+
+
+class EngineeringScenarioCatalogEntryResponse(BaseModel):
+    scenario_id: str
+    revision: int
+    title: str
+    summary: str
+    domains: list[str]
+    tier: str
+    resource_class: str
+    expected_duration_seconds: int
+    manifest_digest: str
+
+
+class EngineeringScenarioListResponse(BaseModel):
+    scenarios: list[EngineeringScenarioCatalogEntryResponse]
+
+
+class EngineeringScenarioDetailResponse(BaseModel):
+    manifest: Dict[str, Any]
+    manifest_digest: str
+
+
+class EngineeringScenarioPreflightRequest(BaseModel):
+    session_id: str
+    allow_tier2: bool = False
+    platform: str | None = Field(default=None, max_length=40)
+
+
+class EngineeringScenarioBlockerResponse(BaseModel):
+    code: str
+    message: str
+    recovery: str
+
+
+class EngineeringProviderEvidenceResponse(BaseModel):
+    schema_version: Literal["1.0"]
+    provider_kind: Literal["mcp", "engineering_model"]
+    provider_id: str
+    capability_id: str
+    resource_class: Literal["small", "medium", "large", "external"]
+    evidence: Dict[str, Any]
+
+
+class EngineeringScenarioCapabilityResponse(BaseModel):
+    node_id: str
+    requested_tool: str | None = None
+    selected_tool: str | None = None
+    binding_digest: str | None = None
+    blockers: list[str]
+    provider: EngineeringProviderEvidenceResponse | None = None
+    provider_evidence_digest: str | None = Field(default=None, pattern="^[a-f0-9]{64}$")
+
+
+class EngineeringScenarioPreflightResponse(BaseModel):
+    preflight_id: str
+    scenario_id: str
+    scenario_revision: int
+    manifest_digest: str
+    workflow_slug: str
+    workflow_revision: int | None = None
+    workflow_digest: str | None = None
+    graph_id: str
+    binding_set_digest: str | None = None
+    state: Literal["ready", "blocked", "skipped"]
+    capabilities: list[EngineeringScenarioCapabilityResponse]
+    environment: Dict[str, Any]
+    blockers: list[EngineeringScenarioBlockerResponse]
+    expires_at: str
+
+
+class EngineeringScenarioStartRequest(BaseModel):
+    session_id: str
+    manifest_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    workflow_revision: int = Field(ge=1)
+    workflow_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    binding_set_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    seed: int = Field(default=0, ge=0, le=2147483647)
+
+
+class EngineeringScenarioStartResponse(BaseModel):
+    scenario_run_id: str
+    workflow_run: WorkflowRunResponse
+    state: Literal["running"]
+
+
+class EngineeringScenarioReportResponse(BaseModel):
+    scenario_run_id: str
+    workflow_run_id: str
+    workspace_id: str
+    session_id: str
+    scenario_id: str
+    scenario_revision: int
+    manifest_digest: str
+    workflow_digest: str
+    binding_set_digest: str | None = None
+    state: str
+    identity: Dict[str, Any]
+    artifacts: list[Dict[str, Any]]
+    environment: Dict[str, Any]
+    cleanup_state: str
+    residue: Dict[str, Any]
+    assertions: list[Dict[str, Any]]
+    advisory: Dict[str, Any] | None = None
+    report_digest: str | None = None
+
+
+class EngineeringScenarioCancelRequest(BaseModel):
+    session_id: str
+
+
+class EngineeringScenarioCompareResponse(BaseModel):
+    strictly_reproducible: bool
+    differences: list[Dict[str, Any]]
+    assertion_changes: list[Dict[str, Any]]
 
 
 class WorkflowEditorAvailabilityResponse(BaseModel):

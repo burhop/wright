@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "model_id": "wright-affine-test",
+  "package_revision": 1,
+  "display_name": "Wright Affine Test Model",
+  "description": "Generated deterministic fixture for safe lifecycle tests.",
+  "publisher": {
+    "name": "Wright Project",
+    "source_uri": "https://github.com/burhop/wright"
+  },
+  "source": {
+    "kind": "wright",
+    "uri": "wright://generated/affine-test",
+    "immutable_revision": "fixture-revision-1",
+    "access": "public",
+    "allowed_hosts": []
+  },
+  "tasks": [
+    {
+      "task_id": "predict",
+      "description": "Apply a deterministic affine transform.",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x"],
+        "properties": { "x": { "type": "number" } }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["y"],
+        "properties": { "y": { "type": "number" } }
+      },
+      "units": { "x": "1", "y": "1" }
+    }
+  ],
+  "license": {
+    "expression": "MIT",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "location": "LICENSE",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    ],
+    "attribution": "Copyright Wright Project contributors.",
+    "redistribution": "allowed",
+    "acceptance_required": false
+  },
+  "limitations": [
+    {
+      "limitation_id": "test-only",
+      "description": "Not a production engineering prediction model.",
+      "severity": "critical"
+    }
+  ],
+  "remote_code_policy": "forbidden",
+  "review_state": "approved",
+  "variants": [
+    {
+      "variant_id": "json-cpu-f64",
+      "format": "wright-affine-json",
+      "precision": "float64",
+      "platforms": ["linux/x86_64", "linux/aarch64", "windows/x86_64", "macos/aarch64"],
+      "accelerator": "cpu",
+      "runtime": {
+        "adapter_id": "wright-deterministic",
+        "contract_version": "1.0",
+        "version_specifier": "==1.0.0"
+      },
+      "resources": {
+        "download_bytes": 64,
+        "installed_bytes": 64,
+        "ram_bytes": 1048576,
+        "vram_bytes": 0,
+        "load_timeout_ms": 1000,
+        "inference_timeout_ms": 1000,
+        "max_output_bytes": 4096
+      },
+      "artifacts": [
+        {
+          "path": "model/coefficients.json",
+          "role": "model_data",
+          "media_type": "application/vnd.wright.affine+json",
+          "size": 24,
+          "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+          "source_uri": "wright://generated/affine-test/model/coefficients.json",
+          "redistributable": true
+        }
+      ],
+      "test_vectors": [
+        {
+          "schema_version": "1.0",
+          "vector_id": "predict-two",
+          "version": 1,
+          "task_id": "predict",
+          "input_schema_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "output_schema_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "deterministic_seed": 0,
+          "units": { "x": "1", "y": "1" },
+          "input": { "x": 2.0 },
+          "expected": { "kind": "exact", "value": { "y": 5.0 } },
+          "limitations_exercised": ["test-only"],
+          "limits": {
+            "load_timeout_ms": 1000,
+            "inference_timeout_ms": 1000,
+            "max_output_bytes": 4096
+          },
+          "mandatory": true
+        }
+      ]
+    }
+  ]
+}

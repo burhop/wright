@@ -85,6 +85,16 @@ tests. GitHub CodeQL remains the whole-program data-flow authority: new CodeQL
 alerts block promotion even when the local gate is green, and the local gate
 must be updated whenever CI exposes a security path it did not cover.
 
+The deterministic program-hardening tranche also validates support-diagnostic
+redaction and one-use grants, native data-schema inventory/quarantine,
+Compose named-volume persistence, offline catalog/model/scenario reads, exact
+artifact/platform evidence, the two bounded engineering journeys, packaging,
+and Gate E's no-physical-actuation boundary. A skipped Docker host or fixture
+journey is recorded as non-supporting evidence; it cannot satisfy an exact host
+claim. When CI finds a deterministic Loop 068-073 regression absent from
+`scripts/check-dev-merge.sh`, add its reproducer to that script and update this
+section in the same fix.
+
 Run the relevant checks before opening a pull request:
 
 ```bash

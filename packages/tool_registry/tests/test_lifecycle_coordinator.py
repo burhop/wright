@@ -33,8 +33,31 @@ class FakeRunner:
         return self.running
 
 
+class SlowStartupRunner(FakeRunner):
+    startup_timeout = 0.05
+
+
 @pytest.mark.asyncio
-async def test_concurrent_starts_leave_one_current_generation() -> None:
+async def test_runner_startup_timeout_can_exceed_operation_timeout() -> None:
+    runner = SlowStartupRunner("oauth")
+
+    async def start() -> None:
+        await asyncio.sleep(0.02)
+        runner.running = True
+
+    runner.start = start  # type: ignore[method-assign]
+    coordinator = McpLifecycleCoordinator(lambda *_: runner, operation_timeout=0.01)
+
+    await coordinator.start("remote")
+
+    assert runner.is_running()
+    await coordinator.shutdown()
+
+
+@pytest.mark.asyncio
+async def test_concurrent_starts_are_idempotent_and_leave_one_current_generation() -> (
+    None
+):
     runners: list[FakeRunner] = []
 
     def factory(
@@ -49,11 +72,11 @@ async def test_concurrent_starts_leave_one_current_generation() -> None:
         *(coordinator.start("cad", workspace_path="/w") for _ in range(20))
     )
 
-    assert generations == list(range(1, 21))
-    assert coordinator.generation_for("cad") == 20
+    assert generations == [1] * 20
+    assert coordinator.generation_for("cad") == 1
     assert coordinator.live_runner_count() == 1
     assert sum(runner.is_running() for runner in runners) == 1
-    assert runners[-1].is_running()
+    assert runners[0].is_running()
 
     await coordinator.shutdown()
     assert coordinator.live_runner_count() == 0
@@ -85,6 +108,61 @@ async def test_restart_invalidates_in_flight_tool_result() -> None:
 
     with pytest.raises(asyncio.CancelledError):
         await call
+
+
+@pytest.mark.asyncio
+async def test_routine_start_observation_does_not_cancel_delayed_tool_call() -> None:
+    gate = asyncio.Event()
+    runner = FakeRunner("remote")
+
+    async def delayed_call(tool_name: str, arguments: dict) -> dict:
+        await gate.wait()
+        return {"ok": True, **arguments}
+
+    runner.call_tool = delayed_call  # type: ignore[method-assign]
+    coordinator = McpLifecycleCoordinator(lambda *_: runner, operation_timeout=1.0)
+    assert await coordinator.start("remote") == 1
+    call = asyncio.create_task(
+        coordinator.call_tool("remote", "search", {"topic": "featurescript"})
+    )
+    await asyncio.sleep(0)
+
+    assert await coordinator.start("remote") == 1
+    gate.set()
+    assert await call == {"ok": True, "topic": "featurescript"}
+    assert runner.stop_count == 0
+
+
+@pytest.mark.asyncio
+async def test_tool_timeout_retires_runner_for_clean_retry() -> None:
+    runners: list[FakeRunner] = []
+
+    def factory(server_id: str, workspace_path: str | None, approval_context):
+        runner = FakeRunner(f"runner-{len(runners) + 1}")
+        if not runners:
+
+            async def stalled_call(tool_name: str, arguments: dict) -> dict:
+                await asyncio.Event().wait()
+                return {}
+
+            runner.call_tool = stalled_call  # type: ignore[method-assign]
+        runners.append(runner)
+        return runner
+
+    coordinator = McpLifecycleCoordinator(factory, operation_timeout=0.02)
+    await coordinator.start("remote")
+
+    with pytest.raises(TimeoutError):
+        await coordinator.call_tool("remote", "search", {})
+
+    assert runners[0].stop_count == 1
+    assert coordinator.runner_for("remote") is None
+
+    await coordinator.start("remote")
+    assert await coordinator.call_tool("remote", "search", {"topic": "cad"}) == {
+        "runner": "runner-2",
+        "topic": "cad",
+    }
 
 
 @pytest.mark.asyncio

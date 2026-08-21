@@ -1,18 +1,18 @@
 {
   "files": [
     {
-      "path": "assets/index-6IqJmpvd.js",
-      "sha256": "7e3ad3e8c111ec2a0fe152657d931465f565421c0e074c1529c3d318ef00f1b0",
-      "size": 1558830
+      "path": "assets/index-D68HXs1C.js",
+      "sha256": "12028f8d86431bf703afd1390880441ebc4f9855d68c7fd7639258d29050f14c",
+      "size": 1631361
     },
     {
-      "path": "assets/index-D4Rg3fd6.css",
-      "sha256": "094ecb01f753440469187c0ca2fc6deba0d8a843f599b4c0dbb061551c7381a6",
-      "size": 14140
+      "path": "assets/index-nfGsCzks.css",
+      "sha256": "b2b9abd45d21905b04131d88300a2af10b16640a39bc7e57c8b9f871bbc6283c",
+      "size": 29130
     },
     {
-      "path": "assets/plotly.min-BgjpdgRX.js",
-      "sha256": "da8fdac810c2b1d301a7a64339af33d93c9232766e2d2453b574e50146a4c67e",
+      "path": "assets/plotly.min-DA6MvHtm.js",
+      "sha256": "e90eb1fb9b51915ca3d1f129f0814aa741e856970ab13b30b005700a0badc9a4",
       "size": 4603563
     },
     {
@@ -27,7 +27,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "2a6449cc79501e01bd9c63974fa1265242312e720511d0ea986a4bdf38542593",
+      "sha256": "8b140134b99661b01e9667b5498de92f69dad175cc3de7e3cc119e094c0437e4",
       "size": 917
     },
     {

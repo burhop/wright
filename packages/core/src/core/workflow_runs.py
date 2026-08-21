@@ -63,6 +63,7 @@ class WorkflowRunEvent:
     sequence: int
     kind: str
     payload: Mapping[str, str | int | float | bool | None]
+    occurred_at: int | None = None
 
     def __post_init__(self) -> None:
         if not self.run_id or not self.kind or self.sequence < 1:

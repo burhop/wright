@@ -17,9 +17,12 @@ const extraAllowedHosts = (process.env.WRIGHT_WEB_ALLOWED_HOSTS ?? "")
   .split(",")
   .map((host) => host.trim())
   .filter((host) => host.length > 0);
+const apiProxyTarget =
+  process.env.WRIGHT_WEB_API_PROXY_TARGET ?? "http://127.0.0.1:8000";
+const apiProxyPort = new URL(apiProxyTarget).port || "80";
 
 function surfacePreviewHostHeader(host: string): string {
-  return `${host.replace(/:\d+$/, "")}:8000`;
+  return `${host.replace(/:\d+$/, "")}:${apiProxyPort}`;
 }
 
 const surfaceProxyPrefix = "/__wright-surface/";
@@ -93,12 +96,36 @@ export function rewriteSurfaceText(body: string, encoded: string): string {
 export function surfaceProxyHeaders(
   source: IncomingHttpHeaders,
   authority: string,
+  surfaceSessionCookie?: string,
 ): IncomingHttpHeaders {
   const headers = { ...source };
   headers.host = authority;
   headers["accept-encoding"] = "identity";
   delete headers.connection;
+  const cookies = String(headers.cookie ?? "")
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .filter(
+      (cookie) =>
+        cookie.length > 0 &&
+        !cookie.toLowerCase().startsWith("wright_surface="),
+    );
+  if (surfaceSessionCookie) cookies.push(surfaceSessionCookie);
+  if (cookies.length > 0) headers.cookie = cookies.join("; ");
+  else delete headers.cookie;
   return headers;
+}
+
+export function extractSurfaceSessionCookie(
+  value: string | string[] | undefined,
+): string | undefined {
+  if (value === undefined) return undefined;
+  const cookies = Array.isArray(value) ? value : [value];
+  for (const cookie of cookies) {
+    const match = /^\s*(wright_surface=[^;\r\n]*)/i.exec(cookie);
+    if (match?.[1]) return match[1];
+  }
+  return undefined;
 }
 
 export function rewriteSurfaceSetCookies(
@@ -113,6 +140,11 @@ export function rewriteSurfaceSetCookies(
   for (const cookie of cookies) {
     const parts = cookie.split(";");
     const name = parts[0]?.split("=", 1)[0]?.trim();
+    // The isolated preview origin is cross-site when Wright is opened at
+    // 127.0.0.1. Chromium then rejects this HTTP-only iframe cookie. The dev
+    // proxy keeps Wright's internal credential server-side and injects it only
+    // for the matching random presentation authority.
+    if (name?.toLowerCase() === "wright_surface") continue;
     let foundPath = false;
     const scoped = parts.map((part) => {
       const match = /^\s*path\s*=\s*(.*)$/i.exec(part);
@@ -126,19 +158,13 @@ export function rewriteSurfaceSetCookies(
     });
     if (!foundPath) scoped.push(` Path=${prefix}/`);
     rewritten.push(scoped.join(";"));
-
-    // Earlier Wright development builds stored preview cookies at the Vite
-    // origin root. Remove that legacy cookie so it cannot shadow the new,
-    // surface-scoped credential in the Cookie request header.
-    if (name === "wright_surface") {
-      rewritten.push("wright_surface=; Max-Age=0; Path=/");
-    }
   }
 
   return rewritten;
 }
 
 function surfaceDevProxyPlugin(): Plugin {
+  const surfaceSessions = new Map<string, string>();
   return {
     name: "wright-surface-dev-proxy",
     configureServer(server) {
@@ -160,7 +186,11 @@ function surfaceDevProxyPlugin(): Plugin {
             return;
           }
 
-          const headers = surfaceProxyHeaders(req.headers, match.authority);
+          const headers = surfaceProxyHeaders(
+            req.headers,
+            match.authority,
+            surfaceSessions.get(match.authority),
+          );
 
           const proxyReq = httpRequest(
             {
@@ -185,11 +215,23 @@ function surfaceDevProxyPlugin(): Plugin {
                 let body = Buffer.concat(chunks);
                 const outgoing = { ...proxyRes.headers };
                 delete outgoing["content-length"];
+                const surfaceSession = extractSurfaceSessionCookie(
+                  outgoing["set-cookie"],
+                );
+                if (surfaceSession) {
+                  if (surfaceSessions.size >= 256) {
+                    const oldest = surfaceSessions.keys().next().value;
+                    if (oldest) surfaceSessions.delete(oldest);
+                  }
+                  surfaceSessions.set(match.authority, surfaceSession);
+                } else if (proxyRes.statusCode === 401) {
+                  surfaceSessions.delete(match.authority);
+                }
                 const scopedCookies = rewriteSurfaceSetCookies(
                   outgoing["set-cookie"],
                   match.encoded,
                 );
-                if (scopedCookies === undefined) {
+                if (scopedCookies === undefined || scopedCookies.length === 0) {
                   delete outgoing["set-cookie"];
                 } else {
                   outgoing["set-cookie"] = scopedCookies;
@@ -257,7 +299,7 @@ export default defineConfig(({ command, mode }) => {
       allowedHosts: ["promaxgb10-9666", ".localhost", ...extraAllowedHosts],
       proxy: {
         "^/(?!api(?:/|$)).*": {
-          target: "http://127.0.0.1:8000",
+          target: apiProxyTarget,
           changeOrigin: false,
           ws: true,
           bypass(req: IncomingMessage) {
@@ -280,7 +322,7 @@ export default defineConfig(({ command, mode }) => {
           },
         },
         "/api": {
-          target: "http://127.0.0.1:8000",
+          target: apiProxyTarget,
           changeOrigin: true,
           ws: true,
         },
@@ -289,6 +331,11 @@ export default defineConfig(({ command, mode }) => {
     test: {
       globals: true,
       environment: "jsdom",
+      environmentOptions: {
+        jsdom: {
+          url: "http://localhost/",
+        },
+      },
       setupFiles: "./src/test/setup.ts",
     },
   };

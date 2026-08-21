@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "feature_order": [
+    "fntx", "ktx", "zetatx", "fnty", "kty", "zetaty", "fnwx", "kwx", "zetawx", "fnwy", "kwy", "zetawy", "ktc", "knc", "kte", "kne", "Cn", "d", "m", "beta_mean", "et", "ud", "a", "ft_mean", "omega", "b", "tooth_passing_freq", "frf_ratio_xy", "stiffness_ratio_tw", "radial_immersion", "chip_load", "speed_ratio_to_nat", "has_process_damping", "has_runout", "has_edge_coeffs", "n_modes", "tooth_spacing_std"
+  ],
+  "units": [
+    "Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "N/m^2", "N/m^2", "N/m", "N/m", "N/m", "m", "1", "deg", "1", "1", "m", "m", "rpm", "m", "Hz", "1", "1", "1", "m^2", "1", "1", "1", "1", "1", "deg"
+  ],
+  "batch_provenance": {
+    "producer_artifact_id": "fixture-candidates",
+    "producer_schema_digest": "9f0f7dd26826be5fc0464f37c172e32635e994a0899cb0582f17bdf4b6ce18fc",
+    "producer_tool": "fixture_cam__generate_candidates",
+    "simulation_only": true
+  },
+  "candidates": [
+    {
+      "candidate_id": "fixture-stable",
+      "source_artifact_id": "fixture-candidates",
+      "values": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "origins": ["simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated", "simulated"],
+      "engineering_invariants": [
+        {"invariant_id": "fixture-clearance", "state": "pass", "evidence_artifact_id": "fixture-cad-context"}
+      ]
+    }
+  ]
+}

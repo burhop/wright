@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-scenario-manifest-1.1-extension.json",
+  "title": "Wright Model-Enabled Engineering Scenario Manifest Extension",
+  "type": "object",
+  "required": ["schema_version", "capabilities"],
+  "properties": {
+    "schema_version": {"const": "1.1"},
+    "capabilities": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": ["provider_kind"],
+        "properties": {
+          "provider_kind": {"enum": ["mcp", "engineering_model"]}
+        }
+      }
+    }
+  }
+}

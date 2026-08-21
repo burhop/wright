@@ -104,7 +104,7 @@ def test_onshape_official_preview_is_distinct_and_vendor_grounded() -> None:
     assert official.command == "https://fs-mcp.labs.onshape.app/mcp"
     assert official.default_enabled is False
     assert official.validation_result.status == "not_tested"
-    assert official.auth_model == "unknown"
+    assert official.auth_model == "oauth"
     assert any(
         source.primary and source.authority == "vendor" and source.kind == "vendor_docs"
         for source in official.source_records

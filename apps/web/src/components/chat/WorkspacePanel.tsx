@@ -34,7 +34,6 @@ import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
-import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
 import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
 import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
@@ -48,6 +47,7 @@ import {
   installF6HostRegionCycle,
 } from "../../services/surfaces/focus-manager";
 import { isBrepToolActivity } from "../../services/brep-panel-activity";
+import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
 const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
@@ -76,12 +76,22 @@ function isDirectBrepTab(path: string | null): boolean {
 
 function isVisibleBrepServer(server: {
   name?: string;
-  source_url?: string;
+  source_url?: string | null;
 }): boolean {
   return (
     server.name?.trim().toLowerCase() === "brep mcp" &&
     server.source_url?.toLowerCase().includes("brep-mcp") === true
   );
+}
+
+interface CompactMcpServer {
+  server_id: string;
+  name: string;
+  type: string;
+  is_active: boolean;
+  is_installed: boolean;
+  description?: string | null;
+  source_url?: string | null;
 }
 
 function findFileInTree(
@@ -103,6 +113,7 @@ function findFileInTree(
 interface WorkspacePanelProps {
   workspaceId?: string;
   sessionId?: string;
+  workspace?: WorkspaceInfo;
   onSessionChange?: (sessionId: string) => void;
 }
 
@@ -137,6 +148,7 @@ function getSessionOptionLabels(
 export function WorkspacePanel({
   workspaceId: _workspaceId,
   sessionId: propSessionId,
+  workspace: initialWorkspace,
   onSessionChange,
 }: WorkspacePanelProps) {
   const {
@@ -161,9 +173,11 @@ export function WorkspacePanel({
     setObservedContainer(node);
   }, []);
   const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(
-    null,
+    initialWorkspace ?? null,
   );
-  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [workspacePath, setWorkspacePath] = useState<string>(
+    initialWorkspace?.local_path ?? "",
+  );
   const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
     null,
   );
@@ -191,8 +205,6 @@ export function WorkspacePanel({
     return () => observer.disconnect();
   }, [observedContainer]);
 
-  const isThin = panelWidth < 768 && !surfacesEnabled;
-
   // Refresh sessions when workspace changes
   useEffect(() => {
     refreshSessions(_workspaceId);
@@ -201,6 +213,11 @@ export function WorkspacePanel({
   // Fetch workspace details when workspace changes
   useEffect(() => {
     if (!_workspaceId) return;
+    if (initialWorkspace?.workspace_id === _workspaceId) {
+      setWorkspaceInfo(initialWorkspace);
+      setWorkspacePath(initialWorkspace.local_path || "");
+      return;
+    }
     let isMounted = true;
     const fetchWorkspaceInfo = async () => {
       try {
@@ -219,7 +236,7 @@ export function WorkspacePanel({
     return () => {
       isMounted = false;
     };
-  }, [_workspaceId]);
+  }, [_workspaceId, initialWorkspace]);
 
   // Sync the route workspace session into global chat state on mount or when it changes.
   useEffect(() => {
@@ -365,8 +382,17 @@ export function WorkspacePanel({
 
   // Layout states — initialised from localStorage when available
   const [activeSidebar, setActiveSidebar] = useState<WorkspaceSidebarId>(
-    savedLayout?.activeSidebar ?? "files",
+    savedLayout?.activeSidebar === "marketplace" ||
+      savedLayout?.activeSidebar === "files" ||
+      savedLayout?.activeSidebar === "git" ||
+      savedLayout?.activeSidebar === "settings" ||
+      savedLayout?.activeSidebar === "docs"
+      ? savedLayout.activeSidebar
+      : "files",
   );
+  // Switch to the chat-only thin shell when the legacy workspace has no room
+  // for the full editor layout.
+  const isThin = panelWidth < 768 && !surfacesEnabled;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
@@ -422,6 +448,32 @@ export function WorkspacePanel({
     (surfaceLayout.mode === "focus" || surfaceLayout.mode === "narrow");
   const surfaceFocusManager = useMemo(() => new SurfaceFocusManager(), []);
 
+  const enterSurfaceFocus = () => {
+    surfaceFocusManager.rememberInitiator(
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null,
+    );
+    surfaceLayoutDispatch({
+      type: "enter_focus",
+      containerWidth: panelWidth,
+    });
+  };
+
+  const exitSurfaceFocus = () => {
+    surfaceLayoutDispatch({
+      type: "exit_focus",
+      containerWidth: normalSurfacePaneWidth,
+    });
+    queueMicrotask(() =>
+      surfaceFocusManager.restoreInitiator(
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="tabs"] [role="tab"][aria-selected="true"]',
+        ) ?? null,
+      ),
+    );
+  };
+
   useEffect(() => {
     surfaceLayoutDispatch({
       type: "resize_container",
@@ -457,11 +509,15 @@ export function WorkspacePanel({
     useState<number>(10);
 
   // Compact MCP tools state
-  const [mcpServers, setMcpServers] = useState<any[]>([]);
+  const [mcpServers, setMcpServers] = useState<CompactMcpServer[]>([]);
   const [enabledTools, setEnabledTools] = useState<string[]>([]);
   const [mcpLoading, setMcpLoading] = useState(false);
+  const [mcpError, setMcpError] = useState<string | null>(null);
+  const prefetchedMcpWorkspaceRef = useRef<string | null>(null);
 
-  const installedServers = mcpServers.filter((s) => s.is_installed);
+  const installedServers = mcpServers.filter(
+    (server) => server.is_installed && server.server_id !== "rivet-workflows",
+  );
 
   // File tree expanded directories — persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
@@ -638,8 +694,14 @@ export function WorkspacePanel({
       const syncTabs = async () => {
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
           const tabPath = normalizeEditorTabPath(tab.path);
-          if (isDirectRivetTab(tabPath) || tab.type === "rivet") {
-            const slug = rivetSlugFromTabPath(tabPath) || "rivet";
+          const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
+          if (
+            isDirectRivetTab(tabPath) ||
+            tab.type === "rivet" ||
+            savedWorkflowSlug
+          ) {
+            const slug =
+              rivetSlugFromTabPath(tabPath) || savedWorkflowSlug || "rivet";
             openTransientTab({
               name: `${slug}.rivet-project`,
               path: directRivetTabPath(slug),
@@ -681,10 +743,17 @@ export function WorkspacePanel({
             size: fileNode?.size || undefined,
             metadata: { last_modified: fileNode?.last_modified },
           };
-          await openTab(file, "preview");
+          await openTab(file, "preview", workspaceFileSessionId || undefined);
         }
         if (savedLayout.activeTabPath) {
-          setActiveTabPath(normalizeEditorTabPath(savedLayout.activeTabPath));
+          const savedWorkflowSlug = workspaceRivetWorkflowSlug(
+            savedLayout.activeTabPath,
+          );
+          setActiveTabPath(
+            savedWorkflowSlug
+              ? directRivetTabPath(savedWorkflowSlug)
+              : normalizeEditorTabPath(savedLayout.activeTabPath),
+          );
         }
       };
       syncTabs();
@@ -788,7 +857,14 @@ export function WorkspacePanel({
       const customEvent = e as CustomEvent;
       const { type, content } = customEvent.detail || {};
       if (type === "create-prompt" && content) {
-        sendMessageRef.current(content);
+        // Viewer actions belong to this workspace's bound conversation even
+        // when the global session list has not refreshed yet.
+        sendMessageRef.current(
+          content,
+          undefined,
+          false,
+          workspaceFileSessionId || undefined,
+        );
       }
     };
     container?.addEventListener("viewer-message", handleViewerMessage);
@@ -874,8 +950,11 @@ export function WorkspacePanel({
     }
 
     let isMounted = true;
+    let refreshInFlight = false;
 
     const fetchWorkspace = async (isInitial = false) => {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
       if (isInitial) setLoading(true);
       try {
         const tree = await workspaceService.getWorkspaceFiles(
@@ -924,6 +1003,7 @@ export function WorkspacePanel({
         console.error("Error fetching workspace files:", err);
         setError("Failed to fetch workspace files");
       } finally {
+        refreshInFlight = false;
         if (isMounted && isInitial) setLoading(false);
       }
     };
@@ -932,7 +1012,7 @@ export function WorkspacePanel({
 
     const intervalId = setInterval(() => {
       fetchWorkspace(false);
-    }, 2000);
+    }, 5000);
 
     return () => {
       isMounted = false;
@@ -1041,6 +1121,26 @@ export function WorkspacePanel({
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
 
+    const savedWorkflowSlug = workspaceRivetWorkflowSlug(path);
+    if (savedWorkflowSlug && workspaceFileSessionId) {
+      const workflow = await workspaceService.readRivetWorkflow(
+        workspaceFileSessionId,
+        savedWorkflowSlug,
+      );
+      openTransientTab({
+        name: `${workflow.slug}.rivet-project`,
+        path: directRivetTabPath(workflow.slug),
+        type: "rivet",
+      });
+      if (surfaceLayout.mode === "narrow") {
+        surfaceLayoutDispatch({
+          type: "select_narrow_pane",
+          pane: "surface",
+        });
+      }
+      return;
+    }
+
     const ext = path.split(".").pop()?.toLowerCase() || "";
     const name = path.split("/").pop() || path;
     const fileNode = workspaceRoot ? findFileInTree(workspaceRoot, path) : null;
@@ -1067,7 +1167,16 @@ export function WorkspacePanel({
       metadata: { last_modified: fileNode?.last_modified },
     };
 
-    await openTab(file, "preview");
+    try {
+      await openTab(file, "preview", workspaceFileSessionId || undefined);
+    } catch (err: unknown) {
+      console.error("Failed to open workspace file:", err);
+      setError(
+        err instanceof Error
+          ? `Could not open ${name}: ${err.message}`
+          : `Could not open ${name}.`,
+      );
+    }
   };
 
   // File tree operations
@@ -1229,29 +1338,51 @@ export function WorkspacePanel({
   const fetchMcpData = useCallback(async () => {
     if (!_workspaceId && !activeSessionId) return;
     setMcpLoading(true);
+    setMcpError(null);
     try {
-      const serversRes = await fetch(getApiUrl("/api/mcp/servers"));
-      if (serversRes.ok) {
-        const data = await serversRes.json();
-        setMcpServers(data.servers || []);
+      const serverRequest = fetch(getApiUrl("/api/mcp/servers/installed")).then(
+        async (response) => {
+          if (!response.ok)
+            throw new Error("Installed MCP list is unavailable");
+          const data = await response.json();
+          return (data.servers || []) as CompactMcpServer[];
+        },
+      );
+      const enabledRequest = _workspaceId
+        ? workspaceService.getWorkspaceToolsById(_workspaceId)
+        : workspaceService.getWorkspaceTools(activeSessionId!);
+      const [serversResult, enabledResult] = await Promise.allSettled([
+        serverRequest,
+        enabledRequest,
+      ]);
+      const failures: unknown[] = [];
+      if (serversResult.status === "fulfilled") {
+        setMcpServers(serversResult.value);
+      } else {
+        failures.push(serversResult.reason);
       }
-
-      const enabledList = _workspaceId
-        ? await workspaceService.getWorkspaceToolsById(_workspaceId)
-        : await workspaceService.getWorkspaceTools(activeSessionId!);
-      setEnabledTools(enabledList || []);
-    } catch (err) {
-      console.error("Failed to load compact MCP list", err);
+      if (enabledResult.status === "fulfilled") {
+        setEnabledTools(enabledResult.value || []);
+      } else {
+        failures.push(enabledResult.reason);
+      }
+      if (failures.length > 0) {
+        failures.forEach((failure) =>
+          console.error("Failed to load compact MCP list", failure),
+        );
+        setMcpError("Workspace tools could not be fully loaded.");
+      }
     } finally {
       setMcpLoading(false);
     }
   }, [_workspaceId, activeSessionId]);
 
   useEffect(() => {
-    if (activeSidebar === "marketplace") {
-      fetchMcpData();
-    }
-  }, [activeSidebar, fetchMcpData]);
+    const key = _workspaceId || activeSessionId;
+    if (!key || prefetchedMcpWorkspaceRef.current === key) return;
+    prefetchedMcpWorkspaceRef.current = key;
+    void fetchMcpData();
+  }, [_workspaceId, activeSessionId, fetchMcpData]);
 
   const handleToggleMcpTool = async (
     serverId: string,
@@ -1283,18 +1414,30 @@ export function WorkspacePanel({
   };
 
   const openRivetWorkflowTab = useCallback(
-    async (slug?: string) => {
+    (slug?: string) => {
       if (!workspaceFileSessionId) return;
-      const workflow = slug
-        ? await workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
-        : await workspaceService.ensureDefaultRivetWorkflow(
-            workspaceFileSessionId,
-          );
+      setIsSidebarCollapsed(true);
+      const initialSlug = slug || "rivet";
+      const initialPath = directRivetTabPath(initialSlug);
       openTransientTab({
-        name: `${workflow.slug}.rivet-project`,
-        path: directRivetTabPath(workflow.slug),
+        name: `${initialSlug}.rivet-project`,
+        path: initialPath,
         type: "rivet",
       });
+      const workflowRequest = slug
+        ? workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
+        : workspaceService.ensureDefaultRivetWorkflow(workspaceFileSessionId);
+      void workflowRequest
+        .then((workflow) => {
+          updateTabPath(
+            initialPath,
+            directRivetTabPath(workflow.slug),
+            `${workflow.slug}.rivet-project`,
+          );
+        })
+        .catch((error) => {
+          console.error("Rivet workflow preparation failed", error);
+        });
       if (surfaceLayout.mode === "narrow") {
         surfaceLayoutDispatch({
           type: "select_narrow_pane",
@@ -1306,35 +1449,14 @@ export function WorkspacePanel({
       openTransientTab,
       surfaceLayout.mode,
       surfaceLayoutDispatch,
+      updateTabPath,
       workspaceFileSessionId,
     ],
   );
 
-  const createRivetWorkflowTab = useCallback(async () => {
-    if (!workspaceFileSessionId) return;
-    const workflow = await workspaceService.createBlankRivetWorkflow(
-      workspaceFileSessionId,
-    );
-    openTransientTab({
-      name: `${workflow.slug}.rivet-project`,
-      path: directRivetTabPath(workflow.slug),
-      type: "rivet",
-    });
-    if (surfaceLayout.mode === "narrow") {
-      surfaceLayoutDispatch({
-        type: "select_narrow_pane",
-        pane: "surface",
-      });
-    }
-  }, [
-    openTransientTab,
-    surfaceLayout.mode,
-    surfaceLayoutDispatch,
-    workspaceFileSessionId,
-  ]);
-
   const openBrepPanelTab = useCallback(() => {
     if (!workspaceFileSessionId) return;
+    setIsSidebarCollapsed(true);
     openTransientTab({
       name: "BREP",
       path: DIRECT_BREP_TAB_PATH,
@@ -1395,6 +1517,12 @@ export function WorkspacePanel({
     (tab) => isDirectBrepTab(tab.path) || tab.type === "brep",
   );
   const activeDirectBrep = isDirectBrepTab(activeTabPath);
+
+  useEffect(() => {
+    if (activeDirectRivet || activeDirectBrep) {
+      setIsSidebarCollapsed(true);
+    }
+  }, [activeDirectBrep, activeDirectRivet]);
 
   if (isThin) {
     return (
@@ -1625,8 +1753,10 @@ export function WorkspacePanel({
               <ChatTranscript
                 session={activeSession}
                 isStreaming={isActiveSessionStreaming}
+                streamStartedAt={activeSessionStreamState?.startedAt ?? null}
                 streamedText={activeSessionStreamedText}
                 activeTool={activeSessionTool}
+                streamActivity={activeSessionStreamActivity}
                 onOpenFile={handleFileClick}
                 activeSessionId={activeSessionId || undefined}
                 workspacePath={workspacePath || undefined}
@@ -1667,7 +1797,7 @@ export function WorkspacePanel({
       paneContainerWidth={surfacePaneContainerWidth}
       leftSidebarWidth={leftSidebarWidth}
       leftSidebarCollapsed={isSidebarCollapsed}
-      chatCollapsed={isAgentCollapsed && surfaceLayout.wideMode !== "focus"}
+      chatCollapsed={isAgentCollapsed}
       legacyChatWidth={rightSidebarWidth}
       adaptive={surfacesEnabled}
       resizing={isLeftDragging || isRightDragging}
@@ -1728,7 +1858,22 @@ export function WorkspacePanel({
             <div
               style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}
             >
-              {mcpLoading ? (
+              {mcpError && (
+                <div
+                  role="alert"
+                  style={{
+                    color: "var(--color-warning, #f59e0b)",
+                    fontSize: "0.72rem",
+                    marginBottom: "var(--space-sm)",
+                  }}
+                >
+                  {mcpError}{" "}
+                  <button type="button" onClick={() => void fetchMcpData()}>
+                    Retry
+                  </button>
+                </div>
+              )}
+              {mcpLoading && installedServers.length === 0 ? (
                 <div
                   style={{
                     color: "var(--color-secondary)",
@@ -1880,15 +2025,6 @@ export function WorkspacePanel({
             </div>
           </div>
         )}
-        {activeSidebar === "workflows" && workflowsTabEnabled && (
-          <RivetWorkflowsPanel
-            sessionId={workspaceFileSessionId}
-            workspaceId={_workspaceId ?? null}
-            onOpenEditor={(slug) => openRivetWorkflowTab(slug)}
-            onCreateWorkflow={() => createRivetWorkflowTab()}
-          />
-        )}
-
         {activeSidebar === "files" && (
           <div
             style={{ display: "flex", flexDirection: "column", height: "100%" }}
@@ -2592,31 +2728,8 @@ export function WorkspacePanel({
             workspaceId={_workspaceId}
             sessionId={workspaceFileSessionId}
             focusMode={surfaceLayout.wideMode === "focus"}
-            onEnterFocus={() => {
-              surfaceFocusManager.rememberInitiator(
-                document.activeElement instanceof HTMLElement
-                  ? document.activeElement
-                  : null,
-              );
-              setIsAgentCollapsed(false);
-              surfaceLayoutDispatch({
-                type: "enter_focus",
-                containerWidth: panelWidth,
-              });
-            }}
-            onExitFocus={() => {
-              surfaceLayoutDispatch({
-                type: "exit_focus",
-                containerWidth: normalSurfacePaneWidth,
-              });
-              queueMicrotask(() =>
-                surfaceFocusManager.restoreInitiator(
-                  containerRef.current?.querySelector<HTMLElement>(
-                    '[data-focus-region="tabs"] [role="tab"][aria-selected="true"]',
-                  ) ?? null,
-                ),
-              );
-            }}
+            onEnterFocus={enterSurfaceFocus}
+            onExitFocus={exitSurfaceFocus}
           />
         )}
         {openTabs.length > 0 && (
@@ -2647,21 +2760,9 @@ export function WorkspacePanel({
                 }
                 onClick={() => {
                   if (surfaceLayout.wideMode === "focus") {
-                    surfaceLayoutDispatch({
-                      type: "exit_focus",
-                      containerWidth: normalSurfacePaneWidth,
-                    });
+                    exitSurfaceFocus();
                   } else {
-                    surfaceFocusManager.rememberInitiator(
-                      document.activeElement instanceof HTMLElement
-                        ? document.activeElement
-                        : null,
-                    );
-                    setIsAgentCollapsed(false);
-                    surfaceLayoutDispatch({
-                      type: "enter_focus",
-                      containerWidth: panelWidth,
-                    });
+                    enterSurfaceFocus();
                   }
                 }}
                 style={{
@@ -2972,8 +3073,8 @@ export function WorkspacePanel({
                   lineHeight: "1.4",
                 }}
               >
-                Double-click any file in the left sidebar explorer to open a
-                viewer or code editor tab.
+                Click any file in the left sidebar explorer to open a viewer or
+                code editor tab.
               </div>
             </div>
           ) : null}
@@ -3053,8 +3154,7 @@ export function WorkspacePanel({
 
       {/* Right Sidebar Resize Handle */}
       {(!surfacesEnabled || surfaceLayout.mode !== "narrow") &&
-        (!isAgentCollapsed ||
-          (surfacesEnabled && surfaceLayout.wideMode === "focus")) &&
+        !isAgentCollapsed &&
         (surfacesEnabled ? (
           <PaneSeparator
             valueBasisPoints={resolvedSurfaceLayout.chatBasisPoints}
@@ -3106,8 +3206,7 @@ export function WorkspacePanel({
               ? surfaceLayout.narrowPane === "chat"
                 ? "flex"
                 : "none"
-              : isAgentCollapsed &&
-                  (!surfacesEnabled || surfaceLayout.wideMode !== "focus")
+              : isAgentCollapsed
                 ? "none"
                 : "flex",
           flexDirection: "column",
@@ -3329,6 +3428,7 @@ export function WorkspacePanel({
             <ChatTranscript
               session={activeSession}
               isStreaming={isActiveSessionStreaming}
+              streamStartedAt={activeSessionStreamState?.startedAt ?? null}
               streamedText={activeSessionStreamedText}
               activeTool={activeSessionTool}
               streamActivity={activeSessionStreamActivity}

@@ -1,7 +1,12 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-import { liveSurface, mockWorkspaceShell, previewAppHtml } from "./presentation-fixture";
+import {
+  liveSurface,
+  mockWorkspaceShell,
+  previewAppHtml,
+  workspaceSurfaceOrigin,
+} from "./presentation-fixture";
 
 test.describe("workspace surface keyboard and accessibility", () => {
   test.beforeEach(async ({ page }) => {
@@ -15,13 +20,12 @@ test.describe("workspace surface keyboard and accessibility", () => {
           instanceId: "instance-shared",
           generation: 3,
           kind: "panel",
-          absoluteBootstrapUrl:
-            "http://s-panel.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+          absoluteBootstrapUrl: `${workspaceSurfaceOrigin("s-panel.localhost")}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
           expiresAt: "2026-07-30T12:01:00Z",
         },
       }),
     );
-    await page.route("http://s-panel.localhost:5173/**", (route) =>
+    await page.route(`${workspaceSurfaceOrigin("s-panel.localhost")}/**`, (route) =>
       route.fulfill({ contentType: "text/html", body: previewAppHtml }),
     );
     await page.goto("/workspace/ws-1");

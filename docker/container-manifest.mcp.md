@@ -29,7 +29,9 @@ intentionally want to share state between appliance flavors.
 
 The local application bundle installs OpenSCAD, FreeCAD, BREP CAD tooling, and
 Playwright. The local Linux MCP bundle includes OpenSCAD MCP, FreeCAD MCP,
-BREP MCP, and Playwright MCP.
+BREP MCP, and Playwright MCP. It also carries an explicit remote-only catalog
+entry for Onshape FeatureScript MCP; the hosted service is not redistributed in
+the image and requires OAuth at runtime.
 
 Solid Edge itself is not redistributed in this Linux image. SolidEdgeMCP is a
 Windows-owned MCP runtime in this image family, and Linux bundle metadata keeps

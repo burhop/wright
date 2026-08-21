@@ -28,9 +28,16 @@ def test_lifecycle_context_and_tools_use_only_injected_repository():
     assert lifecycle.get_by_session("session-a")["workspace_id"] == "ws-a"
     context.save("ws-a", {"units": "metric"})
     assert context.load("ws-a")["context_data"] == {"units": "metric"}
-    assert tools.list_by_workspace("ws-a").enabled_tools == ["cad", "solver"]
+    assert tools.list_by_workspace("ws-a").enabled_tools == [
+        "cad",
+        "solver",
+        "rivet-workflows",
+    ]
     tools.set_by_session("session-a", "cad", False)
-    assert repository.tools["ws-a"] == ["solver"]
+    assert repository.tools["ws-a"] == ["solver", "rivet-workflows"]
+    state = tools.set_by_session("session-a", "rivet-workflows", False)
+    assert state.enabled_tools == ["solver", "rivet-workflows"]
+    assert repository.tools["ws-a"] == ["solver", "rivet-workflows"]
 
 
 @pytest.mark.asyncio

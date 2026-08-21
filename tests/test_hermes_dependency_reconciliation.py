@@ -17,7 +17,7 @@ MODULE_SPEC.loader.exec_module(RECONCILIATION)
 EXPECTED_OUTPUT = """Using Python 3.13.13 environment at: /opt/hermes/.venv
 Checked 83 packages in 3ms
 Found 2 incompatibilities
-The package `hermes-agent` requires `cryptography==46.0.7`, but `49.0.0` is installed
+The package `hermes-agent` requires `cryptography==46.0.7`, but `50.0.0` is installed
 The package `hermes-agent` requires `pillow==12.2.0`, but `12.3.0` is installed
 """
 
@@ -34,7 +34,7 @@ def test_accepts_clean_uv_pip_check() -> None:
     ("output", "exit_code"),
     [
         (EXPECTED_OUTPUT.replace("Found 2", "Found 3"), 1),
-        (EXPECTED_OUTPUT.replace("49.0.0", "50.0.0"), 1),
+        (EXPECTED_OUTPUT.replace("50.0.0", "51.0.0"), 1),
         (
             EXPECTED_OUTPUT
             + "The package `other` requires `safe==1`, but `2` is installed\n",

@@ -305,7 +305,7 @@ test.describe("Agent Chat Page", () => {
     });
 
     // Mock workspace-scoped sessions
-    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1/sessions*", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -462,7 +462,7 @@ test.describe("Agent Chat Page", () => {
     });
 
     // Mock workspace-scoped sessions
-    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1/sessions*", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -564,13 +564,16 @@ test.describe("Agent Chat Page", () => {
       message: "MCP configuration is active and healthy.",
       running_mcps: [{ name: "Jarvis OnShape MCP", status: "active" }],
     };
-    await page.route("**/api/workspace/by-id/ws-1/mcp-status", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(mcpStatusPayload),
-      });
-    });
+    await page.route(
+      "**/api/workspace/by-id/ws-1/mcp-status",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(mcpStatusPayload),
+        });
+      },
+    );
 
     await page.goto("/workspace/ws-1");
 

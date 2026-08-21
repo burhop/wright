@@ -37,6 +37,8 @@ class GatewayNotifierPort(Protocol):
 
 
 class GatewayLifecyclePort(Protocol):
+    def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]: ...
+
     async def ensure_started(
         self, server_id: str, *, workspace_path: str, approval_context: Any
     ) -> None: ...
@@ -50,6 +52,32 @@ class GatewayLifecyclePort(Protocol):
         approval_context: Any,
         progress_callback: ProgressCallback | None = None,
     ) -> Mapping[str, Any]: ...
+
+    async def shutdown(self) -> None: ...
+
+
+class GatewayCapabilityProvider(Protocol):
+    """Provider-neutral dynamic tools executed through GatewayService authority."""
+
+    provider_id: str
+    declared_tool_names: frozenset[str]
+
+    def tools(self, session: GatewaySessionContext) -> Sequence[GatewayTool]: ...
+
+    async def call(
+        self,
+        session: GatewaySessionContext,
+        tool: GatewayTool,
+        arguments: Mapping[str, Any],
+        *,
+        request_id: str,
+        approval_context: Any,
+        progress_callback: ProgressCallback | None,
+    ) -> Mapping[str, Any]: ...
+
+    async def cancel(self, session: GatewaySessionContext, request_id: str) -> None: ...
+
+    async def close_session(self, session: GatewaySessionContext) -> None: ...
 
     async def shutdown(self) -> None: ...
 

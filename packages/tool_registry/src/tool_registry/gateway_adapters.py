@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
+import hashlib
+import json
 from typing import Any
 
 from .db import get_servers, get_tools
@@ -12,6 +14,34 @@ from .wright_managed_servers import (
     RIVET_WORKFLOW_MUTATION_APPROVAL,
     RIVET_WORKFLOWS_SERVER_ID,
 )
+
+
+def _server_authority_revision(server: Any) -> str:
+    """Digest executable authority without including mutable runtime health."""
+
+    env_vars = server.env_vars
+    if isinstance(env_vars, list):
+        env_vars = [
+            item.model_dump(mode="json") if hasattr(item, "model_dump") else item
+            for item in env_vars
+        ]
+    material = {
+        "type": server.type,
+        "transport_variant": server.transport_variant,
+        "command": server.command,
+        "source_url": server.source_url,
+        "installed_version": server.installed_version,
+        "env_vars": env_vars,
+        "launch_env": server.launch_env,
+    }
+    encoded = json.dumps(
+        material,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        default=str,
+    ).encode("utf-8")
+    return f"config-{hashlib.sha256(encoded).hexdigest()}"
 
 
 class DatabaseGatewayWorkspace:
@@ -85,7 +115,12 @@ class DatabaseGatewayCatalog:
                     "server_id": server.server_id,
                     "source_url": server.source_url,
                     "installed_version": server.installed_version,
+                    "server_revision": _server_authority_revision(server),
                     "validation_status": server.validation_result.status,
+                    "validation_evidence_id": (
+                        f"gateway-validation:{server.server_id}:"
+                        f"{server.updated_at}:{server.validation_result.status}"
+                    ),
                 },
             )
             for tool in get_tools(self.db_path, server_id)
@@ -97,8 +132,26 @@ class DatabaseGatewayCatalog:
 
 
 class EngineGatewayLifecycle:
-    def __init__(self, engine: McpEngine) -> None:
+    def __init__(
+        self,
+        engine: McpEngine,
+        *,
+        projection_resolver: Callable[[str], Mapping[str, Any]] | None = None,
+        tools_changed: Callable[[str], None] | None = None,
+    ) -> None:
         self.engine = engine
+        self._projection_resolver = projection_resolver
+        self._tools_changed = tools_changed
+
+    def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]:
+        if self._projection_resolver is None:
+            return {
+                "kind": "ordinary",
+                "visible_application": False,
+                "cancellation_supported": True,
+                "recovery_action": None,
+            }
+        return dict(self._projection_resolver(server_id))
 
     async def ensure_started(
         self, server_id: str, *, workspace_path: str, approval_context: Any
@@ -108,6 +161,11 @@ class EngineGatewayLifecycle:
             await self.engine.start_server(
                 server_id, workspace_path, approval_context=context
             )
+            if (
+                self.engine.lifecycle.runner_for(server_id) is not None
+                and self._tools_changed is not None
+            ):
+                self._tools_changed(server_id)
 
     async def call_tool(
         self,

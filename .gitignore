@@ -11,6 +11,11 @@ __pycache__/
 build/
 develop-eggs/
 dist/
+# The Rivet runner is a pinned release artifact. Its source, revision, and
+# checksum are recorded in integrations/rivet/runner/manifest.json so clean
+# source checkouts can build the same self-contained Wright wheel.
+!integrations/rivet/runner/dist/
+!integrations/rivet/runner/dist/wright-runner.mjs
 downloads/
 eggs/
 .eggs/
@@ -151,6 +156,7 @@ activemq-data/
 .env
 .envrc
 .venv
+/.venv-dev-gate/
 env/
 venv/
 ENV/
@@ -293,6 +299,7 @@ jwt_secret.txt
 # Test outputs
 outputs/
 /output/
+/artifacts/ui-walkthrough/
 tests/screenshots/
 tests_output*.txt
 docker/.env.bak
@@ -314,6 +321,14 @@ tmp/
 # Native Hermes candidate build/test scratch (never user data)
 /native-candidate/
 /.native-runtime-cache/
+
+# Private/local model qualification payloads (never repository content)
+/.chatter-qualification/
+*.wright-model.zip
+*.joblib
+*.pickle
+*.pkl
+*.npz
 
 # Local Codex artifact-generation scratch and inspection metadata
 /.codex-tmp/

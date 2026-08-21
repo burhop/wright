@@ -424,10 +424,12 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     page,
   }) => {
     let lastSentMessage = "";
+    let lastSentSessionId = "";
     await page.route("**/api/agent/chat", async (route) => {
       if (route.request().method() === "POST") {
         const body = JSON.parse(route.request().postData() || "{}");
         lastSentMessage = body.message;
+        lastSentSessionId = body.session_id;
         await route.fulfill({
           status: 200,
           contentType: "text/event-stream; charset=utf-8",
@@ -478,5 +480,6 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     );
     expect(lastSentMessage).toContain("Traceback (most recent call):");
     expect(lastSentMessage).toContain("ValueError: Mocked execution error");
+    expect(lastSentSessionId).toBe("session-1");
   });
 });

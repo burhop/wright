@@ -340,13 +340,6 @@ class RivetWorkflowMcpService:
             raise RivetMcpError(
                 "RIVET_WORKFLOW_INVALID", "Workflow inputs exceed the limit."
             )
-        if not self.reviews.approved(
-            self.binding.workspace_id, document.workflow_id, document.revision
-        ):
-            raise RivetMcpError(
-                "RIVET_WORKFLOW_REVIEW_REQUIRED",
-                "The current workflow revision requires durable Wright approval before execution.",
-            )
         if self.run_handler is None:
             raise RivetMcpError(
                 "RIVET_RUNNER_UNAVAILABLE", "The Rivet runtime is unavailable."
@@ -462,7 +455,7 @@ _TOOLS = (
     ),
     _tool(
         "run_workflow",
-        "Run an exact, durably reviewed workflow revision through Wright's Rivet runtime.",
+        "Run an exact saved workflow revision through Wright's Rivet runtime.",
         {
             "slug": _SLUG_SCHEMA,
             "expectedRevision": {"type": "integer", "minimum": 1},
@@ -486,7 +479,7 @@ def create_rivet_mcp_server(service: RivetWorkflowMcpService) -> Server:
         version="0.1.0",
         instructions=(
             "Manage Rivet workflows only in the bound Wright workspace. Creation and execution "
-            "remain subject to Wright validation, durable review, and gateway approval."
+            "remain subject to Wright validation and workspace MCP policy."
         ),
     )
 

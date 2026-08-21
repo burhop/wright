@@ -1,0 +1,86 @@
+{
+  "artifact-envelope.schema.json": [
+    {
+      "case": "unsupported_contract_version",
+      "document": {
+        "schema_version": "2.0",
+        "artifact_id": "mesh",
+        "domain": "cad",
+        "kind": "mesh",
+        "source_schema": {"name": "mesh", "version": "1", "media_type": "application/json"},
+        "producer": {"run_id": "run", "node_id": "node", "call_id": "call", "capability": "cad__mesh"},
+        "upstream_digests": [],
+        "content_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "validation_state": "valid",
+        "content": {}
+      }
+    },
+    {
+      "case": "artifact_id_exceeds_bound",
+      "document": {
+        "schema_version": "1.0",
+        "artifact_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "domain": "cad",
+        "kind": "mesh",
+        "source_schema": {"name": "mesh", "version": "1", "media_type": "application/json"},
+        "producer": {"run_id": "run", "node_id": "node", "call_id": "call", "capability": "cad__mesh"},
+        "upstream_digests": [],
+        "content_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "validation_state": "valid",
+        "content": {}
+      }
+    },
+    {
+      "case": "forbidden_extra_field",
+      "document": {
+        "schema_version": "1.0",
+        "artifact_id": "mesh",
+        "domain": "cad",
+        "kind": "mesh",
+        "source_schema": {"name": "mesh", "version": "1", "media_type": "application/json"},
+        "producer": {"run_id": "run", "node_id": "node", "call_id": "call", "capability": "cad__mesh"},
+        "upstream_digests": [],
+        "content_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "validation_state": "valid",
+        "content": {},
+        "connection_url": "https://example.invalid"
+      }
+    },
+    {
+      "case": "content_and_vault_are_mutually_exclusive",
+      "document": {
+        "schema_version": "1.0",
+        "artifact_id": "mesh",
+        "domain": "cad",
+        "kind": "mesh",
+        "source_schema": {"name": "mesh", "version": "1", "media_type": "application/json"},
+        "producer": {"run_id": "run", "node_id": "node", "call_id": "call", "capability": "cad__mesh"},
+        "upstream_digests": [],
+        "content_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "validation_state": "valid",
+        "content": {},
+        "vault_reference": {
+          "artifact_id": "vault-mesh",
+          "media_type": "application/json",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      }
+    }
+  ],
+  "assertion-result.schema.json": [
+    {
+      "case": "failed_assertion_requires_message_and_recovery",
+      "document": {
+        "schema_version": "1.0",
+        "assertion_id": "mesh-present",
+        "plugin": "geometry",
+        "plugin_version": "1",
+        "state": "fail",
+        "category": "geometry",
+        "reason_code": "artifact_missing",
+        "artifact_digests": [],
+        "producer": {"node_id": "node", "capability": "cad__mesh"}
+      }
+    }
+  ]
+}

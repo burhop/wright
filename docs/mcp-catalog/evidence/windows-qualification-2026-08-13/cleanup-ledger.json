@@ -1,0 +1,26 @@
+[
+  {
+    "event": "owned_process_check_complete",
+    "server_id": "brep-mcp"
+  },
+  {
+    "event": "removed_disposable_server_root",
+    "server_id": "brep-mcp"
+  },
+  {
+    "event": "owned_process_check_complete",
+    "server_id": "solid-edge-mcp-burhop"
+  },
+  {
+    "event": "removed_disposable_server_root",
+    "server_id": "solid-edge-mcp-burhop"
+  },
+  {
+    "event": "owned_process_check_complete",
+    "server_id": "autodesk-product-help-mcp"
+  },
+  {
+    "event": "removed_disposable_server_root",
+    "server_id": "autodesk-product-help-mcp"
+  }
+]

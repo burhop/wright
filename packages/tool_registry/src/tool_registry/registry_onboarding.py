@@ -15,7 +15,7 @@ class RegistryOnboardingError(RuntimeError):
 
 
 class RegistryOnboardingAdapter:
-    """Apply reviewed local/remote plans through Wright's existing registry.
+    """Apply reviewed MCP plans through Wright's existing registry.
 
     Package launchers such as uvx and npx acquire their pinned package when the
     subsequent protocol validation starts the registered server. This adapter
@@ -25,7 +25,12 @@ class RegistryOnboardingAdapter:
     version = "1"
 
     def __init__(self, database_path: str | Path, *, kind: str) -> None:
-        if kind not in {"local_package", "local_command", "remote_endpoint"}:
+        if kind not in {
+            "local_package",
+            "local_command",
+            "remote_endpoint",
+            "host_bridge",
+        }:
             raise ValueError(f"Unsupported registry onboarding backend: {kind}")
         self.database_path = str(database_path)
         self.kind = kind

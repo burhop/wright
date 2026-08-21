@@ -22,6 +22,95 @@ export interface RivetWorkflowOperation {
   review_state: "approved" | "rejected" | null;
   reviewer: string | null;
   reviewed_at: number | null;
+  workflow_digest?: string | null;
+  graph_id?: string | null;
+  binding_set_id?: string | null;
+  binding_set_digest?: string | null;
+  policy_snapshot_digest?: string | null;
+  review_digest?: string | null;
+  stale_reasons?: string[];
+}
+
+export interface RivetMcpRequirement {
+  graph_id: string;
+  node_id: string;
+  node_type: "mcpDiscovery" | "mcpToolCall";
+  static_tool_name: string | null;
+}
+
+export interface RivetMcpCapability {
+  qualified_tool_name: string;
+  server_id: string;
+  tool_name: string;
+  title: string;
+  description: string;
+  server_revision: string;
+  capability_digest: string;
+  validation_evidence_id: string;
+  workspace_grant_digest: string;
+  input_schema: Record<string, unknown>;
+  output_schema: Record<string, unknown> | null;
+  schema_digest: string;
+  annotations: Record<string, boolean>;
+  required_approvals: string[];
+  compatibility: string;
+  binding_eligible: boolean;
+  blocking_reasons: string[];
+}
+
+export interface RivetMcpCapabilities {
+  workflow_id: string;
+  slug: string;
+  revision: number;
+  etag: string;
+  graph_id: string;
+  snapshot_digest: string;
+  policy_snapshot_digest: string;
+  requirements: RivetMcpRequirement[];
+  issues: Array<{
+    code: string;
+    message: string;
+    graph_id?: string | null;
+    node_id?: string | null;
+  }>;
+  capabilities: RivetMcpCapability[];
+  next_after: number | null;
+}
+
+export interface RivetMcpBindingSelection {
+  node_id: string;
+  qualified_tool_name: string;
+  units_policy?: Record<string, unknown>;
+  material_defaults?: Record<string, unknown>;
+}
+
+export interface RivetMcpBindingPreview {
+  workflow_id: string;
+  slug: string;
+  revision: number;
+  etag: string;
+  graph_id: string;
+  snapshot_digest: string;
+  policy_snapshot_digest: string;
+  binding_set_id: string | null;
+  binding_set_digest: string | null;
+  expires_at: string;
+  ready: boolean;
+  bindings: Array<{
+    node_id: string;
+    node_handle: string | null;
+    selected_tool: string | null;
+    binding_digest: string | null;
+    server_id: string | null;
+    server_revision: string | null;
+    schema_digest: string | null;
+    validation_evidence_id: string | null;
+    workspace_grant_digest: string | null;
+    risk: Record<string, unknown> | null;
+    units_policy: Record<string, unknown> | null;
+    material_defaults: Record<string, unknown> | null;
+    blockers: string[];
+  }>;
 }
 
 export interface RivetWorkflowTemplate {
@@ -44,6 +133,346 @@ export interface RivetWorkflowRun {
   outputs: Record<string, unknown> | null;
   duration_ms: number | null;
   output_truncated: boolean;
+  manifest?: Record<string, unknown> | null;
+}
+
+export interface RivetRunSummary {
+  run_id: string;
+  workspace_id: string;
+  session_id: string;
+  workflow_id: string;
+  revision: number;
+  digest: string;
+  graph: string;
+  generation: number;
+  state: string;
+  started_at: string | null;
+  completed_at: string | null;
+  duration_ms: number | null;
+  reason_code: string | null;
+  trace_id: string | null;
+  latest_sequence: number;
+  has_outputs: boolean;
+  has_diagnostic: boolean;
+  output_truncated: boolean;
+  output_redaction_count: number;
+}
+
+export interface RivetRunResultItem {
+  result_id: string;
+  name: string;
+  origin: string;
+  kind:
+    | "null"
+    | "boolean"
+    | "number"
+    | "text"
+    | "structured"
+    | "list"
+    | "link"
+    | "artifact"
+    | string;
+  value: unknown;
+  preview: string;
+  complete: boolean;
+  truncation_reason: string | null;
+  original_bytes: number;
+  retained_bytes: number;
+  digest: string;
+  redaction_count: number;
+  artifact: Record<string, unknown> | null;
+}
+
+export interface RivetRunStep {
+  step_id: string;
+  sequence: number;
+  node_id: string | null;
+  label: string;
+  kind: string;
+  qualified_tool_name: string | null;
+  request_id: string | null;
+  trace_id: string | null;
+  state: string;
+  started_at: string | null;
+  completed_at: string | null;
+  duration_ms: number | null;
+  reason_code: string | null;
+  result: RivetRunResultItem | null;
+  artifacts: Array<Record<string, unknown>>;
+  redaction_count: number;
+  complete: boolean;
+}
+
+export interface RivetRunInspection {
+  schema_version: 1;
+  run: RivetRunSummary;
+  progress: {
+    phase: string;
+    current_step_id: string | null;
+    completed_steps: number;
+    total_steps: number;
+    last_sequence: number;
+    updated_at: string | null;
+  };
+  events: Array<{
+    sequence: number;
+    kind: string;
+    occurred_at: string | null;
+    payload: Record<string, unknown>;
+  }>;
+  steps: RivetRunStep[];
+  final_outputs: RivetRunResultItem[];
+  diagnostic: {
+    code: string;
+    summary: string;
+    recovery_action: string;
+    failed_step_id: string | null;
+    failed_node_id: string | null;
+    qualified_tool_name: string | null;
+    trace_id: string | null;
+    full_rerun_available: boolean;
+    partial_retry_available: false;
+    residue_possible: boolean;
+  } | null;
+  completeness: {
+    outputs_complete: boolean;
+    steps_complete: boolean;
+    events_complete: boolean;
+    evidence_available: boolean;
+    reasons: string[];
+  };
+}
+
+export interface RivetRecentRuns {
+  workflow_id: string;
+  current_revision: number;
+  runs: RivetRunSummary[];
+}
+
+export interface RivetRunEvidence {
+  schema_version: 1;
+  run_id: string;
+  manifest: Record<string, unknown>;
+  bindings: Array<Record<string, unknown>>;
+  child_calls: Array<Record<string, unknown>>;
+  approvals: Array<Record<string, unknown>>;
+  artifacts: Array<{
+    artifact_id?: string;
+    domain?: string;
+    kind?: string;
+    content_digest?: string;
+    validation_state?: string;
+    producer?: { node_id?: string; capability?: string; call_id?: string };
+    [key: string]: unknown;
+  }>;
+  timeline: Array<Record<string, unknown>>;
+  reproducibility: {
+    reproducible: boolean;
+    differences: Array<{
+      code: string;
+      recorded: string;
+      current: string;
+      recovery_action: string;
+    }>;
+    summary: string;
+  };
+  accounting: Record<string, unknown>;
+}
+
+export interface EngineeringScenarioEntry {
+  scenario_id: string;
+  revision: number;
+  title: string;
+  summary: string;
+  domains: string[];
+  tier: "tier1" | "tier2" | "tier3";
+  resource_class: "small" | "medium" | "large" | "external";
+  expected_duration_seconds: number;
+  manifest_digest: string;
+}
+
+export interface EngineeringScenarioDetail {
+  manifest: Record<string, unknown>;
+  manifest_digest: string;
+}
+
+export interface EngineeringProviderEvidence {
+  schema_version: "1.0";
+  provider_kind: "mcp" | "engineering_model";
+  provider_id: string;
+  capability_id: string;
+  resource_class: "small" | "medium" | "large" | "external";
+  evidence: Record<string, unknown>;
+}
+
+export interface EngineeringScenarioPreflight {
+  preflight_id: string;
+  scenario_id: string;
+  scenario_revision: number;
+  manifest_digest: string;
+  workflow_slug: string;
+  workflow_revision: number | null;
+  workflow_digest: string | null;
+  graph_id: string;
+  binding_set_digest: string | null;
+  state: "ready" | "blocked" | "skipped";
+  capabilities: Array<{
+    node_id: string;
+    requested_tool: string;
+    selected_tool: string | null;
+    binding_digest: string | null;
+    blockers: string[];
+    provider?: EngineeringProviderEvidence | null;
+    provider_evidence_digest?: string | null;
+  }>;
+  environment: Record<string, unknown>;
+  blockers: Array<{ code: string; message: string; recovery: string }>;
+  expires_at: string;
+}
+
+export interface EngineeringScenarioReport {
+  scenario_run_id: string;
+  workflow_run_id: string;
+  workspace_id: string;
+  session_id: string;
+  scenario_id: string;
+  scenario_revision: number;
+  manifest_digest: string;
+  workflow_digest: string;
+  binding_set_digest: string | null;
+  state: string;
+  identity: Record<string, unknown>;
+  artifacts: Array<{
+    artifact_id: string;
+    domain: string;
+    kind: string;
+    content_digest: string;
+    validation_state: string;
+    producer: {
+      run_id: string;
+      node_id: string;
+      call_id: string;
+      capability: string;
+    };
+    content?: unknown;
+  }>;
+  environment: Record<string, unknown>;
+  cleanup_state: string;
+  residue: Record<string, unknown>;
+  assertions: Array<{
+    assertion_id: string;
+    plugin: string;
+    state: "pass" | "fail" | "skip" | "error";
+    reason_code: string;
+    artifact_digests?: string[];
+    expected?: unknown;
+    observed?: unknown;
+    units?: Record<string, unknown>;
+    producer: { node_id: string; capability: string; call_id?: string };
+    message?: string;
+    recovery?: string;
+  }>;
+  advisory?: {
+    schema_version: string;
+    simulation_only: boolean;
+    machine_authority: boolean;
+    score_semantics: string;
+    selected_candidate_id: string;
+    candidate_outcomes: Array<{
+      candidate_id: string;
+      review_status: string;
+      reason: string;
+      chatter_score?: number;
+    }>;
+    notices: string[];
+    provider_evidence: Array<Record<string, unknown>>;
+  } | null;
+  report_digest: string | null;
+}
+
+export interface EngineeringScenarioComparison {
+  strictly_reproducible: boolean;
+  differences: Array<Record<string, unknown>>;
+  assertion_changes: Array<Record<string, unknown>>;
+}
+
+export interface SupportDiagnosticScope {
+  session_id?: string;
+  scenario_run_id?: string;
+}
+
+export interface SupportDiagnosticSnapshot {
+  schema_version: "1.0";
+  snapshot_id: string;
+  created_at: string;
+  expires_at: string;
+  workspace_id: string;
+  principal_digest: string;
+  scope: SupportDiagnosticScope;
+  summary: {
+    status: "healthy" | "degraded" | "blocked" | "failed";
+    reason: string;
+    next_action: string;
+  };
+  providers: Array<{
+    kind: "mcp" | "model" | "rivet" | "gateway" | "runtime" | "storage";
+    provider_id: string;
+    status: "ready" | "degraded" | "blocked" | "failed" | "unknown";
+    identity_digest: string;
+  }>;
+  state_inventory: {
+    schema_version: "1.0";
+    data_schema: number;
+    catalog_snapshot: {
+      channel: string;
+      sequence: number;
+      digest: string;
+      state: "bundled" | "active" | "rollback" | "unavailable";
+    };
+    counts: Record<string, number>;
+    digests: Record<string, string>;
+    storage: Array<Record<string, unknown>>;
+  };
+  failures: Array<{
+    stage: string;
+    provider_kind:
+      "mcp" | "model" | "rivet" | "gateway" | "runtime" | "storage";
+    reason: string;
+    cleanup: "clean" | "residue-possible" | "unknown";
+    recovery: string;
+  }>;
+  categories: Array<{
+    name: string;
+    disposition: "included" | "omitted" | "redacted" | "truncated";
+    item_count: number;
+    reason: string;
+  }>;
+  snapshot_digest: string;
+}
+
+export interface SupportDiagnosticPreview {
+  snapshot: SupportDiagnosticSnapshot;
+  snapshot_digest: string;
+  confirmation_token: string;
+  expires_at: string;
+  filename: string;
+}
+
+export interface RivetCallApproval {
+  approval_id: string;
+  run_id: string;
+  node_id: string;
+  qualified_tool_name: string;
+  binding_digest: string;
+  argument_digest: string;
+  argument_summary: Record<string, unknown>;
+  required_gates: string[];
+  state:
+    "pending" | "approved" | "denied" | "expired" | "consumed" | "cancelled";
+  expires_at: string;
+  approval_digest: string;
+  decided_by: string | null;
+  decision_reason: string | null;
 }
 
 export interface RivetWorkflowRunOptions {
@@ -53,6 +482,8 @@ export interface RivetWorkflowRunOptions {
   inputs?: Record<string, unknown>;
   context?: Record<string, unknown>;
   timeoutSeconds?: number;
+  expectedReviewDigest?: string;
+  bindingSetDigest?: string;
 }
 
 export interface RivetWorkflowDocument extends RivetWorkflowOperation {
@@ -165,6 +596,21 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  private workspaceActivationRequests = new Map<string, Promise<boolean>>();
+  private workspaceRequests = new Map<string, Promise<WorkspaceInfo>>();
+  private workspaceFileRequests = new Map<string, Promise<WorkspaceNode>>();
+  private workspaceMcpStatusRequests = new Map<
+    string,
+    Promise<{
+      status: string;
+      message: string;
+      running_mcps?: Array<{
+        name: string;
+        status: string;
+        error_message?: string | null;
+      }>;
+    }>
+  >();
   async openBrepPanel(sessionId: string): Promise<BrepPanelSession> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/brep/panel`,
@@ -350,16 +796,78 @@ export class WorkspaceService {
     slug: string,
     state: "approved" | "rejected",
     reviewer: string,
+    exact?: {
+      expectedDigest: string;
+      graph?: string;
+      bindingSetDigest: string;
+    },
   ): Promise<RivetWorkflowOperation> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/review`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, state, reviewer }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          state,
+          reviewer,
+          expected_digest: exact?.expectedDigest || null,
+          graph: exact?.graph || null,
+          binding_set_digest: exact?.bindingSetDigest || null,
+        }),
       },
     );
     if (!response.ok) throw new Error("Unable to record workflow review");
+    return response.json();
+  }
+
+  async getRivetMcpCapabilities(
+    sessionId: string,
+    slug: string,
+    graph?: string,
+  ): Promise<RivetMcpCapabilities> {
+    const query = new URLSearchParams({ session_id: sessionId, limit: "200" });
+    if (graph) query.set("graph", graph);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/mcp-capabilities?${query.toString()}`,
+    );
+    if (!response.ok)
+      throw new Error("Workspace MCP capabilities are unavailable");
+    return response.json();
+  }
+
+  async previewRivetMcpBindings(
+    sessionId: string,
+    slug: string,
+    expectedRevision: number,
+    expectedDigest: string,
+    selections: RivetMcpBindingSelection[],
+    graph?: string,
+  ): Promise<RivetMcpBindingPreview> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/mcp-bindings/preview`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_revision: expectedRevision,
+          expected_digest: expectedDigest,
+          graph: graph || null,
+          selections,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Unable to preview exact MCP bindings";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Retain the safe fallback.
+      }
+      throw new Error(String(message));
+    }
     return response.json();
   }
 
@@ -377,6 +885,8 @@ export class WorkspaceService {
           session_id: sessionId,
           expected_revision: options.expectedRevision,
           expected_digest: options.expectedDigest,
+          expected_review_digest: options.expectedReviewDigest || null,
+          binding_set_digest: options.bindingSetDigest || null,
           graph: options.graph || null,
           inputs: options.inputs || {},
           context: options.context || {},
@@ -386,7 +896,7 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       let message =
-        "Workflow could not start; approve its current revision and enable the runner.";
+        "Workflow could not start; check the saved graph, workspace tools, and runner.";
       try {
         const failure = await response.json();
         message = failure?.detail?.message || failure?.detail || message;
@@ -409,6 +919,32 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async getRivetRunInspection(
+    sessionId: string,
+    runId: string,
+    afterSequence = 0,
+  ): Promise<RivetRunInspection> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/inspection?session_id=${encodeURIComponent(sessionId)}&after_sequence=${Math.max(0, afterSequence)}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Workflow run inspection is unavailable");
+    return response.json();
+  }
+
+  async getRecentRivetRuns(
+    sessionId: string,
+    slug: string,
+    limit = 20,
+  ): Promise<RivetRecentRuns> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/runs?session_id=${encodeURIComponent(sessionId)}&limit=${Math.max(1, Math.min(50, limit))}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Recent workflow runs are unavailable");
+    return response.json();
+  }
+
   async getRivetWorkflowHistory(
     sessionId: string,
     runId: string,
@@ -424,6 +960,74 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Workflow history is unavailable");
     return (await response.json()).events || [];
+  }
+
+  async getRivetRunEvidence(
+    sessionId: string,
+    runId: string,
+  ): Promise<RivetRunEvidence> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/evidence?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Run evidence is unavailable");
+    return response.json();
+  }
+
+  async exportRivetRunEvidence(
+    sessionId: string,
+    runId: string,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/evidence/export?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Run evidence export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-rivet-run-${runId}-evidence.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async getRivetCallApprovals(
+    sessionId: string,
+    runId: string,
+  ): Promise<RivetCallApproval[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/approvals?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Call approvals are unavailable");
+    return (await response.json()).approvals || [];
+  }
+
+  async decideRivetCallApproval(
+    sessionId: string,
+    runId: string,
+    approval: RivetCallApproval,
+    decision: "approved" | "denied",
+    reason?: string,
+  ): Promise<RivetCallApproval> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/approvals/${encodeURIComponent(approval.approval_id)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_digest: approval.approval_digest,
+          decision,
+          actor: "local-user",
+          reason: reason || null,
+        }),
+      },
+    );
+    if (!response.ok)
+      throw new Error("This exact call changed or is no longer pending");
+    return response.json();
   }
 
   async cancelRivetWorkflow(
@@ -445,6 +1049,228 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async listEngineeringScenarios(): Promise<EngineeringScenarioEntry[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios`,
+    );
+    if (!response.ok) throw new Error("Engineering scenarios are unavailable");
+    return (await response.json()).scenarios || [];
+  }
+
+  async getEngineeringScenarioDetail(
+    scenarioId: string,
+  ): Promise<EngineeringScenarioDetail> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(scenarioId)}`,
+    );
+    if (!response.ok) throw new Error("Engineering scenario is unavailable");
+    return response.json();
+  }
+
+  async preflightEngineeringScenario(
+    sessionId: string,
+    scenarioId: string,
+  ): Promise<EngineeringScenarioPreflight> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(scenarioId)}/preflight`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Scenario preflight failed";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Keep the safe fallback.
+      }
+      throw new Error(String(message));
+    }
+    return response.json();
+  }
+
+  async startEngineeringScenario(
+    sessionId: string,
+    preflight: EngineeringScenarioPreflight,
+  ): Promise<{
+    scenario_run_id: string;
+    workflow_run: RivetWorkflowRun;
+    state: "running";
+  }> {
+    if (
+      !preflight.workflow_revision ||
+      !preflight.workflow_digest ||
+      !preflight.binding_set_digest
+    ) {
+      throw new Error("Prepare the exact scenario workflow first");
+    }
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(preflight.scenario_id)}/runs`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          manifest_digest: preflight.manifest_digest,
+          workflow_revision: preflight.workflow_revision,
+          workflow_digest: preflight.workflow_digest,
+          binding_set_digest: preflight.binding_set_digest,
+          seed: 0,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Engineering scenario could not start";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Keep the safe fallback.
+      }
+      throw new Error(String(message));
+    }
+    return response.json();
+  }
+
+  async getEngineeringScenarioReport(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<EngineeringScenarioReport> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario report is unavailable");
+    return response.json();
+  }
+
+  async cancelEngineeringScenario(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<RivetWorkflowRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}/cancel`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) throw new Error("Scenario cancellation failed");
+    return response.json();
+  }
+
+  async compareEngineeringScenarioReports(
+    sessionId: string,
+    left: string,
+    right: string,
+  ): Promise<EngineeringScenarioComparison> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(left)}/compare/${encodeURIComponent(right)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario comparison is unavailable");
+    return response.json();
+  }
+
+  async exportEngineeringScenarioReport(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}/export?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario report export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-engineering-scenario-${scenarioRunId}.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async previewSupportDiagnostics(
+    workspaceId: string,
+    scope: SupportDiagnosticScope = {},
+  ): Promise<SupportDiagnosticPreview> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/support-diagnostics/preview`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, scope }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Support preview is unavailable. Create a fresh preview.";
+      try {
+        const failure = (await response.json()) as {
+          detail?: { code?: unknown; message?: unknown };
+        };
+        const code = String(failure.detail?.code || "");
+        if (code === "DIAGNOSTIC_PREVIEW_EXPIRED") {
+          message = "Preview expired. Create a fresh preview.";
+        } else if (code === "DIAGNOSTIC_PREVIEW_STALE") {
+          message = "Local state changed. Create a fresh preview.";
+        } else if (code === "DIAGNOSTIC_SCOPE_FORBIDDEN") {
+          message = "This diagnostic scope is unavailable.";
+        }
+      } catch {
+        // Preserve the stable, non-sensitive fallback.
+      }
+      throw new Error(message);
+    }
+    return response.json();
+  }
+
+  async exportSupportDiagnostics(
+    preview: SupportDiagnosticPreview,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/support-diagnostics/export`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspace_id: preview.snapshot.workspace_id,
+          snapshot_digest: preview.snapshot_digest,
+          confirmation_token: preview.confirmation_token,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Support file export was denied. Create a fresh preview.";
+      try {
+        const failure = (await response.json()) as {
+          detail?: { code?: unknown };
+        };
+        if (failure.detail?.code === "DIAGNOSTIC_PREVIEW_EXPIRED") {
+          message = "Preview expired. Create a fresh preview.";
+        } else if (failure.detail?.code === "DIAGNOSTIC_PREVIEW_STALE") {
+          message = "Local state changed. Create a fresh preview.";
+        }
+      } catch {
+        // Preserve the stable, non-sensitive fallback.
+      }
+      throw new Error(message);
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = preview.filename;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {
     workspaceLogger.info("Fetching workspace files", { sessionId });
 
@@ -463,19 +1289,30 @@ export class WorkspaceService {
       }
     }
 
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/files?session_id=${sessionId}`,
-    );
-    if (!response.ok) {
-      workspaceLogger.error("Failed to fetch workspace files", {
-        status: response.status,
-      });
-      throw new Error(
-        `Failed to fetch workspace files: ${response.statusText}`,
+    const existing = this.workspaceFileRequests.get(sessionId);
+    if (existing) return existing;
+
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/files?session_id=${encodeURIComponent(sessionId)}`,
       );
+      if (!response.ok) {
+        workspaceLogger.error("Failed to fetch workspace files", {
+          status: response.status,
+        });
+        throw new Error(
+          `Failed to fetch workspace files: ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      return data.workspace as WorkspaceNode;
+    })();
+    this.workspaceFileRequests.set(sessionId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceFileRequests.delete(sessionId);
     }
-    const data = await response.json();
-    return data.workspace;
   }
 
   private async buildWorkspaceTree(dirPath: string): Promise<WorkspaceNode> {
@@ -1191,25 +2028,40 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(sessionId: string): Promise<boolean> {
+    const existing = this.workspaceActivationRequests.get(sessionId);
+    if (existing) return existing;
     workspaceLogger.info("Activating workspace", { sessionId });
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/activate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/activate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ session_id: sessionId }),
         },
-        body: JSON.stringify({ session_id: sessionId }),
-      },
-    );
-    if (!response.ok) {
-      workspaceLogger.error("Failed to activate workspace", {
-        status: response.status,
-      });
-      throw new Error(`Failed to activate workspace: ${response.statusText}`);
+      );
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        workspaceLogger.error("Failed to activate workspace", {
+          status: response.status,
+        });
+        throw new Error(
+          error.detail ||
+            error.message ||
+            `Failed to activate workspace: ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      return Boolean(data.success);
+    })();
+    this.workspaceActivationRequests.set(sessionId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceActivationRequests.delete(sessionId);
     }
-    const data = await response.json();
-    return data.success;
   }
 
   async createWorkspace(
@@ -1244,17 +2096,32 @@ export class WorkspaceService {
   }
 
   async getWorkspace(workspaceId: string): Promise<WorkspaceInfo> {
+    const existing = this.workspaceRequests.get(workspaceId);
+    if (existing) return existing;
     workspaceLogger.info("Fetching workspace by ID", { workspaceId });
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`,
-    );
-    if (!response.ok) {
-      workspaceLogger.error("Failed to fetch workspace", {
-        status: response.status,
-      });
-      throw new Error(`Failed to fetch workspace: ${response.statusText}`);
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`,
+      );
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        workspaceLogger.error("Failed to fetch workspace", {
+          status: response.status,
+        });
+        throw new Error(
+          error.detail ||
+            error.message ||
+            `Failed to fetch workspace: ${response.statusText}`,
+        );
+      }
+      return (await response.json()) as WorkspaceInfo;
+    })();
+    this.workspaceRequests.set(workspaceId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceRequests.delete(workspaceId);
     }
-    return response.json();
   }
 
   async getWorkspaceSessions(workspaceId: string): Promise<
@@ -1411,15 +2278,26 @@ export class WorkspaceService {
       error_message?: string | null;
     }[];
   }> {
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Failed to get workspace MCP status: ${response.statusText}`,
+    const requestKey = `workspace:${workspaceId}`;
+    const existing = this.workspaceMcpStatusRequests.get(requestKey);
+    if (existing) return existing;
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to get workspace MCP status: ${response.statusText}`,
+        );
+      }
+      return response.json();
+    })();
+    this.workspaceMcpStatusRequests.set(requestKey, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceMcpStatusRequests.delete(requestKey);
     }
-    return response.json();
   }
 
   async runFile(

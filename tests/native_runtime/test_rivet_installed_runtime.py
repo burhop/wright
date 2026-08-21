@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_hashed_rivet_source_inputs_keep_canonical_lf_bytes() -> None:
     attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
 
-    assert "integrations/rivet/editor/patches/** text eol=lf" in attributes
+    assert "integrations/rivet/editor/patches/** text eol=lf -whitespace" in attributes
     assert "integrations/rivet/editor/wrapper/** text eol=lf" in attributes
     assert "integrations/rivet/runner/src/** text eol=lf" in attributes
 

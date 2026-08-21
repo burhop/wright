@@ -1763,3 +1763,61 @@ Result:
   `docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md`. Keep this
   source-only and blocked from Wright bundle inclusion until a reviewed slim
   path exists.
+
+## 2026-08-13
+
+Problem:
+  Native Windows cleanup could not remove a reviewed Git checkout because Git
+  pack files carried the Windows read-only attribute.
+
+Solution:
+  Keep the exact parent/child cleanup containment check, then clear the
+  read-only attribute only for files encountered by `shutil.rmtree` inside the
+  validated per-server qualification root.
+
+Result:
+  The SolidEdgeMCP checkout/build root was removed successfully; only ignored
+  safety-decision files remain under `.local-run/windows-mcp-qualification`.
+
+Problem:
+  `brepjs-cad@0.103.0` installed, initialized, and listed tools, but its
+  deterministic 1 mm cube call failed before producing geometry.
+
+Solution:
+  Reproduced the failure without modifying third-party source and classified
+  package/protocol separately from the tool call.
+
+Result:
+  The upstream `defaultCliEntry` path passes a `data:` URL to Node's
+  `fileURLToPath`, which raises because the URL is not `file:`. BREP is recorded
+  as installed/started with an upstream tool-entry defect, not as a Windows
+  installation failure.
+
+Problem:
+  SolidEdgeMCP built, initialized, and listed 12 tools, but the reviewed
+  `cad.get_status` call failed while a user-owned Solid Edge process was running.
+
+Solution:
+  Inspected the exact pinned source and upstream live smoke test, retried only
+  with `providerId: solid_edge`, and captured only the bounded exception class
+  needed to distinguish protocol from schema failure.
+
+Result:
+  With no active document, the server omits `activeDocument`; its published MCP
+  output schema requires that nullable property. The client therefore rejects
+  the structured result. No document was opened, changed, saved, or closed, and
+  the pre-existing Solid Edge process remained running.
+
+Problem:
+  Autodesk Product Help passed its public endpoint probes, but Wright setup did
+  not proceed.
+
+Solution:
+  Ran Wright's production install-plan generation against an isolated migrated
+  database without applying the plan or recording publisher acceptance.
+
+Result:
+  The planner correctly returned `blocked` with
+  `external_license_incomplete`. The remote MCP is operational on Windows, but
+  Wright registration and gateway qualification remain blocked until the user
+  independently completes and records any applicable Autodesk service terms.

@@ -39,6 +39,20 @@ class ServersListResponse(BaseModel):
     servers: List[McpServer]
 
 
+class InstalledServerSummary(BaseModel):
+    server_id: str
+    name: str
+    type: str
+    is_active: bool
+    is_installed: bool
+    description: Optional[str] = None
+    source_url: Optional[str] = None
+
+
+class InstalledServersListResponse(BaseModel):
+    servers: List[InstalledServerSummary]
+
+
 class RegisterServerResponse(BaseModel):
     server_id: str
     name: str
@@ -488,6 +502,40 @@ async def list_servers(service: McpApiService = Depends(get_mcp_api_service)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to list MCP servers: {e}",
+        )
+
+
+@router.get("/servers/installed", response_model=InstalledServersListResponse)
+@traced("mcp.server.list_installed")
+async def list_installed_servers(
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    """Return the small server projection needed by the workspace selector."""
+
+    try:
+        servers = service.list_servers()
+        return InstalledServersListResponse(
+            servers=[
+                InstalledServerSummary(
+                    server_id=server.server_id,
+                    name=server.name,
+                    type=server.type,
+                    is_active=server.is_active,
+                    is_installed=server.is_installed,
+                    description=server.description,
+                    source_url=server.source_url,
+                )
+                for server in servers
+                if server.is_installed
+            ]
+        )
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+    except Exception as error:
+        logger.exception("list_installed_servers_failed", error=str(error))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to list installed MCP servers: {error}",
         )
 
 

@@ -1,0 +1,26 @@
+{
+  "protocolVersion": 2,
+  "runId": "run-contract",
+  "projectPath": "<absolute-project-path>",
+  "expectedDigest": "<sha256>",
+  "graph": "Main",
+  "inputs": {},
+  "context": {},
+  "capabilities": ["mcp"],
+  "mcp": {
+    "authorityId": "authority-contract",
+    "bridgeBaseUrl": "http://127.0.0.1:43123/internal/rivet-mcp/v1",
+    "token": "0123456789012345678901234567890123456789012",
+    "expiresAt": "2099-01-01T00:00:00Z",
+    "bindingSetDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "discoveryHandle": "wright-workspace",
+    "bindings": [
+      {
+        "nodeId": "node-alpha",
+        "handle": "wright:abcdefghijklmnop",
+        "qualifiedToolName": "alpha__inspect",
+        "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ]
+  }
+}

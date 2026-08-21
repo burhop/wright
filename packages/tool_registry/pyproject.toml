@@ -26,7 +26,7 @@ dependencies = [
     "PyYAML>=6.0",
     "mcp>=1.27.2,<2",
     "jsonschema>=4.26",
-    "cryptography>=45,<50",
+    "cryptography>=45,<51",
 ]
 
 [project.urls]

@@ -229,6 +229,34 @@ def test_reserved_control_paths_never_fall_through_or_require_runtime_state() ->
         assert client.get(path, headers={"Host": HOST}).status_code == 404
 
 
+def test_unauthorized_preview_document_notifies_the_verified_parent_frame() -> None:
+    app = FastAPI()
+    app.include_router(router)
+    response = TestClient(app).get(
+        "/?parentOrigin=http%3A%2F%2F127.0.0.1%3A5173",
+        headers={"Host": HOST},
+    )
+
+    assert response.status_code == 401
+    assert response.headers["content-type"].startswith("text/html")
+    assert "wright-surface:authorization-failed" in response.text
+    assert "SURFACE_PREVIEW_UNAUTHORIZED" in response.text
+    assert "Preview credential is invalid" not in response.text
+    assert "default-src 'none'" in response.headers["content-security-policy"]
+
+
+def test_unauthorized_asset_keeps_machine_readable_error() -> None:
+    app = FastAPI()
+    app.include_router(router)
+    response = TestClient(app).get(
+        "/assets/editor.js",
+        headers={"Host": HOST},
+    )
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "SURFACE_PREVIEW_UNAUTHORIZED"}
+
+
 class _Tokens:
     def __init__(self) -> None:
         self.active = True

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/contracts/compatibility-evidence.schema.json",
+  "title": "Wright Compatibility Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "runtime_version", "artifact_digest", "platform", "architecture", "manager_profile", "storage_profile", "data_schema_before", "data_schema_after", "checks", "source_isolation", "forbidden_executable_audit", "evidence_level", "status", "supporting"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evidence_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$"},
+    "runtime_version": {"type": "string", "minLength": 1, "maxLength": 64},
+    "artifact_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "platform": {"enum": ["windows", "linux", "macos"]},
+    "architecture": {"enum": ["x86_64", "arm64"]},
+    "manager_profile": {"type": "string", "pattern": "^[a-z0-9._-]{1,64}$"},
+    "storage_profile": {"type": "string", "pattern": "^[a-z0-9._-]{1,64}$"},
+    "data_schema_before": {"type": "integer", "minimum": 0},
+    "data_schema_after": {"type": "integer", "minimum": 0},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "reason"],
+        "properties": {
+          "name": {"enum": ["install", "start", "status", "doctor", "use", "stop", "upgrade", "persist", "rollback", "uninstall", "offline"]},
+          "status": {"enum": ["passed", "failed", "blocked", "skipped"]},
+          "reason": {"type": "string", "pattern": "^[A-Z0-9_]{1,80}$"}
+        }
+      }
+    },
+    "source_isolation": {"enum": ["clean-candidate", "installed-host", "fixture-only", "unknown"]},
+    "forbidden_executable_audit": {"enum": ["passed", "failed", "blocked", "skipped"]},
+    "evidence_level": {"enum": ["fixture", "contract", "artifact", "host"]},
+    "status": {"enum": ["passed", "failed", "blocked", "skipped"]},
+    "supporting": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"supporting": {"const": true}}, "required": ["supporting"]},
+      "then": {
+        "properties": {
+          "status": {"const": "passed"},
+          "evidence_level": {"enum": ["artifact", "host"]},
+          "source_isolation": {"const": "clean-candidate"},
+          "forbidden_executable_audit": {"const": "passed"},
+          "checks": {
+            "allOf": [
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "install"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "start"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "status"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "doctor"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "use"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "stop"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "upgrade"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "persist"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "rollback"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "uninstall"}, "status": {"const": "passed"}}}},
+              {"contains": {"type": "object", "required": ["name", "status"], "properties": {"name": {"const": "offline"}, "status": {"const": "passed"}}}}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "schema_version": "1.0", "artifact_id": "board-envelope", "domain": "ecad", "kind": "ecad-board",
+    "source_schema": {"name": "kicad-pcb-summary", "version": "20240108", "media_type": "application/vnd.wright.ecad+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-ecad", "call_id": "electronics-ecad", "capability": "ecad__board_envelope"},
+    "upstream_digests": [], "units": {"thickness": "mm", "dimensions": "mm", "minimum_clearance": "mm"},
+    "coordinate_system": {"name": "board-origin", "handedness": "right", "length_unit": "mm"},
+    "content": {"root": "kicad_pcb", "unit": "mm", "thickness": 1.6, "dimensions": [100, 70], "layers": ["F.Cu", "B.Cu", "Edge.Cuts"], "nets": ["GND", "+5V"], "component_count": 18, "minimum_clearance": 3.0}, "content_digest": "ab292b7efc17090694cbf7eb791597cefe847dbb0a8c843528e034ac6931359d", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "enclosure-geometry", "domain": "cad", "kind": "mesh",
+    "source_schema": {"name": "wright-enclosure-summary", "version": "1.0", "media_type": "application/vnd.wright.mesh+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cad", "call_id": "electronics-cad", "capability": "cad__build_enclosure"},
+    "upstream_digests": ["ab292b7efc17090694cbf7eb791597cefe847dbb0a8c843528e034ac6931359d"], "units": {"bounds": "mm", "volume": "mm3", "minimum_clearance": "mm"},
+    "coordinate_system": {"name": "board-origin", "handedness": "right", "length_unit": "mm"},
+    "content": {"vertex_count": 64, "face_count": 120, "bounds": [-5, 105, -5, 75, 0, 32], "degenerate_faces": 0, "manifold": true, "volume": 281600, "minimum_clearance": 3.0}, "content_digest": "1c86df0bf65a68b5589f4d9f2bb24992a1f06be32a641eca6cd2a991a4f215e2", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "thermal-result", "domain": "cfd", "kind": "cfd-result",
+    "source_schema": {"name": "wright-cfd-summary", "version": "1.0", "media_type": "application/vnd.wright.cfd+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cfd", "call_id": "electronics-cfd", "capability": "cfd__solve_thermal"},
+    "upstream_digests": ["1c86df0bf65a68b5589f4d9f2bb24992a1f06be32a641eca6cd2a991a4f215e2"], "units": {"maximum_temperature": "degC", "mass_flow": "kg/s"},
+    "content": {"completed": true, "converged": true, "residual": 0.00003, "residual_limit": 0.0001, "input_digest": "1c86df0bf65a68b5589f4d9f2bb24992a1f06be32a641eca6cd2a991a4f215e2", "maximum_temperature": 58.2, "mass_flow": 0.004}, "content_digest": "c426eb6d4ab0bef9572d00711ac930710075837254616f681f1c27a2866e53cc", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "thermal-margin", "domain": "python", "kind": "numeric-table",
+    "source_schema": {"name": "wright-numeric-table", "version": "1.0", "media_type": "application/vnd.wright.numeric+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-python", "call_id": "electronics-python", "capability": "python__thermal_margin"},
+    "upstream_digests": ["c426eb6d4ab0bef9572d00711ac930710075837254616f681f1c27a2866e53cc"], "units": {"margin": "delta_degC"},
+    "content": {"margin": 11.8}, "content_digest": "8451a3f18da0b637acaf5f6e235d3bafc4b93f756fc2f07077093f843dbbba82", "validation_state": "valid"
+  }
+]

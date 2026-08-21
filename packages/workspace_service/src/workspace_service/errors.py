@@ -44,6 +44,13 @@ class WorkspaceInvalidRequestError(WorkspaceServiceError):
         super().__init__(message, error_code=ErrorCode.INVALID_INPUT, **kwargs)
 
 
+class WorkspaceProtectedPathError(WorkspaceServiceError):
+    code = "workspace.protected_path"
+
+    def __init__(self, message: str, **kwargs: Any) -> None:
+        super().__init__(message, error_code=ErrorCode.FORBIDDEN_PATH, **kwargs)
+
+
 class WorkspaceExecutionError(WorkspaceServiceError):
     code = "workspace.execution_failed"
 

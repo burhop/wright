@@ -10,7 +10,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     // 1. Navigate to the tool registry page
     await page.goto("/tool-registry");
     await liveExpect(
-      page.getByRole("heading", { name: "Engineering Capability Library" }),
+      page.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeVisible();
 
     // 2. Check default seeded CalculiX card exists
@@ -19,7 +19,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     ).toBeVisible();
 
     // 3. Open the guided flow and choose an advanced local command.
-    await page.getByRole("button", { name: "Add capability" }).click();
+    await page.getByRole("button", { name: "Add custom MCP server" }).click();
     await liveExpect(page.getByRole("dialog")).toBeVisible();
     await page.getByLabel("Source").selectOption("local");
 
@@ -29,11 +29,11 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     await page.getByLabel("Literal executable").fill("python");
     await page.getByLabel("Literal arguments").fill("scripts/dummy.py");
 
-    // 5. Preflight is read-only and imported sources remain blocked until the
-    // independent publisher/license review is complete.
-    await page.getByRole("button", { name: "Create read-only plan" }).click();
-    await liveExpect(page.getByText("Review exact plan")).toBeVisible();
-    await liveExpect(page.getByText("Plan is blocked")).toBeVisible();
+    // 5. Preflight is read-only. Review the exact local command without
+    // registering it or requiring an irrelevant publisher acknowledgement.
+    await page.getByRole("button", { name: "Review install plan" }).click();
+    await liveExpect(page.getByText("Confirm this installation")).toBeVisible();
+    await liveExpect(page.getByText("What Wright will do")).toBeVisible();
 
     // 6. The preview did not register a server row.
     await page.getByRole("button", { name: "Close onboarding" }).click();

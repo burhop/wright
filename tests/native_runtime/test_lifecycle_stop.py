@@ -16,13 +16,13 @@ from wright_engineering.runtime.process import ProcessError
 
 
 class StopProcessManager:
-    def __init__(self, *, mismatch: bool = False) -> None:
-        self.mismatch = mismatch
+    def __init__(self, *, failure_code: str | None = None) -> None:
+        self.failure_code = failure_code
         self.stops = 0
 
     def stop(self, *args, **kwargs) -> None:
-        if self.mismatch:
-            raise ProcessError("process_start_mismatch")
+        if self.failure_code:
+            raise ProcessError(self.failure_code)
         self.stops += 1
 
 
@@ -87,10 +87,46 @@ def test_stop_is_idempotent_and_clears_verified_process(tmp_path: Path) -> None:
 
 
 def test_identity_mismatch_never_signals_and_requires_recovery(tmp_path: Path) -> None:
-    manager = StopProcessManager(mismatch=True)
+    manager = StopProcessManager(failure_code="process_start_mismatch")
     lifecycle = _running_lifecycle(tmp_path, manager)
     result = lifecycle.stop()
     assert not result.ok
     assert result.state is LifecycleState.RECOVERY_REQUIRED
     assert manager.stops == 0
     assert lifecycle.store.load().process is not None
+
+
+def test_stop_recovers_verified_active_runtime_with_no_process(tmp_path: Path) -> None:
+    manager = StopProcessManager()
+    lifecycle = _running_lifecycle(tmp_path, manager)
+    manifest = lifecycle.store.load()
+    manifest.process = None
+    manifest.lifecycle_state = LifecycleState.RECOVERY_REQUIRED
+    lifecycle.store.save(manifest)
+
+    result = lifecycle.stop()
+    recovered = lifecycle.store.load()
+
+    assert result.ok and result.state is LifecycleState.STOPPED
+    assert recovered.current_operation is None
+    assert recovered.runtimes["runtime-1"].status is RuntimeStatus.VERIFIED
+    assert manager.stops == 0
+
+
+def test_stop_recovers_stale_record_after_process_is_proven_absent(
+    tmp_path: Path,
+) -> None:
+    manager = StopProcessManager(failure_code="process_not_found")
+    lifecycle = _running_lifecycle(tmp_path, manager)
+    manifest = lifecycle.store.load()
+    manifest.lifecycle_state = LifecycleState.RECOVERY_REQUIRED
+    lifecycle.store.save(manifest)
+
+    result = lifecycle.stop()
+    recovered = lifecycle.store.load()
+
+    assert result.ok and result.state is LifecycleState.STOPPED
+    assert recovered.process is None
+    assert recovered.current_operation is None
+    assert recovered.runtimes["runtime-1"].status is RuntimeStatus.VERIFIED
+    assert manager.stops == 0

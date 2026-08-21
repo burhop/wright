@@ -35,65 +35,74 @@ export class LiveHealthService {
   private callbacks: Set<(statuses: ServiceStatus[]) => void> = new Set();
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private subscriberCount = 0;
+  private checksInFlight = new Set<string>();
+
+  private async checkService(svc: ServiceStatus): Promise<void> {
+    if (this.checksInFlight.has(svc.serviceId)) return;
+    this.checksInFlight.add(svc.serviceId);
+
+    const fetchWithRetry = async (retries = 1): Promise<HealthCheckResult> => {
+      try {
+        const response = await hostAdapter.fetch(`${API_BASE}${svc.endpoint}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (
+            data.state === "connected" ||
+            data.state === "disconnected" ||
+            data.state === "unknown"
+          ) {
+            return {
+              state: data.state as "connected" | "disconnected" | "unknown",
+              latencyMs: data.latencyMs ?? null,
+              baseUrl: data.baseUrl ?? null,
+              error: data.error ?? null,
+            };
+          }
+        }
+      } catch {
+        // Ignore and retry before reporting the request as unavailable.
+      }
+      if (retries > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return fetchWithRetry(retries - 1);
+      }
+      return {
+        state: "disconnected",
+        latencyMs: null,
+        baseUrl: null,
+        error: "Health check request failed",
+      };
+    };
+
+    try {
+      const result = await fetchWithRetry();
+      this.statuses = this.statuses.map((current) =>
+        current.serviceId === svc.serviceId
+          ? {
+              ...current,
+              ...result,
+              lastChecked: Date.now(),
+            }
+          : current,
+      );
+      this.notify();
+    } finally {
+      this.checksInFlight.delete(svc.serviceId);
+    }
+  }
+
+  private runChecks(): void {
+    this.statuses.forEach((svc) => {
+      void this.checkService(svc);
+    });
+  }
 
   startPolling(intervalMs: number = 15000): void {
     this.subscriberCount++;
     if (this.intervalId) return;
 
-    const runChecks = async () => {
-      const checks = this.statuses.map(async (svc) => {
-        const fetchWithRetry = async (
-          retries = 1,
-        ): Promise<HealthCheckResult> => {
-          try {
-            const response = await hostAdapter.fetch(
-              `${API_BASE}${svc.endpoint}`,
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (
-                data.state === "connected" ||
-                data.state === "disconnected" ||
-                data.state === "unknown"
-              ) {
-                return {
-                  state: data.state as "connected" | "disconnected" | "unknown",
-                  latencyMs: data.latencyMs ?? null,
-                  baseUrl: data.baseUrl ?? null,
-                  error: data.error ?? null,
-                };
-              }
-            }
-          } catch (err) {
-            // ignore and retry/fallback
-          }
-          if (retries > 0) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            return fetchWithRetry(retries - 1);
-          }
-          return {
-            state: "disconnected",
-            latencyMs: null,
-            baseUrl: null,
-            error: "Health check request failed",
-          };
-        };
-
-        const result = await fetchWithRetry();
-        return {
-          ...svc,
-          ...result,
-          lastChecked: Date.now(),
-        };
-      });
-
-      const updated = await Promise.all(checks);
-      this.statuses = updated;
-      this.notify();
-    };
-
-    runChecks();
-    this.intervalId = setInterval(runChecks, intervalMs);
+    this.runChecks();
+    this.intervalId = setInterval(() => this.runChecks(), intervalMs);
   }
 
   stopPolling(): void {

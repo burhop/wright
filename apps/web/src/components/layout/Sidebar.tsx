@@ -41,11 +41,18 @@ export function Sidebar() {
       order: 4,
     },
     {
+      id: "engineering-models",
+      label: "Engineering Models",
+      path: "/engineering-models",
+      icon: "wrench",
+      order: 5,
+    },
+    {
       id: "settings",
       label: "Settings",
       path: "/settings",
       icon: "settings",
-      order: 5,
+      order: 6,
     },
   ];
 

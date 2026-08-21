@@ -29,6 +29,27 @@ def test_redaction_masks_nested_secrets_and_sensitive_assignments() -> None:
     assert "value" in rendered
 
 
+def test_redaction_uses_the_program_path_authority_and_collection_limits() -> None:
+    cleaned = redact(
+        {
+            "safe": ["value"] * 150,
+            "message": (
+                "Bearer reusable-token C:\\Users\\engineer\\private.step "
+                "http://127.0.0.1:8123/control"
+            ),
+            "artifact_body": "private geometry",
+            "model_features": [0.1, 0.2],
+        }
+    )
+    rendered = repr(cleaned)
+    assert len(cleaned["safe"]) == 100
+    assert "reusable-token" not in rendered
+    assert "engineer" not in rendered
+    assert "8123" not in rendered
+    assert "private geometry" not in rendered
+    assert "0.1" not in rendered
+
+
 def test_diagnostic_details_are_allowlisted_and_bounded() -> None:
     details = bounded_details(
         {

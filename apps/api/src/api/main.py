@@ -27,6 +27,8 @@ from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
+from api.routers.engineering_models import router as engineering_models_router
+from api.routers.support_diagnostics import router as support_diagnostics_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
 from api.routers.live_apps import router as live_apps_router
@@ -45,6 +47,8 @@ from api.composition import (
     close_application_services,
     close_surface_application_services,
     surface_application,
+    engineering_model_application,
+    support_diagnostic_application,
     workspace_service,
 )
 from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
@@ -136,6 +140,8 @@ async def lifespan(app: FastAPI):
     )
     try:
         app.state.workspace_service = workspace_service()
+        app.state.engineering_model_application = engineering_model_application()
+        app.state.support_diagnostic_application = support_diagnostic_application()
         if app.state.workspace_surface_settings.flags.model:
             app.state.surface_application = surface_application()
             await app.state.surface_application.reconcile_startup()
@@ -270,6 +276,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 # Mount the routers
 app.include_router(workspace_router, prefix="/api/workspace", tags=["Workspace"])
+app.include_router(
+    support_diagnostics_router,
+    prefix="/api/workspace/support-diagnostics",
+    tags=["Support Diagnostics"],
+)
 app.include_router(agent_router, prefix="/api/agent", tags=["Agent"])
 app.include_router(mcp_router, prefix="/api/mcp", tags=["MCP"])
 app.include_router(vault_router, prefix="/api/vault", tags=["Vault"])
@@ -277,6 +288,11 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.include_router(
+    engineering_models_router,
+    prefix="/api/v1/engineering-models",
+    tags=["Engineering Models"],
+)
 if app.state.workspace_surface_settings.flags.model:
     # Events must be registered before the dynamic /surfaces/{surface_id} path.
     app.include_router(
@@ -436,10 +452,7 @@ async def check_agent_health():
     if (
         sync_manager is not None
         and getattr(sync_manager, "active_agent", "") == "hermes"
-        and (
-            getattr(sync_manager, "gateway_refresh_in_progress", False)
-            or getattr(sync_manager, "gateway_refresh_pending", False)
-        )
+        and getattr(sync_manager, "gateway_refresh_in_progress", False)
     ):
         return HealthResponse(
             state="unknown",

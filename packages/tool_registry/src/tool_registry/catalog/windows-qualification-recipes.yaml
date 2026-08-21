@@ -1,0 +1,492 @@
+schema_version: '1.0'
+policy_version: windows-allowlist-v1
+ordered_server_ids:
+- brep-mcp
+- solid-edge-mcp-burhop
+- aps-mcp-server-nodejs
+- autodesk-product-help-mcp
+- autodesk-fusion-desktop-mcp
+- autodesk-fusion-data-mcp
+- onshape-labs-featurescript-mcp
+recipes:
+- schema_version: '1.0'
+  recipe_id: brep-mcp-windows-v1
+  server_id: brep-mcp
+  publisher: andymai
+  source:
+    kind: npm
+    url: https://www.npmjs.com/package/brepjs-cad/v/0.103.0
+    immutable_revision: 4c9d787842351de388e77b16444f581b2205a646
+    package_name: brepjs-cad
+    package_version: 0.103.0
+    artifact_integrity: sha512-I76nxriOU9GqSJHxZ7saj+B+gie1wPz5RzYXZEaVlSQM1vGtblrfb8FJu94yzyCR2TR8CQq/v+4h8Iv+jFKLig==
+    maintenance_expectation: active
+  license: Apache-2.0
+  locality: local_package
+  transport: stdio
+  allowed_network_destinations:
+  - https://registry.npmjs.org
+  - https://github.com
+  credential_requirements: []
+  host_requirements:
+  - Node.js >=24
+  risk_findings:
+  - capability: arbitrary_program_execution
+    severity: high
+    boundary: Only the exact recipe-pinned deterministic BREP program may run in the disposable work root.
+    rationale: The run_program MCP tool executes JavaScript and writes geometry artifacts.
+  - capability: filesystem_write
+    severity: high
+    boundary: All source and STEP/report output paths must remain under the disposable work root.
+    rationale: Verification and export intentionally create local engineering artifacts.
+  operations:
+  - operation_id: inspect-source
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      repository: https://github.com/andymai/brepjs.git
+      revision: 4c9d787842351de388e77b16444f581b2205a646
+  - operation_id: install-local-package
+    stage: windows_install_passed
+    kind: npm_local_install
+    timeout_seconds: 300
+    output_limit_bytes: 65536
+    parameters:
+      package: brepjs-cad
+      version: 0.103.0
+      integrity: sha512-I76nxriOU9GqSJHxZ7saj+B+gie1wPz5RzYXZEaVlSQM1vGtblrfb8FJu94yzyCR2TR8CQq/v+4h8Iv+jFKLig==
+  - operation_id: launch-stdio
+    stage: mcp_started
+    kind: stdio_mcp
+    timeout_seconds: 60
+    output_limit_bytes: 65536
+    parameters:
+      executable: brep-mcp
+  - operation_id: wright-onboarding
+    stage: wright_install_passed
+    kind: wright_onboarding
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      backend: subprocess
+  - operation_id: wright-gateway
+    stage: wright_gateway_passed
+    kind: wright_gateway
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      tool_prefix: brep-mcp
+  safe_probe:
+    tool_name: run_program
+    mode: disposable_brep_geometry
+    safety_rationale: Exact deterministic 1 mm cube program writes only bounded report and STEP artifacts under the disposable root.
+    write_scope: disposable_work_root
+    arguments:
+      recipe: deterministic-unit-cube-v1
+      program_sha256: cb77b74a2a1dfb8144f025afa3d39de83057ffb2fdabee5f85f04ed263dd421a
+  expected_residue: []
+  cleanup:
+  - operation_id: stop-owned-processes
+    stage: cleanup_passed
+    kind: stop_owned_processes
+    timeout_seconds: 10
+    output_limit_bytes: 8192
+    parameters: {}
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: solid-edge-mcp-burhop-windows-v1
+  server_id: solid-edge-mcp-burhop
+  publisher: burhop
+  source:
+    kind: git
+    url: https://github.com/burhop/SolidEdgeMCP.git
+    immutable_revision: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: unknown
+  license: Internal-Use-Only
+  locality: local_package
+  transport: stdio
+  allowed_network_destinations:
+  - https://github.com
+  - https://api.nuget.org
+  credential_requirements: []
+  host_requirements:
+  - Siemens Solid Edge
+  - .NET SDK
+  risk_findings:
+  - capability: cad_document_mutation
+    severity: high
+    boundary: Do not call part creation or mutation tools during qualification.
+    rationale: The bridge automates a licensed desktop CAD session through COM.
+  - capability: proprietary_desktop_automation
+    severity: high
+    boundary: Detect the existing host only; never install, upgrade, configure, or mutate it.
+    rationale: Solid Edge is outside Wright distribution and its live session may contain real documents.
+  operations:
+  - operation_id: inspect-source
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      repository: https://github.com/burhop/SolidEdgeMCP.git
+      revision: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+  - operation_id: checkout-source
+    stage: windows_install_passed
+    kind: git_checkout
+    timeout_seconds: 180
+    output_limit_bytes: 32768
+    parameters:
+      revision: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+  - operation_id: build-local
+    stage: windows_install_passed
+    kind: dotnet_local_build
+    timeout_seconds: 600
+    output_limit_bytes: 65536
+    parameters:
+      configuration: Release
+  - operation_id: launch-stdio
+    stage: mcp_started
+    kind: stdio_mcp
+    timeout_seconds: 60
+    output_limit_bytes: 65536
+    parameters:
+      executable: SolidEdgeMcpServer.exe
+  - operation_id: wright-onboarding
+    stage: wright_install_passed
+    kind: wright_onboarding
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      backend: host_bridge
+  - operation_id: wright-gateway
+    stage: wright_gateway_passed
+    kind: wright_gateway
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      tool_prefix: solid-edge-mcp-burhop
+  safe_probe:
+    tool_name: cad.get_status
+    mode: read_only
+    safety_rationale: Status only; no CAD document or application preference may be changed.
+    write_scope: null
+    arguments:
+      providerId: solid_edge
+  expected_residue: []
+  cleanup:
+  - operation_id: stop-owned-processes
+    stage: cleanup_passed
+    kind: stop_owned_processes
+    timeout_seconds: 10
+    output_limit_bytes: 8192
+    parameters: {}
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: aps-mcp-server-nodejs-windows-v1
+  server_id: aps-mcp-server-nodejs
+  publisher: Autodesk Platform Services
+  source:
+    kind: git
+    url: https://github.com/autodesk-platform-services/aps-mcp-server-nodejs
+    immutable_revision: 722591abb08c42000e9aedcabc746bbd7f413739
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: archived
+  license: MIT
+  locality: local_package
+  transport: stdio
+  allowed_network_destinations:
+  - https://github.com
+  - https://developer.api.autodesk.com
+  credential_requirements:
+  - APS client ID
+  - APS client secret
+  - Secure Service Account ID
+  - Secure Service Account private key
+  host_requirements:
+  - Node.js
+  risk_findings:
+  - capability: private_key_access
+    severity: high
+    boundary: No credential or private key is requested, created, or read during qualification.
+    rationale: Upstream requires an SSA PEM key and APS secret.
+  - capability: cloud_data_access
+    severity: high
+    boundary: No Autodesk account authentication or ACC project access is attempted.
+    rationale: Tools can enumerate and access Autodesk Construction Cloud projects.
+  operations:
+  - operation_id: inspect-archived-source
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      repository: https://github.com/autodesk-platform-services/aps-mcp-server-nodejs
+      revision: 722591abb08c42000e9aedcabc746bbd7f413739
+  safe_probe: null
+  expected_residue: []
+  cleanup:
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: autodesk-product-help-mcp-windows-v1
+  server_id: autodesk-product-help-mcp
+  publisher: Autodesk
+  source:
+    kind: remote_endpoint
+    url: https://developer.api.autodesk.com/knowledge/public/v1/mcp
+    immutable_revision: null
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: active
+  license: Autodesk service terms
+  locality: remote
+  transport: streamable_http
+  allowed_network_destinations:
+  - https://developer.api.autodesk.com
+  credential_requirements: []
+  host_requirements: []
+  risk_findings:
+  - capability: external_network_read
+    severity: low
+    boundary: Contact only the documented public endpoint and call only product listing or bounded help search.
+    rationale: The service is public and read-only but responses are remote content.
+  operations:
+  - operation_id: inspect-vendor-docs
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      documentation: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html
+  - operation_id: connect-remote
+    stage: mcp_started
+    kind: remote_mcp
+    timeout_seconds: 60
+    output_limit_bytes: 65536
+    parameters:
+      endpoint: https://developer.api.autodesk.com/knowledge/public/v1/mcp
+  - operation_id: wright-onboarding
+    stage: wright_install_passed
+    kind: wright_onboarding
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      backend: remote_endpoint
+  - operation_id: wright-gateway
+    stage: wright_gateway_passed
+    kind: wright_gateway
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      tool_prefix: autodesk-product-help-mcp
+  safe_probe:
+    tool_name: get_available_products
+    mode: read_only
+    safety_rationale: Public product metadata listing does not mutate Autodesk or local state.
+    write_scope: null
+    arguments: {}
+  expected_residue: []
+  cleanup:
+  - operation_id: stop-owned-processes
+    stage: cleanup_passed
+    kind: stop_owned_processes
+    timeout_seconds: 10
+    output_limit_bytes: 8192
+    parameters: {}
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: autodesk-fusion-desktop-mcp-windows-v1
+  server_id: autodesk-fusion-desktop-mcp
+  publisher: Autodesk
+  source:
+    kind: built_in_host
+    url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_FusionDesktopMcp_connecting_to_the_fusion_mcp_server_html
+    immutable_revision: null
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: built_in
+  license: Autodesk product terms
+  locality: built_in_host
+  transport: streamable_http
+  allowed_network_destinations:
+  - http://127.0.0.1:27182
+  credential_requirements: []
+  host_requirements:
+  - Autodesk Fusion running with MCP enabled
+  risk_findings:
+  - capability: live_cad_mutation
+    severity: high
+    boundary: Do not call any Fusion tool; protocol discovery only if an already-enabled clean session is available.
+    rationale: Dynamic tools can execute commands against the active Fusion document.
+  operations:
+  - operation_id: inspect-vendor-docs
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      documentation: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_FusionDesktopMcp_connecting_to_the_fusion_mcp_server_html
+  - operation_id: detect-loopback
+    stage: mcp_started
+    kind: loopback_mcp
+    timeout_seconds: 10
+    output_limit_bytes: 16384
+    parameters:
+      endpoint: http://127.0.0.1:27182/mcp
+  - operation_id: wright-onboarding
+    stage: wright_install_passed
+    kind: wright_onboarding
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      backend: host_bridge
+  - operation_id: wright-gateway
+    stage: wright_gateway_passed
+    kind: wright_gateway
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      tool_prefix: autodesk-fusion-desktop-mcp
+  safe_probe: null
+  expected_residue: []
+  cleanup:
+  - operation_id: stop-owned-processes
+    stage: cleanup_passed
+    kind: stop_owned_processes
+    timeout_seconds: 10
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: autodesk-fusion-data-mcp-windows-v1
+  server_id: autodesk-fusion-data-mcp
+  publisher: Autodesk
+  source:
+    kind: vendor_docs
+    url: https://help.autodesk.com/view/fusion360/ENU/?guid=FMCP-OVERVIEW
+    immutable_revision: null
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: active
+  license: Autodesk cloud service terms
+  locality: remote
+  transport: streamable_http
+  allowed_network_destinations:
+  - https://developer.api.autodesk.com
+  credential_requirements:
+  - Autodesk account OAuth
+  host_requirements: []
+  risk_findings:
+  - capability: oauth_and_cloud_mutation
+    severity: high
+    boundary: Do not begin OAuth or call any collaboration, project, folder, item, or administration tool.
+    rationale: The service requires account authority and exposes dynamic cloud data-management tools.
+  operations:
+  - operation_id: inspect-vendor-docs
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      documentation: https://help.autodesk.com/view/fusion360/ENU/?guid=FMCP-OVERVIEW
+  safe_probe: null
+  expected_residue: []
+  cleanup:
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}
+
+- schema_version: '1.0'
+  recipe_id: onshape-labs-featurescript-mcp-windows-v1
+  server_id: onshape-labs-featurescript-mcp
+  publisher: Onshape / PTC
+  source:
+    kind: remote_endpoint
+    url: https://fs-mcp.labs.onshape.app/mcp
+    immutable_revision: null
+    package_name: null
+    package_version: null
+    artifact_integrity: null
+    maintenance_expectation: preview
+  license: Onshape App Store subscription and applicable Onshape terms
+  locality: remote
+  transport: streamable_http
+  allowed_network_destinations:
+  - https://www.onshape.com
+  - https://fs-mcp.labs.onshape.app
+  credential_requirements:
+  - Onshape account OAuth
+  - Onshape App Store subscription
+  host_requirements: []
+  risk_findings:
+  - capability: remote_code_and_cad_context
+    severity: high
+    boundary: Do not authenticate, accept terms, submit FeatureScript, or connect a real Onshape document.
+    rationale: The preview can generate and test code against user-governed Onshape context.
+  operations:
+  - operation_id: inspect-official-announcement
+    stage: source_current
+    kind: source_metadata
+    timeout_seconds: 60
+    output_limit_bytes: 16384
+    parameters:
+      documentation: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
+  - operation_id: inspect-preview-endpoint
+    stage: mcp_started
+    kind: remote_mcp
+    timeout_seconds: 30
+    output_limit_bytes: 16384
+    parameters:
+      endpoint: https://fs-mcp.labs.onshape.app/mcp
+      stop_before_authentication: true
+  safe_probe: null
+  expected_residue: []
+  cleanup:
+  - operation_id: stop-owned-processes
+    stage: cleanup_passed
+    kind: stop_owned_processes
+    timeout_seconds: 10
+    output_limit_bytes: 8192
+    parameters: {}
+  - operation_id: remove-work-root
+    stage: cleanup_passed
+    kind: remove_isolated_root
+    timeout_seconds: 30
+    output_limit_bytes: 8192
+    parameters: {}

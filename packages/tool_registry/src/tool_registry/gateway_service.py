@@ -11,6 +11,7 @@ from jsonschema import ValidationError, validate  # type: ignore[import-untyped]
 from .gateway_models import (
     GatewayError,
     GatewayErrorCode,
+    GatewayLifecycleError,
     GatewayRequest,
     GatewayResource,
     GatewaySessionContext,
@@ -24,6 +25,7 @@ from .gateway_management import GatewayManagementTools
 from .gateway_resources import GatewayResourceProvider, ResourceContent
 from .gateway_ports import (
     GatewayAuditPort,
+    GatewayCapabilityProvider,
     GatewayCatalogPort,
     GatewayLifecyclePort,
     GatewayNotifierPort,
@@ -79,6 +81,91 @@ def _sanitize_model_result(
     )
 
 
+def _schema_allows_null(schema: object) -> bool:
+    if not isinstance(schema, Mapping):
+        return False
+    declared_type = schema.get("type")
+    if declared_type == "null":
+        return True
+    if isinstance(declared_type, list) and "null" in declared_type:
+        return True
+    if isinstance(schema.get("enum"), list) and None in schema["enum"]:
+        return True
+    return any(
+        _schema_allows_null(option)
+        for keyword in ("anyOf", "oneOf")
+        for option in (
+            schema.get(keyword) if isinstance(schema.get(keyword), list) else []
+        )
+    )
+
+
+def _supply_missing_nullable_fields(value: Any, schema: object) -> Any:
+    """Repair a common MCP omission without weakening output validation."""
+
+    if not isinstance(schema, Mapping):
+        return value
+    if isinstance(value, Mapping):
+        repaired = {str(key): item for key, item in value.items()}
+        properties = schema.get("properties")
+        properties = properties if isinstance(properties, Mapping) else {}
+        required = schema.get("required")
+        required = required if isinstance(required, list) else []
+        for name in required:
+            property_schema = properties.get(name)
+            if (
+                isinstance(name, str)
+                and name not in repaired
+                and _schema_allows_null(property_schema)
+            ):
+                repaired[name] = None
+        for name, property_schema in properties.items():
+            if isinstance(name, str) and name in repaired:
+                repaired[name] = _supply_missing_nullable_fields(
+                    repaired[name], property_schema
+                )
+        return repaired
+    if isinstance(value, list) and isinstance(schema.get("items"), Mapping):
+        return [
+            _supply_missing_nullable_fields(item, schema["items"]) for item in value
+        ]
+    return value
+
+
+def _safe_lifecycle_projection(
+    lifecycle: GatewayLifecyclePort, server_id: str
+) -> dict[str, Any]:
+    """Return the bounded lifecycle facts allowed across the gateway boundary."""
+
+    ordinary = {
+        "kind": "ordinary",
+        "visible_application": False,
+        "cancellation_supported": True,
+        "recovery_action": None,
+    }
+    resolver = getattr(lifecycle, "lifecycle_projection", None)
+    if not callable(resolver):
+        return ordinary
+    try:
+        raw = resolver(server_id)
+    except Exception:
+        return ordinary
+    if not isinstance(raw, Mapping):
+        return ordinary
+    kind = str(raw.get("kind") or "ordinary")
+    if kind not in {"ordinary", "panel", "host_bridge"}:
+        kind = "ordinary"
+    recovery = raw.get("recovery_action")
+    return {
+        "kind": kind,
+        "visible_application": bool(raw.get("visible_application", False)),
+        "cancellation_supported": bool(raw.get("cancellation_supported", True)),
+        "recovery_action": (
+            str(recovery)[:128] if isinstance(recovery, str) and recovery else None
+        ),
+    }
+
+
 class GatewayService:
     def __init__(
         self,
@@ -93,6 +180,7 @@ class GatewayService:
         policy: GatewayPolicy | None = None,
         ui_policy: McpUiPolicy | None = None,
         mcp_ui_resources: McpUiResourceStore | None = None,
+        capability_providers: tuple[GatewayCapabilityProvider, ...] = (),
         operation_timeout: float = 30.0,
         maximum_timeout: float = 120.0,
     ) -> None:
@@ -112,7 +200,41 @@ class GatewayService:
         self._requests: dict[
             tuple[str, str], tuple[GatewayRequest, asyncio.Task[Any]]
         ] = {}
+        self._request_providers: dict[tuple[str, str], GatewayCapabilityProvider] = {}
+        self._provider_cancellations: set[tuple[str, str]] = set()
+        self._capability_providers: dict[str, GatewayCapabilityProvider] = {}
         self._closing = False
+        for provider in capability_providers:
+            self.add_capability_provider(provider)
+
+    def add_capability_provider(self, provider: GatewayCapabilityProvider) -> None:
+        """Register one provider while failing closed on every stable collision."""
+
+        provider_id = str(provider.provider_id).strip()
+        if not provider_id or provider_id in self._capability_providers:
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability provider identity is missing or duplicated",
+            )
+        declared = frozenset(str(item) for item in provider.declared_tool_names)
+        if not declared or any(not item for item in declared):
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability provider declared no valid tool identities",
+            )
+        occupied: set[str] = set()
+        for server in self.catalog.servers():
+            occupied.update(tool.name for tool in self.catalog.tools(server.server_id))
+        if self.management is not None:
+            occupied.update(tool.name for tool in self.management.tools())
+        for existing in self._capability_providers.values():
+            occupied.update(existing.declared_tool_names)
+        if occupied.intersection(declared):
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability tool name collision",
+            )
+        self._capability_providers[provider_id] = provider
 
     def open_session(
         self,
@@ -220,26 +342,71 @@ class GatewayService:
                 )
                 if decision.allowed:
                     result.append(tool)
+        names = {tool.name for tool in result}
+        for provider in self._capability_providers.values():
+            for tool in provider.tools(session):
+                if tool.name not in provider.declared_tool_names:
+                    raise GatewayError(
+                        GatewayErrorCode.INVALID_BINDING,
+                        "Gateway capability provider returned an undeclared tool",
+                    )
+                if tool.name in names:
+                    raise GatewayError(
+                        GatewayErrorCode.INVALID_BINDING,
+                        "Gateway capability tool name collision",
+                    )
+                names.add(tool.name)
+                decision = self.policy.can_list(session, tool)
+                self._audit(
+                    session,
+                    "",
+                    tool,
+                    decision.allowed,
+                    decision.reason_code,
+                    "listed" if decision.allowed else "hidden",
+                    0,
+                    operation="tool.list",
+                )
+                if decision.allowed:
+                    result.append(tool)
         return tuple(result)
+
+    def _provider_for_tool(
+        self, session: GatewaySessionContext, tool: GatewayTool
+    ) -> GatewayCapabilityProvider | None:
+        matches = [
+            provider
+            for provider in self._capability_providers.values()
+            if tool.name in provider.declared_tool_names
+        ]
+        if len(matches) > 1:
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability tool name collision",
+            )
+        return matches[0] if matches else None
 
     def workspace_approvals_for_model_call(
         self, session_id: str, name: str
     ) -> set[str]:
-        """Project a narrow operator grant for enabled Wright-managed tools.
+        """Project the operator grant represented by workspace enablement.
 
-        Enabling the workspace-confined Rivet server authorizes only its own
-        revision-checked workflow mutations. Generic workspace and machine
-        approvals are never inferred from server enablement.
+        Model-visible tools from installed catalog servers have already been
+        filtered to the servers enabled for this workspace. Their declared
+        call gates therefore travel with the model call instead of prompting
+        for a second, unavailable approval. Wright management tools remain
+        narrowly scoped to the built-in Rivet mutation grant.
         """
 
         session = self._session(session_id)
         tool = next(
             (item for item in self.list_tools(session_id) if item.name == name), None
         )
-        if (
-            tool is None
-            or RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals
-        ):
+        if tool is None:
+            return set()
+        if tool.server_id != "wright":
+            return set(tool.required_approvals)
+        if RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals:
             return set()
         is_rivet_tool = tool.server_id == RIVET_WORKFLOWS_SERVER_ID or (
             tool.server_id == "wright" and tool.name.startswith("wright__rivet_")
@@ -701,9 +868,18 @@ class GatewayService:
             now + self.maximum_timeout,
         )
         request.transition(RequestState.RUNNING)
+        capability_provider = (
+            None
+            if _app_server_id is not None
+            else self._provider_for_tool(session, tool)
+        )
+        lifecycle_projection = _safe_lifecycle_projection(
+            self.lifecycle, tool.server_id
+        )
         audit_metadata = {
             "timeout_ms": int(bounded * 1000),
             "argument_count": len(arguments),
+            "lifecycle_kind": lifecycle_projection["kind"],
         }
         self._audit(
             session,
@@ -724,52 +900,113 @@ class GatewayService:
         if workspace_approvals:
             approval_context["workspace_approvals"] = sorted(workspace_approvals)
 
+        async def forward_progress(update: Mapping[str, Any]) -> None:
+            if progress_callback is None:
+                return
+            event = {
+                **dict(update),
+                "server": tool.server_id,
+                "tool": tool.name,
+                "title": (
+                    update.get("title")
+                    or tool.title
+                    or tool.description
+                    or tool.tool_name
+                ),
+                "correlationId": request.correlation_id,
+                "status": update.get("status") or "running",
+            }
+            if lifecycle_projection["kind"] != "ordinary":
+                event["lifecycle"] = lifecycle_projection
+            callback_result = progress_callback(event)
+            if callback_result is not None:
+                await callback_result
+
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
                 return await self.management.call(session, tool.name, dict(arguments))
-            await self.lifecycle.ensure_started(
-                tool.server_id,
-                workspace_path=session.workspace_path,
-                approval_context=approval_context,
-            )
-            if progress_callback is None:
+            if capability_provider is not None:
+                return await capability_provider.call(
+                    session,
+                    tool,
+                    arguments,
+                    request_id=request_id,
+                    approval_context=approval_context,
+                    progress_callback=(
+                        forward_progress if progress_callback is not None else None
+                    ),
+                )
+            specialized = lifecycle_projection["kind"] != "ordinary"
+            try:
+                if specialized:
+                    await forward_progress(
+                        {
+                            "phase": "lifecycle-starting",
+                            "message": "Wright is preparing the required application.",
+                        }
+                    )
+                await self.lifecycle.ensure_started(
+                    tool.server_id,
+                    workspace_path=session.workspace_path,
+                    approval_context=approval_context,
+                )
+                if specialized:
+                    await forward_progress(
+                        {
+                            "phase": "lifecycle-ready",
+                            "message": "The required application is ready.",
+                        }
+                    )
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:
+                if not specialized:
+                    raise
+                raise GatewayLifecycleError(
+                    lifecycle_kind=str(lifecycle_projection["kind"]),
+                    recovery_action=(
+                        str(lifecycle_projection["recovery_action"])
+                        if lifecycle_projection["recovery_action"]
+                        else None
+                    ),
+                ) from error
+            try:
+                if progress_callback is None:
+                    return await self.lifecycle.call_tool(
+                        tool.server_id,
+                        tool.tool_name,
+                        arguments,
+                        approval_context=approval_context,
+                    )
+
                 return await self.lifecycle.call_tool(
                     tool.server_id,
                     tool.tool_name,
                     arguments,
                     approval_context=approval_context,
+                    progress_callback=forward_progress,
                 )
-
-            async def forward_progress(update: Mapping[str, Any]) -> None:
-                callback_result = progress_callback(
-                    {
-                        **dict(update),
-                        "server": tool.server_id,
-                        "tool": tool.name,
-                        "title": (
-                            update.get("title")
-                            or tool.title
-                            or tool.description
-                            or tool.tool_name
-                        ),
-                        "correlationId": request.correlation_id,
-                        "status": update.get("status") or "running",
-                    }
-                )
-                if callback_result is not None:
-                    await callback_result
-
-            return await self.lifecycle.call_tool(
-                tool.server_id,
-                tool.tool_name,
-                arguments,
-                approval_context=approval_context,
-                progress_callback=forward_progress,
-            )
+            except asyncio.CancelledError:
+                raise
+            except GatewayLifecycleError:
+                raise
+            except Exception as error:
+                if not specialized:
+                    raise
+                raise GatewayLifecycleError(
+                    lifecycle_kind=str(lifecycle_projection["kind"]),
+                    recovery_action=(
+                        str(lifecycle_projection["recovery_action"])
+                        if lifecycle_projection["recovery_action"]
+                        else None
+                    ),
+                ) from error
 
         task = asyncio.create_task(execute())
         key = (session_id, request_id)
         self._requests[key] = (request, task)
+        if capability_provider is not None:
+            self._request_providers[key] = capability_provider
         try:
             raw_result = dict(await asyncio.wait_for(task, bounded))
             normalized = GatewayToolResult.from_upstream(raw_result)
@@ -785,12 +1022,22 @@ class GatewayService:
                         raise ValidationError(
                             "Child omitted structuredContent required by outputSchema"
                         )
+                    structured = _supply_missing_nullable_fields(
+                        structured, tool.output_schema
+                    )
                     validate(instance=structured, schema=dict(tool.output_schema))
                 except ValidationError as exc:
                     raise GatewayError(
                         GatewayErrorCode.INVALID_OUTPUT,
                         f"Invalid output from tool: {name}",
                     ) from exc
+                normalized = GatewayToolResult(
+                    content=normalized.content,
+                    structured_content=structured,
+                    meta=normalized.meta,
+                    is_error=normalized.is_error,
+                    error_code=normalized.error_code,
+                )
             normalized = _sanitize_model_result(tool, normalized)
             structured = normalized.structured_content
             request.transition(RequestState.SUCCEEDED)
@@ -817,6 +1064,10 @@ class GatewayService:
                 is_error=normalized.is_error,
             )
         except TimeoutError:
+            if capability_provider is not None:
+                await self._cancel_provider_once(
+                    key, capability_provider, session, request_id
+                )
             request.transition(RequestState.TIMED_OUT)
             self._audit(
                 session,
@@ -856,6 +1107,7 @@ class GatewayService:
                 "invalid_output",
                 "failed",
                 now,
+                metadata=audit_metadata,
                 operation=audit_operation,
             )
             raise
@@ -869,6 +1121,7 @@ class GatewayService:
                 "child_error",
                 "failed",
                 now,
+                metadata=audit_metadata,
                 operation=audit_operation,
             )
             raise GatewayError(
@@ -876,6 +1129,8 @@ class GatewayService:
             ) from exc
         finally:
             self._requests.pop(key, None)
+            self._request_providers.pop(key, None)
+            self._provider_cancellations.discard(key)
 
     def list_resources(self, session_id: str) -> tuple[GatewayResource, ...]:
         session = self._session(session_id)
@@ -902,8 +1157,24 @@ class GatewayService:
         if request.state.terminal:
             return False
         request.cancellation_reason = reason
+        provider = self._request_providers.get((session_id, request_id))
+        if provider is not None:
+            self._provider_cancellations.add((session_id, request_id))
+            asyncio.create_task(provider.cancel(self._session(session_id), request_id))
         task.cancel()
         return True
+
+    async def _cancel_provider_once(
+        self,
+        key: tuple[str, str],
+        provider: GatewayCapabilityProvider,
+        session: GatewaySessionContext,
+        request_id: str,
+    ) -> None:
+        if key in self._provider_cancellations:
+            return
+        self._provider_cancellations.add(key)
+        await provider.cancel(session, request_id)
 
     async def close_session(self, session_id: str) -> None:
         session = self._sessions.get(session_id)
@@ -916,6 +1187,13 @@ class GatewayService:
             await asyncio.gather(*(task for _, task in owned), return_exceptions=True)
         if self.mcp_ui_resources is not None:
             self.mcp_ui_resources.close_session(session)
+        await asyncio.gather(
+            *(
+                provider.close_session(session)
+                for provider in self._capability_providers.values()
+            ),
+            return_exceptions=True,
+        )
         self._sessions[session_id] = session.close()
 
     async def shutdown(self) -> None:
@@ -925,6 +1203,10 @@ class GatewayService:
             return_exceptions=True,
         )
         await self.lifecycle.shutdown()
+        await asyncio.gather(
+            *(provider.shutdown() for provider in self._capability_providers.values()),
+            return_exceptions=True,
+        )
 
     def publish_list_changes(
         self,

@@ -1,0 +1,37 @@
+version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-chatter-review:
+      metadata: {id: graph-chatter-review, name: Chatter candidate review, description: Provider-neutral CAD, simulated CAM, local-model, and advisory chain}
+      nodes:
+        '[node-cad-context]:mcpToolCall "Inspect CAD context"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: fixture_cad__inspect_setup, toolArguments: '{"fixture":"chatter-candidate-review"}', toolCallId: chatter-cad-context, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"CAD context" output-cad/value']
+          visualData: 0/0/300/null//
+        '[node-cam-candidates]:mcpToolCall "Generate simulated candidates"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: fixture_cam__generate_candidates, toolArguments: '{"fixture":"chatter-candidate-review"}', toolCallId: chatter-candidates, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"CAM response" node-cam-response/array', 'response->"Candidates" output-candidates/value']
+          visualData: 0/220/300/null//
+        '[node-cam-response]:pop "CAM response"':
+          data: {fromFront: false}
+          outgoingConnections: ['lastItem->"CAM payload" node-cam-payload/object']
+          visualData: 360/220/220/null//
+        '[node-cam-payload]:destructure "CAM payload"':
+          data: {paths: [$.value]}
+          outgoingConnections: ['match_0->"Screen with local model" node-chatter-model/toolArguments']
+          visualData: 620/220/240/null//
+        '[node-chatter-model]:mcpToolCall "Screen with local model"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: wright_model__wright_chatter_generated_test__screen_chatter_candidates, toolArguments: '{}', toolCallId: chatter-model, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: true, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Model results" output-model/value']
+          visualData: 920/220/300/null//
+        '[node-advisory]:mcpToolCall "Compose advisory"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: fixture_report__compose_advisory, toolArguments: '{"fixture":"chatter-candidate-review"}', toolCallId: chatter-advisory, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Advisory" output-advisory/value']
+          visualData: 0/660/300/null//
+        '[output-cad]:graphOutput "CAD context"': {data: {id: cad, dataType: "object[]"}, visualData: 420/0/280/null//}
+        '[output-candidates]:graphOutput "Candidates"': {data: {id: candidates, dataType: "object[]"}, visualData: 420/220/280/null//}
+        '[output-model]:graphOutput "Model results"': {data: {id: model, dataType: "object[]"}, visualData: 420/440/280/null//}
+        '[output-advisory]:graphOutput "Advisory"': {data: {id: advisory, dataType: "object[]"}, visualData: 420/660/280/null//}
+  metadata: {id: scenario-chatter-candidate-review, title: Chatter candidate review, description: Deterministic provider-neutral engineering scenario, mainGraphId: graph-chatter-review}
+  plugins: []

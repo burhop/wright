@@ -162,14 +162,14 @@ export function MissingCapabilityForm({
           style={{ display: "flex", justifyContent: "space-between", gap: 16 }}
         >
           <h2 id="missing-capability-title" ref={titleRef} tabIndex={-1}>
-            Report a missing capability
+            Report a missing MCP server
           </h2>
           <button
             ref={closeButtonRef}
             type="button"
             data-testid="missing-capability-close"
             onClick={closeAndRestore}
-            aria-label="Close missing capability form"
+            aria-label="Close missing MCP server form"
           >
             Close
           </button>
@@ -190,7 +190,7 @@ export function MissingCapabilityForm({
             <h3>Report saved</h3>
             <p>
               Reference {submitted.report_id}. Its state is {submitted.state};
-              it is not an installable capability.
+              it is not an installable MCP server.
             </p>
             <button
               type="button"
@@ -203,7 +203,7 @@ export function MissingCapabilityForm({
         ) : (
           <form onSubmit={submit} style={{ display: "grid", gap: 12 }}>
             <label>
-              Capability or MCP name
+              MCP server name
               <input
                 data-testid="missing-capability-name"
                 required

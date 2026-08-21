@@ -8,6 +8,7 @@ import yaml
 
 
 _NODE_TYPE = re.compile(r"\]:([A-Za-z0-9_-]+)(?:\s|$)")
+_NODE_ID = re.compile(r"^\[([^\]]+)\]:")
 _MAX_GRAPHS = 256
 _MAX_PORTS = 256
 _MAX_ISSUES = 64
@@ -54,6 +55,20 @@ class WorkflowValidationResult:
     warnings: tuple[ValidationIssue, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class RivetMcpNodeRequirement:
+    graph_id: str
+    node_id: str
+    node_type: str
+    static_tool_name: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class RivetMcpRequirementResult:
+    nodes: tuple[RivetMcpNodeRequirement, ...]
+    errors: tuple[ValidationIssue, ...]
+
+
 def _issue(code: str, message: object, **location: str | None) -> ValidationIssue:
     safe = " ".join(str(message).split())[:_MAX_MESSAGE]
     return ValidationIssue(code, safe, **location)
@@ -64,6 +79,37 @@ def _node_type(serialized_id: object, node: object) -> str:
         return str(node["type"])
     match = _NODE_TYPE.search(str(serialized_id))
     return match.group(1) if match else "unknown"
+
+
+def _node_id(serialized_id: object, node: object) -> str:
+    if isinstance(node, dict) and isinstance(node.get("id"), str):
+        return str(node["id"])
+    match = _NODE_ID.search(str(serialized_id))
+    return match.group(1) if match else str(serialized_id)
+
+
+def _referenced_graph_ids(node_type: str, node: dict[str, Any]) -> set[str]:
+    data = node.get("data")
+    if not isinstance(data, dict):
+        return set()
+
+    if node_type in {"subGraph", "loopUntil"}:
+        key = "graphId" if node_type == "subGraph" else "targetGraph"
+        target = data.get(key)
+        return {target.strip()} if isinstance(target, str) and target.strip() else set()
+
+    if node_type != "delegateFunctionCall":
+        return set()
+    handlers = data.get("handlers")
+    if not isinstance(handlers, list):
+        return set()
+    return {
+        str(handler["value"]).strip()
+        for handler in handlers
+        if isinstance(handler, dict)
+        and isinstance(handler.get("value"), str)
+        and handler["value"].strip()
+    }
 
 
 def _nodes(graph: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
@@ -190,7 +236,8 @@ def validate_rivet_project(
         )
 
     graph_summaries: list[GraphSummary] = []
-    all_node_types: set[str] = set()
+    node_types_by_graph: dict[str, set[str]] = {}
+    referenced_graphs_by_graph: dict[str, set[str]] = {}
     for serialized_graph_id, raw_graph in list(raw_graphs.items())[:_MAX_GRAPHS]:
         if not isinstance(raw_graph, dict):
             errors.append(
@@ -207,9 +254,12 @@ def validate_rivet_project(
         name = str(metadata.get("name") or graph_id)
         inputs: list[GraphPortSummary] = []
         outputs: list[GraphPortSummary] = []
+        node_types: set[str] = set()
+        referenced_graph_ids: set[str] = set()
         for serialized_node_id, node in _nodes(raw_graph):
             node_type = _node_type(serialized_node_id, node)
-            all_node_types.add(node_type)
+            node_types.add(node_type)
+            referenced_graph_ids.update(_referenced_graph_ids(node_type, node))
             port = _port(node)
             if port is None:
                 continue
@@ -225,6 +275,8 @@ def validate_rivet_project(
                 tuple(sorted(outputs, key=lambda value: value.id)),
             )
         )
+        node_types_by_graph[graph_id] = node_types
+        referenced_graphs_by_graph[graph_id] = referenced_graph_ids
 
     metadata = data.get("metadata")
     metadata = metadata if isinstance(metadata, dict) else {}
@@ -253,6 +305,26 @@ def validate_rivet_project(
             )
         )
 
+    # Runtime services are started only for the graph that will execute. We
+    # still validate every graph above, so malformed inactive graphs remain
+    # visible without making a no-AI graph depend on Hermes.
+    execution_node_types: set[str] = set()
+    if main_graph is not None:
+        reachable_graph_ids: set[str] = set()
+        pending_graph_ids = [main_graph.id]
+        while pending_graph_ids:
+            graph_id = pending_graph_ids.pop()
+            if graph_id in reachable_graph_ids:
+                continue
+            reachable_graph_ids.add(graph_id)
+            execution_node_types.update(node_types_by_graph.get(graph_id, set()))
+            pending_graph_ids.extend(
+                target
+                for target in referenced_graphs_by_graph.get(graph_id, set())
+                if target in node_types_by_graph and target not in reachable_graph_ids
+            )
+    else:
+        execution_node_types = set().union(*node_types_by_graph.values())
     return WorkflowValidationResult(
         workflow_id,
         revision,
@@ -260,7 +332,140 @@ def validate_rivet_project(
         not errors,
         main_graph,
         tuple(graph_summaries),
-        _requirements(all_node_types),
+        _requirements(execution_node_types),
         tuple(errors[:_MAX_ISSUES]),
         tuple(warnings[:_MAX_ISSUES]),
+    )
+
+
+def extract_rivet_mcp_requirements(
+    project: str, *, selected_graph: str | None = None
+) -> RivetMcpRequirementResult:
+    """Extract executable MCP nodes and reject project-owned connection authority."""
+
+    errors: list[ValidationIssue] = []
+    requirements: list[RivetMcpNodeRequirement] = []
+    try:
+        document = yaml.safe_load(project)
+    except yaml.YAMLError as error:
+        return RivetMcpRequirementResult(
+            (), (_issue("RIVET_PROJECT_PARSE_FAILED", error),)
+        )
+    if not isinstance(document, dict) or not isinstance(document.get("data"), dict):
+        return RivetMcpRequirementResult(
+            (),
+            (_issue("RIVET_PROJECT_INVALID", "Project must contain a data mapping"),),
+        )
+    data = document["data"]
+    metadata = data.get("metadata")
+    if isinstance(metadata, dict) and metadata.get("mcpServer") is not None:
+        errors.append(
+            _issue(
+                "RIVET_MCP_PROJECT_CONFIG_DENIED",
+                "Project-owned MCP server configuration is not permitted",
+            )
+        )
+    raw_graphs = data.get("graphs")
+    if not isinstance(raw_graphs, dict):
+        return RivetMcpRequirementResult((), tuple(errors))
+    for serialized_graph_id, graph in list(raw_graphs.items())[:_MAX_GRAPHS]:
+        if not isinstance(graph, dict):
+            continue
+        graph_metadata = graph.get("metadata")
+        graph_metadata = graph_metadata if isinstance(graph_metadata, dict) else {}
+        graph_id = str(graph_metadata.get("id") or serialized_graph_id)
+        graph_name = str(graph_metadata.get("name") or graph_id)
+        if selected_graph is not None and selected_graph not in {graph_id, graph_name}:
+            # A selected graph can call subgraphs. Inspecting every graph is the
+            # fail-closed choice for prohibited configuration, while only the
+            # selected graph contributes direct binding requirements here.
+            include_requirement = False
+        else:
+            include_requirement = True
+        seen_node_ids: set[str] = set()
+        for serialized_node_id, node in _nodes(graph):
+            node_type = _node_type(serialized_node_id, node)
+            if node_type not in {"mcpDiscovery", "mcpToolCall", "mcpGetPrompt"}:
+                continue
+            node_id = _node_id(serialized_node_id, node)
+            if node_id in seen_node_ids:
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_DUPLICATE_NODE",
+                        "MCP node identities must be unique within a graph",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            seen_node_ids.add(node_id)
+            node_data = node.get("data")
+            node_data = node_data if isinstance(node_data, dict) else {}
+            if node_type == "mcpGetPrompt" or (
+                node_type == "mcpDiscovery" and bool(node_data.get("usePromptsOutput"))
+            ):
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_PROMPT_DENIED",
+                        "MCP prompt operations are not enabled for reviewed tool runs",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            if any(
+                node_data.get(key) not in (None, "", [], {})
+                for key in (
+                    "serverUrl",
+                    "command",
+                    "args",
+                    "env",
+                    "environment",
+                    "headers",
+                    "authorization",
+                    "serverId",
+                )
+            ):
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_PROJECT_CONFIG_DENIED",
+                        "MCP node connection configuration is not permitted",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            if node_type == "mcpToolCall" and bool(node_data.get("useToolNameInput")):
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_DYNAMIC_TOOL_DENIED",
+                        "MCP tool identity must be static",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            if node_type == "mcpToolCall" and not (
+                isinstance(node_data.get("toolName"), str)
+                and str(node_data.get("toolName")).strip()
+            ):
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_TOOL_REQUIRED",
+                        "Choose the exact workspace MCP tool for this node",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            if include_requirement and node_type in {"mcpDiscovery", "mcpToolCall"}:
+                raw_tool = node_data.get("toolName")
+                requirements.append(
+                    RivetMcpNodeRequirement(
+                        graph_id,
+                        node_id,
+                        node_type,
+                        str(raw_tool)
+                        if isinstance(raw_tool, str) and raw_tool
+                        else None,
+                    )
+                )
+    return RivetMcpRequirementResult(
+        tuple(sorted(requirements, key=lambda item: (item.graph_id, item.node_id))),
+        tuple(errors[:_MAX_ISSUES]),
     )

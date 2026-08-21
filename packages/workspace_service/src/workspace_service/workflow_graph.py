@@ -205,6 +205,7 @@ def lint_project(
                 }
             )
             continue
+        graph_output_ids: dict[str, str] = {}
         for node_id, node in nodes.items():
             if not isinstance(node, dict):
                 issues.append(
@@ -228,6 +229,91 @@ def lint_project(
                         "node_id": str(node_id),
                     }
                 )
+            node_type = str(node.get("type") or _node_kind(str(node_id)) or "")
+            if node_type == "graphOutput":
+                data = node.get("data")
+                data = data if isinstance(data, dict) else {}
+                output_id = data.get("id")
+                if not isinstance(output_id, str) or not output_id.strip():
+                    issues.append(
+                        {
+                            "level": "error",
+                            "code": "RIVET_GRAPH_OUTPUT_ID_REQUIRED",
+                            "message": "Give every Graph Output a stable output ID",
+                            "graph_id": current_graph_id,
+                            "node_id": str(node_id),
+                        }
+                    )
+                elif output_id.strip() in graph_output_ids:
+                    issues.append(
+                        {
+                            "level": "error",
+                            "code": "RIVET_GRAPH_OUTPUT_ID_DUPLICATE",
+                            "message": (
+                                f"Graph Output ID '{output_id.strip()}' is duplicated; "
+                                "each visible output must have a unique ID"
+                            ),
+                            "graph_id": current_graph_id,
+                            "node_id": str(node_id),
+                            "conflicting_node_id": graph_output_ids[output_id.strip()],
+                        }
+                    )
+                else:
+                    graph_output_ids[output_id.strip()] = str(node_id)
+            if node_type == "mcpToolCall":
+                data = node.get("data")
+                data = data if isinstance(data, dict) else {}
+                if any(
+                    data.get(key) not in (None, "", [], {})
+                    for key in (
+                        "serverId",
+                        "serverUrl",
+                        "command",
+                        "args",
+                        "env",
+                        "environment",
+                        "headers",
+                        "authorization",
+                    )
+                ):
+                    issues.append(
+                        {
+                            "level": "error",
+                            "code": "RIVET_MCP_PROJECT_CONFIG_DENIED",
+                            "message": (
+                                "Leave MCP connection settings empty; Wright binds "
+                                "the workspace tool when the workflow runs"
+                            ),
+                            "graph_id": current_graph_id,
+                            "node_id": str(node_id),
+                        }
+                    )
+                if data.get("useToolNameInput") is not False:
+                    issues.append(
+                        {
+                            "level": "error",
+                            "code": "RIVET_MCP_DYNAMIC_TOOL_DENIED",
+                            "message": (
+                                "Choose one static MCP tool name instead of using "
+                                "a dynamic tool-name input"
+                            ),
+                            "graph_id": current_graph_id,
+                            "node_id": str(node_id),
+                        }
+                    )
+                if (
+                    not isinstance(data.get("toolName"), str)
+                    or not str(data.get("toolName")).strip()
+                ):
+                    issues.append(
+                        {
+                            "level": "error",
+                            "code": "RIVET_MCP_TOOL_REQUIRED",
+                            "message": "Choose the exact workspace MCP tool for this node",
+                            "graph_id": current_graph_id,
+                            "node_id": str(node_id),
+                        }
+                    )
     return tuple(issues)
 
 

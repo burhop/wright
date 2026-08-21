@@ -11,6 +11,8 @@ vi.mock("../src/services/agent-service", () => ({
     getSessionHistory: vi.fn(),
     deleteSession: vi.fn(),
     sendMessage: vi.fn(),
+    getStreamStatus: vi.fn(),
+    attachStream: vi.fn(),
     cancelStream: vi.fn(),
   },
 }));
@@ -90,6 +92,24 @@ function ChatMessagesHarness() {
       <div data-testid="prompt-queue-order">
         {state.promptQueue.map((prompt) => prompt.content).join("|")}
       </div>
+      <div data-testid="chat-is-streaming">
+        {String(
+          Boolean(
+            state.activeSessionId &&
+            state.streamStates[state.activeSessionId]?.isStreaming,
+          ),
+        )}
+      </div>
+      <div data-testid="chat-streamed-text">
+        {state.activeSessionId
+          ? state.streamStates[state.activeSessionId]?.streamedText
+          : ""}
+      </div>
+      <div data-testid="chat-stream-started-at">
+        {state.activeSessionId
+          ? state.streamStates[state.activeSessionId]?.startedAt
+          : ""}
+      </div>
       <ul>
         {(activeSession?.messages || []).map((message) => (
           <li data-testid="chat-message" key={message.id}>
@@ -126,6 +146,10 @@ describe("ChatProvider session state", () => {
     vi.clearAllMocks();
     localStorageMock.clear();
     vi.mocked(agentService.getSessionHistory).mockResolvedValue([]);
+    vi.mocked(agentService.getStreamStatus).mockResolvedValue({
+      active: false,
+      sessionId: "session-1",
+    });
   });
 
   it("deduplicates sessions returned by backend refreshes", async () => {
@@ -260,6 +284,112 @@ describe("ChatProvider session state", () => {
         screen.getByText("assistant:cached assistant response"),
       ).toBeInTheDocument();
     });
+  });
+
+  it("reattaches to a running turn after the provider reloads", async () => {
+    const startedAt = Date.now() - 12_000;
+    const existingHistory = [
+      {
+        id: "earlier-assistant",
+        role: "assistant" as const,
+        content: "Earlier context",
+        timestamp: startedAt - 1000,
+        traceId: null,
+      },
+    ];
+    const completedHistory = [
+      ...existingHistory,
+      {
+        id: "running-user",
+        role: "user" as const,
+        content: "finish the bracket",
+        timestamp: startedAt,
+        traceId: "stream-reload",
+      },
+      {
+        id: "running-assistant",
+        role: "assistant" as const,
+        content: "Bracket finished",
+        timestamp: startedAt + 1000,
+        traceId: "stream-reload",
+      },
+    ];
+    let finishStream = () => {};
+    const keepRunning = new Promise<void>((resolve) => {
+      finishStream = resolve;
+    });
+
+    localStorageMock.setItem(
+      "wright-chat-sessions",
+      JSON.stringify([makeSession({ isActive: true })]),
+    );
+    vi.mocked(agentService.listSessions).mockResolvedValue([
+      {
+        sessionId: "session-1",
+        title: "Test Session",
+        createdAt: 1000,
+        updatedAt: 1001,
+      },
+    ]);
+    vi.mocked(agentService.getSessionHistory)
+      .mockResolvedValueOnce(existingHistory)
+      .mockResolvedValue(completedHistory);
+    vi.mocked(agentService.getStreamStatus).mockResolvedValue({
+      active: true,
+      sessionId: "session-1",
+      streamId: "stream-reload",
+      message: "finish the bracket",
+      startedAt,
+      eventCount: 2,
+    });
+    vi.mocked(agentService.attachStream).mockImplementation(async function* () {
+      yield {
+        type: "stream_start",
+        streamId: "stream-reload",
+        startedAt,
+      };
+      yield { type: "token", text: "Bracket " };
+      await keepRunning;
+      yield { type: "token", text: "finished" };
+      yield {
+        type: "done",
+        session: makeSession({ sessionId: "session-1" }),
+      };
+    });
+
+    render(
+      <ChatProvider>
+        <ChatMessagesHarness />
+      </ChatProvider>,
+    );
+
+    expect(
+      await screen.findByText("assistant:Earlier context"),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText("user:finish the bracket"),
+    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-is-streaming")).toHaveTextContent("true");
+      expect(screen.getByTestId("chat-streamed-text")).toHaveTextContent(
+        "Bracket",
+      );
+      expect(screen.getByTestId("chat-stream-started-at")).toHaveTextContent(
+        String(startedAt),
+      );
+    });
+
+    finishStream();
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-is-streaming")).toHaveTextContent(
+        "false",
+      );
+      expect(
+        screen.getByText("assistant:Bracket finished"),
+      ).toBeInTheDocument();
+    });
+    expect(agentService.attachStream).toHaveBeenCalledWith("session-1");
+    expect(agentService.sendMessage).not.toHaveBeenCalled();
   });
 
   it("shows only cached sessions for the active workspace during scoped refresh", async () => {

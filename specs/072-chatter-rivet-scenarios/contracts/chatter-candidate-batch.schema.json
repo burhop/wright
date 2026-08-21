@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/chatter-candidate-batch-1.0.json",
+  "title": "Wright Chatter Candidate Batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "feature_order", "units", "candidates", "batch_provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "feature_order": {
+      "const": ["fntx", "ktx", "zetatx", "fnty", "kty", "zetaty", "fnwx", "kwx", "zetawx", "fnwy", "kwy", "zetawy", "ktc", "knc", "kte", "kne", "Cn", "d", "m", "beta_mean", "et", "ud", "a", "ft_mean", "omega", "b", "tooth_passing_freq", "frf_ratio_xy", "stiffness_ratio_tw", "radial_immersion", "chip_load", "speed_ratio_to_nat", "has_process_damping", "has_runout", "has_edge_coeffs", "n_modes", "tooth_spacing_std"]
+    },
+    "units": {
+      "const": ["Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "Hz", "N/m", "1", "N/m^2", "N/m^2", "N/m", "N/m", "N/m", "m", "1", "deg", "1", "1", "m", "m", "rpm", "m", "Hz", "1", "1", "1", "m^2", "1", "1", "1", "1", "1", "deg"]
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {"$ref": "#/$defs/candidate"}
+    },
+    "batch_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["simulation_only", "producer_tool", "producer_artifact_id", "producer_schema_digest"],
+      "properties": {
+        "simulation_only": {"const": true},
+        "producer_tool": {"type": "string", "pattern": "^[A-Za-z0-9._-]+__[A-Za-z0-9._-]+$", "maxLength": 200},
+        "producer_artifact_id": {"$ref": "#/$defs/id"},
+        "producer_schema_digest": {"$ref": "#/$defs/digest"}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "values", "origins", "source_artifact_id", "engineering_invariants"],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/id"},
+        "values": {"type": "array", "minItems": 37, "maxItems": 37, "items": {"type": "number"}},
+        "origins": {"type": "array", "minItems": 37, "maxItems": 37, "items": {"enum": ["simulated", "identified", "measured", "assumed"]}},
+        "source_artifact_id": {"$ref": "#/$defs/id"},
+        "engineering_invariants": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["invariant_id", "state", "evidence_artifact_id"],
+            "properties": {
+              "invariant_id": {"$ref": "#/$defs/id"},
+              "state": {"enum": ["pass", "fail"]},
+              "evidence_artifact_id": {"$ref": "#/$defs/id"},
+              "message": {"type": "string", "maxLength": 500}
+            }
+          }
+        }
+      }
+    }
+  }
+}

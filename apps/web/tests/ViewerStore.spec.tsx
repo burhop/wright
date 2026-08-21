@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   dedupeEditorTabs,
@@ -61,6 +61,36 @@ function OpenSingleTabHarness() {
   return (
     <div>
       <span data-testid="tab-count">{viewer.openTabs.length}</span>
+      <span data-testid="active-tab">{viewer.activeTabPath}</span>
+    </div>
+  );
+}
+
+function RenameTransientTabHarness() {
+  const viewer = useViewerPanel();
+  const initialUpdateTabPath = useRef(viewer.updateTabPath);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => {
+          viewer.openTransientTab({
+            name: "rivet.rivet-project",
+            path: "/.wright/rivet-workflows/rivet/workflow.rivet-project",
+            type: "rivet",
+          });
+          queueMicrotask(() =>
+            initialUpdateTabPath.current(
+              "/.wright/rivet-workflows/rivet/workflow.rivet-project",
+              "/.wright/rivet-workflows/ai-agent/workflow.rivet-project",
+              "ai-agent.rivet-project",
+            ),
+          );
+        }}
+      >
+        Open Rivet
+      </button>
       <span data-testid="active-tab">{viewer.activeTabPath}</span>
     </div>
   );
@@ -157,6 +187,22 @@ describe("ViewerPanelProvider tab state", () => {
     expect(screen.getByTestId("tab-count")).toHaveTextContent("1");
     expect(screen.getByTestId("active-tab")).toHaveTextContent(
       "/lessons.viewer",
+    );
+  });
+
+  it("keeps an asynchronously renamed transient tab active", async () => {
+    render(
+      <ViewerPanelProvider>
+        <RenameTransientTabHarness />
+      </ViewerPanelProvider>,
+    );
+
+    screen.getByRole("button", { name: "Open Rivet" }).click();
+
+    await waitFor(() =>
+      expect(screen.getByTestId("active-tab")).toHaveTextContent(
+        "/.wright/rivet-workflows/ai-agent/workflow.rivet-project",
+      ),
     );
   });
 });

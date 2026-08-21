@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.0",
+  "model_id": "neuralfoil-medium",
+  "package_revision": 1,
+  "display_name": "NeuralFoil Medium Airfoil Aerodynamics",
+  "description": "Reviewed data-only NeuralFoil medium model for bounded subsonic airfoil coefficient estimates from exact Kulfan parameters.",
+  "publisher": {
+    "name": "Peter Sharpe and R. John Hansman",
+    "source_uri": "https://github.com/peterdsharpe/NeuralFoil"
+  },
+  "source": {
+    "kind": "https",
+    "uri": "https://github.com/peterdsharpe/NeuralFoil/tree/bb8a775199d1dafb5f410e68e027ba6eca1af9bc",
+    "immutable_revision": "bb8a775199d1dafb5f410e68e027ba6eca1af9bc",
+    "access": "public",
+    "allowed_hosts": ["github.com", "raw.githubusercontent.com"]
+  },
+  "tasks": [
+    {
+      "task_id": "airfoil_aerodynamics",
+      "description": "Estimate lift, drag, pitching moment, transition locations, and model confidence for one Kulfan-parameterized airfoil case.",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "upper_weights",
+          "lower_weights",
+          "leading_edge_weight",
+          "te_thickness",
+          "alpha_deg",
+          "reynolds_number",
+          "n_crit",
+          "xtr_upper",
+          "xtr_lower"
+        ],
+        "properties": {
+          "upper_weights": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "number"}},
+          "lower_weights": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "number"}},
+          "leading_edge_weight": {"type": "number"},
+          "te_thickness": {"type": "number", "minimum": 0, "maximum": 0.1},
+          "alpha_deg": {"type": "number", "minimum": -30, "maximum": 30},
+          "reynolds_number": {"type": "number", "minimum": 10000, "maximum": 100000000},
+          "n_crit": {"type": "number", "minimum": 1, "maximum": 14},
+          "xtr_upper": {"type": "number", "minimum": 0, "maximum": 1},
+          "xtr_lower": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["analysis_confidence", "cl", "cd", "cm", "top_xtr", "bottom_xtr"],
+        "properties": {
+          "analysis_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "cl": {"type": "number"},
+          "cd": {"type": "number", "minimum": 0},
+          "cm": {"type": "number"},
+          "top_xtr": {"type": "number", "minimum": 0, "maximum": 1},
+          "bottom_xtr": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      },
+      "units": {
+        "alpha_deg": "degree",
+        "reynolds_number": "1",
+        "te_thickness": "chord fraction",
+        "cl": "1",
+        "cd": "1",
+        "cm": "1",
+        "top_xtr": "chord fraction",
+        "bottom_xtr": "chord fraction"
+      },
+      "coordinate_convention": "Kulfan upper and lower arrays contain eight CST weights from leading edge to trailing edge; positive alpha is nose-up; transition locations are x/c."
+    }
+  ],
+  "license": {
+    "expression": "MIT",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "location": "LICENSE.txt",
+        "sha256": "f3a3857f0bfab1733bcea48be8b6f1ad2c43176f855362cdd6c334a360a93450"
+      }
+    ],
+    "attribution": "NeuralFoil copyright (c) 2023-2023 Peter Sharpe; model and equations by Peter Sharpe and R. John Hansman.",
+    "redistribution": "allowed",
+    "acceptance_required": false
+  },
+  "limitations": [
+    {
+      "limitation_id": "xfoil-surrogate",
+      "description": "The model is trained primarily against XFoil results, so it inherits XFoil assumptions and is not certification-grade CFD or experimental evidence.",
+      "severity": "critical"
+    },
+    {
+      "limitation_id": "confidence-is-not-probability",
+      "description": "analysis_confidence is an out-of-distribution indicator, not a calibrated probability that every coefficient is accurate.",
+      "severity": "caution"
+    },
+    {
+      "limitation_id": "bounded-kulfan-entry",
+      "description": "This Wright adapter accepts exact eight-weight-per-side Kulfan inputs only and does not provide AeroSandbox coordinate fitting, compressibility, post-stall, or control-surface extensions.",
+      "severity": "caution"
+    }
+  ],
+  "remote_code_policy": "forbidden",
+  "review_state": "approved",
+  "variants": [
+    {
+      "variant_id": "medium-npz-cpu-f64",
+      "format": "numpy-npz",
+      "precision": "float32-weights-float64-math",
+      "platforms": ["linux/x86_64", "linux/aarch64", "windows/x86_64", "macos/aarch64"],
+      "accelerator": "cpu",
+      "runtime": {
+        "adapter_id": "wright-neuralfoil-numpy",
+        "contract_version": "1.0",
+        "version_specifier": "==1.0.0"
+      },
+      "resources": {
+        "download_bytes": 112237,
+        "installed_bytes": 112237,
+        "ram_bytes": 268435456,
+        "vram_bytes": 0,
+        "load_timeout_ms": 5000,
+        "inference_timeout_ms": 2000,
+        "max_output_bytes": 4096
+      },
+      "artifacts": [
+        {
+          "path": "LICENSE.txt",
+          "role": "license",
+          "media_type": "text/plain",
+          "size": 1074,
+          "sha256": "f3a3857f0bfab1733bcea48be8b6f1ad2c43176f855362cdd6c334a360a93450",
+          "source_uri": "https://raw.githubusercontent.com/peterdsharpe/NeuralFoil/bb8a775199d1dafb5f410e68e027ba6eca1af9bc/LICENSE.txt",
+          "redistributable": true
+        },
+        {
+          "path": "model/nn-medium.npz",
+          "role": "model_data",
+          "media_type": "application/vnd.numpy.npz",
+          "size": 103467,
+          "sha256": "6cae229ce9ab9df0c3c68a1a441fae529a78481409d6b3ac4baf17ee58715952",
+          "source_uri": "https://raw.githubusercontent.com/peterdsharpe/NeuralFoil/bb8a775199d1dafb5f410e68e027ba6eca1af9bc/neuralfoil/nn_weights_and_biases/nn-medium.npz",
+          "redistributable": true
+        },
+        {
+          "path": "model/scaled_input_distribution.npz",
+          "role": "metadata",
+          "media_type": "application/vnd.numpy.npz",
+          "size": 7696,
+          "sha256": "63a33149c902ad01ecf537dd2d127d9e7ffbf86527893f4dc76f25f7087a3573",
+          "source_uri": "https://raw.githubusercontent.com/peterdsharpe/NeuralFoil/bb8a775199d1dafb5f410e68e027ba6eca1af9bc/neuralfoil/nn_weights_and_biases/scaled_input_distribution.npz",
+          "redistributable": true
+        }
+      ],
+      "test_vectors": [
+        {
+          "schema_version": "1.0",
+          "vector_id": "official-golden-kulfan-medium",
+          "version": 1,
+          "task_id": "airfoil_aerodynamics",
+          "input_schema_sha256": "585952b672fbe7fe0a914b82983b439b9bf234b2699235f9b1cb23e4f841cf95",
+          "output_schema_sha256": "83ae2add1289e81cdfdad3aac0e9635e634c35933fba889bd277b36a3cd76806",
+          "deterministic_seed": 0,
+          "units": {
+            "alpha_deg": "degree",
+            "reynolds_number": "1",
+            "te_thickness": "chord fraction",
+            "cl": "1",
+            "cd": "1",
+            "cm": "1",
+            "top_xtr": "chord fraction",
+            "bottom_xtr": "chord fraction"
+          },
+          "coordinate_convention": "Kulfan upper and lower arrays contain eight CST weights from leading edge to trailing edge; positive alpha is nose-up; transition locations are x/c.",
+          "input": {
+            "upper_weights": [0.20, 0.25, 0.20, 0.27, 0.20, 0.25, 0.20, 0.20],
+            "lower_weights": [-0.10, -0.05, -0.10, 0.00, 0.05, 0.05, 0.10, 0.10],
+            "leading_edge_weight": 0.15,
+            "te_thickness": 0.002,
+            "alpha_deg": 5.0,
+            "reynolds_number": 1000000.0,
+            "n_crit": 9.0,
+            "xtr_upper": 1.0,
+            "xtr_lower": 1.0
+          },
+          "expected": {
+            "kind": "relative_tolerance",
+            "value": {
+              "analysis_confidence": 0.955711837783,
+              "cl": 1.10332809679,
+              "cd": 0.00919882438456,
+              "cm": -0.110598030451,
+              "top_xtr": 0.250543496781,
+              "bottom_xtr": 0.964878409058
+            },
+            "relative_tolerance": 0.000001
+          },
+          "limitations_exercised": ["xfoil-surrogate", "confidence-is-not-probability", "bounded-kulfan-entry"],
+          "limits": {
+            "load_timeout_ms": 5000,
+            "inference_timeout_ms": 2000,
+            "max_output_bytes": 4096
+          },
+          "mandatory": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "feature_order": ["fntx"],
+  "units": ["probability"],
+  "batch_provenance": {
+    "producer_artifact_id": "fixture-candidates",
+    "producer_schema_digest": "invalid",
+    "producer_tool": "unreviewed",
+    "simulation_only": false
+  },
+  "candidates": []
+}

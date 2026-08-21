@@ -4,6 +4,7 @@ import asyncio
 from types import SimpleNamespace
 from typing import Any
 
+import httpx
 import pytest
 from mcp.types import LATEST_PROTOCOL_VERSION
 
@@ -12,8 +13,35 @@ from tool_registry.runners.protocol import (
     MCP_APP_MIME_TYPE,
     ChildProtocolState,
 )
-from tool_registry.runners.sse import SseRunner
+from tool_registry.runners.sse import _OAuthCallbackServer, SseRunner
 from tool_registry.runners.stdio import StdioRunner
+
+
+@pytest.mark.asyncio
+async def test_streamable_http_direct_rpc_error_is_not_discarded() -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            headers={"content-type": "application/json"},
+            json={
+                "jsonrpc": "2.0",
+                "id": 1,
+                "error": {"code": -32001, "message": "publisher entitlement missing"},
+            },
+            request=request,
+        )
+
+    runner = SseRunner("https://example.test/mcp", oauth_enabled=False)
+    runner.client = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    runner._message_endpoint = runner.sse_url
+    runner._is_streamable_http = True
+
+    try:
+        with pytest.raises(RuntimeError, match="publisher entitlement missing"):
+            await asyncio.wait_for(runner._send_request("tools/call", {}), timeout=1)
+        assert runner._pending_requests == {}
+    finally:
+        await runner.client.aclose()
 
 
 def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabled() -> (
@@ -86,6 +114,48 @@ async def test_child_resource_template_read_and_subscription_operations(
         ("resources/subscribe", {"uri": "ui://reference/app"}),
         ("resources/unsubscribe", {"uri": "ui://reference/app"}),
     ]
+
+
+@pytest.mark.asyncio
+async def test_oauth_callback_server_returns_code_and_state() -> None:
+    callback = _OAuthCallbackServer(timeout=5.0)
+    redirect_uri = await callback.start()
+    parsed = redirect_uri.split(":", 2)
+    port = int(parsed[2].split("/", 1)[0])
+
+    result_task = asyncio.create_task(callback.wait_for_callback())
+    reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    writer.write(
+        b"GET /oauth/callback?code=fixture-code&state=fixture-state HTTP/1.1\r\n"
+        b"Host: 127.0.0.1\r\n\r\n"
+    )
+    await writer.drain()
+
+    assert await result_task == ("fixture-code", "fixture-state")
+    response = await reader.read()
+    assert b"Wright MCP sign-in complete" in response
+    writer.close()
+    await writer.wait_closed()
+    await callback.close()
+
+
+@pytest.mark.asyncio
+async def test_oauth_callback_server_ignores_browser_asset_requests() -> None:
+    callback = _OAuthCallbackServer(timeout=5.0)
+    redirect_uri = await callback.start()
+    port = int(redirect_uri.split(":", 2)[2].split("/", 1)[0])
+
+    reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    writer.write(b"GET /favicon.ico HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n")
+    await writer.drain()
+
+    response = await reader.read()
+    assert b"400 Bad Request" in response
+    assert callback.future is not None
+    assert not callback.future.done()
+    writer.close()
+    await writer.wait_closed()
+    await callback.close()
 
 
 @pytest.mark.asyncio

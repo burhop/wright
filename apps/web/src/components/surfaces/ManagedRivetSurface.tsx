@@ -61,6 +61,11 @@ export function ManagedRivetSurface({
 
     void ensureRivetEditorRunning(workspaceId, sessionId)
       .then(async (surfaceId) => {
+        // React may retire this effect while the shared, idempotent startup is
+        // still resolving. Do not issue a presentation that this mount can no
+        // longer display; Strict Mode and rapid tab changes otherwise create a
+        // burst of immediately abandoned preview sessions.
+        if (!active) return;
         const presentation = await createPresentation(
           surfaceId,
           workspaceId,

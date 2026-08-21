@@ -2,13 +2,16 @@ name: python-quality
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [main, dev]
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   python-quality:
     runs-on: ubuntu-latest
@@ -28,8 +31,14 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Set up Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: "npm"
       - name: Install dependencies
-        run: uv sync --all-packages --all-groups
+        # Rivet assets are force-included from integrations/, outside the Python package root.
+        run: uv sync --all-packages --all-groups --reinstall-package wright-engineering
 
       - name: Lint with Ruff
         run: uv run ruff check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
@@ -60,7 +69,17 @@ jobs:
       - name: Run Tests with pytest
         run: |
           uv run python -m pytest -q tests/native_runtime tests/release/test_native_workflow_policy.py
-          uv run python -m pytest
+          for python_suite in \
+            apps/api/tests \
+            packages/agent_adapters/tests \
+            packages/core/tests \
+            packages/data_vault/tests \
+            packages/model_registry/tests \
+            packages/tool_registry/tests \
+            packages/workspace_service/tests \
+            tests; do
+            uv run --extra runtime --extra engineering-models python -m pytest -q "$python_suite"
+          done
 
       - name: Enforce ratcheted release-code coverage
         run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85

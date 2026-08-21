@@ -20,3 +20,14 @@ exact Wright wheel hash, runtime-extra lock, platform/architecture, lifecycle or
 MCP result, source isolation, and forbidden-executable audit. Fixture-only or
 skipped runs do not make a platform supported. Docker publication to both GHCR
 and Docker Hub remains mandatory and independent.
+
+Every supporting record is bound to one immutable artifact digest, operating
+system, architecture, manager profile, storage profile, source-isolated
+candidate, forbidden-executable audit, and passed install/start/status/doctor/
+use/stop/update/persistence/rollback/uninstall/offline checks. Evidence from a
+different artifact, platform, or architecture remains visible but cannot fill
+that record. Unavailable Windows, Linux, or macOS hosts remain explicitly
+unverified and do not turn contract or fixture results into support claims.
+
+For retained-state behavior and the exact difference between update, rollback,
+uninstall, and purge, see [Engineering Program State Lifecycle](program-state-lifecycle.md).

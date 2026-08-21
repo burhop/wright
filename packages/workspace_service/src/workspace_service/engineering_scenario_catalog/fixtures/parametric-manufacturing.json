@@ -1,0 +1,38 @@
+[
+  {
+    "schema_version": "1.0", "artifact_id": "parameter-tree", "domain": "grasshopper", "kind": "data-tree",
+    "source_schema": {"name": "grasshopper-data-tree-summary", "version": "1.0", "media_type": "application/vnd.wright.data-tree+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-grasshopper", "call_id": "parametric-tree", "capability": "grasshopper__generate_tree"},
+    "upstream_digests": [], "units": {"radius": "mm"},
+    "content": {"branches": [{"path": "{0;0}", "items": [{"type": "number", "value": 12}]}, {"path": "{0;1}", "items": [{"type": "number", "value": 18}]}]}, "content_digest": "bbadf08855e2beb75190138811da5e211da00b02d776faff91a930213720799d", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "parametric-geometry", "domain": "cad", "kind": "mesh",
+    "source_schema": {"name": "wright-mesh-summary", "version": "1.0", "media_type": "application/vnd.wright.mesh+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cad", "call_id": "parametric-cad", "capability": "cad__build_parametric"},
+    "upstream_digests": ["bbadf08855e2beb75190138811da5e211da00b02d776faff91a930213720799d"], "units": {"bounds": "mm", "volume": "mm3"},
+    "coordinate_system": {"name": "wright-right-handed-z-up", "handedness": "right", "length_unit": "mm"},
+    "content": {"vertex_count": 96, "face_count": 188, "bounds": [-18, 18, -18, 18, 0, 20], "degenerate_faces": 0, "manifold": true, "volume": 12960}, "content_digest": "cda61be496abe20549b55cb50b5b5c3d031509c7195e9f6b0a93dbbcc09dd41c", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "additive-package", "domain": "additive", "kind": "3mf-summary",
+    "source_schema": {"name": "3mf-core", "version": "1.3", "media_type": "model/3mf"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-additive", "call_id": "parametric-3mf", "capability": "additive__build_3mf"},
+    "upstream_digests": ["cda61be496abe20549b55cb50b5b5c3d031509c7195e9f6b0a93dbbcc09dd41c"], "units": {"length": "mm"},
+    "content": {"package_type": "3mf", "unit": "millimeter", "mesh_count": 1, "build_item_count": 1, "invalid_triangle_count": 0, "relationships_valid": true}, "content_digest": "7de89b0e675aff9bf40dc6018f6effe68bd5cc932194bdd44a1e916b20769ff6", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "slice-summary", "domain": "slicing", "kind": "slicer-summary",
+    "source_schema": {"name": "wright-slicer-summary", "version": "1.0", "media_type": "application/vnd.wright.slicer+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-slicer", "call_id": "parametric-slicer", "capability": "slicer__summarize"},
+    "upstream_digests": ["7de89b0e675aff9bf40dc6018f6effe68bd5cc932194bdd44a1e916b20769ff6"], "units": {"layer_count": "1", "layer_height": "mm"},
+    "content": {"layer_count": 100, "layer_height": 0.2, "estimated_material_volume": 12960}, "content_digest": "807926db552487609eeb629d9588fcba3fc0ffba7582ca86ec12ca82f58bdefb", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "cam-program", "domain": "cam", "kind": "gcode-static",
+    "source_schema": {"name": "rs274ngc-static-summary", "version": "3", "media_type": "text/x.gcode"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cam", "call_id": "parametric-cam", "capability": "cam__static_lint"},
+    "upstream_digests": ["807926db552487609eeb629d9588fcba3fc0ffba7582ca86ec12ca82f58bdefb"], "units": {},
+    "content": {"dialect": "rs274ngc-static", "unit_mode": "mm", "static_only": true, "program": "(WRIGHT STATIC ANALYSIS ONLY)\nG21\nG90\n(geometry bounds declared; no motion or machine control)"}, "content_digest": "833df8e70cef3840e9099eb08a0ef28721a96c0ea9683751d6bf2ab5445a7ebb", "validation_state": "valid"
+  }
+]

@@ -36,6 +36,24 @@ class BrepPanelGatewayLifecycle:
         }:
             raise ValueError("The Wright BREP gateway requires a loopback API URL")
 
+    def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]:
+        if server_id == self.server_id:
+            return {
+                "kind": "panel",
+                "visible_application": True,
+                "cancellation_supported": True,
+                "recovery_action": "reopen_panel_and_inspect",
+            }
+        resolver = getattr(self.delegate, "lifecycle_projection", None)
+        if callable(resolver):
+            return dict(resolver(server_id))
+        return {
+            "kind": "ordinary",
+            "visible_application": False,
+            "cancellation_supported": True,
+            "recovery_action": None,
+        }
+
     async def ensure_started(
         self, server_id: str, *, workspace_path: str, approval_context: Any
     ) -> None:

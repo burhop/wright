@@ -183,6 +183,7 @@ class DatabaseLifecycleAdapter:
             return SseRunner(
                 server.command,
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
+                server_id=server_id,
             )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")
 

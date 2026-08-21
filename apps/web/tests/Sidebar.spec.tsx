@@ -16,6 +16,7 @@ describe("Sidebar", () => {
     expect(screen.getByTestId("nav-tool-registry")).toBeInTheDocument();
     expect(screen.getByTestId("nav-logs")).toBeInTheDocument();
     expect(screen.getByTestId("nav-model-setup")).toBeInTheDocument();
+    expect(screen.getByTestId("nav-engineering-models")).toBeInTheDocument();
     expect(screen.getByTestId("nav-settings")).toBeInTheDocument();
   });
 });

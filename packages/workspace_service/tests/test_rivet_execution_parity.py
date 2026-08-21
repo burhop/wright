@@ -93,7 +93,7 @@ async def test_mcp_and_canvas_execute_the_same_revision_with_identical_output(
         "inputs": {"input": "identical result"},
     }
     mcp_result = await mcp_service.dispatch("run_workflow", run_arguments)
-    assert mcp_result["state"] == "succeeded"
+    assert mcp_result["state"] == "succeeded", mcp_result
 
     settings = RunnerSettings(enabled=True, real_execution_enabled=True)
     supervisor = _supervisor()

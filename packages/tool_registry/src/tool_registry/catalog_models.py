@@ -13,6 +13,7 @@ from .models import (
     ValidationStatus,
     VerificationState,
 )
+from .windows_qualification_models import WindowsQualificationSummary
 
 EvidenceClass = Literal[
     "official_production",
@@ -239,6 +240,7 @@ class CatalogEntry(BaseModel):
     default_enabled: bool = True
     approval_gates: list[str] = Field(default_factory=list)
     validation_result: ValidationSummary = Field(default_factory=ValidationSummary)
+    windows_qualification: WindowsQualificationSummary | None = None
     follow_up_url: Optional[str] = None
     install_blocked_reason: Optional[str] = None
 

@@ -13,6 +13,7 @@ from wright_engineering.runtime.server import (
     packaged_static_path,
     prepare_runtime_environment,
     runtime_identity_payload,
+    native_ui_url,
 )
 
 
@@ -37,13 +38,32 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
     assert values["WRIGHT_RIVET_WORKFLOWS_ENABLED"] == "1"
     assert values["WRIGHT_RIVET_RUNNER_ENABLED"] == "1"
     assert values["WRIGHT_RIVET_EDITOR_ENABLED"] == "1"
+    assert values["WRIGHT_RIVET_AI_ENABLED"] == "1"
     assert values["WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED"] == "1"
     assert values["WRIGHT_SURFACES_ENABLED"] == "1"
     assert values["WRIGHT_SURFACES_LIVE_APPS_ENABLED"] == "1"
+    assert values["WRIGHT_SURFACE_PREVIEW_DOMAIN"] == "wright.localhost"
+    assert values["WRIGHT_SURFACE_PREVIEW_PORT"] == "8000"
+    assert values["WRIGHT_ALLOWED_ORIGINS"] == ",".join(
+        (
+            "http://127.0.0.1:8000",
+            "http://localhost:8000",
+            "http://wright.localhost:8000",
+        )
+    )
     assert values["WRIGHT_WORKSPACE_ROOT"] == str(layout.workspaces)
     assert values["WRIGHT_WORKSPACES_DIR"] == str(layout.workspaces)
     assert environment == values
     assert layout.workspaces.is_dir()
+
+
+def test_native_loopback_ui_and_rivet_preview_share_a_browser_site() -> None:
+    ui_url = native_ui_url("127.0.0.1", 8765)
+
+    assert ui_url == "http://wright.localhost:8765/"
+    assert "s-presentation.wright.localhost".endswith(
+        "." + ui_url.split("//", 1)[1].split(":", 1)[0]
+    )
 
 
 def test_windows_workstation_startup_enables_rivet_without_eager_launch() -> None:

@@ -135,7 +135,9 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
             )
 
             assert not result.isError
-            assert result.structuredContent["state"] == "succeeded"
+            assert result.structuredContent["state"] == "succeeded", (
+                result.structuredContent
+            )
             assert (
                 result.structuredContent["outputs"]["output"]["value"]
                 == "hello through MCP"
@@ -267,10 +269,21 @@ async def test_templates_create_inspect_validate_and_list_round_trip(tmp_path) -
 
 
 @pytest.mark.asyncio
-async def test_run_tool_requires_exact_identity_and_durable_review(tmp_path) -> None:
+async def test_run_tool_requires_exact_identity_but_not_workflow_review(
+    tmp_path,
+) -> None:
     service = RivetWorkflowMcpService(
         RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     )
+
+    async def run_handler(arguments, document, validation, progress_callback):
+        return {
+            "runId": "run-1",
+            "revision": document.revision,
+            "graph": validation.main_graph.name,
+        }
+
+    service.run_handler = run_handler
     server, client_write, server_read, server_write, client_read = await _session(
         service
     )
@@ -294,9 +307,6 @@ async def test_run_tool_requires_exact_identity_and_durable_review(tmp_path) -> 
                     "inputs": {"input": "hello"},
                 },
             )
-            assert result.isError
-            assert (
-                result.structuredContent["error"]["code"]
-                == "RIVET_WORKFLOW_REVIEW_REQUIRED"
-            )
+            assert not result.isError
+            assert result.structuredContent["runId"] == "run-1"
         group.cancel_scope.cancel()
