@@ -17,7 +17,13 @@ FROM ${WRIGHT_BASE_IMAGE}
 
 USER root
 
-RUN node --version && npm --version
+# Reviewed bundle entries can be pinned Git sources. Keep this dependency in the
+# engineering-tools flavor instead of expanding the standard Wright image.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/* && \
+    git --version && \
+    node --version && npm --version
 
 COPY docker/entrypoint.sh /entrypoint.sh
 
