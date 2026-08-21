@@ -117,7 +117,7 @@ def test_playwright_ci_fails_fast_without_retries() -> None:
     config = read_text("playwright.config.ts")
 
     assert "retries: 0" in config
-    assert "maxFailures: process.env.CI ? 1 : undefined" in config
+    assert "maxFailures: process.env.CI ? 5 : undefined" in config
     assert "retries: process.env.CI" not in config
 
 

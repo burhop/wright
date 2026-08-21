@@ -83,8 +83,23 @@ while IFS= read -r changed_file; do
       CHECK_FRONTEND=1
       CHECK_PYTHON=1
       CHECK_DOCS=1
+      PYTHON_TEST_TARGETS+=(
+        tests/release/test_dev_push_process.py
+        tests/test_alpha_release_readiness.py
+        tests/test_release_engineering_scripts.py
+        tests/test_security_scanner_setup.py
+      )
       ;;
-    apps/web/*|playwright*.ts|package.json|package-lock.json)
+    playwright*.ts)
+      CHECK_FRONTEND=1
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/test_alpha_release_readiness.py)
+      ;;
+    .gitleaks.toml|.pre-commit-config.yaml)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
+      ;;
+    apps/web/*|package.json|package-lock.json)
       CHECK_FRONTEND=1
       ;;
     docs/*|specs/*|mkdocs.yml)
@@ -210,7 +225,9 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     PLAYWRIGHT_TARGETS=(
       tests/ui-integration/navigation.spec.ts
       tests/ui-integration/workspace-surfaces/focus-layout.spec.ts
+      tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts
       tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts
+      tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts
     )
   fi
   mapfile -t PLAYWRIGHT_TARGETS < <(printf '%s\n' "${PLAYWRIGHT_TARGETS[@]}" | sort -u)

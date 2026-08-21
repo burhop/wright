@@ -53,7 +53,12 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "--project=chromium" in gate
     assert "tests/ui-integration/navigation.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts" in gate
+    assert "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts" in gate
+    assert "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts" in gate
+    assert "tests/test_alpha_release_readiness.py" in gate
+    assert "tests/test_release_engineering_scripts.py" in gate
+    assert "tests/test_security_scanner_setup.py" in gate
 
 
 def test_browser_gate_uses_isolated_configurable_ports() -> None:
@@ -80,3 +85,20 @@ def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
 
     assert "needs: frontend-quality" not in workflow
     assert "cancel-in-progress: true" in workflow
+
+
+def test_codeql_cancels_superseded_runs_and_skips_generated_bundles() -> None:
+    workflow = _read(".github/workflows/codeql.yml")
+    config = _read(".github/codeql/codeql-config.yml")
+
+    assert "config-file: ./.github/codeql/codeql-config.yml" in workflow
+    assert "cancel-in-progress: true" in workflow
+    for generated_path in (
+        "integrations/rivet/editor/dist/**",
+        "integrations/rivet/runner/dist/**",
+        "integrations/rivet/runner/artifacts/**",
+        "src/wright_engineering/static/web/**",
+    ):
+        assert generated_path in config
+    assert "apps/web/src" not in config
+    assert "apps/api" not in config

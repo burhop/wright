@@ -24,6 +24,11 @@ Direct pushes to `dev` are not part of the supported development workflow.
 5. Push one validated change set, then inspect all CI jobs before making another
    change. Do not use CI as a one-error-at-a-time discovery loop.
 
+If a branch predates this runbook, has not had a green cumulative CI run, or
+adopts a materially changed gate, run the full merge gate once before relying
+on the last-pushed-tip fast baseline. This one-time bootstrap prevents an older
+branch failure from hiding outside the latest incremental diff.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
@@ -60,6 +65,9 @@ cross-browser coverage.
 - Classify the failure as product behavior, test contract, test isolation,
   platform/profile drift, packaging, or infrastructure.
 - Reproduce the failing command locally or in the matching clean container.
+- Long-running independent analysis may overlap deterministic local
+  reproduction, but do not push a replacement commit until every job from the
+  previous commit has reached a terminal state.
 - After two failed pushes for the same cause, stop pushing. Build a deterministic
   reproducer and make one consolidated correction.
 - When CI catches a failure class the local gate missed, update the gate and

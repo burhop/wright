@@ -88,6 +88,8 @@ async function mockRivetWorkflow(page: Page) {
   let savedProject = "";
   let templateCreated = false;
   let reviewState: "approved" | null = null;
+  let runPolls = 0;
+  let hasRun = false;
 
   await page.route("**/api/auth/session/status", (route) =>
     route.fulfill({ json: { auth_required: false, authenticated: true } }),
@@ -135,7 +137,8 @@ async function mockRivetWorkflow(page: Page) {
       },
     });
   });
-  await page.route("**/api/workspace/workflows/rivet/runs", (route) =>
+  await page.route("**/api/workspace/workflows/rivet/runs", (route) => {
+    hasRun = true;
     route.fulfill({
       json: {
         run_id: "run-1",
@@ -150,7 +153,88 @@ async function mockRivetWorkflow(page: Page) {
         duration_ms: null,
         output_truncated: false,
       },
+    });
+  });
+  const runSummary = (state: "running" | "succeeded") => ({
+    run_id: "run-1",
+    workspace_id: "ws-1",
+    session_id: "session-1",
+    workflow_id: workflow.workflow_id,
+    revision,
+    digest: workflow.digest,
+    graph: null,
+    generation: 1,
+    state,
+    started_at: "2026-08-20T14:00:00Z",
+    completed_at: state === "succeeded" ? "2026-08-20T14:00:01Z" : null,
+    duration_ms: state === "succeeded" ? 8 : null,
+    reason_code: null,
+    trace_id: "trace-rivet",
+    latest_sequence: state === "succeeded" ? 2 : 1,
+    has_outputs: state === "succeeded",
+    has_diagnostic: false,
+    output_truncated: false,
+    output_redaction_count: 0,
+  });
+  const runInspection = (state: "running" | "succeeded") => ({
+    schema_version: 1,
+    run: runSummary(state),
+    progress: {
+      phase: state,
+      current_step_id: null,
+      completed_steps: state === "succeeded" ? 1 : 0,
+      total_steps: 1,
+      last_sequence: state === "succeeded" ? 2 : 1,
+      updated_at: "2026-08-20T14:00:01Z",
+    },
+    events: [],
+    steps: [],
+    final_outputs:
+      state === "succeeded"
+        ? [
+            {
+              result_id: "output",
+              name: "output",
+              origin: "workflow_output",
+              kind: "string",
+              value: "Hello",
+              preview: '"Hello"',
+              complete: true,
+              truncation_reason: null,
+              original_bytes: 5,
+              retained_bytes: 5,
+              digest: "c".repeat(64),
+              redaction_count: 0,
+              artifact: null,
+            },
+          ]
+        : [],
+    diagnostic: null,
+    completeness: {
+      outputs_complete: true,
+      steps_complete: true,
+      events_complete: true,
+      evidence_available: true,
+      reasons: [],
+    },
+  });
+  await page.route("**/api/workspace/workflows/rivet/runs?*", (route) =>
+    route.fulfill({
+      json: {
+        workflow_id: workflow.workflow_id,
+        current_revision: revision,
+        runs: hasRun ? [runSummary(runPolls ? "succeeded" : "running")] : [],
+      },
     }),
+  );
+  await page.route(
+    "**/api/workspace/workflows/runs/run-1/inspection?*",
+    (route) => {
+      runPolls += 1;
+      return route.fulfill({
+        json: runInspection(runPolls > 1 ? "succeeded" : "running"),
+      });
+    },
   );
   await page.route(
     "**/api/workspace/workflows/runs/run-1?session_id=*",
@@ -309,18 +393,14 @@ test.describe("Rivet 2 retained canvas", () => {
       toolbar.getByLabel("Open Rivet workflow from workspace"),
     ).toHaveCount(0);
 
-    await page.getByTestId("direct-rivet-run").click();
+    await page.getByTestId("direct-rivet-run-options").click();
     const runPanel = page.getByTestId("direct-rivet-run-panel");
     await expect(runPanel).toHaveCSS("background-color", "rgb(24, 34, 56)");
-    await expect(page.getByTestId("direct-rivet-review-state")).toContainText(
-      "needs approval",
-    );
-    await expect(page.getByTestId("direct-rivet-run-start")).toBeDisabled();
-    await page.getByTestId("direct-rivet-run-approve").click();
     await expect(page.getByTestId("direct-rivet-run-start")).toBeEnabled();
     await page.getByTestId("direct-rivet-run-start").click();
-    await expect(page.getByTestId("direct-rivet-run-feedback")).toContainText(
-      'Run succeeded in 8 ms. Output: output: "Hello"',
+    await expect(page.getByTestId("rivet-run-state-succeeded")).toBeVisible();
+    await expect(page.getByTestId("rivet-run-result-output")).toContainText(
+      "Hello",
     );
 
     await toolbar.getByTestId("direct-rivet-template-picker").click();
