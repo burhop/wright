@@ -19,7 +19,7 @@ Docker Hub as a required byte-identical distribution target.
 | `dependency-review.yml`         | Pull request to `main` or `dev`                                          | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories.                                                                                                                                                                                      |
 | `docker-pr.yml`                 | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images.                                                                                                         |
 | `docker-build.yml`              | Reusable `workflow_call` from `release.yml`                              | Builds one amd64 OCI candidate, smokes and scans that exact subject, enforces vulnerability policy, records evidence, and optionally pushes and attests the candidate digest.                                                                                                                |
-| `docker-image-family.yml`       | Push to `dev` or `main` when container/application inputs change; release-train call; manual dispatch | Builds and smokes the Linux engineering-tools image family on native amd64 and arm64 runners, then publishes matching GHCR and Docker Hub tags such as `dev-engineering-tools-linux-amd64`, `dev-engineering-tools-linux-arm64`, or `<version>-engineering-tools-linux-arm64`. |
+| `docker-image-family.yml`       | Pull request or push to `dev` or `main` when container/application inputs change; release-train call; manual dispatch | Builds and smokes the Linux engineering-tools image family on native amd64 and arm64 runners. Pull requests validate without publishing; branch pushes and approved release calls publish matching GHCR and Docker Hub tags such as `dev-engineering-tools-linux-amd64`, `dev-engineering-tools-linux-arm64`, or `<version>-engineering-tools-linux-arm64`. |
 | `docs-deploy.yml`               | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run  | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds.                                                                                                                                                                                                            |
 | `sync-hermes-plugin-mirror.yml` | Relevant push to `main` or `dev`, or manual run                          | Generates and validates the thin Hermes plugin mirror, records provenance, and publishes the selected mirror branch when enabled.                                                                                                                                                            |
 | `release-drafter.yml`           | Push to `main` or `dev`                                                  | Updates the draft release notes from merged PR metadata.                                                                                                                                                                                                                                     |
@@ -29,7 +29,9 @@ Docker Hub as a required byte-identical distribution target.
 
 Pull requests to `main` or `dev` run source, frontend, Windows, docs, CodeQL,
 dependency, and public-alpha safety gates. When container or application inputs
-change, `docker-pr.yml` also builds and validates the exact PR image:
+change, `docker-pr.yml` builds and validates the exact standard PR image, while
+`docker-image-family.yml` builds and smokes the engineering-tools image on native
+amd64 and arm64 runners:
 
 ```bash
 uv run pytest
@@ -41,8 +43,8 @@ python scripts/check-public-alpha-leaks.py
 
 The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
 workflow runs Ruff and mypy in warning mode. The docs workflow builds strictly on
-pull requests and branch pushes but deploys only from `main`. The Docker PR gate
-does not publish public images.
+pull requests and branch pushes but deploys only from `main`. Neither pull-request
+Docker gate publishes public images.
 
 ## Local Merge Gates
 

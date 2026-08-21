@@ -33,6 +33,11 @@ The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Gate or workflow changes run all slices.
+Container and engineering-image changes also select the Docker bundle, smoke
+contract, and workflow-policy tests. Pull-request CI remains authoritative for
+the native amd64 and arm64 image builds that cannot be reproduced on every
+developer host; both images must build and pass their exact-image smoke tests.
+
 It uses dedicated browser-test ports, so the normal Wright UI on
 5173 and API on 8000 can remain running. Python checks use the cached,
 Git-ignored `.venv-dev-gate` environment instead of modifying the environment

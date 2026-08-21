@@ -61,6 +61,15 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "tests/test_security_scanner_setup.py" in gate
 
 
+def test_fast_gate_routes_container_changes_to_image_contract_tests() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+
+    assert ".github/workflows/docker-image-family.yml|docker/*|scripts/docker-*" in gate
+    assert "tests/docker/test_mcp_bundle.py" in gate
+    assert "tests/test_docker_smoke_contract.py" in gate
+    assert "tests/release/test_workflow_policy.py" in gate
+
+
 def test_browser_gate_uses_isolated_configurable_ports() -> None:
     push_gate = _read("scripts/check-dev-push.sh")
     merge_gate = _read("scripts/check-dev-merge.sh")

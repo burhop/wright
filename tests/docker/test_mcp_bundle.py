@@ -223,7 +223,12 @@ def test_dockerfile_mcp_derives_from_existing_appliance_contract_and_reuses_node
     assert "# syntax=docker/dockerfile:1.7" in dockerfile
     assert "ARG WRIGHT_BASE_IMAGE=wright:test" in dockerfile
     assert "FROM ${WRIGHT_BASE_IMAGE}" in dockerfile
-    assert "RUN node --version && npm --version" in dockerfile
+    install_git = "apt-get install -y --no-install-recommends git"
+    assert install_git in dockerfile
+    assert dockerfile.index(install_git) < dockerfile.index(
+        "/opt/wright/mcp/install-bundle.sh"
+    )
+    assert "node --version && npm --version" in dockerfile
     assert "FROM node:" not in dockerfile
     assert "COPY --from=node-runtime" not in dockerfile
     assert "WRIGHT_MCP_BUNDLE_FILE" in dockerfile
@@ -424,6 +429,10 @@ def test_engineering_tools_image_family_cd_publishes_clear_tags() -> None:
     assert "ubuntu-24.04-arm" in workflow
     assert "DOCKERHUB_TOKEN is required to publish engineering-tools images" in workflow
     assert "scripts/docker-mcp-smoke-test.sh" in workflow
+    assert "pull_request:" in workflow
+    assert 'GITHUB_EVENT_NAME}" == "pull_request"' in workflow
+    assert 'prefix="pr-${PR_NUMBER}"' in workflow
+    assert 'publish="false"' in workflow
 
 
 def test_docs_link_mcp_quickstart_from_existing_guides() -> None:

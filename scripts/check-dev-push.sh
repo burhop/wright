@@ -101,6 +101,14 @@ PLAYWRIGHT_TARGETS=()
 while IFS= read -r changed_file; do
   [[ -z "$changed_file" ]] && continue
   case "$changed_file" in
+    .github/workflows/docker-image-family.yml|docker/*|scripts/docker-*)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(
+        tests/docker/test_mcp_bundle.py
+        tests/test_docker_smoke_contract.py
+        tests/release/test_workflow_policy.py
+      )
+      ;;
     .github/workflows/*|scripts/check-dev-*|Makefile|AGENTS.md)
       CHECK_FRONTEND=1
       CHECK_PYTHON=1

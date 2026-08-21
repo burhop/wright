@@ -1,6 +1,19 @@
 name: Engineering tools image family
 
 on:
+  pull_request:
+    branches: [dev, main]
+    paths:
+      - .github/workflows/docker-image-family.yml
+      - docker/**
+      - scripts/docker-image-family-build.sh
+      - scripts/docker-mcp-smoke-test.sh
+      - apps/**
+      - packages/**
+      - pyproject.toml
+      - uv.lock
+      - package-lock.json
+
   push:
     branches: [dev, main]
     paths:
@@ -71,11 +84,15 @@ jobs:
           PROFILE: ${{ matrix.profile }}
           DISPATCH_TAG_PREFIX: ${{ inputs['tag-prefix'] }}
           DISPATCH_PUBLISH: ${{ inputs.publish }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || "${GITHUB_EVENT_NAME}" == "workflow_call" ]]; then
             prefix="${DISPATCH_TAG_PREFIX}"
             publish="${DISPATCH_PUBLISH}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            prefix="pr-${PR_NUMBER}"
+            publish="false"
           else
             prefix="${GITHUB_REF_NAME}"
             publish="true"
