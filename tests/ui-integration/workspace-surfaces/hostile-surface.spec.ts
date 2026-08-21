@@ -3,7 +3,11 @@ import path from 'node:path'
 
 import { expect, test } from '@playwright/test'
 
-import { liveSurface, mockWorkspaceShell } from './presentation-fixture'
+import {
+  liveSurface,
+  mockWorkspaceShell,
+  workspaceSurfaceOrigin,
+} from './presentation-fixture'
 
 
 const fixtureRoot = path.resolve(
@@ -28,7 +32,11 @@ test.describe('hostile surface security boundary', () => {
     }
     await mockWorkspaceShell(page, [surface])
     await context.addCookies([
-      { name: 'wright_control', value: 'must-not-leak', url: 'http://localhost:5173' },
+      {
+        name: 'wright_control',
+        value: 'must-not-leak',
+        url: workspaceSurfaceOrigin('localhost'),
+      },
     ])
     await page.addInitScript(() => {
       localStorage.setItem('wright.control.secret', 'must-not-leak')
@@ -41,13 +49,12 @@ test.describe('hostile surface security boundary', () => {
           instanceId: 'instance-hostile',
           generation: 3,
           kind: 'panel',
-          absoluteBootstrapUrl:
-            'http://s-hostile.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345',
+          absoluteBootstrapUrl: `${workspaceSurfaceOrigin('s-hostile.localhost')}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
           expiresAt: '2026-07-30T12:01:00Z',
         },
       }),
     )
-    await page.route('http://s-hostile.localhost:5173/**', (route) => {
+    await page.route(`${workspaceSurfaceOrigin('s-hostile.localhost')}/**`, (route) => {
       if (new URL(route.request().url()).pathname.startsWith('/api')) {
         return route.fulfill({ status: 404, body: 'not found' })
       }

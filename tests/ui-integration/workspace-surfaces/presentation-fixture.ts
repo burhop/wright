@@ -1,5 +1,12 @@
 import type { Page } from "@playwright/test";
 
+export const workspaceSurfaceTestPort =
+  process.env.WRIGHT_PLAYWRIGHT_PORT || "5173";
+
+export function workspaceSurfaceOrigin(hostname: string): string {
+  return `http://${hostname}:${workspaceSurfaceTestPort}`;
+}
+
 export const liveSurface = (
   lifecycle: "ready" | "unhealthy" | "stopped" = "ready",
   options: {

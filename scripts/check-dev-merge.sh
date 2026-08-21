@@ -34,6 +34,28 @@ run() {
   "$@"
 }
 
+assert_port_available() {
+  local port="$1"
+  local label="$2"
+  if ! "$GATE_PYTHON" - "$port" <<'PY'
+import socket
+import sys
+
+port = int(sys.argv[1])
+probe = socket.socket()
+try:
+    probe.bind(("127.0.0.1", port))
+except OSError:
+    raise SystemExit(1)
+finally:
+    probe.close()
+PY
+  then
+    echo "Gate $label port $port is already in use. Set WRIGHT_GATE_${label}_PORT to an unused port."
+    exit 1
+  fi
+}
+
 cleanup() {
   if [[ -n "${BACKEND_PID:-}" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
     kill "$BACKEND_PID" 2>/dev/null || true
@@ -61,6 +83,13 @@ run git diff --check
 # Rivet assets are force-included from integrations/, outside the Python package root.
 run uv sync --all-packages --all-groups --reinstall-package wright-engineering
 
+if [[ "${SKIP_PLAYWRIGHT:-0}" != "1" ]]; then
+  echo
+  echo "==> Checking Playwright live gate ports"
+  assert_port_available "$API_PORT" API
+  assert_port_available "$UI_PORT" UI
+fi
+
 run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
 run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
 
@@ -87,7 +116,10 @@ run uv run python -m pytest -q \
   tests/release/test_native_workflow_policy.py \
   tests/test_public_python_distribution.py
 run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
-run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
+# Build once with the developer's installed lockfile dependencies. Native packaging
+# reuses the fresh dist without running npm ci against a live Wright node_modules.
+run npm run build --workspace=apps/web
+run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 run uv run python -c "from pathlib import Path; from scripts.release.python_artifacts import validate_native_distribution; artifacts=[p for p in Path('dist/dev-merge-python').rglob('*') if p.suffix == '.whl' or p.name.endswith('.tar.gz')]; assert len(artifacts) == 2; [validate_native_distribution(p) for p in artifacts]"
 
 # Keep the request-to-cookie, request-to-filesystem/process, and exception-to-response
@@ -148,23 +180,12 @@ run uv run --isolated --reinstall-package hermes-plugin-wright \
   --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML \
   python -m pytest hermes-plugin-wright/tests
 run npm run test --workspace=apps/web
-run npm run build --workspace=apps/web
 run uv run --with mkdocs-material mkdocs build --strict
 
 if [[ "${SKIP_PLAYWRIGHT:-0}" == "1" ]]; then
   echo
   echo "==> Skipping Playwright live gate because SKIP_PLAYWRIGHT=1"
 else
-  echo
-  echo "==> Checking Playwright live gate ports"
-  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${API_PORT}/api/health" >/dev/null 2>&1; then
-    echo "Gate API port $API_PORT is already in use. Set WRIGHT_GATE_API_PORT to an unused port."
-    exit 1
-  fi
-  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${UI_PORT}" >/dev/null 2>&1; then
-    echo "Gate UI port $UI_PORT is already in use. Set WRIGHT_GATE_UI_PORT to an unused port."
-    exit 1
-  fi
 
   TMP_DB="$(mktemp "${TMPDIR:-/tmp}/wright-dev-merge.XXXXXX.db")"
   BACKEND_LOG="$(mktemp "${TMPDIR:-/tmp}/wright-dev-merge-api.XXXXXX.log")"

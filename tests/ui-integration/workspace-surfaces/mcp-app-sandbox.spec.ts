@@ -1,6 +1,8 @@
 import { expect, test, type Frame, type Page } from "@playwright/test";
 
-const sandboxOrigin = "http://wright-sandbox.localhost:5173";
+import { workspaceSurfaceOrigin } from "./presentation-fixture";
+
+const sandboxOrigin = workspaceSurfaceOrigin("wright-sandbox.localhost");
 const envelope = {
   version: 1,
   surfaceId: "surface-sandbox-test",

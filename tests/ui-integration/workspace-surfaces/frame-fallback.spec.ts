@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { liveSurface, mockWorkspaceShell } from "./presentation-fixture";
+import {
+  liveSurface,
+  mockWorkspaceShell,
+  workspaceSurfaceOrigin,
+  workspaceSurfaceTestPort,
+} from "./presentation-fixture";
 
 test("framing refusal remains truthful and the browser fallback stays usable", async ({
   page,
@@ -20,13 +25,13 @@ test("framing refusal remains truthful and the browser fallback stays usable", a
           instanceId: "instance-shared",
           generation: 3,
           kind,
-          absoluteBootstrapUrl: `http://s-${kind}.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
+          absoluteBootstrapUrl: `${workspaceSurfaceOrigin(`s-${kind}.localhost`)}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
           expiresAt: "2026-07-30T12:01:00Z",
         },
       });
     },
   );
-  await context.route("http://s-*.localhost:5173/**", (route) =>
+  await context.route(`http://s-*.localhost:${workspaceSurfaceTestPort}/**`, (route) =>
     route.fulfill({
       contentType: "text/html",
       headers: {

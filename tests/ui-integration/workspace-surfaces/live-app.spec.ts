@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { liveSurface, mockWorkspaceShell } from "./presentation-fixture";
+import {
+  liveSurface,
+  mockWorkspaceShell,
+  workspaceSurfaceOrigin,
+  workspaceSurfaceTestPort,
+} from "./presentation-fixture";
 
 const dashboardHtml = `<!doctype html>
 <html><body>
@@ -145,7 +150,7 @@ test.describe("managed FastAPI dashboard journey", () => {
             instanceId: "instance-managed",
             generation,
             kind,
-            absoluteBootstrapUrl: `http://s-${kind}-${presentation}.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
+            absoluteBootstrapUrl: `${workspaceSurfaceOrigin(`s-${kind}-${presentation}.localhost`)}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
             expiresAt: "2026-07-30T13:00:00Z",
           },
         });
@@ -157,7 +162,7 @@ test.describe("managed FastAPI dashboard journey", () => {
     );
 
     await context.route(
-      /^http:\/\/s-[^.]+\.localhost:5173\/.*/,
+      new RegExp(`^http://s-[^.]+\\.localhost:${workspaceSurfaceTestPort}/.*`),
       async (route) => {
         const url = new URL(route.request().url());
         const surfacePath = url.pathname.replace(
@@ -205,7 +210,7 @@ test.describe("managed FastAPI dashboard journey", () => {
       },
     );
     await page.routeWebSocket(
-      /^ws:\/\/s-[^.]+\.localhost:5173\/socket$/,
+      new RegExp(`^ws://s-[^.]+\\.localhost:${workspaceSurfaceTestPort}/socket$`),
       (socket) => {
         socket.send("WebSocket connected");
       },

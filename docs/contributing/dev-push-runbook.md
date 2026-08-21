@@ -37,6 +37,13 @@ It uses dedicated browser-test ports, so the normal Wright UI on
 5173 and API on 8000 can remain running. Python checks use the cached,
 Git-ignored `.venv-dev-gate` environment instead of modifying the environment
 used by a running Wright process.
+The full gate builds the frontend once with the developer's installed lockfile
+dependencies, then reuses that fresh output for native packaging. It does not
+run `npm ci` against the shared `node_modules`, so an active Wright UI cannot
+lock a native Node binding that the merge gate tries to replace.
+Before starting its long checks, the full gate verifies that both configured
+browser-test ports can actually be bound. A conflict fails immediately with
+the environment-variable override instead of surfacing after the test matrix.
 The fast browser slice is a Chromium smoke; the full merge gate retains
 cross-browser coverage.
 

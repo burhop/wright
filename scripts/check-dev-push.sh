@@ -29,6 +29,28 @@ run() {
   "$@"
 }
 
+assert_port_available() {
+  local port="$1"
+  local label="$2"
+  if ! "$GATE_PYTHON" - "$port" <<'PY'
+import socket
+import sys
+
+port = int(sys.argv[1])
+probe = socket.socket()
+try:
+    probe.bind(("127.0.0.1", port))
+except OSError:
+    raise SystemExit(1)
+finally:
+    probe.close()
+PY
+  then
+    echo "Gate $label port $port is already in use. Set WRIGHT_GATE_${label}_PORT to an unused port."
+    exit 1
+  fi
+}
+
 cleanup() {
   if [[ -n "${BACKEND_PID:-}" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
     kill "$BACKEND_PID" 2>/dev/null || true
@@ -184,14 +206,8 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
 
   GATE_API_PORT="${WRIGHT_GATE_API_PORT:-18001}"
   GATE_UI_PORT="${WRIGHT_GATE_UI_PORT:-15174}"
-  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${GATE_API_PORT}/api/health" >/dev/null 2>&1; then
-    echo "Gate API port $GATE_API_PORT is already in use. Set WRIGHT_GATE_API_PORT to an unused port."
-    exit 1
-  fi
-  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${GATE_UI_PORT}" >/dev/null 2>&1; then
-    echo "Gate UI port $GATE_UI_PORT is already in use. Set WRIGHT_GATE_UI_PORT to an unused port."
-    exit 1
-  fi
+  assert_port_available "$GATE_API_PORT" API
+  assert_port_available "$GATE_UI_PORT" UI
   TMP_DB="$(mktemp "${TMPDIR:-/tmp}/wright-dev-push.XXXXXX.db")"
   BACKEND_LOG="$(mktemp "${TMPDIR:-/tmp}/wright-dev-push-api.XXXXXX.log")"
   echo "==> Starting isolated API on port $GATE_API_PORT"

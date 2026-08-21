@@ -78,6 +78,18 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
     assert "WRIGHT_PLAYWRIGHT_PORT" in playwright
     assert "WRIGHT_WEB_API_PROXY_TARGET" in vite
     assert "/.venv-dev-gate/" in _read(".gitignore")
+    for gate in (push_gate, merge_gate):
+        assert 'probe.bind(("127.0.0.1", port))' in gate
+    assert merge_gate.index("Checking Playwright live gate ports") < merge_gate.index(
+        "run uv run ruff check"
+    )
+
+    surface_fixture = _read(
+        "tests/ui-integration/workspace-surfaces/presentation-fixture.ts"
+    )
+    assert "process.env.WRIGHT_PLAYWRIGHT_PORT" in surface_fixture
+    for spec in (ROOT / "tests/ui-integration/workspace-surfaces").glob("*.spec.ts"):
+        assert "localhost:5173" not in spec.read_text(encoding="utf-8"), spec
 
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
@@ -85,6 +97,19 @@ def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
 
     assert "needs: frontend-quality" not in workflow
     assert "cancel-in-progress: true" in workflow
+
+
+def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None:
+    gate = _read("scripts/check-dev-merge.sh")
+    frontend_build = "run npm run build --workspace=apps/web"
+    native_package_build = (
+        'run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" '
+        'scripts/build-python-distributions.sh --dist-root '
+    )
+
+    assert gate.count(frontend_build) == 1
+    assert native_package_build in gate
+    assert gate.index(frontend_build) < gate.index(native_package_build)
 
 
 def test_codeql_cancels_superseded_runs_and_skips_generated_bundles() -> None:

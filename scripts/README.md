@@ -73,6 +73,14 @@ drift in CI:
 
 Before its test stages, the gate refreshes `wright-engineering` so the Rivet editor and runner bundles force-included from `integrations/rivet/` cannot remain stale in an editable environment.
 
+The frontend is built once from the developer's installed lockfile dependencies
+and that fresh output is reused by native packaging. The merge gate does not run
+`npm ci` against a shared `node_modules` that may be serving a live Wright UI.
+
+The full gate verifies that its configurable API and UI ports can be bound
+before starting the long test matrix. Port conflicts therefore fail immediately
+with the override to use instead of appearing at the browser stage.
+
 1. `git diff --check`
 2. Ruff lint and format checks for Wright-owned Python workspaces
 3. ESLint, Prettier, TypeScript, Vitest, and frontend build checks

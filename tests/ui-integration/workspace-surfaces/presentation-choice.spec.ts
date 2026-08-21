@@ -4,6 +4,8 @@ import {
   liveSurface,
   mockWorkspaceShell,
   previewAppHtml,
+  workspaceSurfaceOrigin,
+  workspaceSurfaceTestPort,
 } from "./presentation-fixture";
 
 test.describe("panel and browser presentation choice", () => {
@@ -22,7 +24,9 @@ test.describe("panel and browser presentation choice", () => {
       return route.fulfill({ json: { value: counter } });
     });
     await context.route(
-      /^http:\/\/s-[^.]+\.localhost:5173\/(?:__wright-surface\/[^/]+\/)?__wright\/bootstrap$/,
+      new RegExp(
+        `^http://s-[^.]+\\.localhost:${workspaceSurfaceTestPort}/(?:__wright-surface/[^/]+/)?__wright/bootstrap$`,
+      ),
       (route) =>
         route.fulfill({ contentType: "text/html", body: previewAppHtml }),
     );
@@ -41,7 +45,7 @@ test.describe("panel and browser presentation choice", () => {
             instanceId: "instance-shared",
             generation: 3,
             kind,
-            absoluteBootstrapUrl: `http://s-${kind}-${presentation}.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
+            absoluteBootstrapUrl: `${workspaceSurfaceOrigin(`s-${kind}-${presentation}.localhost`)}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
             expiresAt: "2026-07-30T12:01:00Z",
           },
         });
@@ -101,13 +105,13 @@ test.describe("panel and browser presentation choice", () => {
             instanceId: "instance-shared",
             generation: 3,
             kind,
-            absoluteBootstrapUrl: `http://s-${kind}.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
+            absoluteBootstrapUrl: `${workspaceSurfaceOrigin(`s-${kind}.localhost`)}/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345`,
             expiresAt: "2026-07-30T12:01:00Z",
           },
         });
       },
     );
-    await page.route("http://s-panel.localhost:5173/**", (route) =>
+    await page.route(`${workspaceSurfaceOrigin("s-panel.localhost")}/**`, (route) =>
       route.fulfill({ contentType: "text/html", body: previewAppHtml }),
     );
     await page.route("**/presentations/*", (route) =>
