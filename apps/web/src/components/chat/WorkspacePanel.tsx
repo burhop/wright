@@ -399,7 +399,6 @@ export function WorkspacePanel({
   const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
-  const agentCollapsedBeforeFocusRef = useRef(isAgentCollapsed);
   const {
     openTabs,
     activeTabPath,
@@ -455,8 +454,6 @@ export function WorkspacePanel({
         ? document.activeElement
         : null,
     );
-    agentCollapsedBeforeFocusRef.current = isAgentCollapsed;
-    setIsAgentCollapsed(true);
     surfaceLayoutDispatch({
       type: "enter_focus",
       containerWidth: panelWidth,
@@ -468,7 +465,6 @@ export function WorkspacePanel({
       type: "exit_focus",
       containerWidth: normalSurfacePaneWidth,
     });
-    setIsAgentCollapsed(agentCollapsedBeforeFocusRef.current);
     queueMicrotask(() =>
       surfaceFocusManager.restoreInitiator(
         containerRef.current?.querySelector<HTMLElement>(
