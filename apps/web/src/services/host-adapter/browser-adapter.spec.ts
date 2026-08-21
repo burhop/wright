@@ -34,6 +34,18 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     expect(development.validateIssuedPreviewUrl(proxy)).toBe(proxy);
   });
 
+  it("supports an isolated loopback development port", () => {
+    const development = new BrowserHostAdapter({
+      controlUrl: "http://127.0.0.1:15174/workspace/ws-1",
+    });
+    const issued =
+      "http://s-panel.localhost:18001/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+
+    expect(development.validateIssuedPreviewUrl(issued)).toBe(
+      "http://s-panel.localhost:15174/__wright-surface/s-panel.localhost%3A18001/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+    );
+  });
+
   it("upgrades a legacy same-origin development proxy to an isolated origin", () => {
     const development = new BrowserHostAdapter({
       controlUrl: "http://localhost:5173/workspace/ws-1",

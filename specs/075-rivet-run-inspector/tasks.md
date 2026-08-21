@@ -163,6 +163,18 @@
 - [x] T061 Run the web build and lint, then repair only Run Inspector regressions in `apps/web/` and `tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts`
 - [x] T062 Run `scripts/check-dev-merge.sh` before any merge to `dev`, or document the exact local host limitation and failing gate in `specs/075-rivet-run-inspector/quickstart.md`
 
+## Phase 8: Development Feedback-Loop Hardening
+
+**Purpose**: Make every push fast, isolated, reproducible, and able to report all useful CI failure classes in one cycle.
+
+- [x] T063 Add process-policy and deterministic browser-storage isolation tests in `tests/release/test_dev_push_process.py` and `apps/web/src/test/setup-storage-isolation.spec.ts`
+- [x] T064 Add the mandatory dev-push runbook and wire it into `AGENTS.md`, contributor docs, the PR template, scripts documentation, and Make targets
+- [x] T065 Add native Windows and Unix fast/full gate entry points with last-pushed-tip scope selection, a cached Python 3.13 gate environment, isolated ports, and reliable child cleanup
+- [x] T066 Run frontend unit and Playwright CI independently, cancel superseded runs, and retain multiple browser failures per CI run
+- [x] T067 Isolate frontend test storage and make Vite/Playwright API and UI endpoints configurable
+- [x] T068 Support arbitrary loopback development ports in the browser surface proxy and cover port 15174 with a unit regression
+- [x] T069 Run the optimized fast gate end to end and verify policy, Python, frontend, build, browser smoke, docs, and port cleanup
+
 ---
 
 ## Dependencies and Execution Order
@@ -176,6 +188,7 @@
 - **Phase 5 — US3**: Depends on the step model and inspector shell; editor-patch work is isolated from backend diagnostic work.
 - **Phase 6 — US4**: Depends on the inspection client/hook but not on node highlighting; history remains independently testable.
 - **Phase 7 — Polish**: Depends on all selected story phases.
+- **Phase 8 — Feedback loop**: Follows implementation and hardens the path from local validation through CI without changing feature semantics.
 
 ### User story dependency graph
 

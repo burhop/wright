@@ -2,6 +2,17 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+RUNBOOK="docs/contributing/dev-push-runbook.md"
+API_PORT="${WRIGHT_GATE_API_PORT:-18000}"
+UI_PORT="${WRIGHT_GATE_UI_PORT:-15173}"
+GATE_VENV="${WRIGHT_GATE_VENV:-$ROOT_DIR/.venv-dev-gate}"
+export UV_PROJECT_ENVIRONMENT="$GATE_VENV"
+export UV_PYTHON="${WRIGHT_GATE_PYTHON:-3.13}"
+if [[ "${OSTYPE:-}" == msys* || "${OSTYPE:-}" == cygwin* ]]; then
+  GATE_PYTHON="$GATE_VENV/Scripts/python.exe"
+else
+  GATE_PYTHON="$GATE_VENV/bin/python"
+fi
 PYTHON_WORKSPACE_PATHS=(
   src/wright_engineering
   scripts/release
@@ -31,23 +42,20 @@ cleanup() {
   if [[ -n "${TMP_DB:-}" ]]; then
     rm -f "$TMP_DB"
   fi
+  if [[ -n "${BACKEND_LOG:-}" ]]; then
+    rm -f "$BACKEND_LOG"
+  fi
 }
 trap cleanup EXIT
 
 cd "$ROOT_DIR"
 
-if [[ -n "${PYTHON:-}" ]]; then
-  PYTHON_BIN="$PYTHON"
-elif [[ -x "$ROOT_DIR/.venv/Scripts/python.exe" ]]; then
-  PYTHON_BIN="$ROOT_DIR/.venv/Scripts/python.exe"
-elif [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
-  PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
-else
-  PYTHON_BIN="python3"
-fi
+PYTHON_BIN="${PYTHON:-$GATE_PYTHON}"
 
 echo "Running Wright dev merge gate from $ROOT_DIR"
 echo "Set SKIP_PLAYWRIGHT=1 only for a documented local browser/runtime limitation."
+echo "Required reading: $RUNBOOK"
+echo "Isolated live gate: API $API_PORT, UI $UI_PORT"
 
 run git diff --check
 # Rivet assets are force-included from integrations/, outside the Python package root.
@@ -57,12 +65,15 @@ run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
 run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
 
 run npx -w apps/web eslint .
-run npx prettier --check apps/web/ --end-of-line auto
+if [[ "${OSTYPE:-}" == msys* || "${OSTYPE:-}" == cygwin* ]]; then
+  run npx prettier --check apps/web/ --end-of-line auto
+else
+  run npx prettier --check apps/web/
+fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
-run uv pip install mypy build --quiet
-run uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
-run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
+run uv run --with mypy mypy scripts/release src/wright_engineering --ignore-missing-imports
+run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
 }
 
@@ -146,12 +157,12 @@ if [[ "${SKIP_PLAYWRIGHT:-0}" == "1" ]]; then
 else
   echo
   echo "==> Checking Playwright live gate ports"
-  if curl --fail --silent --show-error --max-time 1 http://127.0.0.1:8000/api/health >/dev/null 2>&1; then
-    echo "Port 8000 already has a Wright API server. Stop local Wright/API servers before running the merge gate."
+  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${API_PORT}/api/health" >/dev/null 2>&1; then
+    echo "Gate API port $API_PORT is already in use. Set WRIGHT_GATE_API_PORT to an unused port."
     exit 1
   fi
-  if curl --fail --silent --show-error --max-time 1 http://127.0.0.1:5173 >/dev/null 2>&1; then
-    echo "Port 5173 already has a frontend dev server. Stop local Vite/Wright dev servers before running the merge gate."
+  if curl --fail --silent --show-error --max-time 1 "http://127.0.0.1:${UI_PORT}" >/dev/null 2>&1; then
+    echo "Gate UI port $UI_PORT is already in use. Set WRIGHT_GATE_UI_PORT to an unused port."
     exit 1
   fi
 
@@ -159,16 +170,16 @@ else
   BACKEND_LOG="$(mktemp "${TMPDIR:-/tmp}/wright-dev-merge-api.XXXXXX.log")"
   echo
   echo "==> Starting backend for Playwright live gate"
-  LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:8000/v1}" \
+  LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:${API_PORT}/v1}" \
   DATABASE_PATH="$TMP_DB" \
   WRIGHT_AUTH_MODE=compat \
   WRIGHT_API_MCP_AUTOSTART=1 \
   WRIGHT_BIND_HOST=127.0.0.1 \
-    uv run uvicorn api.main:app --host 127.0.0.1 --port 8000 >"$BACKEND_LOG" 2>&1 &
+    "$GATE_PYTHON" -m uvicorn api.main:app --host 127.0.0.1 --port "$API_PORT" >"$BACKEND_LOG" 2>&1 &
   BACKEND_PID=$!
 
   for attempt in {1..30}; do
-    if curl --fail --silent --show-error --max-time 2 http://127.0.0.1:8000/api/health >/dev/null; then
+    if curl --fail --silent --show-error --max-time 2 "http://127.0.0.1:${API_PORT}/api/health" >/dev/null; then
       echo "Backend is ready"
       break
     fi
@@ -185,7 +196,12 @@ else
     sleep 2
   done
 
-  run env CI=1 PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
+  run env -u PLAYWRIGHT_BASE_URL \
+    CI=1 \
+    PLAYWRIGHT_INCLUDE_LIVE=1 \
+    WRIGHT_PLAYWRIGHT_PORT="$UI_PORT" \
+    WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${API_PORT}" \
+    npx playwright test
 fi
 
 echo

@@ -19,9 +19,18 @@ interface BrowserHostAdapterOptions {
   ) => Window | null;
 }
 
+const LOOPBACK_DEVELOPMENT_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+function usesDevelopmentSurfaceProxy(control: URL): boolean {
+  return (
+    ["5173", "5174"].includes(control.port) ||
+    (import.meta.env.DEV && LOOPBACK_DEVELOPMENT_HOSTS.has(control.hostname))
+  );
+}
+
 function devSurfaceProxyUrl(value: string, control: URL): string {
   const preview = new URL(value);
-  if (!["5173", "5174"].includes(control.port)) return value;
+  if (!usesDevelopmentSurfaceProxy(control)) return value;
   if (preview.origin === control.origin) return value;
   const path = `/__wright-surface/${encodeURIComponent(preview.host)}${preview.pathname}${preview.search}${preview.hash}`;
   const proxyOrigin = `${control.protocol}//${preview.hostname}:${control.port}`;
@@ -32,7 +41,7 @@ function existingDevSurfaceProxyUrl(
   value: string,
   control: URL,
 ): { readonly proxyUrl: string; readonly issuedUrl: string } | null {
-  if (!["5173", "5174"].includes(control.port)) return null;
+  if (!usesDevelopmentSurfaceProxy(control)) return null;
   const proxy = new URL(value);
   if (
     proxy.protocol !== control.protocol ||

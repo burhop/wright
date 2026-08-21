@@ -8,6 +8,9 @@
 Please review and check all items that apply to your submission:
 
 - [ ] I have read the [CONTRIBUTING.md](CONTRIBUTING.md) guidelines.
+- [ ] I read `docs/contributing/dev-push-runbook.md` before pushing this branch.
+- [ ] I ran `scripts/check-dev-push.ps1` or `scripts/check-dev-push.sh` before the latest push.
+- [ ] Before merge to `dev`, I ran the full dev merge gate or documented an exact host limitation.
 - [ ] My changes follow the project's coding standards (ran `ruff check` / `eslint`).
 - [ ] I have added or updated tests covering my changes.
 - [ ] All existing and new tests pass locally.

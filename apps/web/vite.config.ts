@@ -17,9 +17,12 @@ const extraAllowedHosts = (process.env.WRIGHT_WEB_ALLOWED_HOSTS ?? "")
   .split(",")
   .map((host) => host.trim())
   .filter((host) => host.length > 0);
+const apiProxyTarget =
+  process.env.WRIGHT_WEB_API_PROXY_TARGET ?? "http://127.0.0.1:8000";
+const apiProxyPort = new URL(apiProxyTarget).port || "80";
 
 function surfacePreviewHostHeader(host: string): string {
-  return `${host.replace(/:\d+$/, "")}:8000`;
+  return `${host.replace(/:\d+$/, "")}:${apiProxyPort}`;
 }
 
 const surfaceProxyPrefix = "/__wright-surface/";
@@ -296,7 +299,7 @@ export default defineConfig(({ command, mode }) => {
       allowedHosts: ["promaxgb10-9666", ".localhost", ...extraAllowedHosts],
       proxy: {
         "^/(?!api(?:/|$)).*": {
-          target: "http://127.0.0.1:8000",
+          target: apiProxyTarget,
           changeOrigin: false,
           ws: true,
           bypass(req: IncomingMessage) {
@@ -319,7 +322,7 @@ export default defineConfig(({ command, mode }) => {
           },
         },
         "/api": {
-          target: "http://127.0.0.1:8000",
+          target: apiProxyTarget,
           changeOrigin: true,
           ws: true,
         },
@@ -328,6 +331,11 @@ export default defineConfig(({ command, mode }) => {
     test: {
       globals: true,
       environment: "jsdom",
+      environmentOptions: {
+        jsdom: {
+          url: "http://localhost/",
+        },
+      },
       setupFiles: "./src/test/setup.ts",
     },
   };

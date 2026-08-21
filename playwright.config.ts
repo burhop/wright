@@ -1,6 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 import { workspaceSurfaceProjects } from "./tests/ui-integration/playwright.workspace-surfaces";
 
+const configuredBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
+const testUiHost = process.env.WRIGHT_PLAYWRIGHT_HOST || "127.0.0.1";
+const testUiPort = process.env.WRIGHT_PLAYWRIGHT_PORT || "5173";
+const managedBaseUrl = `http://${testUiHost}:${testUiPort}`;
+
 export default defineConfig({
   testDir: "./tests/ui-integration",
   expect: {
@@ -9,14 +14,14 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  maxFailures: process.env.CI ? 1 : undefined,
+  maxFailures: process.env.CI ? 5 : undefined,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
     ? [["line"], ["html", { outputFolder: "playwright-report", open: "never" }]]
     : "line",
   grepInvert: process.env.PLAYWRIGHT_INCLUDE_LIVE ? undefined : /@live/,
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173",
+    baseURL: configuredBaseUrl || managedBaseUrl,
     trace: process.env.CI ? "retain-on-failure" : "on-first-retry",
   },
   projects: [
@@ -26,11 +31,11 @@ export default defineConfig({
     },
     ...workspaceSurfaceProjects,
   ],
-  webServer: process.env.PLAYWRIGHT_BASE_URL
+  webServer: configuredBaseUrl
     ? undefined
     : {
-        command: "npm run dev --prefix apps/web",
-        url: "http://localhost:5173",
+        command: `npm run dev --prefix apps/web -- --host ${testUiHost} --port ${testUiPort}`,
+        url: managedBaseUrl,
         reuseExistingServer: !process.env.CI,
       },
 });

@@ -22,6 +22,7 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`backup-volumes.sh`](#backup-volumessh) | Bash | Backs up Wright Docker volumes to local disk | Docker |
 | [`restore-volume.sh`](#restore-volumesh) | Bash | Restores a Docker volume from a saved backup | Docker |
 | [`alpha-release-check.sh`](#alpha-release-checksh-and-alpha-release-checkps1) / [`alpha-release-check.ps1`](#alpha-release-checksh-and-alpha-release-checkps1) | Bash / PowerShell | Runs the full local alpha release gate | Python 3, uv, npm, Docker |
+| [`check-dev-push.sh`](#check-dev-pushsh-and-check-dev-pushps1) / [`check-dev-push.ps1`](#check-dev-pushsh-and-check-dev-pushps1) | Bash / PowerShell | Runs the fast diff-aware gate before pushing a PR that targets `dev` | Git, Python 3, uv, npm, Playwright |
 | [`check-dev-merge.sh`](#check-dev-mergesh) | Bash | Runs the CI-equivalent gate before merging a feature branch to `dev` | Python 3, uv, npm, Playwright |
 | [`check-prod-merge.sh`](#check-prod-mergesh) | Bash | Runs the release gate before merging `dev` to `main` | Python 3, uv, npm, Docker, Hermes |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
@@ -38,6 +39,31 @@ launcher in the user's Startup folder. The workstation setup uses
 
 ---
 
+
+### `check-dev-push.sh` and `check-dev-push.ps1`
+
+Read [`docs/contributing/dev-push-runbook.md`](../docs/contributing/dev-push-runbook.md)
+before every push to a pull request targeting `dev`. The fast gate selects the
+Python, frontend/browser, and documentation slices affected since the branch's
+last pushed tip, including staged, unstaged, and untracked files. A new branch
+falls back to `origin/dev`. Gate-infrastructure changes select all slices. The PowerShell
+entry point deliberately uses Git for Windows Bash instead of WSL, so the
+Windows `uv`, Node, and browser installations remain available.
+Python dependencies are cached in `.venv-dev-gate`, separate from a running
+Wright development environment.
+
+```powershell
+scripts/check-dev-push.ps1
+```
+
+```bash
+scripts/check-dev-push.sh
+```
+
+The mocked Playwright slice uses port `15174` by default and does not disturb a
+developer's Wright UI on 5173.
+
+---
 
 ### `check-dev-merge.sh`
 
@@ -57,15 +83,18 @@ Before its test stages, the gate refreshes `wright-engineering` so the Rivet edi
 8. Playwright with `PLAYWRIGHT_INCLUDE_LIVE=1` against a temporary local API database
 
 * **Usage**:
+  ```powershell
+  scripts/check-dev-merge.ps1
+  ```
+
   ```bash
   scripts/check-dev-merge.sh
   make check-dev-merge
   ```
 
-The live Playwright portion requires ports `8000` and `5173` to be free so it can
-start an isolated API database and frontend server. Stop local Wright/API/Vite
-servers before running the gate. Set `SKIP_PLAYWRIGHT=1` only for a documented
-local browser/runtime limitation.
+The live Playwright portion uses isolated ports `18000` and `15173` by default.
+Override them with `WRIGHT_GATE_API_PORT` and `WRIGHT_GATE_UI_PORT` when needed.
+Set `SKIP_PLAYWRIGHT=1` only for a documented local browser/runtime limitation.
 
 ---
 

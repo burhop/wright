@@ -67,3 +67,11 @@ node integrations/rivet/editor/scripts/build-rivet2.mjs
 - Web production build passed. ESLint passed with three pre-existing hook warnings outside Run Inspector files.
 - `git diff --check` and Ruff lint passed. All feature Python files were formatted with the repository Ruff configuration.
 - `scripts/check-dev-merge.sh` was attempted from PowerShell with `SKIP_PLAYWRIGHT=1` because the actively running local Wright UI occupies ports 5173/8000. The script entered WSL, passed `git diff --check`, then stopped at its first Python gate because `uv` is installed in Windows but is not on the WSL `PATH` (`scripts/check-dev-merge.sh: line 23: uv: command not found`). The equivalent focused Python, frontend, browser, build, and artifact gates above were run directly in Windows.
+
+## Development feedback-loop verification — 2026-08-20
+
+- Added `scripts/check-dev-push.ps1` and `scripts/check-dev-merge.ps1`; both use Git for Windows Bash, eliminating the WSL toolchain mismatch above.
+- Added isolated UI/API ports and a cached, Git-ignored Python 3.13 gate environment so validation does not stop or mutate a running Wright instance.
+- Process-policy tests passed: 5. Frontend tests passed: 368 across 91 files. The production web build and strict MkDocs build passed.
+- The Chromium fast smoke passed 6 journeys, including direct Rivet run, failed-run diagnostics, refresh reattachment, focus mode, narrow layout, and navigation.
+- The final fast gate passed end to end, and ports 18001 and 15174 were confirmed released after cleanup.

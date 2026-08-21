@@ -46,6 +46,12 @@ does not publish public images.
 
 ## Local Merge Gates
 
+Read the [development push runbook](dev-push-runbook.md) before every push to a
+pull request targeting `dev`. Use `scripts/check-dev-push.ps1` on Windows or
+`scripts/check-dev-push.sh` on Unix for the diff-aware fast gate. Frontend unit
+and Playwright jobs run independently so one CI run reports both failure classes,
+and superseded PR runs are cancelled.
+
 Routine development can use targeted tests and `make check`. Before integrating
 branches, use the heavier merge gates so local validation matches CI closely
 enough to catch formatting, mocked UI, live Playwright, docs, package metadata,

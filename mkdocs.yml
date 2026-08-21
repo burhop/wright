@@ -94,6 +94,7 @@ nav:
       - Solid Edge Creation: integrations/solid-edge-creation.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
+      - Development Push Runbook: contributing/dev-push-runbook.md
       - Spec-Kit Workflow: contributing/spec-kit.md
       - Code Style: contributing/code-style.md
       - Testing Guidelines: contributing/testing.md
