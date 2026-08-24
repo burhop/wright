@@ -1,0 +1,226 @@
+.ewp-rete-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+        circle at 1px 1px,
+        rgba(25, 117, 177, 0.2) 1px,
+        transparent 0
+      )
+      0 0 / 14px 14px,
+    linear-gradient(180deg, #04101f 0%, #020a13 100%);
+}
+
+.ewp-rete-editor,
+.ewp-rete-lanes {
+  position: absolute;
+  inset: 0;
+}
+
+.ewp-rete-lanes {
+  z-index: 0;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+
+.ewp-rete-editor {
+  z-index: 1;
+}
+
+.ewp-rete-editor > div {
+  background: transparent !important;
+}
+
+.ewp-rete-phase {
+  position: absolute;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(15, 89, 146, 0.075), transparent 40%),
+    rgba(3, 15, 29, 0.76);
+  border: 1px solid #137dc2;
+  border-radius: 12px;
+  box-shadow: inset 0 0 28px rgba(0, 112, 189, 0.05);
+}
+
+.ewp-rete-phase[data-tone="verify"] {
+  border-color: #069b9b;
+}
+
+.ewp-rete-phase[data-tone="manufacture"] {
+  border-color: #7650db;
+}
+
+.ewp-rete-phase > header {
+  display: flex;
+  height: 37px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px 0 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(19, 123, 194, 0.58),
+    rgba(9, 42, 70, 0.82)
+  );
+  border-bottom: 1px solid rgba(24, 151, 229, 0.48);
+}
+
+.ewp-rete-phase[data-tone="verify"] > header {
+  background: linear-gradient(
+    90deg,
+    rgba(5, 145, 144, 0.64),
+    rgba(5, 55, 63, 0.8)
+  );
+  border-color: rgba(22, 200, 193, 0.48);
+}
+
+.ewp-rete-phase[data-tone="manufacture"] > header {
+  background: linear-gradient(
+    90deg,
+    rgba(102, 60, 196, 0.7),
+    rgba(44, 27, 84, 0.8)
+  );
+  border-color: rgba(155, 96, 255, 0.5);
+}
+
+.ewp-rete-phase > header > span:last-child {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ewp-rete-phase > header strong {
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ewp-rete-phase > header small {
+  color: rgba(235, 246, 255, 0.66);
+  font-size: 9px;
+}
+
+.ewp-rete-phase__number {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: #06101f;
+  font-size: 18px;
+  background: #69baff;
+  border-radius: 50%;
+}
+
+[data-tone="verify"] .ewp-rete-phase__number {
+  background: #25d3cc;
+}
+
+[data-tone="manufacture"] .ewp-rete-phase__number {
+  background: #a981ff;
+}
+
+.ewp-rete-node {
+  position: relative;
+}
+
+.ewp-rete-socket {
+  position: absolute;
+  z-index: 8;
+  top: calc(50% - 7px);
+}
+
+.ewp-rete-socket--input {
+  left: -7px;
+}
+
+.ewp-rete-socket--output {
+  right: -7px;
+}
+
+.ewp-rete-port {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: #d8edff;
+  border: 2px solid #159cff;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+.ewp-rete-connection {
+  position: absolute;
+  width: 9999px;
+  height: 9999px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ewp-rete-connection > path {
+  fill: none;
+  filter: drop-shadow(0 0 2px currentColor);
+  pointer-events: auto;
+}
+
+.ewp-rete-connection__label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  paint-order: stroke;
+  stroke: #04101f;
+  stroke-width: 3px;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.ewp-rete-candidate-note {
+  position: absolute;
+  z-index: 12;
+  top: 10px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
+  color: #98adc4;
+  font-size: 9px;
+  background: rgba(8, 20, 37, 0.94);
+  border: 1px solid #274361;
+  border-radius: 6px;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.ewp-rete-candidate-note strong {
+  color: #8fd2ff;
+}
+
+.ewp-rete-controls {
+  position: absolute;
+  z-index: 12;
+  bottom: 49px;
+  left: 12px;
+  display: grid;
+  overflow: hidden;
+  background: rgba(8, 20, 37, 0.94);
+  border: 1px solid #1b3554;
+  border-radius: 7px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
+}
+
+.ewp-rete-controls button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: #c8d9eb;
+  background: #11243d;
+  border-bottom: 1px solid #1a3555;
+}
+
+.ewp-rete-controls button:last-child {
+  border-bottom: 0;
+}
+
+.ewp-rete-controls button:disabled {
+  opacity: 0.45;
+}
