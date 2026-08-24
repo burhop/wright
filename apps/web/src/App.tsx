@@ -33,6 +33,10 @@ const EngineeringWorkflowVisualSlice = lazy(
   () =>
     import("./prototypes/engineering-workflow/EngineeringWorkflowVisualSlice"),
 );
+const ReactFlowBakeoffHarness = lazy(
+  () =>
+    import("./prototypes/engineering-workflow/canvas/react-flow/ReactFlowBakeoffHarness"),
+);
 
 function App() {
   useDesktopIntegration();
@@ -56,6 +60,14 @@ function App() {
   const prototypeElement = engineeringWorkflowPrototypeEnabled() ? (
     <Suspense fallback={<p role="status">Loading visual prototype.</p>}>
       <EngineeringWorkflowVisualSlice />
+    </Suspense>
+  ) : (
+    <NotFoundPage />
+  );
+
+  const reactFlowBakeoffElement = engineeringWorkflowPrototypeEnabled() ? (
+    <Suspense fallback={<p role="status">Loading React Flow bakeoff.</p>}>
+      <ReactFlowBakeoffHarness />
     </Suspense>
   ) : (
     <NotFoundPage />
@@ -103,6 +115,10 @@ function App() {
         <Route
           path="/prototype/engineering-workflow"
           element={prototypeElement}
+        />
+        <Route
+          path="/prototype/engineering-workflow/bakeoff/react-flow"
+          element={reactFlowBakeoffElement}
         />
         <Route
           path="*"

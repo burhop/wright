@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 import {
   engineeringCapabilityCategories,
@@ -11,6 +12,7 @@ import {
   type WorkflowPreviewBlock,
   type WorkflowPreviewConnection,
   type WorkflowPreviewPhase,
+  type WorkflowPreview,
 } from "./workflow-preview-model";
 
 import "./engineering-workflow-visual-slice.css";
@@ -86,7 +88,7 @@ function RoleIcon({ role }: { role: WorkflowBlockRole }) {
   );
 }
 
-function WorkflowBlock({
+export function WorkflowBlock({
   block,
   selected,
   onSelect,
@@ -631,7 +633,21 @@ function Legend() {
   );
 }
 
-export function EngineeringWorkflowVisualSlice() {
+export interface EngineeringWorkflowCanvasRenderProps {
+  workflow: WorkflowPreview;
+  selectedBlockId: string;
+  onSelectBlock: (blockId: string) => void;
+}
+
+export interface EngineeringWorkflowVisualSliceProps {
+  badge?: string;
+  renderCanvas?: (props: EngineeringWorkflowCanvasRenderProps) => ReactNode;
+}
+
+export function EngineeringWorkflowVisualSlice({
+  badge = "Visual slice",
+  renderCanvas,
+}: EngineeringWorkflowVisualSliceProps = {}) {
   const workflow = drillBitHolderWorkflow;
   const [selectedBlockId, setSelectedBlockId] = useState("analysis-definition");
   const [zoom, setZoom] = useState(0.9);
@@ -663,7 +679,7 @@ export function EngineeringWorkflowVisualSlice() {
         <div className="ewp-brand">
           <WrightMark />
           <h1>{workflow.title}</h1>
-          <span>Visual slice</span>
+          <span>{badge}</span>
         </div>
         <div className="ewp-toolbar__actions" aria-label="Workflow actions">
           <button type="button" className="is-primary" disabled>
@@ -695,74 +711,86 @@ export function EngineeringWorkflowVisualSlice() {
       <div className="ewp-workspace">
         <Palette onBrowseCapabilities={() => setCapabilityLibraryOpen(true)} />
         <main className="ewp-canvas" aria-label="Engineering workflow preview">
-          <div className="ewp-canvas__scroll">
-            <div
-              className="ewp-board-frame"
-              style={{
-                width: CANVAS_WIDTH * zoom,
-                height: contentHeight * zoom,
-              }}
-            >
-              <div
-                className="ewp-board"
-                style={{
-                  width: CANVAS_WIDTH,
-                  transform: `scale(${zoom})`,
-                }}
-              >
-                {workflow.phases.map((phase) => {
-                  const phaseBlocks = workflow.blocks.filter(
-                    (block) => block.phaseId === phase.phaseId,
-                  );
-                  const blockIds = new Set(
-                    phaseBlocks.map((block) => block.blockId),
-                  );
-                  const phaseConnections = workflow.connections.filter(
-                    (connection) =>
-                      blockIds.has(connection.sourceBlockId) &&
-                      blockIds.has(connection.targetBlockId),
-                  );
-                  return (
-                    <PhaseLane
-                      key={phase.phaseId}
-                      phase={phase}
-                      blocks={phaseBlocks}
-                      connections={phaseConnections}
-                      selectedBlockId={selectedBlockId}
-                      onSelectBlock={setSelectedBlockId}
-                    />
-                  );
-                })}
+          {renderCanvas ? (
+            renderCanvas({
+              workflow,
+              selectedBlockId,
+              onSelectBlock: setSelectedBlockId,
+            })
+          ) : (
+            <>
+              <div className="ewp-canvas__scroll">
+                <div
+                  className="ewp-board-frame"
+                  style={{
+                    width: CANVAS_WIDTH * zoom,
+                    height: contentHeight * zoom,
+                  }}
+                >
+                  <div
+                    className="ewp-board"
+                    style={{
+                      width: CANVAS_WIDTH,
+                      transform: `scale(${zoom})`,
+                    }}
+                  >
+                    {workflow.phases.map((phase) => {
+                      const phaseBlocks = workflow.blocks.filter(
+                        (block) => block.phaseId === phase.phaseId,
+                      );
+                      const blockIds = new Set(
+                        phaseBlocks.map((block) => block.blockId),
+                      );
+                      const phaseConnections = workflow.connections.filter(
+                        (connection) =>
+                          blockIds.has(connection.sourceBlockId) &&
+                          blockIds.has(connection.targetBlockId),
+                      );
+                      return (
+                        <PhaseLane
+                          key={phase.phaseId}
+                          phase={phase}
+                          blocks={phaseBlocks}
+                          connections={phaseConnections}
+                          selectedBlockId={selectedBlockId}
+                          onSelectBlock={setSelectedBlockId}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div
-            className="ewp-canvas__controls"
-            aria-label="Preview zoom controls"
-          >
-            <button
-              type="button"
-              aria-label="Zoom in"
-              onClick={() => setZoom((value) => Math.min(1, value + 0.08))}
-            >
-              +
-            </button>
-            <button
-              type="button"
-              aria-label="Zoom out"
-              onClick={() => setZoom((value) => Math.max(0.58, value - 0.08))}
-            >
-              −
-            </button>
-            <button
-              type="button"
-              aria-label="Fit workflow"
-              onClick={() => setZoom(0.9)}
-            >
-              ⛶
-            </button>
-            <output aria-live="polite">{Math.round(zoom * 100)}%</output>
-          </div>
+              <div
+                className="ewp-canvas__controls"
+                aria-label="Preview zoom controls"
+              >
+                <button
+                  type="button"
+                  aria-label="Zoom in"
+                  onClick={() => setZoom((value) => Math.min(1, value + 0.08))}
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  aria-label="Zoom out"
+                  onClick={() =>
+                    setZoom((value) => Math.max(0.58, value - 0.08))
+                  }
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  aria-label="Fit workflow"
+                  onClick={() => setZoom(0.9)}
+                >
+                  ⛶
+                </button>
+                <output aria-live="polite">{Math.round(zoom * 100)}%</output>
+              </div>
+            </>
+          )}
           <Legend />
         </main>
         <Inspector block={selectedBlock} outgoing={outgoing} />
