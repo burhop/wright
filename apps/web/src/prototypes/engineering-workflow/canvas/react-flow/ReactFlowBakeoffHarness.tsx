@@ -86,7 +86,7 @@ function EngineeringBlockNode({ data }: NodeProps<EngineeringBlockFlowNode>) {
         type="target"
         position={Position.Left}
         isConnectable={false}
-        aria-label={`${data.block.title} input`}
+        aria-hidden="true"
       />
       <WorkflowBlock
         block={localBlock}
@@ -98,7 +98,7 @@ function EngineeringBlockNode({ data }: NodeProps<EngineeringBlockFlowNode>) {
         type="source"
         position={Position.Right}
         isConnectable={false}
-        aria-label={`${data.block.title} output`}
+        aria-hidden="true"
       />
     </div>
   );
@@ -195,9 +195,31 @@ export function ReactFlowCanvas({
     [onSelectBlock, projection, selectedBlockId],
   );
   const edges = useMemo(() => projectReactFlowEdges(projection), [projection]);
+  const blockTitleById = useMemo(
+    () => new Map(workflow.blocks.map((block) => [block.blockId, block.title])),
+    [workflow.blocks],
+  );
 
   return (
     <div className="ewp-rf-canvas" data-testid="react-flow-bakeoff-canvas">
+      <section className="ewp-sr-only" aria-label="Workflow phase summary">
+        <h2>Workflow phases</h2>
+        <ol>
+          {projection.phases.map(({ phase }) => (
+            <li key={phase.phaseId}>
+              {phase.index}. {phase.label}: {phase.description}
+            </li>
+          ))}
+        </ol>
+      </section>
+      <ol className="ewp-sr-only" aria-label="Workflow connections">
+        {workflow.connections.map((connection) => (
+          <li key={connection.connectionId}>
+            {blockTitleById.get(connection.sourceBlockId) ?? connection.sourceBlockId} to {blockTitleById.get(connection.targetBlockId) ?? connection.targetBlockId} (
+            {connection.label ?? connection.semantics})
+          </li>
+        ))}
+      </ol>
       <div className="ewp-rf-candidate-note" role="status">
         <strong>React Flow 12.11.3</strong>
         <span>Read-only CP1B candidate · Wright model remains canonical</span>

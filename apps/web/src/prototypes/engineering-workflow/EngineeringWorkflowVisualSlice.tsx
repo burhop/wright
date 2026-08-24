@@ -588,7 +588,7 @@ function Inspector({
 
 function MiniMap() {
   return (
-    <div className="ewp-minimap" aria-label="Workflow overview">
+    <div className="ewp-minimap" role="img" aria-label="Workflow overview">
       <div data-phase="define">
         {Array.from({ length: 9 }, (_, index) => (
           <i key={index} />
