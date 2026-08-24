@@ -139,3 +139,62 @@ A bounded list of run summaries scoped to one workspace, session, and workflow.
 - Historical revisions remain immutable and visibly distinct from the current document revision.
 - Old records lacking newer optional evidence fields remain readable with explicit unavailable values.
 
+## Requested Deliverable Effect
+
+Host-owned intent retained with a Graph Builder preview and committed workflow
+revision. It is never inferred from a tool title or output path.
+
+| Field | Type | Rules |
+|---|---|---|
+| `kind` | enum | `value_only`, `workspace_document`, `native_cad`, or `stl_mesh`; mandatory user selection. |
+| `label` | string | Bounded human description; not an authority or filesystem locator. |
+| `suggested_relative_path` | string or null | Allowed only for `workspace_document`; still subject to producer validation. |
+| `confirmed_at` | UTC timestamp | Set when the user confirms the Graph Builder request. |
+| `confirmation_revision` | integer | Correlates the effect with the preview/commit revision. |
+
+The effect is immutable for a saved revision. Changing it creates another
+preview/revision and reruns producer validation.
+
+## Workspace Artifact
+
+An authoritative workspace-confined file created by a reviewed producing
+capability.
+
+| Field | Type | Rules |
+|---|---|---|
+| `artifact_id` | opaque string | Immutable primary key; does not reveal a path. |
+| `workspace_id` | string | Required access-scope identity. |
+| `relative_path` | string | Normalized link-free workspace path; never absolute or hidden. |
+| `sha256` | SHA-256 string | Digest of the exact published bytes. |
+| `bytes` | integer | Non-negative exact byte count. |
+| `media_type` | string | Reviewed text media type for the generic document producer. |
+| `producer_server_id` | string | `wright-workspace-files` for the generic writer. |
+| `producer_tool_name` | string | Exact reviewed producing tool. |
+| `producer_request_id` | string | Gateway call correlation; not authority. |
+| `principal_id` | string | User/principal that authorized creation. |
+| `session_id` | string | Session in which creation was authorized. |
+| `run_id` | string or null | Set only when accepted workflow evidence links the artifact to a run. |
+| `created_at` | UTC timestamp | Immutable creation time. |
+
+Identity is insert-only. The same artifact ID cannot be reused with another
+path, digest, producer, or scope. Reads resolve the record within the bound
+workspace/run and verify the current bytes against `sha256`; changed or missing
+files are unavailable rather than silently served.
+
+## Artifact Producer Declaration
+
+Reviewed capability metadata used by Graph Builder, save, and run validation.
+
+| Field | Type | Rules |
+|---|---|---|
+| `qualified_tool_name` | string | Exact binding identity retained in the graph. |
+| `effect_kind` | enum | One requested deliverable kind. |
+| `artifact_output` | boolean | Must be true to satisfy a file deliverable. |
+| `native_format` | boolean | False for the workspace document writer; true only for reviewed domain exporters. |
+| `required_approvals` | list of string | Must include every current gateway approval gate. |
+| `declaration_digest` | SHA-256 string | Detects binding/effect metadata drift before save/run. |
+
+The graph must retain an output dependency from the producer to its declared
+Graph Output. An LLM response, path string, or ordinary result value is not an
+artifact producer declaration or artifact record.
+

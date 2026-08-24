@@ -141,13 +141,16 @@ def _translate(error: LiveAppControlError | SurfaceError | ValueError) -> HTTPEx
         status_code = 404 if error.code.endswith("NOT_FOUND") else 409
         if error.code.startswith("SURFACE_LIMIT_"):
             status_code = 429
+        detail: dict[str, object] = {
+            "code": error.code,
+            "message": str(error),
+            "retryable": error.retryable,
+        }
+        if error.correlation_id is not None:
+            detail["correlationId"] = error.correlation_id
         return HTTPException(
             status_code=status_code,
-            detail={
-                "code": error.code,
-                "message": str(error),
-                "retryable": error.retryable,
-            },
+            detail=detail,
         )
     if isinstance(error, SurfaceError):
         return HTTPException(status_code=404, detail=error.as_dict())

@@ -187,9 +187,12 @@ async def test_shared_runner_persists_exact_identity_progress_and_real_outputs(
         "Main",
     )
     assert record.output_summary is not None
-    assert record.output_summary["outputs"]["output"]["value"] == "persist me"
+    assert record.output_summary["outputs"]["output"] == "persist me"
     events = repository.events(started.run_id)
-    assert events[0].kind == "queued"
+    assert [event.kind for event in events[:2]] == [
+        "inspection-context",
+        "queued",
+    ]
     assert events[-1].kind == "completed"
 
 

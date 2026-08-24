@@ -8,6 +8,7 @@ import json
 import os
 import secrets
 import shutil
+import sqlite3
 import time
 import uuid
 from collections.abc import Awaitable, Callable, Mapping
@@ -17,6 +18,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
 from data_vault import (
+    WorkspaceArtifactRepository,
     WorkflowRunEventRecord,
     WorkflowRunRecord,
     WorkflowRunRepository,
@@ -41,8 +43,12 @@ from .surfaces.process_supervisor import ProcessSupervisor, ProcessSupervisorErr
 from .rivet_approvals import RivetApprovalService
 from .rivet_authority import AuthorityClaims, RivetRunAuthorityService
 from .rivet_settings import RivetMcpGatewaySettings
-from .rivet_validation import validate_rivet_project
-from .rivet_evidence import project_output_summary
+from .rivet_validation import (
+    project_graph_inventory,
+    validate_requested_deliverable_effect,
+    validate_rivet_project,
+)
+from .rivet_evidence import project_named_values, project_output_summary
 from .workflows import WorkspaceWorkflowStore
 
 if TYPE_CHECKING:
@@ -330,6 +336,7 @@ class WorkspaceWorkflowRunner:
         self._mcp_bridge: RivetRunnerBridgePort | None = None
         self._mcp_session_resolver: Callable[[str, str], str] | None = None
         self._mcp_settings = RivetMcpGatewaySettings()
+        self._artifact_repository: WorkspaceArtifactRepository | None = None
         self._mcp_runs: dict[str, _RivetMcpRunContext] = {}
 
     def configure_mcp(
@@ -341,6 +348,7 @@ class WorkspaceWorkflowRunner:
         bridge: RivetRunnerBridgePort,
         session_resolver: Callable[[str, str], str],
         settings: RivetMcpGatewaySettings,
+        artifact_repository: WorkspaceArtifactRepository | None = None,
     ) -> None:
         self._mcp_repository = repository
         self._mcp_authorities = authorities
@@ -348,6 +356,7 @@ class WorkspaceWorkflowRunner:
         self._mcp_bridge = bridge
         self._mcp_session_resolver = session_resolver
         self._mcp_settings = settings
+        self._artifact_repository = artifact_repository
         repository.finalize_orphaned_manifests(reason_code="runner_restarted")
 
     def status(self) -> RunnerStatus:
@@ -378,9 +387,7 @@ class WorkspaceWorkflowRunner:
     def _node(self) -> str | None:
         return self._node_path or shutil.which("node")
 
-    def _append_event(
-        self, run_id: str, kind: str, **payload: str | int | float | bool | None
-    ) -> None:
+    def _append_event(self, run_id: str, kind: str, **payload: Any) -> None:
         events = self._events.setdefault(run_id, [])
         # Keep a small in-memory projection; the ProcessSupervisor owns bounded raw logs.
         if len(events) >= 256:
@@ -624,6 +631,25 @@ class WorkspaceWorkflowRunner:
                 if artifact.artifact_id not in seen_artifacts:
                     artifacts.append(artifact)
                     seen_artifacts.add(artifact.artifact_id)
+        if self._artifact_repository is not None:
+            linked: list[ArtifactReference] = []
+            for artifact in artifacts[:1000]:
+                try:
+                    self._artifact_repository.link_run(
+                        artifact_id=artifact.artifact_id,
+                        workspace_id=context.draft.workspace_id,
+                        session_id=context.draft.session_id,
+                        run_id=run_id,
+                        linked_at=datetime.now(UTC),
+                    )
+                except (ValueError, RuntimeError, sqlite3.Error):
+                    # Evidence capture must not change the workflow outcome.
+                    # Omit an artifact that cannot receive accepted run
+                    # authority and mark the retained evidence incomplete.
+                    context.draft.output_truncated = True
+                else:
+                    linked.append(artifact)
+            artifacts = linked
         manifest = context.draft.finalize(
             terminal_state=terminal_state,
             completed_at=datetime.now(UTC),
@@ -736,6 +762,27 @@ class WorkspaceWorkflowRunner:
                 )
             selected_graph = graph or validation.main_graph.name
             selected_graph_id = validation.main_graph.id
+            binding_set_for_effect = (
+                self._mcp_repository.get_binding_set_by_digest(binding_set_digest)
+                if self._mcp_repository is not None and binding_set_digest
+                else None
+            )
+            deliverable_issues = validate_requested_deliverable_effect(
+                document.project,
+                selected_graph=selected_graph_id,
+                bindings=(
+                    binding_set_for_effect.bindings
+                    if binding_set_for_effect is not None
+                    else ()
+                ),
+                require_reviewed_binding=True,
+            )
+            if deliverable_issues:
+                self._runs.pop(run_id, None)
+                raise WorkflowRunnerError(
+                    deliverable_issues[0].code,
+                    deliverable_issues[0].message,
+                )
             if self._run_repository is not None:
                 self._run_repository.create(
                     WorkflowRunRecord(
@@ -755,6 +802,46 @@ class WorkspaceWorkflowRunner:
                         output_truncated=False,
                         trace_id=uuid.uuid4().hex,
                     )
+                )
+                try:
+                    run_inputs, inputs_complete = project_named_values(
+                        inputs or {},
+                        origin="run_input",
+                        maximum_bytes=20 * 1024,
+                    )
+                except Exception:
+                    run_inputs, inputs_complete = [], False
+                try:
+                    graph_nodes, inventory_complete = project_graph_inventory(
+                        document.project, selected_graph=selected_graph_id
+                    )
+                except Exception:
+                    graph_nodes, inventory_complete = [], False
+                self._append_event(
+                    run_id,
+                    "inspection-context",
+                    revision=document.revision,
+                    digest=document.digest,
+                    graphId=selected_graph_id,
+                    graphName=validation.main_graph.name,
+                    runInputs=run_inputs,
+                    inputsComplete=inputs_complete,
+                    inputsState=(
+                        "available"
+                        if inputs_complete
+                        else "not-retained"
+                        if not run_inputs and not inputs
+                        else "truncated"
+                    ),
+                    graphNodes=graph_nodes,
+                    inventoryComplete=inventory_complete,
+                    inventoryState=(
+                        "available"
+                        if inventory_complete
+                        else "unavailable"
+                        if not graph_nodes
+                        else "truncated"
+                    ),
                 )
             mcp_grant: RivetMcpRuntimeGrant | None = None
             if "mcp" in validation.requirements:
@@ -855,11 +942,15 @@ class WorkspaceWorkflowRunner:
         from .rivet_runtime_host import RivetRuntimeError
 
         async def progress(event: dict[str, Any]) -> None:
+            nested_evidence = {"inputValues", "outputValues"}
             payload = {
                 key: value
                 for key, value in event.items()
                 if key not in {"type", "runId", "sequence"}
-                and isinstance(value, (str, int, float, bool, type(None)))
+                and (
+                    isinstance(value, (str, int, float, bool, type(None)))
+                    or (key in nested_evidence and isinstance(value, list))
+                )
             }
             self._append_event(run.run_id, "progress", **payload)
             if progress_callback is not None:

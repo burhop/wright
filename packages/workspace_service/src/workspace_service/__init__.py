@@ -59,6 +59,9 @@ from .rivet_validation import (
     ValidationIssue,
     WorkflowIdentityMismatch,
     WorkflowValidationResult,
+    RequestedDeliverable,
+    requested_deliverable,
+    validate_requested_deliverable_effect,
     validate_rivet_project,
 )
 from .rivet_approvals import RivetApprovalError, RivetApprovalService
@@ -86,6 +89,11 @@ from .workflow_catalog import (
     WorkflowTemplateCatalog,
     WorkflowTemplateError,
 )
+from .workspace_document_artifacts import (
+    WorkspaceDocumentArtifactError,
+    WorkspaceDocumentArtifactService,
+)
+from .workspace_document_gateway import WorkspaceDocumentGatewayProvider
 from .workflow_graph import (
     WorkflowGraphError,
     WorkflowGraphNode,
@@ -160,6 +168,9 @@ __all__ = [
     "ValidationIssue",
     "WorkflowIdentityMismatch",
     "WorkflowValidationResult",
+    "RequestedDeliverable",
+    "requested_deliverable",
+    "validate_requested_deliverable_effect",
     "validate_rivet_project",
     "RivetApprovalError",
     "RivetApprovalService",
@@ -177,4 +188,7 @@ __all__ = [
     "RivetMcpError",
     "RivetWorkflowMcpService",
     "create_rivet_mcp_server",
+    "WorkspaceDocumentArtifactError",
+    "WorkspaceDocumentArtifactService",
+    "WorkspaceDocumentGatewayProvider",
 ]

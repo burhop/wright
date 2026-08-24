@@ -7,7 +7,9 @@ from data_vault import WorkflowIndexRecord, WorkflowRepository
 
 from ..executor import BoundedExecutor
 from ..rivet_project import normalize_graph_output_ids
+from ..rivet_validation import validate_requested_deliverable_effect
 from ..workflows import WorkflowDocument, WorkspaceWorkflowStore
+from core.workflows import WorkflowPersistenceError
 
 
 class WorkspaceWorkflowUseCases:
@@ -36,6 +38,12 @@ class WorkspaceWorkflowUseCases:
             )
         )
 
+    @staticmethod
+    def _validate_deliverable(project: str) -> None:
+        issues = validate_requested_deliverable_effect(project)
+        if issues:
+            raise WorkflowPersistenceError(issues[0].message)
+
     async def create(
         self,
         workspace_id: str,
@@ -45,6 +53,7 @@ class WorkspaceWorkflowUseCases:
         datasets: dict[str, str] | None = None,
     ) -> WorkflowDocument:
         def work() -> WorkflowDocument:
+            self._validate_deliverable(project)
             document = self._store_factory(workspace_dir).create(
                 slug, project, datasets
             )
@@ -65,10 +74,12 @@ class WorkspaceWorkflowUseCases:
         datasets: dict[str, str] | None = None,
     ) -> WorkflowDocument:
         def work() -> WorkflowDocument:
+            normalized = normalize_graph_output_ids(project)
+            self._validate_deliverable(normalized)
             document = self._store_factory(workspace_dir).save(
                 slug,
                 expected_revision,
-                normalize_graph_output_ids(project),
+                normalized,
                 datasets,
             )
             self._index_document(workspace_id, document)

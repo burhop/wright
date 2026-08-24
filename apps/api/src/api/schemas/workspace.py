@@ -220,6 +220,8 @@ class RivetRunResultResponse(BaseModel):
     name: str
     origin: str
     kind: str
+    data_type: str = "unknown"
+    evidence_state: str = "unavailable"
     value: Any = None
     preview: str
     complete: bool
@@ -235,6 +237,7 @@ class RivetRunStepResponse(BaseModel):
     step_id: str
     sequence: int
     node_id: str | None = None
+    node_type: str | None = None
     label: str
     kind: str
     qualified_tool_name: str | None = None
@@ -245,6 +248,10 @@ class RivetRunStepResponse(BaseModel):
     completed_at: str | None = None
     duration_ms: int | None = None
     reason_code: str | None = None
+    inputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    outputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    input_state: str = "unavailable"
+    output_state: str = "unavailable"
     result: Dict[str, Any] | None = None
     artifacts: List[Dict[str, Any]] = Field(default_factory=list)
     redaction_count: int = 0
@@ -257,6 +264,7 @@ class RivetRunDiagnosticResponse(BaseModel):
     recovery_action: str
     failed_step_id: str | None = None
     failed_node_id: str | None = None
+    failed_node_label: str | None = None
     qualified_tool_name: str | None = None
     trace_id: str | None = None
     full_rerun_available: bool
@@ -265,6 +273,7 @@ class RivetRunDiagnosticResponse(BaseModel):
 
 
 class RivetRunCompletenessResponse(BaseModel):
+    inputs_complete: bool = False
     outputs_complete: bool
     steps_complete: bool
     events_complete: bool
@@ -277,6 +286,8 @@ class RivetRunInspectionResponse(BaseModel):
     run: RivetRunSummaryResponse
     progress: RivetRunProgressResponse
     events: List[Dict[str, Any]] = Field(default_factory=list)
+    run_inputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    inputs_state: str = "not-retained"
     steps: List[RivetRunStepResponse] = Field(default_factory=list)
     final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
     diagnostic: RivetRunDiagnosticResponse | None = None
@@ -368,6 +379,10 @@ class RivetMcpCapabilityResponse(BaseModel):
     compatibility: str
     binding_eligible: bool
     blocking_reasons: list[str]
+    artifact_producer: Dict[str, Any] | None = None
+    artifact_producer_digest: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$"
+    )
 
 
 class RivetMcpCapabilitiesResponse(BaseModel):
@@ -418,6 +433,10 @@ class RivetMcpBindingResponse(BaseModel):
     risk: Dict[str, Any] | None = None
     units_policy: Dict[str, Any] | None = None
     material_defaults: Dict[str, Any] | None = None
+    artifact_producer: Dict[str, Any] | None = None
+    artifact_producer_digest: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$"
+    )
     blockers: list[str] = Field(default_factory=list)
 
 

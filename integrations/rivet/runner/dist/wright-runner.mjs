@@ -282326,7 +282326,15 @@ var QUALIFIED_TOOL_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}__[A-Za-z0-9][A-Z
 var DISCOVERY_HANDLE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 var MAX_BRIDGE_RESPONSE_BYTES = 1024 * 1024;
 var MAX_BRIDGE_EVENTS = 2e3;
+var MAX_INSPECTION_ITEMS = 64;
+var MAX_INSPECTION_VALUE_BYTES = 2 * 1024;
+var MAX_INSPECTION_COLLECTION_BYTES = 20 * 1024;
+var MAX_INSPECTION_DEPTH = 8;
+var MAX_INSPECTION_CHILDREN = 64;
 var STABLE_RIVET_ERROR = /^RIVET_[A-Z0-9_]{1,64}$/;
+var SECRET_FIELD = /token|secret|password|passwd|api[_-]?key|authorization|credential/i;
+var URL_SECRET = /([?&](?:token|access_token|api_key|key)=)[^&\s]+/gi;
+var BINARY_DATA_TYPES = /* @__PURE__ */ new Set(["audio", "binary", "document", "image"]);
 var OUTPUT_SECRETS = /* @__PURE__ */ new Set();
 function writeDiagnostic(...values3) {
   let encoded = format(...values3);
@@ -282423,6 +282431,149 @@ function writeEvent(event) {
   }
   process.stdout.write(`${encoded}
 `);
+}
+function inspectionJson(value) {
+  return JSON.stringify(value) ?? "null";
+}
+function inspectionDigest(value) {
+  return createHash2("sha256").update(inspectionJson(value)).digest("hex");
+}
+function binaryMetadata(value, dataType) {
+  const semantic = value && typeof value === "object" && "value" in value ? value.value : value;
+  const structured = semantic && typeof semantic === "object" ? semantic : void 0;
+  const payload = structured?.data ?? semantic;
+  const bytes = payload instanceof Uint8Array ? payload.byteLength : Array.isArray(payload) ? payload.length : void 0;
+  return {
+    data_type: dataType,
+    media_type: typeof structured?.mediaType === "string" ? structured.mediaType.slice(0, 255) : null,
+    bytes,
+    body: "not retained"
+  };
+}
+function safeInspectionValue(value, depth = 0) {
+  if (depth >= MAX_INSPECTION_DEPTH) {
+    return { value: "[projection depth limit]", redactions: 0, bounded: true };
+  }
+  if (value instanceof Uint8Array || Buffer.isBuffer(value)) {
+    return {
+      value: { body: "not retained", bytes: value.byteLength },
+      redactions: 0,
+      bounded: true
+    };
+  }
+  if (typeof value === "function") {
+    return { value: "[function not retained]", redactions: 0, bounded: true };
+  }
+  if (typeof value === "string") {
+    let safe2 = value.replace(URL_SECRET, "$1[redacted]");
+    let redactions = safe2 === value ? 0 : 1;
+    for (const secret of OUTPUT_SECRETS) {
+      if (secret.length >= 8 && safe2.includes(secret)) {
+        safe2 = safe2.split(secret).join("[redacted]");
+        redactions += 1;
+      }
+    }
+    if (/^data:[^;,\s]+;base64,/i.test(safe2) || safe2.length >= 256 && safe2.length % 4 === 0 && new Set(safe2).size >= 12 && /^[A-Za-z0-9+/]+={0,2}$/.test(safe2)) {
+      return {
+        value: { body: "base64 not retained" },
+        redactions: redactions + 1,
+        bounded: true
+      };
+    }
+    if (safe2.length > 4096) {
+      return {
+        value: `${safe2.slice(0, 4096)}\u2026[truncated]`,
+        redactions,
+        bounded: true
+      };
+    }
+    return { value: safe2, redactions, bounded: false };
+  }
+  if (Array.isArray(value)) {
+    let redactions = 0;
+    let bounded = value.length > MAX_INSPECTION_CHILDREN;
+    const projected = value.slice(0, MAX_INSPECTION_CHILDREN).map((item) => {
+      const child = safeInspectionValue(item, depth + 1);
+      redactions += child.redactions;
+      bounded ||= child.bounded;
+      return child.value;
+    });
+    return { value: projected, redactions, bounded };
+  }
+  if (value && typeof value === "object") {
+    let redactions = 0;
+    const entries2 = Object.entries(value);
+    let bounded = entries2.length > MAX_INSPECTION_CHILDREN;
+    const projected = {};
+    for (const [key, childValue] of entries2.slice(0, MAX_INSPECTION_CHILDREN)) {
+      if (SECRET_FIELD.test(key)) {
+        projected[key] = "[redacted]";
+        redactions += 1;
+        continue;
+      }
+      const child = safeInspectionValue(childValue, depth + 1);
+      projected[key] = child.value;
+      redactions += child.redactions;
+      bounded ||= child.bounded;
+    }
+    return { value: projected, redactions, bounded };
+  }
+  return { value, redactions: 0, bounded: false };
+}
+function projectInspectionValue(name21, value, origin2) {
+  const envelope = value && typeof value === "object" && typeof value.type === "string" ? value : void 0;
+  const dataType = envelope?.type ?? (value === null ? "null" : typeof value);
+  const semantic = envelope ? envelope.value : value;
+  const scalarType = dataType.endsWith("[]") ? dataType.slice(0, -2) : dataType;
+  const binaryOmitted = BINARY_DATA_TYPES.has(scalarType) || dataType.startsWith("fn<") || typeof semantic === "function" || typeof semantic === "string" && (/^data:[^;,\s]+;base64,/i.test(semantic) || semantic.length >= 256 && semantic.length % 4 === 0 && new Set(semantic).size >= 12 && /^[A-Za-z0-9+/]+={0,2}$/.test(semantic));
+  const projected = binaryOmitted ? { value: binaryMetadata(value, dataType), redactions: 0, bounded: true } : safeInspectionValue(semantic);
+  const encoded = inspectionJson(projected.value);
+  const exceedsLimit = Buffer.byteLength(encoded, "utf8") > MAX_INSPECTION_VALUE_BYTES;
+  const complete = !binaryOmitted && !projected.bounded && !exceedsLimit;
+  const preview = typeof projected.value === "string" ? projected.value.slice(0, 1024) : encoded.slice(0, 1024);
+  const evidenceState = binaryOmitted ? "not-retained" : exceedsLimit || projected.bounded ? "truncated" : projected.redactions > 0 ? "redacted" : semantic == null ? "no-value" : "available";
+  return {
+    result_id: `${origin2}:${name21}`,
+    name: name21.slice(0, 255),
+    origin: origin2,
+    kind: binaryOmitted ? "structured" : Array.isArray(projected.value) ? "list" : projected.value && typeof projected.value === "object" ? "structured" : projected.value === null ? "null" : typeof projected.value === "string" ? "text" : typeof projected.value,
+    data_type: dataType,
+    evidence_state: evidenceState,
+    value: complete ? projected.value : null,
+    preview,
+    complete,
+    truncation_reason: binaryOmitted ? "binary_omitted" : projected.bounded ? "projection_limit" : exceedsLimit ? "size_limit" : null,
+    original_bytes: Buffer.byteLength(encoded, "utf8"),
+    retained_bytes: complete ? Buffer.byteLength(encoded, "utf8") : Buffer.byteLength(preview, "utf8"),
+    digest: inspectionDigest(projected.value),
+    redaction_count: projected.redactions,
+    artifact: null
+  };
+}
+function projectInspectionValues(values3, origin2) {
+  try {
+    const entries2 = values3 && typeof values3 === "object" && !Array.isArray(values3) ? Object.entries(values3) : [];
+    const projected = entries2.slice(0, MAX_INSPECTION_ITEMS).map(([name21, value]) => projectInspectionValue(name21, value, origin2));
+    let complete = entries2.length <= projected.length;
+    while (projected.length > 0 && Buffer.byteLength(inspectionJson(projected), "utf8") > MAX_INSPECTION_COLLECTION_BYTES) {
+      projected.pop();
+      complete = false;
+    }
+    complete &&= projected.every((item) => item.complete !== false);
+    return {
+      values: projected,
+      complete,
+      state: entries2.length === 0 ? "no-value" : complete ? "available" : "truncated",
+      omittedCount: Math.max(0, entries2.length - projected.length)
+    };
+  } catch {
+    return {
+      values: [],
+      complete: false,
+      state: "unavailable",
+      omittedCount: 0
+    };
+  }
 }
 async function readRequest() {
   process.stdin.setEncoding("utf8");
@@ -282668,6 +282819,51 @@ function graphNodes(project, graphSelector) {
   return graphs.flatMap(
     ([, graph]) => Array.isArray(graph.nodes) ? graph.nodes : Object.values(graph.nodes ?? {})
   );
+}
+function nodeIdentity(node2) {
+  const title = typeof node2?.title === "string" && node2.title.trim() ? node2.title.trim() : "LLM Chat";
+  const id = typeof node2?.id === "string" && node2.id.trim() ? ` (${node2.id.trim()})` : "";
+  return `${title}${id}`;
+}
+function prepareAiProject(project, request2) {
+  if (!request2.ai) return project;
+  const chatNodes = graphNodes(project, request2.graph).filter(
+    (node2) => node2?.type === "llmChatV2"
+  );
+  if (chatNodes.length === 0) return project;
+  const bridgeEndpoint = `${request2.ai.baseUrl.replace(/\/$/, "")}/chat/completions`;
+  for (const node2 of chatNodes) {
+    const data3 = node2.data ?? {};
+    if (data3.configurationMode === "profile") {
+      throw failure(
+        "RIVET_AI_PROFILE_BRIDGE_REQUIRED",
+        `${nodeIdentity(node2)} uses an LLM Profile whose provider cannot be bound to the Wright AI bridge before execution. Change this node to Inline configuration and run it again.`
+      );
+    }
+    node2.data = {
+      ...data3,
+      configurationMode: "inline",
+      provider: "custom",
+      model: request2.ai.model,
+      useModelInput: false,
+      apiKeySource: "environment",
+      customProviderApiKeyProgrammaticName: "",
+      customProviderApiKeyEnvVarName: "CUSTOM_PROVIDER_API_KEY",
+      customProviderBaseURL: bridgeEndpoint,
+      useCustomProviderBaseURLInput: false,
+      baseURL: "",
+      useBaseURLInput: false,
+      headers: [],
+      useHeadersInput: false,
+      extraProviderOptions: "",
+      useExtraProviderOptionsInput: false,
+      enableOpenAIWebSearch: false,
+      enableOpenAICodeInterpreter: false,
+      enableGoogleSearchGrounding: false,
+      enableGoogleUrlContext: false
+    };
+  }
+  return project;
 }
 function prepareMcpProject(project, request2) {
   const nodes = graphNodes(project, request2.graph);
@@ -282986,7 +283182,10 @@ async function execute(request2) {
   if (request2.mcp?.token) OUTPUT_SECRETS.add(request2.mcp.token);
   await verifyProjectDigest(request2);
   const loadedProject = await loadProjectFromFile(request2.projectPath);
-  const project = prepareMcpProject(loadedProject, request2);
+  const project = prepareMcpProject(
+    prepareAiProject(loadedProject, request2),
+    request2
+  );
   enforceCapabilities(project, request2);
   installNetworkGuard(request2);
   const abortController = new AbortController();
@@ -283005,6 +283204,7 @@ async function execute(request2) {
     graph: request2.graph,
     inputs: request2.inputs ?? {},
     context: request2.context ?? {},
+    captureNodeTimings: true,
     projectPath: request2.projectPath,
     abortSignal: abortController.signal,
     mcpProvider: createWrightMcpProvider(request2, abortController.signal),
@@ -283015,20 +283215,35 @@ async function execute(request2) {
       endpoint: `${request2.ai.baseUrl.replace(/\/$/, "")}/chat/completions`,
       headers: { Authorization: `Bearer ${request2.ai.token}` }
     }) : void 0,
-    onNodeStart: (event) => writeEvent({
-      type: "progress",
-      runId: request2.runId,
-      state: "running",
-      phase: "node-start",
-      ...nodeLabel(event)
-    }),
-    onNodeFinish: (event) => writeEvent({
-      type: "progress",
-      runId: request2.runId,
-      state: "running",
-      phase: "node-finish",
-      ...nodeLabel(event)
-    }),
+    onNodeStart: (event) => {
+      const inputs = projectInspectionValues(event.inputs, "node_input");
+      writeEvent({
+        type: "progress",
+        runId: request2.runId,
+        state: "running",
+        phase: "node-start",
+        ...nodeLabel(event),
+        inputValues: inputs.values,
+        inputComplete: inputs.complete,
+        inputState: inputs.state,
+        inputOmittedCount: inputs.omittedCount
+      });
+    },
+    onNodeFinish: (event) => {
+      const outputs = projectInspectionValues(event.outputs, "node_output");
+      writeEvent({
+        type: "progress",
+        runId: request2.runId,
+        state: "running",
+        phase: "node-finish",
+        ...nodeLabel(event),
+        durationMs: event.durationMs,
+        outputValues: outputs.values,
+        outputComplete: outputs.complete,
+        outputState: outputs.state,
+        outputOmittedCount: outputs.omittedCount
+      });
+    },
     onNodeError: (event) => {
       const eventError = stableRunnerError(event.error) ?? (event.error instanceof Error ? event.error : new Error(String(event.error)));
       writeEvent({
@@ -283038,7 +283253,28 @@ async function execute(request2) {
         phase: "node-error",
         errorCode: eventError.code,
         errorMessage: eventError.message,
+        durationMs: event.durationMs,
         ...nodeLabel(event)
+      });
+    },
+    onNodeExcluded: (event) => {
+      const inputs = projectInspectionValues(event.inputs, "node_input");
+      const outputs = projectInspectionValues(event.outputs, "node_output");
+      writeEvent({
+        type: "progress",
+        runId: request2.runId,
+        state: "running",
+        phase: "node-excluded",
+        ...nodeLabel(event),
+        exclusionReason: typeof event.reason === "string" ? event.reason.slice(0, 255) : void 0,
+        inputValues: inputs.values,
+        inputComplete: inputs.complete,
+        inputState: inputs.state,
+        inputOmittedCount: inputs.omittedCount,
+        outputValues: outputs.values,
+        outputComplete: outputs.complete,
+        outputState: outputs.state,
+        outputOmittedCount: outputs.omittedCount
       });
     }
   });

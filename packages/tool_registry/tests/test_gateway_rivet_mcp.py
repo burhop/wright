@@ -17,6 +17,7 @@ from tool_registry.gateway_management import (
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.gateway_resources import GatewayResourceProvider
 from tool_registry.gateway_service import GatewayService
+from tool_registry.gateway_models import GatewayTool
 from tool_registry.mcp_server import create_mcp_server, initialization_options
 from tool_registry.models import McpServer, McpTool
 from tool_registry.wright_managed_servers import RIVET_WORKFLOW_MUTATION_APPROVAL
@@ -79,6 +80,36 @@ class _Audit:
         return None
 
 
+class _WriteProvider:
+    provider_id = "test-writer"
+    declared_tool_names = frozenset({"test-writer__write"})
+
+    def tools(self, _session):
+        return (
+            GatewayTool(
+                name="test-writer__write",
+                server_id="test-writer",
+                tool_name="write",
+                title="Write test artifact",
+                description="Approval boundary fixture",
+                input_schema={"type": "object"},
+                required_approvals=frozenset({"workspace_write_approval"}),
+            ),
+        )
+
+    async def call(self, *_args, **_kwargs):
+        return {"ok": True}
+
+    async def cancel(self, *_args):
+        return None
+
+    async def close_session(self, *_args):
+        return None
+
+    async def shutdown(self):
+        return None
+
+
 def _other_server() -> tuple[McpServer, McpTool]:
     now = int(time.time())
     return (
@@ -107,7 +138,7 @@ def _other_server() -> tuple[McpServer, McpTool]:
     )
 
 
-def _service(tmp_path):
+def _service(tmp_path, *, capability_providers=()):
     database = str(tmp_path / "state.db")
     upgrade_database(database)
     reconcile_wright_managed_servers(database)
@@ -123,6 +154,7 @@ def _service(tmp_path):
         audit=_Audit(),
         notifier=GatewayNotificationHub(),
         resources=GatewayResourceProvider(),
+        capability_providers=capability_providers,
     )
     service.open_session(
         session_id="session-1",
@@ -138,6 +170,27 @@ def _service(tmp_path):
         client_capabilities={},
     )
     return service, lifecycle, workspaces
+
+
+def test_model_call_never_synthesizes_in_process_provider_write_approval(
+    tmp_path,
+) -> None:
+    service, _lifecycle, _workspaces = _service(
+        tmp_path, capability_providers=(_WriteProvider(),)
+    )
+
+    assert "test-writer__write" in {
+        tool.name for tool in service.list_tools("session-1")
+    }
+    assert (
+        service.workspace_approvals_for_model_call("session-1", "test-writer__write")
+        == set()
+    )
+    # Catalog workspace enablement remains the explicit reviewed grant for
+    # ordinary external servers; the provider-specific denial does not break it.
+    assert service.workspace_approvals_for_model_call("session-1", "other__ping") == {
+        "workspace_write_approval"
+    }
 
 
 @pytest.mark.asyncio

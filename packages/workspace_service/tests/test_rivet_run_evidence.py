@@ -10,6 +10,7 @@ from data_vault import WorkflowRunRepository, upgrade_database
 from workspace_service.rivet_evidence import (
     build_run_evidence,
     compare_run_manifest,
+    project_named_values,
     project_output_summary,
     project_result_value,
     run_material_projection,
@@ -57,6 +58,56 @@ def test_output_summary_retains_named_null_and_structured_results() -> None:
     ]
     assert summary["outputs"]["empty"] is None
     assert summary["results"][1]["kind"] == "null"
+
+
+def test_output_summary_unwraps_rivet_data_value_before_projection() -> None:
+    markdown = (
+        "# CAD providers\n\n| Provider | Status |\n| --- | --- |\n| Onshape | Ready |"
+    )
+
+    summary, truncated = project_output_summary(
+        {
+            "cadProviderDocumentationChain": {
+                "type": "object",
+                "value": {"result": markdown},
+            }
+        },
+        duration_ms=42,
+    )
+
+    projected = summary["results"][0]
+    assert truncated is False
+    assert projected["kind"] == "structured"
+    assert projected["value"] == {"result": markdown}
+    assert summary["outputs"]["cadProviderDocumentationChain"] == {"result": markdown}
+
+
+def test_named_value_projection_omits_binary_base64_and_preserves_empty_string() -> (
+    None
+):
+    encoded = "c2VjcmV0LWJpbmFyeS1ib2R5" * 16
+    values, complete = project_named_values(
+        {
+            "image": {
+                "type": "image",
+                "value": {"mediaType": "image/png", "data": b"must-not-retain"},
+            },
+            "encoded": f"data:application/octet-stream;base64,{encoded}",
+            "empty": "",
+        },
+        origin="run_input",
+    )
+
+    by_name = {item["name"]: item for item in values}
+    assert complete is False
+    assert by_name["image"]["evidence_state"] == "not-retained"
+    assert by_name["image"]["value"] is None
+    assert by_name["encoded"]["evidence_state"] == "not-retained"
+    assert by_name["empty"]["evidence_state"] == "available"
+    assert by_name["empty"]["value"] == ""
+    retained = json.dumps(values)
+    assert "must-not-retain" not in retained
+    assert encoded not in retained
 
 
 def _manifest() -> dict:

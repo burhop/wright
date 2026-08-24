@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Callable
+import secrets
+from collections.abc import Awaitable, Callable
 from typing import Any, Protocol
 
 from core.surfaces.models import (
@@ -18,14 +19,22 @@ from .live_app_manager import (
     LiveAppManagerError,
     LiveAppStartRequest,
 )
-from .service import SurfaceActor, SurfaceService
+from .service import SurfaceActor, SurfaceRevisionConflictError, SurfaceService
 
 
 class LiveAppControlError(RuntimeError):
-    def __init__(self, code: str, message: str, *, retryable: bool = False) -> None:
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        *,
+        retryable: bool = False,
+        correlation_id: str | None = None,
+    ) -> None:
         super().__init__(message)
         self.code = code
         self.retryable = retryable
+        self.correlation_id = correlation_id
 
 
 class LiveAppControlManager(Protocol):
@@ -41,6 +50,14 @@ class LiveAppControlManager(Protocol):
 
     async def stop(
         self, instance_id: str, *, idempotency_key: str
+    ) -> LiveAppInstance: ...
+
+    async def compensate_uncommitted(
+        self,
+        instance_id: str,
+        *,
+        generation: int,
+        correlation_id: str,
     ) -> LiveAppInstance: ...
 
     async def check_health(self, instance_id: str) -> LiveAppInstance: ...
@@ -100,6 +117,16 @@ class LiveAppControlService:
         return instance_id
 
     @staticmethod
+    def _replacement_generation(descriptor: SurfaceDescriptor) -> int:
+        value = (descriptor.instance or {}).get("generation")
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise LiveAppControlError(
+                "SURFACE_RUNTIME_GENERATION_UNAVAILABLE",
+                "Surface has no valid managed application generation",
+            )
+        return value + 1
+
+    @staticmethod
     def _instance_projection(instance: LiveAppInstance) -> dict[str, object]:
         def timestamp(value):
             return value.isoformat().replace("+00:00", "Z") if value else None
@@ -157,6 +184,172 @@ class LiveAppControlService:
             ),
         )
 
+    @staticmethod
+    async def _finish_despite_cancellation(
+        operation: Awaitable[LiveAppInstance],
+    ) -> LiveAppInstance:
+        """Let the server reach one durable lifecycle outcome before cancelling."""
+
+        task = asyncio.create_task(operation)
+        cancellation: asyncio.CancelledError | None = None
+        while not task.done():
+            try:
+                await asyncio.shield(task)
+            except asyncio.CancelledError as error:
+                cancellation = error
+            except BaseException:
+                break
+        if cancellation is not None:
+            try:
+                task.result()
+            except BaseException:
+                pass
+            raise cancellation
+        return task.result()
+
+    @staticmethod
+    def _descriptor_matches(
+        descriptor: SurfaceDescriptor,
+        instance: LiveAppInstance,
+        target: SurfaceLifecycle,
+    ) -> bool:
+        projected = descriptor.instance or {}
+        return (
+            descriptor.lifecycle is target
+            and projected.get("instanceId") == instance.instance_id
+            and projected.get("generation") == instance.generation
+        )
+
+    async def _reconcile_projection(
+        self,
+        *,
+        actor: SurfaceActor,
+        surface_id: SurfaceId,
+        manager: LiveAppControlManager,
+        instance: LiveAppInstance,
+        target: SurfaceLifecycle,
+    ) -> bool:
+        allowed_from = {
+            SurfaceLifecycle.FAILED: {
+                SurfaceLifecycle.STARTING,
+                SurfaceLifecycle.READY,
+                SurfaceLifecycle.UNHEALTHY,
+                SurfaceLifecycle.STOPPING,
+            },
+            SurfaceLifecycle.STOPPED: {SurfaceLifecycle.STOPPING},
+        }[target]
+        for _ in range(3):
+            latest = await self._surfaces.get(actor=actor, surface_id=surface_id)
+            if self._descriptor_matches(latest, instance, target):
+                return True
+            if latest.lifecycle in {SurfaceLifecycle.FAILED, SurfaceLifecycle.STOPPED}:
+                return True
+            if latest.lifecycle not in allowed_from:
+                return False
+            try:
+                await self._project(
+                    actor=actor,
+                    descriptor=latest,
+                    target=target,
+                    manager=manager,
+                    instance=instance,
+                )
+                return True
+            except SurfaceRevisionConflictError:
+                continue
+        return False
+
+    async def _commit_manager_result(
+        self,
+        *,
+        actor: SurfaceActor,
+        descriptor: SurfaceDescriptor,
+        manager: LiveAppControlManager,
+        instance: LiveAppInstance,
+        transitions: tuple[SurfaceLifecycle, ...],
+    ) -> LiveAppInstance:
+        current = descriptor
+        try:
+            for target in transitions:
+                current = await self._project(
+                    actor=actor,
+                    descriptor=current,
+                    target=target,
+                    manager=manager,
+                    instance=instance,
+                )
+            return instance
+        except BaseException as projection_error:
+            final_target = transitions[-1]
+            try:
+                latest = await self._surfaces.get(
+                    actor=actor, surface_id=descriptor.surface_id
+                )
+            except BaseException:
+                latest = None
+            if latest is not None and self._descriptor_matches(
+                latest, instance, final_target
+            ):
+                return instance
+
+            correlation_id = secrets.token_hex(8)
+            reconciled = instance
+            target = final_target
+            if instance.state in {"ready", "unhealthy"}:
+                try:
+                    reconciled = await manager.compensate_uncommitted(
+                        instance.instance_id,
+                        generation=instance.generation,
+                        correlation_id=correlation_id,
+                    )
+                except BaseException as compensation_error:
+                    if isinstance(compensation_error, asyncio.CancelledError):
+                        raise
+                    raise LiveAppControlError(
+                        "SURFACE_DESCRIPTOR_COMPENSATION_FAILED",
+                        (
+                            "Managed runtime authority could not be reconciled after "
+                            f"a surface commit failure. Reference {correlation_id}."
+                        ),
+                        retryable=False,
+                        correlation_id=correlation_id,
+                    ) from compensation_error
+                target = SurfaceLifecycle.FAILED
+
+            try:
+                projected = await self._reconcile_projection(
+                    actor=actor,
+                    surface_id=descriptor.surface_id,
+                    manager=manager,
+                    instance=reconciled,
+                    target=target,
+                )
+            except BaseException as reconciliation_error:
+                if isinstance(reconciliation_error, asyncio.CancelledError):
+                    raise
+                projected = False
+            if not projected:
+                raise LiveAppControlError(
+                    "SURFACE_DESCRIPTOR_RECONCILIATION_FAILED",
+                    (
+                        "Managed runtime was contained, but its surface descriptor could "
+                        f"not be reconciled. Reference {correlation_id}."
+                    ),
+                    retryable=False,
+                    correlation_id=correlation_id,
+                ) from projection_error
+            if isinstance(projection_error, asyncio.CancelledError):
+                raise projection_error
+            raise LiveAppControlError(
+                "SURFACE_DESCRIPTOR_COMMIT_FAILED",
+                (
+                    "Managed runtime was safely contained after its surface state could "
+                    f"not be committed. Reference {correlation_id}."
+                ),
+                retryable=True,
+                correlation_id=correlation_id,
+            ) from projection_error
+
     async def _start_from_starting(
         self,
         *,
@@ -166,6 +359,7 @@ class LiveAppControlService:
         descriptor: SurfaceDescriptor,
         manager: LiveAppControlManager,
         idempotency_key: str,
+        initial_generation: int = 1,
     ) -> LiveAppInstance:
         try:
             instance = await manager.start(
@@ -176,6 +370,7 @@ class LiveAppControlService:
                     user_id=actor.user_id,
                     session_id=actor.session_id,
                     idempotency_key=idempotency_key,
+                    initial_generation=initial_generation,
                 )
             )
         except LiveAppManagerError as error:
@@ -190,14 +385,13 @@ class LiveAppControlService:
             raise LiveAppControlError(
                 error.code, str(error), retryable=error.retryable
             ) from error
-        await self._project(
+        return await self._commit_manager_result(
             actor=actor,
             descriptor=descriptor,
-            target=SurfaceLifecycle.READY,
             manager=manager,
             instance=instance,
+            transitions=(SurfaceLifecycle.READY,),
         )
-        return instance
 
     async def start(
         self,
@@ -220,13 +414,15 @@ class LiveAppControlService:
                 target=SurfaceLifecycle.STARTING,
                 manager=manager,
             )
-            return await self._start_from_starting(
-                actor=actor,
-                surface_id=surface_id,
-                source=source,
-                descriptor=descriptor,
-                manager=manager,
-                idempotency_key=idempotency_key,
+            return await self._finish_despite_cancellation(
+                self._start_from_starting(
+                    actor=actor,
+                    surface_id=surface_id,
+                    source=source,
+                    descriptor=descriptor,
+                    manager=manager,
+                    idempotency_key=idempotency_key,
+                )
             )
 
     async def _existing_operation(
@@ -303,75 +499,77 @@ class LiveAppControlService:
                 invoke = manager.restart
             else:
                 raise AssertionError("unknown live-app operation")
-            try:
-                instance = await invoke(instance_id, idempotency_key=idempotency_key)
-            except LiveAppManagerError as error:
-                if error.code == "SURFACE_INSTANCE_NOT_FOUND" and operation in {
-                    "retry",
-                    "restart",
-                }:
-                    if descriptor.lifecycle is SurfaceLifecycle.STOPPING:
-                        descriptor = await self._project(
-                            actor=actor,
-                            descriptor=descriptor,
-                            target=SurfaceLifecycle.STOPPED,
-                            manager=manager,
-                        )
-                        descriptor = await self._project(
-                            actor=actor,
-                            descriptor=descriptor,
-                            target=SurfaceLifecycle.STARTING,
-                            manager=manager,
-                        )
-                    return await self._start_from_starting(
-                        actor=actor,
-                        surface_id=surface_id,
-                        source=source,
-                        descriptor=descriptor,
-                        manager=manager,
-                        idempotency_key=idempotency_key,
+
+            async def complete_operation() -> LiveAppInstance:
+                current = descriptor
+                try:
+                    instance = await invoke(
+                        instance_id, idempotency_key=idempotency_key
                     )
-                if error.instance is not None:
-                    await self._project(
-                        actor=actor,
-                        descriptor=descriptor,
-                        target=SurfaceLifecycle.FAILED,
-                        manager=manager,
-                        instance=error.instance,
+                except LiveAppManagerError as error:
+                    if error.code == "SURFACE_INSTANCE_NOT_FOUND" and operation in {
+                        "retry",
+                        "restart",
+                    }:
+                        if current.lifecycle is SurfaceLifecycle.STOPPING:
+                            current = await self._project(
+                                actor=actor,
+                                descriptor=current,
+                                target=SurfaceLifecycle.STOPPED,
+                                manager=manager,
+                            )
+                            current = await self._project(
+                                actor=actor,
+                                descriptor=current,
+                                target=SurfaceLifecycle.STARTING,
+                                manager=manager,
+                            )
+                        return await self._start_from_starting(
+                            actor=actor,
+                            surface_id=surface_id,
+                            source=source,
+                            descriptor=current,
+                            manager=manager,
+                            idempotency_key=idempotency_key,
+                            initial_generation=self._replacement_generation(current),
+                        )
+                    if error.instance is not None:
+                        await self._project(
+                            actor=actor,
+                            descriptor=current,
+                            target=SurfaceLifecycle.FAILED,
+                            manager=manager,
+                            instance=error.instance,
+                        )
+                    raise LiveAppControlError(
+                        error.code, str(error), retryable=error.retryable
+                    ) from error
+
+                target = (
+                    SurfaceLifecycle.STOPPED
+                    if operation == "stop" and instance.state == "stopped"
+                    else SurfaceLifecycle.FAILED
+                    if instance.state == "failed"
+                    else SurfaceLifecycle.READY
+                )
+                transitions = (
+                    (
+                        SurfaceLifecycle.STOPPED,
+                        SurfaceLifecycle.STARTING,
+                        target,
                     )
-                raise LiveAppControlError(
-                    error.code, str(error), retryable=error.retryable
-                ) from error
-            if operation == "restart" and restart_from_active:
-                descriptor = await self._project(
+                    if operation == "restart" and restart_from_active
+                    else (target,)
+                )
+                return await self._commit_manager_result(
                     actor=actor,
-                    descriptor=descriptor,
-                    target=SurfaceLifecycle.STOPPED,
+                    descriptor=current,
                     manager=manager,
                     instance=instance,
+                    transitions=transitions,
                 )
-                descriptor = await self._project(
-                    actor=actor,
-                    descriptor=descriptor,
-                    target=SurfaceLifecycle.STARTING,
-                    manager=manager,
-                    instance=instance,
-                )
-            target = (
-                SurfaceLifecycle.STOPPED
-                if operation == "stop" and instance.state == "stopped"
-                else SurfaceLifecycle.FAILED
-                if instance.state == "failed"
-                else SurfaceLifecycle.READY
-            )
-            await self._project(
-                actor=actor,
-                descriptor=descriptor,
-                target=target,
-                manager=manager,
-                instance=instance,
-            )
-            return instance
+
+            return await self._finish_despite_cancellation(complete_operation())
 
     async def retry(self, **kwargs: Any) -> LiveAppInstance:
         return await self._existing_operation(operation="retry", **kwargs)

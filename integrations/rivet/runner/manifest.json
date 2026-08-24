@@ -10,11 +10,11 @@
     "package_version": "2.1.9"
   },
   "entrypoint": "dist/wright-runner.mjs",
-  "sha256": "9bb86e2fc4269568c22b02d28a4f51e3c97cbe8e10a387e23c24a7ba9f56d829",
-  "bytes": 13511098,
+  "sha256": "dd15cd85a721c5312a5c45170c3e95ae414b7a942f0c8c3e29079f4aa48f7ceb",
+  "bytes": 13521177,
   "build_input": {
     "path": "src/wright-runner.ts",
-    "sha256": "52e14089912aa610c53c0d6d17bfff93f38ad24264798ba2fff0bd238133c471"
+    "sha256": "c07284ff982768cf750fadf6ca8ff0ac3bb1a95f0c5233f5b4082da0be8207a4"
   },
   "runtime_network_policy": "wright-bridge-only"
 }

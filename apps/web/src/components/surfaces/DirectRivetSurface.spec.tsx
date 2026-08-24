@@ -98,6 +98,8 @@ describe("DirectRivetSurface", () => {
       updated_at: "2026-08-20T14:00:01Z",
     },
     events: [],
+    run_inputs: [],
+    inputs_state: "available",
     steps: [],
     final_outputs: Object.entries(
       (run.outputs as Record<
@@ -107,20 +109,22 @@ describe("DirectRivetSurface", () => {
     ).map(([name, output]) => ({
       result_id: name,
       name,
+      origin: "final_output",
       kind: output.type,
+      data_type: output.type,
+      evidence_state: output.value === null ? "no-value" : "available",
       value: output.value,
       preview:
         typeof output.value === "string"
           ? output.value
           : JSON.stringify(output.value),
-      media_type: null,
-      size_bytes: null,
-      digest: null,
-      artifact_path: null,
-      safe_link: null,
-      redacted: false,
-      truncated: false,
       complete: true,
+      truncation_reason: null,
+      original_bytes: JSON.stringify(output.value).length,
+      retained_bytes: JSON.stringify(output.value).length,
+      digest: "b".repeat(64),
+      redaction_count: 0,
+      artifact: null,
     })),
     diagnostic:
       run.state === "cancelled"
@@ -140,6 +144,7 @@ describe("DirectRivetSurface", () => {
           }
         : null,
     completeness: {
+      inputs_complete: true,
       outputs_complete: true,
       steps_complete: true,
       events_complete: true,

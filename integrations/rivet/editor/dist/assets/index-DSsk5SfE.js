@@ -1,4 +1,4 @@
-import { g as Br } from "./vendor-CRPgzvoS.js";
+import { g as Br } from "./vendor-Bw7vnkIi.js";
 function Tr(u, s) {
   for (var i = 0; i < s.length; i++) {
     const a = s[i];

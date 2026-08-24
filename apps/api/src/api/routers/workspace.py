@@ -9,6 +9,7 @@ All handlers are decorated with @traced for OTel span creation.
 import asyncio
 import json
 import time
+from urllib.parse import quote
 
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
@@ -153,6 +154,9 @@ from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
 from workspace_service.workflow_operations import WorkflowOperationsError
 from workspace_service.rivet_approvals import RivetApprovalError
+from workspace_service.workspace_document_artifacts import (
+    WorkspaceDocumentArtifactError,
+)
 from workspace_service.workflow_graph import WorkflowGraphError
 from workspace_service.workflow_catalog import WorkflowTemplateError
 from core.engineering_scenarios import EngineeringScenarioError
@@ -1321,6 +1325,65 @@ async def workflow_run_inspection_endpoint(
     return RivetRunInspectionResponse.model_validate(inspection)
 
 
+@router.get("/workflows/runs/{run_id}/artifacts/{artifact_id}")
+@traced("workspace.workflows.runner.artifact")
+async def workflow_run_artifact_endpoint(
+    run_id: str,
+    artifact_id: str,
+    session_id: str = Query(...),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Read one digest-verified artifact proven to belong to this run."""
+
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    artifacts = getattr(service, "workspace_document_artifacts", None)
+    if artifacts is None:
+        raise HTTPException(status_code=404, detail="Run artifact was not found")
+    try:
+        # Enforce the same workspace/session run scope as inspection before
+        # consulting the immutable run-to-artifact link.
+        service.workflow_operations.run(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+        workspace_dir = await service.resolve_workspace_dir(session_id, engine)
+        record, payload = artifacts.read_for_run(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            workspace_path=workspace_dir,
+            run_id=run_id,
+            artifact_id=artifact_id,
+        )
+    except (
+        WorkflowOperationsError,
+        WorkflowRunnerError,
+        WorkspaceDocumentArtifactError,
+        FileNotFoundError,
+        ValueError,
+    ) as error:
+        raise HTTPException(
+            status_code=404, detail="Run artifact was not found"
+        ) from error
+    filename = record.relative_path.rsplit("/", maxsplit=1)[-1]
+    return Response(
+        content=payload,
+        media_type=record.media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                "inline; filename*=UTF-8''" + quote(filename, safe="")
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 @router.get(
     "/workflows/runs/{run_id}/approvals",
     response_model=RivetCallApprovalListResponse,
@@ -1542,6 +1605,12 @@ async def workflow_mcp_capabilities_endpoint(
                 compatibility=item.compatibility,
                 binding_eligible=item.binding_eligible,
                 blocking_reasons=list(item.blocking_reasons),
+                artifact_producer=(
+                    dict(item.artifact_producer)
+                    if item.artifact_producer is not None
+                    else None
+                ),
+                artifact_producer_digest=item.artifact_producer_digest,
             )
             for item in page
         ],
@@ -1629,6 +1698,14 @@ async def workflow_mcp_binding_preview_endpoint(
                 units_policy=dict(item.binding.units_policy) if item.binding else None,
                 material_defaults=(
                     dict(item.binding.material_defaults) if item.binding else None
+                ),
+                artifact_producer=(
+                    dict(item.binding.artifact_producer)
+                    if item.binding and item.binding.artifact_producer is not None
+                    else None
+                ),
+                artifact_producer_digest=(
+                    item.binding.artifact_producer_digest if item.binding else None
                 ),
                 blockers=list(item.blockers),
             )

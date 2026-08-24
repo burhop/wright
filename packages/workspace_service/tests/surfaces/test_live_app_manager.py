@@ -292,6 +292,20 @@ async def test_shared_concurrent_and_idempotent_starts_return_one_ready_instance
     assert len(supervisor.starts) == 1
 
 
+async def test_replacement_start_preserves_monotonic_authority_generation(
+    tmp_path,
+) -> None:
+    manager, supervisor, _pins, _clock = _manager(tmp_path)
+
+    started = await manager.start(
+        replace(_request("replacement-after-api-restart"), initial_generation=4)
+    )
+
+    assert started.state == "ready"
+    assert started.generation == 4
+    assert len(supervisor.starts) == 1
+
+
 async def test_isolated_starts_are_distinct_and_port_ownership_retry_increments_generation(
     tmp_path,
 ) -> None:
@@ -351,6 +365,49 @@ async def test_restart_generation_budget_and_stop_are_exact_and_idempotent(
     repeated = await manager.stop(started.instance_id, idempotency_key="stop-1")
     assert stopped == repeated
     assert stopped.state == "stopped"
+
+
+async def test_uncommitted_ready_compensation_is_exact_and_idempotent(
+    tmp_path,
+) -> None:
+    manager, supervisor, pins, _clock = _manager(tmp_path)
+    started = await manager.start(_request("uncommitted-ready"))
+    assert (
+        pins.resolve(
+            instance_id=started.instance_id, generation=started.generation
+        ).target.port
+        == 43000
+    )
+
+    compensated = await manager.compensate_uncommitted(
+        started.instance_id,
+        generation=started.generation,
+        correlation_id="commitfailure01",
+    )
+    repeated = await manager.compensate_uncommitted(
+        started.instance_id,
+        generation=started.generation,
+        correlation_id="commitfailure01",
+    )
+
+    assert compensated == repeated
+    assert compensated.state == "failed"
+    assert compensated.generation == started.generation
+    assert compensated.failure is not None
+    assert compensated.failure.code == "SURFACE_DESCRIPTOR_COMMIT_FAILED"
+    assert "commitfailure01" in compensated.failure.message
+    assert supervisor.stops == [(started.runtime_id, started.generation)]
+    with pytest.raises(TargetPinError):
+        pins.resolve(instance_id=started.instance_id, generation=started.generation)
+
+    with pytest.raises(LiveAppManagerError) as mismatch:
+        await manager.compensate_uncommitted(
+            started.instance_id,
+            generation=started.generation + 1,
+            correlation_id="wronggeneration1",
+        )
+    assert mismatch.value.code == "SURFACE_COMPENSATION_GENERATION_MISMATCH"
+    assert supervisor.stops == [(started.runtime_id, started.generation)]
 
 
 async def test_failed_start_can_be_retried_with_a_new_generation(tmp_path) -> None:

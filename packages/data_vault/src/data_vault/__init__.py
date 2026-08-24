@@ -20,6 +20,11 @@ from .workflow_runs import (
     WorkflowRunRecord,
     WorkflowRunRepository,
 )
+from .workspace_artifacts import (
+    WorkspaceArtifactConflict,
+    WorkspaceArtifactRecord,
+    WorkspaceArtifactRepository,
+)
 from .rivet_mcp_repository import RivetMcpRepository
 from .engineering_scenario_repository import EngineeringScenarioRepository
 from .gateway_repository import GatewayBindingError, GatewayRepository
@@ -67,6 +72,9 @@ __all__ = [
     "WorkflowRunEventRecord",
     "WorkflowRunRecord",
     "WorkflowRunRepository",
+    "WorkspaceArtifactConflict",
+    "WorkspaceArtifactRecord",
+    "WorkspaceArtifactRepository",
     "RivetMcpRepository",
     "EngineeringScenarioRepository",
     "GatewayBindingError",

@@ -237,6 +237,8 @@ class CapabilityBinding:
     binding_digest: str
     created_at: datetime
     provider: ProviderEvidence | None = None
+    artifact_producer: Mapping[str, Any] | None = None
+    artifact_producer_digest: str | None = None
 
     @classmethod
     def build(
@@ -265,6 +267,8 @@ class CapabilityBinding:
         argument_constraints: Mapping[str, Any],
         created_at: datetime,
         provider: ProviderEvidence | Mapping[str, Any] | None = None,
+        artifact_producer: Mapping[str, Any] | None = None,
+        artifact_producer_digest: str | None = None,
     ) -> "CapabilityBinding":
         provider_value = (
             ProviderEvidence.parse(provider)
@@ -299,6 +303,13 @@ class CapabilityBinding:
         }
         if provider_value is not None:
             material["provider"] = provider_value.canonical()
+        if artifact_producer is not None:
+            producer_value = dict(artifact_producer)
+            expected_producer_digest = canonical_digest(producer_value)
+            if artifact_producer_digest not in {None, expected_producer_digest}:
+                raise ValueError("Artifact producer declaration digest changed")
+            material["artifact_producer"] = producer_value
+            material["artifact_producer_digest"] = expected_producer_digest
         reject_secret_material(material)
         return cls(
             binding_id=binding_id,
@@ -306,10 +317,24 @@ class CapabilityBinding:
             binding_digest=canonical_digest(material),
             created_at=created_at,
             provider=provider_value,
+            artifact_producer=(
+                dict(artifact_producer) if artifact_producer is not None else None
+            ),
+            artifact_producer_digest=(
+                canonical_digest(artifact_producer)
+                if artifact_producer is not None
+                else None
+            ),
             **{
                 key: value
                 for key, value in material.items()
-                if key not in {"schema_digest", "provider"}
+                if key
+                not in {
+                    "schema_digest",
+                    "provider",
+                    "artifact_producer",
+                    "artifact_producer_digest",
+                }
             },
         )
 
@@ -340,6 +365,12 @@ class CapabilityBinding:
         ):
             _require_digest(value, label)
         reject_secret_material(self.digest_material())
+        if self.artifact_producer is not None:
+            expected = canonical_digest(self.artifact_producer)
+            if self.artifact_producer_digest != expected:
+                raise ValueError("Artifact producer declaration digest changed")
+        elif self.artifact_producer_digest is not None:
+            raise ValueError("Artifact producer declaration is missing")
 
     def digest_material(self) -> dict[str, Any]:
         material = {
@@ -367,11 +398,18 @@ class CapabilityBinding:
         }
         if self.provider is not None:
             material["provider"] = self.provider.canonical()
+        if self.artifact_producer is not None:
+            material["artifact_producer"] = dict(self.artifact_producer)
+            material["artifact_producer_digest"] = self.artifact_producer_digest
         return material
 
     def canonical(self) -> dict[str, Any]:
         return {
-            "schema_version": 2 if self.provider is not None else 1,
+            "schema_version": (
+                3
+                if self.artifact_producer is not None
+                else (2 if self.provider is not None else 1)
+            ),
             "binding_id": self.binding_id,
             **self.digest_material(),
             "binding_digest": self.binding_digest,

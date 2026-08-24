@@ -10,6 +10,8 @@ from workspace_service import (  # type: ignore[import-untyped]
     EngineeringModelService,
     SupportDiagnosticService,
     WorkspaceService,
+    WorkspaceDocumentArtifactService,
+    WorkspaceDocumentGatewayProvider,
     build_workspace_service,
     RivetApprovalService,
     RivetCapabilityService,
@@ -27,6 +29,7 @@ from data_vault import (
     ModelArtifactStore,
     ModelRepository,
     RivetMcpRepository,
+    WorkspaceArtifactRepository,
     upgrade_database,
 )
 from model_registry.gateway_provider import EngineeringModelGatewayProvider
@@ -455,22 +458,31 @@ def build_api_gateway_service(
         if Path(db_path).resolve() == Path(DATABASE_PATH).resolve()
         else build_engineering_model_application(db_path)
     )
+    artifact_repository = WorkspaceArtifactRepository(db_path)
+    document_artifacts = WorkspaceDocumentArtifactService(artifact_repository)
     gateway = GatewayService(
         workspaces=DatabaseGatewayWorkspace(repository),
         catalog=catalog,
         lifecycle=lifecycle,
         audit=DatabaseGatewayAudit(repository),
         notifier=GatewayNotificationHub(),
-        resources=GatewayResourceProvider(),
+        resources=GatewayResourceProvider(
+            list_artifacts=document_artifacts.list_resources,
+            read_artifact=document_artifacts.read_resource,
+        ),
         management=management,
         mcp_ui_resources=ui_resources,
-        capability_providers=(EngineeringModelGatewayProvider(model_application),),
+        capability_providers=(
+            EngineeringModelGatewayProvider(model_application),
+            WorkspaceDocumentGatewayProvider(document_artifacts),
+        ),
         operation_timeout=settings.operation_timeout_seconds,
         maximum_timeout=settings.maximum_timeout_seconds,
     )
     application = build_rivet_mcp_application(db_path, gateway)
     service = workspace_service()
     service.rivet_mcp_application = application
+    service.workspace_document_artifacts = document_artifacts
     return gateway
 
 
@@ -569,5 +581,6 @@ def build_rivet_mcp_application(
         bridge=runner_bridge,
         session_resolver=gateway_session_id,
         settings=settings,
+        artifact_repository=WorkspaceArtifactRepository(db_path),
     )
     return application

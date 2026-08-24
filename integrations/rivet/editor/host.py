@@ -13,7 +13,7 @@ from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 from urllib.parse import unquote, urlsplit
 
 from agent_adapters.hermes_config import resolve_hermes_api_settings
@@ -58,15 +58,36 @@ class RivetAiHost:
     expires_at: datetime | None
     maximum_request_bytes: int
     token_ttl_seconds: int
+    state: str = "unavailable"
     _token_lock: threading.Lock = field(
-        default_factory=threading.Lock,
+        default_factory=threading.RLock,
         init=False,
         repr=False,
     )
 
     @property
     def available(self) -> bool:
-        return self.bridge is not None and self.bridge.available
+        with self._token_lock:
+            return (
+                self.state == "ready"
+                and self.bridge is not None
+                and self.bridge.available
+            )
+
+    def finish_discovery(
+        self, bridge: HermesOpenAICompatibilityBridge | None
+    ) -> None:
+        """Publish one safe terminal state after optional Hermes discovery."""
+
+        with self._token_lock:
+            if bridge is not None and bridge.available:
+                self.bridge = bridge
+                self.state = "ready"
+                return
+            self.bridge = None
+            self.state = "unavailable"
+            self.token = None
+            self.expires_at = None
 
     def accepts_token(self, supplied: str) -> bool:
         with self._token_lock:
@@ -105,9 +126,16 @@ class RivetAiHost:
                 )
 
     def config(self) -> dict[str, Any]:
-        if not self.available:
-            return {"available": False, "reason": "hermes_unavailable"}
         with self._token_lock:
+            if not self.available:
+                return {
+                    "available": False,
+                    "reason": (
+                        "hermes_initializing"
+                        if self.state == "initializing"
+                        else "hermes_unavailable"
+                    ),
+                }
             now = datetime.now(UTC)
             if self.token is None or self.expires_at is None or now >= self.expires_at:
                 self.token = secrets.token_urlsafe(32)
@@ -402,6 +430,52 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _discover_ai_bridge(
+    ai_host: RivetAiHost,
+    *,
+    timeout_seconds: float,
+    workspace_root: Path,
+    resolver: Callable[[], Any] = resolve_hermes_api_settings,
+) -> None:
+    """Resolve optional Hermes authority without delaying the health listener."""
+
+    try:
+        hermes = resolver()
+        bridge = HermesOpenAICompatibilityBridge(
+            HermesOpenAIBridgeSettings(
+                base_url=hermes.base_url,
+                api_key=hermes.api_key,
+                timeout_seconds=timeout_seconds,
+                translation_context=_load_workspace_translation_context(
+                    workspace_root
+                ),
+            )
+        )
+    except Exception:
+        bridge = None
+    ai_host.finish_discovery(bridge)
+
+
+def _start_ai_discovery(
+    ai_host: RivetAiHost,
+    *,
+    timeout_seconds: float,
+    workspace_root: Path,
+) -> threading.Thread:
+    thread = threading.Thread(
+        target=_discover_ai_bridge,
+        kwargs={
+            "ai_host": ai_host,
+            "timeout_seconds": timeout_seconds,
+            "workspace_root": workspace_root,
+        },
+        name="rivet-hermes-discovery",
+        daemon=True,
+    )
+    thread.start()
+    return thread
+
+
 def main() -> None:
     args = parse_args()
     root = args.root.resolve()
@@ -422,27 +496,8 @@ def main() -> None:
         None,
         args.ai_request_bytes,
         args.ai_token_ttl,
+        state="initializing" if args.ai_enabled else "unavailable",
     )
-    if args.ai_enabled:
-        hermes = resolve_hermes_api_settings()
-        bridge = HermesOpenAICompatibilityBridge(
-            HermesOpenAIBridgeSettings(
-                base_url=hermes.base_url,
-                api_key=hermes.api_key,
-                timeout_seconds=args.ai_timeout,
-                translation_context=_load_workspace_translation_context(
-                    Path.cwd().resolve()
-                ),
-            )
-        )
-        if bridge.available:
-            ai_host = RivetAiHost(
-                bridge,
-                None,
-                None,
-                args.ai_request_bytes,
-                args.ai_token_ttl,
-            )
 
     def handler(*handler_args, **handler_kwargs):
         return RivetCanvasHandler(
@@ -453,6 +508,12 @@ def main() -> None:
         )
 
     server = ThreadingHTTPServer((args.host, args.port), handler)
+    if args.ai_enabled:
+        _start_ai_discovery(
+            ai_host,
+            timeout_seconds=args.ai_timeout,
+            workspace_root=Path.cwd().resolve(),
+        )
     try:
         server.serve_forever()
     finally:

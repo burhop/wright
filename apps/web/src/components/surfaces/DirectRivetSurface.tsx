@@ -655,6 +655,43 @@ export function DirectRivetSurface({
     }
   };
 
+  const openRunArtifact = async (artifact: Record<string, unknown>) => {
+    if (!inspection) return;
+    const artifactId = artifact.artifact_id;
+    if (typeof artifactId !== "string" || !artifactId) {
+      setRunNotice({
+        tone: "error",
+        message: "This run artifact has no verified identity.",
+      });
+      return;
+    }
+    const opened = window.open("about:blank", "_blank", "popup");
+    if (!opened) {
+      setRunNotice({
+        tone: "error",
+        message: "The browser blocked the artifact window.",
+      });
+      return;
+    }
+    opened.opener = null;
+    try {
+      const blob = await workspaceService.getRivetRunArtifact(
+        sessionId,
+        inspection.run.run_id,
+        artifactId,
+      );
+      const url = URL.createObjectURL(blob);
+      opened.location.href = url;
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      setRunNotice(null);
+    } catch (error) {
+      opened.close();
+      const message =
+        error instanceof Error ? error.message : "Run artifact is unavailable.";
+      setRunNotice({ tone: "error", message });
+    }
+  };
+
   const focusWorkflow = () => {
     iframeRef.current?.focus();
     iframeRef.current?.contentWindow?.postMessage(
@@ -1193,6 +1230,7 @@ export function DirectRivetSurface({
                 )
             : undefined
         }
+        onOpenArtifact={(artifact) => void openRunArtifact(artifact)}
       />
     </div>
   );

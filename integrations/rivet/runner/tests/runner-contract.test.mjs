@@ -95,6 +95,116 @@ data:
   plugins: []
 `;
 
+const llmChatV2Project = `version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-1:
+      metadata:
+        id: graph-1
+        name: Main
+        description: ""
+      nodes:
+        '[prompt-node]:graphInput "Prompt"':
+          data:
+            id: prompt
+            dataType: string
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"LLM Chat" llm-node/prompt
+          visualData: 0/0/220/null//
+        '[llm-node]:llmChatV2 "LLM Chat"':
+          data:
+            configurationMode: inline
+            provider: openai
+            model: gpt-5
+            useModelInput: false
+            apiKeySource: environment
+            customProviderApiKeyProgrammaticName: ""
+            customProviderApiKeyEnvVarName: CUSTOM_PROVIDER_API_KEY
+            customProviderBaseURL: ""
+            useCustomProviderBaseURLInput: false
+            baseURL: ""
+            useBaseURLInput: false
+            temperature: 0
+            useTemperatureInput: false
+            useTopPInput: false
+            useTopKInput: false
+            usePresencePenaltyInput: false
+            useFrequencyPenaltyInput: false
+            stopSequences: []
+            useStopSequencesInput: false
+            useSeedInput: false
+            maxTokens: 32
+            useMaxTokensInput: false
+            useToolCalling: false
+            outputUsage: false
+            outputReasoning: false
+            cache: false
+            useAsGraphPartialOutput: true
+            headers: []
+            useHeadersInput: false
+            extraProviderOptions: ""
+            useExtraProviderOptionsInput: false
+            responseFormat: ""
+            toolChoice: ""
+            parallelToolCalls: false
+            autoContinueToolCalls: false
+            maxToolRounds: 3
+            retryOnNon200: false
+            outputRequestStatus: false
+            outputRequestError: false
+            outputRequestBody: false
+            enableOpenAIWebSearch: false
+            enableOpenAICodeInterpreter: false
+            enableGoogleSearchGrounding: false
+            enableGoogleUrlContext: false
+          outgoingConnections:
+            - response->"Output" output-node/value
+          visualData: 320/0/260/null//
+        '[output-node]:graphOutput "Output"':
+          data:
+            id: output
+            dataType: string
+          visualData: 700/0/220/null//
+  metadata:
+    id: llm-contract
+    title: LLM bridge contract
+    description: ""
+    mainGraphId: graph-1
+  plugins: []
+`;
+
+const directExternalProject = `version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-1:
+      metadata:
+        id: graph-1
+        name: Main
+        description: ""
+      nodes:
+        '[external-node]:httpCall "External fetch"':
+          data:
+            method: GET
+            url: https://example.com/
+            headers: ""
+            body: ""
+            errorOnNon200: true
+            catchRequestFailed: false
+            retryOnNon200: false
+            retryOnNon200RepeatTimes: 1
+            retryOnNon200CooldownMs: 0
+          visualData: 0/0/250/null//
+  metadata:
+    id: direct-external-contract
+    title: Direct external denial
+    description: ""
+    mainGraphId: graph-1
+  plugins: []
+`;
+
 function invoke(project, overrides = {}) {
   const directory = mkdtempSync(resolve(tmpdir(), "wright-rivet-runner-"));
   try {
@@ -213,6 +323,26 @@ async function loopbackBridge(handler) {
   };
 }
 
+async function loopbackAiBridge(handler) {
+  const server = createServer(handler);
+  await new Promise((resolveListen) =>
+    server.listen(0, "127.0.0.1", resolveListen),
+  );
+  const address = server.address();
+  return {
+    baseUrl: `http://127.0.0.1:${address.port}/internal/rivet-ai/v1`,
+    close: () => new Promise((resolveClose) => server.close(resolveClose)),
+  };
+}
+
+function aiGrant(baseUrl) {
+  return {
+    baseUrl,
+    token: "ci-test-ai-token-012345678901234567890123",
+    model: "wright-model",
+  };
+}
+
 function mcpGrant(baseUrl, changes = {}) {
   return {
     authorityId: "authority-contract",
@@ -240,6 +370,153 @@ test("executes a deterministic graph and emits one terminal result", () => {
   assert.equal(lines.at(-1).type, "result");
   assert.equal(lines.at(-1).state, "succeeded");
   assert.equal(lines.at(-1).outputs.output.value, "hello");
+});
+
+test("emits bounded typed node inputs and outputs before the terminal result", () => {
+  const result = invoke(passthroughProject, {
+    inputs: { input: "mechanical input" },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
+  const starts = events.filter((event) => event.phase === "node-start");
+  const finishes = events.filter((event) => event.phase === "node-finish");
+  assert.ok(starts.length >= 1);
+  assert.ok(finishes.length >= 1);
+  assert.ok(
+    starts.some(
+      (event) =>
+        event.inputValues?.length === 0 && event.inputState === "no-value",
+    ),
+  );
+  assert.ok(
+    starts.some((event) =>
+      event.inputValues?.some(
+        (value) =>
+          value.data_type === "string" &&
+          value.evidence_state === "available" &&
+          value.preview === "mechanical input",
+      ),
+    ),
+  );
+  assert.ok(
+    finishes.some((event) =>
+      event.outputValues?.some(
+        (value) =>
+          value.data_type === "string" &&
+          value.evidence_state === "available" &&
+          value.preview === "mechanical input",
+      ),
+    ),
+  );
+  assert.ok(
+    finishes.every(
+      (event) =>
+        event.durationMs === undefined ||
+        (Number.isFinite(event.durationMs) && event.durationMs >= 0),
+    ),
+  );
+});
+
+test("llmChatV2 executes only through the authorized Wright AI bridge", async () => {
+  const receipts = [];
+  const bridge = await loopbackAiBridge((request, response) => {
+    let body = "";
+    request.setEncoding("utf8");
+    request.on("data", (chunk) => (body += chunk));
+    request.on("end", () => {
+      receipts.push({
+        url: request.url,
+        authorization: request.headers.authorization,
+        body: JSON.parse(body),
+      });
+      response.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      });
+      response.end(
+        [
+          `data: ${JSON.stringify({
+            id: "chatcmpl-wright",
+            object: "chat.completion.chunk",
+            created: 0,
+            model: "wright-model",
+            choices: [
+              {
+                index: 0,
+                delta: { role: "assistant", content: "bridged answer" },
+                finish_reason: null,
+              },
+            ],
+          })}`,
+          `data: ${JSON.stringify({
+            id: "chatcmpl-wright",
+            object: "chat.completion.chunk",
+            created: 0,
+            model: "wright-model",
+            choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+            usage: {
+              prompt_tokens: 1,
+              completion_tokens: 2,
+              total_tokens: 3,
+            },
+          })}`,
+          "data: [DONE]",
+          "",
+        ].join("\n\n"),
+      );
+    });
+  });
+  try {
+    const ai = aiGrant(bridge.baseUrl);
+    const result = await invokeAsync(llmChatV2Project, {
+      capabilities: ["ai"],
+      inputs: { prompt: "hello" },
+      ai,
+    });
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(receipts.length, 1);
+    assert.equal(receipts[0].url, "/internal/rivet-ai/v1/chat/completions");
+    assert.equal(receipts[0].authorization, `Bearer ${ai.token}`);
+    assert.equal(receipts[0].body.model, ai.model);
+    const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
+    assert.equal(events.at(-1).state, "succeeded");
+    assert.equal(events.at(-1).outputs.output.value, "bridged answer");
+  } finally {
+    await bridge.close();
+  }
+});
+
+test("llmChatV2 profile mode fails closed with named-node bridge guidance", async () => {
+  const result = await invokeAsync(
+    llmChatV2Project.replace(
+      "configurationMode: inline",
+      "configurationMode: profile",
+    ),
+    {
+      capabilities: ["ai"],
+      ai: aiGrant("http://127.0.0.1:43124/internal/rivet-ai/v1"),
+    },
+  );
+  assert.notEqual(result.status, 0);
+  const terminal = result.stdout.trim().split(/\r?\n/).map(JSON.parse).at(-1);
+  assert.equal(terminal.error.code, "RIVET_AI_PROFILE_BRIDGE_REQUIRED");
+  assert.match(terminal.error.message, /LLM Chat \(llm-node\)/);
+  assert.match(terminal.error.message, /Inline configuration/);
+});
+
+test("arbitrary direct fetch remains denied outside Wright bridges", async () => {
+  const result = await invokeAsync(directExternalProject, {
+    capabilities: ["network"],
+    ai: aiGrant("http://127.0.0.1:43125/internal/rivet-ai/v1"),
+  });
+  assert.notEqual(result.status, 0);
+  const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
+  const nodeError = events.find((event) => event.phase === "node-error");
+  assert.equal(nodeError.errorCode, "RIVET_RUNNER_NETWORK_DENIED");
+  assert.equal(nodeError.nodeTitle, "External fetch");
+  assert.equal(nodeError.nodeType, "httpCall");
+  assert.equal(events.at(-1).error.code, "RIVET_RUNNER_NETWORK_DENIED");
 });
 
 test("checks capabilities only for the selected graph", () => {

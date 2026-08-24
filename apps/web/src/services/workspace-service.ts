@@ -56,6 +56,8 @@ export interface RivetMcpCapability {
   compatibility: string;
   binding_eligible: boolean;
   blocking_reasons: string[];
+  artifact_producer?: Record<string, unknown> | null;
+  artifact_producer_digest?: string | null;
 }
 
 export interface RivetMcpCapabilities {
@@ -109,6 +111,8 @@ export interface RivetMcpBindingPreview {
     risk: Record<string, unknown> | null;
     units_policy: Record<string, unknown> | null;
     material_defaults: Record<string, unknown> | null;
+    artifact_producer?: Record<string, unknown> | null;
+    artifact_producer_digest?: string | null;
     blockers: string[];
   }>;
 }
@@ -172,6 +176,17 @@ export interface RivetRunResultItem {
     | "link"
     | "artifact"
     | string;
+  data_type: string;
+  evidence_state:
+    | "available"
+    | "no-value"
+    | "not-run"
+    | "not-retained"
+    | "redacted"
+    | "truncated"
+    | "expired"
+    | "unavailable"
+    | string;
   value: unknown;
   preview: string;
   complete: boolean;
@@ -187,6 +202,7 @@ export interface RivetRunStep {
   step_id: string;
   sequence: number;
   node_id: string | null;
+  node_type: string | null;
   label: string;
   kind: string;
   qualified_tool_name: string | null;
@@ -197,6 +213,10 @@ export interface RivetRunStep {
   completed_at: string | null;
   duration_ms: number | null;
   reason_code: string | null;
+  inputs: RivetRunResultItem[];
+  outputs: RivetRunResultItem[];
+  input_state: string;
+  output_state: string;
   result: RivetRunResultItem | null;
   artifacts: Array<Record<string, unknown>>;
   redaction_count: number;
@@ -220,6 +240,8 @@ export interface RivetRunInspection {
     occurred_at: string | null;
     payload: Record<string, unknown>;
   }>;
+  run_inputs: RivetRunResultItem[];
+  inputs_state: string;
   steps: RivetRunStep[];
   final_outputs: RivetRunResultItem[];
   diagnostic: {
@@ -228,6 +250,7 @@ export interface RivetRunInspection {
     recovery_action: string;
     failed_step_id: string | null;
     failed_node_id: string | null;
+    failed_node_label: string | null;
     qualified_tool_name: string | null;
     trace_id: string | null;
     full_rerun_available: boolean;
@@ -235,6 +258,7 @@ export interface RivetRunInspection {
     residue_possible: boolean;
   } | null;
   completeness: {
+    inputs_complete: boolean;
     outputs_complete: boolean;
     steps_complete: boolean;
     events_complete: boolean;
@@ -930,6 +954,19 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Workflow run inspection is unavailable");
     return response.json();
+  }
+
+  async getRivetRunArtifact(
+    sessionId: string,
+    runId: string,
+    artifactId: string,
+  ): Promise<Blob> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/artifacts/${encodeURIComponent(artifactId)}?session_id=${encodeURIComponent(sessionId)}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Run artifact is unavailable");
+    return response.blob();
   }
 
   async getRecentRivetRuns(

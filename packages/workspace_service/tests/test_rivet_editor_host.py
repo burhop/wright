@@ -7,6 +7,7 @@ import time
 import json
 import os
 import threading
+from collections.abc import Callable
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError
@@ -35,6 +36,80 @@ def _request(url: str, *, method="GET", headers=None, body: bytes | None = None)
             return response.status, dict(response.headers), response.read()
     except HTTPError as error:
         return error.code, dict(error.headers), error.read()
+
+
+def _wait_for_health(base_url: str, *, attempts: int = 80) -> tuple[int, bytes]:
+    for _ in range(attempts):
+        try:
+            return _get(f"{base_url}/health")
+        except OSError:
+            time.sleep(0.05)
+    raise AssertionError("editor health endpoint did not become ready")
+
+
+def _wait_for_ai_config(
+    base_url: str,
+    predicate: Callable[[dict], bool],
+    *,
+    attempts: int = 200,
+) -> tuple[int, bytes, dict]:
+    last: dict = {}
+    for _ in range(attempts):
+        try:
+            status, _, body = _request(f"{base_url}/wright-ai/config")
+        except OSError:
+            time.sleep(0.05)
+            continue
+        if status == 200:
+            last = json.loads(body)
+            if predicate(last):
+                return status, body, last
+        time.sleep(0.05)
+    raise AssertionError(f"editor AI config did not reach the expected state: {last}")
+
+
+def _write_slow_hermes_cli(tmp_path: Path, *, delay_seconds: float) -> Path:
+    config = tmp_path / "hermes-config.yaml"
+    config.write_text(
+        "API_SERVER_HOST: 127.0.0.1\n"
+        "API_SERVER_PORT: 8642\n"
+        "API_SERVER_KEY: slow-private-hermes-key\n",
+        encoding="utf-8",
+    )
+    env_file = tmp_path / "hermes.env"
+    env_file.write_text("", encoding="utf-8")
+    helper = tmp_path / "slow-hermes.py"
+    helper.write_text(
+        "import sys\n"
+        "import time\n"
+        f"time.sleep({delay_seconds!r})\n"
+        f"config_path = {str(config)!r}\n"
+        f"env_path = {str(env_file)!r}\n"
+        "args = sys.argv[1:]\n"
+        "if args[-2:] == ['config', 'path']:\n"
+        "    print(config_path)\n"
+        "elif args[-2:] == ['config', 'env-path']:\n"
+        "    print(env_path)\n"
+        "else:\n"
+        "    raise SystemExit(2)\n",
+        encoding="utf-8",
+    )
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    if os.name == "nt":
+        launcher = bin_dir / "hermes.cmd"
+        launcher.write_text(
+            f'@echo off\r\n"{sys.executable}" "{helper}" %*\r\n',
+            encoding="utf-8",
+        )
+    else:
+        launcher = bin_dir / "hermes"
+        launcher.write_text(
+            f"#!{sys.executable}\n" + helper.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        launcher.chmod(0o755)
+    return bin_dir
 
 
 class _HermesHandler(BaseHTTPRequestHandler):
@@ -120,6 +195,70 @@ def test_editor_host_serves_health_and_spa_routes_from_supplied_root(tmp_path) -
         process.wait(timeout=5)
 
 
+def test_editor_health_binds_before_two_slow_hermes_cli_lookups(tmp_path) -> None:
+    root = tmp_path / "artifact"
+    root.mkdir()
+    (root / "index.html").write_text("<main>Rivet editor</main>", encoding="utf-8")
+    bin_dir = _write_slow_hermes_cli(tmp_path, delay_seconds=1.5)
+    port = _unused_port()
+    env = {**os.environ, "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}"}
+    for name in (
+        "HERMES_API_BASE_URL",
+        "HERMES_API_KEY",
+        "API_SERVER_HOST",
+        "API_SERVER_PORT",
+        "API_SERVER_KEY",
+        "HERMES_CONFIG_PATH",
+        "HERMES_ENV_PATH",
+        "HERMES_HOME",
+        "HERMES_PROFILE",
+    ):
+        env.pop(name, None)
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            str(HOST),
+            "--root",
+            str(root),
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--ai-enabled",
+        ],
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    base_url = f"http://127.0.0.1:{port}"
+    try:
+        for _ in range(80):
+            try:
+                health_status, health = _get(f"{base_url}/health")
+                break
+            except OSError:
+                time.sleep(0.05)
+        else:
+            raise AssertionError("health waited for slow Hermes CLI discovery")
+
+        assert health_status == 200
+        assert health == b'{"status": "ok", "mode": "rivet2-canvas"}'
+        config_status, _, initial_body = _request(f"{base_url}/wright-ai/config")
+        initial = json.loads(initial_body)
+        assert config_status == 200
+        assert initial == {"available": False, "reason": "hermes_initializing"}
+        assert "slow-private-hermes-key" not in initial_body.decode()
+
+        _, ready_body, ready = _wait_for_ai_config(
+            base_url, lambda value: value.get("available") is True
+        )
+        assert ready["baseUrl"] == "/wright-ai/v1"
+        assert "slow-private-hermes-key" not in ready_body.decode()
+    finally:
+        process.terminate()
+        process.wait(timeout=5)
+
+
 def test_editor_host_ai_config_token_security_and_completion_proxy(tmp_path) -> None:
     root = tmp_path / "artifact"
     root.mkdir()
@@ -153,17 +292,12 @@ def test_editor_host_ai_config_token_security_and_completion_proxy(tmp_path) -> 
     )
     base_url = f"http://127.0.0.1:{port}"
     try:
-        for _ in range(40):
-            try:
-                status, _, config_body = _request(f"{base_url}/wright-ai/config")
-            except OSError:
-                time.sleep(0.05)
-                continue
-            if status == 200:
-                break
-        else:
-            raise AssertionError("editor AI host did not become ready")
-        config = json.loads(config_body)
+        health_status, _ = _wait_for_health(base_url)
+        status, config_body, config = _wait_for_ai_config(
+            base_url, lambda value: value.get("available") is True
+        )
+        assert health_status == 200
+        assert status == 200
         assert config["available"] is True
         assert config["provider"] == "custom"
         assert config["model"] == "wright-hermes"
@@ -272,14 +406,10 @@ def test_editor_host_renews_expired_browser_token(tmp_path) -> None:
     )
     try:
         base_url = f"http://127.0.0.1:{port}"
-        for _ in range(40):
-            try:
-                status, _, first_body = _request(f"{base_url}/wright-ai/config")
-                break
-            except OSError:
-                time.sleep(0.05)
+        status, first_body, first = _wait_for_ai_config(
+            base_url, lambda value: value.get("available") is True
+        )
         assert status == 200
-        first = json.loads(first_body)
         time.sleep(1.1)
         second_status, _, second_body = _request(f"{base_url}/wright-ai/config")
         second = json.loads(second_body)
@@ -333,14 +463,11 @@ def test_editor_host_keeps_active_ai_token_alive_across_initial_ttl(tmp_path) ->
         }
     ).encode()
     try:
-        for _ in range(40):
-            try:
-                status, _, config_body = _request(f"{base_url}/wright-ai/config")
-                break
-            except OSError:
-                time.sleep(0.05)
+        status, config_body, config = _wait_for_ai_config(
+            base_url, lambda value: value.get("available") is True
+        )
         assert status == 200
-        token = json.loads(config_body)["token"]
+        token = config["token"]
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
@@ -398,15 +525,16 @@ def test_editor_host_reports_ai_unavailable_without_a_browser_secret(tmp_path) -
     )
     try:
         base_url = f"http://127.0.0.1:{port}"
-        for _ in range(40):
-            try:
-                status, _, body = _request(f"{base_url}/wright-ai/config")
-                break
-            except OSError:
-                time.sleep(0.05)
+        health_status, health = _wait_for_health(base_url)
+        status, body, config = _wait_for_ai_config(
+            base_url,
+            lambda value: value.get("reason") == "hermes_unavailable",
+        )
+        assert health_status == 200
+        assert health == b'{"status": "ok", "mode": "rivet2-canvas"}'
         assert status == 200
-        config = json.loads(body)
         assert config == {"available": False, "reason": "hermes_unavailable"}
+        assert "token" not in body.decode()
     finally:
         process.terminate()
         process.wait(timeout=5)
