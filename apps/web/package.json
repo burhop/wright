@@ -20,6 +20,7 @@
     "@xyflow/react": "12.11.3",
     "dompurify": "3.4.12",
     "idb": "^8.0.3",
+    "litegraph.js": "0.7.18",
     "plotly.js-dist-min": "3.7.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

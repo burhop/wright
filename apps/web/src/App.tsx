@@ -41,6 +41,10 @@ const ReteBakeoffHarness = lazy(
   () =>
     import("./prototypes/engineering-workflow/canvas/rete/ReteBakeoffHarness"),
 );
+const LiteGraphBakeoffHarness = lazy(
+  () =>
+    import("./prototypes/engineering-workflow/canvas/litegraph/LiteGraphBakeoffHarness"),
+);
 
 function App() {
   useDesktopIntegration();
@@ -80,6 +84,14 @@ function App() {
   const reteBakeoffElement = engineeringWorkflowPrototypeEnabled() ? (
     <Suspense fallback={<p role="status">Loading Rete bakeoff.</p>}>
       <ReteBakeoffHarness />
+    </Suspense>
+  ) : (
+    <NotFoundPage />
+  );
+
+  const liteGraphBakeoffElement = engineeringWorkflowPrototypeEnabled() ? (
+    <Suspense fallback={<p role="status">Loading LiteGraph bakeoff.</p>}>
+      <LiteGraphBakeoffHarness />
     </Suspense>
   ) : (
     <NotFoundPage />
@@ -135,6 +147,10 @@ function App() {
         <Route
           path="/prototype/engineering-workflow/bakeoff/rete"
           element={reteBakeoffElement}
+        />
+        <Route
+          path="/prototype/engineering-workflow/bakeoff/litegraph"
+          element={liteGraphBakeoffElement}
         />
         <Route
           path="*"
