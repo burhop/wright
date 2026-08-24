@@ -1,0 +1,235 @@
+export interface EngineeringCapabilityTemplate {
+  capabilityId: string;
+  categoryId: string;
+  title: string;
+  description: string;
+  keywords: string[];
+  expectedInputs: string[];
+  expectedOutputs: string[];
+  catalogMatches: number;
+}
+
+export interface EngineeringCapabilityCategory {
+  categoryId: string;
+  label: string;
+  shortLabel: string;
+}
+
+export const engineeringCapabilityCategories: EngineeringCapabilityCategory[] =
+  [
+    { categoryId: "all", label: "All capabilities", shortLabel: "All" },
+    { categoryId: "design", label: "Design & geometry", shortLabel: "Design" },
+    {
+      categoryId: "simulation",
+      label: "Analysis & simulation",
+      shortLabel: "Simulation",
+    },
+    {
+      categoryId: "manufacturing",
+      label: "Manufacturing & process",
+      shortLabel: "Manufacturing",
+    },
+    {
+      categoryId: "lifecycle",
+      label: "Product data & lifecycle",
+      shortLabel: "Lifecycle",
+    },
+    {
+      categoryId: "quality",
+      label: "Quality & inspection",
+      shortLabel: "Quality",
+    },
+  ];
+
+export const engineeringCapabilityTemplates: EngineeringCapabilityTemplate[] = [
+  {
+    capabilityId: "parametric-cad",
+    categoryId: "design",
+    title: "Parametric CAD",
+    description: "Create or revise feature-based parts and assemblies.",
+    keywords: ["CAD", "geometry", "solid", "assembly", "feature"],
+    expectedInputs: ["Design specification", "Parameters", "References"],
+    expectedOutputs: ["Native model", "Neutral geometry", "Preview"],
+    catalogMatches: 3,
+  },
+  {
+    capabilityId: "surface-modeling",
+    categoryId: "design",
+    title: "Surface & shape modeling",
+    description: "Create constrained surfaces, lofts, and complex shapes.",
+    keywords: ["surface", "loft", "NURBS", "shape", "CAD"],
+    expectedInputs: ["Curves", "Constraints", "Shape intent"],
+    expectedOutputs: ["Surface model", "Geometry report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "kinematics",
+    categoryId: "design",
+    title: "Kinematics & mechanisms",
+    description: "Evaluate joints, motion envelopes, and interference.",
+    keywords: ["kinematics", "motion", "mechanism", "joint", "collision"],
+    expectedInputs: ["Assembly", "Joints", "Motion definition"],
+    expectedOutputs: ["Motion study", "Interference report"],
+    catalogMatches: 1,
+  },
+  {
+    capabilityId: "tolerance-stack",
+    categoryId: "design",
+    title: "Tolerance stack-up",
+    description: "Analyze dimensional variation across an assembly.",
+    keywords: ["tolerance", "GD&T", "variation", "assembly"],
+    expectedInputs: ["Dimensions", "Tolerances", "Assembly path"],
+    expectedOutputs: ["Stack report", "Sensitivity"],
+    catalogMatches: 1,
+  },
+  {
+    capabilityId: "structural-fea",
+    categoryId: "simulation",
+    title: "Structural FEA",
+    description: "Evaluate stress, displacement, stability, and safety factor.",
+    keywords: ["FEA", "stress", "deflection", "structural", "buckling"],
+    expectedInputs: ["Geometry", "Material", "Loads", "Constraints"],
+    expectedOutputs: ["Result fields", "Plots", "Evidence report"],
+    catalogMatches: 4,
+  },
+  {
+    capabilityId: "cfd",
+    categoryId: "simulation",
+    title: "Computational fluid dynamics",
+    description: "Model flow, pressure, turbulence, and heat transfer.",
+    keywords: ["CFD", "fluid", "flow", "pressure", "turbulence"],
+    expectedInputs: ["Fluid domain", "Boundary conditions", "Material model"],
+    expectedOutputs: ["Flow fields", "Plots", "Solver report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "thermal",
+    categoryId: "simulation",
+    title: "Thermal analysis",
+    description: "Predict temperature, heat flux, and thermal expansion.",
+    keywords: ["thermal", "heat", "temperature", "conduction", "radiation"],
+    expectedInputs: ["Geometry", "Heat sources", "Boundary conditions"],
+    expectedOutputs: ["Temperature field", "Thermal report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "multibody-dynamics",
+    categoryId: "simulation",
+    title: "Multibody dynamics",
+    description: "Simulate forces and motion across connected bodies.",
+    keywords: ["dynamics", "motion", "forces", "kinematics", "multibody"],
+    expectedInputs: ["Assembly", "Joints", "Forces", "Motion profile"],
+    expectedOutputs: ["Time history", "Loads", "Animation"],
+    catalogMatches: 1,
+  },
+  {
+    capabilityId: "cam-toolpaths",
+    categoryId: "manufacturing",
+    title: "CAM & toolpaths",
+    description: "Plan machining operations and generate verified toolpaths.",
+    keywords: ["CAM", "CNC", "toolpath", "machining", "G-code"],
+    expectedInputs: ["Manufacturing geometry", "Stock", "Machine", "Tools"],
+    expectedOutputs: ["Setup plan", "Toolpaths", "NC program"],
+    catalogMatches: 3,
+  },
+  {
+    capabilityId: "sheet-metal",
+    categoryId: "manufacturing",
+    title: "Sheet-metal preparation",
+    description: "Create flat patterns, bend data, and cut-ready exports.",
+    keywords: ["sheet metal", "DXF", "flat pattern", "bend", "laser"],
+    expectedInputs: ["Approved model", "Material", "Thickness", "Rules"],
+    expectedOutputs: ["Flat pattern", "Bend table", "Cut file"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "additive",
+    categoryId: "manufacturing",
+    title: "Additive preparation",
+    description: "Orient, support, slice, and assess build readiness.",
+    keywords: ["additive", "3D printing", "slice", "support", "build"],
+    expectedInputs: ["Geometry", "Material", "Machine profile"],
+    expectedOutputs: ["Build file", "Support plan", "Build report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "process-planning",
+    categoryId: "manufacturing",
+    title: "Manufacturing process plan",
+    description: "Sequence operations, resources, inspections, and handoffs.",
+    keywords: ["routing", "process", "work instruction", "manufacturing"],
+    expectedInputs: ["Part definition", "Capabilities", "Quality plan"],
+    expectedOutputs: ["Process plan", "Work instructions"],
+    catalogMatches: 3,
+  },
+  {
+    capabilityId: "plm-release",
+    categoryId: "lifecycle",
+    title: "PLM release & change",
+    description: "Create items, route reviews, and manage engineering change.",
+    keywords: ["PLM", "release", "ECO", "change", "workflow"],
+    expectedInputs: ["Design package", "Approvers", "Change reason"],
+    expectedOutputs: ["Released item", "Change record", "Audit trail"],
+    catalogMatches: 3,
+  },
+  {
+    capabilityId: "pdm-vault",
+    categoryId: "lifecycle",
+    title: "PDM & document control",
+    description: "Check in, version, relate, and retrieve controlled files.",
+    keywords: ["PDM", "vault", "document", "version", "check-in"],
+    expectedInputs: ["Files", "Metadata", "Relationships"],
+    expectedOutputs: ["Controlled revision", "Document links"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "bom",
+    categoryId: "lifecycle",
+    title: "BOM management",
+    description: "Create, compare, validate, and release bills of material.",
+    keywords: ["BOM", "parts", "assembly", "quantity", "effectivity"],
+    expectedInputs: ["Product structure", "Parts", "Effectivity"],
+    expectedOutputs: ["BOM revision", "Comparison", "Validation report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "supplier-collaboration",
+    categoryId: "lifecycle",
+    title: "Supplier collaboration",
+    description: "Exchange governed packages, quotes, and delivery status.",
+    keywords: ["supplier", "RFQ", "quote", "portal", "procurement"],
+    expectedInputs: ["Package", "Supplier", "Commercial request"],
+    expectedOutputs: ["Quote", "Acknowledgment", "Status"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "metrology",
+    categoryId: "quality",
+    title: "Metrology & inspection",
+    description: "Plan measurements and evaluate dimensional results.",
+    keywords: ["CMM", "inspection", "metrology", "measurement", "GD&T"],
+    expectedInputs: ["Drawing", "Geometry", "Inspection plan"],
+    expectedOutputs: ["Measurement results", "Inspection report"],
+    catalogMatches: 2,
+  },
+  {
+    capabilityId: "quality-plan",
+    categoryId: "quality",
+    title: "Quality planning",
+    description: "Create control plans, checks, and acceptance evidence.",
+    keywords: ["quality", "control plan", "acceptance", "inspection"],
+    expectedInputs: ["Requirements", "Risks", "Process plan"],
+    expectedOutputs: ["Control plan", "Acceptance checklist"],
+    catalogMatches: 3,
+  },
+  {
+    capabilityId: "nonconformance",
+    categoryId: "quality",
+    title: "Nonconformance & corrective action",
+    description: "Record deviations, disposition work, and track action.",
+    keywords: ["NCR", "CAPA", "deviation", "quality", "corrective action"],
+    expectedInputs: ["Observation", "Evidence", "Affected items"],
+    expectedOutputs: ["Disposition", "Action plan", "Audit record"],
+    catalogMatches: 2,
+  },
+];

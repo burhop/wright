@@ -250,8 +250,9 @@ external engineering applications.
   ports, loops, selection, keyboard access, layout control, serialization
   separation, React integration, performance, package health, and testability.
 - **FR-016**: The branch MUST deliver independently demonstrable checkpoints
-  for baseline/postmortem, library bakeoff, static canvas, editing, generic MCP
-  call, LLM authoring, integrated scenario, and final decision.
+  for baseline/postmortem, early visual contract, library bakeoff, selected
+  canvas integration, editing, generic MCP call, LLM authoring, integrated
+  scenario, and final decision.
 - **FR-017**: Each checkpoint MUST state its hypothesis, bounded scope,
   demonstration, automated verification, measurements, decision, and retained
   learning.
@@ -274,6 +275,18 @@ external engineering applications.
   workflow-specification decisions.
 - **FR-024**: Prototype implementation MUST stop for human review after every
   major checkpoint, in accordance with the project constitution.
+- **FR-025**: Before any graph-library dependency is installed, the prototype
+  MUST provide a feature-flagged, read-only visual contract that is materially
+  faithful to the generated reference image and driven by a typed fixture.
+- **FR-026**: Engineering capability discovery MUST support pinned/recent items,
+  search, and filterable categories so CAD, FEA, CAM, CFD, PLM/PDM, kinematics,
+  and organization-defined capabilities do not become one long fixed palette.
+- **FR-027**: Capability categories and templates MUST be presentation and
+  discovery metadata only. Adding an executable capability MUST create the same
+  generic MCP action role and require a reviewed exact catalog binding.
+- **FR-028**: A capability template MUST expose an engineer-readable purpose,
+  expected inputs, and expected outputs before tool binding. Any displayed
+  catalog matches MUST be clearly identified as fixture or live data.
 
 ### Key Entities
 
@@ -282,7 +295,9 @@ external engineering applications.
 - **Phase Lane**: Configurable visual grouping with identity, order, label,
   description, and presentation attributes.
 - **Workflow Block**: Stable semantic unit with role, purpose, configuration,
-  ports, phase membership, and optional capability binding.
+  ports, phase membership, and optional capability binding.- **Capability Template**: Searchable, organization-extensible discovery record
+  with presentation category, keywords, purpose, and expected input/output
+  shapes; it never selects execution code.
 - **Connection**: Typed directed relationship with source/target ports and
   control or data semantics.
 - **MCP Binding**: Exact reviewed server/tool declaration and schema identity
@@ -326,6 +341,10 @@ external engineering applications.
 - **SC-009**: The final decision record scores every candidate with the same
   rubric and provides an evidence-backed retain, hybrid, replace, or stop
   recommendation.
+- **SC-010**: A representative user can find each of CAD, FEA, CAM, CFD, PLM,
+  and kinematics using the compact palette plus capability library without
+  scanning a complete flat list, and can distinguish the friendly template
+  from the exact MCP tool binding.
 
 ## Assumptions
 

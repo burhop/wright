@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   HashRouter,
@@ -23,8 +23,16 @@ import { ChatProvider } from "./store/sessions";
 import { ViewerPanelProvider } from "./store/viewer";
 import { SurfaceStateProvider } from "./store/surfaces";
 import { hostAdapter } from "./services/host-adapter";
-import { workspaceSurfacesEnabled } from "./services/surfaces/feature-flags";
+import {
+  engineeringWorkflowPrototypeEnabled,
+  workspaceSurfacesEnabled,
+} from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
+
+const EngineeringWorkflowVisualSlice = lazy(
+  () =>
+    import("./prototypes/engineering-workflow/EngineeringWorkflowVisualSlice"),
+);
 
 function App() {
   useDesktopIntegration();
@@ -45,7 +53,15 @@ function App() {
   const Router =
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
 
-  const content = (
+  const prototypeElement = engineeringWorkflowPrototypeEnabled() ? (
+    <Suspense fallback={<p role="status">Loading visual prototype.</p>}>
+      <EngineeringWorkflowVisualSlice />
+    </Suspense>
+  ) : (
+    <NotFoundPage />
+  );
+
+  const securedContent = (
     <ViewerPanelProvider>
       <ToolsProvider>
         <AuthGate>
@@ -75,15 +91,24 @@ function App() {
     </ViewerPanelProvider>
   );
 
+  const applicationContent = workspaceSurfacesEnabled() ? (
+    <SurfaceStateProvider>{securedContent}</SurfaceStateProvider>
+  ) : (
+    securedContent
+  );
+
   return (
     <Router>
-      <ChatProvider>
-        {workspaceSurfacesEnabled() ? (
-          <SurfaceStateProvider>{content}</SurfaceStateProvider>
-        ) : (
-          content
-        )}
-      </ChatProvider>
+      <Routes>
+        <Route
+          path="/prototype/engineering-workflow"
+          element={prototypeElement}
+        />
+        <Route
+          path="*"
+          element={<ChatProvider>{applicationContent}</ChatProvider>}
+        />
+      </Routes>
     </Router>
   );
 }

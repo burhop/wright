@@ -53,6 +53,10 @@ and ready for implementation planning.
       optional remote LLM, simulated external systems, and disposable persistence.
 - [x] CHK020 Requirements avoid committing to a graph candidate before the
       bakeoff.
+- [x] CHK021 The early visual contract is explicitly separated from replaceable
+      canvas projection code.
+- [x] CHK022 Capability discovery covers a broad engineering catalog without
+      introducing domain-specific execution classes.
 
 ## Notes
 

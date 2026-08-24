@@ -72,6 +72,24 @@ Blocks use a small interaction-role vocabulary, not an engineering-domain taxono
 
 The role controls visual grammar and generic behavior. “Create CAD model,” “Run FEA,” and “Request quote” may all be `mcp-action` blocks with different exact tool bindings and display labels.
 
+## EngineeringCapabilityTemplate
+
+A capability template makes a broad engineering catalog understandable without creating a runtime taxonomy.
+
+| Field                | Type                      | Rules                                                               |
+| -------------------- | ------------------------- | ------------------------------------------------------------------- |
+| `capabilityId`       | stable ID                 | Organization-extensible presentation identity.                      |
+| `categoryId`         | string                    | Search/filter metadata only; never an executor selector.            |
+| `title`              | string                    | Engineer-facing name such as Parametric CAD or Structural FEA.      |
+| `description`        | string                    | Outcome-oriented purpose.                                           |
+| `keywords`           | string[]                  | Search synonyms such as CFD, fluids, or turbulence.                 |
+| `expectedInputs`     | string/schema hints[]     | Helps authors understand and map required information.              |
+| `expectedOutputs`    | string/schema hints[]     | Describes expected artifacts or result shapes.                      |
+| `compatibilityQuery` | optional structured query | Narrows the generic workspace catalog without binding a tool.       |
+| `catalogMatches`     | derived list/count        | Live or clearly labeled fixture data; never persisted as authority. |
+
+Selecting a template creates an unbound `mcp-action` block. The block cannot run until the user reviews one exact catalog tool and its schema through `McpBinding`. Pinned and recent state is a user preference over template IDs, not a new service registry.
+
 ## Port
 
 | Field          | Type                    | Rules                                                              |

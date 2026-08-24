@@ -10,23 +10,23 @@ Build a checkpointed prototype that tests whether Wright can present engineering
 
 The prototype will not reimplement or fork Rivet and will not introduce CAD-, FEA-, manufacturing-, supplier-, or other domain-specific runtime services. A versioned Wright workflow specification is canonical. Candidate graph libraries are replaceable view/interaction adapters. LLMs propose validated atomic changes with a preview/accept boundary. MCP actions bind exact workspace catalog tools and invoke them only through the existing governed gateway.
 
-Progress is intentionally incremental: establish a baseline, run a shallow three-candidate graph bakeoff, build a static engineer-readable canvas, add typed manual editing, add generic MCP binding, add LLM authoring, integrate the reference story, and then write an evidence-backed architecture decision. Each major checkpoint is independently reviewable and can result in continue, change, stop, or defer.
+Progress is intentionally incremental: establish a baseline, make the target UI concrete with a reusable read-only visual slice, run a shallow three-candidate graph bakeoff around that visual contract, wire the selected canvas adapter, add typed manual editing, add generic MCP binding, add LLM authoring, integrate the reference story, and then write an evidence-backed architecture decision. Each major checkpoint is independently reviewable and can result in continue, change, stop, or defer.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 6 and React 19.2 in `apps/web`; existing Python/FastAPI services remain unchanged unless CP4 proves a narrowly scoped generic API gap.
-**Primary Dependencies**: Existing React Router, Zod, Vitest, Testing Library, Playwright, Wright design tokens, workspace service client, MCP catalog/gateway, approvals, artifacts, and evidence APIs. Candidate-only dependencies evaluated at CP1: `@xyflow/react`, Rete.js packages, and LiteGraph.js.
+**Primary Dependencies**: Existing React Router, Zod, Vitest, Testing Library, Playwright, Wright design tokens, workspace service client, MCP catalog/gateway, approvals, artifacts, and evidence APIs. Candidate-only dependencies evaluated at CP1B: `@xyflow/react`, Rete.js packages, and LiteGraph.js.
 **Storage**: Versioned deterministic TypeScript/JSON fixtures and optional browser-local ephemeral drafts. No SQLite, vault, or production schema migration in the prototype.
 **Testing**: Vitest model/component tests, deterministic fake LLM/MCP contract tests, at most three focused Chromium journeys, existing pre-push gate only at accepted push checkpoints.
 **Target Platform**: Wright web application in supported desktop browsers; Chromium is the automated prototype browser.
 **Project Type**: Existing monorepo web application with established API and package boundaries.
 **Performance Goals**: T0 model feedback <=5 seconds; T1 prototype component feedback <=30 seconds; T2 contract suite <=2 minutes; usable pan/select/open behavior for the 100-block bakeoff fixture.
 **Constraints**: Feature-flagged direct route; no production navigation; no Rivet project migration; no candidate-native persistence; no domain-specific executor/service taxonomy; generic MCP gateway only; no model/tool execution without established approval/evidence boundaries; checkpoints remain discardable.
-**Scale/Scope**: One fully expressed reference scenario, three candidate harnesses at CP1, one selected implementation thereafter, 25- and 100-block evaluation fixtures, three structurally different MCP contract fixtures, at least 20 LLM proposal fixtures, and no more than three browser journeys.
+**Scale/Scope**: One fully expressed reference scenario, one early visual contract, three candidate harnesses at CP1B, one selected implementation thereafter, 25- and 100-block evaluation fixtures, three structurally different MCP contract fixtures, at least 20 LLM proposal fixtures, and no more than three browser journeys.
 
 ## Constitution Check
 
-_GATE: Must pass before implementation research is accepted and be rechecked after CP1 selection and CP4 integration._
+_GATE: Must pass before implementation research is accepted and be rechecked after CP1B selection and CP4 integration._
 
 | Principle                             | Plan response                                                                                                                                                                                       | Status |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
@@ -57,6 +57,7 @@ specs/076-engineering-workflow-prototype/
 ├── contracts/
 │   ├── authoring-command.md
 │   ├── canvas-adapter.md
+│   ├── capability-template.md
 │   ├── checkpoint-evidence.md
 │   ├── generic-mcp-binding.md
 │   └── workflow-spec.md
@@ -172,6 +173,15 @@ The canvas uses horizontal process flow within configurable vertical phase lanes
 The small role vocabulary controls shape/accent, while phase controls lane/background. Status uses an independent indicator so color is not overloaded. Connections distinguish data/control/feedback by line treatment and label, not color alone. Selecting a block opens a structured side panel for details, mappings, documents, evidence, and review rather than expanding every block into a form.
 
 Define/Verify/Manufacture are reference-template phases, not hard-coded product categories. Other templates can use Discover/Design/Validate/Release, Plan/Make/Inspect/Ship, or user-defined phases without new code.
+Engineering capability selection uses two levels. The narrow palette shows pinned, recent, and workflow-relevant templates. A searchable library handles the larger engineering landscape, including CAD, FEA, CAM, CFD, PLM/PDM, kinematics, thermal analysis, metrology, quality, and future organization-defined capabilities. Categories, keywords, expected inputs/outputs, and friendly names are discovery metadata only. Adding any executable capability still creates the same generic `mcp-action` block and requires an exact catalog tool binding before it can run.
+
+The early visual slice is a visual contract rather than a throwaway screenshot:
+
+- reusable React components own the application shell, palette, capability library, phase headers, block cards, review gates, inspector, legend, and status language;
+- a typed reference fixture supplies the content;
+- a small static projection owns only fixed positioning and connector routing;
+- CP1B candidates must render around or reuse this visual system without becoming the canonical model;
+- editing, execution, persistence, LLM calls, and MCP calls remain disabled and visibly labeled until their checkpoints.
 
 ## Incremental delivery checkpoints
 
@@ -192,9 +202,31 @@ Exit criteria:
 - reference scenario and task script are unambiguous;
 - baseline timings and screenshots are reproducible;
 - no product or dependency code has changed;
-- human approves CP1 or stops.
+- human approves CP1A or stops.
 
-### CP1 — Shallow graph-library bakeoff
+### CP1A — Engineer-readable visual contract
+
+**Hypothesis**: A faithful read-only UI based on the generated target image can make the intended product concrete without prejudging the canvas library or creating throwaway product logic.
+
+Scope:
+
+- implement the feature-flagged direct route outside normal navigation and backend bootstrap requirements;
+- render the reference workflow with reusable Wright-token React components and a typed fixture;
+- include the top workflow toolbar, compact palette, searchable engineering capability library, configurable phase lanes, role-based block cards, review diamonds, data/control/feedback connections, inspector, legend, zoom controls, and minimap;
+- make blocks selectable and capability discovery searchable/filterable while leaving edit/run/save actions disabled;
+- capture the workflow and capability-library views at the reference dimensions;
+- add focused component and flag tests; install no graph dependency.
+
+Exit criteria:
+
+- visual review confirms the slice is materially faithful to the reference image;
+- CAD, FEA, CAM, CFD, PLM/PDM, kinematics, and additional capabilities are discoverable without a long flat palette;
+- capability categories do not select runtime code and all executable templates still map to generic MCP actions;
+- reusable presentation components are separated from static positioning/connector code;
+- focused component feedback remains <=30 seconds and the production web build passes;
+- human approves the visual contract before candidate wiring.
+
+### CP1B — Shallow graph-library bakeoff
 
 **Hypothesis**: At least one MIT candidate can express the engineer-readable visual grammar while keeping the Wright model canonical and tests fast.
 
@@ -216,14 +248,15 @@ Exit criteria:
 - if none passes, stop or authorize a fourth candidate; do not start a custom renderer by default;
 - human selects continue/change/stop.
 
-### CP2 — Static engineer-readable workflow UI
+### CP2 — Selected canvas integration and usability validation
 
 **Hypothesis**: Mechanical engineers can understand the reference workflow materially faster than the current Rivet presentation.
 
 Scope:
 
 - retain only the selected canvas adapter;
-- implement Wright-token phase lanes, block roles, ports, connection semantics, status, gate and feedback presentation;
+- replace the CP1A static projection/connector layer while retaining the approved visual components and typed fixture;
+- prove pan, zoom, selection, focus, and layout behavior through the common adapter;
 - implement details/evidence panels using deterministic data;
 - add keyboard focus, readable labels, non-color cues, empty/loading/error examples;
 - run a five-person or equivalently documented formative task review where practical.

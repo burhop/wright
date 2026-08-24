@@ -145,6 +145,12 @@ The client validates the proposal, applies it to a copy through the same reducer
 
 Development uses deterministic fixtures representing valid, invalid, stale, and partially applicable proposals. A real configured model is an optional checkpoint demonstration behind the same adapter, not a prerequisite for deterministic testing.
 
+## Visual-contract sequencing decision
+
+The generated UI image is promoted from inspiration to an early visual contract before the graph bakeoff. This is a sound incremental practice only because presentation and static projection are separated: reusable React components and a typed fixture are retained, while fixed positioning and connector routing are explicitly replaceable. This lets users judge the product language early and gives every graph candidate the same visual target.
+
+Engineering capability selection is similarly separated from execution. A compact palette shows pinned or recent templates, while a searchable library handles CAD, FEA, CAM, CFD, PLM/PDM, kinematics, thermal, quality, and organization-defined additions. These labels and categories help discovery; they never select a Wright service or executor. Exact MCP catalog identity remains the only executable binding.
+
 ## Testing strategy decision
 
 | Tier      | Scope                                                                     |                Target | When                                 |
