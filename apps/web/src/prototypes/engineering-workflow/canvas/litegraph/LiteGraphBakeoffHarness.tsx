@@ -11,6 +11,7 @@ import {
   EngineeringWorkflowVisualSlice,
   type EngineeringWorkflowCanvasRenderProps,
 } from "../../EngineeringWorkflowVisualSlice";
+import { workflowForBakeoffSearch } from "../../fixtures/scale-workflows";
 import type {
   WorkflowBlockRole,
   WorkflowConnectionSemantics,
@@ -527,9 +528,15 @@ export function LiteGraphCanvas({
 }
 
 export function LiteGraphBakeoffHarness() {
+  const workflow = useMemo(
+    () => workflowForBakeoffSearch(window.location.search),
+    [],
+  );
+
   return (
     <EngineeringWorkflowVisualSlice
       badge="CP1B · LiteGraph.js"
+      workflow={workflow}
       renderCanvas={(props) => <LiteGraphCanvas {...props} />}
     />
   );

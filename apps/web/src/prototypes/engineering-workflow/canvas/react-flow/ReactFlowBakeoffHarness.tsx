@@ -19,6 +19,7 @@ import {
   WorkflowBlock,
   type EngineeringWorkflowCanvasRenderProps,
 } from "../../EngineeringWorkflowVisualSlice";
+import { workflowForBakeoffSearch } from "../../fixtures/scale-workflows";
 import {
   projectWorkflowToCanvas,
   type CanvasProjection,
@@ -243,9 +244,15 @@ export function ReactFlowCanvas({
 }
 
 export function ReactFlowBakeoffHarness() {
+  const workflow = useMemo(
+    () => workflowForBakeoffSearch(window.location.search),
+    [],
+  );
+
   return (
     <EngineeringWorkflowVisualSlice
       badge="CP1B · React Flow"
+      workflow={workflow}
       renderCanvas={(props) => <ReactFlowCanvas {...props} />}
     />
   );

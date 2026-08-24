@@ -642,14 +642,19 @@ export interface EngineeringWorkflowCanvasRenderProps {
 export interface EngineeringWorkflowVisualSliceProps {
   badge?: string;
   renderCanvas?: (props: EngineeringWorkflowCanvasRenderProps) => ReactNode;
+  workflow?: WorkflowPreview;
 }
 
 export function EngineeringWorkflowVisualSlice({
   badge = "Visual slice",
   renderCanvas,
+  workflow = drillBitHolderWorkflow,
 }: EngineeringWorkflowVisualSliceProps = {}) {
-  const workflow = drillBitHolderWorkflow;
-  const [selectedBlockId, setSelectedBlockId] = useState("analysis-definition");
+  const [selectedBlockId, setSelectedBlockId] = useState(
+    () =>
+      workflow.blocks.find(({ blockId }) => blockId === "analysis-definition")
+        ?.blockId ?? workflow.blocks[0].blockId,
+  );
   const [zoom, setZoom] = useState(0.9);
   const [capabilityLibraryOpen, setCapabilityLibraryOpen] = useState(false);
 
