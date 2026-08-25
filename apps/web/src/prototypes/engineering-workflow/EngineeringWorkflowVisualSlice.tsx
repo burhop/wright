@@ -1,10 +1,17 @@
-import { useMemo, useReducer, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import {
   engineeringCapabilityCategories,
   engineeringCapabilityTemplates,
 } from "./fixtures/engineering-capability-library";
+import {
+  createDesignInputHistory,
+  reduceDesignInputHistory,
+  type DesignInputDocumentDraft,
+  type DesignInputHistory,
+  type DesignInputHistoryAction,
+} from "./domain/design-input-draft";
 import {
   createReferenceImageHistory,
   reduceReferenceImageHistory,
@@ -91,7 +98,7 @@ function reduceReferenceImageDraft(
   return { history, images };
 }
 
-function formatImageFileSize(bytes: number): string {
+function formatFileSize(bytes: number): string {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
@@ -114,13 +121,99 @@ function readUploadedReferenceImage(
         imageId,
         title: file.name,
         description:
-          (file.type || "Image file") + " · " + formatImageFileSize(file.size),
+          (file.type || "Image file") + " · " + formatFileSize(file.size),
         alt: "Uploaded reference image " + file.name,
         thumbnailUrl: reader.result,
       });
     };
     reader.readAsDataURL(file);
   });
+}
+const DESIGN_DOCUMENT_ACCEPT =
+  ".txt,.md,.markdown,.csv,.json,.yaml,.yml,.xml,.rtf,.pdf,.doc,.docx";
+const READABLE_DOCUMENT_EXTENSIONS = new Set([
+  "txt",
+  "md",
+  "markdown",
+  "csv",
+  "json",
+  "yaml",
+  "yml",
+  "xml",
+  "rtf",
+  "pdf",
+  "doc",
+  "docx",
+]);
+const TEXT_PREVIEW_EXTENSIONS = new Set([
+  "txt",
+  "md",
+  "markdown",
+  "csv",
+  "json",
+  "yaml",
+  "yml",
+  "xml",
+  "rtf",
+]);
+const DESIGN_DOCUMENT_PREVIEW_LIMIT = 480;
+
+function fileExtension(fileName: string): string {
+  return fileName.split(".").at(-1)?.toLowerCase() ?? "";
+}
+
+function isReadableDesignDocument(file: File): boolean {
+  return READABLE_DOCUMENT_EXTENSIONS.has(fileExtension(file.name));
+}
+
+function canPreviewDesignDocument(file: File): boolean {
+  return (
+    file.type.startsWith("text/") ||
+    TEXT_PREVIEW_EXTENSIONS.has(fileExtension(file.name))
+  );
+}
+
+function readDocumentText(file: Blob, fileName: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () =>
+      reject(new Error("Wright could not read " + fileName + "."));
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        reject(new Error("Wright could not preview " + fileName + "."));
+        return;
+      }
+      resolve(reader.result);
+    };
+    reader.readAsText(file);
+  });
+}
+
+async function readUploadedDesignDocument(
+  file: File,
+  documentId: string,
+): Promise<DesignInputDocumentDraft> {
+  const text = canPreviewDesignDocument(file)
+    ? await readDocumentText(
+        file.slice(0, DESIGN_DOCUMENT_PREVIEW_LIMIT + 1),
+        file.name,
+      )
+    : null;
+  const normalizedText = text?.trim() ?? null;
+  return {
+    documentId,
+    name: file.name,
+    mediaType: file.type || "Document",
+    sizeBytes: file.size,
+    textPreview:
+      normalizedText === null
+        ? null
+        : normalizedText.slice(0, DESIGN_DOCUMENT_PREVIEW_LIMIT),
+    textPreviewTruncated:
+      normalizedText !== null &&
+      (normalizedText.length > DESIGN_DOCUMENT_PREVIEW_LIMIT ||
+        file.size > DESIGN_DOCUMENT_PREVIEW_LIMIT + 1),
+  };
 }
 const paletteGroups = [
   {
@@ -753,6 +846,170 @@ function ReferenceImageEditor({
     </section>
   );
 }
+function DesignInputEditor({
+  history,
+  dispatch,
+  onFilesSelected,
+  uploadError,
+}: {
+  history: DesignInputHistory;
+  dispatch: (action: DesignInputHistoryAction) => void;
+  onFilesSelected: (files: readonly File[]) => void;
+  uploadError: string | null;
+}) {
+  const [promptDraft, setPromptDraft] = useState(history.present.prompt);
+
+  useEffect(() => {
+    setPromptDraft(history.present.prompt);
+  }, [history.present.prompt]);
+
+  const promptChanged = promptDraft !== history.present.prompt;
+  const documentCount = history.present.documents.length;
+
+  return (
+    <section
+      className="ewp-design-input"
+      aria-labelledby="ewp-design-input-title"
+    >
+      <header className="ewp-design-input__header">
+        <span>
+          <h2 id="ewp-design-input-title">Design input</h2>
+          <small>Prompt + readable documents · session only</small>
+        </span>
+        <strong>
+          {documentCount} document{documentCount === 1 ? "" : "s"}
+        </strong>
+      </header>
+
+      <div className="ewp-design-input__history">
+        <button
+          type="button"
+          disabled={history.past.length === 0}
+          onClick={() => dispatch({ type: "undo" })}
+        >
+          Undo
+        </button>
+        <button
+          type="button"
+          disabled={history.future.length === 0}
+          onClick={() => dispatch({ type: "redo" })}
+        >
+          Redo
+        </button>
+        <output aria-live="polite">
+          Draft revision {history.present.revision}
+        </output>
+      </div>
+
+      <label className="ewp-design-input__prompt">
+        <span>Prompt</span>
+        <textarea
+          aria-label="Design prompt"
+          value={promptDraft}
+          rows={6}
+          placeholder="Describe the goal, intended use, constraints, priorities, and what a good result should accomplish."
+          onChange={(event) => setPromptDraft(event.currentTarget.value)}
+        />
+      </label>
+      <div className="ewp-design-input__prompt-actions">
+        <button
+          type="button"
+          disabled={!promptChanged}
+          onClick={() =>
+            dispatch({
+              type: "apply",
+              command: { type: "replace-prompt", prompt: promptDraft },
+            })
+          }
+        >
+          Apply prompt
+        </button>
+        <small>
+          {promptDraft.length} characters
+          {promptChanged ? " · changes not applied" : " · applied"}
+        </small>
+      </div>
+
+      <label className="ewp-design-input__upload">
+        <input
+          type="file"
+          accept={DESIGN_DOCUMENT_ACCEPT}
+          multiple
+          aria-label="Attach design documents"
+          onChange={(event) => {
+            const files = Array.from(event.currentTarget.files ?? []);
+            if (files.length > 0) onFilesSelected(files);
+            event.currentTarget.value = "";
+          }}
+        />
+        <span>
+          {documentCount === 0
+            ? "Attach readable documents"
+            : "Attach more documents"}
+        </span>
+        <small>Text, Markdown, PDF, Word, CSV, JSON, YAML, XML, or RTF</small>
+      </label>
+      <p className="ewp-design-input__boundary">
+        Text formats show a bounded local preview. PDF and Word extraction,
+        reusable workspace sources, and downstream AI use come later.
+      </p>
+      {uploadError ? (
+        <p className="ewp-design-input__upload-error" role="alert">
+          {uploadError}
+        </p>
+      ) : null}
+
+      {history.present.documents.length ? (
+        <ol
+          className="ewp-design-input__documents"
+          aria-label="Attached design documents"
+        >
+          {history.present.documents.map((document) => (
+            <li key={document.documentId}>
+              <div>
+                <strong>{document.name}</strong>
+                <small>
+                  {document.mediaType} · {formatFileSize(document.sizeBytes)}
+                </small>
+                <small>
+                  {document.textPreview === null
+                    ? "Attached · parser required in a later checkpoint"
+                    : "Readable text preview available"}
+                </small>
+              </div>
+              <button
+                type="button"
+                aria-label={"Remove " + document.name}
+                onClick={() =>
+                  dispatch({
+                    type: "apply",
+                    command: {
+                      type: "remove-document",
+                      documentId: document.documentId,
+                    },
+                  })
+                }
+              >
+                ×
+              </button>
+              {document.textPreview !== null ? (
+                <blockquote aria-label={"Text preview for " + document.name}>
+                  {document.textPreview || "Empty text document"}
+                  {document.textPreviewTruncated ? "…" : ""}
+                </blockquote>
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="ewp-design-input__empty">
+          No documents attached. A prompt, documents, or both can feed later
+          workflow steps.
+        </p>
+      )}
+    </section>
+  );
+}
 function Inspector({
   workflow,
   block,
@@ -762,6 +1019,10 @@ function Inspector({
   referenceImages,
   onReferenceImageFilesSelected,
   referenceImageUploadError,
+  designInputHistory,
+  onDesignInputAction,
+  onDesignInputFilesSelected,
+  designInputUploadError,
 }: {
   workflow: WorkflowPreview;
   block: WorkflowPreviewBlock;
@@ -771,6 +1032,10 @@ function Inspector({
   referenceImages: readonly WorkflowReferenceImageOption[];
   onReferenceImageFilesSelected: (files: readonly File[]) => void;
   referenceImageUploadError: string | null;
+  designInputHistory: DesignInputHistory;
+  onDesignInputAction: (action: DesignInputHistoryAction) => void;
+  onDesignInputFilesSelected: (files: readonly File[]) => void;
+  designInputUploadError: string | null;
 }) {
   const [activeTab, setActiveTab] = useState<"details" | "evidence">("details");
   const detailsTabId = "ewp-inspector-details-tab";
@@ -838,6 +1103,14 @@ function Inspector({
               uploadError={referenceImageUploadError}
             />
           ) : null}
+          {block.blockId === "design-intent" ? (
+            <DesignInputEditor
+              history={designInputHistory}
+              dispatch={onDesignInputAction}
+              onFilesSelected={onDesignInputFilesSelected}
+              uploadError={designInputUploadError}
+            />
+          ) : null}
           {(
             block.inspector?.fields ?? [
               { label: "Purpose", value: block.purpose },
@@ -860,7 +1133,8 @@ function Inspector({
               />
             </label>
           ))}
-          {block.blockId !== "reference-images" ? (
+          {block.blockId !== "reference-images" &&
+          block.blockId !== "design-intent" ? (
             <button type="button" className="ewp-inspector__edit" disabled>
               Edit in a later CP3 increment
             </button>
@@ -907,7 +1181,9 @@ function Inspector({
               <dd>
                 {block.blockId === "reference-images"
                   ? "Local CP3A draft · session only"
-                  : "Validated fixture · read only"}
+                  : block.blockId === "design-intent"
+                    ? "Local CP3B draft · session only"
+                    : "Validated fixture · read only"}
               </dd>
             </div>
             {block.blockId === "reference-images" ? (
@@ -919,6 +1195,19 @@ function Inspector({
                     ? ""
                     : "s"}{" "}
                   selected · not persisted
+                </dd>
+              </div>
+            ) : null}
+            {block.blockId === "design-intent" ? (
+              <div>
+                <dt>Design input draft</dt>
+                <dd>
+                  {designInputHistory.present.prompt.length} prompt characters ·{" "}
+                  {designInputHistory.present.documents.length} document
+                  {designInputHistory.present.documents.length === 1
+                    ? ""
+                    : "s"}{" "}
+                  attached · not persisted
                 </dd>
               </div>
             ) : null}
@@ -1060,7 +1349,15 @@ export function EngineeringWorkflowVisualSlice({
   const [referenceImageUploadError, setReferenceImageUploadError] = useState<
     string | null
   >(null);
+  const [designInputHistory, dispatchDesignInputAction] = useReducer(
+    reduceDesignInputHistory,
+    createDesignInputHistory(),
+  );
+  const [designInputUploadError, setDesignInputUploadError] = useState<
+    string | null
+  >(null);
   const nextUploadedImageId = useRef(1);
+  const nextUploadedDocumentId = useRef(1);
   const referenceImageHistory = referenceImageDraft.history;
 
   const handleReferenceImageFilesSelected = async (
@@ -1095,6 +1392,41 @@ export function EngineeringWorkflowVisualSlice({
     }
   };
 
+  const handleDesignInputFilesSelected = async (
+    files: readonly File[],
+  ): Promise<void> => {
+    const readableFiles = files.filter(isReadableDesignDocument);
+    if (readableFiles.length !== files.length) {
+      setDesignInputUploadError(
+        "Attach text, Markdown, PDF, Word, CSV, JSON, YAML, XML, or RTF documents.",
+      );
+    } else {
+      setDesignInputUploadError(null);
+    }
+    if (readableFiles.length === 0) return;
+
+    try {
+      const documents = await Promise.all(
+        readableFiles.map((file) =>
+          readUploadedDesignDocument(
+            file,
+            "design-document-" + nextUploadedDocumentId.current++,
+          ),
+        ),
+      );
+      dispatchDesignInputAction({
+        type: "apply",
+        command: { type: "add-documents", documents },
+      });
+    } catch (error) {
+      setDesignInputUploadError(
+        error instanceof Error
+          ? error.message
+          : "Wright could not read the selected design documents.",
+      );
+    }
+  };
+
   const selectedReferenceImages = useMemo(() => {
     const imagesById = new Map(
       referenceImageDraft.images.map((image) => [image.imageId, image]),
@@ -1106,33 +1438,64 @@ export function EngineeringWorkflowVisualSlice({
       );
   }, [referenceImageDraft.images, referenceImageHistory.present.imageIds]);
   const displayWorkflow = useMemo<WorkflowPreview>(() => {
-    const count = selectedReferenceImages.length;
+    const imageCount = selectedReferenceImages.length;
+    const promptPresent = designInputHistory.present.prompt.trim().length > 0;
+    const documentCount = designInputHistory.present.documents.length;
+    const designInputCount = Number(promptPresent) + documentCount;
     return {
       ...workflow,
-      blocks: workflow.blocks.map((block) =>
-        block.blockId === "reference-images"
-          ? {
-              ...block,
-              purpose:
-                count === 0
-                  ? "Select image inputs in the inspector."
-                  : block.purpose,
-              badge: `${count} ${count === 1 ? "IMAGE" : "IMAGES"}`,
-              status:
-                count === 0
-                  ? "No images selected"
-                  : `${count} selected · session only`,
-              imagePreviews: selectedReferenceImages.map((imageOption) => ({
-                imageId: imageOption.imageId,
-                title: imageOption.title,
-                alt: imageOption.alt,
-                thumbnailUrl: imageOption.thumbnailUrl,
-              })),
-            }
-          : block,
-      ),
+      blocks: workflow.blocks.map((block) => {
+        if (block.blockId === "reference-images") {
+          return {
+            ...block,
+            purpose:
+              imageCount === 0
+                ? "Select image inputs in the inspector."
+                : block.purpose,
+            badge: `${imageCount} ${imageCount === 1 ? "IMAGE" : "IMAGES"}`,
+            status:
+              imageCount === 0
+                ? "No images selected"
+                : `${imageCount} selected · session only`,
+            imagePreviews: selectedReferenceImages.map((imageOption) => ({
+              imageId: imageOption.imageId,
+              title: imageOption.title,
+              alt: imageOption.alt,
+              thumbnailUrl: imageOption.thumbnailUrl,
+            })),
+          };
+        }
+
+        if (block.blockId === "design-intent") {
+          const badgeParts = [
+            promptPresent ? "PROMPT" : null,
+            documentCount > 0
+              ? `${documentCount} ${documentCount === 1 ? "FILE" : "FILES"}`
+              : null,
+          ].filter((part): part is string => part !== null);
+          return {
+            ...block,
+            purpose:
+              designInputCount === 0
+                ? "Add a prompt or readable documents in the inspector."
+                : "Prompt and documents for later workflow steps.",
+            badge: badgeParts.length > 0 ? badgeParts.join(" + ") : "EMPTY",
+            status:
+              designInputCount === 0
+                ? "No design input"
+                : "Draft · session only",
+          };
+        }
+
+        return block;
+      }),
     };
-  }, [selectedReferenceImages, workflow]);
+  }, [
+    designInputHistory.present.documents.length,
+    designInputHistory.present.prompt,
+    selectedReferenceImages,
+    workflow,
+  ]);
 
   const selectedBlock =
     displayWorkflow.blocks.find((block) => block.blockId === selectedBlockId) ??
@@ -1296,6 +1659,12 @@ export function EngineeringWorkflowVisualSlice({
             void handleReferenceImageFilesSelected(files)
           }
           referenceImageUploadError={referenceImageUploadError}
+          designInputHistory={designInputHistory}
+          onDesignInputAction={dispatchDesignInputAction}
+          onDesignInputFilesSelected={(files) =>
+            void handleDesignInputFilesSelected(files)
+          }
+          designInputUploadError={designInputUploadError}
         />
       </div>
       {capabilityLibraryOpen ? (

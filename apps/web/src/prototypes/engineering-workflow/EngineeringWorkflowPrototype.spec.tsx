@@ -59,7 +59,7 @@ describe("EngineeringWorkflowPrototype", () => {
         name: "Drill-Bit Holder — Design to Fabrication",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText("CP3A · Image upload")).toBeInTheDocument();
+    expect(screen.getByText("CP3B · Design input")).toBeInTheDocument();
     expect(
       screen.getByTestId("react-flow-workflow-canvas"),
     ).toBeInTheDocument();

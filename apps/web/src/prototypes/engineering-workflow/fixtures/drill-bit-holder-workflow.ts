@@ -56,9 +56,9 @@ export const drillBitHolderWorkflow: WorkflowPreview = {
       phaseId: "define",
       sequence: "B",
       role: "input",
-      title: "Design Intent",
-      purpose: "Describe use, loads, constraints, and goals.",
-      badge: "TEXT",
+      title: "Design Input",
+      purpose: "Add a prompt, readable documents, or both.",
+      badge: "PROMPT · FILES",
       position: { x: 14, y: 138, width: 144, height: 76 },
     },
     {
