@@ -1,17 +1,22 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
+  BaseEdge,
   Controls,
+  EdgeLabelRenderer,
   Handle,
   MarkerType,
   MiniMap,
   Position,
   ReactFlow,
   type Edge,
+  type EdgeProps,
+  type EdgeTypes,
   type Node,
   type NodeProps,
   type NodeTypes,
+  type ReactFlowInstance,
 } from "@xyflow/react";
 
 import {
@@ -20,11 +25,13 @@ import {
 } from "../../EngineeringWorkflowVisualSlice";
 import { engineeringWorkflowVisualContract } from "../../engineering-workflow-visual-contract";
 import {
+  focusCanvasProjection,
   projectWorkflowToCanvas,
   type CanvasProjection,
 } from "../canvas-adapter";
 import type {
   WorkflowPreviewBlock,
+  WorkflowPreviewConnection,
   WorkflowPreviewPhase,
 } from "../../workflow-preview-model";
 
@@ -41,14 +48,23 @@ interface EngineeringBlockNodeData extends Record<string, unknown> {
   onSelectBlock: (blockId: string) => void;
 }
 
+interface WorkflowEdgeData extends Record<string, unknown> {
+  semantics: WorkflowPreviewConnection["semantics"];
+  feedbackRailY?: number;
+}
+
 type PhaseLaneFlowNode = Node<PhaseLaneNodeData, "phaseLane">;
 type EngineeringBlockFlowNode = Node<
   EngineeringBlockNodeData,
   "engineeringBlock"
 >;
 type WorkflowFlowNode = PhaseLaneFlowNode | EngineeringBlockFlowNode;
+type WorkflowFlowEdge = Edge<WorkflowEdgeData, "step" | "workflowFeedback">;
 
 const edgeColor = engineeringWorkflowVisualContract.connectionColors;
+const LARGE_WORKFLOW_THRESHOLD = 25;
+const LARGE_OVERVIEW_THRESHOLD = 50;
+const LARGE_OVERVIEW_MAX_ZOOM = 0.35;
 
 function PhaseLaneNode({ data }: NodeProps<PhaseLaneFlowNode>) {
   return (
@@ -99,9 +115,64 @@ function EngineeringBlockNode({ data }: NodeProps<EngineeringBlockFlowNode>) {
   );
 }
 
+function WorkflowFeedbackEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  markerEnd,
+  style,
+  label,
+  data,
+  interactionWidth,
+}: EdgeProps<WorkflowFlowEdge>) {
+  const railY = data?.feedbackRailY ?? Math.max(sourceY, targetY) + 32;
+  const sourceLeadX = sourceX + 24;
+  const targetLeadX = targetX - 24;
+  const labelX = (sourceLeadX + targetLeadX) / 2;
+  const path = [
+    `M ${sourceX} ${sourceY}`,
+    `L ${sourceLeadX} ${sourceY}`,
+    `L ${sourceLeadX} ${railY}`,
+    `L ${targetLeadX} ${railY}`,
+    `L ${targetLeadX} ${targetY}`,
+    `L ${targetX} ${targetY}`,
+  ].join(" ");
+
+  return (
+    <>
+      <BaseEdge
+        id={id}
+        path={path}
+        markerEnd={markerEnd}
+        style={style}
+        interactionWidth={interactionWidth}
+      />
+      {label ? (
+        <EdgeLabelRenderer>
+          <span
+            aria-hidden="true"
+            className="ewp-rf-feedback-label nodrag nopan"
+            style={{
+              transform: `translate(-50%, -100%) translate(${labelX}px, ${railY - 6}px)`,
+            }}
+          >
+            {label}
+          </span>
+        </EdgeLabelRenderer>
+      ) : null}
+    </>
+  );
+}
+
 const nodeTypes: NodeTypes = {
   phaseLane: PhaseLaneNode,
   engineeringBlock: EngineeringBlockNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  workflowFeedback: WorkflowFeedbackEdge,
 };
 
 function projectReactFlowNodes(
@@ -149,23 +220,74 @@ function projectReactFlowNodes(
   return [...phaseNodes, ...blockNodes];
 }
 
-function projectReactFlowEdges(projection: CanvasProjection): Edge[] {
+function feedbackRailYForConnection(
+  projection: CanvasProjection,
+  connection: WorkflowPreviewConnection,
+): number {
+  const sourceBlock = projection.blocks.find(
+    ({ block }) => block.blockId === connection.sourceBlockId,
+  );
+  const targetBlock = projection.blocks.find(
+    ({ block }) => block.blockId === connection.targetBlockId,
+  );
+  if (!sourceBlock || !targetBlock) {
+    throw new Error(
+      `Cannot route unknown feedback edge ${connection.connectionId}.`,
+    );
+  }
+
+  const sourcePhase = projection.phases.find(
+    ({ phase }) => phase.phaseId === sourceBlock.phaseId,
+  );
+  const targetPhase = projection.phases.find(
+    ({ phase }) => phase.phaseId === targetBlock.phaseId,
+  );
+  if (!sourcePhase || !targetPhase) {
+    throw new Error(
+      `Cannot route feedback edge ${connection.connectionId} without phases.`,
+    );
+  }
+
+  if (sourcePhase.phase.phaseId === targetPhase.phase.phaseId) {
+    return sourcePhase.position.y + sourcePhase.size.height - 14;
+  }
+
+  const sourceCenterY =
+    sourceBlock.absolutePosition.y + sourceBlock.size.height / 2;
+  const targetCenterY =
+    targetBlock.absolutePosition.y + targetBlock.size.height / 2;
+  return targetCenterY < sourceCenterY
+    ? sourcePhase.position.y - 5
+    : sourcePhase.position.y + sourcePhase.size.height + 5;
+}
+
+export function projectReactFlowEdges(
+  projection: CanvasProjection,
+): WorkflowFlowEdge[] {
   return projection.connections.map(({ connection }) => {
     const color = edgeColor[connection.semantics];
+    const isFeedback = connection.semantics === "feedback";
     return {
       id: connection.connectionId,
       source: connection.sourceBlockId,
       sourceHandle: "out",
       target: connection.targetBlockId,
       targetHandle: "in",
-      type: "step",
+      type: isFeedback ? "workflowFeedback" : "step",
       label: connection.label,
+      data: {
+        semantics: connection.semantics,
+        ...(isFeedback
+          ? {
+              feedbackRailY: feedbackRailYForConnection(projection, connection),
+            }
+          : {}),
+      },
       className: `ewp-rf-edge ewp-rf-edge--${connection.semantics}`,
       style: {
         stroke: color,
-        strokeWidth: connection.semantics === "feedback" ? 3 : 2.5,
-        strokeDasharray:
-          connection.semantics === "feedback" ? "8 5" : undefined,
+        strokeWidth: isFeedback ? 3 : 2.5,
+        strokeDasharray: isFeedback ? "8 5" : undefined,
       },
       labelStyle: { fill: color, fontSize: 9, fontWeight: 800 },
       markerEnd: { type: MarkerType.ArrowClosed, color },
@@ -181,22 +303,69 @@ export function ReactFlowWorkflowCanvas({
   selectedBlockId,
   onSelectBlock,
 }: EngineeringWorkflowCanvasRenderProps) {
+  const [requestedPhaseId, setRequestedPhaseId] = useState<string | null>(null);
+  const reactFlowInstance = useRef<ReactFlowInstance<
+    WorkflowFlowNode,
+    WorkflowFlowEdge
+  > | null>(null);
   const projection = useMemo(
     () => projectWorkflowToCanvas(workflow),
     [workflow],
   );
-  const nodes = useMemo(
-    () => projectReactFlowNodes(projection, selectedBlockId, onSelectBlock),
-    [onSelectBlock, projection, selectedBlockId],
+  const focusedPhaseId =
+    requestedPhaseId !== null &&
+    projection.phases.some(({ phase }) => phase.phaseId === requestedPhaseId)
+      ? requestedPhaseId
+      : null;
+  const visibleProjection = useMemo(
+    () => focusCanvasProjection(projection, focusedPhaseId),
+    [focusedPhaseId, projection],
   );
-  const edges = useMemo(() => projectReactFlowEdges(projection), [projection]);
+  const nodes = useMemo(
+    () =>
+      projectReactFlowNodes(visibleProjection, selectedBlockId, onSelectBlock),
+    [onSelectBlock, selectedBlockId, visibleProjection],
+  );
+  const edges = useMemo(
+    () => projectReactFlowEdges(visibleProjection),
+    [visibleProjection],
+  );
   const blockTitleById = useMemo(
     () => new Map(workflow.blocks.map((block) => [block.blockId, block.title])),
     [workflow.blocks],
   );
+  const showPhaseNavigation =
+    workflow.blocks.length >= LARGE_WORKFLOW_THRESHOLD;
+  const fitViewMaxZoom =
+    focusedPhaseId === null &&
+    workflow.blocks.length >= LARGE_OVERVIEW_THRESHOLD
+      ? LARGE_OVERVIEW_MAX_ZOOM
+      : 1;
+
+  useEffect(() => {
+    void reactFlowInstance.current?.fitView({
+      padding: 0.08,
+      minZoom: 0.35,
+      maxZoom: fitViewMaxZoom,
+    });
+  }, [fitViewMaxZoom, focusedPhaseId]);
+
+  const choosePhase = (phaseId: string | null) => {
+    setRequestedPhaseId(phaseId);
+    if (phaseId === null) return;
+
+    const firstBlock = workflow.blocks.find(
+      (block) => block.phaseId === phaseId,
+    );
+    if (firstBlock) onSelectBlock(firstBlock.blockId);
+  };
 
   return (
-    <div className="ewp-rf-canvas" data-testid="react-flow-workflow-canvas">
+    <div
+      className="ewp-rf-canvas"
+      data-testid="react-flow-workflow-canvas"
+      data-phase-navigation={showPhaseNavigation ? "true" : undefined}
+    >
       <section className="ewp-sr-only" aria-label="Workflow phase summary">
         <h2>Workflow phases</h2>
         <ol>
@@ -223,10 +392,38 @@ export function ReactFlowWorkflowCanvas({
         <strong>React Flow 12.11.3</strong>
         <span>CP2 selected canvas · Wright model remains canonical</span>
       </div>
-      <ReactFlow<WorkflowFlowNode, Edge>
+      {showPhaseNavigation ? (
+        <nav className="ewp-rf-phase-focus" aria-label="Large workflow view">
+          <span className="ewp-rf-phase-focus__label">Focus</span>
+          <button
+            type="button"
+            aria-pressed={focusedPhaseId === null}
+            onClick={() => choosePhase(null)}
+          >
+            All phases
+          </button>
+          {projection.phases.map(({ phase }) => (
+            <button
+              key={phase.phaseId}
+              type="button"
+              aria-label={`Focus ${phase.label} phase`}
+              aria-pressed={focusedPhaseId === phase.phaseId}
+              onClick={() => choosePhase(phase.phaseId)}
+            >
+              {phase.label}
+            </button>
+          ))}
+          <output aria-live="polite">
+            Showing {visibleProjection.blocks.length} of{" "}
+            {workflow.blocks.length} blocks
+          </output>
+        </nav>
+      ) : null}
+      <ReactFlow<WorkflowFlowNode, WorkflowFlowEdge>
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
@@ -236,7 +433,19 @@ export function ReactFlowWorkflowCanvas({
         minZoom={0.35}
         maxZoom={1.35}
         fitView
-        fitViewOptions={{ padding: 0.04, minZoom: 0.35, maxZoom: 1 }}
+        fitViewOptions={{
+          padding: 0.04,
+          minZoom: 0.35,
+          maxZoom: fitViewMaxZoom,
+        }}
+        onInit={(instance) => {
+          reactFlowInstance.current = instance;
+          void instance.fitView({
+            padding: 0.08,
+            minZoom: 0.35,
+            maxZoom: fitViewMaxZoom,
+          });
+        }}
         onNodeClick={(_, node) => {
           if (node.type === "engineeringBlock") onSelectBlock(node.id);
         }}

@@ -142,3 +142,36 @@ export function projectWorkflowToCanvas(
     connections,
   };
 }
+
+/**
+ * Returns a read-only phase view over an existing projection. This is
+ * progressive disclosure only: the canonical workflow and its coordinates are
+ * left unchanged, and connections that cross the view boundary are hidden.
+ */
+export function focusCanvasProjection(
+  projection: CanvasProjection,
+  phaseId: string | null,
+): CanvasProjection {
+  if (phaseId === null) return projection;
+
+  const phases = projection.phases.filter(
+    ({ phase }) => phase.phaseId === phaseId,
+  );
+  if (phases.length === 0) {
+    throw new Error(`Cannot focus unknown phase ${phaseId}.`);
+  }
+
+  const blocks = projection.blocks.filter((block) => block.phaseId === phaseId);
+  const visibleBlockIds = new Set(blocks.map(({ block }) => block.blockId));
+
+  return {
+    ...projection,
+    phases,
+    blocks,
+    connections: projection.connections.filter(
+      ({ sourceBlockId, targetBlockId }) =>
+        visibleBlockIds.has(sourceBlockId) &&
+        visibleBlockIds.has(targetBlockId),
+    ),
+  };
+}

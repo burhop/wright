@@ -3,6 +3,11 @@
   inset: 0;
 }
 
+.ewp-rf-canvas[data-phase-navigation="true"] > .react-flow {
+  top: 82px;
+  height: calc(100% - 82px);
+}
+
 .ewp-rf-canvas .react-flow {
   background:
     radial-gradient(
@@ -34,6 +39,68 @@
 
 .ewp-rf-status strong {
   color: #8fd2ff;
+}
+
+.ewp-rf-phase-focus {
+  position: absolute;
+  z-index: 13;
+  top: 45px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 6px;
+  color: #9eb2c9;
+  font-size: 9px;
+  background: rgba(8, 20, 37, 0.96);
+  border: 1px solid #274361;
+  border-radius: 7px;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.3);
+}
+
+.ewp-rf-phase-focus__label {
+  padding: 0 3px;
+  color: #c6d6e8;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ewp-rf-phase-focus button {
+  min-height: 25px;
+  padding: 3px 8px;
+  color: #a9bdd3;
+  font: inherit;
+  font-weight: 750;
+  background: #10243d;
+  border: 1px solid #244361;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ewp-rf-phase-focus button:hover {
+  color: #e4f4ff;
+  border-color: #3c729b;
+}
+
+.ewp-rf-phase-focus button:focus-visible {
+  outline: 2px solid #72c6ff;
+  outline-offset: 2px;
+}
+
+.ewp-rf-phase-focus button[aria-pressed="true"] {
+  color: #f3f9ff;
+  background: #096cae;
+  border-color: #37aeff;
+  box-shadow: inset 0 0 0 1px rgba(135, 211, 255, 0.18);
+}
+
+.ewp-rf-phase-focus output {
+  margin-left: 3px;
+  padding: 0 5px 0 8px;
+  color: #77d7ce;
+  border-left: 1px solid #31506d;
+  white-space: nowrap;
 }
 
 .ewp-rf-phase {
@@ -162,6 +229,20 @@
 .ewp-rf-canvas .react-flow__edge-textbg {
   fill: #071425;
   fill-opacity: 0.9;
+}
+
+.ewp-rf-feedback-label {
+  position: absolute;
+  padding: 2px 5px;
+  color: #ff697c;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(7, 20, 37, 0.94);
+  border: 1px solid rgba(255, 66, 86, 0.45);
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 .ewp-rf-canvas .react-flow__controls,

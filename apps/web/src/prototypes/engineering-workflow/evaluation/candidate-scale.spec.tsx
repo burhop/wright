@@ -71,6 +71,11 @@ describe("React Flow scale interaction", () => {
       disconnect() {}
     }
 
+    class DOMMatrixReadOnlyMock {
+      readonly m22 = 1;
+    }
+
+    vi.stubGlobal("DOMMatrixReadOnly", DOMMatrixReadOnlyMock);
     vi.stubGlobal("ResizeObserver", ResizeObserverMock);
     vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
       callback(performance.now());
@@ -102,7 +107,10 @@ describe("React Flow scale interaction", () => {
     async (blockCount) => {
       const startedAt = performance.now();
       render(
-        <ScaleHarness Canvas={ReactFlowWorkflowCanvas} blockCount={blockCount} />,
+        <ScaleHarness
+          Canvas={ReactFlowWorkflowCanvas}
+          blockCount={blockCount}
+        />,
       );
 
       const lastBlock = await screen.findByRole(
@@ -142,4 +150,42 @@ describe("React Flow scale interaction", () => {
     },
     30_000,
   );
+  it("focuses one phase of the 100-block fixture without changing the workflow", async () => {
+    render(<ScaleHarness Canvas={ReactFlowWorkflowCanvas} blockCount={100} />);
+
+    const verifyPhase = await screen.findByRole(
+      "button",
+      { name: "Focus Verify phase" },
+      { timeout: 20_000 },
+    );
+    expect(screen.getByText("Showing 100 of 100 blocks")).toBeInTheDocument();
+
+    fireEvent.click(verifyPhase);
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText("Showing 33 of 100 blocks"),
+        ).toBeInTheDocument();
+        expect(verifyPhase).toHaveAttribute("aria-pressed", "true");
+      },
+      { timeout: 20_000 },
+    );
+    const firstVerifyBlock = await screen.findByRole("button", {
+      name: /S035\. Scale Step 35/,
+    });
+    expect(firstVerifyBlock).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.queryByRole("button", { name: /S100\. Scale Step 100/ }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "All phases" }));
+    expect(
+      await screen.findByRole(
+        "button",
+        { name: /S100\. Scale Step 100/ },
+        { timeout: 20_000 },
+      ),
+    ).toBeInTheDocument();
+  }, 30_000);
 });
