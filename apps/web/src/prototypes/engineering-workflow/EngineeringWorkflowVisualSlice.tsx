@@ -1,10 +1,21 @@
-import { useMemo, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import type { ReactNode } from "react";
 
 import {
   engineeringCapabilityCategories,
   engineeringCapabilityTemplates,
 } from "./fixtures/engineering-capability-library";
+import {
+  createReferenceImageHistory,
+  reduceReferenceImageHistory,
+  type ReferenceImageHistory,
+  type ReferenceImageHistoryAction,
+} from "./domain/reference-image-draft";
+import {
+  referenceImageSampleIds,
+  referenceImageSamples,
+  type ReferenceImageSample,
+} from "./fixtures/reference-image-samples";
 import {
   ENGINEERING_WORKFLOW_VISUAL_CONTRACT_VERSION,
   engineeringWorkflowCssVariables,
@@ -28,6 +39,13 @@ import {
 import "./engineering-workflow-visual-slice.css";
 
 const CANVAS_WIDTH = 1360;
+
+function referenceImageHistoryReducer(
+  history: ReferenceImageHistory,
+  action: ReferenceImageHistoryAction,
+): ReferenceImageHistory {
+  return reduceReferenceImageHistory(history, action, referenceImageSampleIds);
+}
 
 const paletteGroups = [
   {
@@ -135,7 +153,23 @@ export function WorkflowBlock({
           {block.title}
         </strong>
       </span>
-      <span className="ewp-node__purpose">{block.purpose}</span>
+      {block.imagePreviews?.length ? (
+        <span
+          className="ewp-node__image-strip"
+          aria-label={`${block.imagePreviews.length} selected reference images`}
+        >
+          {block.imagePreviews.slice(0, 3).map((image) => (
+            <img
+              key={image.imageId}
+              src={image.thumbnailUrl}
+              alt=""
+              title={image.title}
+            />
+          ))}
+        </span>
+      ) : (
+        <span className="ewp-node__purpose">{block.purpose}</span>
+      )}
       <span className="ewp-node__footer">
         <span className="ewp-node__port">IN</span>
         {block.badge ? (
@@ -495,14 +529,169 @@ function CapabilityLibrary({ onClose }: { onClose: () => void }) {
   );
 }
 
+function ReferenceImageEditor({
+  history,
+  dispatch,
+}: {
+  history: ReferenceImageHistory;
+  dispatch: (action: ReferenceImageHistoryAction) => void;
+}) {
+  const selectedSamples = history.present.imageIds
+    .map((imageId) =>
+      referenceImageSamples.find((sample) => sample.imageId === imageId),
+    )
+    .filter((sample): sample is ReferenceImageSample => sample !== undefined);
+  const selectedIds = new Set(history.present.imageIds);
+  const count = selectedSamples.length;
+
+  return (
+    <section
+      className="ewp-reference-images"
+      aria-labelledby="ewp-reference-images-title"
+    >
+      <header className="ewp-reference-images__header">
+        <span>
+          <h2 id="ewp-reference-images-title">Reference images</h2>
+          <small>Local CP3A draft · resets on reload</small>
+        </span>
+        <strong>{count} selected</strong>
+      </header>
+
+      <div className="ewp-reference-images__history">
+        <button
+          type="button"
+          disabled={history.past.length === 0}
+          onClick={() => dispatch({ type: "undo" })}
+        >
+          Undo
+        </button>
+        <button
+          type="button"
+          disabled={history.future.length === 0}
+          onClick={() => dispatch({ type: "redo" })}
+        >
+          Redo
+        </button>
+        <output aria-live="polite">
+          {count === 0
+            ? "No images selected"
+            : `${count} image${count === 1 ? "" : "s"} selected`}
+        </output>
+      </div>
+
+      {selectedSamples.length ? (
+        <ol
+          className="ewp-reference-images__selected"
+          aria-label="Selected reference images"
+        >
+          {selectedSamples.map((sample, index) => (
+            <li key={sample.imageId}>
+              <img src={sample.thumbnailUrl} alt={sample.alt} />
+              <span>
+                <strong>{sample.title}</strong>
+                <small>{sample.description}</small>
+              </span>
+              <div aria-label={`Reorder or remove ${sample.title}`}>
+                <button
+                  type="button"
+                  aria-label={`Move ${sample.title} earlier`}
+                  disabled={index === 0}
+                  onClick={() =>
+                    dispatch({
+                      type: "apply",
+                      command: {
+                        type: "move",
+                        imageId: sample.imageId,
+                        direction: "earlier",
+                      },
+                    })
+                  }
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Move ${sample.title} later`}
+                  disabled={index === selectedSamples.length - 1}
+                  onClick={() =>
+                    dispatch({
+                      type: "apply",
+                      command: {
+                        type: "move",
+                        imageId: sample.imageId,
+                        direction: "later",
+                      },
+                    })
+                  }
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Remove ${sample.title}`}
+                  onClick={() =>
+                    dispatch({
+                      type: "apply",
+                      command: { type: "remove", imageId: sample.imageId },
+                    })
+                  }
+                >
+                  ×
+                </button>
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="ewp-reference-images__empty">
+          Choose one or more deterministic concepts below. Real file upload and
+          workspace persistence are not enabled yet.
+        </p>
+      )}
+
+      <h3>Sample image library</h3>
+      <div className="ewp-reference-images__library">
+        {referenceImageSamples.map((sample) => {
+          const selected = selectedIds.has(sample.imageId);
+          return (
+            <button
+              key={sample.imageId}
+              type="button"
+              aria-label={
+                selected ? `${sample.title} selected` : `Add ${sample.title}`
+              }
+              disabled={selected}
+              onClick={() =>
+                dispatch({
+                  type: "apply",
+                  command: { type: "add", imageId: sample.imageId },
+                })
+              }
+            >
+              <img src={sample.thumbnailUrl} alt="" />
+              <span>
+                <strong>{sample.title}</strong>
+                <small>{selected ? "Selected" : "Add sample"}</small>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 function Inspector({
   workflow,
   block,
   outgoing,
+  referenceImageHistory,
+  onReferenceImageAction,
 }: {
   workflow: WorkflowPreview;
   block: WorkflowPreviewBlock;
   outgoing: WorkflowPreviewBlock[];
+  referenceImageHistory: ReferenceImageHistory;
+  onReferenceImageAction: (action: ReferenceImageHistoryAction) => void;
 }) {
   const [activeTab, setActiveTab] = useState<"details" | "evidence">("details");
   const detailsTabId = "ewp-inspector-details-tab";
@@ -561,6 +750,12 @@ function Inspector({
           <p className="ewp-inspector__summary">
             {block.inspector?.summary ?? block.purpose}
           </p>
+          {block.blockId === "reference-images" ? (
+            <ReferenceImageEditor
+              history={referenceImageHistory}
+              dispatch={onReferenceImageAction}
+            />
+          ) : null}
           {(
             block.inspector?.fields ?? [
               { label: "Purpose", value: block.purpose },
@@ -583,9 +778,11 @@ function Inspector({
               />
             </label>
           ))}
-          <button type="button" className="ewp-inspector__edit" disabled>
-            Edit in CP3
-          </button>
+          {block.blockId !== "reference-images" ? (
+            <button type="button" className="ewp-inspector__edit" disabled>
+              Edit in a later CP3 increment
+            </button>
+          ) : null}
           <section className="ewp-inspector__output">
             <h2>Provides to</h2>
             {outgoing.length ? (
@@ -625,8 +822,24 @@ function Inspector({
             </div>
             <div>
               <dt>Projection status</dt>
-              <dd>Validated fixture · read only</dd>
+              <dd>
+                {block.blockId === "reference-images"
+                  ? "Local CP3A draft · session only"
+                  : "Validated fixture · read only"}
+              </dd>
             </div>
+            {block.blockId === "reference-images" ? (
+              <div>
+                <dt>Reference input draft</dt>
+                <dd>
+                  {referenceImageHistory.present.imageIds.length} image
+                  {referenceImageHistory.present.imageIds.length === 1
+                    ? ""
+                    : "s"}{" "}
+                  selected · not persisted
+                </dd>
+              </div>
+            ) : null}
             <div>
               <dt>Execution status</dt>
               <dd>Not executed</dd>
@@ -758,19 +971,59 @@ export function EngineeringWorkflowVisualSlice({
   );
   const [zoom, setZoom] = useState(0.9);
   const [capabilityLibraryOpen, setCapabilityLibraryOpen] = useState(false);
+  const [referenceImageHistory, dispatchReferenceImageAction] = useReducer(
+    referenceImageHistoryReducer,
+    createReferenceImageHistory(),
+  );
+  const selectedReferenceImages = useMemo(() => {
+    const samplesById = new Map(
+      referenceImageSamples.map((sample) => [sample.imageId, sample]),
+    );
+    return referenceImageHistory.present.imageIds
+      .map((imageId) => samplesById.get(imageId))
+      .filter((sample): sample is ReferenceImageSample => sample !== undefined);
+  }, [referenceImageHistory.present.imageIds]);
+  const displayWorkflow = useMemo<WorkflowPreview>(() => {
+    const count = selectedReferenceImages.length;
+    return {
+      ...workflow,
+      blocks: workflow.blocks.map((block) =>
+        block.blockId === "reference-images"
+          ? {
+              ...block,
+              purpose:
+                count === 0
+                  ? "Select sample images in the inspector."
+                  : block.purpose,
+              badge: `${count} ${count === 1 ? "IMAGE" : "IMAGES"}`,
+              status:
+                count === 0
+                  ? "No images selected"
+                  : `${count} selected · session only`,
+              imagePreviews: selectedReferenceImages.map((sample) => ({
+                imageId: sample.imageId,
+                title: sample.title,
+                alt: sample.alt,
+                thumbnailUrl: sample.thumbnailUrl,
+              })),
+            }
+          : block,
+      ),
+    };
+  }, [selectedReferenceImages, workflow]);
 
   const selectedBlock =
-    workflow.blocks.find((block) => block.blockId === selectedBlockId) ??
-    workflow.blocks[0];
-  const outgoing = workflow.connections
+    displayWorkflow.blocks.find((block) => block.blockId === selectedBlockId) ??
+    displayWorkflow.blocks[0];
+  const outgoing = displayWorkflow.connections
     .filter((connection) => connection.sourceBlockId === selectedBlock.blockId)
     .map((connection) =>
-      workflow.blocks.find(
+      displayWorkflow.blocks.find(
         (block) => block.blockId === connection.targetBlockId,
       ),
     )
     .filter((block): block is WorkflowPreviewBlock => Boolean(block));
-  const contentHeight = workflow.phases.reduce(
+  const contentHeight = displayWorkflow.phases.reduce(
     (total, phase) => total + phase.height + 10,
     0,
   );
@@ -827,7 +1080,7 @@ export function EngineeringWorkflowVisualSlice({
             <WorkflowCanvasReviewState viewState={viewState} />
           ) : renderCanvas ? (
             renderCanvas({
-              workflow,
+              workflow: displayWorkflow,
               selectedBlockId,
               onSelectBlock: setSelectedBlockId,
             })
@@ -848,18 +1101,19 @@ export function EngineeringWorkflowVisualSlice({
                       transform: `scale(${zoom})`,
                     }}
                   >
-                    {workflow.phases.map((phase) => {
-                      const phaseBlocks = workflow.blocks.filter(
+                    {displayWorkflow.phases.map((phase) => {
+                      const phaseBlocks = displayWorkflow.blocks.filter(
                         (block) => block.phaseId === phase.phaseId,
                       );
                       const blockIds = new Set(
                         phaseBlocks.map((block) => block.blockId),
                       );
-                      const phaseConnections = workflow.connections.filter(
-                        (connection) =>
-                          blockIds.has(connection.sourceBlockId) &&
-                          blockIds.has(connection.targetBlockId),
-                      );
+                      const phaseConnections =
+                        displayWorkflow.connections.filter(
+                          (connection) =>
+                            blockIds.has(connection.sourceBlockId) &&
+                            blockIds.has(connection.targetBlockId),
+                        );
                       return (
                         <PhaseLane
                           key={phase.phaseId}
@@ -907,7 +1161,13 @@ export function EngineeringWorkflowVisualSlice({
           )}
           <Legend />
         </main>
-        <Inspector workflow={workflow} block={selectedBlock} outgoing={outgoing} />
+        <Inspector
+          workflow={displayWorkflow}
+          block={selectedBlock}
+          outgoing={outgoing}
+          referenceImageHistory={referenceImageHistory}
+          onReferenceImageAction={dispatchReferenceImageAction}
+        />
       </div>
       {capabilityLibraryOpen ? (
         <CapabilityLibrary onClose={() => setCapabilityLibraryOpen(false)} />

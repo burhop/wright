@@ -525,6 +525,23 @@
   -webkit-line-clamp: 3;
 }
 
+.ewp-node__image-strip {
+  display: flex;
+  min-height: 30px;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.ewp-node__image-strip img {
+  min-width: 0;
+  height: 30px;
+  flex: 1 1 0;
+  object-fit: cover;
+  background: #071426;
+  border: 1px solid rgba(127, 205, 255, 0.52);
+  border-radius: 3px;
+}
+
 .ewp-node__footer {
   min-height: 14px;
   justify-content: space-between;
@@ -850,6 +867,204 @@
   line-height: 1.4;
 }
 
+.ewp-reference-images {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: #09182a;
+  border: 1px solid #274765;
+  border-radius: 8px;
+}
+
+.ewp-reference-images__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ewp-reference-images__header h2,
+.ewp-reference-images > h3 {
+  margin: 0;
+  color: #e2effc;
+  font-size: 10px;
+}
+
+.ewp-reference-images__header small {
+  display: block;
+  margin-top: 2px;
+  color: #6f8ba8;
+  font-size: 8px;
+}
+
+.ewp-reference-images__header > strong {
+  flex: 0 0 auto;
+  padding: 3px 6px;
+  color: #8fe5de;
+  font-size: 8px;
+  background: rgba(22, 200, 193, 0.08);
+  border: 1px solid rgba(22, 200, 193, 0.3);
+  border-radius: 999px;
+}
+
+.ewp-reference-images__history {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+}
+
+.ewp-reference-images__history button,
+.ewp-reference-images__selected button {
+  min-width: 27px;
+  height: 26px;
+  padding: 0 7px;
+  color: #b8d5ed;
+  font-size: 8px;
+  font-weight: 750;
+  background: #10243b;
+  border: 1px solid #2a4b69;
+  border-radius: 5px;
+}
+
+.ewp-reference-images button:focus-visible {
+  outline: 2px solid #72c6ff;
+  outline-offset: 2px;
+}
+
+.ewp-reference-images button:disabled {
+  color: #61758c;
+  cursor: default;
+  opacity: 0.58;
+}
+
+.ewp-reference-images__history output {
+  overflow: hidden;
+  color: #8aa2bb;
+  font-size: 8px;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ewp-reference-images__empty {
+  padding: 9px;
+  margin: 0;
+  color: #8ca4bd;
+  font-size: 8px;
+  line-height: 1.4;
+  background: #071321;
+  border: 1px dashed #31506e;
+  border-radius: 6px;
+}
+
+.ewp-reference-images__selected {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ewp-reference-images__selected li {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 6px;
+  background: #071321;
+  border: 1px solid #25415e;
+  border-radius: 6px;
+}
+
+.ewp-reference-images__selected img {
+  width: 58px;
+  height: 38px;
+  object-fit: cover;
+  background: #071426;
+  border: 1px solid #315c7e;
+  border-radius: 4px;
+}
+
+.ewp-reference-images__selected li > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.ewp-reference-images__selected strong,
+.ewp-reference-images__library strong {
+  overflow: hidden;
+  color: #d7e8f8;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ewp-reference-images__selected small {
+  overflow: hidden;
+  color: #7890aa;
+  font-size: 7px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.ewp-reference-images__selected li > div {
+  display: grid;
+  grid-template-columns: repeat(2, 27px);
+  gap: 3px;
+}
+
+.ewp-reference-images__selected li > div button:last-child {
+  grid-column: 1 / -1;
+  color: #ff8794;
+}
+
+.ewp-reference-images__library {
+  display: grid;
+  gap: 5px;
+}
+
+.ewp-reference-images__library > button {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  color: #d7e8f8;
+  text-align: left;
+  background: #0d2035;
+  border: 1px solid #294967;
+  border-radius: 6px;
+}
+
+.ewp-reference-images__library > button:not(:disabled):hover {
+  background: #13304d;
+  border-color: #3c7ca7;
+}
+
+.ewp-reference-images__library img {
+  width: 52px;
+  height: 34px;
+  object-fit: cover;
+  background: #071426;
+  border-radius: 4px;
+}
+
+.ewp-reference-images__library span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.ewp-reference-images__library small {
+  color: #68c9ff;
+  font-size: 7px;
+}
 .ewp-inspector__evidence-grid {
   display: grid;
   gap: 8px;

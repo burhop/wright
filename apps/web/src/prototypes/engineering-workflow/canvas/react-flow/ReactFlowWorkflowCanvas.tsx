@@ -390,7 +390,7 @@ export function ReactFlowWorkflowCanvas({
       </ol>
       <div className="ewp-rf-status" role="status">
         <strong>React Flow 12.11.3</strong>
-        <span>CP2 selected canvas · Wright model remains canonical</span>
+        <span>Selected canvas · Wright model remains canonical</span>
       </div>
       {showPhaseNavigation ? (
         <nav className="ewp-rf-phase-focus" aria-label="Large workflow view">

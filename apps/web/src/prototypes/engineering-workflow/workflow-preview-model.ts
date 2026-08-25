@@ -17,6 +17,13 @@ export interface WorkflowInspectorField {
   value: string;
 }
 
+export interface WorkflowBlockImagePreview {
+  imageId: string;
+  title: string;
+  alt: string;
+  thumbnailUrl: string;
+}
+
 export interface WorkflowPreviewBlock {
   blockId: string;
   phaseId: string;
@@ -26,6 +33,7 @@ export interface WorkflowPreviewBlock {
   purpose: string;
   badge?: string;
   status?: string;
+  imagePreviews?: WorkflowBlockImagePreview[];
   position: WorkflowBlockPosition;
   inspector?: {
     summary: string;

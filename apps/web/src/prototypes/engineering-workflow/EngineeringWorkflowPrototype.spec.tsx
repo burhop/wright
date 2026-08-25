@@ -59,8 +59,10 @@ describe("EngineeringWorkflowPrototype", () => {
         name: "Drill-Bit Holder — Design to Fabrication",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText("CP2 · React Flow")).toBeInTheDocument();
-    expect(screen.getByTestId("react-flow-workflow-canvas")).toBeInTheDocument();
+    expect(screen.getByText("CP3A · Reference inputs")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("react-flow-workflow-canvas"),
+    ).toBeInTheDocument();
     const visualSlice = screen.getByTestId("engineering-workflow-visual-slice");
     expect(visualSlice).toHaveAttribute("data-visual-contract", "cp2a-1");
     expect(visualSlice).toHaveStyle({
