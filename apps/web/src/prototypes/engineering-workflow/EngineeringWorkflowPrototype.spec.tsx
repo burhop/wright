@@ -59,7 +59,7 @@ describe("EngineeringWorkflowPrototype", () => {
         name: "Drill-Bit Holder — Design to Fabrication",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText("CP3A · Reference inputs")).toBeInTheDocument();
+    expect(screen.getByText("CP3A · Image upload")).toBeInTheDocument();
     expect(
       screen.getByTestId("react-flow-workflow-canvas"),
     ).toBeInTheDocument();
@@ -82,5 +82,11 @@ describe("EngineeringWorkflowPrototype", () => {
     expect(
       await screen.findByText("Source material supplied by the designer."),
     ).toBeInTheDocument();
+    const upload = screen.getByLabelText("Upload reference images");
+    expect(upload).toHaveAttribute("accept", "image/*");
+    expect(upload).toHaveAttribute("multiple");
+    expect(
+      screen.queryByRole("button", { name: /drill index tray/i }),
+    ).not.toBeInTheDocument();
   });
 });

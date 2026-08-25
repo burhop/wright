@@ -287,6 +287,13 @@ external engineering applications.
 - **FR-028**: A capability template MUST expose an engineer-readable purpose,
   expected inputs, and expected outputs before tool binding. Any displayed
   catalog matches MUST be clearly identified as fixture or live data.
+- **FR-029**: A reference-image input MUST accept one or more arbitrary image
+  files without presenting domain-, product-, or test-specific image choices.
+  Prototype uploads MAY remain explicitly session-only.
+- **FR-030**: A design or textual input MUST support both a direct prompt and
+  attached readable documents for long or reusable content. Reusable sources
+  SHOULD be selectable through a generic workspace or template boundary rather
+  than encoded as block-specific file-format logic.
 
 ### Key Entities
 

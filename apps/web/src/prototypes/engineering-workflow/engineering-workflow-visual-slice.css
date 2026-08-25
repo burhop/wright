@@ -958,7 +958,6 @@
   border: 1px dashed #31506e;
   border-radius: 6px;
 }
-
 .ewp-reference-images__selected {
   display: grid;
   gap: 6px;
@@ -993,8 +992,7 @@
   gap: 2px;
 }
 
-.ewp-reference-images__selected strong,
-.ewp-reference-images__library strong {
+.ewp-reference-images__selected strong {
   overflow: hidden;
   color: #d7e8f8;
   font-size: 8px;
@@ -1022,49 +1020,58 @@
   grid-column: 1 / -1;
   color: #ff8794;
 }
-
-.ewp-reference-images__library {
+.ewp-reference-images__upload {
+  position: relative;
   display: grid;
-  gap: 5px;
+  gap: 2px;
+  padding: 10px;
+  color: #dcecff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #123250, #0d263e);
+  border: 1px solid #3a7ca8;
+  border-radius: 7px;
 }
 
-.ewp-reference-images__library > button {
-  display: grid;
-  min-width: 0;
-  grid-template-columns: 52px minmax(0, 1fr);
-  align-items: center;
-  gap: 8px;
-  padding: 5px;
-  color: #d7e8f8;
-  text-align: left;
-  background: #0d2035;
-  border: 1px solid #294967;
+.ewp-reference-images__upload:hover,
+.ewp-reference-images__upload:focus-within {
+  background: linear-gradient(135deg, #174369, #11314d);
+  border-color: #62bdf5;
+  outline: 2px solid rgba(114, 198, 255, 0.25);
+  outline-offset: 2px;
+}
+
+.ewp-reference-images__upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+  border: 0;
+}
+
+.ewp-reference-images__upload span {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.ewp-reference-images__upload small {
+  color: #78add0;
+  font-size: 7px;
+}
+
+.ewp-reference-images__upload-error {
+  padding: 7px 8px;
+  margin: 0;
+  color: #ff9eaa;
+  font-size: 8px;
+  line-height: 1.35;
+  background: rgba(255, 64, 88, 0.08);
+  border: 1px solid rgba(255, 64, 88, 0.35);
   border-radius: 6px;
 }
 
-.ewp-reference-images__library > button:not(:disabled):hover {
-  background: #13304d;
-  border-color: #3c7ca7;
-}
-
-.ewp-reference-images__library img {
-  width: 52px;
-  height: 34px;
-  object-fit: cover;
-  background: #071426;
-  border-radius: 4px;
-}
-
-.ewp-reference-images__library span {
-  display: grid;
-  min-width: 0;
-  gap: 2px;
-}
-
-.ewp-reference-images__library small {
-  color: #68c9ff;
-  font-size: 7px;
-}
 .ewp-inspector__evidence-grid {
   display: grid;
   gap: 8px;

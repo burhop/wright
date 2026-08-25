@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useState } from "react";
+import { useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import {
@@ -11,11 +11,6 @@ import {
   type ReferenceImageHistory,
   type ReferenceImageHistoryAction,
 } from "./domain/reference-image-draft";
-import {
-  referenceImageSampleIds,
-  referenceImageSamples,
-  type ReferenceImageSample,
-} from "./fixtures/reference-image-samples";
 import {
   ENGINEERING_WORKFLOW_VISUAL_CONTRACT_VERSION,
   engineeringWorkflowCssVariables,
@@ -34,19 +29,99 @@ import {
   type WorkflowPreviewConnection,
   type WorkflowPreviewPhase,
   type WorkflowPreview,
+  type WorkflowReferenceImageOption,
 } from "./workflow-preview-model";
 
 import "./engineering-workflow-visual-slice.css";
 
 const CANVAS_WIDTH = 1360;
 
-function referenceImageHistoryReducer(
-  history: ReferenceImageHistory,
-  action: ReferenceImageHistoryAction,
-): ReferenceImageHistory {
-  return reduceReferenceImageHistory(history, action, referenceImageSampleIds);
+interface ReferenceImageDraftState {
+  history: ReferenceImageHistory;
+  images: WorkflowReferenceImageOption[];
 }
 
+type ReferenceImageDraftAction =
+  | { type: "edit"; action: ReferenceImageHistoryAction }
+  | { type: "upload"; images: readonly WorkflowReferenceImageOption[] };
+
+function createReferenceImageDraft(): ReferenceImageDraftState {
+  return {
+    history: createReferenceImageHistory(),
+    images: [],
+  };
+}
+
+function reduceReferenceImageDraft(
+  state: ReferenceImageDraftState,
+  action: ReferenceImageDraftAction,
+): ReferenceImageDraftState {
+  if (action.type === "edit") {
+    return {
+      ...state,
+      history: reduceReferenceImageHistory(
+        state.history,
+        action.action,
+        state.images.map(({ imageId }) => imageId),
+      ),
+    };
+  }
+
+  const existingIds = new Set(state.images.map(({ imageId }) => imageId));
+  const uploadedImages = action.images.filter(
+    ({ imageId }) => !existingIds.has(imageId),
+  );
+  if (uploadedImages.length === 0) return state;
+
+  const images = [...state.images, ...uploadedImages];
+  const allowedImageIds = images.map(({ imageId }) => imageId);
+  const history = uploadedImages.reduce(
+    (currentHistory, image) =>
+      reduceReferenceImageHistory(
+        currentHistory,
+        {
+          type: "apply",
+          command: { type: "add", imageId: image.imageId },
+        },
+        allowedImageIds,
+      ),
+    state.history,
+  );
+
+  return { history, images };
+}
+
+function formatImageFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+function readUploadedReferenceImage(
+  file: File,
+  imageId: string,
+): Promise<WorkflowReferenceImageOption> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () =>
+      reject(new Error("Wright could not read " + file.name + "."));
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        reject(new Error("Wright could not preview " + file.name + "."));
+        return;
+      }
+      resolve({
+        imageId,
+        title: file.name,
+        description:
+          (file.type || "Image file") + " · " + formatImageFileSize(file.size),
+        alt: "Uploaded reference image " + file.name,
+        thumbnailUrl: reader.result,
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+}
 const paletteGroups = [
   {
     label: "Inputs",
@@ -532,17 +607,23 @@ function CapabilityLibrary({ onClose }: { onClose: () => void }) {
 function ReferenceImageEditor({
   history,
   dispatch,
+  images,
+  onFilesSelected,
+  uploadError,
 }: {
   history: ReferenceImageHistory;
   dispatch: (action: ReferenceImageHistoryAction) => void;
+  images: readonly WorkflowReferenceImageOption[];
+  onFilesSelected: (files: readonly File[]) => void;
+  uploadError: string | null;
 }) {
-  const selectedSamples = history.present.imageIds
-    .map((imageId) =>
-      referenceImageSamples.find((sample) => sample.imageId === imageId),
-    )
-    .filter((sample): sample is ReferenceImageSample => sample !== undefined);
-  const selectedIds = new Set(history.present.imageIds);
-  const count = selectedSamples.length;
+  const imagesById = new Map(images.map((image) => [image.imageId, image]));
+  const selectedImages = history.present.imageIds
+    .map((imageId) => imagesById.get(imageId))
+    .filter(
+      (image): image is WorkflowReferenceImageOption => image !== undefined,
+    );
+  const count = selectedImages.length;
 
   return (
     <section
@@ -575,33 +656,33 @@ function ReferenceImageEditor({
         <output aria-live="polite">
           {count === 0
             ? "No images selected"
-            : `${count} image${count === 1 ? "" : "s"} selected`}
+            : count + " image" + (count === 1 ? "" : "s") + " selected"}
         </output>
       </div>
 
-      {selectedSamples.length ? (
+      {selectedImages.length ? (
         <ol
           className="ewp-reference-images__selected"
           aria-label="Selected reference images"
         >
-          {selectedSamples.map((sample, index) => (
-            <li key={sample.imageId}>
-              <img src={sample.thumbnailUrl} alt={sample.alt} />
+          {selectedImages.map((image, index) => (
+            <li key={image.imageId}>
+              <img src={image.thumbnailUrl} alt={image.alt} />
               <span>
-                <strong>{sample.title}</strong>
-                <small>{sample.description}</small>
+                <strong>{image.title}</strong>
+                <small>{image.description}</small>
               </span>
-              <div aria-label={`Reorder or remove ${sample.title}`}>
+              <div aria-label={"Reorder or remove " + image.title}>
                 <button
                   type="button"
-                  aria-label={`Move ${sample.title} earlier`}
+                  aria-label={"Move " + image.title + " earlier"}
                   disabled={index === 0}
                   onClick={() =>
                     dispatch({
                       type: "apply",
                       command: {
                         type: "move",
-                        imageId: sample.imageId,
+                        imageId: image.imageId,
                         direction: "earlier",
                       },
                     })
@@ -611,14 +692,14 @@ function ReferenceImageEditor({
                 </button>
                 <button
                   type="button"
-                  aria-label={`Move ${sample.title} later`}
-                  disabled={index === selectedSamples.length - 1}
+                  aria-label={"Move " + image.title + " later"}
+                  disabled={index === selectedImages.length - 1}
                   onClick={() =>
                     dispatch({
                       type: "apply",
                       command: {
                         type: "move",
-                        imageId: sample.imageId,
+                        imageId: image.imageId,
                         direction: "later",
                       },
                     })
@@ -628,11 +709,11 @@ function ReferenceImageEditor({
                 </button>
                 <button
                   type="button"
-                  aria-label={`Remove ${sample.title}`}
+                  aria-label={"Remove " + image.title}
                   onClick={() =>
                     dispatch({
                       type: "apply",
-                      command: { type: "remove", imageId: sample.imageId },
+                      command: { type: "remove", imageId: image.imageId },
                     })
                   }
                 >
@@ -644,39 +725,31 @@ function ReferenceImageEditor({
         </ol>
       ) : (
         <p className="ewp-reference-images__empty">
-          Choose one or more deterministic concepts below. Real file upload and
-          workspace persistence are not enabled yet.
+          Upload one or more photos or other image files. They remain in this
+          browser tab and can be used as inputs by later workflow steps.
         </p>
       )}
 
-      <h3>Sample image library</h3>
-      <div className="ewp-reference-images__library">
-        {referenceImageSamples.map((sample) => {
-          const selected = selectedIds.has(sample.imageId);
-          return (
-            <button
-              key={sample.imageId}
-              type="button"
-              aria-label={
-                selected ? `${sample.title} selected` : `Add ${sample.title}`
-              }
-              disabled={selected}
-              onClick={() =>
-                dispatch({
-                  type: "apply",
-                  command: { type: "add", imageId: sample.imageId },
-                })
-              }
-            >
-              <img src={sample.thumbnailUrl} alt="" />
-              <span>
-                <strong>{sample.title}</strong>
-                <small>{selected ? "Selected" : "Add sample"}</small>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      <label className="ewp-reference-images__upload">
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          aria-label="Upload reference images"
+          onChange={(event) => {
+            const files = Array.from(event.currentTarget.files ?? []);
+            if (files.length > 0) onFilesSelected(files);
+            event.currentTarget.value = "";
+          }}
+        />
+        <span>{count === 0 ? "Upload images" : "Add more images"}</span>
+        <small>Select one or more image files · session only</small>
+      </label>
+      {uploadError ? (
+        <p className="ewp-reference-images__upload-error" role="alert">
+          {uploadError}
+        </p>
+      ) : null}
     </section>
   );
 }
@@ -686,12 +759,18 @@ function Inspector({
   outgoing,
   referenceImageHistory,
   onReferenceImageAction,
+  referenceImages,
+  onReferenceImageFilesSelected,
+  referenceImageUploadError,
 }: {
   workflow: WorkflowPreview;
   block: WorkflowPreviewBlock;
   outgoing: WorkflowPreviewBlock[];
   referenceImageHistory: ReferenceImageHistory;
   onReferenceImageAction: (action: ReferenceImageHistoryAction) => void;
+  referenceImages: readonly WorkflowReferenceImageOption[];
+  onReferenceImageFilesSelected: (files: readonly File[]) => void;
+  referenceImageUploadError: string | null;
 }) {
   const [activeTab, setActiveTab] = useState<"details" | "evidence">("details");
   const detailsTabId = "ewp-inspector-details-tab";
@@ -754,6 +833,9 @@ function Inspector({
             <ReferenceImageEditor
               history={referenceImageHistory}
               dispatch={onReferenceImageAction}
+              images={referenceImages}
+              onFilesSelected={onReferenceImageFilesSelected}
+              uploadError={referenceImageUploadError}
             />
           ) : null}
           {(
@@ -971,18 +1053,58 @@ export function EngineeringWorkflowVisualSlice({
   );
   const [zoom, setZoom] = useState(0.9);
   const [capabilityLibraryOpen, setCapabilityLibraryOpen] = useState(false);
-  const [referenceImageHistory, dispatchReferenceImageAction] = useReducer(
-    referenceImageHistoryReducer,
-    createReferenceImageHistory(),
+  const [referenceImageDraft, dispatchReferenceImageDraft] = useReducer(
+    reduceReferenceImageDraft,
+    createReferenceImageDraft(),
   );
+  const [referenceImageUploadError, setReferenceImageUploadError] = useState<
+    string | null
+  >(null);
+  const nextUploadedImageId = useRef(1);
+  const referenceImageHistory = referenceImageDraft.history;
+
+  const handleReferenceImageFilesSelected = async (
+    files: readonly File[],
+  ): Promise<void> => {
+    const imageFiles = files.filter(({ type }) => type.startsWith("image/"));
+    if (imageFiles.length !== files.length) {
+      setReferenceImageUploadError(
+        "Only image files can be added to Reference Images.",
+      );
+    } else {
+      setReferenceImageUploadError(null);
+    }
+    if (imageFiles.length === 0) return;
+
+    try {
+      const images = await Promise.all(
+        imageFiles.map((file) =>
+          readUploadedReferenceImage(
+            file,
+            "uploaded-reference-" + nextUploadedImageId.current++,
+          ),
+        ),
+      );
+      dispatchReferenceImageDraft({ type: "upload", images });
+    } catch (error) {
+      setReferenceImageUploadError(
+        error instanceof Error
+          ? error.message
+          : "Wright could not read the selected image files.",
+      );
+    }
+  };
+
   const selectedReferenceImages = useMemo(() => {
-    const samplesById = new Map(
-      referenceImageSamples.map((sample) => [sample.imageId, sample]),
+    const imagesById = new Map(
+      referenceImageDraft.images.map((image) => [image.imageId, image]),
     );
     return referenceImageHistory.present.imageIds
-      .map((imageId) => samplesById.get(imageId))
-      .filter((sample): sample is ReferenceImageSample => sample !== undefined);
-  }, [referenceImageHistory.present.imageIds]);
+      .map((imageId) => imagesById.get(imageId))
+      .filter(
+        (image): image is WorkflowReferenceImageOption => image !== undefined,
+      );
+  }, [referenceImageDraft.images, referenceImageHistory.present.imageIds]);
   const displayWorkflow = useMemo<WorkflowPreview>(() => {
     const count = selectedReferenceImages.length;
     return {
@@ -993,18 +1115,18 @@ export function EngineeringWorkflowVisualSlice({
               ...block,
               purpose:
                 count === 0
-                  ? "Select sample images in the inspector."
+                  ? "Select image inputs in the inspector."
                   : block.purpose,
               badge: `${count} ${count === 1 ? "IMAGE" : "IMAGES"}`,
               status:
                 count === 0
                   ? "No images selected"
                   : `${count} selected · session only`,
-              imagePreviews: selectedReferenceImages.map((sample) => ({
-                imageId: sample.imageId,
-                title: sample.title,
-                alt: sample.alt,
-                thumbnailUrl: sample.thumbnailUrl,
+              imagePreviews: selectedReferenceImages.map((imageOption) => ({
+                imageId: imageOption.imageId,
+                title: imageOption.title,
+                alt: imageOption.alt,
+                thumbnailUrl: imageOption.thumbnailUrl,
               })),
             }
           : block,
@@ -1166,7 +1288,14 @@ export function EngineeringWorkflowVisualSlice({
           block={selectedBlock}
           outgoing={outgoing}
           referenceImageHistory={referenceImageHistory}
-          onReferenceImageAction={dispatchReferenceImageAction}
+          onReferenceImageAction={(action) =>
+            dispatchReferenceImageDraft({ type: "edit", action })
+          }
+          referenceImages={referenceImageDraft.images}
+          onReferenceImageFilesSelected={(files) =>
+            void handleReferenceImageFilesSelected(files)
+          }
+          referenceImageUploadError={referenceImageUploadError}
         />
       </div>
       {capabilityLibraryOpen ? (

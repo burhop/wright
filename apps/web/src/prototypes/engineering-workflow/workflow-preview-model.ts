@@ -24,6 +24,10 @@ export interface WorkflowBlockImagePreview {
   thumbnailUrl: string;
 }
 
+export interface WorkflowReferenceImageOption extends WorkflowBlockImagePreview {
+  description: string;
+}
+
 export interface WorkflowPreviewBlock {
   blockId: string;
   phaseId: string;
