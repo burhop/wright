@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
+import { KnowledgeLookupEditor } from "./KnowledgeLookupEditor";
+import {
+  createKnowledgeLookupHistory,
+  reduceKnowledgeLookupHistory,
+  type KnowledgeLookupHistory,
+  type KnowledgeLookupHistoryAction,
+} from "./domain/knowledge-lookup-draft";
 import {
   engineeringCapabilityCategories,
   engineeringCapabilityTemplates,
@@ -29,6 +36,10 @@ import {
   type EngineeringWorkflowPrototypeViewState,
 } from "./prototype-review-state";
 import { drillBitHolderWorkflow } from "./fixtures/drill-bit-holder-workflow";
+import {
+  knowledgeLookupSourceIds,
+  knowledgeLookupSources,
+} from "./fixtures/knowledge-lookup-sources";
 import {
   blockDimensions,
   type WorkflowBlockRole,
@@ -215,10 +226,21 @@ async function readUploadedDesignDocument(
         file.size > DESIGN_DOCUMENT_PREVIEW_LIMIT + 1),
   };
 }
+function reduceKnowledgeLookupDraft(
+  history: KnowledgeLookupHistory,
+  action: KnowledgeLookupHistoryAction,
+): KnowledgeLookupHistory {
+  return reduceKnowledgeLookupHistory(
+    history,
+    action,
+    knowledgeLookupSourceIds,
+  );
+}
+
 const paletteGroups = [
   {
     label: "Inputs",
-    items: ["File upload", "Text input", "Company context"],
+    items: ["File upload", "Text input", "Knowledge lookup"],
     role: "input" as const,
   },
   {
@@ -1023,6 +1045,8 @@ function Inspector({
   onDesignInputAction,
   onDesignInputFilesSelected,
   designInputUploadError,
+  knowledgeLookupHistory,
+  onKnowledgeLookupAction,
 }: {
   workflow: WorkflowPreview;
   block: WorkflowPreviewBlock;
@@ -1036,6 +1060,8 @@ function Inspector({
   onDesignInputAction: (action: DesignInputHistoryAction) => void;
   onDesignInputFilesSelected: (files: readonly File[]) => void;
   designInputUploadError: string | null;
+  knowledgeLookupHistory: KnowledgeLookupHistory;
+  onKnowledgeLookupAction: (action: KnowledgeLookupHistoryAction) => void;
 }) {
   const [activeTab, setActiveTab] = useState<"details" | "evidence">("details");
   const detailsTabId = "ewp-inspector-details-tab";
@@ -1111,6 +1137,13 @@ function Inspector({
               uploadError={designInputUploadError}
             />
           ) : null}
+          {block.blockId === "knowledge-lookup" ? (
+            <KnowledgeLookupEditor
+              history={knowledgeLookupHistory}
+              dispatch={onKnowledgeLookupAction}
+              sources={knowledgeLookupSources}
+            />
+          ) : null}
           {(
             block.inspector?.fields ?? [
               { label: "Purpose", value: block.purpose },
@@ -1134,7 +1167,8 @@ function Inspector({
             </label>
           ))}
           {block.blockId !== "reference-images" &&
-          block.blockId !== "design-intent" ? (
+          block.blockId !== "design-intent" &&
+          block.blockId !== "knowledge-lookup" ? (
             <button type="button" className="ewp-inspector__edit" disabled>
               Edit in a later CP3 increment
             </button>
@@ -1183,7 +1217,9 @@ function Inspector({
                   ? "Local CP3A draft · session only"
                   : block.blockId === "design-intent"
                     ? "Local CP3B draft · session only"
-                    : "Validated fixture · read only"}
+                    : block.blockId === "knowledge-lookup"
+                      ? "Local CP3C draft · session only"
+                      : "Validated fixture · read only"}
               </dd>
             </div>
             {block.blockId === "reference-images" ? (
@@ -1211,6 +1247,20 @@ function Inspector({
                 </dd>
               </div>
             ) : null}
+            {block.blockId === "knowledge-lookup" ? (
+              <div>
+                <dt>Knowledge lookup draft</dt>
+                <dd>
+                  {knowledgeLookupHistory.present.query.length} prompt
+                  characters · {knowledgeLookupHistory.present.sourceIds.length}{" "}
+                  source
+                  {knowledgeLookupHistory.present.sourceIds.length === 1
+                    ? ""
+                    : "s"}{" "}
+                  selected · not persisted
+                </dd>
+              </div>
+            ) : null}
             <div>
               <dt>Execution status</dt>
               <dd>Not executed</dd>
@@ -1221,7 +1271,9 @@ function Inspector({
             <p>
               {block.role === "mcp-action"
                 ? "An exact workspace catalog tool must be bound before the generic MCP gateway can run this action. Capability categories never dispatch runtime services."
-                : "This block does not invoke a tool. Any future execution evidence must come through the governed workflow runtime."}
+                : block.blockId === "knowledge-lookup"
+                  ? "This draft has not searched any source. Future retrieval must honor workspace permissions and return citations and evidence through a governed generic boundary."
+                  : "This block does not invoke a tool. Any future execution evidence must come through the governed workflow runtime."}
             </p>
           </section>
           <section className="ewp-inspector__output">
@@ -1356,6 +1408,10 @@ export function EngineeringWorkflowVisualSlice({
   const [designInputUploadError, setDesignInputUploadError] = useState<
     string | null
   >(null);
+  const [knowledgeLookupHistory, dispatchKnowledgeLookupAction] = useReducer(
+    reduceKnowledgeLookupDraft,
+    createKnowledgeLookupHistory(),
+  );
   const nextUploadedImageId = useRef(1);
   const nextUploadedDocumentId = useRef(1);
   const referenceImageHistory = referenceImageDraft.history;
@@ -1442,6 +1498,9 @@ export function EngineeringWorkflowVisualSlice({
     const promptPresent = designInputHistory.present.prompt.trim().length > 0;
     const documentCount = designInputHistory.present.documents.length;
     const designInputCount = Number(promptPresent) + documentCount;
+    const lookupQueryPresent =
+      knowledgeLookupHistory.present.query.trim().length > 0;
+    const lookupSourceCount = knowledgeLookupHistory.present.sourceIds.length;
     return {
       ...workflow,
       blocks: workflow.blocks.map((block) => {
@@ -1487,12 +1546,41 @@ export function EngineeringWorkflowVisualSlice({
           };
         }
 
+        if (block.blockId === "knowledge-lookup") {
+          const lookupConfigured = lookupQueryPresent && lookupSourceCount > 0;
+          const lookupBadgeParts = [
+            lookupQueryPresent ? "QUERY" : null,
+            lookupSourceCount > 0
+              ? `${lookupSourceCount} ${lookupSourceCount === 1 ? "SOURCE" : "SOURCES"}`
+              : null,
+          ].filter((part): part is string => part !== null);
+          return {
+            ...block,
+            purpose: lookupConfigured
+              ? "Find relevant information within selected source scopes."
+              : "Add a lookup prompt and choose where Wright may search.",
+            badge:
+              lookupBadgeParts.length > 0
+                ? lookupBadgeParts.join(" + ")
+                : "EMPTY",
+            status: lookupConfigured
+              ? "Draft · retrieval not run"
+              : lookupQueryPresent
+                ? "Choose sources"
+                : lookupSourceCount > 0
+                  ? "Add lookup prompt"
+                  : "No lookup configured",
+          };
+        }
+
         return block;
       }),
     };
   }, [
     designInputHistory.present.documents.length,
     designInputHistory.present.prompt,
+    knowledgeLookupHistory.present.query,
+    knowledgeLookupHistory.present.sourceIds.length,
     selectedReferenceImages,
     workflow,
   ]);
@@ -1665,6 +1753,8 @@ export function EngineeringWorkflowVisualSlice({
             void handleDesignInputFilesSelected(files)
           }
           designInputUploadError={designInputUploadError}
+          knowledgeLookupHistory={knowledgeLookupHistory}
+          onKnowledgeLookupAction={dispatchKnowledgeLookupAction}
         />
       </div>
       {capabilityLibraryOpen ? (

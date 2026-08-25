@@ -294,6 +294,11 @@ external engineering applications.
   attached readable documents for long or reusable content. Reusable sources
   SHOULD be selectable through a generic workspace or template boundary rather
   than encoded as block-specific file-format logic.
+- **FR-031**: A knowledge-lookup input MUST let the user describe what
+  information is needed and choose generic governed source scopes. The UI MUST
+  NOT expose RAG, a search provider, an engineering domain, or a source label as
+  runtime dispatch logic, and future retrieved context MUST be reviewable with
+  source citations and retrieval evidence.
 
 ### Key Entities
 

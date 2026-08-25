@@ -1,0 +1,220 @@
+.ewp-knowledge-lookup {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: #09182a;
+  border: 1px solid #274765;
+  border-radius: 8px;
+}
+
+.ewp-knowledge-lookup__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ewp-knowledge-lookup__header h2 {
+  margin: 0;
+  color: #e2effc;
+  font-size: 10px;
+}
+
+.ewp-knowledge-lookup__header small {
+  display: block;
+  margin-top: 2px;
+  color: #6f8ba8;
+  font-size: 8px;
+}
+
+.ewp-knowledge-lookup__header > strong {
+  flex: 0 0 auto;
+  padding: 3px 6px;
+  color: #8fe5de;
+  font-size: 8px;
+  background: rgba(22, 200, 193, 0.08);
+  border: 1px solid rgba(22, 200, 193, 0.3);
+  border-radius: 999px;
+}
+
+.ewp-knowledge-lookup__history {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+}
+
+.ewp-knowledge-lookup__history button,
+.ewp-knowledge-lookup__query-actions button {
+  min-width: 27px;
+  height: 26px;
+  padding: 0 7px;
+  color: #b8d5ed;
+  font-size: 8px;
+  font-weight: 750;
+  background: #10243b;
+  border: 1px solid #2a4b69;
+  border-radius: 5px;
+}
+
+.ewp-knowledge-lookup button:disabled {
+  color: #61758c;
+  cursor: default;
+  opacity: 0.58;
+}
+
+.ewp-knowledge-lookup__history output {
+  overflow: hidden;
+  color: #8aa2bb;
+  font-size: 8px;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ewp-knowledge-lookup__query {
+  display: grid;
+  gap: 5px;
+  color: #dcecff;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.ewp-knowledge-lookup__query textarea {
+  width: 100%;
+  min-height: 86px;
+  padding: 8px;
+  resize: vertical;
+  color: #d7e7f8;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.4;
+  background: #071321;
+  border: 1px solid #31506e;
+  border-radius: 6px;
+}
+
+.ewp-knowledge-lookup__query textarea::placeholder {
+  color: #607b98;
+}
+
+.ewp-knowledge-lookup__query-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.ewp-knowledge-lookup__query-actions button:not(:disabled) {
+  color: #eff8ff;
+  background: linear-gradient(#2eabff, #087be1);
+  border-color: #35b4ff;
+}
+
+.ewp-knowledge-lookup__query-actions small {
+  color: #7891aa;
+  font-size: 7px;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.ewp-knowledge-lookup__sources {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  margin: 0;
+  background: #071321;
+  border: 1px solid #31506e;
+  border-radius: 6px;
+}
+
+.ewp-knowledge-lookup__sources legend {
+  padding: 0 4px;
+  color: #dcecff;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.ewp-knowledge-lookup__sources > label {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: start;
+  gap: 6px;
+  padding: 6px;
+  cursor: pointer;
+  background: #0b1d30;
+  border: 1px solid #203c5a;
+  border-radius: 5px;
+}
+
+.ewp-knowledge-lookup__sources input {
+  width: 13px;
+  height: 13px;
+  margin-top: 1px;
+  accent-color: var(--ewp-cyan);
+}
+
+.ewp-knowledge-lookup__sources span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.ewp-knowledge-lookup__sources strong {
+  color: #cfe5f7;
+  font-size: 8px;
+}
+
+.ewp-knowledge-lookup__sources small {
+  color: #758fa9;
+  font-size: 7px;
+  line-height: 1.3;
+}
+
+.ewp-knowledge-lookup__status,
+.ewp-knowledge-lookup__boundary {
+  padding: 8px;
+  margin: 0;
+  color: #8ca4bd;
+  font-size: 8px;
+  line-height: 1.4;
+  background: #071321;
+  border: 1px dashed #31506e;
+  border-radius: 6px;
+}
+
+.ewp-knowledge-lookup__status[data-ready="true"] {
+  color: #85d9d3;
+  background: rgba(22, 200, 193, 0.055);
+  border-color: rgba(22, 200, 193, 0.32);
+  border-style: solid;
+}
+
+.ewp-knowledge-lookup__output {
+  padding: 8px;
+  background: #081727;
+  border: 1px solid #25415e;
+  border-radius: 6px;
+}
+
+.ewp-knowledge-lookup__output h3 {
+  margin: 0 0 4px;
+  color: #dcecff;
+  font-size: 9px;
+}
+
+.ewp-knowledge-lookup__output p {
+  margin: 0;
+  color: #7891aa;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.ewp-knowledge-lookup__boundary {
+  color: #8cb8d4;
+  background: rgba(21, 156, 255, 0.045);
+  border-color: rgba(21, 156, 255, 0.24);
+  border-style: solid;
+}

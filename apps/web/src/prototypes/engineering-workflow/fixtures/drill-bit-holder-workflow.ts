@@ -62,14 +62,19 @@ export const drillBitHolderWorkflow: WorkflowPreview = {
       position: { x: 14, y: 138, width: 144, height: 76 },
     },
     {
-      blockId: "company-context",
+      blockId: "knowledge-lookup",
       phaseId: "define",
       sequence: "C",
       role: "input",
-      title: "Company Context",
-      purpose: "Standards, known products, and available materials.",
-      badge: "RAG",
+      title: "Knowledge Lookup",
+      purpose: "Find relevant information from selected sources.",
+      badge: "QUERY · SOURCES",
       position: { x: 14, y: 226, width: 144, height: 76 },
+      inspector: {
+        summary:
+          "Describe what information is needed and where Wright may search for it.",
+        fields: [],
+      },
     },
     {
       blockId: "create-specification",
@@ -316,7 +321,7 @@ export const drillBitHolderWorkflow: WorkflowPreview = {
     },
   ],
   connections: [
-    ...["reference-images", "design-intent", "company-context"].map(
+    ...["reference-images", "design-intent", "knowledge-lookup"].map(
       (sourceBlockId, index) => ({
         connectionId: `define-input-${index}`,
         sourceBlockId,

@@ -17,7 +17,7 @@ export function EngineeringWorkflowPrototype() {
 
   return (
     <EngineeringWorkflowVisualSlice
-      badge="CP3B · Design input"
+      badge="CP3C · Knowledge lookup"
       workflow={workflow}
       viewState={viewState}
       renderCanvas={(props) => <ReactFlowWorkflowCanvas {...props} />}
