@@ -17,7 +17,7 @@ import {
 import { useState, type ComponentType } from "react";
 
 import type { EngineeringWorkflowCanvasRenderProps } from "../EngineeringWorkflowVisualSlice";
-import { ReactFlowCanvas } from "../canvas/react-flow/ReactFlowBakeoffHarness";
+import { ReactFlowWorkflowCanvas } from "../canvas/react-flow/ReactFlowWorkflowCanvas";
 import {
   createScaleWorkflow,
   type WorkflowScale,
@@ -102,7 +102,7 @@ describe("React Flow scale interaction", () => {
     async (blockCount) => {
       const startedAt = performance.now();
       render(
-        <ScaleHarness Canvas={ReactFlowCanvas} blockCount={blockCount} />,
+        <ScaleHarness Canvas={ReactFlowWorkflowCanvas} blockCount={blockCount} />,
       );
 
       const lastBlock = await screen.findByRole(

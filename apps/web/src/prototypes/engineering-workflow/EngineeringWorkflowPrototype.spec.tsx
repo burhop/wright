@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { ReactFlowBakeoffHarness } from "./ReactFlowBakeoffHarness";
+import { EngineeringWorkflowPrototype } from "./EngineeringWorkflowPrototype";
 
-describe("ReactFlowBakeoffHarness", () => {
+describe("EngineeringWorkflowPrototype", () => {
   const originalGetBoundingClientRect =
     HTMLElement.prototype.getBoundingClientRect;
 
@@ -52,15 +52,25 @@ describe("ReactFlowBakeoffHarness", () => {
   });
 
   it("reuses the approved shell around a Wright-owned read-only projection", async () => {
-    render(<ReactFlowBakeoffHarness />);
+    render(<EngineeringWorkflowPrototype />);
 
     expect(
       screen.getByRole("heading", {
         name: "Drill-Bit Holder — Design to Fabrication",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText("CP1B · React Flow")).toBeInTheDocument();
-    expect(screen.getByTestId("react-flow-bakeoff-canvas")).toBeInTheDocument();
+    expect(screen.getByText("CP2 · React Flow")).toBeInTheDocument();
+    expect(screen.getByTestId("react-flow-workflow-canvas")).toBeInTheDocument();
+    const visualSlice = screen.getByTestId("engineering-workflow-visual-slice");
+    expect(visualSlice).toHaveAttribute("data-visual-contract", "cp2a-1");
+    expect(visualSlice).toHaveStyle({
+      "--ewp-blue": "#159cff",
+      "--ewp-purple": "#9b4dff",
+      "--ewp-cyan": "#16c8c1",
+      "--ewp-green": "#12c881",
+      "--ewp-amber": "#ffb20b",
+      "--ewp-red": "#ff4058",
+    });
     const referenceImages = await screen.findByRole("button", {
       name: /Reference Images/,
     });

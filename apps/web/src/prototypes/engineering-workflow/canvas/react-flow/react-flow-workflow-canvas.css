@@ -14,7 +14,7 @@
     linear-gradient(180deg, #04101f 0%, #020a13 100%);
 }
 
-.ewp-rf-candidate-note {
+.ewp-rf-status {
   position: absolute;
   z-index: 12;
   top: 10px;
@@ -32,7 +32,7 @@
   pointer-events: none;
 }
 
-.ewp-rf-candidate-note strong {
+.ewp-rf-status strong {
   color: #8fd2ff;
 }
 

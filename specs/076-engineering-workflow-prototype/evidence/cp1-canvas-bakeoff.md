@@ -1,7 +1,7 @@
 # CP1B canvas bakeoff decision
 
-**Status**: Complete; awaiting the CP1B human continue/change/stop gate  
-**Branch**: `076-engineering-workflow-prototype`  
+**Status**: Accepted; Continue selected at the CP1B human gate
+**Branch**: `076-engineering-workflow-prototype`
 **Date**: 2026-08-24
 
 ## Recommendation
@@ -178,8 +178,8 @@ For CP2 after human approval:
 5. Run the focused model/component suite and production build to prove no
    domain change was required.
 
-The rejected implementations remain in this checkpoint commit only so the
-human reviewer can compare live routes before choosing continue/change/stop.
+The rejected implementations remained in the CP1B checkpoint for live comparison
+and were deleted in CP2A after the Continue decision. Their evidence is retained.
 
 ## Limits of this decision
 
@@ -188,18 +188,16 @@ invocation, execution, or migration of Rivet workflows. It therefore cannot
 justify a production rearchitecture or answer the final retain-Rivet versus
 hybrid versus replace decision.
 
-If the human gate chooses **continue**, CP2 should first delete the rejected
-candidates and validate only the selected UI through pan/zoom/selection/focus,
-deterministic details/evidence states, custom feedback-edge polish, and an
-engineer comprehension exercise against the current Rivet baseline. Generic
-MCP binding and LLM-proposed edits stay in their later checkpoints behind the
-same Wright-owned contracts.
+The human gate selected **Continue**. CP2A therefore deletes the rejected
+candidates and validates only the selected UI through the same Wright-owned
+contracts. Generic MCP binding and LLM-proposed edits stay in their later
+checkpoints.
 
-## Human gate
+## Human gate decision
 
-- **Continue**: accept React Flow provisionally, delete Rete/LiteGraph, and
-  start bounded CP2 usability integration.
-- **Change**: adjust the rubric or request one specific missing experiment
-  before selecting.
-- **Stop/defer**: retain the evidence and make no production change.
-
+- **Decision**: Continue.
+- **Accepted visual direction**: retain the dark navy engineering surface,
+  role/status colors, phase bands, card anatomy, labeled edges, and feedback
+  treatment shown in the selected React Flow prototype.
+- **Authorized next increment**: visual-contract lock, rejected-candidate
+  deletion, and selected-adapter promotion only.

@@ -2,7 +2,7 @@
 
 ## Status
 
-CP1A now contains a feature-flagged, read-only visual contract driven by deterministic fixtures. Graph-library dependencies, editing, persistence, LLM integration, and MCP invocation remain unimplemented until their reviewed checkpoints.
+CP2A promotes React Flow as the single feature-flagged, read-only canvas adapter over deterministic Wright-owned fixtures. The accepted color/style contract is versioned as `cp2a-1`. Editing, persistence, LLM integration, and MCP invocation remain excluded until their reviewed checkpoints.
 
 ## Safety boundaries
 
@@ -16,7 +16,8 @@ CP1A now contains a feature-flagged, read-only visual contract driven by determi
 
 ## Proposed route and flag
 
-- Route: `/prototype/engineering-workflow`
+- Selected route: `/prototype/engineering-workflow`
+- Temporary CP1B compatibility alias: `/prototype/engineering-workflow/bakeoff/react-flow`
 - Flag: `VITE_ENGINEERING_WORKFLOW_PROTOTYPE=1`
 - Initial navigation: direct URL only; no production sidebar entry.
 - The visual slice is outside authenticated backend bootstrap so deterministic UI review works offline.

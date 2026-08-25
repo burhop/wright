@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   createScaleWorkflow,
-  workflowForBakeoffSearch,
+  workflowForPrototypeSearch,
 } from "./scale-workflows";
 
 describe("scale workflow fixtures", () => {
@@ -26,9 +26,9 @@ describe("scale workflow fixtures", () => {
   );
 
   it("selects scale fixtures only for supported query values", () => {
-    expect(workflowForBakeoffSearch("?scale=25").blocks).toHaveLength(25);
-    expect(workflowForBakeoffSearch("?scale=100").blocks).toHaveLength(100);
-    expect(workflowForBakeoffSearch("?scale=500").workflowId).toBe(
+    expect(workflowForPrototypeSearch("?scale=25").blocks).toHaveLength(25);
+    expect(workflowForPrototypeSearch("?scale=100").blocks).toHaveLength(100);
+    expect(workflowForPrototypeSearch("?scale=500").workflowId).toBe(
       "drill-bit-holder-design-to-fabrication",
     );
   });

@@ -5,6 +5,12 @@ import {
   engineeringCapabilityCategories,
   engineeringCapabilityTemplates,
 } from "./fixtures/engineering-capability-library";
+import {
+  ENGINEERING_WORKFLOW_VISUAL_CONTRACT_VERSION,
+  engineeringWorkflowCssVariables,
+  workflowRoleIcons,
+  workflowRoleLabels,
+} from "./engineering-workflow-visual-contract";
 import { drillBitHolderWorkflow } from "./fixtures/drill-bit-holder-workflow";
 import {
   blockDimensions,
@@ -18,24 +24,6 @@ import {
 import "./engineering-workflow-visual-slice.css";
 
 const CANVAS_WIDTH = 1360;
-
-const roleLabels: Record<WorkflowBlockRole, string> = {
-  input: "Input",
-  "ai-task": "AI task",
-  "mcp-action": "MCP action",
-  artifact: "Artifact",
-  decision: "Review",
-  notification: "Notification",
-};
-
-const roleIcons: Record<WorkflowBlockRole, string> = {
-  input: "↥",
-  "ai-task": "✦",
-  "mcp-action": "⌘",
-  artifact: "▤",
-  decision: "✓",
-  notification: "↗",
-};
 
 const paletteGroups = [
   {
@@ -83,7 +71,7 @@ function WrightMark() {
 function RoleIcon({ role }: { role: WorkflowBlockRole }) {
   return (
     <span className="ewp-role-icon" data-role={role} aria-hidden="true">
-      {roleIcons[role]}
+      {workflowRoleIcons[role]}
     </span>
   );
 }
@@ -132,7 +120,7 @@ export function WorkflowBlock({
       className={`ewp-node${selected ? " is-selected" : ""}`}
       data-role={block.role}
       style={style}
-      aria-label={`${roleLabels[block.role]} ${block.sequence ? `${block.sequence}. ` : ""}${block.title}`}
+      aria-label={`${workflowRoleLabels[block.role]} ${block.sequence ? `${block.sequence}. ` : ""}${block.title}`}
       aria-pressed={selected}
       onClick={() => onSelect(block.blockId)}
     >
@@ -522,7 +510,7 @@ function Inspector({
             {block.sequence ? `${block.sequence}. ` : ""}
             {block.title}
           </strong>
-          <small>{roleLabels[block.role]}</small>
+          <small>{workflowRoleLabels[block.role]}</small>
         </span>
       </div>
       <div
@@ -544,7 +532,7 @@ function Inspector({
         {(
           block.inspector?.fields ?? [
             { label: "Purpose", value: block.purpose },
-            { label: "Role", value: roleLabels[block.role] },
+            { label: "Role", value: workflowRoleLabels[block.role] },
             {
               label: "Current binding",
               value:
@@ -623,7 +611,7 @@ function Legend() {
       <strong>Legend</strong>
       {roles.map((role) => (
         <span key={role} data-role={role}>
-          <i /> {roleLabels[role]}
+          <i /> {workflowRoleLabels[role]}
         </span>
       ))}
       <span className="ewp-legend__feedback">
@@ -679,6 +667,8 @@ export function EngineeringWorkflowVisualSlice({
       className="ewp"
       data-testid="engineering-workflow-visual-slice"
       data-theme="dark"
+      data-visual-contract={ENGINEERING_WORKFLOW_VISUAL_CONTRACT_VERSION}
+      style={engineeringWorkflowCssVariables}
     >
       <header className="ewp-toolbar">
         <div className="ewp-brand">

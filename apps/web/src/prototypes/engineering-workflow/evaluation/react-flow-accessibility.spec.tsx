@@ -3,7 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { ReactFlowBakeoffHarness } from "../canvas/react-flow/ReactFlowBakeoffHarness";
+import { EngineeringWorkflowPrototype } from "../EngineeringWorkflowPrototype";
 
 describe("React Flow workflow accessibility", () => {
   const originalGetBoundingClientRect =
@@ -55,7 +55,7 @@ describe("React Flow workflow accessibility", () => {
 
   it("exposes phases and blocks through semantic names and keyboard selection", async () => {
     const user = userEvent.setup();
-    render(<ReactFlowBakeoffHarness />);
+    render(<EngineeringWorkflowPrototype />);
 
     const phaseSummary = await screen.findByRole("region", {
       name: "Workflow phase summary",
@@ -81,7 +81,7 @@ describe("React Flow workflow accessibility", () => {
   });
 
   it("has no axe violations detectable in the component-test environment", async () => {
-    const { container } = render(<ReactFlowBakeoffHarness />);
+    const { container } = render(<EngineeringWorkflowPrototype />);
 
     await screen.findByRole("button", {
       name: "Input A. Reference Images",

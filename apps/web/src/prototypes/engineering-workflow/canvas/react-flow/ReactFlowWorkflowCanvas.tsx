@@ -15,11 +15,10 @@ import {
 } from "@xyflow/react";
 
 import {
-  EngineeringWorkflowVisualSlice,
   WorkflowBlock,
   type EngineeringWorkflowCanvasRenderProps,
 } from "../../EngineeringWorkflowVisualSlice";
-import { workflowForBakeoffSearch } from "../../fixtures/scale-workflows";
+import { engineeringWorkflowVisualContract } from "../../engineering-workflow-visual-contract";
 import {
   projectWorkflowToCanvas,
   type CanvasProjection,
@@ -30,7 +29,7 @@ import type {
 } from "../../workflow-preview-model";
 
 import "@xyflow/react/dist/base.css";
-import "./react-flow-bakeoff.css";
+import "./react-flow-workflow-canvas.css";
 
 interface PhaseLaneNodeData extends Record<string, unknown> {
   phase: WorkflowPreviewPhase;
@@ -47,13 +46,9 @@ type EngineeringBlockFlowNode = Node<
   EngineeringBlockNodeData,
   "engineeringBlock"
 >;
-type BakeoffFlowNode = PhaseLaneFlowNode | EngineeringBlockFlowNode;
+type WorkflowFlowNode = PhaseLaneFlowNode | EngineeringBlockFlowNode;
 
-const edgeColor = {
-  data: "#159cff",
-  control: "#12c881",
-  feedback: "#ff4058",
-} as const;
+const edgeColor = engineeringWorkflowVisualContract.connectionColors;
 
 function PhaseLaneNode({ data }: NodeProps<PhaseLaneFlowNode>) {
   return (
@@ -113,7 +108,7 @@ function projectReactFlowNodes(
   projection: CanvasProjection,
   selectedBlockId: string,
   onSelectBlock: (blockId: string) => void,
-): BakeoffFlowNode[] {
+): WorkflowFlowNode[] {
   const phaseNodes: PhaseLaneFlowNode[] = projection.phases.map(
     ({ phase, position, size }) => ({
       id: `phase:${phase.phaseId}`,
@@ -181,7 +176,7 @@ function projectReactFlowEdges(projection: CanvasProjection): Edge[] {
   });
 }
 
-export function ReactFlowCanvas({
+export function ReactFlowWorkflowCanvas({
   workflow,
   selectedBlockId,
   onSelectBlock,
@@ -201,7 +196,7 @@ export function ReactFlowCanvas({
   );
 
   return (
-    <div className="ewp-rf-canvas" data-testid="react-flow-bakeoff-canvas">
+    <div className="ewp-rf-canvas" data-testid="react-flow-workflow-canvas">
       <section className="ewp-sr-only" aria-label="Workflow phase summary">
         <h2>Workflow phases</h2>
         <ol>
@@ -215,16 +210,20 @@ export function ReactFlowCanvas({
       <ol className="ewp-sr-only" aria-label="Workflow connections">
         {workflow.connections.map((connection) => (
           <li key={connection.connectionId}>
-            {blockTitleById.get(connection.sourceBlockId) ?? connection.sourceBlockId} to {blockTitleById.get(connection.targetBlockId) ?? connection.targetBlockId} (
-            {connection.label ?? connection.semantics})
+            {blockTitleById.get(connection.sourceBlockId) ??
+              connection.sourceBlockId}{" "}
+            to{" "}
+            {blockTitleById.get(connection.targetBlockId) ??
+              connection.targetBlockId}{" "}
+            ({connection.label ?? connection.semantics})
           </li>
         ))}
       </ol>
-      <div className="ewp-rf-candidate-note" role="status">
+      <div className="ewp-rf-status" role="status">
         <strong>React Flow 12.11.3</strong>
-        <span>Read-only CP1B candidate · Wright model remains canonical</span>
+        <span>CP2 selected canvas · Wright model remains canonical</span>
       </div>
-      <ReactFlow<BakeoffFlowNode, Edge>
+      <ReactFlow<WorkflowFlowNode, Edge>
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
@@ -242,7 +241,7 @@ export function ReactFlowCanvas({
           if (node.type === "engineeringBlock") onSelectBlock(node.id);
         }}
         colorMode="dark"
-        aria-label="React Flow engineering workflow bakeoff"
+        aria-label="React Flow engineering workflow canvas"
       >
         <Background variant={BackgroundVariant.Dots} gap={14} size={1} />
         <Controls showInteractive={false} position="bottom-left" />
@@ -251,10 +250,14 @@ export function ReactFlowCanvas({
           pannable
           zoomable
           nodeColor={(node) =>
-            node.type === "phaseLane" ? "#0b2038" : "#159cff"
+            node.type === "phaseLane"
+              ? "#0b2038"
+              : engineeringWorkflowVisualContract.colors.input
           }
           nodeStrokeColor={(node) =>
-            node.type === "phaseLane" ? "#315b7f" : "#8fd2ff"
+            node.type === "phaseLane"
+              ? "#315b7f"
+              : engineeringWorkflowVisualContract.colors.focus
           }
           nodeStrokeWidth={3}
           style={{ width: 168, height: 96, marginTop: 8 }}
@@ -265,19 +268,4 @@ export function ReactFlowCanvas({
   );
 }
 
-export function ReactFlowBakeoffHarness() {
-  const workflow = useMemo(
-    () => workflowForBakeoffSearch(window.location.search),
-    [],
-  );
-
-  return (
-    <EngineeringWorkflowVisualSlice
-      badge="CP1B · React Flow"
-      workflow={workflow}
-      renderCanvas={(props) => <ReactFlowCanvas {...props} />}
-    />
-  );
-}
-
-export default ReactFlowBakeoffHarness;
+export default ReactFlowWorkflowCanvas;

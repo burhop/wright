@@ -134,7 +134,7 @@ export function createScaleWorkflow(
   };
 }
 
-export function workflowForBakeoffSearch(search: string): WorkflowPreview {
+export function workflowForPrototypeSearch(search: string): WorkflowPreview {
   const scale = new URLSearchParams(search).get("scale");
   if (scale === "25" || scale === "100") {
     return createScaleWorkflow(Number(scale) as WorkflowScale);
