@@ -11,6 +11,10 @@ import {
   workflowRoleIcons,
   workflowRoleLabels,
 } from "./engineering-workflow-visual-contract";
+import {
+  prototypeViewStateCopy,
+  type EngineeringWorkflowPrototypeViewState,
+} from "./prototype-review-state";
 import { drillBitHolderWorkflow } from "./fixtures/drill-bit-holder-workflow";
 import {
   blockDimensions,
@@ -492,12 +496,18 @@ function CapabilityLibrary({ onClose }: { onClose: () => void }) {
 }
 
 function Inspector({
+  workflow,
   block,
   outgoing,
 }: {
+  workflow: WorkflowPreview;
   block: WorkflowPreviewBlock;
   outgoing: WorkflowPreviewBlock[];
 }) {
+  const [activeTab, setActiveTab] = useState<"details" | "evidence">("details");
+  const detailsTabId = "ewp-inspector-details-tab";
+  const evidenceTabId = "ewp-inspector-evidence-tab";
+
   return (
     <aside className="ewp-inspector" aria-label="Block properties">
       <div className="ewp-panel-title">
@@ -518,57 +528,127 @@ function Inspector({
         role="tablist"
         aria-label="Block detail sections"
       >
-        <button type="button" role="tab" aria-selected="true">
-          Content
+        <button
+          id={detailsTabId}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "details"}
+          aria-controls="ewp-inspector-details-panel"
+          tabIndex={activeTab === "details" ? 0 : -1}
+          onClick={() => setActiveTab("details")}
+        >
+          Details
         </button>
-        <button type="button" role="tab" aria-selected="false" disabled>
-          Metadata
+        <button
+          id={evidenceTabId}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "evidence"}
+          aria-controls="ewp-inspector-evidence-panel"
+          tabIndex={activeTab === "evidence" ? 0 : -1}
+          onClick={() => setActiveTab("evidence")}
+        >
+          Evidence
         </button>
       </div>
-      <div className="ewp-inspector__body">
-        <p className="ewp-inspector__summary">
-          {block.inspector?.summary ?? block.purpose}
-        </p>
-        {(
-          block.inspector?.fields ?? [
-            { label: "Purpose", value: block.purpose },
-            { label: "Role", value: workflowRoleLabels[block.role] },
-            {
-              label: "Current binding",
-              value:
-                block.role === "mcp-action"
-                  ? "Exact catalog identity required"
-                  : "Not applicable",
-            },
-          ]
-        ).map((field) => (
-          <label key={field.label} className="ewp-inspector__field">
-            <span>{field.label}</span>
-            <textarea
-              value={field.value}
-              readOnly
-              rows={field.value.includes("\n") ? 4 : 2}
-            />
-          </label>
-        ))}
-        <button type="button" className="ewp-inspector__edit" disabled>
-          Edit in CP3
-        </button>
-        <section className="ewp-inspector__output">
-          <h2>Provides to</h2>
-          {outgoing.length ? (
-            <ul>
-              {outgoing.map((target) => (
-                <li key={target.blockId} data-role={target.role}>
-                  <span /> {target.title}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Terminal workflow output</p>
-          )}
-        </section>
-      </div>
+      {activeTab === "details" ? (
+        <div
+          id="ewp-inspector-details-panel"
+          className="ewp-inspector__body"
+          role="tabpanel"
+          aria-labelledby={detailsTabId}
+        >
+          <p className="ewp-inspector__summary">
+            {block.inspector?.summary ?? block.purpose}
+          </p>
+          {(
+            block.inspector?.fields ?? [
+              { label: "Purpose", value: block.purpose },
+              { label: "Role", value: workflowRoleLabels[block.role] },
+              {
+                label: "Current binding",
+                value:
+                  block.role === "mcp-action"
+                    ? "Exact catalog identity required"
+                    : "Not applicable",
+              },
+            ]
+          ).map((field) => (
+            <label key={field.label} className="ewp-inspector__field">
+              <span>{field.label}</span>
+              <textarea
+                value={field.value}
+                readOnly
+                rows={field.value.includes("\n") ? 4 : 2}
+              />
+            </label>
+          ))}
+          <button type="button" className="ewp-inspector__edit" disabled>
+            Edit in CP3
+          </button>
+          <section className="ewp-inspector__output">
+            <h2>Provides to</h2>
+            {outgoing.length ? (
+              <ul>
+                {outgoing.map((target) => (
+                  <li key={target.blockId} data-role={target.role}>
+                    <span /> {target.title}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Terminal workflow output</p>
+            )}
+          </section>
+        </div>
+      ) : (
+        <div
+          id="ewp-inspector-evidence-panel"
+          className="ewp-inspector__body"
+          role="tabpanel"
+          aria-labelledby={evidenceTabId}
+        >
+          <p className="ewp-inspector__summary">
+            Deterministic preview evidence for this Wright-owned workflow
+            projection. No engineering tool has been executed.
+          </p>
+          <dl className="ewp-inspector__evidence-grid">
+            <div>
+              <dt>Block identity</dt>
+              <dd>{block.blockId}</dd>
+            </div>
+            <div>
+              <dt>Workflow revision</dt>
+              <dd>
+                {workflow.workflowId} · r{workflow.revision}
+              </dd>
+            </div>
+            <div>
+              <dt>Projection status</dt>
+              <dd>Validated fixture · read only</dd>
+            </div>
+            <div>
+              <dt>Execution status</dt>
+              <dd>Not executed</dd>
+            </div>
+          </dl>
+          <section className="ewp-inspector__evidence-policy">
+            <h2>Execution boundary</h2>
+            <p>
+              {block.role === "mcp-action"
+                ? "An exact workspace catalog tool must be bound before the generic MCP gateway can run this action. Capability categories never dispatch runtime services."
+                : "This block does not invoke a tool. Any future execution evidence must come through the governed workflow runtime."}
+            </p>
+          </section>
+          <section className="ewp-inspector__output">
+            <h2>Evidence status</h2>
+            <p>
+              Run records and produced artifacts arrive in later governed MCP
+              and integration checkpoints.
+            </p>
+          </section>
+        </div>
+      )}
       <MiniMap />
     </aside>
   );
@@ -621,6 +701,37 @@ function Legend() {
   );
 }
 
+function WorkflowCanvasReviewState({
+  viewState,
+}: {
+  viewState: Exclude<EngineeringWorkflowPrototypeViewState, "ready">;
+}) {
+  const copy = prototypeViewStateCopy[viewState];
+  return (
+    <section
+      className="ewp-canvas-state"
+      data-state={viewState}
+      role={viewState === "error" ? "alert" : "status"}
+      aria-live={viewState === "error" ? "assertive" : "polite"}
+    >
+      <span className="ewp-canvas-state__icon" aria-hidden="true">
+        {viewState === "loading" ? "◌" : viewState === "empty" ? "+" : "!"}
+      </span>
+      <h2>{copy.title}</h2>
+      <p>{copy.description}</p>
+      {viewState === "empty" ? (
+        <button type="button" disabled>
+          Add first block in CP3
+        </button>
+      ) : null}
+      {viewState === "error" ? (
+        <button type="button" disabled>
+          Retry preview
+        </button>
+      ) : null}
+    </section>
+  );
+}
 export interface EngineeringWorkflowCanvasRenderProps {
   workflow: WorkflowPreview;
   selectedBlockId: string;
@@ -631,12 +742,14 @@ export interface EngineeringWorkflowVisualSliceProps {
   badge?: string;
   renderCanvas?: (props: EngineeringWorkflowCanvasRenderProps) => ReactNode;
   workflow?: WorkflowPreview;
+  viewState?: EngineeringWorkflowPrototypeViewState;
 }
 
 export function EngineeringWorkflowVisualSlice({
   badge = "Visual slice",
   renderCanvas,
   workflow = drillBitHolderWorkflow,
+  viewState = "ready",
 }: EngineeringWorkflowVisualSliceProps = {}) {
   const [selectedBlockId, setSelectedBlockId] = useState(
     () =>
@@ -705,8 +818,14 @@ export function EngineeringWorkflowVisualSlice({
 
       <div className="ewp-workspace">
         <Palette onBrowseCapabilities={() => setCapabilityLibraryOpen(true)} />
-        <main className="ewp-canvas" aria-label="Engineering workflow preview">
-          {renderCanvas ? (
+        <main
+          className="ewp-canvas"
+          data-view-state={viewState}
+          aria-label="Engineering workflow preview"
+        >
+          {viewState !== "ready" ? (
+            <WorkflowCanvasReviewState viewState={viewState} />
+          ) : renderCanvas ? (
             renderCanvas({
               workflow,
               selectedBlockId,
@@ -788,7 +907,7 @@ export function EngineeringWorkflowVisualSlice({
           )}
           <Legend />
         </main>
-        <Inspector block={selectedBlock} outgoing={outgoing} />
+        <Inspector workflow={workflow} block={selectedBlock} outgoing={outgoing} />
       </div>
       {capabilityLibraryOpen ? (
         <CapabilityLibrary onClose={() => setCapabilityLibraryOpen(false)} />

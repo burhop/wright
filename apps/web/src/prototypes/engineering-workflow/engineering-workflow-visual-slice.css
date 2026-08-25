@@ -850,6 +850,140 @@
   line-height: 1.4;
 }
 
+.ewp-inspector__evidence-grid {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.ewp-inspector__evidence-grid > div {
+  padding: 9px 10px;
+  background: #0c1a2d;
+  border: 1px solid #213753;
+  border-radius: 6px;
+}
+
+.ewp-inspector__evidence-grid dt {
+  color: #7890aa;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ewp-inspector__evidence-grid dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  color: #c8d9eb;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.ewp-inspector__evidence-policy {
+  padding: 11px;
+  margin-bottom: 12px;
+  background: rgba(22, 200, 193, 0.055);
+  border: 1px solid rgba(22, 200, 193, 0.32);
+  border-radius: 8px;
+}
+
+.ewp-inspector__evidence-policy h2 {
+  margin-bottom: 6px;
+  color: #89ded9;
+  font-size: 10px;
+}
+
+.ewp-inspector__evidence-policy p {
+  margin: 0;
+  color: #9fb8c7;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.ewp-canvas-state {
+  position: absolute;
+  z-index: 6;
+  inset: 50% auto auto 50%;
+  display: grid;
+  width: min(420px, calc(100% - 48px));
+  justify-items: center;
+  padding: 28px;
+  text-align: center;
+  background: rgba(8, 20, 37, 0.96);
+  border: 1px solid #274361;
+  border-radius: 12px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
+  transform: translate(-50%, -50%);
+}
+
+.ewp-canvas-state__icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 13px;
+  place-items: center;
+  color: #06101f;
+  font-size: 24px;
+  font-weight: 800;
+  background: var(--ewp-blue);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(21, 156, 255, 0.28);
+}
+
+.ewp-canvas-state[data-state="loading"] .ewp-canvas-state__icon {
+  animation: ewp-state-spin 1.4s linear infinite;
+}
+
+.ewp-canvas-state[data-state="empty"] .ewp-canvas-state__icon {
+  background: var(--ewp-purple);
+}
+
+.ewp-canvas-state[data-state="error"] {
+  border-color: rgba(255, 64, 88, 0.58);
+}
+
+.ewp-canvas-state[data-state="error"] .ewp-canvas-state__icon {
+  color: #fff;
+  background: var(--ewp-red);
+}
+
+.ewp-canvas-state h2 {
+  margin: 0 0 8px;
+  color: #eaf3ff;
+  font-size: 17px;
+}
+
+.ewp-canvas-state p {
+  max-width: 330px;
+  margin: 0;
+  color: #91a8c1;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.ewp-canvas-state button {
+  height: 32px;
+  margin-top: 16px;
+  padding: 0 13px;
+  color: #e4f1ff;
+  font-size: 10px;
+  background: #11243d;
+  border: 1px solid #284666;
+  border-radius: 6px;
+  opacity: 0.72;
+}
+
+@keyframes ewp-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ewp-canvas-state[data-state="loading"] .ewp-canvas-state__icon {
+    animation: none;
+  }
+}
 .ewp-inspector__field {
   display: grid;
   gap: 5px;
