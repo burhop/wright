@@ -1,0 +1,157 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0007",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "WORKTREE_ALLOCATED",
+  "to_state": "SPECIFIED",
+  "prior_revision": 7,
+  "new_revision": 8,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+  "new_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Create and validate the bounded EPP-F01 specification, requirements-quality checklist, and matching worktree feature pointer without rerunning the already-completed branch hook.",
+  "started_at": "2026-08-26T23:43:30Z",
+  "finished_at": "2026-08-26T23:46:18Z",
+  "duration_ms": 168000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "ef3f7150c25e70a32239e51b3fb1ee2ed4e454e7",
+    "head_after": "ef3f7150c25e70a32239e51b3fb1ee2ed4e454e7",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      ".specify/feature.json",
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0007.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/checklists/requirements.md",
+      "specs/076-control-plane-validator/spec.md"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0007.json",
+      "sha256": "2e69af63a803b357234986209e7d29dbd33732cc08f8363838150167f17e713b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0006.json",
+      "sha256": "fbb8d3ff24a392be34f3cc82c24acfb4280a33b82f4323a1176fb351e3c6f2b8",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-2026-001.json",
+      "sha256": "072c23eb9db41d23adb1b1a914dda43050822a6a7c6eef1a265cac39c5ba3e27",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "2ab94622926648a9bd361f59a70488a8ec74836c3bdd4877b542956188f93a4b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "650831d89446546586d4ecda6c5727c32879ecd9104fcaee095d20e68445f989",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "e8e10a1591c98708461453504d7126da91a24602c63896c67d86529e710100f3",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../.specify/feature.json",
+      "sha256": "54f540d68346fc2014f81a45c97da7e5c3d8a87a9d5501b59db128fdb5ea2174",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+      "sha256": "bf67ef8046fd044165f8d07930253266a8f282fb89f2b4cbee5d43df6a7763b2",
+      "schema_version": null
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "MANDATORY-BRANCH-HOOK-SINGLETON",
+      "command_or_method": "Use the previously captured before_specify result {BRANCH_NAME=077-control-plane-validator, FEATURE_NUM=077}; verify no second hook invocation occurred",
+      "environment": "Spec Kit git extension evidence",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/transitions/TR-0005.json", "evidence/transitions/TR-0006.json"]
+    },
+    {
+      "check_id": "FEATURE-POINTER-AND-LEASE",
+      "command_or_method": "Require .specify/feature.json to point to specs/076-control-plane-validator and lease revision 2 to allow that exact planning path",
+      "environment": "isolated feature worktree",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json", "program-state.json"]
+    },
+    {
+      "check_id": "SPECIFICATION-QUALITY",
+      "command_or_method": "Validate four independently testable user stories, 24 testable requirements, 10 measurable outcomes, UX/failure/I-O/test/compatibility/rollback/benchmark coverage, and all requirements checklist items",
+      "environment": "Spec Kit specification quality review iteration 1",
+      "duration_ms": 800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md", "specs/076-control-plane-validator/checklists/requirements.md"]
+    },
+    {
+      "check_id": "NO-CLARIFICATION-MARKERS",
+      "command_or_method": "Search the specification for NEEDS CLARIFICATION and unresolved template placeholders",
+      "environment": "local text inspection",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md"]
+    },
+    {
+      "check_id": "AUTHORITY-AND-SCOPE",
+      "command_or_method": "Confirm artifacts are planning-only and exclude implementation, dependencies, product/benchmark execution, external writes, push, PR, merge, publication, and release",
+      "environment": "approved EPP-F01 planning lease",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md", "evidence/approvals/APR-EPP-2026-001.json"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 7 to 8 increment, WORKTREE_ALLOCATED to SPECIFIED child edge, canonical/raw state and artifact digests, and clarification-only next action",
+      "environment": "Windows PowerShell; Python jsonschema Draft 2020-12; exact Git index bytes",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0007.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0007.json",
+  "next_action": "CLARIFY_EPP_F01"
+}
