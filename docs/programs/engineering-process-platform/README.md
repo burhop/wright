@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 planning active on `077-control-plane-validator`; no implementation approval
+**Status:** EPP-F01 planning lease repaired on `077-control-plane-validator`; specification retry next and no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`SPECIFY_EPP_F01` is the only eligible action. The isolated worktree and singleton planning lease are allocated on `077-control-plane-validator`; complete the bounded Spec Kit planning loop and stop at exact implementation approval. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`SPECIFY_EPP_F01` is the only eligible action. Repair `EPP-F01-LEASE-PATH-001` removed the unaccepted draft and changed the lease allowlist from the branch-derived `077` path to Spec Kit's independently selected `specs/076-control-plane-validator/**`; rerun the specification outline without rerunning the already-completed branch hook. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.

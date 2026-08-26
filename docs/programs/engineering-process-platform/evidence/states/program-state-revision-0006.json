@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 7,
+  "revision": 6,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -30,17 +30,17 @@
     "branch": "077-control-plane-validator",
     "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
     "holder_role": "feature_owner",
-    "lease_revision": 2,
+    "lease_revision": 1,
     "acquired_at": "2026-08-26T23:33:43Z",
     "expires_at": "2026-08-27T11:33:43Z",
     "allowed_paths": [
-      "specs/076-control-plane-validator/**",
+      "specs/077-control-plane-validator/**",
       ".specify/feature.json",
       "AGENTS.md (managed Spec Kit section only)",
       "docs/programs/engineering-process-platform/**"
     ]
   },
-  "last_transition": "TR-0006",
+  "last_transition": "TR-0005",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -82,7 +82,7 @@
       "action": "SPECIFY_EPP_F01",
       "roadmap_item": "EPP-F01",
       "requires_human_approval": false,
-      "reason": "Repair EPP-F01-LEASE-PATH-001 corrected the planning allowlist to the independently numbered spec directory; rerun only the specification outline, never the already-completed branch hook."
+      "reason": "The isolated worktree, Spec Kit branch, and singleton planning lease are allocated; specification is authorized, but implementation is not."
     }
   ],
   "approval": {
