@@ -19,7 +19,7 @@
       "passed_gates": 0,
       "required_gates": 11,
       "gates": [],
-      "blockers": ["Program plan approval pending", "No product feature authorized"],
+      "blockers": ["No product child feature is implemented or implementation-approved"],
       "evidence": ["gates.md"],
       "fresh": false,
       "last_success_at": null
@@ -49,7 +49,7 @@
       "passed_gates": 0,
       "required_gates": 7,
       "gates": [],
-      "blockers": ["Exact plan approval pending", "Dashboard generator not implemented"],
+      "blockers": ["Dashboard generator not implemented", "No child feature selected"],
       "evidence": ["program-state.json", "roadmap.json", "audits/2026-08-26-omission-audits.md"],
       "fresh": false,
       "last_success_at": null
@@ -75,5 +75,5 @@
   },
   "release_eligible": false,
   "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
-  "next_action": "AWAIT_HUMAN_PROGRAM_PLAN_APPROVAL"
+  "next_action": "SELECT_FIRST_ELIGIBLE_CHILD_FEATURE"
 }

@@ -2,7 +2,7 @@
 
 ## Current decision
 
-**Pending.** This plan is not operational. The only valid next action is a human review decision on the exact committed planning subject.
+**Approved.** [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json) records the human decision made on 2026-08-26 for the exact subject below. The approval has no added conditions and is limited by its `program_plan` scope and the authorization boundaries in this document.
 
 ## Approval subject
 
@@ -52,4 +52,4 @@ The twelve visible P0 decisions in `decision-register.json` may remain deliberat
 - Request named revisions (`revision_requested`); state returns to `PLAN_DRAFT` and all downstream candidate digests are invalidated.
 - Reject/stop.
 
-Until one is recorded, do nothing beyond safe read-only review and planning-document corrections requested by the human.
+The approval is now recorded. The coordinator may select and specify the dependency-eligible `EPP-F01` child feature. No implementation or external action is implied; the feature must traverse the complete machine-evidenced lifecycle and receive its own exact implementation approval.

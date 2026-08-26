@@ -2,8 +2,8 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 4,
-  "state": "PROGRAM_APPROVED",
+  "revision": 3,
+  "state": "AWAITING_PROGRAM_APPROVAL",
   "baseline": {
     "ref": "dev",
     "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
@@ -26,12 +26,12 @@
   },
   "current_feature": null,
   "active_mutating_lease": null,
-  "last_transition": "TR-0003",
+  "last_transition": "TR-0002",
   "readiness": {
     "product": {
       "status": "not_started",
       "gate_file": "gates.md",
-      "blockers": ["No product child feature is implemented or implementation-approved"]
+      "blockers": ["Program plan is not approved", "No product child feature is authorized"]
     },
     "benchmark": {
       "status": "not_started",
@@ -46,7 +46,7 @@
     "program_health": {
       "status": "in_progress",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the first unimplemented child feature", "No child feature is currently selected"]
+      "blockers": ["Exact program-plan approval is pending", "Dashboard generator is the first unimplemented child feature"]
     }
   },
   "open_p0_decisions": [
@@ -65,14 +65,14 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "SELECT_FIRST_ELIGIBLE_CHILD_FEATURE",
-      "roadmap_item": "EPP-F01",
-      "requires_human_approval": false,
-      "reason": "Program approval authorizes bounded selection and specification of EPP-F01; implementation still requires an exact feature-plan approval."
+      "action": "AWAIT_HUMAN_PROGRAM_PLAN_APPROVAL",
+      "roadmap_item": "EPP-P00",
+      "requires_human_approval": true,
+      "reason": "All planning work remains non-operational until a human decision binds the exact committed control-plane subject."
     }
   ],
   "approval": {
-    "status": "approved",
-    "record": "evidence/approvals/APR-EPP-2026-001.json"
+    "status": "pending",
+    "record": null
   }
 }
