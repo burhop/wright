@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/audit-status.schema.json",
+  "title": "Independent Program Plan Audit Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "audits", "all_required_audits_passed", "material_unresolved_findings"],
+  "properties": {
+    "$schema": { "const": "../schemas/audit-status.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "audits": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "area", "auditor_role", "independent_read_only", "status", "finding_ids", "disposition_evidence", "final_review"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^AUD-[0-9]{2}$" },
+          "area": { "enum": ["engineering_usability", "architecture", "commercial_release", "benchmark_quality"] },
+          "auditor_role": { "const": "read_only_auditor" },
+          "independent_read_only": { "const": true },
+          "status": { "enum": ["pending", "passed", "failed", "blocked"] },
+          "finding_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "disposition_evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "final_review": { "oneOf": [{ "type": "null" }, { "type": "string" }] }
+        }
+      }
+    },
+    "all_required_audits_passed": { "type": "boolean" },
+    "material_unresolved_findings": { "type": "array", "items": { "type": "string" } }
+  }
+}

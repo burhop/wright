@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/risk-register.schema.json",
+  "title": "Program Risk Register",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "scoring", "risks"],
+  "properties": {
+    "$schema": { "const": "./schemas/risk-register.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "scoring": { "const": "likelihood_1_to_5_times_impact_1_to_5" },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "priority", "status", "title", "cause", "consequence", "likelihood", "impact", "score", "owner_role", "mitigations", "triggers", "contingency", "evidence", "review_by"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^RISK-[0-9]{3}$" },
+          "priority": { "enum": ["P0", "P1", "P2"] },
+          "status": { "enum": ["open", "mitigating", "accepted", "closed", "materialized"] },
+          "title": { "type": "string", "minLength": 3 },
+          "cause": { "type": "string", "minLength": 3 },
+          "consequence": { "type": "string", "minLength": 3 },
+          "likelihood": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "impact": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "score": { "type": "integer", "minimum": 1, "maximum": 25 },
+          "owner_role": { "type": "string", "minLength": 1 },
+          "mitigations": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "triggers": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "contingency": { "type": "string", "minLength": 3 },
+          "evidence": { "type": "array", "items": { "type": "string" } },
+          "review_by": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

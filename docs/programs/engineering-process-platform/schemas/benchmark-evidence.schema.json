@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/benchmark-evidence.schema.json",
+  "title": "Engineering Process Qualification and Run Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "evidence_id", "process_id", "process_revision", "partition", "qualification_transition",
+    "attempt", "candidate", "material_identities", "oracle_refs", "environment", "run_stages", "terminal_classification",
+    "required_output_coverage", "required_outputs", "artifacts", "assertions", "cleanup", "limitations", "stale_triggers", "independent_reviewer", "observed_at", "maximum_age_hours"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "evidence_id": { "type": "string", "pattern": "^BEV-[A-Za-z0-9._:-]{3,160}$" },
+    "process_id": { "type": "string", "pattern": "^PROC-[0-9]{3}$" },
+    "process_revision": { "type": "integer", "minimum": 1 },
+    "partition": { "enum": ["development", "frozen_qualification", "blind_holdout"] },
+    "qualification_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "prior_process_revision", "new_process_revision", "revision_change", "reason_code", "material_digest", "checks", "evidence_refs", "limitations", "recovery", "stale_triggers", "reviewer", "observed_at"],
+      "properties": {
+        "from": { "$ref": "#/$defs/qualificationState" },
+        "to": { "$ref": "#/$defs/qualificationState" },
+        "prior_process_revision": { "type": "integer", "minimum": 1 },
+        "new_process_revision": { "type": "integer", "minimum": 1 },
+        "revision_change": { "enum": ["unchanged", "incremented"] },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "material_digest": { "$ref": "#/$defs/digest" },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["check_id", "mandatory", "applicable", "result", "reason_code", "evidence_refs"],
+            "properties": {
+              "check_id": { "type": "string", "minLength": 1 },
+              "mandatory": { "type": "boolean" },
+              "applicable": { "type": "boolean" },
+              "result": { "enum": ["passed", "failed", "blocked", "not_tested", "inconclusive"] },
+              "reason_code": { "type": "string", "minLength": 1 },
+              "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        },
+        "evidence_refs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "recovery": { "type": "string", "minLength": 1 },
+        "stale_triggers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "observed_at": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [{ "$ref": "#/$defs/legalQualificationEdge" }]
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt_id", "ordinal", "first_attempt", "retry_class", "prior_attempt"],
+      "properties": {
+        "attempt_id": { "type": "string" },
+        "ordinal": { "type": "integer", "minimum": 1 },
+        "first_attempt": { "type": "boolean" },
+        "retry_class": { "enum": ["none", "approved_infrastructure_retry", "new_material_identity"] },
+        "prior_attempt": { "oneOf": [{ "type": "null" }, { "type": "string" }] }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["git_commit", "git_tree", "build_digest", "artifact_digests"],
+      "properties": {
+        "git_commit": { "$ref": "#/$defs/commit" },
+        "git_tree": { "$ref": "#/$defs/commit" },
+        "build_digest": { "$ref": "#/$defs/digest" },
+        "artifact_digests": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/digest" } }
+      }
+    },
+    "material_identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process_manifest_digest", "required_output_set_digest", "workflow_definition_digest", "input_set_digest", "fixture_digest",
+        "oracle_set_digest", "assertion_bundle_digest", "schema_bundle_digest", "adapter_bundle_digest",
+        "tool_schema_digest", "model_identity_digest", "prompt_digest", "policy_digest",
+        "runtime_digest", "cleanup_policy_digest"
+      ],
+      "properties": {
+        "process_manifest_digest": { "$ref": "#/$defs/digest" },
+        "required_output_set_digest": { "$ref": "#/$defs/digest" },
+        "workflow_definition_digest": { "$ref": "#/$defs/digest" },
+        "input_set_digest": { "$ref": "#/$defs/digest" },
+        "fixture_digest": { "$ref": "#/$defs/digest" },
+        "oracle_set_digest": { "$ref": "#/$defs/digest" },
+        "assertion_bundle_digest": { "$ref": "#/$defs/digest" },
+        "schema_bundle_digest": { "$ref": "#/$defs/digest" },
+        "adapter_bundle_digest": { "$ref": "#/$defs/digest" },
+        "tool_schema_digest": { "$ref": "#/$defs/digest" },
+        "model_identity_digest": { "$ref": "#/$defs/digest" },
+        "prompt_digest": { "$ref": "#/$defs/digest" },
+        "policy_digest": { "$ref": "#/$defs/digest" },
+        "runtime_digest": { "$ref": "#/$defs/digest" },
+        "cleanup_policy_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "oracle_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/oracleRef" } },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "os", "architecture", "deployment", "runtime", "runtime_version", "host_application", "host_application_version", "plugin_set_digest", "driver_set_digest", "locale", "resource_profile", "network_profile", "credential_class", "seed", "nondeterministic_fields"],
+      "properties": {
+        "profile_id": { "type": "string" },
+        "os": { "enum": ["none", "windows", "linux", "macos"] },
+        "architecture": { "enum": ["none", "x86_64", "arm64"] },
+        "deployment": { "type": "string" },
+        "runtime": { "type": "string" },
+        "runtime_version": { "type": "string", "minLength": 1 },
+        "host_application": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+        "host_application_version": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "plugin_set_digest": { "$ref": "#/$defs/digest" },
+        "driver_set_digest": { "$ref": "#/$defs/digest" },
+        "locale": { "type": "string" },
+        "resource_profile": { "type": "string" },
+        "network_profile": { "type": "string" },
+        "credential_class": { "enum": ["none", "fixture", "operator_supplied", "managed_secret"] },
+        "seed": { "oneOf": [{ "type": "null" }, { "type": "integer" }, { "type": "string", "minLength": 1 }] },
+        "nondeterministic_fields": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "run_stages": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "prefixItems": [
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "planned" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "preflight" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "running" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "outputs_collected" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "artifacts_verified" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "assertions_evaluated" } } }] },
+        { "allOf": [{ "$ref": "#/$defs/runStage" }, { "properties": { "stage": { "const": "evidence_finalized" } } }] }
+      ],
+      "items": false
+    },
+    "terminal_classification": { "enum": ["passed", "failed_product", "failed_oracle_or_benchmark", "failed_infrastructure", "blocked_prerequisite", "timed_out", "cancelled", "inconclusive"] },
+    "required_output_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_required_output_set_digest", "evidence_output_set_digest", "complete", "missing_output_ids"],
+      "properties": {
+        "case_required_output_set_digest": { "$ref": "#/$defs/digest" },
+        "evidence_output_set_digest": { "$ref": "#/$defs/digest" },
+        "complete": { "type": "boolean" },
+        "missing_output_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "required_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["output_id", "output_contract_digest", "evidence_kind", "artifact_digest", "result", "assertions_applicable", "assertion_refs", "not_applicable_rationale"],
+        "properties": {
+          "output_id": { "type": "string", "minLength": 1 },
+          "output_contract_digest": { "$ref": "#/$defs/digest" },
+          "evidence_kind": { "enum": ["artifact", "value", "decision", "approval", "valid_no_output"] },
+          "artifact_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
+          "result": { "enum": ["passed", "failed", "not_tested", "inconclusive"] },
+          "assertions_applicable": { "type": "boolean" },
+          "assertion_refs": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "not_applicable_rationale": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "evidence_kind": { "const": "artifact" } }, "required": ["evidence_kind"] },
+            "then": { "properties": { "artifact_digest": { "$ref": "#/$defs/digest" } } }
+          },
+          {
+            "if": { "properties": { "assertions_applicable": { "const": true } }, "required": ["assertions_applicable"] },
+            "then": { "properties": { "assertion_refs": { "minItems": 1 }, "not_applicable_rationale": { "type": "null" } } },
+            "else": { "properties": { "not_applicable_rationale": { "type": "string", "minLength": 1 } } }
+          }
+        ]
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "output_id", "producer_step", "digest", "media_type", "bytes", "content_required", "lineage_digest", "parse_open_result", "lifetime", "available_actions", "assertions_applicable", "assertion_refs"],
+        "properties": {
+          "artifact_id": { "type": "string" },
+          "output_id": { "type": "string", "minLength": 1 },
+          "producer_step": { "type": "string" },
+          "digest": { "$ref": "#/$defs/digest" },
+          "media_type": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "content_required": { "type": "boolean" },
+          "lineage_digest": { "$ref": "#/$defs/digest" },
+          "parse_open_result": { "enum": ["passed", "failed", "not_applicable", "not_tested"] },
+          "lifetime": { "enum": ["ephemeral", "run", "workspace", "release", "external"] },
+          "available_actions": { "type": "array", "items": { "enum": ["view", "open", "download", "open_in_application"] } },
+          "assertions_applicable": { "type": "boolean" },
+          "assertion_refs": { "type": "array", "items": { "type": "string" } }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "content_required": { "const": true } }, "required": ["content_required"] },
+            "then": { "properties": { "bytes": { "minimum": 1 } } }
+          },
+          {
+            "if": { "properties": { "assertions_applicable": { "const": true } }, "required": ["assertions_applicable"] },
+            "then": { "properties": { "assertion_refs": { "minItems": 1 } } }
+          }
+        ]
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assertion_id", "oracle_id", "oracle_revision", "oracle_digest", "validator_digest", "units", "tolerance", "negative_controls_passed", "result", "reason"],
+        "properties": {
+          "assertion_id": { "type": "string" },
+          "oracle_id": { "type": "string", "pattern": "^ORC-[A-Za-z0-9._:-]{3,160}$" },
+          "oracle_revision": { "type": "integer", "minimum": 1 },
+          "oracle_digest": { "$ref": "#/$defs/digest" },
+          "validator_digest": { "$ref": "#/$defs/digest" },
+          "units": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+          "tolerance": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+          "negative_controls_passed": { "type": "boolean" },
+          "result": { "enum": ["passed", "failed", "not_applicable", "not_tested", "inconclusive"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result", "residue", "evidence_refs"],
+      "properties": {
+        "result": { "enum": ["passed", "failed", "blocked", "not_tested"] },
+        "residue": { "type": "array", "items": { "type": "string" } },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "stale_triggers": { "type": "array", "items": { "type": "string" } },
+    "independent_reviewer": { "type": "string", "minLength": 1 },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "maximum_age_hours": { "type": "integer", "minimum": 1, "maximum": 8760 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "terminal_classification": { "const": "passed" } }, "required": ["terminal_classification"] },
+      "then": {
+        "properties": {
+          "run_stages": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": ["result"],
+                "properties": { "result": { "not": { "const": "passed" } } }
+              }
+            }
+          },
+          "required_output_coverage": {
+            "properties": {
+              "complete": { "const": true },
+              "missing_output_ids": { "maxItems": 0 }
+            }
+          },
+          "required_outputs": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": ["result"],
+                "properties": { "result": { "not": { "const": "passed" } } }
+              }
+            }
+          },
+          "artifacts": {
+            "minItems": 1,
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": ["parse_open_result"],
+                "properties": { "parse_open_result": { "enum": ["failed", "not_tested"] } }
+              }
+            }
+          },
+          "assertions": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "anyOf": [
+                  { "required": ["result"], "properties": { "result": { "not": { "const": "passed" } } } },
+                  { "required": ["negative_controls_passed"], "properties": { "negative_controls_passed": { "const": false } } }
+                ]
+              }
+            }
+          },
+          "cleanup": { "properties": { "result": { "const": "passed" } } }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "qualification_transition": {
+            "properties": {
+              "to": { "enum": ["source_reviewed", "specified", "oracle_reviewed", "fixture_validated", "pilot_executed", "independently_reproduced", "qualified", "current"] }
+            },
+            "required": ["to"]
+          }
+        },
+        "required": ["qualification_transition"]
+      },
+      "then": {
+        "properties": {
+          "qualification_transition": {
+            "properties": {
+              "checks": {
+                "contains": {
+                  "type": "object",
+                  "required": ["mandatory", "applicable"],
+                  "properties": { "mandatory": { "const": true }, "applicable": { "const": true } }
+                },
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["mandatory", "applicable", "result"],
+                    "properties": {
+                      "mandatory": { "const": true },
+                      "applicable": { "const": true },
+                      "result": { "not": { "const": "passed" } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "qualificationState": { "enum": ["proposed", "source_reviewed", "specified", "oracle_reviewed", "fixture_validated", "pilot_executed", "independently_reproduced", "qualified", "current", "blocked", "rejected", "stale", "quarantined", "contaminated", "retired"] },
+    "oracleRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle_id", "revision", "content_digest"],
+      "properties": {
+        "oracle_id": { "type": "string", "pattern": "^ORC-[A-Za-z0-9._:-]{3,160}$" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "content_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "runStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "result", "reason_code", "started_at", "finished_at", "evidence_refs"],
+      "properties": {
+        "stage": { "enum": ["planned", "preflight", "running", "outputs_collected", "artifacts_verified", "assertions_evaluated", "evidence_finalized"] },
+        "result": { "enum": ["passed", "failed", "blocked", "timed_out", "cancelled", "not_tested", "inconclusive"] },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "started_at": { "type": "string", "format": "date-time" },
+        "finished_at": { "type": "string", "format": "date-time" },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "legalQualificationEdge": {
+      "oneOf": [
+        { "properties": { "from": { "const": "proposed" }, "to": { "const": "source_reviewed" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "source_reviewed" }, "to": { "const": "specified" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "specified" }, "to": { "const": "oracle_reviewed" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "oracle_reviewed" }, "to": { "const": "fixture_validated" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "fixture_validated" }, "to": { "const": "pilot_executed" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "pilot_executed" }, "to": { "const": "independently_reproduced" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "independently_reproduced" }, "to": { "const": "qualified" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "const": "qualified" }, "to": { "const": "current" }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "enum": ["proposed", "source_reviewed", "specified", "oracle_reviewed", "fixture_validated", "pilot_executed", "independently_reproduced"] }, "to": { "enum": ["blocked", "rejected"] }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "enum": ["qualified", "current"] }, "to": { "enum": ["stale", "quarantined", "contaminated", "retired"] }, "revision_change": { "const": "unchanged" } } },
+        { "properties": { "from": { "enum": ["stale", "quarantined"] }, "to": { "const": "specified" }, "revision_change": { "const": "incremented" } } }
+      ]
+    }
+  }
+}

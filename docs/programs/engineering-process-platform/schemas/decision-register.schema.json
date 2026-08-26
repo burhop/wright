@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/decision-register.schema.json",
+  "title": "Program Decision Register",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "records"],
+  "properties": {
+    "$schema": { "const": "./schemas/decision-register.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "priority", "status", "question", "why_material", "owner_role", "due_before", "blocks", "options", "required_evidence", "decision_record"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^DEC-P[0-2]-[0-9]{3}$" },
+          "priority": { "enum": ["P0", "P1", "P2"] },
+          "status": { "enum": ["open", "proposed", "decided", "superseded", "rejected", "deferred"] },
+          "question": { "type": "string", "minLength": 5, "maxLength": 1000 },
+          "why_material": { "type": "string", "minLength": 5, "maxLength": 2000 },
+          "owner_role": { "type": "string", "minLength": 1 },
+          "due_before": { "type": "string", "minLength": 1 },
+          "blocks": { "type": "array", "items": { "type": "string" } },
+          "options": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+          "required_evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "decision_record": { "oneOf": [{ "type": "null" }, { "type": "string" }] }
+        }
+      }
+    }
+  }
+}

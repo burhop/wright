@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/benchmark-coverage.schema.json",
+  "title": "100-Process Benchmark Coverage Policy and Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "policy_status", "total_target", "partitions", "primary_dimensions", "cross_cutting_requirements", "critical_intersections", "qualification_targets", "release_threshold_proposal", "current_status"],
+  "properties": {
+    "$schema": { "const": "./schemas/benchmark-coverage.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "policy_status": { "enum": ["proposed", "approved", "superseded"] },
+    "total_target": { "const": 100 },
+    "partitions": { "$ref": "#/$defs/quotaMap" },
+    "primary_dimensions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/quotaMap" }
+    },
+    "cross_cutting_requirements": { "type": "object" },
+    "critical_intersections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "requirement", "minimum"],
+        "properties": {
+          "id": { "type": "string" },
+          "requirement": { "type": "string" },
+          "minimum": { "type": "integer", "minimum": 1, "maximum": 100 }
+        }
+      }
+    },
+    "qualification_targets": { "type": "object" },
+    "release_threshold_proposal": { "type": "object" },
+    "current_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["counted", "qualified_t0", "qualified_t1", "qualified_t2", "qualified_t3", "passed", "failed", "blocked", "stale", "contaminated", "not_tested"],
+      "properties": {
+        "counted": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "qualified_t0": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "qualified_t1": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "qualified_t2": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "qualified_t3": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "passed": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "failed": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "blocked": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "stale": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "contaminated": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "not_tested": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    }
+  },
+  "$defs": {
+    "quotaMap": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 100 }
+    }
+  }
+}

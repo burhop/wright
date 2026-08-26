@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0002",
+  "program_id": "EPP-2026",
+  "feature_id": null,
+  "from_state": "PLAN_AUDITED",
+  "to_state": "AWAITING_PROGRAM_APPROVAL",
+  "prior_revision": 2,
+  "new_revision": 3,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9",
+  "new_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Advance the validated and independently audited control plane to the exact human program-plan approval gate.",
+  "started_at": "2026-08-26T22:29:50Z",
+  "finished_at": "2026-08-26T22:30:00Z",
+  "duration_ms": 10000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_after": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "tree_after": null,
+    "worktree_clean_before": false,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": []
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0002.json",
+      "sha256": "076d5cd3884f9fd56785000feedbff74f42bfdd8aa0a0672caa69ea272fc4ee0",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0001.json",
+      "sha256": "8dd44fbfc43fd37374b4267c22a9d42c35415e8fcc3fdd7d5ec5ca60295eee29",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "515e154d640295ab5b171ca3b2d160cd8dc4767a8d9f4977b35e2c4380ea183b",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "PRIOR-TRANSITION",
+      "command_or_method": "Validate TR-0001 schema, input/output raw digests, canonical state digests, and revision increment",
+      "environment": "Windows PowerShell; Python",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/transitions/TR-0001.json", "evidence/states/program-state-revision-0002.json"]
+    },
+    {
+      "check_id": "APPROVAL-GATE-ELIGIBILITY",
+      "command_or_method": "Confirm four audits passed, schemas/semantic invariants passed, no product feature/lease exists, and approval is pending",
+      "environment": "planning-only local worktree",
+      "duration_ms": 800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["audits/audit-status.json", "program-state.json", "roadmap.json", "approval.md"]
+    },
+    {
+      "check_id": "NEXT-ACTION-SINGULARITY",
+      "command_or_method": "Confirm AWAIT_HUMAN_PROGRAM_PLAN_APPROVAL is the only eligible action and requires human approval",
+      "environment": "planning-only local worktree",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "README.md", "dashboard.json"]
+    }
+  ],
+  "approval_record": null,
+  "independent_verifier": "four read-only omission audit areas; exact transition semantics checked by coordinator",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": ["Exact human program-plan approval has not been recorded"],
+  "rollback_subject": "evidence/states/program-state-revision-0002.json",
+  "next_action": "AWAIT_HUMAN_PROGRAM_PLAN_APPROVAL"
+}

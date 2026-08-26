@@ -1,0 +1,79 @@
+{
+  "$schema": "./schemas/dashboard.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "generation_status": "contract_seed_not_evidence",
+  "generated_at": "2026-08-26T22:04:28Z",
+  "data_cutoff": "2026-08-26T22:04:28Z",
+  "source": {
+    "git_commit": null,
+    "git_tree": null,
+    "program_tree": null,
+    "generator_version": "contract-only-0",
+    "generator_digest": null,
+    "artifact_digests": []
+  },
+  "areas": {
+    "product_readiness": {
+      "status": "not_started",
+      "passed_gates": 0,
+      "required_gates": 11,
+      "gates": [],
+      "blockers": ["Program plan approval pending", "No product feature authorized"],
+      "evidence": ["gates.md"],
+      "fresh": false,
+      "last_success_at": null
+    },
+    "benchmark_readiness": {
+      "status": "not_started",
+      "passed_gates": 0,
+      "required_gates": 8,
+      "gates": [],
+      "blockers": ["No collection generated", "Benchmark P0 decisions remain open"],
+      "evidence": ["benchmark-strategy.md", "benchmark-coverage.json"],
+      "fresh": false,
+      "last_success_at": null
+    },
+    "commercial_readiness": {
+      "status": "blocked",
+      "passed_gates": 0,
+      "required_gates": 8,
+      "gates": [],
+      "blockers": ["DEC-P0-001", "DEC-P0-004", "DEC-P0-006", "DEC-P0-011", "DEC-P0-012", "External repository controls unverified"],
+      "evidence": ["gates.md", "decision-register.json"],
+      "fresh": false,
+      "last_success_at": null
+    },
+    "program_health": {
+      "status": "in_progress",
+      "passed_gates": 0,
+      "required_gates": 7,
+      "gates": [],
+      "blockers": ["Exact plan approval pending", "Dashboard generator not implemented"],
+      "evidence": ["program-state.json", "roadmap.json", "audits/2026-08-26-omission-audits.md"],
+      "fresh": false,
+      "last_success_at": null
+    }
+  },
+  "benchmark_summary": {
+    "counted": 0,
+    "target": 100,
+    "first_attempt_passed": 0,
+    "eventual_passed": 0,
+    "failed": 0,
+    "blocked": 0,
+    "stale": 0,
+    "contaminated": 0,
+    "not_tested": 100,
+    "t0": 0,
+    "t1": 0,
+    "t2": 0,
+    "t3": 0,
+    "coverage_deficits": ["All proposed coverage cells are empty"],
+    "oracle_deficits": ["No oracle authority or manifests exist"],
+    "artifact_deficits": ["No benchmark artifacts exist"]
+  },
+  "release_eligible": false,
+  "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
+  "next_action": "AWAIT_HUMAN_PROGRAM_PLAN_APPROVAL"
+}

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/holdout-ledger.schema.json",
+  "title": "Blind Holdout Append-Only Ledger Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "program_id", "ledger_id", "entry_id", "sequence", "prior_entry_digest",
+    "partition_set_digest", "opaque_case_digests", "custody", "authorization", "event",
+    "contamination", "replacement_and_reseal", "payload_digest", "maximum_age_hours", "stale_triggers"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "ledger_id": { "type": "string", "pattern": "^HOLDOUT-[A-Za-z0-9._:-]{3,100}$" },
+    "entry_id": { "type": "string", "pattern": "^HLE-[A-Za-z0-9._:-]{3,160}$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "prior_entry_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
+    "partition_set_digest": { "$ref": "#/$defs/digest" },
+    "opaque_case_digests": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/digest" } },
+    "custody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["custodian_role", "custodian_identity", "custody_record_digest", "store_class"],
+      "properties": {
+        "custodian_role": { "const": "human_holdout_custodian" },
+        "custodian_identity": { "type": "string", "minLength": 1 },
+        "custody_record_digest": { "$ref": "#/$defs/digest" },
+        "store_class": { "enum": ["access_separated_store", "human_controlled_evaluator"] }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_id", "approval_digest", "scope", "valid_from", "valid_until"],
+      "properties": {
+        "approval_id": { "type": "string", "minLength": 1 },
+        "approval_digest": { "$ref": "#/$defs/digest" },
+        "scope": { "type": "string", "minLength": 1 },
+        "valid_from": { "type": "string", "format": "date-time" },
+        "valid_until": { "type": "string", "format": "date-time" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_type", "actor_role", "actor_identity", "purpose", "occurred_at", "candidate"],
+      "properties": {
+        "event_type": { "enum": ["sealed", "evaluation_authorized", "access_opened", "result_released", "access_closed", "contamination_suspected", "contamination_confirmed", "replaced_resealed"] },
+        "actor_role": { "enum": ["human_holdout_custodian", "independent_evaluator", "human_program_approver"] },
+        "actor_identity": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "occurred_at": { "type": "string", "format": "date-time" },
+        "candidate": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["git_commit", "git_tree", "artifact_set_digest"],
+              "properties": {
+                "git_commit": { "$ref": "#/$defs/commit" },
+                "git_tree": { "$ref": "#/$defs/commit" },
+                "artifact_set_digest": { "$ref": "#/$defs/digest" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "contamination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason_code", "affected_case_digests", "decision_by", "decision_at", "decision_record_digest"],
+      "properties": {
+        "status": { "enum": ["clean", "suspected", "confirmed", "cleared_by_replacement"] },
+        "reason_code": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "affected_case_digests": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/digest" } },
+        "decision_by": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "decision_at": { "oneOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] },
+        "decision_record_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "confirmed" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "reason_code": { "type": "string", "minLength": 1 },
+              "affected_case_digests": { "minItems": 1 },
+              "decision_by": { "type": "string", "minLength": 1 },
+              "decision_at": { "type": "string", "format": "date-time" },
+              "decision_record_digest": { "$ref": "#/$defs/digest" }
+            }
+          }
+        }
+      ]
+    },
+    "replacement_and_reseal": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["replaced_set_digest", "new_set_digest", "replacement_approval_digest", "reseal_evidence_digest"],
+          "properties": {
+            "replaced_set_digest": { "$ref": "#/$defs/digest" },
+            "new_set_digest": { "$ref": "#/$defs/digest" },
+            "replacement_approval_digest": { "$ref": "#/$defs/digest" },
+            "reseal_evidence_digest": { "$ref": "#/$defs/digest" }
+          }
+        }
+      ]
+    },
+    "payload_digest": { "$ref": "#/$defs/digest" },
+    "maximum_age_hours": { "type": "integer", "minimum": 1, "maximum": 8760 },
+    "stale_triggers": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+  },
+  "$defs": {
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

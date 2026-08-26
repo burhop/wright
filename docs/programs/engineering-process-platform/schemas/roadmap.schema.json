@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/roadmap.schema.json",
+  "title": "Engineering Process Platform Roadmap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "ordering", "items"],
+  "properties": {
+    "$schema": { "const": "./schemas/roadmap.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "ordering": { "const": "dependency_then_priority" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "priority", "title", "outcome", "status", "depends_on", "blocking_decisions", "gate_impacts", "independently_shippable", "spec_kit_feature"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
+          "kind": { "enum": ["program_control", "product_feature", "benchmark", "commercial", "release"] },
+          "priority": { "type": "integer", "minimum": 0, "maximum": 999 },
+          "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+          "outcome": { "type": "string", "minLength": 10, "maxLength": 1000 },
+          "status": { "enum": ["proposed", "awaiting_approval", "eligible", "active", "blocked", "integrated", "complete", "stopped", "superseded"] },
+          "depends_on": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" } },
+          "blocking_decisions": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^DEC-P0-[0-9]{3}$" } },
+          "gate_impacts": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^(PROD|BENCH|COMM|PROG)-[0-9]{2}$" } },
+          "independently_shippable": { "type": "boolean" },
+          "spec_kit_feature": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

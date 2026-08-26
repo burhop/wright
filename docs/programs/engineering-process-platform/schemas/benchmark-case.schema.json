@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/benchmark-case.schema.json",
+  "title": "Engineering Process Benchmark Case Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "process_id", "revision", "equivalence_family", "partition", "visibility",
+    "status", "qualification_level", "user_role", "intended_outcome", "claim_scope", "distinctness_rationale",
+    "classifications", "provenance", "inputs", "steps", "required_capabilities", "outputs", "oracle_refs",
+    "profiles", "failure_injections", "safety", "resource_budget", "deadlines", "cleanup_contract", "compatibility",
+    "content_digest", "stale_triggers"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "process_id": { "type": "string", "pattern": "^PROC-[0-9]{3}$" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "equivalence_family": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,100}$" },
+    "partition": { "enum": ["development", "frozen_qualification", "blind_holdout"] },
+    "visibility": { "enum": ["public_manifest", "access_controlled", "blind_digest_only"] },
+    "status": { "enum": ["proposed", "source_reviewed", "specified", "oracle_reviewed", "fixture_validated", "pilot_executed", "independently_reproduced", "qualified", "current", "blocked", "rejected", "stale", "quarantined", "contaminated", "retired"] },
+    "qualification_level": { "enum": ["T0", "T1", "T2", "T3", "T4"] },
+    "user_role": { "type": "string", "minLength": 2, "maxLength": 200 },
+    "intended_outcome": { "type": "string", "minLength": 10, "maxLength": 2000 },
+    "claim_scope": { "type": "array", "minItems": 1, "items": { "type": "string", "maxLength": 1000 } },
+    "distinctness_rationale": { "type": "string", "minLength": 10, "maxLength": 2000 },
+    "classifications": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "lifecycle", "complexity", "primary_input", "primary_output", "cross_cutting"],
+      "properties": {
+        "domain": { "type": "string" },
+        "lifecycle": { "type": "string" },
+        "complexity": { "type": "string" },
+        "primary_input": { "type": "string" },
+        "primary_output": { "type": "string" },
+        "cross_cutting": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_authority", "source_revision", "license_id", "redistribution", "commercial_use", "review_record"],
+      "properties": {
+        "source_authority": { "type": "string", "minLength": 1 },
+        "source_revision": { "type": "string", "minLength": 1 },
+        "license_id": { "type": "string", "minLength": 1 },
+        "redistribution": { "enum": ["approved", "access_controlled", "prohibited", "unresolved"] },
+        "commercial_use": { "enum": ["approved", "restricted", "prohibited", "unresolved"] },
+        "review_record": { "type": "string", "minLength": 1 }
+      }
+    },
+    "inputs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/io" } },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step_id", "purpose", "required_inputs", "expected_outputs", "approval_class", "failure_behavior"],
+        "properties": {
+          "step_id": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{1,100}$" },
+          "purpose": { "type": "string", "minLength": 1 },
+          "required_inputs": { "type": "array", "items": { "type": "string" } },
+          "expected_outputs": { "type": "array", "items": { "type": "string" } },
+          "approval_class": { "type": "string" },
+          "failure_behavior": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "required_capabilities": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "outputs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/io" } },
+    "oracle_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/oracleRef" }
+    },
+    "profiles": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/profile" } },
+    "failure_injections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "layer", "injection", "expected_stop", "expected_recovery"],
+        "properties": {
+          "id": { "type": "string" },
+          "layer": { "enum": ["definition", "preflight", "semantic_needs_input", "mapping_schema", "approval", "execution", "outcome", "cleanup"] },
+          "injection": { "type": "string" },
+          "expected_stop": { "type": "string" },
+          "expected_recovery": { "type": "string" }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_level", "physical_actuation", "production_mutation", "paid_or_credentialed", "required_approvals"],
+      "properties": {
+        "authority_level": { "enum": ["read_only", "local_disposable_mutation", "remote_nonproduction_mutation", "production_or_physical"] },
+        "physical_actuation": { "type": "boolean" },
+        "production_mutation": { "type": "boolean" },
+        "paid_or_credentialed": { "type": "boolean" },
+        "required_approvals": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "resource_budget": { "type": "object" },
+    "deadlines": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["connection_seconds", "first_event_seconds", "first_output_seconds", "total_seconds", "cleanup_seconds"],
+      "properties": {
+        "connection_seconds": { "type": "integer", "minimum": 1 },
+        "first_event_seconds": { "type": "integer", "minimum": 1 },
+        "first_output_seconds": { "type": "integer", "minimum": 1 },
+        "total_seconds": { "type": "integer", "minimum": 1 },
+        "cleanup_seconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "cleanup_contract": { "type": "string", "minLength": 1 },
+    "compatibility": { "type": "object" },
+    "content_digest": { "$ref": "#/$defs/digest" },
+    "stale_triggers": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "oracleRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle_id", "revision", "content_digest"],
+      "properties": {
+        "oracle_id": { "type": "string", "pattern": "^ORC-[A-Za-z0-9._:-]{3,160}$" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "content_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "io": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "schema_or_media", "required", "provenance", "lifetime"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["value", "artifact", "decision", "approval"] },
+        "schema_or_media": { "type": "string" },
+        "required": { "type": "boolean" },
+        "provenance": { "type": "string" },
+        "lifetime": { "enum": ["ephemeral", "run", "workspace", "release", "external"] }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "tier", "os", "architecture", "deployment", "network", "credential_class", "host_application"],
+      "properties": {
+        "profile_id": { "type": "string" },
+        "tier": { "enum": ["T0", "T1", "T2", "T3", "T4"] },
+        "os": { "enum": ["none", "windows", "linux", "macos"] },
+        "architecture": { "enum": ["none", "x86_64", "arm64"] },
+        "deployment": { "type": "string" },
+        "network": { "enum": ["none", "setup_only", "runtime_required"] },
+        "credential_class": { "enum": ["none", "fixture", "operator_supplied", "managed_secret"] },
+        "host_application": { "oneOf": [{ "type": "null" }, { "type": "string" }] }
+      }
+    }
+  }
+}
