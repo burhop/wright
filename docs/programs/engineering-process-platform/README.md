@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** exact program plan approved; no child feature has been selected or implementation-approved
+**Status:** exact program plan approved; EPP-F01 selected for planning, with worktree allocation next and no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`SELECT_FIRST_ELIGIBLE_CHILD_FEATURE` for `EPP-F01` is the only eligible action. It may allocate a clean `dev`-based worktree and begin the bounded specification lifecycle, but it does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`ALLOCATE_EPP_F01_WORKTREE` is the only eligible action. It may create one clean isolated worktree descended from the recorded exact `dev` baseline, carry the approved control-plane overlay, acquire the singleton planning lease, and begin the bounded specification lifecycle. It does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
