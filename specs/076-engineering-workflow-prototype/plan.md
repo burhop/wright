@@ -12,6 +12,32 @@ The prototype will not reimplement or fork Rivet and will not introduce CAD-, FE
 
 Progress is intentionally incremental: establish a baseline, make the target UI concrete with a reusable read-only visual slice, run a shallow three-candidate graph bakeoff around that visual contract, wire the selected canvas adapter, add typed manual editing, add generic MCP binding, add LLM authoring, integrate the reference story, and then write an evidence-backed architecture decision. Each major checkpoint is independently reviewable and can result in continue, change, stop, or defer.
 
+## Discovery Operating Mode
+
+This branch exists to reduce ambiguity before Wright commits to a production
+architecture. It is an experimental notebook with executable examples, not a
+production implementation in progress. Code quality must be sufficient to make
+results credible, but a working prototype behavior is not automatically a
+recommended product design.
+
+Every increment and every future agent working on this branch must:
+
+1. name the ambiguity or question being tested;
+2. state a falsifiable hypothesis and the smallest useful experiment;
+3. identify what is deliberately excluded from the experiment;
+4. record the observed result, including confusing or failed behavior;
+5. distinguish evidence from inference and provisional choices from decisions;
+6. update `evidence/prototype-lessons-learned.md` and, for material
+   experiments, add a focused evidence note; and
+7. leave an explicit remaining-question list and a keep, revise, or discard
+   recommendation.
+
+Do not broaden an experiment merely to make the prototype appear complete.
+Shared API changes, schemas, fixtures, executor behavior, and UI conventions
+on this branch are spike evidence until a later production specification and
+architecture review accepts them. A later implementation may replace all
+prototype code while retaining the lessons, contracts, tests, and examples.
+
 ## Technical Context
 
 **Language/Version**: TypeScript 6 and React 19.2 in `apps/web`; existing Python/FastAPI services remain unchanged unless CP4 proves a narrowly scoped generic API gap.
@@ -64,15 +90,30 @@ specs/076-engineering-workflow-prototype/
 ├── checklists/
 │   └── requirements.md
 └── evidence/                         # Created checkpoint by checkpoint
+    ├── prototype-lessons-learned.md  # Living cross-checkpoint findings
     ├── cp0-baseline.md
     ├── cp1-canvas-bakeoff.md
     ├── cp2-static-usability.md
     ├── cp3-editing.md
+    ├── cp3e-workflow-code-roundtrip.md
+    ├── cp3f-run-observability.md
+    ├── cp3g-headless-four-block.md
+    ├── cp3h-ui-execution-projection.md
+    ├── cp3i-output-delivery.md
+    ├── cp3j-artifact-rail-concept.md
+    ├── cp3j-artifact-rail-concept.png
+    ├── cp3o-block-interface-and-composition-research.md
     ├── cp4-generic-mcp.md
     ├── cp5-llm-authoring.md
     ├── cp6-integrated-scenario.md
     └── cp7-architecture-decision.md
 ```
+
+`evidence/prototype-lessons-learned.md` is the durable, living record for
+cross-checkpoint usability, execution, diagnostic, architecture, and testing
+findings. Each accepted checkpoint updates or explicitly confirms it. CP7 must
+disposition every candidate rule and P0/P1 debt item as accepted, revised,
+superseded, rejected, or deferred; passing tests alone cannot close a finding.
 
 ### Proposed source code
 

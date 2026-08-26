@@ -30,7 +30,8 @@ import {
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 
 const EngineeringWorkflowPrototype = lazy(
-  () => import("./prototypes/engineering-workflow/EngineeringWorkflowPrototype"),
+  () =>
+    import("./prototypes/engineering-workflow/EngineeringWorkflowPrototype"),
 );
 
 function App() {

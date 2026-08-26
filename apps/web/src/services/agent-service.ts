@@ -33,6 +33,19 @@ export interface AgentUiContext {
   activeRivetSlug?: string | null;
 }
 
+export type AgentThinkingLevel =
+  "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+
+export interface AgentExecutionOptions {
+  thinkingLevel?: AgentThinkingLevel;
+  toolPolicy?: "configured" | "none";
+  modelSelection?: {
+    provider: string;
+    model: string;
+    requireLock?: boolean;
+  };
+}
+
 export interface AgentStreamStatus {
   active: boolean;
   sessionId: string;
@@ -302,6 +315,7 @@ export class HermesAgentService {
     message: string,
     attachments?: string[],
     uiContext?: AgentUiContext,
+    execution?: AgentExecutionOptions,
   ): AsyncIterable<AgentEvent> {
     agentLogger.info("Sending message", {
       sessionId,
@@ -326,6 +340,11 @@ export class HermesAgentService {
           message,
           attachments,
           active_rivet_slug: uiContext?.activeRivetSlug ?? null,
+          thinking_level: execution?.thinkingLevel ?? null,
+          tool_policy: execution?.toolPolicy ?? "configured",
+          provider: execution?.modelSelection?.provider ?? null,
+          model: execution?.modelSelection?.model ?? null,
+          require_model_lock: execution?.modelSelection?.requireLock ?? false,
         }),
         signal: abortController.signal,
       });

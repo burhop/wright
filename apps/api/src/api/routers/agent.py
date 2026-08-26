@@ -7,7 +7,7 @@ import secrets
 import shutil
 import subprocess
 import time
-from typing import Optional, List, AsyncIterator
+from typing import Optional, List, AsyncIterator, Literal
 import httpx
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
@@ -511,6 +511,13 @@ class ChatRequest(BaseModel):
     message: str
     attachments: Optional[List[str]] = None
     active_rivet_slug: Optional[str] = None
+    thinking_level: Optional[
+        Literal["none", "minimal", "low", "medium", "high", "xhigh"]
+    ] = None
+    provider: Optional[str] = None
+    model: Optional[str] = None
+    require_model_lock: bool = False
+    tool_policy: Literal["configured", "none"] = "configured"
 
 
 MAX_SESSION_TITLE_LENGTH = 200
@@ -941,11 +948,11 @@ async def chat(
             detail=str(exc),
         ) from exc
 
-    # Sync and activate workspace tools before chat turn. Chat should not begin
-    # until the MCP servers assigned to this workspace are available.
+    # Sync and activate Wright-managed workspace MCP tools only when this turn
+    # explicitly permits them. Hermes runtime toolsets are a separate boundary.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     gateway_restart_required = False
-    if sync_manager:
+    if sync_manager and body.tool_policy == "configured":
         try:
             gateway_restart_required = bool(
                 sync_manager.sync_workspace_tools(body.session_id)
@@ -969,12 +976,14 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
-    _mirror_active_rivet_workflow_to_gateway_binding(
-        body.session_id, body.active_rivet_slug
-    )
+    if body.tool_policy == "configured":
+        _mirror_active_rivet_workflow_to_gateway_binding(
+            body.session_id, body.active_rivet_slug
+        )
 
     await ensure_llm_backend_ready(engine)
-    await ensure_workspace_mcp_servers_active(request, body.session_id)
+    if body.tool_policy == "configured":
+        await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     requested_title = title_from_slash_command(body.message)
     if requested_title:
@@ -989,6 +998,11 @@ async def chat(
         trace_id=trace_id,
         attachments=attachment_data_urls(body.attachments),
         active_rivet_slug=body.active_rivet_slug,
+        thinking_level=body.thinking_level,
+        tool_policy=body.tool_policy,
+        model_provider=body.provider,
+        model=body.model,
+        require_model_lock=body.require_model_lock,
     )
     registry = get_chat_stream_registry(request)
     job = await registry.start(chat_request, engine)

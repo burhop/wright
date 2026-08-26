@@ -269,3 +269,8 @@
   color: #71869e;
   background: rgba(8, 20, 37, 0.76);
 }
+
+.ewp-rf-block .react-flow__handle-right[aria-label] {
+  background: #28ddd3;
+  border-color: #087f87;
+}

@@ -1,6 +1,7 @@
 import axe from "axe-core";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { EngineeringWorkflowPrototype } from "../EngineeringWorkflowPrototype";
@@ -55,7 +56,11 @@ describe("React Flow workflow accessibility", () => {
 
   it("exposes phases and blocks through semantic names and keyboard selection", async () => {
     const user = userEvent.setup();
-    render(<EngineeringWorkflowPrototype />);
+    render(
+      <MemoryRouter>
+        <EngineeringWorkflowPrototype />
+      </MemoryRouter>,
+    );
 
     const phaseSummary = await screen.findByRole("region", {
       name: "Workflow phase summary",
@@ -81,7 +86,11 @@ describe("React Flow workflow accessibility", () => {
   });
 
   it("has no axe violations detectable in the component-test environment", async () => {
-    const { container } = render(<EngineeringWorkflowPrototype />);
+    const { container } = render(
+      <MemoryRouter>
+        <EngineeringWorkflowPrototype />
+      </MemoryRouter>,
+    );
 
     await screen.findByRole("button", {
       name: "Input A. Reference Images",
@@ -101,4 +110,3 @@ describe("React Flow workflow accessibility", () => {
     ).toEqual([]);
   });
 });
-

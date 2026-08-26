@@ -2,7 +2,15 @@
 
 ## Status
 
-CP2A promotes React Flow as the single feature-flagged, read-only canvas adapter over deterministic Wright-owned fixtures. The accepted color/style contract is versioned as `cp2a-1`. Editing, persistence, LLM integration, and MCP invocation remain excluded until their reviewed checkpoints.
+CP2A promotes React Flow as the single feature-flagged canvas adapter over
+Wright-owned fixtures. The accepted color/style contract is versioned as
+`cp2a-1`. CP3 experiments now include a repeatable headless four-block smoke
+run; this is discovery evidence and does not authorize production execution.
+
+This branch was frozen as a reference-only prototype checkpoint on 2026-08-26.
+Use the commands below to reproduce or inspect its evidence, not as instructions
+to promote prototype code into production. New product work should begin from
+`dev` after approval of the durable program plan.
 
 ## Safety boundaries
 
@@ -38,6 +46,43 @@ npm run test --workspace apps/web -- src/prototypes/engineering-workflow/domain 
 ```
 
 For a UI slice, run only its component tests, then the prototype set. Formatting and targeted type checks run before broader suites. Browser automation is not part of ordinary edit/save feedback.
+
+## Headless four-block smoke run
+
+With Wright's local API running and BREP MCP installed, the following command
+executes Prompt/Request → selected AI → exact BREP MCP tool → evidence-based
+evaluation without mounting the workflow editor:
+
+```powershell
+node apps/web/src/prototypes/engineering-workflow/evaluation/run-brep-headless-smoke.mjs
+```
+
+The script creates and deletes an isolated Wright AI session, runs the model
+with tools disabled, validates a tool-independent mounting-plate result,
+deterministically compiles the exact `history` argument, mounts BREP's required
+loopback application surface in headless Chromium, invokes
+`brep.model.apply_history`, and requires three consistent inspections. The BREP
+MCP itself is application-controlled rather than truly headless. Close other
+BREP control surfaces before this experiment; any inconsistent inspection
+causes an explicit failure.
+
+## Interactive diagnostic run
+
+Open `/prototype/engineering-workflow?scenario=diagnostic`. Wright's current
+configured AI model is selected automatically; the inspector contains an
+optional model override. Use **Run** to start and **Retry** after a stopped run.
+The progress monitor identifies the active block. Select any block or progress
+step and open **Run result** to see its status, duration, engineering summary,
+and recovery guidance. Expand **Produced data** or **Technical details and
+evidence** only when exact payloads, identities, or timestamps are needed.
+After a successful BREP fixture run, the completion monitor shows a
+**Four-hole mounting plate** output card. Use **View in BREP** to inspect the
+retained live session model or **Download model definition** to save the exact
+BREP history JSON. Resetting the prototype releases the session-scoped model.
+
+These actions test a generic output-reference contract. A production document,
+web model, or native CAD adapter can supply different actions without adding a
+document-, Onshape-, or Solid-Edge-specific branch to the workflow runtime.
 
 ## Checkpoint verification
 

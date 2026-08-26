@@ -9,20 +9,29 @@ describe("EngineeringWorkflowVisualSlice deterministic review states", () => {
     { viewState: "loading" as const, title: "Preparing workflow preview" },
     { viewState: "empty" as const, title: "No workflow blocks yet" },
     { viewState: "error" as const, title: "Workflow preview unavailable" },
-  ])("renders the $viewState state without changing the workflow", ({ viewState, title }) => {
-    render(<EngineeringWorkflowVisualSlice viewState={viewState} />);
+  ])(
+    "renders the $viewState state without changing the workflow",
+    ({ viewState, title }) => {
+      render(<EngineeringWorkflowVisualSlice viewState={viewState} />);
 
-    const statePanel =
-      viewState === "error"
-        ? screen.getByRole("alert")
-        : screen.getByRole("status");
-    expect(within(statePanel).getByRole("heading", { name: title })).toBeVisible();
-    expect(
-      screen.getByRole("heading", {
-        name: "Drill-Bit Holder — Design to Fabrication",
-      }),
-    ).toBeVisible();
-  });
+      const statePanel =
+        viewState === "error"
+          ? screen.getByRole("alert")
+          : within(
+              screen.getByRole("main", {
+                name: "Engineering workflow preview",
+              }),
+            ).getByRole("status");
+      expect(
+        within(statePanel).getByRole("heading", { name: title }),
+      ).toBeVisible();
+      expect(
+        screen.getByRole("heading", {
+          name: "Drill-Bit Holder — Design to Fabrication",
+        }),
+      ).toBeVisible();
+    },
+  );
 
   it("shows deterministic evidence and the generic MCP execution boundary", async () => {
     const user = userEvent.setup();

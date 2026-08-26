@@ -166,9 +166,11 @@ async def test_hermes_adapter_stream_chat_success():
     mock_event_source.response = MagicMock()
     mock_event_source.response.raise_for_status = MagicMock()
 
+    completion_request = {}
+
     class MockAconnectSse:
         def __init__(self, *args, **kwargs):
-            pass
+            completion_request.update(kwargs)
 
         async def __aenter__(self):
             return mock_event_source
@@ -176,7 +178,15 @@ async def test_hermes_adapter_stream_chat_success():
         async def __aexit__(self, exc_type, exc_val, exc_tb):
             pass
 
-    req = AgentChatRequest(session_id="session123", message="Hello")
+    req = AgentChatRequest(
+        session_id="session123",
+        message="Hello",
+        thinking_level="high",
+        tool_policy="none",
+        model_provider="openai-codex",
+        model="gpt-test",
+        require_model_lock=True,
+    )
 
     with (
         patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
@@ -200,6 +210,16 @@ async def test_hermes_adapter_stream_chat_success():
         assert events[1].data == {"tool": "development", "status": "running"}
         assert events[2].type == "stream_end"
         assert events[2].data == {}
+        assert completion_request["json"]["provider"] == "openai-codex"
+        assert completion_request["json"]["model"] == "gpt-test"
+        assert completion_request["json"]["require_model_lock"] is True
+        assert completion_request["json"]["model_options"]["reasoning"] == {
+            "enabled": True,
+            "effort": "high",
+        }
+        assert completion_request["json"]["tools"] == []
+        assert completion_request["json"]["tool_choice"] == "none"
+        assert completion_request["json"]["session_id"] == "session123"
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { drillBitHolderWorkflow } from "../../fixtures/drill-bit-holder-workflow";
+import { diagnosticWorkflow } from "../../fixtures/diagnostic-workflow";
 import { projectWorkflowToCanvas } from "../canvas-adapter";
 import { projectReactFlowEdges } from "./ReactFlowWorkflowCanvas";
 
@@ -36,5 +37,20 @@ describe("projectReactFlowEdges", () => {
     );
 
     expect(forwardEdges.every(({ type }) => type === "step")).toBe(true);
+  });
+
+  it("projects a typed source connector without changing the canonical block identity", () => {
+    const edges = projectReactFlowEdges(
+      projectWorkflowToCanvas(diagnosticWorkflow),
+    );
+
+    expect(edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "diagnostic-input-to-ai",
+          sourceHandle: "request",
+        }),
+      ]),
+    );
   });
 });

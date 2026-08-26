@@ -104,13 +104,30 @@ function EngineeringBlockNode({ data }: NodeProps<EngineeringBlockFlowNode>) {
         selected={data.selected}
         onSelect={data.onSelectBlock}
       />
-      <Handle
-        id="out"
-        type="source"
-        position={Position.Right}
-        isConnectable={false}
-        aria-hidden="true"
-      />
+      {data.block.outputPorts?.length ? (
+        data.block.outputPorts.map((port, index) => (
+          <Handle
+            key={port.portId}
+            id={port.portId}
+            type="source"
+            position={Position.Right}
+            isConnectable={false}
+            aria-label={`${port.label} output`}
+            title={`${port.label} · ${port.dataType}${port.count === undefined ? "" : ` · ${port.count}`}`}
+            style={{
+              top: `${((index + 1) / (data.block.outputPorts!.length + 1)) * 100}%`,
+            }}
+          />
+        ))
+      ) : (
+        <Handle
+          id="out"
+          type="source"
+          position={Position.Right}
+          isConnectable={false}
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }
@@ -270,9 +287,9 @@ export function projectReactFlowEdges(
     return {
       id: connection.connectionId,
       source: connection.sourceBlockId,
-      sourceHandle: "out",
+      sourceHandle: connection.sourcePortId ?? "out",
       target: connection.targetBlockId,
-      targetHandle: "in",
+      targetHandle: connection.targetPortId ?? "in",
       type: isFeedback ? "workflowFeedback" : "step",
       label: connection.label,
       data: {

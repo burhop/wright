@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import AsyncIterator
+from typing import AsyncIterator, Literal
 from dataclasses import dataclass
 
 
@@ -20,6 +20,13 @@ class AgentChatRequest:
     trace_id: str | None = None
     attachments: list[str] | None = None
     active_rivet_slug: str | None = None
+    thinking_level: (
+        Literal["none", "minimal", "low", "medium", "high", "xhigh"] | None
+    ) = None
+    tool_policy: Literal["configured", "none"] = "configured"
+    model_provider: str | None = None
+    model: str | None = None
+    require_model_lock: bool = False
 
 
 @dataclass

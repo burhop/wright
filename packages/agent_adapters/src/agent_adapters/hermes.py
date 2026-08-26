@@ -770,16 +770,34 @@ class HermesAdapter(BaseAgentEngine):
 
         try:
             headers = {**self.headers, "X-Hermes-Session-Id": session_id}
+            completion_payload: dict[str, Any] = {
+                "model": request.model or "hermes",
+                "messages": messages,
+                "stream": True,
+                "session_id": session_id,
+            }
+            if request.model_provider:
+                completion_payload["provider"] = request.model_provider
+            if request.require_model_lock:
+                completion_payload["require_model_lock"] = True
+            if request.thinking_level is not None:
+                completion_payload["model_options"] = {
+                    "reasoning": {"enabled": False}
+                    if request.thinking_level == "none"
+                    else {
+                        "enabled": True,
+                        "effort": request.thinking_level,
+                    }
+                }
+            if request.tool_policy == "none":
+                completion_payload["tools"] = []
+                completion_payload["tool_choice"] = "none"
+
             async with aconnect_sse(
                 client,
                 "POST",
                 f"{self.base_url}/v1/chat/completions",
-                json={
-                    "model": "hermes",
-                    "messages": messages,
-                    "stream": True,
-                    "session_id": session_id,
-                },
+                json=completion_payload,
                 headers=headers,
                 timeout=60.0,
             ) as event_source:

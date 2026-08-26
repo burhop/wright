@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-24
 
-**Status**: Draft for prototype approval
+**Status**: Reference-only prototype checkpoint; not approved for production
 
 **Input**: Create a disposable, incremental prototype for an engineer-readable
 workflow canvas. Evaluate MIT-licensed graph modules, phase separators, LLM
@@ -20,6 +20,11 @@ This feature is a learning branch, not a production rearchitecture. It MUST
 make uncertain architectural choices cheap to test and easy to reverse. Each
 checkpoint MUST yield a demonstrable result and evidence that can be retained
 even if every prototype implementation file is later deleted.
+
+As of 2026-08-26, this branch is preserved as reference evidence. New product
+implementation is expected to start from `dev` under a separately reviewed
+program plan. No prototype schema, executor, UI component, or integration is a
+production contract merely because it works in this branch.
 
 The drill-bit-holder workflow is the primary reference scenario because it
 exercises visual inputs, contextual knowledge, specification review, iterative
@@ -299,6 +304,47 @@ external engineering applications.
   NOT expose RAG, a search provider, an engineering domain, or a source label as
   runtime dispatch logic, and future retrieved context MUST be reviewable with
   source citations and retrieval evidence.
+- **FR-032**: The prototype MUST support a generic multimodal Prompt / Request
+  contract containing instructions, typed image/file/artifact references, and
+  configurable runtime requirements without introducing request classes for
+  individual engineering or business domains.
+- **FR-033**: Validation and execution status MUST distinguish workflow
+  definition errors, runtime preflight blocks, semantic `needs-input` results,
+  tool-call validation errors, executor failures, and unacceptable outcomes.
+  A stopped or failed block MUST visibly block its unexecuted dependents.
+- **FR-034**: User-supplied runtime data MUST NOT be paired with a
+  predetermined semantic result. Fixture runs MUST use controlled fixture
+  inputs, be unmistakably identified as fixtures, and remain distinguishable
+  from validate-only, unconnected, and live runs in the UI and evidence.
+- **FR-035**: Diagnostics and canvas cause highlighting MUST derive only from
+  findings and evidence produced by the current run. A block MUST NOT be
+  identified as a possible cause solely because of its position, role, or
+  presence in a scenario fixture.
+- **FR-036**: Every completed executable block MUST expose reviewable inputs,
+  structured or artifact-backed output, executor provenance, activity status,
+  and diagnosis details. Valid empty, redacted, and truncated results MUST be
+  explicit rather than appearing as missing evidence.
+- **FR-037**: An AI task MUST be able to return a schema-validated
+  `needs-input` result containing unresolved values, examined evidence,
+  assumptions, and user-facing questions. A `needs-input` result MUST prevent
+  downstream MCP invocation.
+- **FR-038**: An AI task that prepares an MCP call MUST receive the exact
+  reviewed server/tool declaration and input schema before generation. No
+  capability category, presentation alias, or domain label may substitute for
+  an exact generic MCP binding.
+- **FR-039**: Each run record MUST identify its execution mode and preserve
+  immutable per-step results so reruns can be compared without overwriting the
+  evidence that caused an earlier stop or failure.
+- **FR-040**: Every human prototype checkpoint MUST update or explicitly
+  confirm the living lessons-learned evidence record. The final architecture
+  decision MUST disposition every recorded candidate rule and open P0/P1 debt
+  item rather than relying on conversation history or passing tests.
+- **FR-041**: Runtime preflight MUST enforce only explicit canonical
+  requirements with inspectable provenance. The UI MUST expose each required
+  input and its source before Run. A phrase or implication in free-form prompt
+  text MUST NOT silently become a preflight rule; semantic interpretation may
+  instead return a reviewable `needs-input` result or propose an authoring
+  change for user acceptance.
 
 ### Key Entities
 
@@ -307,7 +353,21 @@ external engineering applications.
 - **Phase Lane**: Configurable visual grouping with identity, order, label,
   description, and presentation attributes.
 - **Workflow Block**: Stable semantic unit with role, purpose, configuration,
-  ports, phase membership, and optional capability binding.- **Capability Template**: Searchable, organization-extensible discovery record
+  ports, phase membership, and optional capability binding.
+- **Prompt Request**: Generic runtime input package containing instructions,
+  typed attachment or artifact references, parameters, and requirement
+  evidence.
+- **Step Result**: Immutable result of one block attempt, including status,
+  inputs, outputs, provenance, evidence, diagnostics, and recovery actions.
+- **Run Record**: Immutable collection of correlated step results and run-mode
+  metadata for one workflow attempt.
+- **Diagnostic Finding**: Current-run, evidence-backed explanation with a
+  detection point, related block identities, expected/actual values,
+  provenance, uncertainty, and bounded recovery actions.
+- **Input Requirement**: Typed prompt, attachment, binding, permission, or
+  parameter constraint with stable identity, minimum/shape rules, and
+  provenance showing who or what established it.
+- **Capability Template**: Searchable, organization-extensible discovery record
   with presentation category, keywords, purpose, and expected input/output
   shapes; it never selects execution code.
 - **Connection**: Typed directed relationship with source/target ports and
@@ -357,6 +417,17 @@ external engineering applications.
   and kinematics using the compact palette plus capability library without
   scanning a complete flat list, and can distinguish the friendly template
   from the exact MCP tool binding.
+- **SC-011**: In all deterministic evaluation cases, 100% of fixture,
+  validate-only, unconnected, and live-mode projections identify their mode,
+  and no user-supplied input displays a predetermined fixture-specific finding.
+- **SC-012**: Every modeled non-success layer selects the detecting block,
+  distinguishes work that ran from work that was blocked, exposes supporting
+  evidence or explicit uncertainty, and provides at least one valid recovery
+  action or a clear statement that intervention outside Wright is required.
+- **SC-013**: In 100% of preflight evaluation cases, every enforced input
+  requirement is visible before Run with its provenance. A prompt that merely
+  mentions an absent attachment passes Step 1 unless an explicit canonical
+  requirement independently requires that attachment.
 
 ## Assumptions
 

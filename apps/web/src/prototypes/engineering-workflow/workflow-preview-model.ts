@@ -5,6 +5,15 @@ export type WorkflowBlockRole =
 
 export type WorkflowConnectionSemantics = "data" | "control" | "feedback";
 
+export type WorkflowBlockRunState =
+  | "idle"
+  | "running"
+  | "completed"
+  | "warning"
+  | "failed"
+  | "revised"
+  | "passed";
+
 export interface WorkflowBlockPosition {
   x: number;
   y: number;
@@ -28,6 +37,16 @@ export interface WorkflowReferenceImageOption extends WorkflowBlockImagePreview 
   description: string;
 }
 
+export type WorkflowPreviewDataType =
+  "request" | "text" | "images" | "documents" | "instruction" | "result";
+
+export interface WorkflowPreviewPort {
+  portId: string;
+  label: string;
+  dataType: WorkflowPreviewDataType;
+  count?: number;
+}
+
 export interface WorkflowPreviewBlock {
   blockId: string;
   phaseId: string;
@@ -37,7 +56,9 @@ export interface WorkflowPreviewBlock {
   purpose: string;
   badge?: string;
   status?: string;
+  runState?: WorkflowBlockRunState;
   imagePreviews?: WorkflowBlockImagePreview[];
+  outputPorts?: WorkflowPreviewPort[];
   position: WorkflowBlockPosition;
   inspector?: {
     summary: string;
@@ -51,6 +72,8 @@ export interface WorkflowPreviewConnection {
   targetBlockId: string;
   semantics: WorkflowConnectionSemantics;
   label?: string;
+  sourcePortId?: string;
+  targetPortId?: string;
 }
 
 export interface WorkflowPreviewPhase {

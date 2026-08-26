@@ -301,3 +301,74 @@ async def test_chat_preflight_reports_disconnected_llm(monkeypatch):
 
     assert error.value.status_code == 503
     assert error.value.detail == "LLM backend is not ready: Codex auth expired"
+
+
+@pytest.mark.asyncio
+async def test_no_tools_chat_skips_mcp_activation_and_forwards_thinking(monkeypatch):
+    class FailingSyncManager:
+        def sync_workspace_tools(self, _session_id):
+            raise AssertionError("no-tools turn must not sync workspace tools")
+
+    class CaptureRegistry:
+        request = None
+
+        async def start(self, request, _engine):
+            self.request = request
+            return _AttachFailureJob()
+
+    capture_registry = CaptureRegistry()
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/agent/chat",
+            "headers": [],
+            "app": SimpleNamespace(
+                state=SimpleNamespace(agent_sync_manager=FailingSyncManager())
+            ),
+        }
+    )
+
+    async def ready(_engine):
+        return None
+
+    async def unexpected_mcp_activation(*_args, **_kwargs):
+        raise AssertionError("no-tools turn must not activate MCP servers")
+
+    def unexpected_rivet_binding(*_args, **_kwargs):
+        raise AssertionError("no-tools turn must not mirror a Rivet binding")
+
+    monkeypatch.setattr("api.routers.agent.ensure_llm_backend_ready", ready)
+    monkeypatch.setattr(
+        "api.routers.agent.ensure_workspace_mcp_servers_active",
+        unexpected_mcp_activation,
+    )
+    monkeypatch.setattr(
+        "api.routers.agent._mirror_active_rivet_workflow_to_gateway_binding",
+        unexpected_rivet_binding,
+    )
+    monkeypatch.setattr(
+        "api.routers.agent.get_chat_stream_registry",
+        lambda _request: capture_registry,
+    )
+
+    await chat(
+        ChatRequest(
+            session_id="session-1",
+            message="Create a concise design brief.",
+            thinking_level="high",
+            tool_policy="none",
+            provider="openai-codex",
+            model="gpt-test",
+            require_model_lock=True,
+        ),
+        request,
+        _FailingEngine(),
+    )
+
+    assert capture_registry.request is not None
+    assert capture_registry.request.thinking_level == "high"
+    assert capture_registry.request.tool_policy == "none"
+    assert capture_registry.request.model_provider == "openai-codex"
+    assert capture_registry.request.model == "gpt-test"
+    assert capture_registry.request.require_model_lock is True

@@ -1,8 +1,5 @@
 export type EngineeringWorkflowPrototypeViewState =
-  | "ready"
-  | "loading"
-  | "empty"
-  | "error";
+  "ready" | "loading" | "empty" | "error";
 
 export const prototypeViewStateCopy = {
   loading: {

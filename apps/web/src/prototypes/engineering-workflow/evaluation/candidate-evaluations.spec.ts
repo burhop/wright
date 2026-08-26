@@ -47,4 +47,3 @@ describe("candidate evaluation evidence", () => {
     }
   });
 });
-

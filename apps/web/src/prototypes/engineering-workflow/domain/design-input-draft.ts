@@ -32,10 +32,12 @@ export type DesignInputHistoryAction =
   | { type: "undo" }
   | { type: "redo" };
 
-export function createDesignInputHistory(): DesignInputHistory {
+export function createDesignInputHistory(
+  initialPrompt = "",
+): DesignInputHistory {
   return {
     past: [],
-    present: { prompt: "", documents: [], revision: 0 },
+    present: { prompt: initialPrompt, documents: [], revision: 0 },
     future: [],
   };
 }

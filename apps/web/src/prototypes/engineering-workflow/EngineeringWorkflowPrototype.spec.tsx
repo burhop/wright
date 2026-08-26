@@ -1,7 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { EngineeringWorkflowPrototype } from "./EngineeringWorkflowPrototype";
+import { wrightDiagnosticLlmAdapter } from "./services/diagnostic-llm-adapter";
 
 describe("EngineeringWorkflowPrototype", () => {
   const originalGetBoundingClientRect =
@@ -52,7 +54,11 @@ describe("EngineeringWorkflowPrototype", () => {
   });
 
   it("reuses the approved shell around a Wright-owned read-only projection", async () => {
-    render(<EngineeringWorkflowPrototype />);
+    render(
+      <MemoryRouter>
+        <EngineeringWorkflowPrototype />
+      </MemoryRouter>,
+    );
 
     expect(
       screen.getByRole("heading", {
@@ -88,5 +94,29 @@ describe("EngineeringWorkflowPrototype", () => {
     expect(
       screen.queryByRole("button", { name: /drill index tray/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("activates the diagnostic scenario from the router query", async () => {
+    vi.spyOn(wrightDiagnosticLlmAdapter, "listModels").mockResolvedValueOnce(
+      [],
+    );
+
+    render(
+      <MemoryRouter
+        initialEntries={["/prototype/engineering-workflow?scenario=diagnostic"]}
+      >
+        <EngineeringWorkflowPrototype />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Four-Block Diagnostic Workflow" }),
+    ).toBeVisible();
+    expect(
+      await screen.findByRole("button", {
+        name: "⚠ Current Wright model unavailable",
+      }),
+    ).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "Diagnosis" })).toBeVisible();
   });
 });
