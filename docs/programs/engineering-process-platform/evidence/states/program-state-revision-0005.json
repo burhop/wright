@@ -2,8 +2,8 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 6,
-  "state": "PROGRAM_ACTIVE",
+  "revision": 5,
+  "state": "SELECTING_FEATURE",
   "baseline": {
     "ref": "dev",
     "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
@@ -25,22 +25,8 @@
     "audit_status": "passed"
   },
   "current_feature": "EPP-F01",
-  "active_mutating_lease": {
-    "feature_id": "EPP-F01",
-    "branch": "077-control-plane-validator",
-    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
-    "holder_role": "feature_owner",
-    "lease_revision": 1,
-    "acquired_at": "2026-08-26T23:33:43Z",
-    "expires_at": "2026-08-27T11:33:43Z",
-    "allowed_paths": [
-      "specs/077-control-plane-validator/**",
-      ".specify/feature.json",
-      "AGENTS.md (managed Spec Kit section only)",
-      "docs/programs/engineering-process-platform/**"
-    ]
-  },
-  "last_transition": "TR-0005",
+  "active_mutating_lease": null,
+  "last_transition": "TR-0004",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -60,7 +46,7 @@
     "program_health": {
       "status": "in_progress",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 has no exact implementation approval"]
+      "blockers": ["Dashboard generator is the selected unimplemented child feature", "EPP-F01 worktree and lease are not yet allocated"]
     }
   },
   "open_p0_decisions": [
@@ -79,10 +65,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "SPECIFY_EPP_F01",
+      "action": "ALLOCATE_EPP_F01_WORKTREE",
       "roadmap_item": "EPP-F01",
       "requires_human_approval": false,
-      "reason": "The isolated worktree, Spec Kit branch, and singleton planning lease are allocated; specification is authorized, but implementation is not."
+      "reason": "EPP-F01 is the sole dependency-eligible item; allocate one clean isolated worktree and lease before specification."
     }
   ],
   "approval": {

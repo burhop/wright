@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** exact program plan approved; EPP-F01 selected for planning, with worktree allocation next and no implementation approval
+**Status:** EPP-F01 planning active on `077-control-plane-validator`; no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`ALLOCATE_EPP_F01_WORKTREE` is the only eligible action. It may create one clean isolated worktree descended from the recorded exact `dev` baseline, carry the approved control-plane overlay, acquire the singleton planning lease, and begin the bounded specification lifecycle. It does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`SPECIFY_EPP_F01` is the only eligible action. The isolated worktree and singleton planning lease are allocated on `077-control-plane-validator`; complete the bounded Spec Kit planning loop and stop at exact implementation approval. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.

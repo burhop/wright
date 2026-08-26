@@ -23,7 +23,7 @@
       "priority": 10,
       "title": "Control-plane validator and live readiness dashboard",
       "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP, then generate four non-substitutable readiness areas from committed evidence without hand-setting green status.",
-      "status": "eligible",
+      "status": "active",
       "depends_on": ["EPP-P00"],
       "blocking_decisions": [],
       "gate_impacts": ["PROG-01", "PROG-02", "PROG-05", "PROG-06"],
