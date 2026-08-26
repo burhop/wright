@@ -1,0 +1,149 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0008",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "SPECIFIED",
+  "to_state": "CLARIFIED",
+  "prior_revision": 8,
+  "new_revision": 9,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+  "new_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Run the structured Spec Kit clarification and coverage audit, ask zero questions because no material ambiguity remains, and preserve the unchanged passing specification and checklist.",
+  "started_at": "2026-08-26T23:46:30Z",
+  "finished_at": "2026-08-26T23:49:23Z",
+  "duration_ms": 173000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "e7b72f936fa7c69acd591eb7fd796c5319334783",
+    "head_after": "e7b72f936fa7c69acd591eb7fd796c5319334783",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0008.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0008.json",
+      "sha256": "2ab94622926648a9bd361f59a70488a8ec74836c3bdd4877b542956188f93a4b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0007.json",
+      "sha256": "f96efc9804fca989677d81267232223fdddee9b5f54d1557225998ec17d72fcc",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+      "sha256": "bf67ef8046fd044165f8d07930253266a8f282fb89f2b4cbee5d43df6a7763b2",
+      "schema_version": null
+    },
+    {
+      "path": "../../../.specify/feature.json",
+      "sha256": "54f540d68346fc2014f81a45c97da7e5c3d8a87a9d5501b59db128fdb5ea2174",
+      "schema_version": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "dab12e6d70fbe29a85a6120fd3a7ca2a7d3e7e283db5757672815a253997c9aa",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6798fd2e0157bc65f98b34ebb76bf92117111e1d8fe82e58cfce9cc54974d565",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "0bade7c6577f864ef7e4503974072e864a58f37eb29141cea6ec87d37176ae7f",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "CLARIFY-PREREQUISITE-PATHS",
+      "command_or_method": "The documented PowerShell prerequisite script is absent and no Bash runtime is installed; apply the installed shell script's paths-only semantics directly and resolve the branch, feature directory, spec, future plan, and future tasks paths from .specify/feature.json",
+      "environment": "Windows PowerShell fallback; read-only",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json", ".specify/scripts/bash/check-prerequisites.sh"]
+    },
+    {
+      "check_id": "CLARIFICATION-COVERAGE",
+      "command_or_method": "Scan functional scope, domain/data, interaction/UX, non-functional qualities, integrations, failure handling, constraints/tradeoffs, terminology, completion signals, and placeholders; all material feature-level choices are clear and implementation choices are correctly deferred to planning",
+      "environment": "Spec Kit clarify taxonomy",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md"]
+    },
+    {
+      "check_id": "ZERO-QUESTION-SESSION",
+      "command_or_method": "Confirm no candidate question would materially change scope, security/privacy, data, UX, acceptance, compatibility, rollback, or benchmark validation; ask and answer zero questions",
+      "environment": "bounded clarification session 2026-08-26",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md"]
+    },
+    {
+      "check_id": "CHECKLIST-REVALIDATION",
+      "command_or_method": "Re-evaluate all 16 specification-quality checkbox items against the unchanged spec; preserve 16/16 passing with zero newly checked, regressions, or unchecked items",
+      "environment": "Spec Kit checklist revalidation",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/checklists/requirements.md"]
+    },
+    {
+      "check_id": "WORKTREE-POINTERS",
+      "command_or_method": "Verify .specify/feature.json still identifies specs/076-control-plane-validator; defer the optional AGENTS.md plan-pointer update until plan.md exists",
+      "environment": "isolated feature worktree",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json", "AGENTS.md"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 8 to 9 increment, SPECIFIED to CLARIFIED child edge, canonical/raw state digests, unchanged spec/checklist identities, and planning-only next action",
+      "environment": "Windows PowerShell; Python jsonschema Draft 2020-12; exact Git index bytes",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0008.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0008.json",
+  "next_action": "PLAN_EPP_F01"
+}
