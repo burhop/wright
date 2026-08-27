@@ -1,0 +1,156 @@
+{
+  "accept_new_records": false,
+  "checkpoint_commit": "c46ea627a7403ff3e1ce3db6be3d1baeebebb377",
+  "checkpoint_commit_rule": "fixed_commit",
+  "checkpoint_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+  "from_revision": 1,
+  "profile_id": "epp-bootstrap-v1-r1-r9",
+  "schema_major": 1,
+  "states": [
+    {
+      "canonical_digest": "309a92e99e333e868ef13881faf9b2b379a36651cf2ac1224111fb16a3ce7ca7",
+      "path": "evidence/states/program-state-revision-0001.json",
+      "raw_sha256": "f4f5d9d97492b3032d7a03b71689fa4b6537e30e252c7d371c029c30fd4d58b5",
+      "revision": 1
+    },
+    {
+      "canonical_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9",
+      "path": "evidence/states/program-state-revision-0002.json",
+      "raw_sha256": "076d5cd3884f9fd56785000feedbff74f42bfdd8aa0a0672caa69ea272fc4ee0",
+      "revision": 2
+    },
+    {
+      "canonical_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+      "path": "evidence/states/program-state-revision-0003.json",
+      "raw_sha256": "515e154d640295ab5b171ca3b2d160cd8dc4767a8d9f4977b35e2c4380ea183b",
+      "revision": 3
+    },
+    {
+      "canonical_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+      "path": "evidence/states/program-state-revision-0004.json",
+      "raw_sha256": "a4692eac947839ca96c7e00bc0c1cddf2fa22e9464f57003a66e8edb478efbe6",
+      "revision": 4
+    },
+    {
+      "canonical_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+      "path": "evidence/states/program-state-revision-0005.json",
+      "raw_sha256": "5189f2defedab9fe7eb524b9117479d8ba150f2b15d9a664b67561778c178259",
+      "revision": 5
+    },
+    {
+      "canonical_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+      "path": "evidence/states/program-state-revision-0006.json",
+      "raw_sha256": "f86cc305a36d0f935ff3fc0227b2d77b7683fe74d502955c3e8f24f13d9217e1",
+      "revision": 6
+    },
+    {
+      "canonical_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+      "path": "evidence/states/program-state-revision-0007.json",
+      "raw_sha256": "2e69af63a803b357234986209e7d29dbd33732cc08f8363838150167f17e713b",
+      "revision": 7
+    },
+    {
+      "canonical_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+      "path": "evidence/states/program-state-revision-0008.json",
+      "raw_sha256": "2ab94622926648a9bd361f59a70488a8ec74836c3bdd4877b542956188f93a4b",
+      "revision": 8
+    },
+    {
+      "canonical_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+      "path": "evidence/states/program-state-revision-0009.json",
+      "raw_sha256": "dab12e6d70fbe29a85a6120fd3a7ca2a7d3e7e283db5757672815a253997c9aa",
+      "revision": 9
+    }
+  ],
+  "successor": {
+    "first_transition_id": "TR-0009",
+    "kind": "closed_profile",
+    "maximum_count": 1,
+    "target_profile_id": "epp-bridge-v1-r10-r19"
+  },
+  "terminal_feature_state": "CLARIFIED",
+  "terminal_program_state": "PROGRAM_ACTIVE",
+  "through_revision": 9,
+  "transitions": [
+    {
+      "new_revision": 2,
+      "new_state_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9",
+      "path": "evidence/transitions/TR-0001.json",
+      "prior_revision": 1,
+      "prior_state_digest": "309a92e99e333e868ef13881faf9b2b379a36651cf2ac1224111fb16a3ce7ca7",
+      "raw_sha256": "8dd44fbfc43fd37374b4267c22a9d42c35415e8fcc3fdd7d5ec5ca60295eee29",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0001"
+    },
+    {
+      "new_revision": 3,
+      "new_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+      "path": "evidence/transitions/TR-0002.json",
+      "prior_revision": 2,
+      "prior_state_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9",
+      "raw_sha256": "b5aa09b0426016ca73e893a2abc26429576997d560bb307ddc0308b004dc1621",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0002"
+    },
+    {
+      "new_revision": 4,
+      "new_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+      "path": "evidence/transitions/TR-0003.json",
+      "prior_revision": 3,
+      "prior_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+      "raw_sha256": "0809d3e85254b350265b829f7032adf7e83cead22fdb62dcca9d7acc1cb679ad",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0003"
+    },
+    {
+      "new_revision": 5,
+      "new_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+      "path": "evidence/transitions/TR-0004.json",
+      "prior_revision": 4,
+      "prior_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+      "raw_sha256": "f3135fe641c196c886e510ed2892257c1b71a217a85bdc83c8e6877c54c67004",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0004"
+    },
+    {
+      "new_revision": 6,
+      "new_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+      "path": "evidence/transitions/TR-0005.json",
+      "prior_revision": 5,
+      "prior_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+      "raw_sha256": "22225aebee2ce25f2407c07736f48caf710c56f7fa2625273f9648dc4ce8fd2f",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0005"
+    },
+    {
+      "new_revision": 7,
+      "new_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+      "path": "evidence/transitions/TR-0006.json",
+      "prior_revision": 6,
+      "prior_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+      "raw_sha256": "fbb8d3ff24a392be34f3cc82c24acfb4280a33b82f4323a1176fb351e3c6f2b8",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0006"
+    },
+    {
+      "new_revision": 8,
+      "new_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+      "path": "evidence/transitions/TR-0007.json",
+      "prior_revision": 7,
+      "prior_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+      "raw_sha256": "f96efc9804fca989677d81267232223fdddee9b5f54d1557225998ec17d72fcc",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0007"
+    },
+    {
+      "new_revision": 9,
+      "new_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+      "path": "evidence/transitions/TR-0008.json",
+      "prior_revision": 8,
+      "prior_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+      "raw_sha256": "593da4b53a971dc5aca45ae1ac8a6ed77a41f74a0ce54d6e1ebfff7fdc7dead7",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0008"
+    }
+  ]
+}

@@ -18,11 +18,11 @@
 
 **Purpose**: Establish the repo-local package, deterministic fixtures, and failing contract tests without changing public product code or dependencies.
 
-- [ ] T001 Create the thin entrypoint and importable package skeleton in `scripts/validate-engineering-process-program.py` and `scripts/program_control/__init__.py`
-- [ ] T002 [P] Freeze exactly two ordered closed compatibility profiles—the unchanged revision-1-through-9 bootstrap and contiguous revision-10-through-19 / `TR-0009`–`TR-0018` bridge—with unique archive/transition paths, exact raw state and historical-transition blob digests, terminal `TR-0018` `checkpoint_commit_blob` identity, canonical edges, runtime-resolved approval-subject checkpoint rule, no-future-v1 rule, and sole v2 successor in `tests/program_control_plane/fixtures/epp-bootstrap-v1-r1-r9.json` and `tests/program_control_plane/fixtures/epp-bridge-v1-r10-r19.json`
-- [ ] T003 [P] Create isolated temporary-Git-repository builders with fixed clocks, paths with spaces, raw-byte mutation, and Git command spies in `tests/program_control_plane/conftest.py` and `tests/program_control_plane/fixture_builder.py`
-- [ ] T004 [P] Add planning-contract schema meta-tests and expected implementation-path assertions in `tests/program_control_plane/test_contract_schemas.py`
-- [ ] T005 Document the no-new-dependency setup, supported Python/Git prerequisites, and focused invocation in `scripts/README.md`
+- [x] T001 Create the thin entrypoint and importable package skeleton in `scripts/validate-engineering-process-program.py` and `scripts/program_control/__init__.py`
+- [x] T002 [P] Freeze exactly two ordered closed compatibility profiles—the unchanged revision-1-through-9 bootstrap and contiguous revision-10-through-19 / `TR-0009`–`TR-0018` bridge—with unique archive/transition paths, exact raw state and historical-transition blob digests, terminal `TR-0018` `checkpoint_commit_blob` identity, canonical edges, runtime-resolved approval-subject checkpoint rule, no-future-v1 rule, and sole v2 successor in `tests/program_control_plane/fixtures/epp-bootstrap-v1-r1-r9.json` and `tests/program_control_plane/fixtures/epp-bridge-v1-r10-r19.json`
+- [x] T003 [P] Create isolated temporary-Git-repository builders with fixed clocks, paths with spaces, raw-byte mutation, and Git command spies in `tests/program_control_plane/conftest.py` and `tests/program_control_plane/fixture_builder.py`
+- [x] T004 [P] Add planning-contract schema meta-tests and expected implementation-path assertions in `tests/program_control_plane/test_contract_schemas.py`
+- [x] T005 Document the no-new-dependency setup, supported Python/Git prerequisites, and focused invocation in `scripts/README.md`
 
 **Checkpoint**: Package imports, fixture builders, and contract tests exist; no semantic validator behavior is claimed.
 

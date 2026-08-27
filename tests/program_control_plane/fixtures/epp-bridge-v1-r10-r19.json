@@ -1,0 +1,182 @@
+{
+  "accept_new_records": false,
+  "checkpoint_commit": null,
+  "checkpoint_commit_rule": "exact_material_change_approval_subject",
+  "checkpoint_state_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20",
+  "from_revision": 10,
+  "profile_id": "epp-bridge-v1-r10-r19",
+  "schema_major": 1,
+  "states": [
+    {
+      "canonical_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+      "path": "evidence/states/program-state-revision-0010.json",
+      "raw_sha256": "08cf2927158fda8448eea61a731db44f49fce73709b80e39b8f27d25d652b5b1",
+      "revision": 10
+    },
+    {
+      "canonical_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a",
+      "path": "evidence/states/program-state-revision-0011.json",
+      "raw_sha256": "dd36c61a7434e69663dbce1c90e6970349d46ae1c7cedf71175690536fdb229f",
+      "revision": 11
+    },
+    {
+      "canonical_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b",
+      "path": "evidence/states/program-state-revision-0012.json",
+      "raw_sha256": "35e17041ad7ec86182904ace9d9ec86a16285402e6537a8b77fa520b59bb1c4c",
+      "revision": 12
+    },
+    {
+      "canonical_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+      "path": "evidence/states/program-state-revision-0013.json",
+      "raw_sha256": "6869097ca13d8880797a05c6605c42ea5a9005da7e081c8956ae3bef2dde0210",
+      "revision": 13
+    },
+    {
+      "canonical_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e",
+      "path": "evidence/states/program-state-revision-0014.json",
+      "raw_sha256": "90ed5ea95b386e07ceb2a90db8f26a31f9b263932ea591b9baa4002775fa20c5",
+      "revision": 14
+    },
+    {
+      "canonical_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634",
+      "path": "evidence/states/program-state-revision-0015.json",
+      "raw_sha256": "92240e5068323b4f152ef7d8cca72bdca9d40966f1447aadf945a3cf545943b2",
+      "revision": 15
+    },
+    {
+      "canonical_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2",
+      "path": "evidence/states/program-state-revision-0016.json",
+      "raw_sha256": "b7124ed84199e1be0c8b180a743f479dde240f5f957459e096dc339226646e12",
+      "revision": 16
+    },
+    {
+      "canonical_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658",
+      "path": "evidence/states/program-state-revision-0017.json",
+      "raw_sha256": "204566408650fd1c50f3555ddf7403f70a472af0610e0c9f893a3693a355a7eb",
+      "revision": 17
+    },
+    {
+      "canonical_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d",
+      "path": "evidence/states/program-state-revision-0018.json",
+      "raw_sha256": "68be520040541eb3949349dd038a8caa96ce3bf5363d39e406d0a4f82ffdfeb8",
+      "revision": 18
+    },
+    {
+      "canonical_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20",
+      "path": "evidence/states/program-state-revision-0019.json",
+      "raw_sha256": "2d03b9e5294b7d09fe31f264537093918731ddd32a2fb408b1b5e4b222e00283",
+      "revision": 19
+    }
+  ],
+  "successor": {
+    "event_kind": "lifecycle_transition",
+    "kind": "schema_migration",
+    "maximum_count": 1,
+    "target_schema_version": "2.0"
+  },
+  "terminal_feature_state": "IMPLEMENTATION_APPROVAL_PENDING",
+  "terminal_program_state": "PROGRAM_ACTIVE",
+  "through_revision": 19,
+  "transitions": [
+    {
+      "new_revision": 10,
+      "new_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+      "path": "evidence/transitions/TR-0009.json",
+      "prior_revision": 9,
+      "prior_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+      "raw_sha256": "5f985ee5b1214cdd2c1d970648ad042fdd2f61fd74251979c06f154bb240b3df",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0009"
+    },
+    {
+      "new_revision": 11,
+      "new_state_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a",
+      "path": "evidence/transitions/TR-0010.json",
+      "prior_revision": 10,
+      "prior_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+      "raw_sha256": "14694b3bec7abafbf8661844975689e294f0beb5fe7a6d9cd34e7d4a0d6e0304",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0010"
+    },
+    {
+      "new_revision": 12,
+      "new_state_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b",
+      "path": "evidence/transitions/TR-0011.json",
+      "prior_revision": 11,
+      "prior_state_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a",
+      "raw_sha256": "2f25c9b705e906fe6d560f1f30fe9ccf07d45fd0872399ca442ca6d5bdc5008d",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0011"
+    },
+    {
+      "new_revision": 13,
+      "new_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+      "path": "evidence/transitions/TR-0012.json",
+      "prior_revision": 12,
+      "prior_state_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b",
+      "raw_sha256": "682fabcae2ea7759158f8673fa4d9bec21ee6888f56bca2a382aa49950268d65",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0012"
+    },
+    {
+      "new_revision": 14,
+      "new_state_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e",
+      "path": "evidence/transitions/TR-0013.json",
+      "prior_revision": 13,
+      "prior_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+      "raw_sha256": "2e61ee6df7dac637b803780eb66b28c740247538eed1f1800c0473a407d84ffc",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0013"
+    },
+    {
+      "new_revision": 15,
+      "new_state_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634",
+      "path": "evidence/transitions/TR-0014.json",
+      "prior_revision": 14,
+      "prior_state_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e",
+      "raw_sha256": "b612022cfed263ccab1bc214c99b0580af4fb9eec914bc68a158c1e0295c083d",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0014"
+    },
+    {
+      "new_revision": 16,
+      "new_state_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2",
+      "path": "evidence/transitions/TR-0015.json",
+      "prior_revision": 15,
+      "prior_state_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634",
+      "raw_sha256": "5e9b3ad6e6dc25279cb2c09e1e3802d5b378819d965e0252c47750bed9df2498",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0015"
+    },
+    {
+      "new_revision": 17,
+      "new_state_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658",
+      "path": "evidence/transitions/TR-0016.json",
+      "prior_revision": 16,
+      "prior_state_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2",
+      "raw_sha256": "2f4745290d987175e20051a5f7c6d287b9b6229e21a67facf4b8f8dd963f5523",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0016"
+    },
+    {
+      "new_revision": 18,
+      "new_state_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d",
+      "path": "evidence/transitions/TR-0017.json",
+      "prior_revision": 17,
+      "prior_state_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658",
+      "raw_sha256": "d64ce99a90a2f084cecb5d011142b146fb4474bd4f597d2665fa71cb0db7ea08",
+      "raw_sha256_rule": "exact_blob_sha256",
+      "transition_id": "TR-0017"
+    },
+    {
+      "new_revision": 19,
+      "new_state_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20",
+      "path": "evidence/transitions/TR-0018.json",
+      "prior_revision": 18,
+      "prior_state_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d",
+      "raw_sha256": null,
+      "raw_sha256_rule": "checkpoint_commit_blob",
+      "transition_id": "TR-0018"
+    }
+  ]
+}

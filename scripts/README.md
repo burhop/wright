@@ -26,6 +26,7 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`check-dev-merge.sh`](#check-dev-mergesh) | Bash | Runs the CI-equivalent gate before merging a feature branch to `dev` | Python 3, uv, npm, Playwright |
 | [`check-prod-merge.sh`](#check-prod-mergesh) | Bash | Runs the release gate before merging `dev` to `main` | Python 3, uv, npm, Docker, Hermes |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
+| [`validate-engineering-process-program.py`](#validate-engineering-process-program) | Python | Validates an exact committed engineering-process program subject and generates a local candidate dashboard | Python 3.11+, Git 2.39+, existing `jsonschema` runtime |
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, Hermes dependencies, permissions, and self-healing behaviors | Docker, Python 3 |
@@ -36,6 +37,26 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
 | [`patch-submodule.sh`](#patch-submodulesh) | Bash | Applies localized patches to the FreeCAD MCP submodule | Git |
 | [`setup-wright-profile.sh`](#setup-wright-profilesh) | Bash | Provisions and configures a Hermes profile for native Wright development | `hermes` CLI |
+
+---
+
+### Validate engineering process program
+
+This validator is deliberately repo-local and adds no dependency. It requires Python 3.11 or newer, Git 2.39 or newer, and the `jsonschema` package already present in Wright's runtime/test environment. It reads committed Git objects through argument-array, read-only commands; it does not treat checkout line endings as artifact identity.
+
+Run the focused suite without pytest cache writes:
+
+```powershell
+python -m pytest -p no:cacheprovider tests/program_control_plane -q
+```
+
+Validate the current committed program subject:
+
+```powershell
+python scripts/validate-engineering-process-program.py validate --source HEAD --format text
+```
+
+Both commands are offline. A validator failure authorizes no repair, integration, benchmark execution, or release action; inspect the repository-relative finding and follow the program state's sole eligible action.
 
 ---
 
