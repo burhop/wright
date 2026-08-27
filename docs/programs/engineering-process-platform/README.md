@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 implementation authorized on `077-control-plane-validator`; implementation has not started
+**Status:** EPP-F01 implementing on `077-control-plane-validator` under lease revision 3
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`START_EPP_F01_IMPLEMENTATION` is the only eligible action and does not require another human approval. The human approved separate `material_change` and `feature_implementation` records for commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and all 21 artifact digests in `TR-0014`. Lease revision 3 limits the sole writer to the 68 approved local tasks and their exact paths. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`EXECUTE_EPP_F01_TASKS` is the only eligible action and does not require another human approval. Execute the 68 dependency-ordered tasks under lease revision 3, retain tests-before-implementation evidence, and stop author mutation after candidate freeze for a separate independent verifier. The approved subject remains commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and all 21 artifact digests in `TR-0014`. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

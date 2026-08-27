@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 17,
+  "revision": 16,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -50,7 +50,7 @@
       "AGENTS.md (managed Spec Kit section only)"
     ]
   },
-  "last_transition": "TR-0016",
+  "last_transition": "TR-0015",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -70,7 +70,7 @@
     "program_health": {
       "status": "in_progress",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 implementation is active and no candidate is frozen"]
+      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 implementation is approved but has not started"]
     }
   },
   "open_p0_decisions": [
@@ -89,10 +89,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "EXECUTE_EPP_F01_TASKS",
+      "action": "START_EPP_F01_IMPLEMENTATION",
       "roadmap_item": "EPP-F01",
       "requires_human_approval": false,
-      "reason": "EPP-F01 is implementing under lease revision 3; execute the 68 dependency-ordered tasks, preserve exclusions, and stop for independent verification after candidate freeze."
+      "reason": "Both exact-subject approval records are current, all 21 TR-0014 digests revalidated, and implementation lease revision 3 limits mutation to the 68 approved local tasks."
     }
   ],
   "approval": {
