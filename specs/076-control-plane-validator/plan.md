@@ -1,4 +1,4 @@
-# Implementation Plan: Control-Plane Validator and Live Readiness Dashboard
+# Implementation Plan: Control-Plane Validator and Governed Readiness Snapshot
 
 **Branch**: `077-control-plane-validator` | **Date**: 2026-08-26 | **Spec**: [spec.md](spec.md)
 
@@ -6,7 +6,7 @@
 
 ## Summary
 
-Build an offline, repository-local Python CLI that reads the Engineering Process Platform control plane from exact committed Git blobs, validates its JSON schemas and cross-artifact semantics, derives one bounded next action, and transactionally generates one canonical dashboard with four independent readiness areas. The design adds machine-readable lifecycle, gate, and gate-evidence contracts because those rules currently exist only in prose. It preserves revisions 1–9 through the original frozen bootstrap profile and revisions 10–19 through a second closed, enumerated, digest-bound bridge ending at this amended approval checkpoint; no later v1 record is compatible. Implementation is not authorized by this plan.
+Build an offline, repository-local Python CLI that reads the Engineering Process Platform control plane from exact committed Git blobs, validates its JSON schemas and cross-artifact semantics, derives one bounded next action, and transactionally generates one canonical machine snapshot with four independent readiness areas. The design adds machine-readable lifecycle, gate, and gate-evidence contracts because those rules currently exist only in prose. It preserves revisions 1–9 through the original frozen bootstrap profile and revisions 10–19 through a second closed, enumerated, digest-bound bridge ending at this amended approval checkpoint; no later v1 record is compatible. EPP-F01 does not add a browser route or frontend page; the required read-only browser projection is dependency-ordered EPP-F01B. Implementation is blocked pending a replacement exact approval bundle.
 
 ## Technical Context
 
@@ -39,7 +39,7 @@ Build an offline, repository-local Python CLI that reads the Engineering Process
 | Data storage and RAG | No product data store is introduced. Inputs are committed Git blobs; output is one versioned JSON projection. | Pass |
 | Security and identity | No authentication surface is introduced. Output is metadata-allowlisted and tested against secret, payload, endpoint, log, prompt, authority, and absolute-path canaries. | Pass |
 | Engineering tooling protocol | The CLI is code-driven and non-interactive; it never requires a GUI or launches an engineering tool. | Pass |
-| UI and testing | No product UI is added. Human terminal output and the JSON dashboard have explicit empty, stale, blocked, failure, evidence-inspection, and recovery behavior. | Pass |
+| UI and testing | No product UI is added. Human terminal output and the JSON snapshot have explicit empty, stale, blocked, failure, evidence-inspection, and recovery behavior. Browser presentation and its constitution-mandated component/integration tests belong to EPP-F01B. | Pass |
 | Observability and tracing | This offline governance command does not process user requests or product execution. Stable bounded findings replace raw logging; no remote telemetry is introduced. | Pass |
 | Autonomous workflow | Planning is isolated on the feature branch, implementation is blocked pending exact human approval, and later integration remains separately gated. | Pass |
 
@@ -48,6 +48,8 @@ Post-design re-check: the proposed contracts remain local, typed, offline, compa
 ## Design Decisions and Approval Boundary
 
 The following material contract decisions are part of the exact implementation-approval subject. They are not silently assumed:
+
+0. Keep this feature bounded to validator, machine snapshot, provenance and CLI behavior. The browser-accessible program-status page is EPP-F01B, depends on EPP-F01, blocks EPP-F02, and requires a separate Spec Kit subject and implementation approval.
 
 1. Add separate program and child-feature lifecycle domains, an explicit `feature_state`, and event kinds for lifecycle transitions, failed attempts, and repair checkpoints.
 2. Expand leases to distinguish the `dev` baseline from the actual worktree start subject and to record stable worktree identity, mode, allowed actions, and recovery/audit status.

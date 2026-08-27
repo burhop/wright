@@ -1,4 +1,4 @@
-# Tasks: Control-Plane Validator and Live Readiness Dashboard
+# Tasks: Control-Plane Validator and Governed Readiness Snapshot
 
 **Input**: Design documents from `/specs/076-control-plane-validator/`
 
@@ -6,7 +6,7 @@
 
 **Tests**: Required by FR-020 and SC-002–SC-010. Story tests are written first and must fail for the intended missing behavior before implementation.
 
-**Authority gate**: Do not execute any checkbox until a replacement exact approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject, authorizes EPP-F01 plus R-004 through R-008 and R-014 through R-015 / `DEC-P0-013` and `DEC-P0-014`, binds this task file and every planning contract by digest, and reactivates the implementation lease for the exact paths below. The earlier approval bundle is stale. Approval does not authorize push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
+**Authority gate**: Do not execute any checkbox until a replacement exact approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject, authorizes only these 68 EPP-F01 tasks plus R-004 through R-008 and R-014 through R-015 / `DEC-P0-013`, `DEC-P0-014`, and the EPP-F01 boundary in `DEC-P0-015`, binds this task file and every planning contract by digest, and reactivates the implementation lease for the exact paths below. The earlier approval bundle is stale. Approval does not authorize EPP-F01B browser implementation, push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -259,6 +259,7 @@ exact implementation + material-change approval
 
 ## Notes
 
+- These 68 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
 - No task adds or upgrades a dependency, changes product runtime, creates/executes benchmark cases, contacts external systems, pushes, opens/merges a PR, integrates to `dev`, publishes, or releases.
 - Task checkboxes are progress markers, not lifecycle or approval evidence.
 - Optional Spec Kit auto-commit hooks remain disabled for this workflow because reviewed allowlist staging is required; no `git add .` may be used.

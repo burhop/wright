@@ -1,12 +1,14 @@
-# Feature Specification: Control-Plane Validator and Live Readiness Dashboard
+# Feature Specification: Control-Plane Validator and Governed Readiness Snapshot
 
 **Feature Branch**: `077-control-plane-validator`
 
 **Created**: 2026-08-26
 
-**Status**: Draft
+**Status**: Blocked — replacement exact approval required
 
 **Input**: User description: "Create EPP-F01, a local control-plane validator and live readiness dashboard that validates program schemas, references, digests, approvals, transitions, roadmap eligibility, WIP and leases, then truthfully derives four independent evidence-linked readiness areas."
+
+**Resolved boundary**: In EPP-F01, “dashboard” means the governed `dashboard.json` snapshot and equivalent CLI report only. The browser-accessible program-status page required by the parent program is the separate dependency-ordered EPP-F01B feature and is not one of these 68 tasks.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -26,9 +28,9 @@ A maintainer or fresh agent runs one documented local validation action before c
 
 ---
 
-### User Story 2 - See Four Truthful Readiness Areas (Priority: P2)
+### User Story 2 - Derive Four Truthful Readiness Areas (Priority: P2)
 
-A program approver or maintainer generates and reads one evidence-linked dashboard that keeps product readiness, benchmark readiness, commercial readiness, and program health separate.
+A program approver or maintainer generates and reads one evidence-linked machine snapshot and equivalent CLI report that keep product readiness, benchmark readiness, commercial readiness, and program health separate.
 
 **Why this priority**: A high process pass count, a healthy program, or a commercially complete package must never conceal failure in another release obligation.
 
@@ -99,14 +101,14 @@ A fresh agent can use only committed documentation and machine output to identif
 - **FR-007**: Validation MUST enforce program WIP limits, singleton feature-pointer ownership, active-lease identity and freshness, branch/worktree/base consistency, allowed planning or implementation scope, and stop conditions.
 - **FR-008**: Validation MUST verify approval existence, decision, scope, subject identity, conditions, expiry, revocation, and freshness; approval for one lifecycle boundary MUST NOT authorize another.
 - **FR-009**: Validation MUST evaluate semantic invariants that individual schemas cannot express, including referenced-ID existence, equality of bound subjects and digests, readiness-count consistency, release-formula inputs, and state/roadmap/dashboard agreement.
-- **FR-010**: The feature MUST derive, never hand-set, four independent dashboard areas in this exact order: product readiness, benchmark readiness, commercial readiness, and program health.
+- **FR-010**: The feature MUST derive, never hand-set, four independent machine-snapshot areas in this exact order: product readiness, benchmark readiness, commercial readiness, and program health.
 - **FR-011**: Each readiness area MUST expose its status, passed and required gate counts, gate-level status, classification, reason, evidence, and explicit per-gate `fresh` value, plus area blockers, exact evidence references, aggregate freshness, and last successful qualification. Each catalog assertion MUST have one same-ID evaluator result; a closed catalog registry MUST bind every required evidence class to expected source schema ID and role; every evidence reference MUST match that registry and its resolved exact SourceArtifact; and gate pass MUST be derived only from complete, fresh, supporting, evidence-backed, required-class-complete, exact-candidate results with required verifier independence. The validation report and dashboard MUST use the same derived gate-row contract.
-- **FR-012**: The dashboard MUST include benchmark target and counted totals, first-attempt and eventual outcomes, T0-T3 counts, failed, blocked, stale, contaminated, and not-tested counts, plus coverage, oracle, artifact, partition, and freshness deficits.
+- **FR-012**: The machine dashboard snapshot MUST include benchmark target and counted totals, first-attempt and eventual outcomes, T0-T3 counts, failed, blocked, stale, contaminated, and not-tested counts, plus coverage, oracle, artifact, partition, and freshness deficits.
 - **FR-013**: Overall release eligibility MUST remain false unless every required gate in all four readiness areas passes for the same exact candidate and a current exact-subject human release approval exists; no score, benchmark count, or manual flag may substitute.
 - **FR-014**: Validation and generation MUST be read-only with respect to source evidence and MUST NOT launch product runs, benchmark cases, MCPs, models, applications, network calls, release actions, or external writes.
 - **FR-015**: Dashboard replacement MUST be transactional. Generated dashboard bytes MUST remain `candidate_not_evidence`; a failed run MUST preserve the prior snapshot, expose a failed or stale delivery result, and never leave a partial or newly green snapshot. A committed-current claim MUST exist only in a validation delivery envelope backed by independently verified, passing delivery evidence in an explicitly supplied descendant `D` that binds source `S`, dashboard-only container `C`, exact dashboard bytes, and the allowed `C..D` delivery-only change without becoming an input to the snapshot. `D` MUST never be searched for, guessed, or inferred.
 - **FR-016**: Findings MUST use stable reason codes, severity, affected artifact and invariant, evidence, consequence, and bounded recovery; output ordering MUST be deterministic and all safely discoverable independent findings MUST be reported in one run.
-- **FR-017**: Human-readable and machine-readable outputs MUST represent the same verdict, exact subjects, area states, counts, blockers, and next action. Machine output MUST be versioned and reject unknown major consumers/producers rather than guessing.
+- **FR-017**: Human-readable CLI and machine-readable snapshot outputs MUST represent the same verdict, exact subjects, area states, counts, blockers, and next action. Machine output MUST be versioned and reject unknown major consumers/producers rather than guessing.
 - **FR-018**: Output MUST include only allowlisted metadata and bounded summaries. It MUST exclude credentials, tokens, cookies, private endpoints, raw prompts, raw logs, proprietary payloads, engineering artifact bodies, reusable authority, and unapproved absolute paths.
 - **FR-019**: The documented user journey MUST explain prerequisites, inputs, outputs, pass/fail meaning, empty/stale/blocked states, recovery, compatibility, and how to inspect the exact evidence behind every reported status.
 - **FR-020**: Automated verification MUST include a valid end-to-end fixture and isolated negative fixtures for every fail-closed class in FR-003 through FR-009, both byte-closed legacy profiles and rejection of any later v1 record, explicit and constrained-inferred container resolution, explicit-only delivery resolution and every rejection path, closed source-bundle generator identity, validator-success/readiness-status separation, shared per-gate freshness, independent passing descendant delivery evidence, every dashboard truth rule in FR-010 through FR-013, transactional failure, deterministic output, redaction, and no-source-mutation behavior.
@@ -142,7 +144,7 @@ A fresh agent can use only committed documentation and machine output to identif
 
 ## Assumptions
 
-- EPP-F01 is local repository tooling and documentation only; it does not implement the engineering-process product runtime or a remote hosted dashboard.
+- EPP-F01 is local repository tooling and documentation only; it does not implement the engineering-process product runtime, a browser-accessible status page, or a remote hosted dashboard. The governed browser projection is EPP-F01B and must traverse its own Spec Kit and approval lifecycle.
 - The approved program control plane and existing Wright Git history are the source of truth. Conversation history, checked task boxes, and manually edited aggregate status are not authority.
 - Git is available for exact committed-subject inspection. When Git metadata is unavailable, committed-evidence validation fails closed rather than falling back to checkout bytes.
 - Existing repository dependencies and supported runtimes are sufficient for implementation; adding or upgrading a dependency requires separate approval.
@@ -154,6 +156,7 @@ A fresh agent can use only committed documentation and machine output to identif
 ## Out of Scope
 
 - Product process definition, authoring, visualization, execution, persistence, or MCP invocation.
+- Browser route, frontend adapter, page, components, automatic refresh, or browser accessibility tests for program status; those belong to EPP-F01B.
 - Generating, editing, or executing benchmark process cases or qualification attempts.
 - Remote telemetry, hosted dashboards, notifications, SaaS integrations, or automatic uploads.
 - Push, PR creation, dev integration, production release, dependency changes, or approval automation.

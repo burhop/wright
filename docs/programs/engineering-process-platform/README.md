@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 implementing under the approved v2 lease
+**Status:** EPP-F01 blocked at a material-change gate; EPP-F01B browser-status follow-up proposed
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -23,7 +23,7 @@ Start here, then read only the artifacts needed for the next action:
 9. [`prototype-evidence.md`](prototype-evidence.md) and [`audits/2026-08-26-omission-audits.md`](audits/2026-08-26-omission-audits.md) — read-only prototype lessons and four independent plan audits.
 10. [`approval.md`](approval.md) — the recorded approval subject, scope, and downstream limits.
 11. [`../../../specs/076-control-plane-validator/spec.md`](../../../specs/076-control-plane-validator/spec.md), [`plan.md`](../../../specs/076-control-plane-validator/plan.md), [`tasks.md`](../../../specs/076-control-plane-validator/tasks.md), completed [`requirements checklist`](../../../specs/076-control-plane-validator/checklists/requirements.md) and [`program-control checklist`](../../../specs/076-control-plane-validator/checklists/program-control.md), and [`analysis.md`](../../../specs/076-control-plane-validator/analysis.md) — the active bounded EPP-F01 feature subject.
-12. [`evidence/transitions/TR-0018.json`](evidence/transitions/TR-0018.json) — the exact amended approval-subject artifact manifest and four-audit synthesis binding. If this record or its referenced revision-19 archive is absent or digest-invalid, the approval gate is not ready.
+12. [`decisions/0015-browser-status-surface.md`](decisions/0015-browser-status-surface.md) and [`evidence/transitions/TR-0021.json`](evidence/transitions/TR-0021.json) — the material browser-page omission, bounded EPP-F01B split, preserved EPP-F01 WIP checkpoint, and current human stop gate.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -52,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`EXECUTE_EPP_F01_TASKS` is the only eligible action. [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) bind the exact amended subject and all 34 `TR-0018` artifact digests. `TR-0019` is the sole v1-to-v2 migration, and `TR-0020` enters implementation under lease revision 5 for only the 68 local tasks. The preserved script drafts remain unverified work-in-progress and no task is yet claimed complete. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`APPROVE_EPP_F01_BROWSER_STATUS_SPLIT` is the only eligible action and requires the human. `DEC-P0-015` records that EPP-F01 remains bounded to its validator/snapshot/CLI work while the browser-accessible page becomes dependency-ordered `EPP-F01B` immediately before EPP-F02. The existing workspace `DashboardPage.tsx` is not accepted as that page. EPP-F01 Phase 1 is committed; incomplete Phase 2 WIP is preserved in local commit `40458d19e53882638e791339f7f3303053412795` with `49 passed`, but no Phase 2 task is claimed. Because the changed roadmap, dashboard contract, decision/risk and catch-up artifacts were part of the digest-bound implementation subject, both current EPP-F01 approvals are stale and the mutating lease is released. No EPP-F01 or EPP-F01B implementation, dependency, product runtime change, push, PR, merge, benchmark generation/execution, external mutation, publication, or release is authorized.

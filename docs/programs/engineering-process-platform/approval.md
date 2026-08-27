@@ -6,9 +6,9 @@
 
 ## Current EPP-F01 decision
 
-**Approved for bounded local implementation.** [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) record separate `material_change` and `feature_implementation` decisions for commit `10d13cbeaa2d038744752e93713ab7671f17f7d4`, repository tree `04f7cfc5cb3226896238ba6d3d060506284aece1`, program tree `321daf5e92f0981322ff0f54632bef56299e17b4`, and the same 34 artifact digests in `TR-0018`. Authority is limited to the 68 local tasks and implementation lease defined by the amended plan. Dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+**Stale; implementation is stopped.** [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) remain immutable evidence of the prior decision for commit `10d13cbeaa2d038744752e93713ab7671f17f7d4`, repository tree `04f7cfc5cb3226896238ba6d3d060506284aece1`, program tree `321daf5e92f0981322ff0f54632bef56299e17b4`, and the 34 artifact digests in `TR-0018`. `DEC-P0-015` identifies the omitted browser-accessible program-status outcome and splits it into dependency-ordered `EPP-F01B`. That material roadmap/dashboard-contract change invalidates the current exact subject; neither record grants further mutation.
 
-`TR-0019` validates both records and the frozen subject, emits the sole approved v1-to-v2 migration, reactivates the exact implementation lease, and enters `IMPLEMENTATION_AUTHORIZED`. No task mutation may begin until that transition's containing commit is complete and revalidated.
+`TR-0019` and `TR-0020` remain valid historical authorization/start evidence. `TR-0021` stops EPP-F01, releases the mutating lease, preserves incomplete WIP, and requests a new exact same-subject pair of `material_change` and `feature_implementation` approvals before the existing 68-task implementation can resume. EPP-F01B requires its own future Spec Kit lifecycle and implementation approval; approving this split does not authorize its implementation.
 
 ## Historical EPP-F01 decision — stale
 

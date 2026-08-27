@@ -240,6 +240,23 @@
       "options": ["Adopt explicit or constrained inferred container identity, per-gate fresh, a source-bundle digest, and external descendant delivery evidence", "Redesign the S/C/D delivery sequence and regenerate the affected contracts", "Stop dashboard delivery and ship validator-only scope after reapproval"],
       "required_evidence": ["Non-circular S/C/D proof", "One shared gate-row schema", "Canonical generator bundle manifest", "Fresh material-change and feature-implementation approvals"],
       "decision_record": "decisions/0014-dashboard-provenance.md"
+    },
+    {
+      "id": "DEC-P0-015",
+      "priority": "P0",
+      "status": "decided",
+      "question": "How will Wright satisfy the required browser-accessible live program-status page without silently expanding EPP-F01's approved 68-task implementation boundary?",
+      "why_material": "EPP-F01 governs validation, dashboard.json, provenance and CLI reporting but contains no browser route/page; treating the workspace landing page or JSON as the required status surface would hide a user-facing program outcome and change approved scope.",
+      "owner_role": "human_program_approver_and_product_approver",
+      "due": {
+        "before_event": "EPP-F01 implementation resumes or EPP-F02 becomes eligible",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T12:00:00Z"
+      },
+      "blocks": ["EPP-F01", "EPP-F01B", "EPP-F02", "PROD-02", "PROD-11", "BENCH-08", "PROG-01", "PROG-06"],
+      "options": ["Keep EPP-F01 machine-only and add independent EPP-F01B browser projection", "Expand EPP-F01 during implementation", "Treat Wright's workspace dashboard or dashboard.json as sufficient"],
+      "required_evidence": ["Dependency-ordered EPP-F01B roadmap item", "Read-only browser projection contract", "Accessible empty/stale/failed and traffic-light states", "Automatic committed-evidence refresh rule", "Fresh exact material-change and feature-implementation approvals before EPP-F01 resumes"],
+      "decision_record": "decisions/0015-browser-status-surface.md"
     }
   ]
 }

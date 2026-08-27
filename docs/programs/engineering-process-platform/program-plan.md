@@ -25,7 +25,7 @@ In scope:
 - deterministic, live, UI-started, and headless execution through existing Wright authority boundaries;
 - durable run/step/activity/evidence/output records with layered failure and recovery;
 - actionable artifacts, approvals, feedback loops, compatibility, rollback, and support evidence;
-- a 100-process qualification system and live evidence-derived dashboard;
+- a 100-process qualification system, governed evidence-derived snapshot, and browser-accessible read-only status page;
 - small Spec Kit feature loops governed by machine-readable transitions.
 
 Out of scope until separately approved:
@@ -63,9 +63,9 @@ The earlier engineering capability program remains historical evidence. Feature 
 
 ### Phase P0 — Approve and mechanize governance
 
-Approve this exact control plane, resolve the initial authority model, and implement a local validator/dashboard generator as the first child Spec Kit feature. No product feature becomes implementation-eligible until the validator can reject invalid schemas, cycles, stale approvals, missing digests, impossible transitions, and conflated readiness areas.
+Approve this exact control plane, resolve the initial authority model, implement the local validator/snapshot generator as `EPP-F01`, and then deliver its browser-accessible read-only projection as the independent `EPP-F01B` child feature. No product feature becomes implementation-eligible until the validator can reject invalid schemas, cycles, stale approvals, missing digests, impossible transitions and conflated readiness areas, and the browser page truthfully renders the same committed evidence without becoming a second authority.
 
-Exit evidence: plan approval record; control-plane validator feature integrated and deployed on `dev`; dashboard shows four independent areas; no active P0 governance defect.
+Exit evidence: plan approval record; EPP-F01 validator/snapshot and EPP-F01B browser page independently integrated and deployed on `dev`; the browser page shows four independent areas, `0/100`–`100/100` benchmark progress, active feature/task/checkpoint progress, blockers, next action, evidence and freshness; no active P0 governance defect.
 
 ### Phase P1 — Establish the canonical product spine
 

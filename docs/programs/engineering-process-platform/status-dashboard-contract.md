@@ -6,7 +6,9 @@ The dashboard is a read-only, locally generated projection of committed machine-
 
 The canonical snapshot is [`dashboard.json`](dashboard.json), validated by [`schemas/dashboard.schema.json`](schemas/dashboard.schema.json). Source artifacts remain authoritative.
 
-The current program schema is the legacy v1 planning/seed contract and still contains historical status vocabulary. Until EPP-F01 implements and migrates the approved v2 contracts, no v1 `committed_valid` dashboard claim is current or newly creatable: the checked-in v1 snapshot is only `contract_seed_not_evidence`. The approved implementation contract is [`../../../specs/076-control-plane-validator/contracts/dashboard.schema.json`](../../../specs/076-control-plane-validator/contracts/dashboard.schema.json), under which dashboard bytes are only seed/candidate and committed-current status belongs to the external validation delivery envelope.
+Delivery is intentionally split into two bounded features. `EPP-F01` owns validation, provenance, deterministic snapshot generation and CLI rendering. It does **not** provide a browser page. `EPP-F01B` owns the read-only browser projection of that snapshot after EPP-F01 integrates. Wright's existing workspace landing page (`DashboardPage.tsx`) is not the program-status dashboard and cannot satisfy this requirement without the separately specified EPP-F01B evidence contract. Until EPP-F01B integrates, browser status is explicitly unavailable rather than inferred from `dashboard.json` or the CLI.
+
+The committed `dashboard.json` is still the legacy v1 planning seed, while the promoted schema is the incomplete EPP-F01 v2 work-in-progress contract. The seed therefore does not validate as a v2 current snapshot and must not be migrated, regenerated, or called current while implementation is stopped. T040 remains responsible for reconciling the seed/current interpretation after the replacement EPP-F01 approval. Under v2, dashboard bytes are only seed/candidate and committed-current status belongs to the external validation delivery envelope.
 
 ## Four independent areas
 
@@ -59,11 +61,13 @@ Refresh never launches product runs, benchmark cases, MCPs, models, applications
 
 ## Minimum dashboard views
 
-- Overview with four traffic-light areas and release formula.
+- Browser-accessible overview with four accessible traffic-light areas and the non-compensating release formula.
 - Gate detail with evidence subject, age, blocker/recovery and history.
-- Roadmap/lease/next-action view.
-- Benchmark coverage/partition/qualification/attempt/oracle/artifact/freshness view.
+- Roadmap/lease/next-action view with active feature plus completed/total Spec Kit task and checkpoint progress.
+- Benchmark coverage/partition/qualification/attempt/oracle/artifact/freshness view that always exposes counted/target progress from `0/100` through `100/100` without implying another readiness area passes.
 - Commercial compatibility/release-subject view.
 - Program risk/decision/repair/verification view.
 
-All views link to exact evidence and remain keyboard accessible, narrow/zoomed/reduced-motion usable, and honest when empty, stale, blocked or unknown.
+All views link to exact evidence and freshness, remain keyboard accessible with non-color status text, usable contrast, narrow/zoomed/reduced-motion behavior, and honest empty, loading, stale, blocked, failed, unavailable and unknown states. The page refreshes automatically only when its committed snapshot/evidence identity changes; refresh never invents status, reads uncommitted author state as authority, or mutates the program.
+
+The browser adapter must verify the snapshot schema and source identity before rendering. A failed refresh preserves the last clearly labeled prior snapshot and exposes staleness/failure; it must never replace it with a partial page or a hand-set green value. The page is a projection, not an approval, transition, next-action grant, or authority source.

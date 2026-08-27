@@ -339,6 +339,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       }
+    },
+    {
+      "id": "RISK-017",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Machine dashboard is mistaken for the required browser status experience",
+      "cause": "EPP-F01 generates dashboard.json and CLI reports while the original program outcome also requires a browser-accessible page; Wright's existing workspace landing dashboard looks adjacent but consumes different state.",
+      "consequence": "The program can report governance tooling complete while maintainers cannot see four-area readiness, 0-to-100 benchmark progress, active work, blockers, next action, evidence and freshness in the required accessible browser surface.",
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "owner_role": "human_program_approver_and_product_approver",
+      "mitigations": ["DEC-P0-015", "Separate EPP-F01B after EPP-F01 and before EPP-F02", "Keep browser projection read-only and evidence-derived", "Test honest empty/stale/failed states and accessible traffic-light presentation", "Require fresh exact approvals before EPP-F01 resumes"],
+      "triggers": ["EPP-F01 called a browser dashboard", "DashboardPage.tsx treated as program status", "Status hand-set outside generated evidence", "EPP-F02 becomes eligible before EPP-F01B integrates"],
+      "contingency": "Keep EPP-F01 blocked, preserve validator WIP, and require a newly approved exact program subject; do not implement browser work inside EPP-F01 or claim the browser outcome complete.",
+      "evidence": ["decisions/0015-browser-status-surface.md", "status-dashboard-contract.md", "roadmap.json", "specs/076-control-plane-validator/tasks.md"],
+      "review": {
+        "cadence": "Every EPP-F01/EPP-F01B transition and before EPP-F02 eligibility",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T12:00:00Z"
+      }
     }
   ]
 }
