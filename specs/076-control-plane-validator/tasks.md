@@ -6,7 +6,7 @@
 
 **Tests**: Required by FR-020 and SC-002–SC-010. Story tests are written first and must fail for the intended missing behavior before implementation.
 
-**Authority gate**: Do not execute any checkbox until an exact human approval authorizes both EPP-F01 implementation and the material contract decisions R-004 through R-008, binds this task file and the remaining planning artifacts by digest, and expands the implementation lease to the exact paths below. Approval does not authorize push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
+**Authority gate**: Do not execute any checkbox until an exact approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same subject, authorizes EPP-F01 and decisions R-004 through R-008, binds this task file and the remaining planning artifacts by digest, and expands the implementation lease to the exact paths below. Approval does not authorize push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -39,12 +39,12 @@
 - [ ] T008 [P] Add failing catalog/evidence uniqueness, exact-candidate, freshness, and non-passing-classification contract tests in `tests/program_control_plane/test_dashboard_projection.py`
 - [ ] T009 Promote the approved lifecycle-policy schema and instantiate the closed legal graphs, event rules, WIP limits, path roles, action rules, approval boundaries, and bootstrap profile in `docs/programs/engineering-process-platform/schemas/lifecycle-policy.schema.json` and `docs/programs/engineering-process-platform/lifecycle-policy.json`
 - [ ] T010 Update the state-machine prose to match the machine policy and explicitly describe state domains, attempt/repair events, source/container history, and the v1 checkpoint in `docs/programs/engineering-process-platform/coordinator-state-machine.md`
-- [ ] T011 Promote the approved gate-catalog schema and transcribe all 27 current gates exactly once with evaluator, requiredness, assertions, freshness, and independence policy in `docs/programs/engineering-process-platform/schemas/gate-catalog.schema.json` and `docs/programs/engineering-process-platform/gate-catalog.json`
+- [ ] T011 Promote the approved gate-catalog schema and transcribe all 34 current gates exactly once with evaluator, requiredness, assertions, freshness, and independence policy in `docs/programs/engineering-process-platform/schemas/gate-catalog.schema.json` and `docs/programs/engineering-process-platform/gate-catalog.json`
 - [ ] T012 Promote the approved gate-evidence schema and create an honest initial evidence set for the current non-product/non-benchmark candidate without passing unsupported gates in `docs/programs/engineering-process-platform/schemas/gate-evidence.schema.json` and `docs/programs/engineering-process-platform/gate-evidence.json`
 - [ ] T013 Migrate program-state and transition-evidence schemas to v2 feature-state, domain/event, source/container, complete-manifest, and `FeatureLeaseV2` fields in `docs/programs/engineering-process-platform/schemas/program-state.schema.json` and `docs/programs/engineering-process-platform/schemas/transition-evidence.schema.json`
 - [ ] T014 Add append-only approval revocation/supersession/material-change semantics and structured due/review dates in `docs/programs/engineering-process-platform/schemas/approval.schema.json`, `docs/programs/engineering-process-platform/schemas/decision-register.schema.json`, and `docs/programs/engineering-process-platform/schemas/risk-register.schema.json`
-- [ ] T015 Append the approved material-change record and explicit v1-to-v2 migration transition without rewriting revisions 1–9 in `docs/programs/engineering-process-platform/evidence/approvals/`, `docs/programs/engineering-process-platform/evidence/transitions/`, and `docs/programs/engineering-process-platform/program-state.json`
-- [ ] T016 Promote the validation-report schema and migrate the dashboard schema to source `S`, inferred container `C`, exact candidate `R`, release approval, input-manifest digest, evidence classifications, and candidate status in `docs/programs/engineering-process-platform/schemas/validation-report.schema.json` and `docs/programs/engineering-process-platform/schemas/dashboard.schema.json`
+- [ ] T015 Append both same-subject approval-bundle records (`material_change` and `feature_implementation`) plus the explicit v1-to-v2 migration transition without rewriting revisions 1–9 in `docs/programs/engineering-process-platform/evidence/approvals/`, `docs/programs/engineering-process-platform/evidence/transitions/`, and `docs/programs/engineering-process-platform/program-state.json`
+- [ ] T016 Promote the validation-report, dashboard, and verification-evidence schemas with source `S`, inferred container `C`, exact candidate `R`, release approval, input-manifest digest, complete gate/benchmark fields, candidate status, actor separation, original failures/skips, and rollback identity in `docs/programs/engineering-process-platform/schemas/validation-report.schema.json`, `docs/programs/engineering-process-platform/schemas/dashboard.schema.json`, and `docs/programs/engineering-process-platform/schemas/verification-evidence.schema.json`
 - [ ] T017 Implement duplicate-key rejection, UTF-8 JSON loading, explicit compatibility tables, Draft 2020-12 validation, canonical state hashing, and stable schema findings in `scripts/program_control/json_contracts.py`
 - [ ] T018 Implement safe repository-root/path normalization and read-only Git object access with argument arrays and checkout-representation separation in `scripts/program_control/git_subject.py`
 - [ ] T019 Run the focused foundational contract tests and record exact commands/results in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-foundation.json`
@@ -65,7 +65,7 @@
 - [ ] T021 [P] [US1] Add exact blob/canonical digest, monotonic revision, append-only history, legal domain/event edge, bootstrap-profile, and complete-manifest cases in `tests/program_control_plane/test_transition_chain.py`
 - [ ] T022 [P] [US1] Add DAG cycle, dependency, tie ambiguity, status/evidence, blocking decision/risk, approval scope/freshness/revocation, WIP/pointer, and lease identity/action cases in `tests/program_control_plane/test_roadmap_approval_and_lease.py`
 - [ ] T023 [P] [US1] Add LF-blob/clean-CRLF, mixed/dirty checkout, detached/missing Git, path-with-spaces, unsafe path/symlink, and no-mutating-Git-command cases in `tests/program_control_plane/test_git_subject.py`
-- [ ] T024 [US1] Add valid end-to-end and multi-fault deterministic CLI cases with exact exit classes and no source changes in `tests/program_control_plane/test_cli.py`
+- [ ] T024 [US1] Add valid end-to-end and multi-fault deterministic CLI cases with exact exit classes, no source changes, current-program runtime under 5 seconds, and machine output at most 1 MiB in `tests/program_control_plane/test_cli.py`
 
 ### Implementation for User Story 1
 
@@ -167,9 +167,11 @@
 - [ ] T063 Exercise removal/manual-validation rollback and previous-compatible snapshot reading, then record immutable source and prior-dashboard identities in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-rollback.json`
 - [ ] T064 Inspect the full candidate diff for scope, secrets/private payloads, generated/binary artifacts, dependency drift, benchmark/product execution, and unauthorized external/Git changes in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-diff-audit.json`
 - [ ] T065 Freeze the exact candidate commit/tree/artifact manifest, author identity, commands, acceptance envelope, remaining limitations, and rollback pointer in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json`
-- [ ] T066 Stop author mutation and have a different independent-verifier identity rerun the critical deterministic, negative, platform, quickstart, evidence-link, rollback, and original-failure/skip review on the unchanged candidate; persist its verdict in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json`
+- [ ] T066 Stop author mutation and have a different independent-verifier identity rerun the critical deterministic, negative, platform, quickstart, evidence-link, rollback, and original-failure/skip review on unchanged candidate `R`; persist its candidate verdict in source commit `S` via `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json`
+- [ ] T067 Have the coordinator validate source commit `S`, generate the exact deterministic dashboard without code/source mutation, commit only `docs/programs/engineering-process-platform/dashboard.json` as successor `C`, and prove the first-parent, diff-allowlist, and digest relation
+- [ ] T068 Have the independent verifier inspect exact container `C`, dashboard bytes, schema/semantic recomputation, and `S`/`C` relation, then persist delivery-only evidence in descendant `D` at `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json` without changing a source input represented by the snapshot
 
-**Stop**: Any author change after T065 invalidates T066. A failed/blocked verifier returns to bounded repair with a stable cause; passing verification permits only a request for separate dev-integration approval.
+**Stop**: Any author code/source change after T065 invalidates T066. A failed/blocked verifier returns to bounded repair with a stable cause. T067 is a declared generated-output delivery by the coordinator; any other change invalidates the verdict. T068 may add only delivery evidence about `C`; new readiness/source evidence makes the snapshot stale. Passing delivery permits only a request for separate dev-integration approval.
 
 ---
 
@@ -205,7 +207,7 @@ exact implementation + material-change approval
 - US2 depends on US1's validated source/report model.
 - US3 depends on US2's candidate-generation path.
 - US4 depends on the complete report/projection behavior from US1–US3.
-- Phase 7 depends on all stories. T066 depends on candidate freeze at T065 and a distinct verifier.
+- Phase 7 depends on all stories. T066 depends on candidate freeze at T065 and a distinct verifier; T067 depends on T066 and must be a dashboard-only successor; T068 depends on T067 and changes only delivery evidence.
 
 ### Within-Phase Dependencies
 
@@ -215,7 +217,7 @@ exact implementation + material-change approval
 - T036–T040 depend on T032–T035; T041 depends on all US2 work.
 - T046–T048 depend on T042–T045; T049 depends on all US3 work.
 - T053–T055 depend on T050–T052 and prior stories; T056 depends on all US4 work.
-- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064; T066 depends on T065.
+- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064; T066 depends on T065; T067 depends on T066; T068 depends on T067.
 
 ### Parallel Opportunities
 
@@ -246,13 +248,13 @@ exact implementation + material-change approval
 
 ## Task Summary
 
-- Total tasks: 66
+- Total tasks: 68
 - Setup/foundation: 19
 - US1: 12
 - US2: 10
 - US3: 8
 - US4: 7
-- Cross-cutting/verification: 10
+- Cross-cutting/verification: 12
 - Suggested MVP: Phases 1–3 (US1), followed by a deliberate validation checkpoint
 
 ## Notes

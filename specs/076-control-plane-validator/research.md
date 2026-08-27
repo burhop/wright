@@ -92,6 +92,7 @@ The primary writer inspected the approved program contracts, current revisions 1
 - Any immutable-policy change requires a new append-only `material_change` approval bound to the change subject.
 - Record revocation/supersession as append-only events, never by editing the original approval.
 - Treat `approved_with_conditions` as blocking autonomous progress until each condition has a machine-verifiable record.
+- Encode the EPP-F01 entry authority as two approved records—`material_change` and `feature_implementation`—bound to the same exact artifact subject and cross-referenced as one approval bundle; do not overload the v1 singular `scope` field.
 
 **Rationale**: Comparing today's entire program tree to the original approved tree makes intended operational progress stale; merely proving the historical subject exists misses later policy changes.
 
@@ -131,6 +132,8 @@ The primary writer inspected the approved program contracts, current revisions 1
 **Decision**: Use compact temporary Git repositories from a fixture factory and one mutation per parameterized negative case. Duplicate keys are injected at raw-byte level. A fixed clock and shuffled discovery/insertion order prove determinism.
 
 Add focused routing for program docs, implementation modules, and tests to `check-dev-push.sh`; include modules in Ruff/format/MyPy paths and focused tests early in dev-merge/CI. Extend gate-process tests so routing cannot drift. Existing PowerShell wrappers delegate to Bash and need no duplicate validator logic.
+
+Every persisted foundation, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery result uses the versioned verification-evidence contract. The verifier validates frozen candidate `R` and commits candidate evidence in source `S`; the coordinator creates dashboard-only successor `C`; the verifier then checks `C` and persists delivery-only evidence in descendant `D`. `D` does not retroactively become an input to the snapshot at `S`; any new readiness evidence does. This sequencing preserves independent-verifier identity without an endless verify/regenerate cycle.
 
 ## Independent Audit Synthesis
 

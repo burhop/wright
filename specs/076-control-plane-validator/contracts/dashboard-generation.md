@@ -30,6 +30,8 @@ For each sorted path it records role, Git blob ID, exact blob-byte SHA-256, sche
 
 Before commit, the snapshot is `candidate_not_evidence`.
 
+For the final feature delivery, freeze implementation candidate `R` before independent verification. The independent verifier validates `R` and commits a schema-valid candidate-verification record in source commit `S`. The coordinator then generates without changing code/source evidence and commits only the dashboard as successor `C`. The independent verifier checks the exact dashboard bytes and `S`/`C` relation, then persists delivery-only evidence in descendant `D`. `D` is evidence about container `C`, not an input to the snapshot at `S`; a new readiness input after `S` makes the snapshot stale and requires regeneration.
+
 ## Committed-Current Relation
 
 A dashboard is `committed_valid` only when:
@@ -41,6 +43,7 @@ A dashboard is `committed_valid` only when:
 - the generator digest and complete input-manifest digest match Git objects at `S`;
 - every input remains schema/semantically valid;
 - every area and release result recomputes identically.
+- a final feature-delivery claim has independent delivery-only evidence bound to `C` in a descendant that changes no source input represented by the snapshot.
 
 If any condition changes or cannot be proved, delivery is stale/failed and the snapshot is not approval authority.
 

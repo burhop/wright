@@ -26,7 +26,7 @@ Build an offline, repository-local Python CLI that reads the Engineering Process
 
 **Constraints**: Read-only source inspection; committed Git-object bytes are identity authority; no product or benchmark execution; no network or external writes; bounded allowlisted diagnostics; one durable generated artifact; fail closed on unsupported contracts
 
-**Scale/Scope**: Current program plus append-only growth through 100 benchmark cases, 27 readiness gates, bounded feature history, decisions, risks, approvals, and leases
+**Scale/Scope**: Current program plus append-only growth through 100 benchmark cases, 34 readiness gates, bounded feature history, decisions, risks, approvals, and leases
 
 ## Constitution Check
 
@@ -52,8 +52,8 @@ The following material contract decisions are part of the exact implementation-a
 1. Add separate program and child-feature lifecycle domains, an explicit `feature_state`, and event kinds for lifecycle transitions, failed attempts, and repair checkpoints.
 2. Expand leases to distinguish the `dev` baseline from the actual worktree start subject and to record stable worktree identity, mode, allowed actions, and recovery/audit status.
 3. Define a non-circular dashboard source/container relation: source commit `S`, a complete authoritative-input manifest excluding generated outputs, and a dashboard-only successor commit `C`; record a separate release-candidate subject `R`.
-4. Add machine-readable gate catalog, gate-evidence, lifecycle-policy, and validation-report contracts. Markdown is explanatory, never parser authority.
-5. Make approval freshness and revocation append-only. Historical approvals validate their historical subjects; material policy changes need a new `material_change` approval; `approved_with_conditions` blocks autonomous progression until conditions are machine-verifiable.
+4. Add machine-readable gate catalog, gate-evidence, lifecycle-policy, validation-report, dashboard, and verification-evidence contracts. Markdown is explanatory, never parser authority.
+5. Make approval freshness and revocation append-only. Historical approvals validate their historical subjects; material policy changes need a new `material_change` approval; `approved_with_conditions` blocks autonomous progression until conditions are machine-verifiable. The implementation entry gate is an approval bundle containing separate `material_change` and `feature_implementation` records bound to the same exact subject because the v1 approval schema encodes one scope per record.
 6. Preserve transition revisions 1–9 through a closed bootstrap profile anchored to the approved control-plane subject and integrity checkpoint. Do not rewrite history.
 7. Accept only explicitly declared compatible schema versions. Unknown majors and undeclared newer minors fail closed.
 
@@ -76,7 +76,9 @@ specs/076-control-plane-validator/
 │   ├── gate-catalog.schema.json
 │   ├── gate-evidence.schema.json
 │   ├── lifecycle-policy.schema.json
-│   └── validation-report.schema.json
+│   ├── validation-report.schema.json
+│   ├── dashboard.schema.json
+│   └── verification-evidence.schema.json
 ├── checklists/
 └── tasks.md
 ```
@@ -99,7 +101,12 @@ tests/program_control_plane/
 ├── fixture_builder.py
 ├── test_atomicity_redaction_and_compatibility.py
 ├── test_cli.py
+├── test_contract_schemas.py
+├── test_dashboard_provenance.py
 ├── test_dashboard_projection.py
+├── test_determinism.py
+├── test_evidence_walkthrough.py
+├── test_git_subject.py
 ├── test_json_contracts.py
 ├── test_roadmap_approval_and_lease.py
 └── test_transition_chain.py
@@ -117,7 +124,8 @@ docs/programs/engineering-process-platform/
     ├── lifecycle-policy.schema.json
     ├── program-state.schema.json
     ├── transition-evidence.schema.json
-    └── validation-report.schema.json
+    ├── validation-report.schema.json
+    └── verification-evidence.schema.json
 ```
 
 **Structure Decision**: A thin executable delegates to an importable repo-local package. This follows existing script patterns, keeps governance code out of the public product distribution, and permits focused tests without subprocess-only coupling. The canonical schema designs in this feature directory are planning contracts; implementation copies the approved forms into the program schema directory.
@@ -131,7 +139,7 @@ docs/programs/engineering-process-platform/
 5. **Derive readiness**: evaluate every required gate exactly once from gate evidence for one exact release candidate `R`; aggregate each area independently with precedence `failed > blocked > stale > in_progress > not_started`; calculate release eligibility only from four passed areas plus a current exact-subject human release approval.
 6. **Render one report model**: deterministic findings and next action feed both terminal text and versioned machine JSON. Human output cannot diverge from the model.
 7. **Commit dashboard locally**: serialize UTF-8/LF, flush and `fsync`, reread and validate temporary bytes, then `os.replace`. A failure before replacement preserves prior bytes; no fallible validation occurs after the commit point.
-8. **Verify container relation**: a committed-valid dashboard is accepted only when commit `C` has first parent `S` and `S..C` changes only declared generated outputs. Uncommitted candidates remain non-evidence.
+8. **Verify and deliver without a provenance loop**: freeze implementation candidate `R`; have an independent verifier validate `R` and commit a schema-valid candidate report in source commit `S`; let the coordinator create successor `C` whose `S..C` diff contains only the dashboard; then have the verifier check `C` and persist a delivery-only record in descendant `D`. `D` is container evidence, not an input to the snapshot at `S`; any new readiness input requires regeneration. No author code/source mutation occurs after candidate freeze. Uncommitted candidates remain non-evidence.
 
 ## Error, Privacy, and Recovery Contract
 
@@ -143,13 +151,14 @@ docs/programs/engineering-process-platform/
 
 ## Verification Strategy
 
-- A frozen valid fixture and the current committed control plane must pass.
+- A frozen valid fixture and the current committed control plane must pass within 5 seconds and produce at most 1 MiB of machine output at current program scale.
 - Parameterized raw-byte or semantic single-fault fixtures cover every fail-closed class in FR-003 through FR-009; a multi-fault fixture proves deterministic aggregation.
 - Git fixtures prove LF blob identity survives clean CRLF checkout representation, dirty/mixed endings are separate observations, paths with spaces work, and no mutating Git command runs.
 - A four-by-status dashboard matrix proves area independence; the 100-terminal-success trap proves other areas and release approval remain independent.
 - Atomic failure injection covers candidate validation, write, flush/`fsync`, and replace failures with byte-for-byte prior snapshot preservation and no residue.
 - Runtime-built privacy canaries are searched across JSON, terminal output, stdout, and stderr.
 - Compatibility fixtures cover the seed snapshot, the bootstrap history profile, every explicitly supported schema version, unsupported major/minor, unknown generator, and removed-validator rollback.
+- Every author, story, rollback, candidate, and independent-verifier evidence file validates against the verification-evidence contract and preserves original failures/skips.
 - Focused tests run on Windows and Linux/POSIX; semantic verdicts and committed digests must match.
 - Wright fast-push routing, merge gates, and CI receive focused program-control coverage and tests that prevent gate-routing drift.
 

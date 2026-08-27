@@ -45,6 +45,8 @@ Text and JSON are renderings of the same schema-valid validation report. Text is
 6. sole next action or blocker;
 7. smallest recovery step.
 
+The JSON report additionally carries complete gate rows, the benchmark summary, exact release-approval result, and `release_eligible`; these are the same semantic values summarized in text.
+
 JSON validates against `validation-report.schema.json`. Machine output is UTF-8/LF with sorted keys and a trailing newline. Only `observed_at` and explicitly identified filesystem-delivery observations may differ between otherwise identical runs.
 
 ## Exit Status

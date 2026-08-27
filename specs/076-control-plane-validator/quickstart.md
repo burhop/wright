@@ -47,6 +47,8 @@ uv run --extra runtime python scripts/validate-engineering-process-program.py ge
 
 The command validates all sources before writing, builds all four areas for the same exact candidate, validates temporary output, and atomically replaces the target. Until the output is committed in the required source/container relationship, it is `candidate_not_evidence`.
 
+For final feature delivery, the implementation candidate is frozen and independently verified first. That candidate-verification record is committed in source `S`; the coordinator commits only the dashboard in successor `C`; the independent verifier then records a delivery-only check of `C` in descendant `D`. The delivery record does not become an input to the snapshot at `S`, and any new readiness evidence requires regeneration.
+
 On any write, flush, `fsync`, candidate-validation, or replace failure:
 
 - the command returns nonzero;

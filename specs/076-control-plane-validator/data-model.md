@@ -11,16 +11,17 @@
 
 | Field | Type | Rule |
 |---|---|---|
-| `source_commit` | 40-hex Git commit | Authoritative input commit `S` |
-| `source_tree` | 40-hex Git tree | Tree of `S` |
-| `program_tree` | 40-hex Git tree | Program subtree at `S` |
+| `resolution_status` | enum | `resolved` or `unresolved`; a passing report requires resolved exact Git identities |
+| `source_commit` | 40-hex Git commit/null | Authoritative input commit `S`; null only when resolution failed |
+| `source_tree` | 40-hex Git tree/null | Tree of `S`; null only when resolution failed |
+| `program_tree` | 40-hex Git tree/null | Program subtree at `S`; null only when resolution failed |
 | `container_commit` | null or 40-hex | Commit `C` containing generated dashboard; inferred, never embedded as self-identity |
 | `release_candidate` | null or exact subject object | Independent candidate `R` shared by all release gates |
 | `worktree_clean` | boolean | Observation only |
 | `checkout_representation` | object | Platform, autocrlf mode, dirty paths/count; bounded and non-authoritative |
 | `validator` | object | Version plus exact committed generator blob digest |
 | `observed_at` | date-time | Declared nondeterministic observation field |
-| `input_manifest_digest` | SHA-256 | Canonical digest of sorted complete authoritative input manifest |
+| `input_manifest_digest` | SHA-256/null | Canonical digest of sorted complete authoritative input manifest; null only when subject resolution failed and verdict cannot pass |
 
 ## SourceArtifact
 
@@ -166,7 +167,11 @@ Sort by severity rank, code, artifact, invariant. Unknown internal exceptions ma
 
 ## ValidationReport
 
-The report contains schema version, validation subject, overall verdict, ordered checks/findings, derived eligibility, four readiness areas, delivery result, and one next action or blocker. Observation time is explicitly nondeterministic; all other semantic fields are deterministic for one subject and validator version.
+The report contains schema version, validation subject, overall verdict, ordered checks/findings, derived eligibility, four readiness areas with complete gate rows and last-success data, benchmark summary, exact release-approval result, release eligibility, delivery result, and one next action or blocker. Observation time is explicitly nondeterministic; all other semantic fields are deterministic for one subject and validator version.
+
+## VerificationEvidence
+
+Every durable author, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery record contains a versioned evidence ID/kind, exact subject commit/tree/artifact manifest, actor identity/role/independence, bounded check records, original failure/skip references, findings, verdict, created time, and rollback pointer. It records command IDs or bounded methods, never secrets or unredacted command arguments. Candidate-freeze and independent-verifier evidence must use distinct actor identities. Delivery-only evidence in descendant `D` binds container `C` and is not an input to the snapshot generated from `S`.
 
 ## State Transitions
 
@@ -188,5 +193,5 @@ Validation failures never authorize or synthesize a transition. A failed attempt
 1. Freeze and test the v1 revision-9 integrity checkpoint.
 2. Add v2 schemas/policy/catalog/evidence plus append-only material-change approval.
 3. Emit one explicit v1-to-v2 migration transition; do not rewrite v1 files.
-4. Generate v2 dashboard only after v2 sources validate.
+4. Freeze implementation candidate `R`; commit independent-candidate evidence as source `S`; generate v2 dashboard only as dashboard-only successor `C`; then persist independent delivery-only verification in descendant `D` without treating `D` as a source input for the snapshot at `S`.
 5. On rollback/removal, retain all source evidence and v1 manual validation instructions; v2 dashboards become stale/unsupported and cannot be approval evidence.
