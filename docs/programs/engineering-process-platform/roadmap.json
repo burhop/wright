@@ -13,7 +13,10 @@
       "status": "complete",
       "depends_on": [],
       "blocking_decisions": [],
-      "gate_impacts": ["PROG-01", "PROG-05"],
+      "gate_impacts": [
+        "PROG-01",
+        "PROG-05"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": false
     },
@@ -23,10 +26,17 @@
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
       "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP; dispose the one exact approved 37-claim committed-identity cause without rewriting history or changing readiness; then generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
-      "status": "blocked",
-      "depends_on": ["EPP-P00"],
-      "blocking_decisions": ["DEC-P0-016"],
-      "gate_impacts": ["PROG-01", "PROG-02", "PROG-05", "PROG-06"],
+      "status": "active",
+      "depends_on": [
+        "EPP-P00"
+      ],
+      "blocking_decisions": [],
+      "gate_impacts": [
+        "PROG-01",
+        "PROG-02",
+        "PROG-05",
+        "PROG-06"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -37,9 +47,17 @@
       "title": "Browser program-status dashboard",
       "outcome": "A maintainer can open an accessible read-only browser page that renders the validated committed dashboard snapshot, four independent readiness areas, 0-to-100 benchmark qualification progress, active feature and task/checkpoint progress, blockers, next action, evidence links and freshness without becoming a second authority.",
       "status": "proposed",
-      "depends_on": ["EPP-F01"],
+      "depends_on": [
+        "EPP-F01"
+      ],
       "blocking_decisions": [],
-      "gate_impacts": ["PROD-02", "PROD-11", "BENCH-08", "PROG-01", "PROG-06"],
+      "gate_impacts": [
+        "PROD-02",
+        "PROD-11",
+        "BENCH-08",
+        "PROG-01",
+        "PROG-06"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -50,9 +68,19 @@
       "title": "Canonical process definition and read-only engineer view",
       "outcome": "An engineer can open a versioned process, understand phases, blocks, ports, gates, feedback and intended artifacts, and inspect the same semantic identities in text and diagram without enabling execution or inheriting prototype runtime code.",
       "status": "proposed",
-      "depends_on": ["EPP-F01B"],
-      "blocking_decisions": ["DEC-P0-002"],
-      "gate_impacts": ["PROD-01", "PROD-02", "PROD-08", "PROD-10", "BENCH-02"],
+      "depends_on": [
+        "EPP-F01B"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-002"
+      ],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-08",
+        "PROD-10",
+        "BENCH-02"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -63,9 +91,22 @@
       "title": "Durable run evidence and layered failure inspector",
       "outcome": "Deterministic runs produce immutable run and step records, truthful mode and provenance, boundary-level activity, inspectable inputs and outputs, distinct failure layers, blocked-dependent explanations, cancellation/reconnect semantics, and recovery guidance.",
       "status": "proposed",
-      "depends_on": ["EPP-F02"],
-      "blocking_decisions": ["DEC-P0-005", "DEC-P0-006", "DEC-P0-008"],
-      "gate_impacts": ["PROD-03", "PROD-04", "PROD-05", "PROD-07", "PROD-10", "BENCH-03"],
+      "depends_on": [
+        "EPP-F02"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-005",
+        "DEC-P0-006",
+        "DEC-P0-008"
+      ],
+      "gate_impacts": [
+        "PROD-03",
+        "PROD-04",
+        "PROD-05",
+        "PROD-07",
+        "PROD-10",
+        "BENCH-03"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -76,9 +117,19 @@
       "title": "Exact MCP binding and schema-aware preflight",
       "outcome": "A workflow author can select an installed server and exact tool, inspect identity/schema/approval, map typed producer outputs to required arguments, and receive honest preflight diagnostics without calling a tool or using domain-specific dispatch.",
       "status": "proposed",
-      "depends_on": ["EPP-F02", "EPP-F03"],
+      "depends_on": [
+        "EPP-F02",
+        "EPP-F03"
+      ],
       "blocking_decisions": [],
-      "gate_impacts": ["PROD-04", "PROD-06", "PROD-08", "PROD-09", "BENCH-02", "BENCH-06"],
+      "gate_impacts": [
+        "PROD-04",
+        "PROD-06",
+        "PROD-08",
+        "PROD-09",
+        "BENCH-02",
+        "BENCH-06"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -89,9 +140,26 @@
       "title": "Governed UI and headless execution with actionable outputs",
       "outcome": "The same reviewed definition runs through Wright's governed boundary from UI or headless entrypoints, with exact application identity, approvals, deadlines, cancellation, durable evidence, verified artifacts, usable output actions and explicit cleanup/rollback.",
       "status": "proposed",
-      "depends_on": ["EPP-F03", "EPP-F04"],
-      "blocking_decisions": ["DEC-P0-003", "DEC-P0-004", "DEC-P0-005", "DEC-P0-006", "DEC-P0-008"],
-      "gate_impacts": ["PROD-05", "PROD-06", "PROD-07", "PROD-09", "PROD-10", "BENCH-03", "BENCH-04"],
+      "depends_on": [
+        "EPP-F03",
+        "EPP-F04"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-003",
+        "DEC-P0-004",
+        "DEC-P0-005",
+        "DEC-P0-006",
+        "DEC-P0-008"
+      ],
+      "gate_impacts": [
+        "PROD-05",
+        "PROD-06",
+        "PROD-07",
+        "PROD-09",
+        "PROD-10",
+        "BENCH-03",
+        "BENCH-04"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -102,9 +170,26 @@
       "title": "Benchmark registry, oracle, holdout, and qualification harness",
       "outcome": "A governed registry can qualify process manifests, oracles, attempts, artifacts, partitions, coverage and freshness without exposing holdouts or treating terminal success as engineering correctness.",
       "status": "proposed",
-      "depends_on": ["EPP-F01", "EPP-F03"],
-      "blocking_decisions": ["DEC-P0-007", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"],
-      "gate_impacts": ["BENCH-01", "BENCH-02", "BENCH-03", "BENCH-05", "BENCH-07", "BENCH-08", "PROG-01"],
+      "depends_on": [
+        "EPP-F01",
+        "EPP-F03"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ],
+      "gate_impacts": [
+        "BENCH-01",
+        "BENCH-02",
+        "BENCH-03",
+        "BENCH-05",
+        "BENCH-07",
+        "BENCH-08",
+        "PROG-01"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -115,9 +200,22 @@
       "title": "Reviewed text and LLM process authoring",
       "outcome": "Engineers and bounded LLM adapters propose validated atomic changes against one canonical model, inspect semantic diffs and assumptions, and accept or reject without execution authority or stale-revision mutation.",
       "status": "proposed",
-      "depends_on": ["EPP-F04", "EPP-F05"],
-      "blocking_decisions": ["DEC-P0-002", "DEC-P0-004"],
-      "gate_impacts": ["PROD-01", "PROD-02", "PROD-06", "PROD-08", "PROD-09", "BENCH-05"],
+      "depends_on": [
+        "EPP-F04",
+        "EPP-F05"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-002",
+        "DEC-P0-004"
+      ],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-06",
+        "PROD-08",
+        "PROD-09",
+        "BENCH-05"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -128,9 +226,28 @@
       "title": "Qualify the frozen 100-process collection",
       "outcome": "Exactly 100 distinct, licensed and governed processes satisfy the approved coverage matrix, oracle and artifact rules, deterministic and declared live/profile levels, holdout integrity, independent review and freshness policy.",
       "status": "proposed",
-      "depends_on": ["EPP-B01", "EPP-F05", "EPP-F06"],
-      "blocking_decisions": ["DEC-P0-007", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"],
-      "gate_impacts": ["BENCH-01", "BENCH-02", "BENCH-03", "BENCH-04", "BENCH-05", "BENCH-06", "BENCH-07", "BENCH-08"],
+      "depends_on": [
+        "EPP-B01",
+        "EPP-F05",
+        "EPP-F06"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ],
+      "gate_impacts": [
+        "BENCH-01",
+        "BENCH-02",
+        "BENCH-03",
+        "BENCH-04",
+        "BENCH-05",
+        "BENCH-06",
+        "BENCH-07",
+        "BENCH-08"
+      ],
       "independently_shippable": false,
       "spec_kit_feature": false
     },
@@ -141,9 +258,23 @@
       "title": "Commercial and lifecycle hardening",
       "outcome": "The approved offering posture has evidence-backed compatibility, packaging, supply chain, privacy, support, operations, upgrade, rollback, documentation and repository controls for one exact release candidate.",
       "status": "proposed",
-      "depends_on": ["EPP-F05", "EPP-B01"],
-      "blocking_decisions": ["DEC-P0-001", "DEC-P0-012"],
-      "gate_impacts": ["COMM-01", "COMM-02", "COMM-03", "COMM-04", "COMM-05", "COMM-06", "COMM-07"],
+      "depends_on": [
+        "EPP-F05",
+        "EPP-B01"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-001",
+        "DEC-P0-012"
+      ],
+      "gate_impacts": [
+        "COMM-01",
+        "COMM-02",
+        "COMM-03",
+        "COMM-04",
+        "COMM-05",
+        "COMM-06",
+        "COMM-07"
+      ],
       "independently_shippable": true,
       "spec_kit_feature": true
     },
@@ -154,9 +285,20 @@
       "title": "Exact-subject production release",
       "outcome": "One candidate passes all four independent readiness areas, receives human release authorization, and completes Wright's build-once public release train with rollback evidence and GitHub Release last.",
       "status": "proposed",
-      "depends_on": ["EPP-B02", "EPP-C01"],
-      "blocking_decisions": ["DEC-P0-001", "DEC-P0-011"],
-      "gate_impacts": ["PROD-11", "BENCH-08", "COMM-08", "PROG-07"],
+      "depends_on": [
+        "EPP-B02",
+        "EPP-C01"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-001",
+        "DEC-P0-011"
+      ],
+      "gate_impacts": [
+        "PROD-11",
+        "BENCH-08",
+        "COMM-08",
+        "PROG-07"
+      ],
       "independently_shippable": false,
       "spec_kit_feature": false
     }

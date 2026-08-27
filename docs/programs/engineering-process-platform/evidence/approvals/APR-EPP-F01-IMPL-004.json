@@ -1,0 +1,185 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "bundle_id": "APB-EPP-F01-004",
+  "decision": "approved",
+  "subject": {
+    "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+    "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+    "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+    "artifact_digests": [
+      {
+        "path": "README.md",
+        "sha256": "57403f500d5eebf5e0dbecb8e11b00442fb1db81104fa3527dcf67a728064b25"
+      },
+      {
+        "path": "approval.md",
+        "sha256": "470e20a5ce09053afb73d6a4ec66110e0ca1dbe8f77a039c866f77b50838e4ac"
+      },
+      {
+        "path": "audits/2026-08-27-epp-f01-committed-identity-repair-audits.md",
+        "sha256": "cad5e2b311b27fe01a646511ae1fb4b4690bacf390660f4bca6f83f5331057f2"
+      },
+      {
+        "path": "audits/audit-status.json",
+        "sha256": "f814924b98a2df28b0c3267d57a832e0b9efcac542d586a16eb058572d79fa6e"
+      },
+      {
+        "path": "coordinator-state-machine.md",
+        "sha256": "7ce381005154183a5fb0b8e2c1e04305d2226cad09e5d86461d0b32972787df5"
+      },
+      {
+        "path": "decision-register.json",
+        "sha256": "5a74d95f0e7ed7472552986b3e63bdd14a69d4e731b4f0321841d329ebb054af"
+      },
+      {
+        "path": "decisions/0016-closed-committed-identity-correction.md",
+        "sha256": "c6bd4415fb8db91db74cfe819393ef38a5e5b1aa47daff65b014af394defb0b6"
+      },
+      {
+        "path": "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json",
+        "sha256": "fde4c32d48d4b352f21869304eec6f176bead9312cc2f15ff2da87685dd1580f"
+      },
+      {
+        "path": "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+        "sha256": "9bd3bab9215eefbfb951a0d8db8c613433002f1afc44b79cce6063de6e0ff27d"
+      },
+      {
+        "path": "evidence/states/README.md",
+        "sha256": "1b4e193095104cc2c9108e7de1697cb6d35cc570e1db53661650574506a01e01"
+      },
+      {
+        "path": "evidence/states/program-state-revision-0028.json",
+        "sha256": "5313bb58c294ee2c6f48cdb17393bb88e8c67edc0c2c24833b23f6706a89982f"
+      },
+      {
+        "path": "gate-catalog.json",
+        "sha256": "a2d64c918b5fe4c0f77a9618ce1135da7d5539c58513eb0526548b00d394e251"
+      },
+      {
+        "path": "gates.md",
+        "sha256": "674c49b484d52e5a8bfe3040dbd31b66da6e22b3557e2ca00f52e3d42e0cafeb"
+      },
+      {
+        "path": "integration-release.md",
+        "sha256": "00049f96bda972a29ad4cf0ca6ba4f18a7c79ccb9d0be38717515582e71b1044"
+      },
+      {
+        "path": "lifecycle-policy.json",
+        "sha256": "d68bf6443187bcd6d8bc162b8b78cf4d944a24345aafb65ba13c94c66deaba6b"
+      },
+      {
+        "path": "program-plan.md",
+        "sha256": "a42524165b04c2af234ff6f9f444898ad834dbe358a325cabbc9771eb7020b74"
+      },
+      {
+        "path": "program-state.json",
+        "sha256": "5313bb58c294ee2c6f48cdb17393bb88e8c67edc0c2c24833b23f6706a89982f"
+      },
+      {
+        "path": "proposed-features.md",
+        "sha256": "94f6451c955770f7a57d87cd797b74b39d0bf86bddce77caef4c8c5835a6070a"
+      },
+      {
+        "path": "risk-register.json",
+        "sha256": "a431f8fb7e0c3defeb1c7c9d4a460e3f55dfd462078b503ce009db5fe0fdd230"
+      },
+      {
+        "path": "roadmap.json",
+        "sha256": "8eafc90195585936f08074fd83be0d1b289924d8c66636fc77d363da8494c0b0"
+      },
+      {
+        "path": "schemas/README.md",
+        "sha256": "d6d3189c1e19080c2b76fc7ae5203b3ab10ad2ae9e9216596a6e41cbf5a3320d"
+      },
+      {
+        "path": "schemas/committed-identity-correction.schema.json",
+        "sha256": "e01b2eda036b69046912945b065c1a7d8aba2334991c37b48179132aedaddc7b"
+      },
+      {
+        "path": "schemas/transition-evidence.schema.json",
+        "sha256": "50fc533d00091e19544cd11071cbb1d022d58969cec32ab16dd064c0d0c0a0fb"
+      },
+      {
+        "path": "schemas/validation-report.schema.json",
+        "sha256": "547e6004a50a8972c755f0aa2102c5fd8ea80510264cd7acc9b7169c6b63e5d8"
+      },
+      {
+        "path": "status-dashboard-contract.md",
+        "sha256": "2fde0d81995d4ffd383e51750e3528d947a64fbef470a7cb1af13820ecd6f0f6"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/analysis.md",
+        "sha256": "c4951074d6fe2b74dd8797b93ad2d8f79339e11662043f943511cfc7456fd2c6"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+        "sha256": "ca8d8abf24399b1419087b6e10dbcad85d32a9dc0538fa72fb2e85203c21269d"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "sha256": "3ec5dd11b93f80c0b2b389199b25be624946261cc54db518737d37f9ff7b8034"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/cli.md",
+        "sha256": "5a97859bc068c4340e389d9dd2c5dd08f2a110a10f8208cd86db656665e862e1"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json",
+        "sha256": "e01b2eda036b69046912945b065c1a7d8aba2334991c37b48179132aedaddc7b"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/dashboard-generation.md",
+        "sha256": "007cab5b7be8f0abced6d015a1d1c567f167defb3a7f9ea3e63ecc0382cd106f"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json",
+        "sha256": "547e6004a50a8972c755f0aa2102c5fd8ea80510264cd7acc9b7169c6b63e5d8"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/data-model.md",
+        "sha256": "102efb70abf53dbc21d3b1d8555e312aa81eecd475195947859a6d659016b577"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/plan.md",
+        "sha256": "456213dbbf145c626fcc4ab78969e31ae676784c496f6f2ac1fb12567c6b8375"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/quickstart.md",
+        "sha256": "5647fe5f9dbd9de8fac30e5ec4647bfb071776156e6cce6a7fb444fbd116262d"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/research.md",
+        "sha256": "dfdae0540b2111ead39fd6b2bd230427c3cd72fec87a22d54e2ff64a60922ab5"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/spec.md",
+        "sha256": "be2469bd5b3cc3abd5b8de947661911a08ffbc4af5d2273c1b97c3e3120b9899"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/tasks.md",
+        "sha256": "ed41729f6ed3b57dc2bc10c8b9be943db5710edbc3307331e349daf55e39dca9"
+      }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T16:24:45Z",
+  "expires_at": null,
+  "review": {
+    "due_at": null,
+    "last_reviewed_at": "2026-08-27T16:24:45Z"
+  },
+  "revocation_events": [],
+  "conditions": [
+    "Authority is limited to the revised 69 local EPP-F01 validator, snapshot, provenance and CLI tasks and the implementation lease defined by the amended plan.",
+    "DEC-P0-016 and only the exact closed 37-claim profile COR-EPP-F01-US1-COMMITTED-IDENTITY-001 are accepted; the claims remain unresolved until implementation independently recomputes 37/37.",
+    "EPP-F01B, dependencies, benchmark generation or execution, product-runtime changes, push, PR, merge, dev integration, external mutation, publication and release remain unauthorized."
+  ],
+  "approval_id": "APR-EPP-F01-IMPL-004",
+  "scope": "feature_implementation",
+  "supersedes": [
+    "APR-EPP-F01-IMPL-003"
+  ]
+}

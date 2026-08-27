@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 remains blocked after planning-only repair analysis. T020–T023 pass; the stable committed-identity cause is now specified as exactly 37 factual claims (six immutable transition output digests and 31 wrong-tree pointers across state revisions 1–26). A closed append-only correction is proposed, but no implementation authority exists until exact V4 approval. EPP-F01B remains proposed and unauthorized.
+**Status:** EPP-F01 V4 local implementation is authorized. T001–T023 pass; DEC-P0-016 and the exact closed 37-claim correction profile are approved under lease revision 7. The historical claims remain unresolved until T069 recomputes 37/37. EPP-F01B remains proposed and unauthorized.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -55,4 +55,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Stop before T069, T024, or any implementation mutation. Planning/re-analysis authority was used only to define the closed correction, revise the plan to 69 tasks, run four audits and Spec Kit analysis, and freeze a new subject. The sole next action is exact human V4 `material_change` plus `feature_implementation` approval accepting DEC-P0-016 and the frozen 37-claim profile. Approval may authorize only the amended local task/lease envelope; it cannot weaken Git-blob identity, rewrite TR-0023–TR-0025 or state revisions 1–26, or grant any excluded action. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+Run the implementation preflight and then T069 before T024 or any dependent work. The approved correction may only dispose the literal historical findings after independent 37/37 Git-object recomputation; it cannot weaken Git-blob identity or rewrite TR-0023–TR-0025 or state revisions 1–26. Continue the remaining local tasks without pausing at ordinary passing checkpoints. Stop for a material plan change, exhausted repair limit, missing authority, a new dependency, EPP-F01B work, benchmark execution, external change, push/PR/merge/dev integration, publication/release, or the next explicit human gate.

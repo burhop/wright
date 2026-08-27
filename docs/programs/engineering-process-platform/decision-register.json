@@ -15,9 +15,22 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-C01", "EPP-R01", "COMM-01", "COMM-06", "COMM-08"],
-      "options": ["Supportable public-alpha evaluation", "Production-supported commercial offer"],
-      "required_evidence": ["Approved offering and exclusions", "Support/SLA and incident ownership", "Customer-facing terms and contact-path test"],
+      "blocks": [
+        "EPP-C01",
+        "EPP-R01",
+        "COMM-01",
+        "COMM-06",
+        "COMM-08"
+      ],
+      "options": [
+        "Supportable public-alpha evaluation",
+        "Production-supported commercial offer"
+      ],
+      "required_evidence": [
+        "Approved offering and exclusions",
+        "Support/SLA and incident ownership",
+        "Customer-facing terms and contact-path test"
+      ],
       "decision_record": null
     },
     {
@@ -32,9 +45,23 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F02", "EPP-F06", "PROD-01", "PROD-10"],
-      "options": ["Versioned JSON with explicit Apply", "Versioned YAML with explicit Apply", "Purpose-built textual DSL", "No editable text in first production increment"],
-      "required_evidence": ["Human and LLM edit study", "Round-trip and invalid-edit behavior", "Compatibility and migration analysis"],
+      "blocks": [
+        "EPP-F02",
+        "EPP-F06",
+        "PROD-01",
+        "PROD-10"
+      ],
+      "options": [
+        "Versioned JSON with explicit Apply",
+        "Versioned YAML with explicit Apply",
+        "Purpose-built textual DSL",
+        "No editable text in first production increment"
+      ],
+      "required_evidence": [
+        "Human and LLM edit study",
+        "Round-trip and invalid-edit behavior",
+        "Compatibility and migration analysis"
+      ],
       "decision_record": null
     },
     {
@@ -49,9 +76,22 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F05", "PROD-06", "BENCH-04"],
-      "options": ["Exclusive renewable lease", "Immutable application candidate identity", "Application-native transaction/session identity", "Disallow application-backed execution until a contract exists"],
-      "required_evidence": ["Competing-client failure tests", "Kill/reconnect/recovery tests", "Exact surface/run identity contract"],
+      "blocks": [
+        "EPP-F05",
+        "PROD-06",
+        "BENCH-04"
+      ],
+      "options": [
+        "Exclusive renewable lease",
+        "Immutable application candidate identity",
+        "Application-native transaction/session identity",
+        "Disallow application-backed execution until a contract exists"
+      ],
+      "required_evidence": [
+        "Competing-client failure tests",
+        "Kill/reconnect/recovery tests",
+        "Exact surface/run identity contract"
+      ],
       "decision_record": null
     },
     {
@@ -66,9 +106,23 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F05", "EPP-F06", "PROD-06", "PROD-09", "COMM-03"],
-      "options": ["Backend-acknowledged hard-no-tools capability", "Dedicated executor that cannot load tools", "Do not offer a hard-no-tools claim"],
-      "required_evidence": ["Negative tool-call proof", "Executor capability identity", "Policy-violation event behavior"],
+      "blocks": [
+        "EPP-F05",
+        "EPP-F06",
+        "PROD-06",
+        "PROD-09",
+        "COMM-03"
+      ],
+      "options": [
+        "Backend-acknowledged hard-no-tools capability",
+        "Dedicated executor that cannot load tools",
+        "Do not offer a hard-no-tools claim"
+      ],
+      "required_evidence": [
+        "Negative tool-call proof",
+        "Executor capability identity",
+        "Policy-violation event behavior"
+      ],
       "decision_record": null
     },
     {
@@ -83,9 +137,21 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F03", "EPP-F05", "PROD-05"],
-      "options": ["Fixed profile-specific deadlines", "Policy-bounded workflow overrides", "Executor-declared defaults with product ceilings"],
-      "required_evidence": ["Observed workload distributions", "Cancellation and cleanup behavior", "User-facing recovery study"],
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-05"
+      ],
+      "options": [
+        "Fixed profile-specific deadlines",
+        "Policy-bounded workflow overrides",
+        "Executor-declared defaults with product ceilings"
+      ],
+      "required_evidence": [
+        "Observed workload distributions",
+        "Cancellation and cleanup behavior",
+        "User-facing recovery study"
+      ],
       "decision_record": null
     },
     {
@@ -100,9 +166,24 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F03", "EPP-F05", "PROD-07", "PROD-10", "COMM-03", "COMM-05"],
-      "options": ["Workspace-governed durable artifacts plus explicit ephemeral outputs", "Run-scoped retention only", "Capability-owned retention with Wright references"],
-      "required_evidence": ["Lifetime and ownership matrix", "Reopen/expiry/cleanup tests", "Authorization and deletion policy"],
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-07",
+        "PROD-10",
+        "COMM-03",
+        "COMM-05"
+      ],
+      "options": [
+        "Workspace-governed durable artifacts plus explicit ephemeral outputs",
+        "Run-scoped retention only",
+        "Capability-owned retention with Wright references"
+      ],
+      "required_evidence": [
+        "Lifetime and ownership matrix",
+        "Reopen/expiry/cleanup tests",
+        "Authorization and deletion policy"
+      ],
       "decision_record": null
     },
     {
@@ -117,9 +198,22 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-B01", "EPP-B02", "BENCH-03", "BENCH-07"],
-      "options": ["Named qualified domain reviewers per family", "Independent standards/reference-tool review", "Mixed reviewer plus reference-tool panel"],
-      "required_evidence": ["Oracle-authority matrix", "Negative-control policy", "Reviewer independence and disagreement process"],
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-03",
+        "BENCH-07"
+      ],
+      "options": [
+        "Named qualified domain reviewers per family",
+        "Independent standards/reference-tool review",
+        "Mixed reviewer plus reference-tool panel"
+      ],
+      "required_evidence": [
+        "Oracle-authority matrix",
+        "Negative-control policy",
+        "Reviewer independence and disagreement process"
+      ],
       "decision_record": null
     },
     {
@@ -134,9 +228,23 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F03", "EPP-F05", "PROD-01", "PROD-05", "BENCH-04"],
-      "options": ["Normalized full run-record equivalence", "Contract-selected material-field equivalence with declared observational differences", "No cross-entrypoint support claim"],
-      "required_evidence": ["Equivalence field contract", "Paired-run tests", "Declared nondeterministic observation policy"],
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-01",
+        "PROD-05",
+        "BENCH-04"
+      ],
+      "options": [
+        "Normalized full run-record equivalence",
+        "Contract-selected material-field equivalence with declared observational differences",
+        "No cross-entrypoint support claim"
+      ],
+      "required_evidence": [
+        "Equivalence field contract",
+        "Paired-run tests",
+        "Declared nondeterministic observation policy"
+      ],
       "decision_record": null
     },
     {
@@ -151,9 +259,21 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-B01", "EPP-B02", "BENCH-05"],
-      "options": ["Human-controlled evaluator service/store", "Access-separated local encrypted store", "External evaluator organization"],
-      "required_evidence": ["Custodian and access policy", "Contamination ledger", "Replacement and evaluation cadence"],
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-05"
+      ],
+      "options": [
+        "Human-controlled evaluator service/store",
+        "Access-separated local encrypted store",
+        "External evaluator organization"
+      ],
+      "required_evidence": [
+        "Custodian and access policy",
+        "Contamination ledger",
+        "Replacement and evaluation cadence"
+      ],
       "decision_record": null
     },
     {
@@ -168,9 +288,22 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-B01", "EPP-B02", "BENCH-01", "BENCH-06"],
-      "options": ["Mechanical-product-development teams", "Cross-discipline engineering organizations", "Wright public-alpha evaluation use cases only"],
-      "required_evidence": ["Sampling frame and exclusions", "Customer/user research", "Maximum contribution per equivalence family"],
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-01",
+        "BENCH-06"
+      ],
+      "options": [
+        "Mechanical-product-development teams",
+        "Cross-discipline engineering organizations",
+        "Wright public-alpha evaluation use cases only"
+      ],
+      "required_evidence": [
+        "Sampling frame and exclusions",
+        "Customer/user research",
+        "Maximum contribution per equivalence family"
+      ],
       "decision_record": null
     },
     {
@@ -185,9 +318,24 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-B01", "EPP-B02", "EPP-R01", "BENCH-04", "BENCH-07", "COMM-08"],
-      "options": ["Adopt the proposed all-100 T0/T1 plus declared T2/T3 subset policy", "Adopt stricter per-stratum first-attempt and repeat thresholds", "Limit initial claims and reduce required live profiles explicitly"],
-      "required_evidence": ["Frozen benchmark policy", "First-attempt/eventual/retry semantics", "Per-stratum/profile and staleness thresholds"],
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "EPP-R01",
+        "BENCH-04",
+        "BENCH-07",
+        "COMM-08"
+      ],
+      "options": [
+        "Adopt the proposed all-100 T0/T1 plus declared T2/T3 subset policy",
+        "Adopt stricter per-stratum first-attempt and repeat thresholds",
+        "Limit initial claims and reduce required live profiles explicitly"
+      ],
+      "required_evidence": [
+        "Frozen benchmark policy",
+        "First-attempt/eventual/retry semantics",
+        "Per-stratum/profile and staleness thresholds"
+      ],
       "decision_record": null
     },
     {
@@ -202,9 +350,23 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-B01", "EPP-B02", "EPP-C01", "COMM-02", "BENCH-02"],
-      "options": ["Publicly redistributable assets only", "Mixed public and access-controlled licensed assets", "Customer-provided evaluation assets under separate agreements"],
-      "required_evidence": ["License/provenance policy", "Redistribution and commercial-use review", "Public versus access-controlled storage rules"],
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "EPP-C01",
+        "COMM-02",
+        "BENCH-02"
+      ],
+      "options": [
+        "Publicly redistributable assets only",
+        "Mixed public and access-controlled licensed assets",
+        "Customer-provided evaluation assets under separate agreements"
+      ],
+      "required_evidence": [
+        "License/provenance policy",
+        "Redistribution and commercial-use review",
+        "Public versus access-controlled storage rules"
+      ],
       "decision_record": null
     },
     {
@@ -219,9 +381,22 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
-      "options": ["Add a closed exact-digest bridge profile for revisions 10 through 19 while retaining r1-through-r9", "Replace the bootstrap profile with one closed revisions-1-through-19 profile", "Stop EPP-F01 and redesign migration/history semantics"],
-      "required_evidence": ["Exact revision-19 checkpoint", "Enumerated revisions 10 through 19 and TR-0009 through TR-0018", "No-future-v1 and single-migration acceptance rules", "Fresh exact material-change and feature-implementation approvals"],
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-05"
+      ],
+      "options": [
+        "Add a closed exact-digest bridge profile for revisions 10 through 19 while retaining r1-through-r9",
+        "Replace the bootstrap profile with one closed revisions-1-through-19 profile",
+        "Stop EPP-F01 and redesign migration/history semantics"
+      ],
+      "required_evidence": [
+        "Exact revision-19 checkpoint",
+        "Enumerated revisions 10 through 19 and TR-0009 through TR-0018",
+        "No-future-v1 and single-migration acceptance rules",
+        "Fresh exact material-change and feature-implementation approvals"
+      ],
       "decision_record": "decisions/0013-closed-v1-bridge.md"
     },
     {
@@ -236,9 +411,23 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T11:04:37Z"
       },
-      "blocks": ["EPP-F01", "PROG-01", "PROG-03", "PROG-05"],
-      "options": ["Adopt explicit or constrained inferred container identity, per-gate fresh, a source-bundle digest, and external descendant delivery evidence", "Redesign the S/C/D delivery sequence and regenerate the affected contracts", "Stop dashboard delivery and ship validator-only scope after reapproval"],
-      "required_evidence": ["Non-circular S/C/D proof", "One shared gate-row schema", "Canonical generator bundle manifest", "Fresh material-change and feature-implementation approvals"],
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-03",
+        "PROG-05"
+      ],
+      "options": [
+        "Adopt explicit or constrained inferred container identity, per-gate fresh, a source-bundle digest, and external descendant delivery evidence",
+        "Redesign the S/C/D delivery sequence and regenerate the affected contracts",
+        "Stop dashboard delivery and ship validator-only scope after reapproval"
+      ],
+      "required_evidence": [
+        "Non-circular S/C/D proof",
+        "One shared gate-row schema",
+        "Canonical generator bundle manifest",
+        "Fresh material-change and feature-implementation approvals"
+      ],
       "decision_record": "decisions/0014-dashboard-provenance.md"
     },
     {
@@ -253,26 +442,59 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T12:00:00Z"
       },
-      "blocks": ["EPP-F01", "EPP-F01B", "EPP-F02", "PROD-02", "PROD-11", "BENCH-08", "PROG-01", "PROG-06"],
-      "options": ["Keep EPP-F01 machine-only and add independent EPP-F01B browser projection", "Expand EPP-F01 during implementation", "Treat Wright's workspace dashboard or dashboard.json as sufficient"],
-      "required_evidence": ["Dependency-ordered EPP-F01B roadmap item", "Read-only browser projection contract", "Accessible empty/stale/failed and traffic-light states", "Automatic committed-evidence refresh rule", "Fresh exact material-change and feature-implementation approvals before EPP-F01 resumes"],
+      "blocks": [
+        "EPP-F01",
+        "EPP-F01B",
+        "EPP-F02",
+        "PROD-02",
+        "PROD-11",
+        "BENCH-08",
+        "PROG-01",
+        "PROG-06"
+      ],
+      "options": [
+        "Keep EPP-F01 machine-only and add independent EPP-F01B browser projection",
+        "Expand EPP-F01 during implementation",
+        "Treat Wright's workspace dashboard or dashboard.json as sufficient"
+      ],
+      "required_evidence": [
+        "Dependency-ordered EPP-F01B roadmap item",
+        "Read-only browser projection contract",
+        "Accessible empty/stale/failed and traffic-light states",
+        "Automatic committed-evidence refresh rule",
+        "Fresh exact material-change and feature-implementation approvals before EPP-F01 resumes"
+      ],
       "decision_record": "decisions/0015-browser-status-surface.md"
     },
     {
       "id": "DEC-P0-016",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "May EPP-F01 resolve the stable committed-identity cause only through the exact closed 37-claim append-only correction profile without changing any readiness or release authority?",
       "why_material": "The six transition digests and 31 state tree pointers are immutable factual defects. Rewriting history, weakening Git identity, or adopting a generic override would compromise control-plane trust and could become a hidden readiness waiver.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due": {
         "before_event": "EPP-F01 V4 implementation authorization",
         "due_at": null,
-        "last_reviewed_at": "2026-08-27T15:26:54Z"
+        "last_reviewed_at": "2026-08-27T16:24:45Z"
       },
-      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
-      "options": ["Accept only COR-EPP-F01-US1-COMMITTED-IDENTITY-001 and its exact 37 factual claims", "Stop EPP-F01 and redesign immutable-evidence correction semantics", "Reject correction and retain EPP-F01 blocked"],
-      "required_evidence": ["Literal six-transition plus 26-state/31-pointer target set", "Exact Git-object and canonical-state recomputation", "Strict-ancestor and no-correction-of-correction proof", "Readiness/benchmark/commercial/release non-interference proof", "Fresh exact material-change and feature-implementation approvals"],
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-05"
+      ],
+      "options": [
+        "Accept only COR-EPP-F01-US1-COMMITTED-IDENTITY-001 and its exact 37 factual claims",
+        "Stop EPP-F01 and redesign immutable-evidence correction semantics",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Literal six-transition plus 26-state/31-pointer target set",
+        "Exact Git-object and canonical-state recomputation",
+        "Strict-ancestor and no-correction-of-correction proof",
+        "Readiness/benchmark/commercial/release non-interference proof",
+        "Fresh exact material-change and feature-implementation approvals"
+      ],
       "decision_record": "decisions/0016-closed-committed-identity-correction.md"
     }
   ]
