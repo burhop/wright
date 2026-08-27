@@ -6,9 +6,9 @@
 
 ## Current EPP-F01 decision
 
-**Blocked at a new exact V7 approval gate.** V6 authorized the now-complete author work through T065 and the first T066 verification attempt. That attempt exposed exactly two immutable repair-evidence defects. The proposed `COR-EPP-F01-REPAIR-EVIDENCE-001` amendment and DEC-P0-018 do not acquire implementation authority merely by being planned or committed.
+**Approved for the bounded V7 repair and one T066 retry.** `APR-EPP-F01-MC-007` and `APR-EPP-F01-IMPL-007` bind commit `a2b9727a15c445875b2ef857f482bee31ccc594c`, tree `ee16d103c98c3d891d32c45b243a131dd0745527`, program tree `677f1ec8e895b6330941f8ab5afe92c5dadf980b`, and the 31 artifact digests in TR-0046. They accept DEC-P0-018 and the exact closed two-claim correction.
 
-All existing approval and transition records remain immutable historical evidence. The current planning authority permits only this closed amendment, local consistency checks, read-only analysis, bounded independent review, and exact-subject freeze. T070–T072, T066 retry, EPP-F01B implementation, and every excluded action remain blocked.
+Lease revision 11 authorizes only local T070 through T072 and, after a passing replacement freeze, one distinct independent T066 retry. T067–T068, product changes, EPP-F01B implementation, dependencies, benchmark execution, external changes, push/PR/merge/dev integration, publication, and release remain blocked.
 
 ## Historical EPP-F01 decision — stale
 

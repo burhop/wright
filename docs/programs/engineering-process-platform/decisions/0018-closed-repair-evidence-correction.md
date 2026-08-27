@@ -1,6 +1,6 @@
 # DEC-P0-018 — Closed two-claim repair-evidence correction
 
-- **Status:** Proposed; implementation-blocking
+- **Status:** Decided; exact V7 subject approved on 2026-08-27
 - **Owner:** human program and architecture approver
 - **Decision boundary:** before correction implementation, candidate refreeze, T066 retry, dashboard delivery, or integration request
 

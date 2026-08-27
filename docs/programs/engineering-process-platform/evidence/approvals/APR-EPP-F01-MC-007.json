@@ -1,0 +1,158 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F01-MC-007",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "bundle_id": "APB-EPP-F01-007",
+  "decision": "approved_with_conditions",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+    "git_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+    "program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+    "artifact_digests": [
+      {
+        "path": "approval.md",
+        "sha256": "8e1ab6a138676833ab97ad2ef05d3bd0f4c0c38a1e86931b663c4856146eb5ac"
+      },
+      {
+        "path": "audits/2026-08-27-epp-f01-repair-evidence-audit.md",
+        "sha256": "feb4c7ba8cf2ae94fdd2ad6daa78fa25c25ad6aa414f662d840e8574e55c1e95"
+      },
+      {
+        "path": "coordinator-state-machine.md",
+        "sha256": "2629fc8241a1896c624c796705a4f4d74d94f08062b7212280734d16c9285a9b"
+      },
+      {
+        "path": "decision-register.json",
+        "sha256": "75f93f4ab8d6fd24aa195808b1e9051c1a8256777ffa31006ae2830490ae2735"
+      },
+      {
+        "path": "decisions/0018-closed-repair-evidence-correction.md",
+        "sha256": "ec33058aec0da211fa2067d2b3fe6a61c132b0dbef673958b5e8051adf688f58"
+      },
+      {
+        "path": "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json",
+        "sha256": "5df46132d8f8cf38a0c6a31fa03bc6363f5d222e3c71fe14c45bb9b9e51a1677"
+      },
+      {
+        "path": "evidence/states/program-state-revision-0047.json",
+        "sha256": "185ad562314b383567d130ef1504791ef6c4e292fb55aacfbbd80eccb05ae7d3"
+      },
+      {
+        "path": "gate-catalog.json",
+        "sha256": "29c3c497aa98a8c2bcf9fd6cca13d4e6dc2bf7787e6650fdb88f93878f6c03aa"
+      },
+      {
+        "path": "gates.md",
+        "sha256": "750fca7eae6add4a10386b67153d64ae6ac7551747581e2f443f351a01a1ae28"
+      },
+      {
+        "path": "integration-release.md",
+        "sha256": "8f8f75a9dedd99fded05102d436f9071b7ce47a2a8a7cdab5c924ec9647c2d11"
+      },
+      {
+        "path": "lifecycle-policy.json",
+        "sha256": "37b864d779925c9010fd2faef86751c0f0d872f01442b27b92b534b969269eb3"
+      },
+      {
+        "path": "program-plan.md",
+        "sha256": "1d816665919d9d710c21b5a96bd0b0c295f1e4e64e3ce8cfe1d570d0f13fedd1"
+      },
+      {
+        "path": "program-state.json",
+        "sha256": "185ad562314b383567d130ef1504791ef6c4e292fb55aacfbbd80eccb05ae7d3"
+      },
+      {
+        "path": "proposed-features.md",
+        "sha256": "d59fb7bc4a7fdfd7463ef68167d51e44d16ca04c3775c971d9712b64261b008d"
+      },
+      {
+        "path": "README.md",
+        "sha256": "76e01c408210f64d461f61100392b0f3eecf08a29ded87341ec62f8d547f0bd1"
+      },
+      {
+        "path": "risk-register.json",
+        "sha256": "cd50545d464f37a8f8e2c5c68653841449b5c4b018f3188e6738fabe74b9e6a6"
+      },
+      {
+        "path": "roadmap.json",
+        "sha256": "ae2afa90cbc2778f39d2c791aa61f623ce69113e53ad545f74fe737f0b2a08a9"
+      },
+      {
+        "path": "schemas/README.md",
+        "sha256": "26d4882a36bc4f7a4ce254c39a708a5aa221b8edaed230552a1b8f3440edd9e4"
+      },
+      {
+        "path": "schemas/repair-evidence-correction.schema.json",
+        "sha256": "50676373c395aed7534eff8b3001bc248346a3e184cf580eb6a6fd101cb43691"
+      },
+      {
+        "path": "status-dashboard-contract.md",
+        "sha256": "5b5ee1b8624dd845abacd32fa1484ab203059693848fd9a3a3afc48179ae7383"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/analysis.md",
+        "sha256": "f36dfc18083d699ad79bbe61357acb73acdeca813dab8479bc61de9d94c547e7"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+        "sha256": "ffe050454bec2ef1bfc6023362ba0691df917e25279133c0e1a598c298cc4eec"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "sha256": "181d5dea1c52351c378092421cbe0f572f47ba1c0ac8ff04e5591848bf4182b4"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json",
+        "sha256": "50676373c395aed7534eff8b3001bc248346a3e184cf580eb6a6fd101cb43691"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/data-model.md",
+        "sha256": "7dcbe0b33c5aaf134fc10c1f24f6884c33cca313c928b79583dc6df6fe026716"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/plan.md",
+        "sha256": "3c91c3ccf7d75ab8c26e1a9bb6b75efb80de8db7a08daefbc05c7811faeb1e32"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/quickstart.md",
+        "sha256": "1ad51f2f6cfa6b2cd1ce0411a405cf4622546a63de23eedbe859860e7822ab2b"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/research.md",
+        "sha256": "fe97217a150d8ab16b143b6aba5348b340e584c1b2483a2905739916bcfd2796"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/spec.md",
+        "sha256": "609a4abbf87424259b7259aef7f74d6432f9a4b9b6a79630fd730def28918435"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/tasks.md",
+        "sha256": "55a831ef5ff213c7c0ef6c3d4685a6efa4c6dae68af0a49361c1d786537286e8"
+      },
+      {
+        "path": "../../../tests/program_control_plane/test_contract_schemas.py",
+        "sha256": "87847a38f682568273f0e0ea2a4e75bb30d7e752eb2d97f6684d385dc3dfc1c4"
+      }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T23:30:50Z",
+  "expires_at": null,
+  "review": {
+    "due_at": null,
+    "last_reviewed_at": "2026-08-27T23:30:50Z"
+  },
+  "supersedes": [
+    "APR-EPP-F01-MC-006"
+  ],
+  "revocation_events": [],
+  "conditions": [
+    "This approval accepts DEC-P0-018 and only COR-EPP-F01-REPAIR-EVIDENCE-001 with its exact ordered two-claim and two-occurrence profile.",
+    "Authority is limited to local T070 through T072 plus the subsequent T066 retry under a bounded reactivated lease; T067 and T068 remain unauthorized.",
+    "Product changes, EPP-F01B implementation, dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication and release remain unauthorized.",
+    "The immutable state revisions 45 and 46, TR-0043 and TR-0044 remain unchanged; the correction may retain and disposition only the exact historical findings and must have zero lifecycle, authority, readiness, benchmark, candidate, delivery or release effect."
+  ]
+}

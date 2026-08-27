@@ -527,14 +527,14 @@
     {
       "id": "DEC-P0-018",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "May EPP-F01 dispose only the invalid repair-cause identifier at two exact historical state pointers and the truncated TR-0043 digest at one exact TR-0044 pointer through a closed two-claim append-only profile?",
       "why_material": "The evidence defects are real and immutable, but a broad repair-evidence exception could hide audit failures, rewrite history semantically, or reactivate verification without exact human authority.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due": {
         "before_event": "EPP-F01 T070, T071, T072 or T066 retry",
         "due_at": null,
-        "last_reviewed_at": "2026-08-27T22:43:44Z"
+        "last_reviewed_at": "2026-08-27T23:30:50Z"
       },
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
       "options": [
