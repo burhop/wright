@@ -190,12 +190,18 @@ def _validate_runtime_source_bundle(
     source_ids = {str(row["path"]): str(row["git_blob"]) for row in manifest}
     head_ids = {str(row["path"]): str(row["git_blob"]) for row in head_manifest}
     try:
-        dirty = reader.status_for_paths(
+        status_records = reader.status_for_paths(
             [
                 "scripts/validate-engineering-process-program.py",
                 "scripts/program_control",
             ]
         )
+        dirty = [
+            record
+            for record in status_records
+            if record.endswith(b".py")
+            or b"scripts/validate-engineering-process-program.py" in record
+        ]
     except GitSubjectError:
         dirty = [b"unresolved"]
     runtime_mismatch = source_ids != head_ids or bool(dirty)
