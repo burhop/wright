@@ -103,6 +103,7 @@ class GitReader:
         self._branch_cache: str | None = None
         self._ancestor_cache: dict[str, frozenset[str]] = {}
         self._parent_cache: dict[str, tuple[str, ...]] = {}
+        self._cat_file_processes: dict[str, subprocess.Popen[bytes]] = {}
 
     @classmethod
     def discover(cls, start: Path | None = None) -> "GitReader":
@@ -131,6 +132,13 @@ class GitReader:
     def _run(self, args: list[str], *, input_data: bytes | None = None) -> bytes:
         if not args or args[0] not in SAFE_GIT_COMMANDS:
             raise GitSubjectError("Git command is not read-only allowlisted")
+        if (
+            args[0] == "cat-file"
+            and len(args) == 2
+            and args[1].startswith("--batch")
+            and input_data is not None
+        ):
+            return self._run_cat_file_batch(args[1], input_data)
         result = subprocess.run(
             ["git", *args],
             cwd=self.repo_root,
@@ -143,6 +151,57 @@ class GitReader:
         if result.returncode != 0:
             raise GitSubjectError("Git object operation failed")
         return result.stdout
+
+    @staticmethod
+    def _read_exact(stream: Any, size: int) -> bytes:
+        chunks: list[bytes] = []
+        remaining = size
+        while remaining:
+            chunk = stream.read(remaining)
+            if not chunk:
+                raise GitSubjectError("Git batch response is truncated")
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        return b"".join(chunks)
+
+    def _run_cat_file_batch(self, mode: str, input_data: bytes) -> bytes:
+        """Reuse bounded cat-file workers to avoid per-object process startup."""
+
+        queries = [line for line in input_data.splitlines() if line]
+        if not queries:
+            return b""
+        process = self._cat_file_processes.get(mode)
+        if process is None or process.poll() is not None:
+            process = subprocess.Popen(
+                ["git", "cat-file", mode],
+                cwd=self.repo_root,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                shell=False,
+            )
+            self._cat_file_processes[mode] = process
+        if process.stdin is None or process.stdout is None:
+            raise GitSubjectError("Git batch worker is unavailable")
+        try:
+            output: list[bytes] = []
+            for query in queries:
+                process.stdin.write(query + b"\n")
+                process.stdin.flush()
+                header = process.stdout.readline()
+                if not header:
+                    raise GitSubjectError("Git batch response is truncated")
+                output.append(header)
+                if mode == "--batch":
+                    fields = header.rstrip(b"\n").split()
+                    if len(fields) == 3 and fields[2].isdigit():
+                        output.append(
+                            self._read_exact(process.stdout, int(fields[2]) + 1)
+                        )
+            return b"".join(output)
+        except (BrokenPipeError, OSError) as exc:
+            self._cat_file_processes.pop(mode, None)
+            raise GitSubjectError("Git batch worker failed") from exc
 
     def resolve_commit(self, revision: str) -> str:
         if (
