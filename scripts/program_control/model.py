@@ -29,8 +29,8 @@ class Finding:
             SEVERITY_RANK.get(self.severity, 99),
             self.code,
             self.artifact,
-            self.json_pointer or "",
             self.invariant,
+            self.json_pointer or "",
         )
 
     def as_dict(self) -> dict[str, Any]:
@@ -55,6 +55,7 @@ class ValidationResult:
     report: dict[str, Any]
     findings: list[Finding] = field(default_factory=list)
     exit_code: int = 0
+    dashboard_data_cutoff: str | None = None
 
     def sorted_findings(self) -> list[Finding]:
         return sorted(self.findings, key=Finding.sort_key)

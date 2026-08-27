@@ -365,6 +365,47 @@ class GitReader:
             self._object_id_cache.update(dict(zip(missing, values, strict=True)))
         return {request: self._object_id_cache[request] for request in normalized}
 
+    def optional_object_ids(
+        self, requests: Iterable[tuple[str, str]]
+    ) -> dict[tuple[str, str], str | None]:
+        """Resolve exact objects while distinguishing a missing path from Git failure."""
+
+        normalized: list[tuple[str, str]] = []
+        for commit, path in requests:
+            if not HEX40.fullmatch(commit):
+                raise GitSubjectError("commit identity is invalid")
+            normalized.append((commit, normalize_repo_path(path)))
+        normalized = sorted(set(normalized))
+        query = b"".join(
+            f"{commit}:{path}\n".encode("utf-8") for commit, path in normalized
+        )
+        raw = self._run(
+            ["cat-file", "--batch-check=%(objectname) %(objecttype)"],
+            input_data=query,
+        )
+        lines = raw.decode("ascii", errors="strict").splitlines()
+        if len(lines) != len(normalized):
+            raise GitSubjectError("Git optional object batch is incomplete")
+        result: dict[tuple[str, str], str | None] = {}
+        for request, line in zip(normalized, lines, strict=True):
+            fields = line.split()
+            if (
+                len(fields) == 2
+                and HEX40.fullmatch(fields[0])
+                and fields[1]
+                in {
+                    "blob",
+                    "tree",
+                }
+            ):
+                result[request] = fields[0]
+                self._object_id_cache[request] = fields[0]
+            elif line.endswith(" missing"):
+                result[request] = None
+            else:
+                raise GitSubjectError("Git optional object identity is invalid")
+        return result
+
     def tree_entries(self, commit: str, root: str) -> list[dict[str, str]]:
         """Return sorted recursive tree entries with exact modes and IDs."""
 
@@ -459,7 +500,9 @@ class GitReader:
                     raise GitSubjectError("Git ancestry encoding is invalid") from exc
                 for line in lines:
                     values = line.split()
-                    if not values or any(not HEX40.fullmatch(value) for value in values):
+                    if not values or any(
+                        not HEX40.fullmatch(value) for value in values
+                    ):
                         raise GitSubjectError("Git ancestry could not be resolved")
                     commit, *parents = values
                     self._parent_cache[commit] = tuple(parents)
@@ -652,9 +695,7 @@ class GitReader:
                 "100644",
                 "100755",
             }:
-                raise GitSubjectError(
-                    "authoritative input is not a regular blob"
-                )
+                raise GitSubjectError("authoritative input is not a regular blob")
             selected.append((tree_row, role))
         by_path = {row["path"]: row for row, _ in selected}
         role_by_path = {row["path"]: role for row, role in selected}

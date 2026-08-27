@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import copy
 import json
+from dataclasses import replace
+from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
 
@@ -11,8 +13,10 @@ import pytest
 
 from program_control.cli import build_parser, render_text
 from program_control.git_subject import GitReader
+from program_control import validation as validation_module
 from program_control.validation import (
     _resolve_container_and_delivery,
+    validate_program,
     validate_transition_input_origin_correction,
 )
 
@@ -21,8 +25,7 @@ PROGRAM_ROOT = "docs/programs/engineering-process-platform"
 DASHBOARD = f"{PROGRAM_ROOT}/dashboard.json"
 DELIVERY = f"{PROGRAM_ROOT}/evidence/verification/EPP-F01-dashboard-delivery.json"
 INPUT_ORIGIN_CORRECTION = (
-    f"{PROGRAM_ROOT}/evidence/corrections/"
-    "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json"
+    f"{PROGRAM_ROOT}/evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json"
 )
 INPUT_ORIGIN_TARGET = (
     f"{PROGRAM_ROOT}/evidence/transitions/TR-0027.json",
@@ -325,12 +328,37 @@ def test_exact_tr0027_input_origin_correction_recomputes_one_of_one(
             "json_pointer", "/inputs/2"
         ),
         lambda profile, approvals: profile["claim"].__setitem__(
+            "transition_path", f"{PROGRAM_ROOT}/evidence/transitions/TR-0026.json"
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "approval_path",
+            f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-003.json",
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
             "declared_source_commit", "0" * 40
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "container_commit", "0" * 40
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "container_tree", "0" * 40
         ),
         lambda profile, approvals: profile["claim"].__setitem__(
             "transition_git_blob", "0" * 40
         ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "transition_raw_sha256", "0" * 64
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "approval_git_blob", "0" * 40
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "approval_raw_sha256", "0" * 64
+        ),
         lambda profile, approvals: profile.__setitem__("expected_claim_count", 2),
+        lambda profile, approvals: profile["forbidden_target_classes"].append(
+            "another_target"
+        ),
         lambda profile, approvals: profile["unchanged_projection_fields"].append(
             "unapproved_field"
         ),
@@ -405,38 +433,69 @@ def test_tr0027_input_origin_correction_fails_closed_for_any_contract_change(
     ],
 )
 def test_input_origin_disposition_cannot_change_protected_projection(
+    repository_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
     benchmark_summary: dict,
 ) -> None:
-    protected = {
-        "areas": {
-            area: {
-                "status": status,
-                "passed_gates": 0,
-                "required_gates": 1,
-                "gates": [],
-                "blockers": ["EVIDENCE_PENDING"],
-                "evidence": [],
-                "fresh": False,
-                "last_success_at": None,
-            }
-            for area, status in (
-                ("product_readiness", "not_started"),
-                ("benchmark_readiness", "not_started"),
-                ("commercial_readiness", "blocked"),
-                ("program_health", "in_progress"),
-            )
-        },
-        "benchmark_summary": benchmark_summary,
-        "release_candidate": None,
-        "release_approval": {
-            "status": "absent",
-            "approval_id": None,
-            "subject_matches": False,
-        },
-        "release_eligible": False,
-    }
-    unresolved = {**copy.deepcopy(protected), "correction_resolution": "unresolved"}
-    resolved = {**copy.deepcopy(protected), "correction_resolution": "resolved"}
-    unresolved.pop("correction_resolution")
-    resolved.pop("correction_resolution")
-    assert resolved == unresolved
+    profile, _ = _input_origin_inputs(repository_root)
+    assert profile["unchanged_projection_fields"] == [
+        "benchmark_readiness_area",
+        "benchmark_summary",
+        "benchmark_target_and_counted",
+        "benchmark_outcomes_and_tiers",
+        "benchmark_coverage_and_qualification",
+        "benchmark_oracles_and_artifacts",
+        "benchmark_holdout_and_contamination",
+        "benchmark_attempts_and_freshness",
+        "all_readiness_statuses_and_colors",
+        "candidate_identity",
+        "approval_authority",
+        "release_eligibility",
+    ]
+    original = validation_module.validate_transition_input_origin_correction
+    monkeypatch.setattr(
+        validation_module,
+        "default_benchmark_summary",
+        lambda _source=None: copy.deepcopy(benchmark_summary),
+    )
+
+    def run(*, correction_on: bool) -> dict:
+        def disposition(*args, **kwargs):
+            findings, targets = original(*args, **kwargs)
+            if correction_on:
+                return findings, targets
+            unresolved = [
+                replace(
+                    finding,
+                    severity="fatal",
+                    resolution_status="unresolved",
+                    correction_ref=None,
+                )
+                if finding.code == "TRANSITION_INPUT_ORIGIN_MISMATCH"
+                else finding
+                for finding in findings
+            ]
+            return unresolved, frozenset()
+
+        monkeypatch.setattr(
+            validation_module,
+            "validate_transition_input_origin_correction",
+            disposition,
+        )
+        return validate_program(
+            GitReader(repository_root),
+            "HEAD",
+            PROGRAM_ROOT,
+            observed_at=datetime(2026, 8, 27, 19, 20, tzinfo=timezone.utc),
+        ).report
+
+    def protected(report: dict) -> dict:
+        return {
+            "areas": report["areas"],
+            "benchmark_summary": report["benchmark_summary"],
+            "candidate_identity": report["subject"]["release_candidate"],
+            "approval_authority": report["release_approval"],
+            "release_eligibility": report["release_eligible"],
+        }
+
+    assert protected(run(correction_on=True)) == protected(run(correction_on=False))

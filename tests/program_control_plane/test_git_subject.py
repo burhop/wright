@@ -161,12 +161,8 @@ def test_authoritative_manifest_is_complete_typed_and_deterministic(
             encoding="utf-8"
         )
     )
-    first, first_digest = reader.authoritative_manifest(
-        "HEAD", program_root, policy
-    )
-    second, second_digest = reader.authoritative_manifest(
-        "HEAD", program_root, policy
-    )
+    first, first_digest = reader.authoritative_manifest("HEAD", program_root, policy)
+    second, second_digest = reader.authoritative_manifest("HEAD", program_root, policy)
     paths = [row["path"] for row in first]
     assert first == second
     assert first_digest == second_digest
@@ -180,12 +176,8 @@ def test_authoritative_manifest_is_complete_typed_and_deterministic(
     correction = next(
         row
         for row in first
-        if row["path"].endswith(
-            "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json"
-        )
+        if row["path"].endswith("COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json")
     )
     assert correction["role"] == "append_only_evidence"
     assert correction["schema_version"] == "1.0"
-    assert correction["schema_id"].endswith(
-        "transition-input-correction.schema.json"
-    )
+    assert correction["schema_id"].endswith("transition-input-correction.schema.json")

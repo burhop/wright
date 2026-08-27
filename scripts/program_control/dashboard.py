@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import os
 import tempfile
-from collections.abc import Callable, Mapping
-from datetime import datetime, timezone
+from collections.abc import Callable, Mapping, Sequence
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -56,11 +56,21 @@ def derive_areas(
     *,
     source_manifest: list[Mapping[str, Any]] | None = None,
     candidate: Mapping[str, Any] | None = None,
+    catalog_digest: str | None = None,
+    source_documents: Mapping[str, Any] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Derive four independent readiness areas from catalog membership and evidence."""
 
     if list(catalog.get("area_order", [])) != list(AREA_ORDER):
         raise DashboardError("GATE_AREA_ORDER_INVALID")
+    if (
+        catalog_digest is not None
+        and evidence_set.get("catalog_digest") != catalog_digest
+    ):
+        raise DashboardError("GATE_CATALOG_DIGEST_MISMATCH")
+    data_cutoff = _parse_time(str(evidence_set.get("data_cutoff")))
+    if data_cutoff > observed_at:
+        raise DashboardError("GATE_DATA_CUTOFF_INVALID")
     gates = list(catalog.get("gates", []))
     gate_ids = [gate.get("id") for gate in gates]
     if len(gate_ids) != len(set(gate_ids)):
@@ -81,11 +91,16 @@ def derive_areas(
     assertion_by_id = {
         str(row["gate_id"]): row for row in assertions if "gate_id" in row
     }
-    manifest_by_path = {
-        str(row.get("path")): row
-        for row in (source_manifest or [])
-        if isinstance(row, Mapping)
-    }
+    manifest_by_path: dict[str, Mapping[str, Any]] = {}
+    for row in source_manifest or []:
+        if not isinstance(row, Mapping):
+            continue
+        path = str(row.get("path"))
+        manifest_by_path[path] = row
+        marker = "docs/programs/engineering-process-platform/"
+        if path.startswith(marker):
+            manifest_by_path[path.removeprefix(marker)] = row
+    documents = source_documents or {}
 
     def validate_artifacts(
         artifacts: list[Mapping[str, Any]],
@@ -111,6 +126,16 @@ def derive_areas(
                     or source.get("role") != artifact.get("source_role")
                 ):
                     raise DashboardError("EVIDENCE_SOURCE_MISMATCH")
+                artifact_path = str(artifact.get("path"))
+                document = documents.get(artifact_path)
+                if document is None:
+                    document = documents.get(
+                        "docs/programs/engineering-process-platform/" + artifact_path
+                    )
+                if isinstance(document, Mapping):
+                    embedded = document.get("subject", document.get("candidate"))
+                    if isinstance(embedded, Mapping) and embedded != candidate:
+                        raise DashboardError("EVIDENCE_CANDIDATE_MISMATCH")
         return classes
 
     def result_status(result: Mapping[str, Any]) -> str:
@@ -162,6 +187,43 @@ def derive_areas(
             status = aggregate_status(statuses)
             if assertion.get("status") != status:
                 raise DashboardError("GATE_AGGREGATE_MISMATCH")
+            gate_freshness = gate.get("freshness", {})
+            expected_triggers = set(gate_freshness.get("invalidation_triggers", []))
+            maximum_age = int(gate_freshness.get("maximum_age_seconds", 0))
+            if maximum_age <= 0:
+                raise DashboardError("GATE_FRESHNESS_POLICY_INVALID")
+            if set(assertion.get("stale_triggers", [])) != expected_triggers:
+                raise DashboardError("GATE_FRESHNESS_POLICY_INVALID")
+            for result in results:
+                if set(result.get("stale_triggers", [])) != expected_triggers:
+                    raise DashboardError("GATE_FRESHNESS_POLICY_INVALID")
+                age = (
+                    observed_at - _parse_time(str(result.get("observed_at")))
+                ).total_seconds()
+                if age < 0 or (result.get("fresh") is True and age > maximum_age):
+                    raise DashboardError("GATE_FRESHNESS_MISMATCH")
+            worst = next(
+                (
+                    candidate_status
+                    for candidate_status in NONPASSING_PRECEDENCE
+                    if candidate_status in statuses
+                ),
+                "passed",
+            )
+            governing_results = [
+                result
+                for result, result_state in zip(results, statuses, strict=True)
+                if result_state == worst
+            ]
+            expected_classification = str(governing_results[0].get("classification"))
+            expected_reason = sorted(
+                str(row.get("reason_code")) for row in governing_results
+            )[0]
+            if (
+                assertion.get("classification") != expected_classification
+                or assertion.get("reason_code") != expected_reason
+            ):
+                raise DashboardError("GATE_AGGREGATE_METADATA_MISMATCH")
             row_expires = assertion.get("expires_at")
             row_expired = (
                 row_expires is not None and _parse_time(str(row_expires)) < observed_at
@@ -192,11 +254,25 @@ def derive_areas(
                 if isinstance(item, Mapping)
             ]
             validate_artifacts(result_artifacts, passing=passing)
+
+            def artifact_key(item: Mapping[str, Any]) -> tuple[str, ...]:
+                return (
+                    str(item.get("path")),
+                    str(item.get("sha256")),
+                    str(item.get("evidence_class")),
+                    str(item.get("schema_id")),
+                    str(item.get("source_role")),
+                )
+
             required_classes = set(
                 gate.get("evidence_policy", {}).get("required_classes", [])
             )
             if passing and not required_classes.issubset(row_classes):
                 raise DashboardError("EVIDENCE_CLASS_COVERAGE_MISSING")
+            if sorted(map(artifact_key, row_artifacts)) != sorted(
+                set(map(artifact_key, result_artifacts))
+            ):
+                raise DashboardError("GATE_EVIDENCE_UNION_MISMATCH")
             independent_required = bool(
                 gate.get("evidence_policy", {}).get("independent_verifier_required")
             )
@@ -253,9 +329,14 @@ def derive_areas(
             "blockers": blockers,
             "evidence": evidence,
             "fresh": bool(rows) and all(row["fresh"] for row in rows),
-            "last_success_at": evidence_set.get("last_success", {}).get(area)
-            if area_status == "passed"
-            else None,
+            "last_success_at": (
+                max(
+                    str(assertion_by_id[str(gate["id"])].get("observed_at"))
+                    for gate in required
+                )
+                if area_status == "passed"
+                else None
+            ),
         }
     return areas
 
@@ -263,7 +344,8 @@ def derive_areas(
 def default_benchmark_summary(
     source: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    existing = dict(source or {})
+    if source:
+        raise DashboardError("BENCHMARK_SUMMARY_HAND_SET")
     counters = {
         "counted": 0,
         "target": 100,
@@ -279,7 +361,6 @@ def default_benchmark_summary(
         "t2": 0,
         "t3": 0,
     }
-    counters.update({key: existing[key] for key in counters if key in existing})
     for name, fallback in (
         ("coverage_deficits", ["BENCHMARK_COVERAGE_EMPTY"]),
         ("oracle_deficits", ["BENCHMARK_ORACLES_ABSENT"]),
@@ -287,11 +368,151 @@ def default_benchmark_summary(
         ("partition_deficits", ["BENCHMARK_PARTITIONS_ABSENT"]),
         ("freshness_deficits", ["BENCHMARK_EVIDENCE_ABSENT"]),
     ):
-        counters[name] = list(existing.get(name, fallback))
+        counters[name] = list(fallback)
     return counters
 
 
-def make_dashboard(report: Mapping[str, Any]) -> dict[str, Any]:
+def derive_benchmark_summary(
+    cases: Sequence[Mapping[str, Any]],
+    evidence_records: Sequence[Mapping[str, Any]],
+    observed_at: datetime,
+) -> dict[str, Any]:
+    """Derive the 100-slot benchmark summary from governed case/run records."""
+
+    if not cases and not evidence_records:
+        return default_benchmark_summary()
+    current_cases: dict[str, Mapping[str, Any]] = {}
+    families: set[str] = set()
+    for case in cases:
+        process_id = str(case.get("process_id", ""))
+        family = str(case.get("equivalence_family", ""))
+        if process_id in current_cases or not process_id or family in families:
+            raise DashboardError("BENCHMARK_DISTINCTNESS_INVALID")
+        if case.get("status") == "current":
+            current_cases[process_id] = case
+            families.add(family)
+    if len(current_cases) > 100:
+        raise DashboardError("BENCHMARK_POPULATION_INVALID")
+
+    histories: dict[str, list[Mapping[str, Any]]] = {}
+    for record in evidence_records:
+        process_id = str(record.get("process_id", ""))
+        if process_id not in current_cases:
+            raise DashboardError("BENCHMARK_EVIDENCE_CASE_MISMATCH")
+        histories.setdefault(process_id, []).append(record)
+    for process_id, rows in histories.items():
+        rows.sort(key=lambda row: int(row.get("attempt", {}).get("ordinal", 0)))
+        ordinals = [int(row.get("attempt", {}).get("ordinal", 0)) for row in rows]
+        if ordinals != list(range(1, len(rows) + 1)):
+            raise DashboardError("BENCHMARK_ATTEMPT_HISTORY_INVALID")
+        for index, row in enumerate(rows):
+            attempt = row.get("attempt", {})
+            if bool(attempt.get("first_attempt")) != (index == 0):
+                raise DashboardError("BENCHMARK_ATTEMPT_HISTORY_INVALID")
+            expected_prior = (
+                None
+                if index == 0
+                else rows[index - 1].get("attempt", {}).get("attempt_id")
+            )
+            if attempt.get("prior_attempt") != expected_prior:
+                raise DashboardError("BENCHMARK_ATTEMPT_HISTORY_INVALID")
+
+    counters = default_benchmark_summary()
+    counters["counted"] = len(current_cases)
+    counters["not_tested"] = 100
+    outcome_by_process: dict[str, str] = {}
+    for process_id, case in current_cases.items():
+        rows = histories.get(process_id, [])
+        latest = rows[-1] if rows else None
+        outcome = "not_tested"
+        if case.get("status") == "contaminated" or (
+            latest
+            and latest.get("qualification_transition", {}).get("to") == "contaminated"
+        ):
+            outcome = "contaminated"
+        elif latest:
+            expires = _parse_time(str(latest.get("observed_at")))
+            expires += timedelta(hours=int(latest.get("maximum_age_hours", 0)))
+            terminal = str(latest.get("terminal_classification"))
+            if expires < observed_at:
+                outcome = "stale"
+            elif terminal == "passed":
+                outcome = "eventual_passed"
+            elif terminal == "blocked_prerequisite":
+                outcome = "blocked"
+            elif terminal in {
+                "failed_product",
+                "failed_oracle_or_benchmark",
+                "failed_infrastructure",
+                "timed_out",
+                "cancelled",
+                "inconclusive",
+            }:
+                outcome = "failed"
+        outcome_by_process[process_id] = outcome
+        if outcome != "not_tested":
+            counters[outcome] += 1
+            counters["not_tested"] -= 1
+        if (
+            outcome == "eventual_passed"
+            and rows[0].get("terminal_classification") == "passed"
+        ):
+            counters["first_attempt_passed"] += 1
+
+    for case in current_cases.values():
+        tiers = {str(profile.get("tier")) for profile in case.get("profiles", [])}
+        if ("T1" in tiers and "T0" not in tiers) or (
+            ({"T2", "T3"} & tiers) and not {"T0", "T1"}.issubset(tiers)
+        ):
+            raise DashboardError("BENCHMARK_TIER_DEPENDENCY_INVALID")
+        for tier in ("T0", "T1", "T2", "T3"):
+            counters[tier.lower()] += int(tier in tiers)
+
+    counters["coverage_deficits"] = (
+        [] if len(current_cases) == 100 else ["BENCHMARK_COVERAGE_INCOMPLETE"]
+    )
+    counters["oracle_deficits"] = (
+        []
+        if current_cases
+        and all(case.get("oracle_refs") for case in current_cases.values())
+        else ["BENCHMARK_ORACLES_INCOMPLETE"]
+    )
+    passed_records = [
+        histories[process_id][-1]
+        for process_id, outcome in outcome_by_process.items()
+        if outcome == "eventual_passed"
+    ]
+    counters["artifact_deficits"] = (
+        []
+        if passed_records
+        and all(
+            row.get("required_output_coverage", {}).get("complete") is True
+            and row.get("artifacts")
+            and all(
+                item.get("parse_open_result") in {"passed", "not_applicable"}
+                for item in row.get("artifacts", [])
+            )
+            for row in passed_records
+        )
+        else ["BENCHMARK_ARTIFACTS_INCOMPLETE"]
+    )
+    partitions = {str(case.get("partition")) for case in current_cases.values()}
+    counters["partition_deficits"] = (
+        []
+        if {"development", "frozen_qualification", "blind_holdout"}.issubset(partitions)
+        else ["BENCHMARK_PARTITIONS_INCOMPLETE"]
+    )
+    counters["freshness_deficits"] = (
+        []
+        if histories and "stale" not in outcome_by_process.values()
+        else ["BENCHMARK_EVIDENCE_STALE_OR_ABSENT"]
+    )
+    return counters
+
+
+def make_dashboard(
+    report: Mapping[str, Any], *, data_cutoff: str | None = None
+) -> dict[str, Any]:
     subject = report["subject"]
     return {
         "$schema": "./schemas/dashboard.schema.json",
@@ -299,30 +520,38 @@ def make_dashboard(report: Mapping[str, Any]) -> dict[str, Any]:
         "program_id": "EPP-2026",
         "generation_status": "candidate_not_evidence",
         "generated_at": report["observed_at"],
-        "data_cutoff": report["observed_at"],
+        "data_cutoff": data_cutoff or report["observed_at"],
         "source": {
             "git_commit": subject["source_commit"],
             "git_tree": subject["source_tree"],
             "program_tree": subject["program_tree"],
             "generator_version": report["validator"]["version"],
-            "generator_digest": report["validator"]["bundle_manifest_digest"],
+            "generator_bundle_manifest_digest": report["validator"][
+                "bundle_manifest_digest"
+            ],
+            "generator_bundle_manifest": report["validator"]["bundle_manifest"],
             "input_manifest_digest": subject["input_manifest_digest"],
-            "input_manifest": subject["input_manifest"],
+            "artifact_digests": subject["input_manifest"],
         },
         "container_relation": {
-            "container_commit": None,
-            "required_first_parent": subject["source_commit"],
-            "allowed_changed_paths": [
+            "first_parent_must_equal_source": True,
+            "allowed_generated_outputs": [
                 "docs/programs/engineering-process-platform/dashboard.json"
             ],
-            "relation_status": "candidate_not_committed",
+            "container_commit_embedded": False,
+            "delivery_evidence_embedded": False,
         },
         "release_candidate": subject["release_candidate"],
         "areas": report["areas"],
         "benchmark_summary": report["benchmark_summary"],
         "release_approval": report["release_approval"],
         "release_eligible": report["release_eligible"],
-        "next_action": report["next_action"],
+        "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
+        "next_action": (
+            str(report["next_action"]["action"])
+            if isinstance(report.get("next_action"), Mapping)
+            else "NO_ELIGIBLE_ACTION_INSPECT_BLOCKERS"
+        ),
     }
 
 

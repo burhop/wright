@@ -12,7 +12,12 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
-from .dashboard import DashboardError, default_benchmark_summary, derive_areas
+from .dashboard import (
+    DashboardError,
+    default_benchmark_summary,
+    derive_areas,
+    derive_benchmark_summary,
+)
 from .git_subject import HEX40, GitReader, GitSubjectError, normalize_repo_path
 from .json_contracts import (
     ContractError,
@@ -604,23 +609,83 @@ INPUT_ORIGIN_CORRECTION_APPROVAL_SHA256 = (
     "4b4b7f748c2adbb64eddedf75306a2aab694054a62c552699be9ea1ac9802c4d",
     "33a327cbc1b599976eabb3bcb86b2081580e8bcda17870fdd69e56e789d58c9e",
 )
-INPUT_ORIGIN_CORRECTION_PROFILE_BLOB = (
-    "752c57d14093763393db183f8c7ae16939a2c82d"
-)
-INPUT_ORIGIN_CORRECTION_SCHEMA_BLOB = (
-    "c781ec8fcae67dcb97cd38be625e44c9b5cd449f"
-)
+INPUT_ORIGIN_CORRECTION_PROFILE_BLOB = "752c57d14093763393db183f8c7ae16939a2c82d"
+INPUT_ORIGIN_CORRECTION_SCHEMA_BLOB = "c781ec8fcae67dcb97cd38be625e44c9b5cd449f"
 INPUT_ORIGIN_CORRECTION_APPROVAL_BLOBS = (
     "34b0c203db7ccb873c5c6bb6e49f9237a9ee4a05",
     "7f04dd7a6784bc68b77bebd9f576588fe53d1eab",
 )
-INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER = (
-    "91fa3a9867d99f117ff9f41bbcac3d5d674f1f3b"
-)
+INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER = "91fa3a9867d99f117ff9f41bbcac3d5d674f1f3b"
 INPUT_ORIGIN_TARGET = (
     "docs/programs/engineering-process-platform/evidence/transitions/TR-0027.json",
     "/inputs/3",
 )
+
+
+def _prefetch_closed_correction_blobs(
+    reader: GitReader,
+    current: str,
+    root: str,
+    documents: Mapping[str, Any],
+) -> None:
+    """Batch immutable correction inputs without changing fail-closed semantics."""
+
+    requests: list[tuple[str, str]] = []
+    closed = (
+        (
+            CORRECTION_SUBJECT,
+            f"{root}/evidence/corrections/{CORRECTION_ID}.json",
+            f"{root}/schemas/committed-identity-correction.schema.json",
+            "specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json",
+        ),
+        (
+            INPUT_ORIGIN_CORRECTION_SUBJECT,
+            f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json",
+            f"{root}/schemas/transition-input-correction.schema.json",
+            "specs/076-control-plane-validator/contracts/transition-input-correction.schema.json",
+        ),
+    )
+    for subject, profile_path, promoted_schema, planning_schema in closed:
+        requests.extend(
+            [
+                (subject, profile_path),
+                (subject, promoted_schema),
+                (subject, planning_schema),
+                (current, profile_path),
+                (current, promoted_schema),
+                (current, planning_schema),
+            ]
+        )
+    approval_relatives = (
+        *CORRECTION_APPROVAL_PATHS,
+        *INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS,
+    )
+    try:
+        for relative in approval_relatives:
+            approval = documents.get(f"{root}/{relative}")
+            if not isinstance(approval, Mapping):
+                continue
+            subject = approval.get("subject", {})
+            approved_commit = subject.get("git_commit")
+            if not isinstance(approved_commit, str) or not HEX40.fullmatch(
+                approved_commit
+            ):
+                continue
+            for artifact in subject.get("artifact_digests", []):
+                requests.append(
+                    (
+                        approved_commit,
+                        normalize_repo_path(
+                            posixpath.normpath(
+                                posixpath.join(root, str(artifact["path"]))
+                            )
+                        ),
+                    )
+                )
+        reader.read_blob_requests(requests)
+    except (GitSubjectError, KeyError, TypeError):
+        # Individual closed validators still report the exact bounded cause.
+        return
 
 
 def _pointer_value(document: Any, pointer: str) -> Any:
@@ -709,12 +774,8 @@ def validate_committed_identity_correction(
             ]
         )
         golden_raw = closed_blobs[(CORRECTION_SUBJECT, correction_path)]
-        promoted_schema_raw = closed_blobs[
-            (CORRECTION_SUBJECT, promoted_schema_path)
-        ]
-        planning_schema_raw = closed_blobs[
-            (CORRECTION_SUBJECT, planning_schema_path)
-        ]
+        promoted_schema_raw = closed_blobs[(CORRECTION_SUBJECT, promoted_schema_path)]
+        planning_schema_raw = closed_blobs[(CORRECTION_SUBJECT, planning_schema_path)]
         golden_value = strict_loads(golden_raw)
         promoted_schema = strict_loads(promoted_schema_raw)
         if not isinstance(golden_value, Mapping) or not isinstance(
@@ -1022,9 +1083,7 @@ def validate_transition_input_origin_correction(
     """Recompute the one approved TR-0027 input-origin disposition."""
 
     root = normalize_repo_path(program_root)
-    correction_path = (
-        f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
-    )
+    correction_path = f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
     promoted_schema_path = f"{root}/schemas/transition-input-correction.schema.json"
     planning_schema_path = (
         "specs/076-control-plane-validator/contracts/"
@@ -1039,9 +1098,7 @@ def validate_transition_input_origin_correction(
 
     try:
         current = reader.resolve_commit(source_commit)
-        introductions = reader.added_path_commits(
-            current, f"{root}/evidence"
-        )
+        introductions = reader.added_path_commits(current, f"{root}/evidence")
         closed_blobs = reader.read_blob_requests(
             [
                 (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path),
@@ -1052,9 +1109,7 @@ def validate_transition_input_origin_correction(
                 (current, planning_schema_path),
             ]
         )
-        golden_raw = closed_blobs[
-            (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)
-        ]
+        golden_raw = closed_blobs[(INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)]
         promoted_schema_raw = closed_blobs[
             (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path)
         ]
@@ -1082,12 +1137,8 @@ def validate_transition_input_origin_correction(
             raise ContractError("closed transition-input artifacts are not objects")
         golden = golden_value
         check_schema(promoted_schema)
-        profile_valid = profile_valid and not validate_schema(
-            promoted_schema, profile
-        )
-        profile_valid = profile_valid and not validate_schema(
-            promoted_schema, golden
-        )
+        profile_valid = profile_valid and not validate_schema(promoted_schema, profile)
+        profile_valid = profile_valid and not validate_schema(promoted_schema, golden)
         profile_valid = profile_valid and profile == golden
         profile_valid = profile_valid and (
             sha256_bytes(golden_raw) == INPUT_ORIGIN_CORRECTION_PROFILE_SHA256
@@ -1097,24 +1148,18 @@ def validate_transition_input_origin_correction(
             and closed_blobs[(current, correction_path)] == golden_raw
             and closed_blobs[(current, promoted_schema_path)] == promoted_schema_raw
             and closed_blobs[(current, planning_schema_path)] == planning_schema_raw
-            and closed_object_ids[
-                (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)
-            ]
+            and closed_object_ids[(INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)]
             == INPUT_ORIGIN_CORRECTION_PROFILE_BLOB
             and closed_object_ids[
                 (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path)
             ]
             == INPUT_ORIGIN_CORRECTION_SCHEMA_BLOB
         )
-        identity = reader.resolve_identity(
-            INPUT_ORIGIN_CORRECTION_SUBJECT, root
-        )
+        identity = reader.resolve_identity(INPUT_ORIGIN_CORRECTION_SUBJECT, root)
         profile_valid = profile_valid and (
             identity.source_tree == INPUT_ORIGIN_CORRECTION_SUBJECT_TREE
-            and identity.program_tree
-            == INPUT_ORIGIN_CORRECTION_SUBJECT_PROGRAM_TREE
-            and introductions.get(correction_path)
-            == INPUT_ORIGIN_CORRECTION_SUBJECT
+            and identity.program_tree == INPUT_ORIGIN_CORRECTION_SUBJECT_PROGRAM_TREE
+            and introductions.get(correction_path) == INPUT_ORIGIN_CORRECTION_SUBJECT
             and INPUT_ORIGIN_CORRECTION_SUBJECT != current
             and reader.is_ancestor(INPUT_ORIGIN_CORRECTION_SUBJECT, current)
         )
@@ -1135,16 +1180,16 @@ def validate_transition_input_origin_correction(
         transition = strict_loads(transition_raw)
         approval_raw = reader.blob(container, approval_path)
         summaries = reader.commit_summaries([container])
-        object_ids = reader.object_ids(
-            [(container, transition_path), (container, approval_path)]
+        object_ids = reader.optional_object_ids(
+            [
+                (container, transition_path),
+                (container, approval_path),
+                (declared_source, approval_path),
+            ]
         )
         approval_introduction = introductions.get(approval_path)
         transition_introduction = introductions.get(transition_path)
-        try:
-            reader.blob(declared_source, approval_path)
-            source_absent = False
-        except GitSubjectError:
-            source_absent = True
+        source_absent = object_ids[(declared_source, approval_path)] is None
         input_row = _pointer_value(transition, str(claim["json_pointer"]))
         expected_relative_approval = posixpath.relpath(approval_path, root)
         manifest = transition.get("git", {}).get("changed_paths_manifest", [])
@@ -1157,15 +1202,14 @@ def validate_transition_input_origin_correction(
                 == claim["transition_git_blob"],
                 reader.blob(current, transition_path) == transition_raw,
                 sha256_bytes(approval_raw) == claim["approval_raw_sha256"],
-                object_ids[(container, approval_path)]
-                == claim["approval_git_blob"],
+                object_ids[(container, approval_path)] == claim["approval_git_blob"],
                 reader.blob(current, approval_path) == approval_raw,
                 source_absent,
+                summaries[container].get("parents") == [declared_source],
                 approval_introduction == container,
                 transition_introduction == container,
                 summaries[container].get("tree") == claim["container_tree"],
-                transition.get("git", {}).get("source_commit")
-                == declared_source,
+                transition.get("git", {}).get("source_commit") == declared_source,
                 isinstance(manifest, list),
                 transition_path in manifest,
                 approval_path in manifest,
@@ -1175,17 +1219,14 @@ def validate_transition_input_origin_correction(
                 input_row.get("schema_version") == "2.0",
                 input_row.get("role") == "append_only_evidence",
                 container != INPUT_ORIGIN_CORRECTION_SUBJECT,
-                reader.is_ancestor(
-                    container, INPUT_ORIGIN_CORRECTION_SUBJECT
-                ),
+                reader.is_ancestor(container, INPUT_ORIGIN_CORRECTION_SUBJECT),
             )
         )
     except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
         profile_valid = False
 
     expected_full_paths = tuple(
-        f"{root}/{relative}"
-        for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
+        f"{root}/{relative}" for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
     )
     try:
         if set(approvals) != set(expected_full_paths):
@@ -1270,15 +1311,12 @@ def validate_transition_input_origin_correction(
                         }
                     ],
                     strict_loads(reader.blob(current, path)) == approval,
-                    sha256_bytes(reader.blob(current, path))
-                    == expected_raw_sha256,
+                    sha256_bytes(reader.blob(current, path)) == expected_raw_sha256,
                     closed_object_ids[
                         (INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER, path)
                     ]
                     == expected_blob,
-                    _verify_approval_artifacts(
-                        reader, current, approval, root
-                    ),
+                    _verify_approval_artifacts(reader, current, approval, root),
                 )
             ):
                 raise ValueError("approval record is not the exact V5 bundle")
@@ -1289,8 +1327,7 @@ def validate_transition_input_origin_correction(
                     INPUT_ORIGIN_CORRECTION_SUBJECT, approval_container
                 )
                 and reader.is_ancestor(approval_container, current)
-                and reader.blob(current, path)
-                == reader.blob(approval_container, path)
+                and reader.blob(current, path) == reader.blob(approval_container, path)
             ):
                 raise ValueError("V5 approval history is not append-only")
     except (GitSubjectError, KeyError, TypeError, ValueError):
@@ -1475,7 +1512,10 @@ def _validate_transition_history(
             requests.extend([(current, transition_path), (container, transition_path)])
             for index, artifact in enumerate(row.get("inputs", [])):
                 input_target = (transition_path, f"/inputs/{index}")
-                if input_target == INPUT_ORIGIN_TARGET:
+                if (
+                    input_target == INPUT_ORIGIN_TARGET
+                    and input_target in corrected_input_targets
+                ):
                     continue
                 requests.append(
                     (source, _artifact_repo_path(program_root, artifact.get("path")))
@@ -1547,7 +1587,11 @@ def _validate_transition_history(
         for kind, commit in (("inputs", source), ("outputs", container)):
             for index, item in enumerate(row.get(kind, [])):
                 target = (artifact, f"/{kind}/{index}")
-                if kind == "inputs" and target == INPUT_ORIGIN_TARGET:
+                if (
+                    kind == "inputs"
+                    and target == INPUT_ORIGIN_TARGET
+                    and target in corrected_input_targets
+                ):
                     # This one immutable historical row is evaluated only by
                     # the exact closed correction proof. It is never a generic
                     # exception for another transition, pointer, or artifact.
@@ -2518,6 +2562,7 @@ def _release_approval(
     program_root: str,
     candidate: Mapping[str, Any] | None,
     findings: list[Finding],
+    observed_at: datetime,
 ) -> dict[str, Any]:
     approvals = [
         value
@@ -2553,13 +2598,38 @@ def _release_approval(
         return {"status": "absent", "approval_id": None, "subject_matches": False}
     approval = sorted(release, key=lambda row: str(row.get("approved_at", "")))[-1]
     subject = approval.get("subject", {})
+    subject_artifacts = sorted(
+        (
+            str(row.get("path")),
+            str(row.get("sha256")),
+        )
+        for row in subject.get("artifact_digests", [])
+        if isinstance(row, Mapping)
+    )
+    candidate_artifacts = sorted(
+        (
+            str(row.get("path")),
+            str(row.get("sha256")),
+        )
+        for row in (candidate or {}).get("artifact_digests", [])
+        if isinstance(row, Mapping)
+    )
     matches = bool(
         candidate
         and subject.get("git_commit") == candidate.get("git_commit")
         and subject.get("git_tree") == candidate.get("git_tree")
+        and subject_artifacts == candidate_artifacts
     )
-    if approval.get("revoked"):
+    revoked = approval.get("revoked") is True or bool(approval.get("revocation_events"))
+    expires_at = approval.get("expires_at")
+    expired = bool(
+        expires_at
+        and datetime.fromisoformat(str(expires_at).replace("Z", "+00:00")) < observed_at
+    )
+    if revoked:
         status = "revoked"
+    elif expired:
+        status = "stale"
     elif not matches:
         status = "stale"
     else:
@@ -2807,6 +2877,7 @@ def validate_program(
     documents = _validate_documents(
         reader, identity.source_commit, root, manifest, findings
     )
+    _prefetch_closed_correction_blobs(reader, identity.source_commit, root, documents)
     input_correction_path = (
         f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
     )
@@ -2817,18 +2888,14 @@ def validate_program(
         input_approval_documents = {
             f"{root}/{relative}": value
             for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
-            if isinstance(
-                (value := documents.get(f"{root}/{relative}")), Mapping
-            )
+            if isinstance((value := documents.get(f"{root}/{relative}")), Mapping)
         }
         input_correction_findings, corrected_input_targets = (
             validate_transition_input_origin_correction(
                 reader,
                 identity.source_commit,
                 root,
-                input_correction
-                if isinstance(input_correction, Mapping)
-                else {},
+                input_correction if isinstance(input_correction, Mapping) else {},
                 input_approval_documents,
             )
         )
@@ -2902,9 +2969,42 @@ def validate_program(
     catalog = documents.get(f"{root}/gate-catalog.json")
     evidence = documents.get(f"{root}/gate-evidence.json")
     candidate = evidence.get("subject") if isinstance(evidence, dict) else None
+    manifest_by_path = {str(row.get("path")): row for row in manifest}
+    enriched_candidate = None
+    if isinstance(candidate, Mapping):
+        enriched_candidate = {
+            "kind": candidate.get("kind"),
+            "git_commit": candidate.get("git_commit"),
+            "git_tree": candidate.get("git_tree"),
+            "artifact_digests": [
+                {
+                    "path": artifact.get("path"),
+                    "sha256": artifact.get("sha256"),
+                    "git_blob": manifest_by_path.get(
+                        normalize_repo_path(
+                            posixpath.normpath(
+                                posixpath.join(root, str(artifact.get("path")))
+                            )
+                        ),
+                        {},
+                    ).get("git_blob", "0" * 40),
+                }
+                for artifact in candidate.get("artifact_digests", [])
+                if isinstance(artifact, Mapping)
+            ],
+        }
     if isinstance(catalog, dict) and isinstance(evidence, dict):
         try:
-            areas = derive_areas(catalog, evidence, now)
+            catalog_path = f"{root}/gate-catalog.json"
+            areas = derive_areas(
+                catalog,
+                evidence,
+                now,
+                source_manifest=manifest,
+                candidate=candidate,
+                catalog_digest=manifest_by_path.get(catalog_path, {}).get("sha256"),
+                source_documents=documents,
+            )
         except DashboardError as exc:
             findings.append(
                 _finding(exc.code, "fatal", "gate-catalog.json", "GATE_PROJECTION")
@@ -2921,14 +3021,21 @@ def validate_program(
             )
         )
     approval = _release_approval(
-        reader, identity.source_commit, documents, root, candidate, findings
+        reader, identity.source_commit, documents, root, candidate, findings, now
     )
-    dashboard_seed = documents.get(f"{root}/dashboard.json")
-    benchmark = default_benchmark_summary(
-        dashboard_seed.get("benchmark_summary")
-        if isinstance(dashboard_seed, dict)
-        else None
-    )
+    benchmark_cases = [
+        value
+        for value in documents.values()
+        if isinstance(value, Mapping)
+        and str(value.get("$schema", "")).endswith("benchmark-case.schema.json")
+    ]
+    benchmark_evidence = [
+        value
+        for value in documents.values()
+        if isinstance(value, Mapping)
+        and str(value.get("$schema", "")).endswith("benchmark-evidence.schema.json")
+    ]
+    benchmark = derive_benchmark_summary(benchmark_cases, benchmark_evidence, now)
     fatal_or_error = [
         item
         for item in findings
@@ -2966,7 +3073,7 @@ def validate_program(
             "source_tree": identity.source_tree,
             "program_tree": identity.program_tree,
             **subject_delivery,
-            "release_candidate": candidate,
+            "release_candidate": enriched_candidate,
             "worktree_clean": checkout["dirty_path_count"] == 0,
             "checkout_representation": checkout,
             "input_manifest_digest": manifest_digest,
@@ -3014,7 +3121,17 @@ def validate_program(
         exit_code = 3
     else:
         exit_code = 4
-    return ValidationResult(report=report, findings=findings, exit_code=exit_code)
+    data_cutoff = (
+        str(evidence.get("data_cutoff"))
+        if isinstance(evidence, Mapping) and evidence.get("data_cutoff")
+        else timestamp
+    )
+    return ValidationResult(
+        report=report,
+        findings=findings,
+        exit_code=exit_code,
+        dashboard_data_cutoff=data_cutoff,
+    )
 
 
 def _unresolved_report(timestamp: str, findings: list[Finding]) -> dict[str, Any]:

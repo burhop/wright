@@ -9,7 +9,12 @@ from pathlib import Path
 
 import pytest
 
-from program_control.dashboard import DashboardError, derive_areas
+from program_control.dashboard import (
+    DashboardError,
+    default_benchmark_summary,
+    derive_areas,
+    derive_benchmark_summary,
+)
 
 
 OBSERVED = datetime(2026, 8, 27, 12, 0, tzinfo=timezone.utc)
@@ -58,6 +63,12 @@ def test_honest_initial_evidence_projects_four_independent_nonpassing_areas(
     assert areas["program_health"]["status"] == "in_progress"
     assert sum(area["required_gates"] for area in areas.values()) == 34
     assert sum(area["passed_gates"] for area in areas.values()) == 0
+    assert [row["id"] for area in areas.values() for row in area["gates"]] == [
+        gate["id"] for gate in catalog["gates"]
+    ]
+    assert all(
+        area["passed_gates"] <= area["required_gates"] for area in areas.values()
+    )
 
 
 @pytest.mark.parametrize(
@@ -302,3 +313,172 @@ def test_exact_candidate_mismatch_fails(catalog: dict, evidence: dict) -> None:
             catalog, evidence, OBSERVED, source_manifest=manifest, candidate=candidate
         )
     assert caught.value.code == "GATE_CANDIDATE_MISMATCH"
+
+
+def test_catalog_digest_and_shared_freshness_policy_are_enforced(
+    catalog: dict, evidence: dict
+) -> None:
+    with pytest.raises(DashboardError) as caught:
+        derive_areas(
+            catalog,
+            evidence,
+            OBSERVED,
+            catalog_digest="f" * 64,
+        )
+    assert caught.value.code == "GATE_CATALOG_DIGEST_MISMATCH"
+
+    evidence["assertions"][0]["assertion_results"][0]["stale_triggers"] = [
+        "candidate_changed"
+    ]
+    with pytest.raises(DashboardError) as caught:
+        derive_areas(catalog, evidence, OBSERVED)
+    assert caught.value.code == "GATE_FRESHNESS_POLICY_INVALID"
+
+
+def test_gate_aggregate_metadata_and_evidence_union_are_derived(
+    catalog: dict, evidence: dict
+) -> None:
+    evidence["assertions"][0]["reason_code"] = "HAND_SET_REASON"
+    with pytest.raises(DashboardError) as caught:
+        derive_areas(catalog, evidence, OBSERVED)
+    assert caught.value.code == "GATE_AGGREGATE_METADATA_MISMATCH"
+
+    evidence["assertions"][0]["reason_code"] = "PRODUCT_EVIDENCE_NOT_RECORDED"
+    evidence["assertions"][0]["evidence"] = [
+        {
+            "path": "evidence/verification/not-derived.json",
+            "sha256": "a" * 64,
+            "evidence_class": catalog["evidence_classes"][0]["class_id"],
+            "schema_id": catalog["evidence_classes"][0]["schema_id"],
+            "source_role": catalog["evidence_classes"][0]["source_role"],
+        }
+    ]
+    with pytest.raises(DashboardError) as caught:
+        derive_areas(catalog, evidence, OBSERVED)
+    assert caught.value.code == "GATE_EVIDENCE_UNION_MISMATCH"
+
+
+def _case(number: int, *, partition: str, tiers: list[str]) -> dict:
+    return {
+        "process_id": f"PROC-{number:03d}",
+        "equivalence_family": f"family-{number:03d}",
+        "status": "current",
+        "partition": partition,
+        "oracle_refs": [{"oracle_id": f"ORC-{number:03d}"}],
+        "profiles": [{"tier": tier} for tier in tiers],
+    }
+
+
+def _run(number: int, terminal: str, *, hours_old: int = 0) -> dict:
+    observed = datetime(2026, 8, 27, 12 - hours_old, tzinfo=timezone.utc)
+    return {
+        "process_id": f"PROC-{number:03d}",
+        "attempt": {
+            "attempt_id": f"ATT-{number:03d}-1",
+            "ordinal": 1,
+            "first_attempt": True,
+            "prior_attempt": None,
+        },
+        "qualification_transition": {"to": "current"},
+        "terminal_classification": terminal,
+        "observed_at": observed.isoformat().replace("+00:00", "Z"),
+        "maximum_age_hours": 1,
+        "required_output_coverage": {"complete": True},
+        "artifacts": [{"parse_open_result": "passed"}],
+    }
+
+
+def test_empty_benchmark_is_honest_zero_of_one_hundred() -> None:
+    summary = derive_benchmark_summary([], [], OBSERVED)
+    assert summary == default_benchmark_summary()
+    assert summary["counted"] == 0
+    assert summary["target"] == summary["not_tested"] == 100
+    assert (
+        sum(
+            summary[key]
+            for key in (
+                "eventual_passed",
+                "failed",
+                "blocked",
+                "stale",
+                "contaminated",
+                "not_tested",
+            )
+        )
+        == 100
+    )
+    assert all(
+        summary[key]
+        for key in (
+            "coverage_deficits",
+            "oracle_deficits",
+            "artifact_deficits",
+            "partition_deficits",
+            "freshness_deficits",
+        )
+    )
+
+
+def test_benchmark_population_outcomes_tiers_and_deficits_are_derived() -> None:
+    cases = [
+        _case(1, partition="development", tiers=["T0", "T1", "T2"]),
+        _case(2, partition="frozen_qualification", tiers=["T0", "T1", "T3"]),
+        _case(3, partition="blind_holdout", tiers=["T0"]),
+    ]
+    records = [_run(1, "passed"), _run(2, "failed_product")]
+    summary = derive_benchmark_summary(cases, records, OBSERVED)
+    assert (summary["counted"], summary["eventual_passed"]) == (3, 1)
+    assert (summary["first_attempt_passed"], summary["failed"]) == (1, 1)
+    assert summary["not_tested"] == 98
+    assert (summary["t0"], summary["t1"], summary["t2"], summary["t3"]) == (
+        3,
+        2,
+        1,
+        1,
+    )
+    assert summary["oracle_deficits"] == []
+    assert summary["artifact_deficits"] == []
+    assert summary["partition_deficits"] == []
+    assert summary["freshness_deficits"] == []
+    assert summary["coverage_deficits"] == ["BENCHMARK_COVERAGE_INCOMPLETE"]
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected"),
+    [
+        (
+            lambda cases, records: cases[0].__setitem__(
+                "profiles", [{"tier": "T0"}, {"tier": "T2"}]
+            ),
+            "BENCHMARK_TIER_DEPENDENCY_INVALID",
+        ),
+        (
+            lambda cases, records: records[0]["attempt"].__setitem__("ordinal", 2),
+            "BENCHMARK_ATTEMPT_HISTORY_INVALID",
+        ),
+        (
+            lambda cases, records: cases[1].__setitem__(
+                "equivalence_family", cases[0]["equivalence_family"]
+            ),
+            "BENCHMARK_DISTINCTNESS_INVALID",
+        ),
+    ],
+)
+def test_benchmark_invalid_tier_attempt_and_distinctness_fail_closed(
+    mutation, expected: str
+) -> None:
+    cases = [
+        _case(1, partition="development", tiers=["T0", "T1"]),
+        _case(2, partition="blind_holdout", tiers=["T0", "T1"]),
+    ]
+    records = [_run(1, "passed")]
+    mutation(cases, records)
+    with pytest.raises(DashboardError) as caught:
+        derive_benchmark_summary(cases, records, OBSERVED)
+    assert caught.value.code == expected
+
+
+def test_hand_set_benchmark_summary_is_never_authoritative() -> None:
+    with pytest.raises(DashboardError) as caught:
+        default_benchmark_summary({"counted": 100, "eventual_passed": 100})
+    assert caught.value.code == "BENCHMARK_SUMMARY_HAND_SET"

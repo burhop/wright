@@ -15,7 +15,7 @@ from .git_subject import (
     ensure_safe_checkout_target,
     normalize_repo_path,
 )
-from .json_contracts import ContractError, deterministic_json_bytes, strict_load
+from .json_contracts import ContractError, deterministic_json_bytes, strict_loads
 from .validation import validate_program
 
 
@@ -146,11 +146,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "OUTPUT_TARGET_UNDECLARED", output_format, EXIT_USAGE
             )
         target = ensure_safe_checkout_target(reader.repo_root, output)
-        schema_path = (
-            reader.repo_root / program_root / "schemas" / "dashboard.schema.json"
+        schema = strict_loads(
+            reader.blob(
+                str(report["subject"]["source_commit"]),
+                f"{program_root}/schemas/dashboard.schema.json",
+            )
         )
-        schema = strict_load(schema_path)
-        dashboard = make_dashboard(report)
+        dashboard = make_dashboard(report, data_cutoff=result.dashboard_data_cutoff)
         atomic_replace_json(target, dashboard, schema)
         report["delivery"] = {
             "mode": "generate_dashboard",
