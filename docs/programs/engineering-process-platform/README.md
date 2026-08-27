@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 planned on `077-control-plane-validator`; requirements-quality checklist next and no implementation approval
+**Status:** EPP-F01 checklist-complete on `077-control-plane-validator`; task decomposition next and no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`CHECKLIST_EPP_F01` is the only eligible action. The plan, research, data model, four JSON contracts, two behavioral contracts, quickstart, managed agent-context pointer, and pre/post-design constitution checks are complete. The plan visibly identifies five material control-plane decisions that must be included in exact implementation approval; they do not block checklist, tasks, or read-only analysis. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`TASKS_EPP_F01` is the only eligible action. The formal program-control requirements checklist passes 40/40 with complete traceability and no override, covering UX, failure/recovery, inspectable I/O, tests, compatibility, benchmark boundaries, privacy/security, rollback, and material change control. Generate dependency-ordered tasks with independently testable stories and explicit verification. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
