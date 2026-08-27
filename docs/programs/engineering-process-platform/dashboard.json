@@ -49,7 +49,7 @@
       "passed_gates": 0,
       "required_gates": 7,
       "gates": [],
-      "blockers": ["Dashboard generator not implemented", "DEC-P0-013", "DEC-P0-014", "EPP-F01 implementation stopped before v2 migration"],
+      "blockers": ["Dashboard generator not implemented", "Replacement exact EPP-F01 material_change and feature_implementation approvals pending", "Preserved implementation drafts remain blocked"],
       "evidence": ["program-state.json", "roadmap.json", "audits/2026-08-26-omission-audits.md"],
       "fresh": false,
       "last_success_at": null
@@ -75,5 +75,5 @@
   },
   "release_eligible": false,
   "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
-  "next_action": "RESOLVE_EPP_F01_MATERIAL_AMENDMENTS"
+  "next_action": "APPROVE_EPP_F01_AMENDED_SUBJECT"
 }

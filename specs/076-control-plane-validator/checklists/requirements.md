@@ -32,5 +32,7 @@
 ## Notes
 
 - Validation iteration 1 passed all items.
+- Amendment validation iteration 2 passed all items after DEC-P0-013/014 were encoded; no `[NEEDS CLARIFICATION]` marker or new unresolved product choice remains.
+- Final bounded repair validation passed after the four independent audits closed deterministic D selection, validator/readiness semantics, authority wording, legacy byte closure, source-bundle closure, delivery independence, and assertion-level benchmark proof.
 - Committed Git object bytes are the exact committed-evidence identity; checkout representation and dirtiness are separate reportable facts.
-- The specification includes UX, failure/recovery, inspectable I/O, tests, compatibility, rollback, and benchmark-policy coverage while excluding process generation and execution.
+- The specification includes UX, failure/recovery, inspectable I/O, tests, closed legacy compatibility, non-circular dashboard delivery, rollback, and benchmark-policy coverage while excluding process generation and execution.

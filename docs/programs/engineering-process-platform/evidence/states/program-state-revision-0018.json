@@ -2,8 +2,8 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 19,
-  "state": "PROGRAM_ACTIVE",
+  "revision": 18,
+  "state": "BLOCKED",
   "baseline": {
     "ref": "dev",
     "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
@@ -30,17 +30,27 @@
     "branch": "077-control-plane-validator",
     "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
     "holder_role": "feature_owner",
-    "lease_revision": 4,
-    "acquired_at": "2026-08-27T01:50:48Z",
-    "expires_at": "2026-08-27T13:50:48Z",
+    "lease_revision": 3,
+    "acquired_at": "2026-08-27T00:47:01Z",
+    "expires_at": "2026-08-27T12:47:01Z",
     "allowed_paths": [
+      "scripts/validate-engineering-process-program.py",
+      "scripts/program_control/**",
+      "tests/program_control_plane/**",
       "docs/programs/engineering-process-platform/**",
       "specs/076-control-plane-validator/**",
+      "scripts/README.md",
+      "scripts/check-dev-push.sh",
+      "scripts/check-dev-merge.sh",
+      ".github/workflows/python-quality.yml",
+      ".github/workflows/test-windows.yml",
+      "tests/release/test_dev_push_process.py",
+      "docs/contributing/dev-push-runbook.md",
       ".specify/feature.json",
       "AGENTS.md (managed Spec Kit section only)"
     ]
   },
-  "last_transition": "TR-0018",
+  "last_transition": "TR-0017",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -60,7 +70,7 @@
     "program_health": {
       "status": "blocked",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the active unimplemented child feature", "Replacement exact EPP-F01 material_change and feature_implementation approvals are pending", "Preserved implementation drafts remain blocked work-in-progress"]
+      "blockers": ["Dashboard generator is the active unimplemented child feature", "DEC-P0-013", "DEC-P0-014", "EPP-F01 implementation stopped before v2 migration"]
     }
   },
   "open_p0_decisions": [
@@ -75,18 +85,20 @@
     "DEC-P0-009",
     "DEC-P0-010",
     "DEC-P0-011",
-    "DEC-P0-012"
+    "DEC-P0-012",
+    "DEC-P0-013",
+    "DEC-P0-014"
   ],
   "next_eligible_actions": [
     {
-      "action": "APPROVE_EPP_F01_AMENDED_SUBJECT",
+      "action": "RESOLVE_EPP_F01_MATERIAL_AMENDMENTS",
       "roadmap_item": "EPP-F01",
       "requires_human_approval": true,
-      "reason": "Approve separate digest-bound material_change and feature_implementation records for the newly analyzed amendment subject; implementation, integration, and every external action remain unauthorized until their own gates."
+      "reason": "Decide DEC-P0-013 and DEC-P0-014; the approved r1-through-r9 profile cannot silently accept v1 revisions 10 through 17, and the approved dashboard contracts contain unresolved S/C/D identity and schema-loop questions."
     }
   ],
   "approval": {
-    "status": "pending",
-    "record": null
+    "status": "stale",
+    "record": "evidence/approvals/APR-EPP-F01-IMPL-001.json"
   }
 }

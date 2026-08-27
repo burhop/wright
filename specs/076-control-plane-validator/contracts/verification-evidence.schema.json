@@ -4,7 +4,7 @@
   "title": "Engineering Process Platform Verification Evidence",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "evidence_id", "program_id", "feature_id", "kind", "subject", "actor", "created_at", "verdict", "checks", "original_failure_refs", "findings", "rollback_subject"],
+  "required": ["schema_version", "evidence_id", "program_id", "feature_id", "kind", "subject", "actor", "created_at", "verdict", "checks", "original_failure_refs", "findings", "rollback_subject", "delivery_relation"],
   "properties": {
     "$schema": { "type": "string", "minLength": 1 },
     "schema_version": { "const": "1.0" },
@@ -56,8 +56,27 @@
         }
       }
     },
-    "rollback_subject": { "type": "string", "minLength": 1, "maxLength": 500 }
+    "rollback_subject": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "delivery_relation": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/deliveryRelation" }] }
   },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "delivery" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "role": { "const": "independent_verifier" },
+              "independent": { "const": true }
+            }
+          },
+          "verdict": { "const": "passed" },
+          "delivery_relation": { "$ref": "#/$defs/deliveryRelation" }
+        }
+      },
+      "else": { "properties": { "delivery_relation": { "type": "null" } } }
+    }
+  ],
   "$defs": {
     "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
@@ -69,6 +88,21 @@
       "properties": {
         "path": { "type": "string", "minLength": 1, "maxLength": 500 },
         "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "deliveryRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_commit", "container_commit", "dashboard", "container_first_parent_source", "container_diff_paths", "evidence_parent_is_container", "delivery_diff_paths", "source_inputs_unchanged"],
+      "properties": {
+        "source_commit": { "$ref": "#/$defs/commit" },
+        "container_commit": { "$ref": "#/$defs/commit" },
+        "dashboard": { "$ref": "#/$defs/artifact" },
+        "container_first_parent_source": { "const": true },
+        "container_diff_paths": { "const": ["docs/programs/engineering-process-platform/dashboard.json"] },
+        "evidence_parent_is_container": { "const": true },
+        "delivery_diff_paths": { "const": ["docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json"] },
+        "source_inputs_unchanged": { "const": true }
       }
     },
     "subject": {

@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 blocked before v2 migration; material decisions `DEC-P0-013` and `DEC-P0-014` require human direction
+**Status:** EPP-F01 amendments decided and re-planned; replacement exact implementation approvals pending
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -22,6 +22,8 @@ Start here, then read only the artifacts needed for the next action:
 8. [`decision-register.json`](decision-register.json) and [`risk-register.json`](risk-register.json) — unresolved material choices and active risks.
 9. [`prototype-evidence.md`](prototype-evidence.md) and [`audits/2026-08-26-omission-audits.md`](audits/2026-08-26-omission-audits.md) — read-only prototype lessons and four independent plan audits.
 10. [`approval.md`](approval.md) — the recorded approval subject, scope, and downstream limits.
+11. [`../../../specs/076-control-plane-validator/spec.md`](../../../specs/076-control-plane-validator/spec.md), [`plan.md`](../../../specs/076-control-plane-validator/plan.md), [`tasks.md`](../../../specs/076-control-plane-validator/tasks.md), completed [`requirements checklist`](../../../specs/076-control-plane-validator/checklists/requirements.md) and [`program-control checklist`](../../../specs/076-control-plane-validator/checklists/program-control.md), and [`analysis.md`](../../../specs/076-control-plane-validator/analysis.md) — the active bounded EPP-F01 feature subject.
+12. [`evidence/transitions/TR-0018.json`](evidence/transitions/TR-0018.json) — the exact amended approval-subject artifact manifest and four-audit synthesis binding. If this record or its referenced revision-19 archive is absent or digest-invalid, the approval gate is not ready.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -50,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`RESOLVE_EPP_F01_MATERIAL_AMENDMENTS` is the only eligible action and requires the human. `DEC-P0-013` covers the closed compatibility bridge for authoritative v1 revisions 10–17; `DEC-P0-014` covers the non-circular source/container/delivery and generator-identity contract. The implementation approval is stale for these material changes. The preserved script drafts are blocked work-in-progress, no task is claimed complete, and no implementation may resume until the affected planning artifacts are amended, re-analyzed, frozen, and reapproved. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`APPROVE_EPP_F01_AMENDED_SUBJECT` is the only eligible action and requires the human. ADR 0013 closes authoritative v1 revisions 10–19 and `TR-0009`–`TR-0018` in a second exact byte-bound bridge while leaving r1–r9 unchanged; ADR 0014 defines explicit/constrained container resolution, explicit-only delivery resolution, shared per-gate freshness, closed source-bundle generator identity, candidate-only dashboard bytes, and external descendant delivery evidence. The exact subject and artifact digests are in `TR-0018`; the active Spec Kit artifacts are linked above. The earlier implementation approvals remain stale. The preserved script drafts are blocked work-in-progress, no task is claimed complete, and no implementation may resume until separate replacement `material_change` and `feature_implementation` records bind the new exact commit, tree, program tree, and artifact digests. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

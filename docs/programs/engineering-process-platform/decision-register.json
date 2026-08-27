@@ -162,20 +162,20 @@
     {
       "id": "DEC-P0-013",
       "priority": "P0",
-      "status": "proposed",
-      "question": "How must the v2 validator recognize the authoritative v1 revisions 10 through 17 without weakening the approved closed r1-through-r9 bootstrap profile?",
-      "why_material": "The approved profile ends at revision 9, but the governed planning and approval lifecycle reached v1 revision 17 before the approved migration task. Accepting those records silently would change compatibility and append-only-history semantics.",
+      "status": "decided",
+      "question": "How must the v2 validator recognize the authoritative v1 revisions 10 through 19 without weakening the approved closed r1-through-r9 bootstrap profile?",
+      "why_material": "The approved profile ends at revision 9, while the governed planning, approval, implementation-start, material-stop, and amended-freeze lifecycle reaches v1 revision 19. Accepting those records silently would change compatibility and append-only-history semantics.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due_before": "EPP-F01 v1-to-v2 schema migration",
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
-      "options": ["Add a closed exact-digest bridge profile for revisions 10 through 17 while retaining r1-through-r9", "Replace the bootstrap profile with one closed revisions-1-through-17 profile", "Stop EPP-F01 and redesign migration/history semantics"],
-      "required_evidence": ["Exact revision-17 checkpoint", "Enumerated legacy transition exceptions", "No-future-v1 acceptance rule", "Fresh material-change and feature-implementation approvals"],
-      "decision_record": null
+      "options": ["Add a closed exact-digest bridge profile for revisions 10 through 19 while retaining r1-through-r9", "Replace the bootstrap profile with one closed revisions-1-through-19 profile", "Stop EPP-F01 and redesign migration/history semantics"],
+      "required_evidence": ["Exact revision-19 checkpoint", "Enumerated revisions 10 through 19 and TR-0009 through TR-0018", "No-future-v1 and single-migration acceptance rules", "Fresh exact material-change and feature-implementation approvals"],
+      "decision_record": "decisions/0013-closed-v1-bridge.md"
     },
     {
       "id": "DEC-P0-014",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "What exact source/container, per-gate freshness, multi-module generator identity, and descendant delivery-evidence rules eliminate the dashboard provenance loop?",
       "why_material": "The approved CLI and schemas cannot unambiguously prove container C from source S, share one gate model, bind a multi-module generator, and represent later independent delivery evidence without a self-reference or regeneration loop.",
       "owner_role": "human_program_approver_and_architecture_approver",
@@ -183,7 +183,7 @@
       "blocks": ["EPP-F01", "PROG-01", "PROG-03", "PROG-05"],
       "options": ["Adopt explicit or constrained inferred container identity, per-gate fresh, a source-bundle digest, and external descendant delivery evidence", "Redesign the S/C/D delivery sequence and regenerate the affected contracts", "Stop dashboard delivery and ship validator-only scope after reapproval"],
       "required_evidence": ["Non-circular S/C/D proof", "One shared gate-row schema", "Canonical generator bundle manifest", "Fresh material-change and feature-implementation approvals"],
-      "decision_record": null
+      "decision_record": "decisions/0014-dashboard-provenance.md"
     }
   ]
 }

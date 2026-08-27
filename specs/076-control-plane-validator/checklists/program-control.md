@@ -73,9 +73,33 @@
 - [x] CHK039 Are Wright fast-push, dev-merge, Linux/POSIX, and Windows gate requirements documented together with a test that prevents route drift? [Completeness, Research §R-013; Plan §Verification Strategy]
 - [x] CHK040 Is independent verification required on an unchanged exact candidate after author verification, without expanding the current planning authority? [Consistency, Plan §Delivery and Gate Impact; Spec §Assumptions]
 
+## DEC-P0-013/014 Amendment Quality
+
+- [x] CHK041 Are r1–r9 and r10–r19 specified as two independently closed profiles, with every bridge revision/transition digest enumerated, no future v1 acceptance, and one migration successor? [Completeness, Spec §FR-004, §FR-021; Data Model §Bootstrap compatibility profile; Contract §Legacy Compatibility Profile]
+- [x] CHK042 Is the bridge checkpoint-commit fixed-point avoided explicitly by resolving only the forthcoming exact material-change approval subject, without leaving a coordinator-selected default? [Clarity, Research §R-014; ADR 0013]
+- [x] CHK043 Are explicit `--container`, constrained `HEAD` inference, absent/unresolved behavior, first-parent proof, and dashboard-only diff requirements consistent across CLI, plan, data model, and tests? [Consistency, Spec §FR-002; CLI Contract §validate; Research §R-015]
+- [x] CHK044 Is validator identity defined as the canonical digest of a sorted, inspectable manifest of every generator source blob so a non-entrypoint module change invalidates identity? [Clarity, Spec §FR-002; Data Model §ValidationSubject; Dashboard Generation §Authoritative Input Manifest]
+- [x] CHK045 Do validation-report and dashboard gate rows share all fields, including a required per-gate `fresh` boolean distinct from area freshness? [Consistency, Spec §FR-011; Validation Report and Dashboard schemas]
+- [x] CHK046 Are dashboard bytes permanently candidate-only while committed-current delivery is proved solely by an external report envelope and independent descendant-`D` evidence? [Clarity, Spec §FR-015; Dashboard Generation §Committed-Current Delivery Envelope; ADR 0014]
+- [x] CHK047 Does delivery evidence bind exact `S`, `C`, dashboard bytes, dashboard-only `S..C`, delivery-only `C..D`, and unchanged source inputs without embedding `C` or `D` in dashboard bytes? [Completeness, Verification Evidence schema; Data Model §DeliveryEnvelope]
+- [x] CHK048 Do the unchanged 68 tasks cover both legacy profiles, container resolution, generator-bundle mutation, per-gate freshness parity, candidate-only bytes, and descendant delivery proof with tests preceding implementation? [Coverage, Tasks T002, T006, T016, T021, T024, T034, T039–T040, T048, T051, T067–T068]
+- [x] CHK049 Are the earlier approvals explicitly stale and the replacement exact `material_change` plus `feature_implementation` approvals required before any task or implementation mutation resumes? [Dependency, Tasks §Authority gate; Research §Remaining Material Questions; Program State §next_eligible_actions]
+
+## Final Independent-Audit Repair Cycle
+
+- [x] CHK050 Is `D` resolvable only through explicit `--delivery`, with resolved `C`, fixed first-parent/diff rules, no descendant search, and complete report/test coverage? [Clarity, CLI Contract §validate; Data Model §DeliveryEnvelope; Tasks T024, T029, T034, T039, T048, T068]
+- [x] CHK051 Is validator success explicitly independent of derived readiness/release status, so valid blocked/not-started areas can exit zero and retain a proven next action? [Consistency, Spec §FR-001; CLI Contract §Exit Status; Tasks T024, T029]
+- [x] CHK052 Does all current approval prose mark the prior EPP-F01 implementation approvals stale and require a replacement same-subject two-record bundle? [Authority, Program Approval §Historical EPP-F01 decision; README §Next action]
+- [x] CHK053 Must delivery evidence be passing and authored by an independent verifier in both schema and negative tests? [Evidence, Verification Evidence schema; Dashboard Generation §Committed-Current Delivery Envelope; Tasks T016, T034, T068]
+- [x] CHK054 Is validator source-bundle membership closed by exact roots, tracked regular file type, normalized uniqueness/order, count/byte bounds, import boundary, runtime-HEAD/loaded-module binding to `S`, clean-path enforcement, and add/delete/change/dirty tests? [Completeness, Spec §FR-002; Plan §Implementation Flow; Tasks T023, T034, T039, T051]
+- [x] CHK055 Are both legacy profiles structurally closed, contiguous, uniquely pathed, raw-byte-bound through exact hashes plus the sole non-circular terminal approval-subject blob rule, archived through revision 19, and checkpoint-resolved without self-mutation? [Consistency, Lifecycle and Legacy Profile schemas; ADR 0013; Tasks T002, T006, T009, T015]
+- [x] CHK056 Does each catalog assertion have exactly one machine result, with a closed class→schema/role registry and SourceArtifact binding, and aggregate gate pass derived only from complete, fresh, supporting, class-complete, evidence-backed, policy-independent results? [Benchmark quality, Gate Catalog/Evidence schemas; Plan §Derive readiness; Tasks T008, T033, T036]
+- [x] CHK057 Are benchmark coverage, qualification lifecycle, oracle/output references, artifact completeness, holdout/contamination, attempts, tiers, freshness, and summary equations explicit semantic validators with negative fixtures? [Coverage, Data Model §Benchmark summary algebra; Dashboard Generation §Four Independent Areas; Tasks T033, T038]
+- [x] CHK058 Does the empty-context README link the active feature artifacts and exact TR-0018 approval manifest, with missing freeze evidence treated fail-closed? [Usability, README §Empty-context orientation; Tasks T052]
+
 ## Notes
 
 - Formal depth; intended for the feature author and independent reviewer before task decomposition and again before implementation approval.
-- All 40 requirements-quality checks passed against the exact spec, plan, research, data model, quickstart, and contracts at this checkpoint. No override was used.
+- All 58 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the final bounded audit-repair cycle. No override was used.
 - This checklist evaluates written requirements. It does not claim that implementation or verification has occurred.
-- Material items in CHK035 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for tasks and read-only analysis.
+- Material items in CHK035, CHK041–CHK049, and CHK052 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.

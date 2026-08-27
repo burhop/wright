@@ -9,31 +9,33 @@
     "$schema": { "type": "string", "minLength": 1 },
     "schema_version": { "const": "2.0" },
     "program_id": { "const": "EPP-2026" },
-    "generation_status": { "enum": ["contract_seed_not_evidence", "candidate_not_evidence", "committed_valid", "stale", "failed"] },
+    "generation_status": { "enum": ["contract_seed_not_evidence", "candidate_not_evidence"] },
     "generated_at": { "type": "string", "format": "date-time" },
     "data_cutoff": { "type": "string", "format": "date-time" },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["git_commit", "git_tree", "program_tree", "generator_version", "generator_digest", "input_manifest_digest", "artifact_digests"],
+      "required": ["git_commit", "git_tree", "program_tree", "generator_version", "generator_bundle_manifest_digest", "generator_bundle_manifest", "input_manifest_digest", "artifact_digests"],
       "properties": {
         "git_commit": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/commit" }] },
         "git_tree": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/commit" }] },
         "program_tree": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/commit" }] },
         "generator_version": { "type": "string", "minLength": 1, "maxLength": 100 },
-        "generator_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
+        "generator_bundle_manifest_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
+        "generator_bundle_manifest": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/bundleArtifact" } },
         "input_manifest_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
-        "artifact_digests": { "type": "array", "items": { "$ref": "#/$defs/artifact" } }
+        "artifact_digests": { "type": "array", "items": { "$ref": "#/$defs/sourceArtifact" } }
       }
     },
     "container_relation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["first_parent_must_equal_source", "allowed_generated_outputs", "verification_evidence"],
+      "required": ["first_parent_must_equal_source", "allowed_generated_outputs", "container_commit_embedded", "delivery_evidence_embedded"],
       "properties": {
         "first_parent_must_equal_source": { "const": true },
         "allowed_generated_outputs": { "const": ["docs/programs/engineering-process-platform/dashboard.json"] },
-        "verification_evidence": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/artifact" }] }
+        "container_commit_embedded": { "const": false },
+        "delivery_evidence_embedded": { "const": false }
       }
     },
     "release_candidate": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/candidate" }] },
@@ -54,27 +56,6 @@
     "release_formula": { "const": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval" },
     "next_action": { "type": "string", "minLength": 1, "maxLength": 500 }
   },
-  "allOf": [
-    {
-      "if": { "properties": { "generation_status": { "const": "committed_valid" } } },
-      "then": {
-        "properties": {
-          "source": {
-            "properties": {
-              "git_commit": { "$ref": "#/$defs/commit" },
-              "git_tree": { "$ref": "#/$defs/commit" },
-              "program_tree": { "$ref": "#/$defs/commit" },
-              "generator_digest": { "$ref": "#/$defs/digest" },
-              "input_manifest_digest": { "$ref": "#/$defs/digest" }
-            }
-          },
-          "container_relation": {
-            "properties": { "verification_evidence": { "$ref": "#/$defs/artifact" } }
-          }
-        }
-      }
-    }
-  ],
   "$defs": {
     "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
@@ -87,6 +68,30 @@
         "path": { "type": "string", "minLength": 1, "maxLength": 500 },
         "sha256": { "$ref": "#/$defs/digest" },
         "git_blob": { "$ref": "#/$defs/commit" }
+      }
+    },
+    "bundleArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "git_blob", "byte_length"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^(scripts/validate-engineering-process-program\\.py|scripts/program_control/.+\\.py)$", "maxLength": 500 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "git_blob": { "$ref": "#/$defs/commit" },
+        "byte_length": { "type": "integer", "minimum": 0, "maximum": 2097152 }
+      }
+    },
+    "sourceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "role", "sha256", "git_blob", "schema_id", "schema_version"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "role": { "enum": ["immutable_policy", "operational_state", "append_only_evidence", "generated_projection", "feature_contract"] },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "git_blob": { "$ref": "#/$defs/commit" },
+        "schema_id": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1, "maxLength": 500 }] },
+        "schema_version": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1, "maxLength": 100 }] }
       }
     },
     "candidate": {

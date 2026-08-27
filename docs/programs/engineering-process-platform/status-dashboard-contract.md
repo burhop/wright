@@ -6,6 +6,8 @@ The dashboard is a read-only, locally generated projection of committed machine-
 
 The canonical snapshot is [`dashboard.json`](dashboard.json), validated by [`schemas/dashboard.schema.json`](schemas/dashboard.schema.json). Source artifacts remain authoritative.
 
+The current program schema is the legacy v1 planning/seed contract and still contains historical status vocabulary. Until EPP-F01 implements and migrates the approved v2 contracts, no v1 `committed_valid` dashboard claim is current or newly creatable: the checked-in v1 snapshot is only `contract_seed_not_evidence`. The approved implementation contract is [`../../../specs/076-control-plane-validator/contracts/dashboard.schema.json`](../../../specs/076-control-plane-validator/contracts/dashboard.schema.json), under which dashboard bytes are only seed/candidate and committed-current status belongs to the external validation delivery envelope.
+
 ## Four independent areas
 
 The dashboard always renders these separate areas in this order:
@@ -39,7 +41,9 @@ At minimum the generator consumes:
 - `benchmark-coverage.json`, case/oracle/qualification/run/holdout/change evidence;
 - compatibility, packaging, security/privacy, documentation/support and release evidence.
 
-Every generated snapshot records the exact source Git commit/tree, program-directory tree, candidate/artifact digests, generation time, data cutoff, generator version/digest and source artifact digests. The checked-in `dashboard.json` begins as `contract_seed_not_evidence` because the generator does not yet exist; it must never be cited as a generated or current status snapshot. Uncommitted/generated candidates likewise identify their status and are never approval evidence.
+Every generated snapshot records the exact source Git commit/tree, program-directory tree, candidate/artifact digests, generation time, data cutoff, generator version, the closed tracked entrypoint-plus-`scripts/program_control/**/*.py` source-bundle manifest/digest, and source artifact digests. Every catalog assertion has one evaluator result; every displayed gate row is derived and carries its own explicit `fresh` value. Area freshness is an aggregate and cannot substitute for assertion/gate freshness. The checked-in `dashboard.json` begins as `contract_seed_not_evidence` because the generator does not yet exist. Generated dashboard bytes remain `candidate_not_evidence` even after commit and are never approval authority by themselves.
+
+Committed-current delivery is a property of an external validation envelope, not a self-claim in dashboard bytes. Validation resolves container `C` from explicit input or infers only `HEAD` when its first parent is source `S` and the diff is exactly the dashboard. Independent passing delivery evidence is then committed in descendant `D`, and the caller must supply that exact commit through `--delivery`; `D` is never searched for or inferred. The envelope binds `S`, `C`, explicit `D`, exact dashboard bytes, and the dashboard-only `S..C` plus delivery-only `C..D` diffs. Neither `C` nor `D` evidence is embedded in the dashboard, so delivery verification does not trigger endless regeneration.
 
 ## Privacy and safety
 
@@ -49,7 +53,7 @@ No data is uploaded automatically. Remote telemetry remains disabled by default 
 
 ## Refresh and failure behavior
 
-Generation is transactional: validate all sources, compute all four areas, write a candidate snapshot, validate it, then replace the prior local/generated snapshot. On failure, retain the last valid snapshot but mark it stale through the delivery layer and expose the generation error; never publish a partial green snapshot.
+Generation is transactional: validate all sources, compute all four areas, write a candidate snapshot, validate it, then replace the prior local/generated snapshot. On failure, retain the prior snapshot byte-for-byte but mark delivery stale/failed through the external delivery layer and expose the generation error; never edit the snapshot merely to change its delivery status and never publish a partial green snapshot.
 
 Refresh never launches product runs, benchmark cases, MCPs, models, applications or release actions. It only projects existing evidence.
 

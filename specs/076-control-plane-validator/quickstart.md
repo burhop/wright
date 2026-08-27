@@ -22,7 +22,7 @@ Expected success behavior:
 - exit `0`;
 - exact source commit, source tree, program tree, validator identity, and input-manifest digest;
 - clean/dirty checkout reported separately from committed evidence;
-- all required structural and semantic checks terminal;
+- all required structural and semantic checks terminal; validator success is independent of whether readiness areas or release eligibility pass;
 - four readiness areas shown independently;
 - one proven next action or an explicit no-action blocker.
 
@@ -39,15 +39,31 @@ Machine output is produced from the same report model:
 uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source HEAD --format json
 ```
 
+To validate a committed dashboard container, identify `S` explicitly and either provide `C`:
+
+```text
+uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source <S> --container <C> --format text
+```
+
+or omit `--container` only while `HEAD` is the intended `C`. The command may infer `HEAD` only when its first parent is `S` and `S..HEAD` changes exactly the declared dashboard output. It never searches for, guesses, or selects another container.
+
+To request a committed-current delivery verdict after the independent verifier has created `D`, supply all three subjects explicitly:
+
+```text
+uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source <S> --container <C> --delivery <D> --format text
+```
+
+`--delivery` requires resolved `C`. The command never searches descendants or infers `D`; omission yields candidate/non-evidence delivery without invalidating an otherwise valid source report. A supplied `D` must have first parent `C`, change only the fixed delivery-evidence record, and contain a passing `kind=delivery` record from an independent verifier.
+
 ## 2. Generate a local candidate dashboard
 
 ```text
 uv run --extra runtime python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --output docs/programs/engineering-process-platform/dashboard.json
 ```
 
-The command validates all sources before writing, builds all four areas for the same exact candidate, validates temporary output, and atomically replaces the target. Until the output is committed in the required source/container relationship, it is `candidate_not_evidence`.
+The command validates all sources before writing, builds all four areas for the same exact candidate, validates temporary output, and atomically replaces the target. Its output bytes always remain `candidate_not_evidence`; committing them does not edit that self-description.
 
-For final feature delivery, the implementation candidate is frozen and independently verified first. That candidate-verification record is committed in source `S`; the coordinator commits only the dashboard in successor `C`; the independent verifier then records a delivery-only check of `C` in descendant `D`. The delivery record does not become an input to the snapshot at `S`, and any new readiness evidence requires regeneration.
+For final feature delivery, the implementation candidate is frozen and independently verified first. That candidate-verification record is committed in source `S`; the coordinator commits only the dashboard in successor `C`; the independent verifier then records a passing delivery-only check of `C` in descendant `D`. A validation report run with exact `S`, `C`, and explicit `D` may report delivery `committed_valid` only after it validates that independent envelope and proves the dashboard bytes plus the allowed `S..C` and `C..D` relations. The delivery record does not become an input to the snapshot at `S`, and any new readiness evidence requires regeneration.
 
 On any write, flush, `fsync`, candidate-validation, or replace failure:
 
@@ -77,7 +93,7 @@ Even `100/100` terminal benchmark success leaves release eligibility false when 
 - `blocked`: progress needs an explicit decision, authority, external control, or prerequisite.
 - `failed`: current evidence disproves a required assertion.
 
-Status precedence does not average. One failed gate makes its area failed; no other area can compensate.
+Status precedence does not average. One failed gate makes its area failed; no other area can compensate. These are truthful derived product states, not validator failures: a schema-valid report may exit `0` while showing blocked/non-passing readiness and `release_eligible=false`.
 
 ## 5. Recover safely
 
@@ -92,7 +108,7 @@ If Git metadata is absent, a schema version is unsupported, approval is stale, a
 ## 6. Compatibility and rollback
 
 - Windows and POSIX runs for the same committed blobs must agree semantically even when line endings differ in clean checkouts.
-- Only explicitly listed compatible schema/snapshot versions are accepted; unknown majors and undeclared minors fail closed.
+- Only explicitly listed compatible schema/snapshot versions are accepted. Legacy v1 is limited to the closed revision-1-through-9 bootstrap and revision-10-through-19 bridge profiles; revision 20, any later v1 record, and a second v1-to-v2 migration fail closed. Unknown majors and undeclared minors also fail closed.
 - Removing the validator restores the README's manual verification path. Source evidence remains unchanged, and any validator-generated snapshot becomes stale/unsupported rather than authoritative.
 
 ## Acceptance Commands (implementation phase only)

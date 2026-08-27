@@ -36,3 +36,7 @@ The feature owner had created only lease-scoped local drafts under `scripts/vali
 ## Required human action
 
 Decide `DEC-P0-013` and `DEC-P0-014`. If the recommended amendments are accepted, the coordinator must update the affected spec/plan/research/data-model/contracts/tasks, rerun checklists and `speckit-analyze`, freeze a new exact subject, and obtain replacement `material_change` and `feature_implementation` approvals before implementation resumes.
+
+## Planning disposition
+
+The human accepted both recommended amendments for planning and re-analysis only in [`APR-EPP-F01-AMEND-PLANNING-001`](../approvals/APR-EPP-F01-AMEND-PLANNING-001.json). Because this stop itself created revision 18 and the amended approval freeze creates the final legacy checkpoint, the closed bridge is now precisely revisions 10–19 and transitions `TR-0009`–`TR-0018`; it ends at `IMPLEMENTATION_APPROVAL_PENDING`, accepts no later v1 record, and permits one v2 migration. ADRs [`0013`](../../decisions/0013-closed-v1-bridge.md) and [`0014`](../../decisions/0014-dashboard-provenance.md) record the decisions. This disposition does not resume implementation or make either earlier approval current.

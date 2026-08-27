@@ -2,7 +2,7 @@
 
 ## Scope and Method
 
-The primary writer inspected the approved program contracts, current revisions 1–9, existing repository tooling, package configuration, tests, and Git-gate scripts. Three bounded read-only agents independently audited repository architecture, contract semantics, and verification strategy. All three stopped without file or Git mutations. Findings below resolve their contradictions and expose every material choice that must be included in exact implementation approval.
+The primary writer inspected the approved program contracts, the complete legacy chain through revision 18 / `TR-0017`, the proposed revision-19 amended checkpoint, existing repository tooling, package configuration, tests, and Git-gate scripts. Three bounded read-only agents initially audited repository architecture, contract semantics, and verification strategy; the amended subject receives a new four-lens audit before freeze. All auditors are read-only. Findings below resolve contradictions and expose every material choice that must be included in exact implementation approval.
 
 ## R-001 — Repository-local Python CLI
 
@@ -38,7 +38,7 @@ The primary writer inspected the approved program contracts, current revisions 1
 
 **Rationale**: Current state records `PROGRAM_ACTIVE`, while TR-0006 through TR-0008 use feature states. An implementation cannot validate their edges from the authoritative snapshot without an undocumented inference. A failed attempt or repair self-loop is evidence, not an ordinary lifecycle advance.
 
-**Compatibility**: Revisions 1–9 remain immutable and are accepted only through a closed bootstrap profile anchored to the approved program subject and a fixed integrity checkpoint. Future records must use the new domain/event fields and complete changed-path manifests.
+**Compatibility**: Revisions 1–9 remain immutable and are accepted only through `epp-bootstrap-v1-r1-r9`. The later governed planning history is accepted only through the independently closed `epp-bridge-v1-r10-r19`, which enumerates revisions 10–19 and transitions `TR-0009`–`TR-0018`, ends at the amended approval checkpoint, rejects every later v1 record, and permits one approved migration to v2. Future records after that migration must use the new domain/event fields and complete changed-path manifests.
 
 **Alternative rejected**: Inferring child state solely from transition history embeds bootstrap exceptions in code and leaves current state unable to prove its own feature stage.
 
@@ -54,10 +54,10 @@ The primary writer inspected the approved program contracts, current revisions 1
 
 1. Commit authoritative source inputs as commit `S`.
 2. Enumerate a sorted, complete authoritative-input manifest at `S`, excluding `dashboard.json` and declared delivery sidecars; record each Git-blob digest and the canonical manifest digest.
-3. Record `S` commit, repository tree, program tree, generator blob digest, and input-manifest digest in the dashboard.
-4. Commit the dashboard in successor commit `C`; infer `C` from Git and require first parent `S` plus an `S..C` diff limited to declared generated outputs.
+3. Enumerate the closed generator bundle—the tracked regular entrypoint plus every tracked regular `*.py` blob recursively under `scripts/program_control/`—in a normalized, unique, path-sorted manifest capped at 100 files and 2 MiB; reject local imports outside that bundle, and record its canonical digest and entries together with `S`, repository tree, program tree, and input-manifest digest.
+4. The validation command accepts optional `--container <commit-ish>`. When omitted, infer only `HEAD`, only if its first parent is `S` and `S..HEAD` changes exactly the declared generated outputs. It separately accepts optional `--delivery <commit-ish>` as the only resolution for `D`; `--delivery` requires resolved `C`, and no descendant search or inference is allowed. Otherwise the missing subject is unresolved and no committed-current claim is possible.
 5. Record a separate exact release candidate `R`; all gate evidence and human release approval must bind the same `R`.
-6. Uncommitted candidates are temporary CLI results and cannot claim `committed_valid`.
+6. Generated dashboard bytes always say `candidate_not_evidence`, whether uncommitted or contained in `C`. Only the external validation delivery envelope may say `committed_valid` after passing evidence from an independent verifier in explicit descendant `D` binds exact dashboard bytes and proves the `S`/`C` and `C`/`D` allowlisted relations.
 
 **Rationale**: A dashboard cannot contain the identity of a program tree that contains its own final bytes. Source/container separation removes the fixed-point problem and permits exact validation.
 
@@ -98,7 +98,7 @@ The primary writer inspected the approved program contracts, current revisions 1
 
 ## R-009 — Schema compatibility
 
-**Decision**: Maintain an explicit compatibility table. `1.0` is supported where declared. Unknown major versions produce `SCHEMA_MAJOR_UNSUPPORTED`; an undeclared newer minor produces `SCHEMA_MINOR_UNSUPPORTED`. Prior snapshots are accepted only when named by the compatibility profile and covered by fixtures.
+**Decision**: Maintain an explicit compatibility table. `1.0` is supported where declared. Unknown major versions produce `SCHEMA_MAJOR_UNSUPPORTED`; an undeclared newer minor produces `SCHEMA_MINOR_UNSUPPORTED`. Prior snapshots are accepted only when named by one of the two closed compatibility profiles and covered by exact fixtures. The second profile is not an open range: it lists revisions 10–19, transitions `TR-0009`–`TR-0018`, every canonical prior/new state digest, the terminal approval-pending state, and a single allowed v2 successor.
 
 **Alternative rejected**: Accepting any `1.x` because the major matches is unsafe while schemas use exact constants and no ignored-field semantics exist.
 
@@ -133,7 +133,26 @@ The primary writer inspected the approved program contracts, current revisions 1
 
 Add focused routing for program docs, implementation modules, and tests to `check-dev-push.sh`; include modules in Ruff/format/MyPy paths and focused tests early in dev-merge/CI. Extend gate-process tests so routing cannot drift. Existing PowerShell wrappers delegate to Bash and need no duplicate validator logic.
 
-Every persisted foundation, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery result uses the versioned verification-evidence contract. The verifier validates frozen candidate `R` and commits candidate evidence in source `S`; the coordinator creates dashboard-only successor `C`; the verifier then checks `C` and persists delivery-only evidence in descendant `D`. `D` does not retroactively become an input to the snapshot at `S`; any new readiness evidence does. This sequencing preserves independent-verifier identity without an endless verify/regenerate cycle.
+Every persisted foundation, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery result uses the versioned verification-evidence contract. The verifier validates frozen candidate `R` and commits candidate evidence in source `S`; the coordinator creates dashboard-only successor `C`; the verifier then checks `C` and persists a passing delivery-only record in descendant `D`. A later validation receives exact `D` explicitly; it never searches for or infers a descendant. `D` does not retroactively become an input to the snapshot at `S`; any new readiness evidence does. This sequencing preserves independent-verifier identity without an endless verify/regenerate cycle.
+
+## R-014 — Closed post-bootstrap v1 bridge (DEC-P0-013)
+
+**Human-approved planning decision**: Retain the bytes and exceptions of `epp-bootstrap-v1-r1-r9` unchanged and add `epp-bridge-v1-r10-r19`. The first profile names the second as its one closed-profile successor beginning at `TR-0009`; this is not open-ended v1 acceptance. The bridge separately enumerates each included state revision and transition through the amended approval checkpoint `TR-0018`, including unique paths, exact raw state/transition SHA-256 values through `TR-0017`, exact canonical state edges, and a sole terminal `checkpoint_commit_blob` rule for `TR-0018`. The terminal raw hash is deliberately null to avoid a profile/transition fixed point; the later approval subject binds the commit from which the validator resolves and hashes both. It accepts no record after revision 19, ends at feature state `IMPLEMENTATION_APPROVAL_PENDING`, and allows exactly one successor: the approved v1-to-v2 migration.
+
+**Checkpoint binding**: The bridge cannot embed the commit that will contain itself. Its `checkpoint_commit` therefore remains null permanently under the closed rule `exact_material_change_approval_subject`; the validator resolves the effective checkpoint commit from the forthcoming digest-bound approval record at validation time and requires that subject to contain the exact profile, state archives, and transition blobs. The approved profile is never patched to insert its own commit. A missing, different, non-ancestor, or byte-mismatched approval subject fails closed.
+
+**Alternatives rejected**: widening r1–r9, accepting arbitrary v1 records, rewriting history, treating later v1 records as v2, or allowing more than one migration successor.
+
+## R-015 — Container, gate-row, generator, and delivery provenance (DEC-P0-014)
+
+**Human-approved planning decision**:
+
+- accept optional explicit `--container`; otherwise infer only `HEAD` under the exact first-parent and dashboard-only diff rule; accept `D` only through explicit `--delivery` with resolved `C` and exact delivery-only first-parent proof;
+- use one gate-row contract in report and dashboard, including required boolean `fresh`;
+- bind validator identity to a canonical SHA-256 of the closed tracked entrypoint-plus-package source manifest, with normalized unique paths, 100-file/2-MiB bounds, no out-of-bundle local imports, and inspectable entries;
+- keep dashboard bytes `candidate_not_evidence`; represent `committed_valid` only in the validation delivery envelope when passing evidence from an independent verifier in explicit descendant `D` binds `S`, `C`, dashboard bytes, and both allowed diffs.
+
+**Alternatives rejected**: silently selecting an arbitrary descendant as `C`, hashing only the entrypoint, inferring gate freshness from area freshness, embedding `C`/`D` evidence in dashboard bytes, or regenerating after every delivery-only record.
 
 ## Independent Audit Synthesis
 
@@ -147,4 +166,4 @@ No audit recommended product implementation, benchmark generation/execution, dep
 
 ## Remaining Material Questions
 
-No design question is hidden. R-004 through R-008 alter or complete approved program semantics and therefore remain **approval-blocking until the human approves the exact combined feature/material-change subject**. Planning, checklist generation, task generation, and read-only analysis may continue; implementation may not.
+`DEC-P0-013` and `DEC-P0-014` are decided for planning by the human direction recorded in ADRs 0013 and 0014. No material design question remains hidden. R-004 through R-008 and R-014 through R-015 alter or complete approved program semantics and therefore remain **implementation-blocking until the human approves the newly frozen exact combined feature/material-change subject**. The bridge fixture's null checkpoint is resolved at validation time only from that exact approval; it is neither mutated nor a coordinator default. Planning, checklist generation, task regeneration, read-only analysis, and bounded audits may continue; implementation may not.

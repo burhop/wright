@@ -15,11 +15,14 @@
 | `source_commit` | 40-hex Git commit/null | Authoritative input commit `S`; null only when resolution failed |
 | `source_tree` | 40-hex Git tree/null | Tree of `S`; null only when resolution failed |
 | `program_tree` | 40-hex Git tree/null | Program subtree at `S`; null only when resolution failed |
-| `container_commit` | null or 40-hex | Commit `C` containing generated dashboard; inferred, never embedded as self-identity |
+| `container_resolution` | enum | `absent`, `explicit`, `inferred_head`, or `unresolved`; inference is allowed only for `HEAD` whose first parent is `S` and whose diff is dashboard-only |
+| `container_commit` | null or 40-hex | Commit `C` containing generated dashboard; resolved from explicit CLI input or the constrained `HEAD` rule, never embedded in dashboard bytes |
+| `delivery_resolution` | enum | `absent`, `explicit`, or `unresolved`; only `--delivery` may resolve `D`, and it requires resolved `C` |
+| `delivery_commit` | null or 40-hex | Explicit descendant `D`; first parent must be `C` and `C..D` must contain only the fixed delivery-evidence path |
 | `release_candidate` | null or exact subject object | Independent candidate `R` shared by all release gates |
 | `worktree_clean` | boolean | Observation only |
 | `checkout_representation` | object | Platform, autocrlf mode, dirty paths/count; bounded and non-authoritative |
-| `validator` | object | Version plus exact committed generator blob digest |
+| `validator` | object | Version and canonical digest/entries for the tracked regular entrypoint plus all tracked regular `*.py` blobs recursively under `scripts/program_control/` at `S`; normalized paths are unique/sorted, capped at 100 files/2 MiB total, local imports outside the bundle fail closed, and any add/delete/change changes identity |
 | `observed_at` | date-time | Declared nondeterministic observation field |
 | `input_manifest_digest` | SHA-256/null | Canonical digest of sorted complete authoritative input manifest; null only when subject resolution failed and verdict cannot pass |
 
@@ -68,6 +71,8 @@ Cross-field invariant: current feature, feature state, active roadmap row, point
 
 `epp-bootstrap-v1-r1-r9` is a closed profile anchored to the approved program subject and the verified revision-9 checkpoint. It recognizes legacy program/feature state mapping, the documented TR-0006 repair checkpoint, legacy `head_after=head_before`, normalized historical path forms, and incomplete containing-commit manifests for TR-0001 through TR-0005. No new v1 transition may be accepted after the checkpoint.
 
+`epp-bridge-v1-r10-r19` is a second, independent closed profile. The r1–r9 profile names it as the single closed-profile successor beginning at `TR-0009`; the bridge then enumerates revisions 10–19 and transitions `TR-0009`–`TR-0018` with unique normalized paths, exact prior/new canonical state digests, exact raw SHA-256 for every state and transitions through `TR-0017`, and one terminal `checkpoint_commit_blob` identity for `TR-0018`. The terminal hash remains null to avoid a mutual hash with the profile; the validator resolves and hashes that blob from the later exact approval subject containing both artifacts. The bridge ends at feature state `IMPLEMENTATION_APPROVAL_PENDING`, accepts no later v1 record, and permits one v1-to-v2 migration successor. Its immutable fixture leaves `checkpoint_commit` null under rule `exact_material_change_approval_subject`; the validator resolves the effective commit from the approval record and verifies every profile path/blob at that subject without modifying the fixture. Exactly the two named profiles, contiguous enumerations, terminal states, and sole successor link are accepted.
+
 ## LifecyclePolicy
 
 | Field | Rule |
@@ -80,7 +85,7 @@ Cross-field invariant: current feature, feature state, active roadmap row, point
 | `action_rules` | State and evidence predicate to allowed next action(s) |
 | `wip_limits` | One mutating lease, one implementing/repairing feature, max three read-only auditors |
 | `path_roles` | Artifact patterns, role, mutability, allowed state/actions |
-| `compatibility_profiles` | Explicit historical profiles and terminal checkpoint |
+| `compatibility_profiles` | Explicit closed historical profiles with enumerated state and transition digests, terminal program/feature state, approval-bound checkpoint, no-new-record rule, and at most one declared successor |
 
 Unknown lifecycle policy versions fail closed.
 
@@ -120,9 +125,17 @@ Unknown lifecycle policy versions fail closed.
 | `subject` | Exact release candidate `R` |
 | `catalog_digest` | Exact committed gate-catalog blob digest |
 | `data_cutoff` | Latest included evidence time |
-| `assertions` | At most one current row per gate and candidate |
+| `assertions` | Exactly one current row per catalog gate and candidate; each row contains exactly one result per catalog assertion ID |
 
-Each assertion contains gate ID, status, evidence classification, reason code, observed/expires times, stale triggers, verifier identity/independence, and exact evidence artifact identities. Non-passing classifications never map to `passed`.
+Each gate row contains the evaluator identity plus a complete set of assertion results. The catalog's closed class registry maps each `evidence_class` to an expected source schema ID and role. Each result contains assertion ID, status, evidence classification, reason code, explicit freshness, observed/expires times, stale triggers, verifier identity/independence, and exact non-empty evidence identities with class/schema/role. The validator requires those fields to match both the registry and resolved SourceArtifact manifest entry, and requires their union to cover every catalog `required_class`; relabeling an arbitrary artifact cannot satisfy a class. The aggregate gate status is derived: `passed` requires every required assertion to be `passed`, `supporting`, fresh, exact-candidate-bound, evaluator-matched, evidence-backed, required-class-complete, and independent when the catalog requires it. Missing/extra/duplicate assertion IDs, missing/unknown/mismatched class/schema/role, hand-set aggregate status, and non-passing classifications fail closed.
+
+## Benchmark summary algebra
+
+- The target population is exactly 100 governed slots. `counted` is the number of distinct, current, non-superseded case manifests admitted by sampling/qualification policy; one equivalence family contributes only its approved maximum.
+- Every target slot is assigned exactly once, in fixed precedence, to `eventual_passed`, `failed`, `blocked`, `stale`, `contaminated`, or `not_tested`; absent target slots and counted cases without terminal evidence are `not_tested`. These six values sum to `target`.
+- `first_attempt_passed` is a subset of `eventual_passed`; both are calculated from append-only attempt history for the same exact candidate and frozen policy. A later pass never erases the first failure.
+- `t0`–`t3` count current, fresh, passing tier qualifications among counted cases. Every T1/T2/T3 case also passes T0, and every T2/T3 claim also passes T1; T2 and T3 may overlap without either containing the other. No tier count exceeds `counted`.
+- Coverage, oracle, artifact, partition, and freshness deficit arrays are independently derived from governed source records and remain non-empty until their exact obligations pass. Counter consistency never substitutes for those deficits.
 
 ## ReadinessArea
 
@@ -132,7 +145,8 @@ Each assertion contains gate ID, status, evidence classification, reason code, o
 | `passed_gates` | Count of passed required rows |
 | `required_gates` | Count of required catalog members |
 | `gates` | Every required area gate exactly once, catalog order |
-| `blockers`, `evidence`, `fresh` | Derived, deterministic, bounded |
+| gate row | Shared report/dashboard object with `id`, `status`, `classification`, `reason_code`, exact `evidence`, and required boolean `fresh` |
+| `blockers`, `evidence`, `fresh` | Derived, deterministic, bounded area aggregates; area freshness never substitutes for a gate's own `fresh` field |
 | `last_success_at` | Latest time the same exact candidate had every area gate passed; null otherwise |
 
 Four areas are evaluated independently. No area consumes another area's counts or status.
@@ -141,9 +155,9 @@ Four areas are evaluated independently. No area consumes another area's counts o
 
 | Field | Rule |
 |---|---|
-| `generation_status` | `contract_seed_not_evidence`, `candidate_not_evidence`, `committed_valid`, `stale`, or `failed` |
-| `source` | `S` identity, input manifest/digest, generator blob/version |
-| `container_relation` | Expected first-parent and generated-output allowlist; actual `C` is inferred |
+| `generation_status` | Only `contract_seed_not_evidence` or `candidate_not_evidence`; dashboard bytes never claim their own committed validity |
+| `source` | `S` identity, input manifest/digest, generator version, source-bundle manifest/digest |
+| `container_relation` | Expected first-parent and generated-output allowlist only; neither actual `C` nor descendant `D` evidence is embedded |
 | `release_candidate` | Exact candidate `R` or null |
 | `areas` | Four independent `ReadinessArea` objects in contract order |
 | `benchmark_summary` | Derived counts and deficits; no implied product/commercial/program result |
@@ -171,7 +185,11 @@ The report contains schema version, validation subject, overall verdict, ordered
 
 ## VerificationEvidence
 
-Every durable author, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery record contains a versioned evidence ID/kind, exact subject commit/tree/artifact manifest, actor identity/role/independence, bounded check records, original failure/skip references, findings, verdict, created time, and rollback pointer. It records command IDs or bounded methods, never secrets or unredacted command arguments. Candidate-freeze and independent-verifier evidence must use distinct actor identities. Delivery-only evidence in descendant `D` binds container `C` and is not an input to the snapshot generated from `S`.
+Every durable author, story, rollback, diff-audit, candidate, independent-candidate, and dashboard-delivery record contains a versioned evidence ID/kind, exact subject commit/tree/artifact manifest, actor identity/role/independence, bounded check records, original failure/skip references, findings, verdict, created time, and rollback pointer. It records command IDs or bounded methods, never secrets or unredacted command arguments. Candidate-freeze and independent-verifier evidence must use distinct actor identities. Delivery-only evidence in explicit descendant `D` has a required relation binding source `S`, container `C`, exact dashboard bytes, the dashboard-only `S..C` diff, and the delivery-only `C..D` diff; its actor is an independent verifier and its verdict is passed. `D` is never inferred or an input to the snapshot generated from `S`.
+
+## DeliveryEnvelope
+
+The validation report, not the dashboard, contains delivery status. It records the container-resolution method, exact `C` when resolved, explicit delivery-resolution method, exact `D`, and artifact identity of independent passing delivery evidence in `D`, prior-snapshot preservation, and status `not_requested`, `candidate_not_evidence`, `committed_valid`, `stale`, or `failed`. `committed_valid` requires all external `S`/`C`/`D` checks; absent or ambiguous proof fails closed without changing dashboard bytes.
 
 ## State Transitions
 
@@ -190,8 +208,8 @@ Validation failures never authorize or synthesize a transition. A failed attempt
 
 ## Migration and Rollback
 
-1. Freeze and test the v1 revision-9 integrity checkpoint.
-2. Add v2 schemas/policy/catalog/evidence plus append-only material-change approval.
-3. Emit one explicit v1-to-v2 migration transition; do not rewrite v1 files.
+1. Freeze and test `epp-bootstrap-v1-r1-r9` and the separately closed `epp-bridge-v1-r10-r19`; reject every later v1 record.
+2. Bind the bridge checkpoint to the newly approved exact material-change subject, then add v2 schemas/policy/catalog/evidence without altering any enumerated legacy digest.
+3. Emit the sole explicit v1-to-v2 migration transition; do not rewrite v1 files and reject a second migration.
 4. Freeze implementation candidate `R`; commit independent-candidate evidence as source `S`; generate v2 dashboard only as dashboard-only successor `C`; then persist independent delivery-only verification in descendant `D` without treating `D` as a source input for the snapshot at `S`.
 5. On rollback/removal, retain all source evidence and v1 manual validation instructions; v2 dashboards become stale/unsupported and cannot be approval evidence.

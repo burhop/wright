@@ -1,109 +1,91 @@
-# Specification Analysis Report: EPP-F01
+# Specification Analysis Report: EPP-F01 Amended Approval Subject
 
-**Analysis method**: `speckit-analyze` cross-artifact consistency and quality passes
+**Analysis method**: `speckit-analyze` non-destructive cross-artifact consistency, coverage, ambiguity, and constitution review after DEC-P0-013/014 re-specification, checklist/task regeneration, and four independent omission audits
 
-**Input commit**: `819914b8309bf306909f31f4e707710eb186e8e0`
+**Subject**: final planning-only candidate; exact commit, repository tree, program tree, and per-artifact SHA-256 values are frozen in `docs/programs/engineering-process-platform/evidence/transitions/TR-0018.json`
 
-**Input tree**: `3ecf31f74b9f23d5cba19d038a1c57fa9d672b6c`
+**Result**: **PASS** — zero active critical, high, or medium findings; all 24 functional requirements and 10 buildable success criteria have task coverage; four independent audit reruns pass
 
-**Result**: PASS — zero active critical, high, or medium findings; all 34 buildable requirements have task coverage
+## Inputs and validation envelope
 
-## Bound Inputs
+- Feature artifacts: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, `tasks.md`, both completed checklists, and every file under `contracts/`.
+- Program artifacts: DEC-P0-013/014 ADRs and decision register, state revisions 18/19, roadmap/dashboard/README/approval/dashboard contract, planning-only approval, material audit, and final four-audit synthesis.
+- Constitution: `.specify/memory/constitution.md`, version 3.0.0.
+- Spec Kit prerequisite/setup scripts resolved the existing feature and task directories without creating a branch or commit.
+- All JSON parsed; all seven feature schemas passed Draft 2020-12 meta-validation; the standalone legacy-profile instance validated with local reference resolution.
+- Both legacy profiles passed semantic checks for order, contiguity, unique paths/IDs, state raw/canonical identity, committed transition bytes through `TR-0017`, the sole non-circular terminal rule, terminal states, and successor limits.
+- Requirements checklist: all items checked, no override. Program-control checklist: 58/58 checked, no override.
+- Tasks: exactly 68 sequential local tasks; zero checked; no product or benchmark implementation task executed.
 
-| Artifact | Exact committed-blob SHA-256 |
-|---|---|
-| `spec.md` | `953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029` |
-| `plan.md` | `2fc8e32cb028d0affaf64aac250e42c83d4945cf18733c454ac9294ec9981e52` |
-| `tasks.md` | `5c4d1a4ac8e763f03f360719655ad87b8d5ee09e4b0092b2db0bd37707ce1fb0` |
-| `checklists/requirements.md` | `bf67ef8046fd044165f8d07930253266a8f282fb89f2b4cbee5d43df6a7763b2` |
-| `checklists/program-control.md` | `2f68c4abd8dadf6c6e7b9bb6d70a4d885b80a1b7ef62d9b30d7cbf8a6284a1a2` |
-| Constitution v3.0.0 | `5d7d558926a0eef0a05b90af41c994aeddcdd2fed7d43673037b34ada931b75b` |
+Exact committed-blob SHA-256 values for every changed artifact are recorded once in `TR-0018`; this report does not duplicate a partial manifest.
 
-All six feature contract schemas parsed and passed Draft 2020-12 schema meta-validation. Both requirements-quality checklists have zero unchecked items and no override.
-
-## Active Findings
+## Active findings
 
 None.
 
-## Resolved Iteration-1 Findings
+## Final bounded repair cycle
 
-The initial read-only pass on `b4262e4c98ca0b3e5026ab1ad3516f222aa971f9` found the following. They were corrected in the single bounded repair checkpoint `TR-0012` and were absent on the clean rerun.
+Stable cause: `EPP-F01-ANALYSIS-001`. Repair attempt: **2 of 2**. Remaining allowance after freeze: **0**.
 
-| ID | Category | Original severity | Original location | Resolution |
-|---|---|---:|---|---|
-| I1 | Inconsistency | HIGH | `plan.md` scale; `tasks.md` T011 | Replaced 27 with the authoritative 34-gate total and retained exact per-area independence. |
-| U1 | Underspecification | HIGH | `contracts/validation-report.schema.json` | Added complete gate rows, benchmark summary, release approval, release eligibility, last-success/evidence fields, and honest unresolved-subject failure representation. |
-| A1 | Ambiguity | HIGH | Plan approval boundary; `tasks.md` entry/T015 | Defined two same-subject approval records—`material_change` and `feature_implementation`—instead of overloading the v1 singular scope. |
-| I2 | Inconsistency | HIGH | Dashboard provenance; tasks T065–T066 | Defined non-circular `R`/`S`/`C`/`D` sequencing with candidate verification, dashboard-only delivery, and delivery-only verification; added dashboard and verification-evidence schemas. |
-| U2 | Underspecification | MEDIUM | `plan.md` source structure | Added every task-referenced program-control test module to the concrete source tree. |
-| C1 | Coverage | MEDIUM | Plan performance goal; US1 tasks | Added explicit current-program `<5 seconds` and `<=1 MiB` assertions to T024 and full verification evidence coverage. |
+One consolidated repair cycle retained and resolved all findings below. The original findings remain visible in the independent audit synthesis; reruns do not erase them.
 
-Repair allowance for stable cause `EPP-F01-ANALYSIS-001`: attempt 1 of 2 used; 1 remains. No second repair was required.
+| Area | Highest severity | Resolved inconsistency or omission |
+|---|---:|---|
+| Spec Kit cross-artifact analysis | HIGH | Source-manifest prose required role/schema identity while report/dashboard schemas reused a generic artifact shape. Added typed SourceArtifact contracts. |
+| Engineering usability | HIGH | Added deterministic explicit-only `D`; separated validator validity/exit from readiness state; linked empty-context subject; closed bundle enumeration. |
+| Architecture | HIGH | Made checkpoint binding immutable/runtime-resolved; byte-bound historical transitions from committed Git objects; eliminated terminal hash cycle; added r19 archive, exact profile structure, explicit `D`, and executing-runtime-to-`S` bundle binding. |
+| Commercial/release | HIGH | Removed current authority from stale approvals and required independent passing delivery evidence. |
+| Benchmark quality | HIGH | Replaced hand-set gate status with complete assertion results, closed evidence-class/schema/role registry binding, explicit FR-022 semantic negatives, deterministic counters/tiers, and exact partition terminology. |
 
-## Coverage Summary
+Independent reruns are recorded in `docs/programs/engineering-process-platform/evidence/audits/2026-08-27-epp-f01-amendment-omission-audits.md`: usability PASS, architecture PASS conditional only on completed freeze checks, commercial/release PASS, and benchmark quality PASS. No audit recommended product implementation, benchmark generation/execution, dependency changes, integration, external activity, publication, or release.
 
-| Requirement key | Has task? | Task IDs | Notes |
-|---|---|---|---|
-| FR-001 | Yes | T029–T031 | One documented non-interactive local validate entrypoint and result. |
-| FR-002 | Yes | T023, T025, T029 | Exact source/tree/program/validator identity and separate checkout observation. |
-| FR-003 | Yes | T004, T017, T020 | Strict parsing, schema compatibility, required/unexpected artifact failures. |
-| FR-004 | Yes | T006, T021, T026 | Digests, revisions, append-only history, domains/events, outputs. |
-| FR-005 | Yes | T018, T023, T025 | Git-blob identity and Windows/POSIX representation separation. |
-| FR-006 | Yes | T022, T027 | DAG, dependencies, priority/tie semantics, sole action. |
-| FR-007 | Yes | T007, T022, T027 | WIP, pointer, complete lease identity/actions/recovery. |
-| FR-008 | Yes | T007, T014–T015, T022, T027 | Scope, subject, freshness, conditions, revocation, approval bundle. |
-| FR-009 | Yes | T026–T028, T036–T039 | Cross-artifact semantic equality and derived readiness. |
-| FR-010 | Yes | T032–T033, T037 | Four fixed independent areas. |
-| FR-011 | Yes | T016, T032, T037, T040 | Complete gate rows, counts, blockers, evidence, freshness, last success. |
-| FR-012 | Yes | T033, T038 | Full benchmark counters and deficits. |
-| FR-013 | Yes | T035, T038–T039 | Same-candidate four-area plus exact approval formula. |
-| FR-014 | Yes | T018, T023, T045, T064 | No product/benchmark/network/external/Git mutation. |
-| FR-015 | Yes | T044, T047–T049 | Transactional replace and prior-byte preservation. |
-| FR-016 | Yes | T028, T042, T046 | Stable bounded deterministic multi-finding diagnostics. |
-| FR-017 | Yes | T016, T029, T053 | Versioned common report model for text and JSON. |
-| FR-018 | Yes | T043, T046, T049 | Allowlisted metadata and prohibited-output canaries. |
-| FR-019 | Yes | T030, T054–T055 | Prerequisites, meaning, inspection, recovery, compatibility. |
-| FR-020 | Yes | T003–T004, T006–T008, T020–T024, T032–T035, T042–T045, T050–T052 | Valid fixture and all required negative/truth/atomic/privacy cases. |
-| FR-021 | Yes | T023, T051, T056, T059 | Windows/POSIX, line endings, spaces, optional/prior contracts. |
-| FR-022 | Yes | T012, T033, T036, T038 | Validate/project benchmark metadata without collection or execution. |
-| FR-023 | Yes | T051, T054, T063 | Removal/manual fallback and incompatible-dashboard invalidation. |
-| FR-024 | Yes | T030, T052, T054–T055 | Empty-context reproduction and approval recognition. |
-| SC-001 | Yes | T030, T052, T054 | Under-five-minute fresh-maintainer journey. |
-| SC-002 | Yes | T020–T024, T031 | Valid fixture plus single-fault stable-code matrix. |
-| SC-003 | Yes | T050, T053, T056 | Fixed-clock byte/semantic determinism. |
-| SC-004 | Yes | T032–T033, T041 | Four-by-status independent area matrix. |
-| SC-005 | Yes | T033, T035, T038, T041 | 100-success and missing-area/approval false-release traps. |
-| SC-006 | Yes | T044, T047–T049 | Every injected delivery failure preserves prior bytes. |
-| SC-007 | Yes | T023, T051, T056, T059 | Cross-platform committed identity and semantic agreement. |
-| SC-008 | Yes | T043, T046, T049 | Zero prohibited canary disclosures. |
-| SC-009 | Yes | T023, T045, T049, T064 | Before/after source identity and Git-spy proof. |
-| SC-010 | Yes | T052, T056, T066–T068 | Empty-context evidence walk and independent delivery verification. |
+## Requirement coverage
 
-## Constitution Alignment
+| Requirement group | Coverage | Principal tasks |
+|---|---:|---|
+| FR-001–FR-005: entrypoint, exact S/C/D/runtime identity, strict contracts, closed v1 history, Git identity | 5/5 | T002–T006, T016–T026, T029 |
+| FR-006–FR-009: roadmap, WIP/lease, approvals, semantic invariants | 4/4 | T007, T013–T015, T022, T026–T028 |
+| FR-010–FR-013: independent areas, assertion/class proof, benchmark summary, release formula | 4/4 | T008, T011–T012, T032–T041 |
+| FR-014–FR-018: no execution/mutation, atomic delivery, diagnostics, common outputs, privacy | 5/5 | T023–T024, T028–T029, T042–T049, T053 |
+| FR-019–FR-024: journey, negative verification, compatibility, benchmark semantics, rollback, empty context | 6/6 | T030, T033–T034, T050–T056, T061–T068 |
+| SC-001–SC-010 | 10/10 | T023–T024, T030–T035, T041–T068 |
 
-No issue found. The feature is repo-local governance tooling, not a product API/UI/runtime; product-only FastAPI, storage, auth, tool, and UI/trace mandates are explicitly non-applicable. Applicable offline-first, package-boundary, test, privacy, branch, phase-isolation, and manual-gating mandates are represented in the plan and tasks. No constitution exception is requested.
+Every task maps to setup/foundation, one user story, gate integration, compatibility, rollback, candidate freeze, independent verification, or exact delivery evidence. No unmapped task or uncovered buildable requirement remains.
 
-## Unmapped Tasks
+## Consistency conclusions
 
-None. Setup/foundation tasks provide shared prerequisites for multiple requirements; cross-cutting tasks provide Git-gate, compatibility, rollback, candidate-freeze, or independent-verification evidence required by the spec and operating contract.
+- Validator success means the requested subject validated and its states were derived; blocked/stale/not-started readiness does not itself cause validator failure.
+- `S` is authoritative input, `C` is explicit or tightly inferred dashboard container, `D` is explicit-only passing independent delivery evidence, and `R` is the independent release candidate shared by gates.
+- Dashboard bytes are always seed/candidate, never self-authority. External delivery proof does not confer implementation, integration, or release authority.
+- Product, benchmark, commercial, and program-health areas remain independent and release eligibility is their logical AND plus current exact human release approval.
+- Exactly two closed v1 profiles are accepted. `TR-0018` uses `checkpoint_commit_blob` rather than an impossible mutual raw hash; the later approval subject supplies the exact containing commit.
+- Evidence classes cannot be self-labeled into passing: class, schema ID, role, SourceArtifact, evaluator, freshness, candidate, and verifier policy must all agree.
+- The 100-process target cannot substitute for coverage, oracles, artifact proof, holdout integrity, attempt history, tier prerequisites, freshness, product readiness, commercial readiness, or program health.
+- The preserved implementation drafts remain unauthorized work-in-progress and no task checkbox is complete.
+
+## Constitution alignment
+
+No constitution violation or exception is requested. EPP-F01 remains repository-local governance tooling, not Wright product/runtime behavior. Applicable offline-first, package-boundary, deterministic-test, privacy, branch/worktree, phase-isolation, compatibility, rollback, independent-verification, and human-gate requirements are explicit. Product-only API/UI/storage/tool mandates remain non-applicable to this feature and are not claimed satisfied.
 
 ## Metrics
 
 - Functional requirements: 24
 - Buildable success criteria: 10
 - Total requirements analyzed: 34
-- Total tasks: 68
-- Requirements with one or more tasks: 34
+- Requirements with task coverage: 34
 - Coverage: 100%
-- User stories with independent test criteria: 4 of 4
-- Active ambiguity findings: 0
-- Active duplication findings: 0
+- User stories with independent test criteria: 4/4
+- Tasks: 68, sequential, 0 checked
+- Feature contract JSON files: 8 (7 schemas plus 1 profile instance)
+- Program-control checklist: 58/58
 - Active critical findings: 0
 - Active high findings: 0
 - Active medium findings: 0
-- Resolved findings retained: 6
-- Unchecked checklist items: 0
+- Independent omission-audit reruns passed: 4/4
+- Repair cycles used: 2/2
 
-## Next Action
+## Next action and stop
 
-Freeze the exact planning subject—spec, plan, research, data model, quickstart, six contracts, both completed checklists, tasks, this analysis, state/transition evidence, and implementation path lease proposal—and request the two-record human approval bundle. Do not run `speckit-implement` until both exact approvals exist and the lease is expanded.
+Freeze and commit `TR-0018`, the immutable revision-19 state archive, this analysis, the audit synthesis, and all amended planning contracts. Recompute every committed-blob digest and exact Git subject. Then stop at one human gate requesting separate same-subject `material_change` and `feature_implementation` approvals.
+
+Do not run `speckit-implement`, change preserved implementation drafts, add dependencies, execute product or benchmark code, push, open/merge a PR, integrate to `dev`, make external changes, publish, or release before those approvals and their separate downstream gates.
