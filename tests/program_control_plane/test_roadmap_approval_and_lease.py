@@ -37,7 +37,7 @@ def code_set(findings) -> set[str]:
     return {finding.code for finding in findings}
 
 
-def test_current_pointer_wip_dates_and_lease_are_consistent(
+def test_current_blocked_pointer_has_no_lease_and_requires_human_authority(
     repository_root: Path,
 ) -> None:
     findings, action = validate_roadmap_approval_and_lease(
@@ -48,7 +48,7 @@ def test_current_pointer_wip_dates_and_lease_are_consistent(
         worktree_id="epp-f01",
     )
     assert findings == []
-    assert action == "EXECUTE_EPP_F01_TASKS"
+    assert action == "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3"
 
 
 def test_cycle_wip_and_pointer_mismatch_are_all_reported(repository_root: Path) -> None:
@@ -73,6 +73,15 @@ def test_expired_or_wrong_worktree_lease_and_unsafe_paths_fail(
     repository_root: Path,
 ) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
+    root = repository_root / PROGRAM_ROOT
+    documents[f"{PROGRAM_ROOT}/program-state.json"] = load(
+        root / "evidence/states/program-state-revision-0026.json"
+    )
+    next(
+        item
+        for item in documents[f"{PROGRAM_ROOT}/roadmap.json"]["items"]
+        if item["id"] == "EPP-F01"
+    )["status"] = "active"
     lease = documents[f"{PROGRAM_ROOT}/program-state.json"]["active_mutating_lease"]
     lease["expires_at"] = "2026-08-27T11:59:59Z"
     lease["branch"] = "wrong-branch"
@@ -236,7 +245,7 @@ def test_next_action_human_flag_must_match_policy(repository_root: Path) -> None
     documents = copy.deepcopy(current_documents(repository_root))
     documents[f"{PROGRAM_ROOT}/program-state.json"]["next_eligible_actions"][0][
         "requires_human_approval"
-    ] = True
+    ] = False
     findings, _ = validate_roadmap_approval_and_lease(
         documents,
         PROGRAM_ROOT,

@@ -23,7 +23,7 @@
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
       "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP, then generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
-      "status": "active",
+      "status": "blocked",
       "depends_on": ["EPP-P00"],
       "blocking_decisions": [],
       "gate_impacts": ["PROG-01", "PROG-02", "PROG-05", "PROG-06"],

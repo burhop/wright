@@ -61,10 +61,10 @@
 
 ### Tests for User Story 1
 
-- [ ] T020 [P] [US1] Add raw malformed/duplicate-key, missing/extra field, invalid format, unknown-major, and undeclared-minor cases in `tests/program_control_plane/test_json_contracts.py`
-- [ ] T021 [P] [US1] Add exact blob/canonical digest, monotonic revision, append-only history, legal domain/event edge, both closed legacy profiles, bridge approval-subject binding, no-future-v1/single-migration, and complete-manifest cases in `tests/program_control_plane/test_transition_chain.py`
-- [ ] T022 [P] [US1] Add DAG cycle, dependency, tie ambiguity, status/evidence, blocking decision/risk, approval scope/freshness/revocation, WIP/pointer, and lease identity/action cases in `tests/program_control_plane/test_roadmap_approval_and_lease.py`
-- [ ] T023 [P] [US1] Add LF-blob/clean-CRLF, mixed/dirty checkout, detached/missing Git, path-with-spaces, unsafe path/symlink, dirty/untracked/ignored validator helpers, runtime-HEAD-versus-explicit-S bundle mismatch, loaded-module path escape, and no-mutating-Git-command cases in `tests/program_control_plane/test_git_subject.py`
+- [x] T020 [P] [US1] Add raw malformed/duplicate-key, missing/extra field, invalid format, unknown-major, and undeclared-minor cases in `tests/program_control_plane/test_json_contracts.py`
+- [x] T021 [P] [US1] Add exact blob/canonical digest, monotonic revision, append-only history, legal domain/event edge, both closed legacy profiles, bridge approval-subject binding, no-future-v1/single-migration, and complete-manifest cases in `tests/program_control_plane/test_transition_chain.py`
+- [x] T022 [P] [US1] Add DAG cycle, dependency, tie ambiguity, status/evidence, blocking decision/risk, approval scope/freshness/revocation, WIP/pointer, and lease identity/action cases in `tests/program_control_plane/test_roadmap_approval_and_lease.py`
+- [x] T023 [P] [US1] Add LF-blob/clean-CRLF, mixed/dirty checkout, detached/missing Git, path-with-spaces, unsafe path/symlink, dirty/untracked/ignored validator helpers, runtime-HEAD-versus-explicit-S bundle mismatch, loaded-module path escape, and no-mutating-Git-command cases in `tests/program_control_plane/test_git_subject.py`
 - [ ] T024 [US1] Add valid end-to-end and multi-fault deterministic CLI cases including optional `--container`, constrained `HEAD` inference, explicit-only `--delivery`, every C/D rejection path, and proof that valid blocked/not-started readiness still exits zero while invalid/ambiguous authority exits four, with no source changes, current-program runtime under 5 seconds, and machine output at most 1 MiB in `tests/program_control_plane/test_cli.py`
 
 ### Implementation for User Story 1

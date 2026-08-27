@@ -1,0 +1,170 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-US1-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "story",
+  "subject": {
+    "git_commit": "fe79e3db68007a4576af28bd5081fbe1488b7900",
+    "git_tree": "f8b3470655ccaf5ce643f293497ab584e0826a9c",
+    "artifact_digests": [
+      {
+        "path": "scripts/program_control/cli.py",
+        "sha256": "c0528aed5d31031977226b65d1039299c1ddfe78f9a792dd037730c3206cb74b"
+      },
+      {
+        "path": "scripts/program_control/dashboard.py",
+        "sha256": "981487595460cc735e41d9333b9f92661dd7b8a899e0bd6ac6a254c1b134aaba"
+      },
+      {
+        "path": "scripts/program_control/git_subject.py",
+        "sha256": "2b99cd42df5885e2491f5a474a60b2fbe19fa6ca0de40e3fbec798e2e5695063"
+      },
+      {
+        "path": "scripts/program_control/json_contracts.py",
+        "sha256": "61bf574debf694f0fe1f4881c8f03ab4f16747c3782702b5fc5b4d06b81d8f4c"
+      },
+      {
+        "path": "scripts/program_control/validation.py",
+        "sha256": "baab8621e8016eb83e67dc73d4bfc98e03cad4b172e0834653d29a2855558239"
+      },
+      {
+        "path": "tests/program_control_plane/test_cli.py",
+        "sha256": "40c14b4737153da62c726b86760d6b6abfc13326c2aa26c201ebe2b320bc43c4"
+      },
+      {
+        "path": "tests/program_control_plane/test_git_subject.py",
+        "sha256": "6e84d5079723e0d0daaa045393bf6e1e048a58b23e4a134817f99ee0e0a9234a"
+      },
+      {
+        "path": "tests/program_control_plane/test_json_contracts.py",
+        "sha256": "68e874fb31b33fd7c668c409359102313fc1f5a34144b9ec77303a94f33bc128"
+      },
+      {
+        "path": "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "sha256": "428fec3f54f81295a604914dff7d61bc21c1c20664a131183e9ee4502af2febe"
+      },
+      {
+        "path": "tests/program_control_plane/test_transition_chain.py",
+        "sha256": "0aee4687d6757dfc616e0869f2d241a96c0957c8fd358475f537ac27263572fd"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T15:40:00Z",
+  "verdict": "blocked",
+  "checks": [
+    {
+      "check_id": "US1-FOCUSED-PYTEST",
+      "method": "Run D:\\Users\\markb\\miniconda3\\python.exe -m pytest tests/program_control_plane -q after formatting and linting the exact local US1 source.",
+      "environment": "Windows local Python; offline; temporary Git repositories; no dependency changes",
+      "duration_ms": 21550,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_cli.py",
+          "sha256": "40c14b4737153da62c726b86760d6b6abfc13326c2aa26c201ebe2b320bc43c4"
+        },
+        {
+          "path": "tests/program_control_plane/test_git_subject.py",
+          "sha256": "6e84d5079723e0d0daaa045393bf6e1e048a58b23e4a134817f99ee0e0a9234a"
+        },
+        {
+          "path": "tests/program_control_plane/test_json_contracts.py",
+          "sha256": "68e874fb31b33fd7c668c409359102313fc1f5a34144b9ec77303a94f33bc128"
+        }
+      ]
+    },
+    {
+      "check_id": "US1-RUFF",
+      "method": "Run Ruff format and Ruff check over scripts/program_control and tests/program_control_plane; require no remaining format or lint findings.",
+      "environment": "Ruff 0.15.14 via local Python; offline",
+      "duration_ms": 5100,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "baab8621e8016eb83e67dc73d4bfc98e03cad4b172e0834653d29a2855558239"
+        }
+      ]
+    },
+    {
+      "check_id": "US1-CURRENT-SUBJECT",
+      "method": "Validate the clean committed source bundle at fe79e3db; require a schema-valid report no larger than 1 MiB and runtime below five seconds, then fail closed on every exact committed-evidence mismatch.",
+      "environment": "clean local Git worktree; read-only Git plumbing; fixed program source; no network",
+      "duration_ms": 2200,
+      "result": "blocked",
+      "evidence": [
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "baab8621e8016eb83e67dc73d4bfc98e03cad4b172e0834653d29a2855558239"
+        }
+      ]
+    },
+    {
+      "check_id": "US1-REPORT-CONTRACT",
+      "method": "Validate the 80,994-byte deterministic report against validation-report.schema.json; require zero schema errors and semantic exit 4 for ambiguous authority.",
+      "environment": "Draft 2020-12 validator with explicit RFC 3339 date-time checking",
+      "duration_ms": 300,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/json_contracts.py",
+          "sha256": "61bf574debf694f0fe1f4881c8f03ab4f16747c3782702b5fc5b4d06b81d8f4c"
+        }
+      ]
+    },
+    {
+      "check_id": "US1-EXCLUSIONS",
+      "method": "Inspect commits and worktree status; require only allowlisted local EPP-F01 validator, test, documentation and control-evidence work with no EPP-F01B implementation or excluded action.",
+      "environment": "local Git diff and exact lease review",
+      "duration_ms": 500,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_cli.py",
+          "sha256": "40c14b4737153da62c726b86760d6b6abfc13326c2aa26c201ebe2b320bc43c4"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "TR-0023: four declared output SHA-256 values differ from the exact blobs in fa98c4cb6557a49bb87a669281da5772f4b0f878",
+    "TR-0024: README.md output SHA-256 differs from the exact blob in e2960f8b96dbb1b6f0d09f19365013f8b8d20b7b",
+    "TR-0025: README.md output SHA-256 differs from the exact blob in 2e39733e7f7f096acd49c728d461fbc36fde6236",
+    "program-state revision 26: dev_baseline commit ad162cca is paired with commit object 255f2424 where a tree identity is required"
+  ],
+  "findings": [
+    {
+      "code": "TRANSITION_ARTIFACT_DIGEST_MISMATCH",
+      "severity": "high",
+      "artifact": "evidence/transitions/TR-0023.json",
+      "disposition": "Four auxiliary output hashes are not exact committed-blob identities. The append-only record cannot be rewritten; accepting or superseding these fields requires an explicit approved repair contract."
+    },
+    {
+      "code": "TRANSITION_ARTIFACT_DIGEST_MISMATCH",
+      "severity": "high",
+      "artifact": "evidence/transitions/TR-0024.json and evidence/transitions/TR-0025.json",
+      "disposition": "Each record carries one README output hash that differs from its containing commit blob. No checkout hash is accepted as committed identity."
+    },
+    {
+      "code": "LEASE_GIT_IDENTITY_MISMATCH",
+      "severity": "high",
+      "artifact": "program-state.json",
+      "disposition": "The lease dev_baseline records ad162cca as commit but 255f2424 as tree; 255f2424 is itself a commit and ad162cca's actual tree is e6a75530. This factual identity requires governed correction."
+    },
+    {
+      "code": "US1_ACCEPTANCE_BLOCKED",
+      "severity": "high",
+      "artifact": "specs/076-control-plane-validator/tasks.md",
+      "disposition": "T020-T023 are demonstrated, but T024's valid-current-subject requirement and therefore T025-T031 dependency closure cannot be claimed. Stop before US2 and request human authority for a bounded evidence-repair amendment."
+    }
+  ],
+  "rollback_subject": "git:2e39733e7f7f096acd49c728d461fbc36fde6236 (verified Phase 2 checkpoint)",
+  "delivery_relation": null
+}

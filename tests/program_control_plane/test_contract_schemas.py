@@ -73,10 +73,15 @@ def test_frozen_profiles_are_exact_ordered_contract_projections(
 
 
 def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> None:
-    state = load(
+    current = load(
         repository_root
         / "docs/programs/engineering-process-platform/program-state.json"
     )
+    state = load(
+        repository_root
+        / "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0026.json"
+    )
+    assert current["active_mutating_lease"] is None
     allowed = state["active_mutating_lease"]["allowed_paths"]
     assert "scripts/program_control/**" in allowed
     assert "tests/program_control_plane/**" in allowed

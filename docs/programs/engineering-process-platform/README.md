@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 Phase 2 foundation is verified under the v3 exact-subject bundle and lease revision 6; US1 is next, while EPP-F01B remains proposed and unauthorized
+**Status:** EPP-F01 US1 is blocked at exact committed-evidence validation; T020–T023 pass, but six immutable transition output digests and the lease baseline tree identity fail closed. EPP-F01B remains proposed and unauthorized.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -25,6 +25,7 @@ Start here, then read only the artifacts needed for the next action:
 11. [`../../../specs/076-control-plane-validator/spec.md`](../../../specs/076-control-plane-validator/spec.md), [`plan.md`](../../../specs/076-control-plane-validator/plan.md), [`tasks.md`](../../../specs/076-control-plane-validator/tasks.md), completed [`requirements checklist`](../../../specs/076-control-plane-validator/checklists/requirements.md) and [`program-control checklist`](../../../specs/076-control-plane-validator/checklists/program-control.md) — the active bounded EPP-F01 feature subject. Its [`analysis.md`](../../../specs/076-control-plane-validator/analysis.md) is the historical pre-browser-gap analysis and is superseded for the current gate by item 12.
 12. [`decisions/0015-browser-status-surface.md`](decisions/0015-browser-status-surface.md), [`evidence/transitions/TR-0021.json`](evidence/transitions/TR-0021.json), [`TR-0022.json`](evidence/transitions/TR-0022.json), [`TR-0023.json`](evidence/transitions/TR-0023.json), and [`TR-0024.json`](evidence/transitions/TR-0024.json) — the material browser-page omission, bounded EPP-F01B split, preserved EPP-F01 WIP checkpoint, full approval-subject manifest, accepted v3 approval bundle, bounded lease recovery, and implementation start.
 13. [`evidence/verification/EPP-F01-foundation.json`](evidence/verification/EPP-F01-foundation.json) — Phase 2's exact source, 29 artifact digests, 63-test result, lint/format result, current-subject verdict, original repair history, open performance gate, and rollback pointer.
+14. [`evidence/verification/EPP-F01-US1.json`](evidence/verification/EPP-F01-US1.json) — the exact 103-pass/1-skip US1 test result, 2.2-second/80,994-byte report checks, and the seven committed-evidence blockers that prevent T024 and all dependent work.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -53,4 +54,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`EXECUTE_EPP_F01_TASKS` is the only eligible action. `APR-EPP-F01-MC-003` and `APR-EPP-F01-IMPL-003` bind the exact 43-artifact `TR-0022` subject and accept `DEC-P0-015`. `TR-0023` records bounded repair attempt 1 for the previously missing `BLOCKED` recovery edge and reactivates lease revision 6; `TR-0024` records the separate implementation-start preflight; `TR-0025` verifies the Phase 2 foundation. EPP-F01 remains limited to its 68 validator/snapshot/provenance/CLI tasks, with 19 complete and 49 remaining; the next bounded phase is US1. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+Stop before T024 acceptance or US2. The validator proves that the current history cannot pass without changing how immutable v2 transition evidence is repaired or interpreted, and the lease also carries a factual commit/tree mismatch. The next action is a human gate authorizing planning and re-analysis for the smallest append-only repair; it is not authority to weaken exact Git-blob identity, rewrite TR-0023–TR-0025, resume implementation, or perform any excluded action. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

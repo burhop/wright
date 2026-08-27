@@ -1679,6 +1679,20 @@ def _validate_current_authority(
             )
         )
         return
+    if (
+        isinstance(approval_state, Mapping)
+        and approval_state.get("status") == "pending"
+    ):
+        if approval_state.get("record") is not None:
+            findings.append(
+                _finding(
+                    "APPROVAL_BUNDLE_INVALID",
+                    "fatal",
+                    "program-state.json",
+                    "PENDING_APPROVAL_HAS_NO_RECORD",
+                )
+            )
+        return
     approvals: list[Mapping[str, Any]] = []
     for relative in required:
         try:

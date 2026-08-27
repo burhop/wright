@@ -56,6 +56,24 @@ Validate the current committed program subject:
 python scripts/validate-engineering-process-program.py validate --source HEAD --format text
 ```
 
+Validate an explicit source `S` with a dashboard-only successor `C` and an
+explicit delivery-evidence successor `D`:
+
+```powershell
+python scripts/validate-engineering-process-program.py validate --source <S> --container <C> --delivery <D> --format json
+```
+
+`--container` is optional; without it, only `HEAD` may be inferred and only
+when its first parent is `S` and the diff is exactly `dashboard.json`.
+`--delivery` is always explicit, requires a resolved `C`, and never searches
+descendants. Exit `0` means the validator contract passed even when readiness
+areas are honestly blocked/not-started; `2` is usage/subject resolution, `3`
+schema/raw JSON, `4` semantic authority, `5` dashboard delivery, `6`
+compatibility, and `70` contained internal failure. Inspect the JSON finding's
+repository-relative artifact, invariant, bounded evidence, and recovery. A
+valid report never makes non-passing readiness green and never grants an action
+that `program-state.json` and policy do not prove.
+
 Both commands are offline. A validator failure authorizes no repair, integration, benchmark execution, or release action; inspect the repository-relative finding and follow the program state's sole eligible action.
 
 ---
