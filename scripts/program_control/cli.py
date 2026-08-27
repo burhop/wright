@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import copy
+import re
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -26,10 +28,26 @@ EXIT_DELIVERY = 5
 EXIT_COMPATIBILITY = 6
 EXIT_INTERNAL = 70
 
+_SAFE_CODE = re.compile(r"^[A-Z][A-Z0-9_-]{2,99}$")
+_SAFE_REPO_PATH = re.compile(r"^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$")
+_SENSITIVE_VALUE = re.compile(
+    r"(?i)(?:password|passwd|secret|token|credential|authorization|bearer|api[_-]?key)\s*[:=]"
+)
+
+
+class BoundedArgumentParser(argparse.ArgumentParser):
+    """Argparse variant that never echoes attacker-controlled argument values."""
+
+    def error(self, message: str) -> None:
+        self.print_usage(sys.stderr)
+        self.exit(EXIT_USAGE, "error: invalid command arguments\n")
+
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="validate-engineering-process-program")
-    commands = parser.add_subparsers(dest="command", required=True)
+    parser = BoundedArgumentParser(prog="validate-engineering-process-program")
+    commands = parser.add_subparsers(
+        dest="command", required=True, parser_class=BoundedArgumentParser
+    )
     validate = commands.add_parser("validate", help="validate one committed source")
     validate.add_argument("--source", default="HEAD")
     validate.add_argument(
@@ -56,6 +74,63 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _safe_code(value: Any, fallback: str) -> str:
+    text = str(value)
+    return text if _SAFE_CODE.fullmatch(text) else fallback
+
+
+def _safe_repo_path(value: Any) -> str:
+    text = str(value).replace("\\", "/")
+    if _SAFE_REPO_PATH.fullmatch(text) and not text.startswith(("/", "../")):
+        return text
+    return "[redacted]"
+
+
+def _safe_message(value: Any, fallback: str) -> str:
+    text = str(value)
+    if (
+        len(text) > 500
+        or "\n" in text
+        or "\r" in text
+        or _SENSITIVE_VALUE.search(text)
+        or re.search(r"(?:[A-Za-z]:[\\/]|\\\\|/(?:home|Users|tmp|var)/)", text)
+    ):
+        return fallback
+    return text
+
+
+def _support_safe_report(report: Mapping[str, Any]) -> dict[str, Any]:
+    """Copy a report and constrain free-form finding metadata at the output edge."""
+
+    safe = copy.deepcopy(dict(report))
+    for finding in safe.get("findings", []):
+        finding["code"] = _safe_code(
+            finding.get("code"), "VALIDATION_FAILURE"
+        )
+        finding["invariant"] = _safe_code(
+            finding.get("invariant"), "VALIDATION_INVARIANT"
+        )
+        finding["artifact"] = _safe_repo_path(finding.get("artifact", ""))
+        pointer = finding.get("json_pointer")
+        if pointer is not None:
+            finding["json_pointer"] = _safe_message(pointer, "/redacted")
+        finding["evidence"] = [
+            _safe_message(item, "[redacted]")
+            for item in list(finding.get("evidence", []))[:20]
+        ]
+        finding["consequence"] = _safe_message(
+            finding.get("consequence"), "Validation invariant was not satisfied."
+        )
+        finding["recovery"] = _safe_message(
+            finding.get("recovery"),
+            "Inspect repository-relative evidence and repair the named invariant.",
+        )
+        correction = finding.get("correction_ref")
+        if correction is not None:
+            finding["correction_ref"] = _safe_repo_path(correction)
+    return safe
+
+
 def render_text(report: Mapping[str, Any]) -> str:
     subject = report["subject"]
     lines = [
@@ -79,12 +154,18 @@ def render_text(report: Mapping[str, Any]) -> str:
         )
     lines.append(f"release_eligible: {str(report['release_eligible']).lower()}")
     for finding in report["findings"][:20]:
-        disposition = str(finding.get("resolution_status", "unresolved"))
-        pointer = finding.get("json_pointer") or "-"
-        correction = finding.get("correction_ref") or "-"
+        disposition = _safe_code(
+            finding.get("resolution_status", "unresolved").upper(), "UNRESOLVED"
+        ).lower()
+        pointer = _safe_message(finding.get("json_pointer") or "-", "[redacted]")
+        correction_value = finding.get("correction_ref")
+        correction = _safe_repo_path(correction_value) if correction_value else "-"
         lines.append(
-            f"{finding['severity']} {finding['code']} {finding['artifact']} "
-            f"{pointer} [{disposition}] correction={correction}: {finding['recovery']}"
+            f"{_safe_code(finding.get('severity', '').upper(), 'ERROR').lower()} "
+            f"{_safe_code(finding.get('code'), 'VALIDATION_FAILURE')} "
+            f"{_safe_repo_path(finding.get('artifact', ''))} "
+            f"{pointer} [{disposition}] correction={correction}: "
+            f"{_safe_message(finding.get('recovery'), 'Inspect repository-relative evidence.')}"
         )
     action = report.get("next_action")
     lines.append(f"next_action: {action['action'] if action else 'none'}")
@@ -92,6 +173,7 @@ def render_text(report: Mapping[str, Any]) -> str:
 
 
 def _emit(report: Mapping[str, Any], output_format: str) -> None:
+    report = _support_safe_report(report)
     if output_format == "json":
         sys.stdout.buffer.write(deterministic_json_bytes(report))
     else:
@@ -99,17 +181,39 @@ def _emit(report: Mapping[str, Any], output_format: str) -> None:
 
 
 def _bounded_failure(code: str, output_format: str, exit_code: int) -> int:
+    safe_code = _safe_code(code, "INTERNAL_VALIDATION_FAILURE")
     payload = {
         "schema_version": "1.0",
         "verdict": "failed",
-        "code": code,
+        "code": safe_code,
         "recovery": "Inspect repository-relative evidence and retry after the named invariant is repaired.",
     }
     if output_format == "json":
         sys.stdout.buffer.write(deterministic_json_bytes(payload))
     else:
-        sys.stderr.write(f"failed {code}: {payload['recovery']}\n")
+        sys.stderr.write(f"failed {safe_code}: {payload['recovery']}\n")
     return exit_code
+
+
+def _set_delivery(
+    report: dict[str, Any],
+    *,
+    status: str,
+    target_changed: bool,
+    prior_snapshot_preserved: bool,
+) -> None:
+    """Update generation facts without discarding the validation envelope."""
+
+    delivery = dict(report["delivery"])
+    delivery.update(
+        {
+            "mode": "generate_dashboard",
+            "status": status,
+            "target_changed": target_changed,
+            "prior_snapshot_preserved": prior_snapshot_preserved,
+        }
+    )
+    report["delivery"] = delivery
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -131,12 +235,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             _emit(report, output_format)
             return result.exit_code
         if result.exit_code != 0:
-            report["delivery"] = {
-                "mode": "generate_dashboard",
-                "status": "failed",
-                "target_changed": False,
-                "prior_snapshot_preserved": True,
-            }
+            _set_delivery(
+                report,
+                status="failed",
+                target_changed=False,
+                prior_snapshot_preserved=True,
+            )
             _emit(report, output_format)
             return result.exit_code
         expected = f"{program_root}/dashboard.json"
@@ -153,13 +257,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         dashboard = make_dashboard(report, data_cutoff=result.dashboard_data_cutoff)
-        atomic_replace_json(target, dashboard, schema)
-        report["delivery"] = {
-            "mode": "generate_dashboard",
-            "status": "candidate_not_evidence",
-            "target_changed": True,
-            "prior_snapshot_preserved": False,
-        }
+        try:
+            atomic_replace_json(target, dashboard, schema)
+        except DashboardError:
+            _set_delivery(
+                report,
+                status="failed",
+                target_changed=False,
+                prior_snapshot_preserved=True,
+            )
+            _emit(report, output_format)
+            return EXIT_DELIVERY
+        _set_delivery(
+            report,
+            status="candidate_not_evidence",
+            target_changed=True,
+            prior_snapshot_preserved=False,
+        )
         _emit(report, output_format)
         return 0
     except (GitSubjectError, ContractError):

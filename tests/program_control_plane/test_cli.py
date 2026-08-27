@@ -11,7 +11,16 @@ from pathlib import Path
 
 import pytest
 
-from program_control.cli import build_parser, render_text
+from program_control.cli import (
+    EXIT_INTERNAL,
+    EXIT_SCHEMA,
+    _bounded_failure,
+    _emit,
+    _set_delivery,
+    build_parser,
+    main,
+    render_text,
+)
 from program_control.git_subject import GitReader
 from program_control import validation as validation_module
 from program_control.validation import (
@@ -19,6 +28,7 @@ from program_control.validation import (
     validate_program,
     validate_transition_input_origin_correction,
 )
+from program_control.model import Finding
 
 
 PROGRAM_ROOT = "docs/programs/engineering-process-platform"
@@ -499,3 +509,142 @@ def test_input_origin_disposition_cannot_change_protected_projection(
         }
 
     assert protected(run(correction_on=True)) == protected(run(correction_on=False))
+
+
+def test_findings_have_stable_multifault_order_and_exit_precedence() -> None:
+    findings = [
+        Finding("SEMANTIC_Z", "error", "z.json", "SEMANTIC_Z", (), "c", "r"),
+        Finding("SCHEMA_UNSUPPORTED_X", "error", "b.json", "SCHEMA_X", (), "c", "r"),
+        Finding("JSON_INVALID", "fatal", "a.json", "JSON_VALID", (), "c", "r"),
+    ]
+    assert [item.code for item in sorted(findings, key=Finding.sort_key)] == [
+        "JSON_INVALID",
+        "SCHEMA_UNSUPPORTED_X",
+        "SEMANTIC_Z",
+    ]
+    # Structural/schema failures take precedence over semantic failures.
+    structural = [item for item in findings if item.code.startswith(("JSON_", "SCHEMA_"))]
+    assert structural
+
+
+def test_unknown_exception_is_bounded_and_does_not_disclose_canary(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    canary = "token=" + "do-not-print"
+
+    def fail(*args, **kwargs):
+        raise RuntimeError(canary)
+
+    monkeypatch.setattr("program_control.cli.GitReader.discover", fail)
+    assert main(["validate", "--source", "HEAD"]) == EXIT_INTERNAL
+    captured = capsys.readouterr()
+    assert "INTERNAL_VALIDATION_FAILURE" in captured.err
+    assert canary not in captured.out + captured.err
+
+
+def test_bounded_failure_uses_cataloged_code_and_recovery(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert _bounded_failure("not a code", "text", EXIT_SCHEMA) == EXIT_SCHEMA
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "INTERNAL_VALIDATION_FAILURE" in captured.err
+    assert len(captured.err) < 220
+
+
+def test_generate_delivery_update_preserves_full_validation_envelope() -> None:
+    report = {
+        "delivery": {
+            "mode": "validate",
+            "status": "not_requested",
+            "target_changed": False,
+            "prior_snapshot_preserved": True,
+            "container_resolution": "absent",
+            "container_commit": None,
+            "delivery_resolution": "absent",
+            "delivery_commit": None,
+            "evidence_record": None,
+        }
+    }
+    _set_delivery(
+        report,
+        status="candidate_not_evidence",
+        target_changed=True,
+        prior_snapshot_preserved=False,
+    )
+    assert report["delivery"] == {
+        "mode": "generate_dashboard",
+        "status": "candidate_not_evidence",
+        "target_changed": True,
+        "prior_snapshot_preserved": False,
+        "container_resolution": "absent",
+        "container_commit": None,
+        "delivery_resolution": "absent",
+        "delivery_commit": None,
+        "evidence_record": None,
+    }
+
+
+def test_json_and_text_render_share_stable_finding_order(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    report = {
+        "verdict": "failed",
+        "subject": {
+            "source_commit": None,
+            "source_tree": None,
+            "program_tree": None,
+            "container_commit": None,
+            "container_resolution": "unresolved",
+            "delivery_commit": None,
+            "delivery_resolution": "unresolved",
+            "worktree_clean": True,
+        },
+        "areas": {
+            name: {"status": "blocked", "passed_gates": 0, "required_gates": 1}
+            for name in (
+                "product_readiness",
+                "benchmark_readiness",
+                "commercial_readiness",
+                "program_health",
+            )
+        },
+        "release_eligible": False,
+        "findings": [
+            {
+                "severity": "error",
+                "code": "SECOND_FAILURE",
+                "artifact": "docs/second.json",
+                "json_pointer": "/x",
+                "resolution_status": "unresolved",
+                "correction_ref": None,
+                "recovery": "Repair second.",
+                "invariant": "SECOND_INVARIANT",
+                "evidence": [],
+                "consequence": "Second failed.",
+            },
+            {
+                "severity": "fatal",
+                "code": "FIRST_FAILURE",
+                "artifact": "docs/first.json",
+                "json_pointer": "/x",
+                "resolution_status": "unresolved",
+                "correction_ref": None,
+                "recovery": "Repair first.",
+                "invariant": "FIRST_INVARIANT",
+                "evidence": [],
+                "consequence": "First failed.",
+            },
+        ],
+        "next_action": None,
+    }
+    report["findings"] = sorted(
+        report["findings"],
+        key=lambda item: (0 if item["severity"] == "fatal" else 1, item["code"]),
+    )
+    _emit(report, "text")
+    text_output = capsys.readouterr().out
+    _emit(report, "json")
+    json_output = capsys.readouterr().out
+    assert text_output.index("FIRST_FAILURE") < text_output.index("SECOND_FAILURE")
+    assert json_output.index("FIRST_FAILURE") < json_output.index("SECOND_FAILURE")

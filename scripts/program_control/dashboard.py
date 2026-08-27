@@ -567,6 +567,10 @@ def atomic_replace_json(
         ],
         None,
     ] = os.replace,
+    write: Callable[[Any, bytes], Any] | None = None,
+    flush: Callable[[Any], Any] | None = None,
+    fsync: Callable[[int], Any] = os.fsync,
+    reread: Callable[[Path], bytes] = Path.read_bytes,
 ) -> None:
     """Validate and atomically replace one JSON file, preserving prior bytes on failure."""
 
@@ -574,9 +578,10 @@ def atomic_replace_json(
     parsed = strict_loads(raw)
     if validate_schema(schema, parsed):
         raise DashboardError("OUTPUT_CANDIDATE_INVALID")
-    target.parent.mkdir(parents=True, exist_ok=True)
     temporary: Path | None = None
+    stage = "prepare"
     try:
+        target.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(
             mode="wb",
             prefix=f".{target.name}.",
@@ -585,18 +590,33 @@ def atomic_replace_json(
             delete=False,
         ) as handle:
             temporary = Path(handle.name)
-            handle.write(raw)
-            handle.flush()
-            os.fsync(handle.fileno())
-        reread = temporary.read_bytes()
-        if reread != raw or validate_schema(schema, strict_loads(reread)):
+            stage = "write"
+            (write or (lambda stream, data: stream.write(data)))(handle, raw)
+            stage = "flush"
+            (flush or (lambda stream: stream.flush()))(handle)
+            stage = "fsync"
+            fsync(handle.fileno())
+        stage = "reread"
+        reread_bytes = reread(temporary)
+        if reread_bytes != raw or validate_schema(schema, strict_loads(reread_bytes)):
             raise DashboardError("OUTPUT_REREAD_INVALID")
+        stage = "replace"
         replace(temporary, target)
         temporary = None
     except DashboardError:
         raise
+    except KeyboardInterrupt as exc:
+        raise DashboardError("OUTPUT_INTERRUPTED") from exc
     except OSError as exc:
-        raise DashboardError("OUTPUT_REPLACE_FAILED") from exc
+        codes = {
+            "prepare": "OUTPUT_PREPARE_FAILED",
+            "write": "OUTPUT_WRITE_FAILED",
+            "flush": "OUTPUT_FLUSH_FAILED",
+            "fsync": "OUTPUT_FSYNC_FAILED",
+            "reread": "OUTPUT_REREAD_FAILED",
+            "replace": "OUTPUT_REPLACE_FAILED",
+        }
+        raise DashboardError(codes[stage]) from exc
     finally:
         if temporary is not None:
             try:
