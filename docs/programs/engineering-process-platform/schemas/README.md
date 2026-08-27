@@ -3,6 +3,7 @@
 All machine-readable artifacts use JSON Schema draft 2020-12 and reject unknown major versions. A fresh coordinator validates at least:
 
 - `program-state.json` with `program-state.schema.json`;
+- `lifecycle-policy.json` with `lifecycle-policy.schema.json`, including the exact two closed v1 compatibility profiles and sole v2 migration rule;
 - `roadmap.json` with `roadmap.schema.json` plus an acyclic-reference check;
 - every transition record with `transition-evidence.schema.json`;
 - every approval with `approval.schema.json`;
@@ -15,3 +16,5 @@ All machine-readable artifacts use JSON Schema draft 2020-12 and reject unknown 
 - `risk-register.json` and `decision-register.json` with their schemas.
 
 Schema validity is necessary, not sufficient. Digests, references, allowed transitions, independence, freshness, WIP, and exact-subject rules require semantic validation. Unknown fields fail closed unless a schema explicitly permits an extension point.
+
+`program-state.schema.json`, `transition-evidence.schema.json`, and `approval.schema.json` retain structural support for immutable schema-v1 history while governing current records with schema v2 where applicable. That structural support is not open-ended compatibility: semantic validation accepts v1 states/transitions only when every byte and edge matches `epp-bootstrap-v1-r1-r9` or `epp-bridge-v1-r10-r19`, and accepts exactly one v2 migration successor.

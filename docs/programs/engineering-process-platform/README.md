@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 amendments decided and re-planned; replacement exact implementation approvals pending
+**Status:** EPP-F01 amended subject approved; v2 implementation lease authorized
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -52,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`APPROVE_EPP_F01_AMENDED_SUBJECT` is the only eligible action and requires the human. ADR 0013 closes authoritative v1 revisions 10–19 and `TR-0009`–`TR-0018` in a second exact byte-bound bridge while leaving r1–r9 unchanged; ADR 0014 defines explicit/constrained container resolution, explicit-only delivery resolution, shared per-gate freshness, closed source-bundle generator identity, candidate-only dashboard bytes, and external descendant delivery evidence. The exact subject and artifact digests are in `TR-0018`; the active Spec Kit artifacts are linked above. The earlier implementation approvals remain stale. The preserved script drafts are blocked work-in-progress, no task is claimed complete, and no implementation may resume until separate replacement `material_change` and `feature_implementation` records bind the new exact commit, tree, program tree, and artifact digests. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`START_EPP_F01_IMPLEMENTATION` is the only eligible action. [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) bind the exact amended subject and all 34 `TR-0018` artifact digests. `TR-0019` is the sole v1-to-v2 migration and activates implementation lease revision 5 for only the 68 local tasks. The preserved script drafts remain unverified work-in-progress and no task is yet claimed complete. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

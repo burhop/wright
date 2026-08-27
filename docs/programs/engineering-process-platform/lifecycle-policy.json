@@ -1,0 +1,977 @@
+{
+  "$schema": "./schemas/lifecycle-policy.schema.json",
+  "schema_version": "1.0",
+  "policy_id": "EPP-LIFECYCLE-1",
+  "program_edges": [
+    {
+      "from": "PLAN_DRAFT",
+      "to": "PLAN_AUDITED"
+    },
+    {
+      "from": "PLAN_AUDITED",
+      "to": "AWAITING_PROGRAM_APPROVAL"
+    },
+    {
+      "from": "AWAITING_PROGRAM_APPROVAL",
+      "to": "PROGRAM_APPROVED"
+    },
+    {
+      "from": "AWAITING_PROGRAM_APPROVAL",
+      "to": "PLAN_DRAFT"
+    },
+    {
+      "from": "AWAITING_PROGRAM_APPROVAL",
+      "to": "STOPPED"
+    },
+    {
+      "from": "PROGRAM_APPROVED",
+      "to": "SELECTING_FEATURE"
+    },
+    {
+      "from": "SELECTING_FEATURE",
+      "to": "PROGRAM_ACTIVE"
+    },
+    {
+      "from": "SELECTING_FEATURE",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "PROGRAM_ACTIVE",
+      "to": "SELECTING_FEATURE"
+    },
+    {
+      "from": "PROGRAM_ACTIVE",
+      "to": "PROGRAM_RELEASE_REVIEW"
+    },
+    {
+      "from": "PROGRAM_ACTIVE",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "PROGRAM_ACTIVE",
+      "to": "STOPPED"
+    },
+    {
+      "from": "PROGRAM_RELEASE_REVIEW",
+      "to": "RELEASE_AUTHORIZED"
+    },
+    {
+      "from": "PROGRAM_RELEASE_REVIEW",
+      "to": "PROGRAM_ACTIVE"
+    },
+    {
+      "from": "PROGRAM_RELEASE_REVIEW",
+      "to": "STOPPED"
+    },
+    {
+      "from": "RELEASE_AUTHORIZED",
+      "to": "PROGRAM_COMPLETE"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "PROGRAM_ACTIVE"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "PLAN_DRAFT"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "STOPPED"
+    }
+  ],
+  "feature_edges": [
+    {
+      "from": "PROPOSED",
+      "to": "ELIGIBLE"
+    },
+    {
+      "from": "ELIGIBLE",
+      "to": "WORKTREE_ALLOCATED"
+    },
+    {
+      "from": "ELIGIBLE",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "WORKTREE_ALLOCATED",
+      "to": "SPECIFIED"
+    },
+    {
+      "from": "WORKTREE_ALLOCATED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "SPECIFIED",
+      "to": "CLARIFIED"
+    },
+    {
+      "from": "SPECIFIED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "CLARIFIED",
+      "to": "PLANNED"
+    },
+    {
+      "from": "CLARIFIED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "PLANNED",
+      "to": "CHECKLISTED"
+    },
+    {
+      "from": "PLANNED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "CHECKLISTED",
+      "to": "TASKED"
+    },
+    {
+      "from": "CHECKLISTED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "TASKED",
+      "to": "ANALYZED"
+    },
+    {
+      "from": "TASKED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "IMPLEMENTATION_APPROVAL_PENDING"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "IMPLEMENTATION_APPROVAL_PENDING",
+      "to": "IMPLEMENTATION_AUTHORIZED"
+    },
+    {
+      "from": "IMPLEMENTATION_APPROVAL_PENDING",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "IMPLEMENTATION_AUTHORIZED",
+      "to": "IMPLEMENTING"
+    },
+    {
+      "from": "IMPLEMENTATION_AUTHORIZED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "AUTHOR_VERIFIED"
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "REPAIRING"
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "STOPPED"
+    },
+    {
+      "from": "AUTHOR_VERIFIED",
+      "to": "CANDIDATE_FROZEN"
+    },
+    {
+      "from": "AUTHOR_VERIFIED",
+      "to": "REPAIRING"
+    },
+    {
+      "from": "AUTHOR_VERIFIED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "CANDIDATE_FROZEN",
+      "to": "INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "from": "CANDIDATE_FROZEN",
+      "to": "REPAIRING"
+    },
+    {
+      "from": "CANDIDATE_FROZEN",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "INDEPENDENTLY_VERIFIED",
+      "to": "PUSH_AUTHORIZATION_PENDING"
+    },
+    {
+      "from": "INDEPENDENTLY_VERIFIED",
+      "to": "REPAIRING"
+    },
+    {
+      "from": "INDEPENDENTLY_VERIFIED",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "REPAIRING",
+      "to": "PLANNED"
+    },
+    {
+      "from": "REPAIRING",
+      "to": "TASKED"
+    },
+    {
+      "from": "REPAIRING",
+      "to": "IMPLEMENTING"
+    },
+    {
+      "from": "REPAIRING",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "PUSH_AUTHORIZATION_PENDING",
+      "to": "PR_READY"
+    },
+    {
+      "from": "PUSH_AUTHORIZATION_PENDING",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "PUSH_AUTHORIZATION_PENDING",
+      "to": "STOPPED"
+    },
+    {
+      "from": "PR_READY",
+      "to": "DEV_MERGE_READY"
+    },
+    {
+      "from": "PR_READY",
+      "to": "REPAIRING"
+    },
+    {
+      "from": "PR_READY",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "DEV_MERGE_READY",
+      "to": "DEV_INTEGRATED"
+    },
+    {
+      "from": "DEV_MERGE_READY",
+      "to": "BLOCKED"
+    },
+    {
+      "from": "DEV_INTEGRATED",
+      "to": "DEV_DEPLOYMENT_VERIFIED"
+    },
+    {
+      "from": "DEV_INTEGRATED",
+      "to": "ROLLED_BACK"
+    },
+    {
+      "from": "DEV_INTEGRATED",
+      "to": "BLOCKED"
+    }
+  ],
+  "event_rules": [
+    {
+      "event_kind": "lifecycle_transition",
+      "state_domain": "program",
+      "may_preserve_state": false,
+      "required_evidence": [
+        "TRANSITION",
+        "STATE_SNAPSHOT"
+      ]
+    },
+    {
+      "event_kind": "lifecycle_transition",
+      "state_domain": "feature",
+      "may_preserve_state": false,
+      "required_evidence": [
+        "TRANSITION",
+        "STATE_SNAPSHOT"
+      ]
+    },
+    {
+      "event_kind": "failed_attempt",
+      "state_domain": "attempt",
+      "may_preserve_state": true,
+      "required_evidence": [
+        "ORIGINAL_FAILURE",
+        "STABLE_CAUSE"
+      ]
+    },
+    {
+      "event_kind": "repair_checkpoint",
+      "state_domain": "repair",
+      "may_preserve_state": true,
+      "required_evidence": [
+        "REPAIR_ATTEMPT",
+        "RERUN_RESULT"
+      ]
+    },
+    {
+      "event_kind": "verification",
+      "state_domain": "feature",
+      "may_preserve_state": true,
+      "required_evidence": [
+        "VERIFICATION_RECORD"
+      ]
+    },
+    {
+      "event_kind": "approval_checkpoint",
+      "state_domain": "feature",
+      "may_preserve_state": false,
+      "required_evidence": [
+        "MATERIAL_CHANGE_APPROVAL",
+        "FEATURE_IMPLEMENTATION_APPROVAL",
+        "STATE_SNAPSHOT"
+      ]
+    }
+  ],
+  "approval_boundaries": [
+    {
+      "state_domain": "program",
+      "to_state": "PROGRAM_APPROVED",
+      "approval_scope": "program_plan"
+    },
+    {
+      "state_domain": "feature",
+      "to_state": "IMPLEMENTATION_AUTHORIZED",
+      "approval_scope": "material_change"
+    },
+    {
+      "state_domain": "feature",
+      "to_state": "IMPLEMENTATION_AUTHORIZED",
+      "approval_scope": "feature_implementation"
+    },
+    {
+      "state_domain": "feature",
+      "to_state": "PUSH_AUTHORIZATION_PENDING",
+      "approval_scope": "external_write"
+    },
+    {
+      "state_domain": "feature",
+      "to_state": "DEV_INTEGRATED",
+      "approval_scope": "dev_integration"
+    },
+    {
+      "state_domain": "program",
+      "to_state": "RELEASE_AUTHORIZED",
+      "approval_scope": "release"
+    }
+  ],
+  "action_rules": [
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_APPROVAL_PENDING",
+      "action": "APPROVE_EPP_F01_AMENDED_SUBJECT",
+      "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_AUTHORIZED",
+      "action": "START_EPP_F01_IMPLEMENTATION",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTING",
+      "action": "EXECUTE_EPP_F01_TASKS",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "CANDIDATE_FROZEN",
+      "action": "VERIFY_EPP_F01_CANDIDATE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "INDEPENDENTLY_VERIFIED",
+      "action": "REQUEST_EPP_F01_PUSH_AUTHORIZATION",
+      "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_RELEASE_REVIEW",
+      "feature_state": null,
+      "action": "APPROVE_EXACT_RELEASE_SUBJECT",
+      "requires_human_approval": true
+    }
+  ],
+  "wip_limits": {
+    "mutating_leases": 1,
+    "implementing_or_repairing_features": 1,
+    "read_only_auditors": 3
+  },
+  "path_roles": [
+    {
+      "pattern": "docs/programs/engineering-process-platform/schemas/**",
+      "role": "immutable_policy",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "MATERIAL_CHANGE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "role": "immutable_policy",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "MATERIAL_CHANGE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/gate-catalog.json",
+      "role": "immutable_policy",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "MATERIAL_CHANGE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/evidence/approvals/**",
+      "role": "append_only_evidence",
+      "mutability": "append_only",
+      "allowed_actions": [
+        "APPEND_APPROVAL_EVIDENCE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/evidence/states/**",
+      "role": "append_only_evidence",
+      "mutability": "append_only",
+      "allowed_actions": [
+        "APPEND_STATE_EVIDENCE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/evidence/transitions/**",
+      "role": "append_only_evidence",
+      "mutability": "append_only",
+      "allowed_actions": [
+        "APPEND_TRANSITION_EVIDENCE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/evidence/verification/**",
+      "role": "append_only_evidence",
+      "mutability": "append_only",
+      "allowed_actions": [
+        "APPEND_VERIFICATION_EVIDENCE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/program-state.json",
+      "role": "operational_state",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "ADVANCE_STATE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/roadmap.json",
+      "role": "operational_state",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "ADVANCE_STATE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/gate-evidence.json",
+      "role": "operational_state",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/dashboard.json",
+      "role": "generated_projection",
+      "mutability": "replaceable_projection",
+      "allowed_actions": [
+        "GENERATE_DASHBOARD_CANDIDATE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/**",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "specs/076-control-plane-validator/**",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "scripts/program_control/**",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "scripts/validate-engineering-process-program.py",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "tests/program_control_plane/**",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "scripts/README.md",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "scripts/check-dev-push.sh",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "scripts/check-dev-merge.sh",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": ".github/workflows/python-quality.yml",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": ".github/workflows/test-windows.yml",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "tests/release/test_dev_push_process.py",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": "docs/contributing/dev-push-runbook.md",
+      "role": "feature_contract",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "EDIT_ALLOWLISTED_PATHS",
+        "RUN_LOCAL_CHECKS"
+      ]
+    },
+    {
+      "pattern": ".specify/feature.json",
+      "role": "operational_state",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "VERIFY_POINTER"
+      ]
+    },
+    {
+      "pattern": "AGENTS.md",
+      "role": "operational_state",
+      "mutability": "lease_scoped",
+      "allowed_actions": [
+        "VERIFY_POINTER"
+      ]
+    }
+  ],
+  "compatibility_profiles": [
+    {
+      "profile_id": "epp-bootstrap-v1-r1-r9",
+      "schema_major": 1,
+      "from_revision": 1,
+      "through_revision": 9,
+      "states": [
+        {
+          "revision": 1,
+          "path": "evidence/states/program-state-revision-0001.json",
+          "raw_sha256": "f4f5d9d97492b3032d7a03b71689fa4b6537e30e252c7d371c029c30fd4d58b5",
+          "canonical_digest": "309a92e99e333e868ef13881faf9b2b379a36651cf2ac1224111fb16a3ce7ca7"
+        },
+        {
+          "revision": 2,
+          "path": "evidence/states/program-state-revision-0002.json",
+          "raw_sha256": "076d5cd3884f9fd56785000feedbff74f42bfdd8aa0a0672caa69ea272fc4ee0",
+          "canonical_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9"
+        },
+        {
+          "revision": 3,
+          "path": "evidence/states/program-state-revision-0003.json",
+          "raw_sha256": "515e154d640295ab5b171ca3b2d160cd8dc4767a8d9f4977b35e2c4380ea183b",
+          "canonical_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105"
+        },
+        {
+          "revision": 4,
+          "path": "evidence/states/program-state-revision-0004.json",
+          "raw_sha256": "a4692eac947839ca96c7e00bc0c1cddf2fa22e9464f57003a66e8edb478efbe6",
+          "canonical_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7"
+        },
+        {
+          "revision": 5,
+          "path": "evidence/states/program-state-revision-0005.json",
+          "raw_sha256": "5189f2defedab9fe7eb524b9117479d8ba150f2b15d9a664b67561778c178259",
+          "canonical_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba"
+        },
+        {
+          "revision": 6,
+          "path": "evidence/states/program-state-revision-0006.json",
+          "raw_sha256": "f86cc305a36d0f935ff3fc0227b2d77b7683fe74d502955c3e8f24f13d9217e1",
+          "canonical_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705"
+        },
+        {
+          "revision": 7,
+          "path": "evidence/states/program-state-revision-0007.json",
+          "raw_sha256": "2e69af63a803b357234986209e7d29dbd33732cc08f8363838150167f17e713b",
+          "canonical_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2"
+        },
+        {
+          "revision": 8,
+          "path": "evidence/states/program-state-revision-0008.json",
+          "raw_sha256": "2ab94622926648a9bd361f59a70488a8ec74836c3bdd4877b542956188f93a4b",
+          "canonical_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886"
+        },
+        {
+          "revision": 9,
+          "path": "evidence/states/program-state-revision-0009.json",
+          "raw_sha256": "dab12e6d70fbe29a85a6120fd3a7ca2a7d3e7e283db5757672815a253997c9aa",
+          "canonical_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327"
+        }
+      ],
+      "transitions": [
+        {
+          "transition_id": "TR-0001",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0001.json",
+          "raw_sha256": "8dd44fbfc43fd37374b4267c22a9d42c35415e8fcc3fdd7d5ec5ca60295eee29",
+          "prior_revision": 1,
+          "new_revision": 2,
+          "prior_state_digest": "309a92e99e333e868ef13881faf9b2b379a36651cf2ac1224111fb16a3ce7ca7",
+          "new_state_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9"
+        },
+        {
+          "transition_id": "TR-0002",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0002.json",
+          "raw_sha256": "b5aa09b0426016ca73e893a2abc26429576997d560bb307ddc0308b004dc1621",
+          "prior_revision": 2,
+          "new_revision": 3,
+          "prior_state_digest": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9",
+          "new_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105"
+        },
+        {
+          "transition_id": "TR-0003",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0003.json",
+          "raw_sha256": "0809d3e85254b350265b829f7032adf7e83cead22fdb62dcca9d7acc1cb679ad",
+          "prior_revision": 3,
+          "new_revision": 4,
+          "prior_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+          "new_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7"
+        },
+        {
+          "transition_id": "TR-0004",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0004.json",
+          "raw_sha256": "f3135fe641c196c886e510ed2892257c1b71a217a85bdc83c8e6877c54c67004",
+          "prior_revision": 4,
+          "new_revision": 5,
+          "prior_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+          "new_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba"
+        },
+        {
+          "transition_id": "TR-0005",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0005.json",
+          "raw_sha256": "22225aebee2ce25f2407c07736f48caf710c56f7fa2625273f9648dc4ce8fd2f",
+          "prior_revision": 5,
+          "new_revision": 6,
+          "prior_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+          "new_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705"
+        },
+        {
+          "transition_id": "TR-0006",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0006.json",
+          "raw_sha256": "fbb8d3ff24a392be34f3cc82c24acfb4280a33b82f4323a1176fb351e3c6f2b8",
+          "prior_revision": 6,
+          "new_revision": 7,
+          "prior_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+          "new_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2"
+        },
+        {
+          "transition_id": "TR-0007",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0007.json",
+          "raw_sha256": "f96efc9804fca989677d81267232223fdddee9b5f54d1557225998ec17d72fcc",
+          "prior_revision": 7,
+          "new_revision": 8,
+          "prior_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+          "new_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886"
+        },
+        {
+          "transition_id": "TR-0008",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0008.json",
+          "raw_sha256": "593da4b53a971dc5aca45ae1ac8a6ed77a41f74a0ce54d6e1ebfff7fdc7dead7",
+          "prior_revision": 8,
+          "new_revision": 9,
+          "prior_state_digest": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886",
+          "new_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327"
+        }
+      ],
+      "terminal_program_state": "PROGRAM_ACTIVE",
+      "terminal_feature_state": "CLARIFIED",
+      "checkpoint_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+      "checkpoint_commit": "c46ea627a7403ff3e1ce3db6be3d1baeebebb377",
+      "checkpoint_commit_rule": "fixed_commit",
+      "accept_new_records": false,
+      "successor": {
+        "kind": "closed_profile",
+        "target_profile_id": "epp-bridge-v1-r10-r19",
+        "first_transition_id": "TR-0009",
+        "maximum_count": 1
+      }
+    },
+    {
+      "profile_id": "epp-bridge-v1-r10-r19",
+      "schema_major": 1,
+      "from_revision": 10,
+      "through_revision": 19,
+      "states": [
+        {
+          "revision": 10,
+          "path": "evidence/states/program-state-revision-0010.json",
+          "raw_sha256": "08cf2927158fda8448eea61a731db44f49fce73709b80e39b8f27d25d652b5b1",
+          "canonical_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2"
+        },
+        {
+          "revision": 11,
+          "path": "evidence/states/program-state-revision-0011.json",
+          "raw_sha256": "dd36c61a7434e69663dbce1c90e6970349d46ae1c7cedf71175690536fdb229f",
+          "canonical_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a"
+        },
+        {
+          "revision": 12,
+          "path": "evidence/states/program-state-revision-0012.json",
+          "raw_sha256": "35e17041ad7ec86182904ace9d9ec86a16285402e6537a8b77fa520b59bb1c4c",
+          "canonical_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b"
+        },
+        {
+          "revision": 13,
+          "path": "evidence/states/program-state-revision-0013.json",
+          "raw_sha256": "6869097ca13d8880797a05c6605c42ea5a9005da7e081c8956ae3bef2dde0210",
+          "canonical_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd"
+        },
+        {
+          "revision": 14,
+          "path": "evidence/states/program-state-revision-0014.json",
+          "raw_sha256": "90ed5ea95b386e07ceb2a90db8f26a31f9b263932ea591b9baa4002775fa20c5",
+          "canonical_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e"
+        },
+        {
+          "revision": 15,
+          "path": "evidence/states/program-state-revision-0015.json",
+          "raw_sha256": "92240e5068323b4f152ef7d8cca72bdca9d40966f1447aadf945a3cf545943b2",
+          "canonical_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634"
+        },
+        {
+          "revision": 16,
+          "path": "evidence/states/program-state-revision-0016.json",
+          "raw_sha256": "b7124ed84199e1be0c8b180a743f479dde240f5f957459e096dc339226646e12",
+          "canonical_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2"
+        },
+        {
+          "revision": 17,
+          "path": "evidence/states/program-state-revision-0017.json",
+          "raw_sha256": "204566408650fd1c50f3555ddf7403f70a472af0610e0c9f893a3693a355a7eb",
+          "canonical_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658"
+        },
+        {
+          "revision": 18,
+          "path": "evidence/states/program-state-revision-0018.json",
+          "raw_sha256": "68be520040541eb3949349dd038a8caa96ce3bf5363d39e406d0a4f82ffdfeb8",
+          "canonical_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d"
+        },
+        {
+          "revision": 19,
+          "path": "evidence/states/program-state-revision-0019.json",
+          "raw_sha256": "2d03b9e5294b7d09fe31f264537093918731ddd32a2fb408b1b5e4b222e00283",
+          "canonical_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20"
+        }
+      ],
+      "transitions": [
+        {
+          "transition_id": "TR-0009",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0009.json",
+          "raw_sha256": "5f985ee5b1214cdd2c1d970648ad042fdd2f61fd74251979c06f154bb240b3df",
+          "prior_revision": 9,
+          "new_revision": 10,
+          "prior_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+          "new_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2"
+        },
+        {
+          "transition_id": "TR-0010",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0010.json",
+          "raw_sha256": "14694b3bec7abafbf8661844975689e294f0beb5fe7a6d9cd34e7d4a0d6e0304",
+          "prior_revision": 10,
+          "new_revision": 11,
+          "prior_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+          "new_state_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a"
+        },
+        {
+          "transition_id": "TR-0011",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0011.json",
+          "raw_sha256": "2f25c9b705e906fe6d560f1f30fe9ccf07d45fd0872399ca442ca6d5bdc5008d",
+          "prior_revision": 11,
+          "new_revision": 12,
+          "prior_state_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a",
+          "new_state_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b"
+        },
+        {
+          "transition_id": "TR-0012",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0012.json",
+          "raw_sha256": "682fabcae2ea7759158f8673fa4d9bec21ee6888f56bca2a382aa49950268d65",
+          "prior_revision": 12,
+          "new_revision": 13,
+          "prior_state_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b",
+          "new_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd"
+        },
+        {
+          "transition_id": "TR-0013",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0013.json",
+          "raw_sha256": "2e61ee6df7dac637b803780eb66b28c740247538eed1f1800c0473a407d84ffc",
+          "prior_revision": 13,
+          "new_revision": 14,
+          "prior_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+          "new_state_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e"
+        },
+        {
+          "transition_id": "TR-0014",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0014.json",
+          "raw_sha256": "b612022cfed263ccab1bc214c99b0580af4fb9eec914bc68a158c1e0295c083d",
+          "prior_revision": 14,
+          "new_revision": 15,
+          "prior_state_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e",
+          "new_state_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634"
+        },
+        {
+          "transition_id": "TR-0015",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0015.json",
+          "raw_sha256": "5e9b3ad6e6dc25279cb2c09e1e3802d5b378819d965e0252c47750bed9df2498",
+          "prior_revision": 15,
+          "new_revision": 16,
+          "prior_state_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634",
+          "new_state_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2"
+        },
+        {
+          "transition_id": "TR-0016",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0016.json",
+          "raw_sha256": "2f4745290d987175e20051a5f7c6d287b9b6229e21a67facf4b8f8dd963f5523",
+          "prior_revision": 16,
+          "new_revision": 17,
+          "prior_state_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2",
+          "new_state_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658"
+        },
+        {
+          "transition_id": "TR-0017",
+          "raw_sha256_rule": "exact_blob_sha256",
+          "path": "evidence/transitions/TR-0017.json",
+          "raw_sha256": "d64ce99a90a2f084cecb5d011142b146fb4474bd4f597d2665fa71cb0db7ea08",
+          "prior_revision": 17,
+          "new_revision": 18,
+          "prior_state_digest": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658",
+          "new_state_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d"
+        },
+        {
+          "transition_id": "TR-0018",
+          "raw_sha256_rule": "checkpoint_commit_blob",
+          "path": "evidence/transitions/TR-0018.json",
+          "raw_sha256": null,
+          "prior_revision": 18,
+          "new_revision": 19,
+          "prior_state_digest": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d",
+          "new_state_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20"
+        }
+      ],
+      "terminal_program_state": "PROGRAM_ACTIVE",
+      "terminal_feature_state": "IMPLEMENTATION_APPROVAL_PENDING",
+      "checkpoint_state_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20",
+      "checkpoint_commit": null,
+      "checkpoint_commit_rule": "exact_material_change_approval_subject",
+      "accept_new_records": false,
+      "successor": {
+        "kind": "schema_migration",
+        "target_schema_version": "2.0",
+        "event_kind": "lifecycle_transition",
+        "maximum_count": 1
+      }
+    }
+  ]
+}

@@ -2,118 +2,987 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://wright.local/programs/epp/transition-evidence.schema.json",
   "title": "Program and Feature Transition Evidence",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "schema_version", "transition_id", "program_id", "feature_id", "from_state", "to_state",
-    "prior_revision", "new_revision", "state_digest_algorithm", "prior_state_digest", "new_state_digest", "actor", "action", "started_at", "finished_at", "duration_ms",
-    "classification", "git", "inputs", "outputs", "checks", "approval_record", "independent_verifier",
-    "repair", "blockers", "rollback_subject", "next_action"
+  "oneOf": [
+    {
+      "$ref": "#/$defs/legacyV1"
+    },
+    {
+      "$ref": "#/$defs/currentV2"
+    }
   ],
-  "properties": {
-    "$schema": { "type": "string", "minLength": 1 },
-    "schema_version": { "const": "1.0" },
-    "transition_id": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
-    "program_id": { "const": "EPP-2026" },
-    "feature_id": { "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" }] },
-    "from_state": { "type": "string", "minLength": 2 },
-    "to_state": { "type": "string", "minLength": 2 },
-    "prior_revision": { "type": "integer", "minimum": 0 },
-    "new_revision": { "type": "integer", "minimum": 1 },
-    "state_digest_algorithm": { "const": "wright-json-c14n-v1-sha256" },
-    "prior_state_digest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
-    "new_state_digest": { "$ref": "#/$defs/digest" },
-    "actor": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["role", "identity"],
-      "properties": {
-        "role": { "enum": ["human_approver", "coordinator", "feature_owner", "read_only_auditor", "independent_verifier", "release_operator"] },
-        "identity": { "type": "string", "minLength": 1, "maxLength": 200 }
-      }
-    },
-    "action": { "type": "string", "minLength": 1, "maxLength": 500 },
-    "started_at": { "type": "string", "format": "date-time" },
-    "finished_at": { "type": "string", "format": "date-time" },
-    "duration_ms": { "type": "integer", "minimum": 0 },
-    "classification": { "enum": ["passed", "failed_product", "failed_test_contract", "failed_test_isolation", "failed_platform_profile", "failed_packaging", "failed_infrastructure", "failed_benchmark_oracle", "failed_security_policy", "blocked", "stopped", "inconclusive"] },
-    "git": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["base_commit", "head_before", "head_after", "tree_after", "worktree_clean_before", "worktree_clean_after", "diff_check_passed", "staged_paths_manifest"],
-      "properties": {
-        "base_commit": { "$ref": "#/$defs/commit" },
-        "head_before": { "$ref": "#/$defs/commit" },
-        "head_after": { "$ref": "#/$defs/commit" },
-        "tree_after": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/commit" }] },
-        "worktree_clean_before": { "type": "boolean" },
-        "worktree_clean_after": { "type": "boolean" },
-        "diff_check_passed": { "type": "boolean" },
-        "staged_paths_manifest": { "type": "array", "items": { "type": "string" } }
-      }
-    },
-    "inputs": { "$ref": "#/$defs/artifacts" },
-    "outputs": {
-      "allOf": [
-        { "$ref": "#/$defs/artifacts" },
-        {
-          "contains": {
-            "type": "object",
-            "required": ["path"],
-            "properties": {
-              "path": { "pattern": "(^|/)program-state(-revision-[0-9]{4})?\\.json$" }
-            }
-          }
-        }
-      ]
-    },
-    "checks": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["check_id", "command_or_method", "environment", "duration_ms", "result", "failure_class", "evidence"],
-        "properties": {
-          "check_id": { "type": "string", "minLength": 1 },
-          "command_or_method": { "type": "string", "minLength": 1 },
-          "environment": { "type": "string", "minLength": 1 },
-          "duration_ms": { "type": "integer", "minimum": 0 },
-          "result": { "enum": ["passed", "failed", "blocked", "skipped", "not_tested", "inconclusive"] },
-          "failure_class": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
-          "evidence": { "type": "array", "items": { "type": "string" } }
-        }
-      }
-    },
-    "approval_record": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
-    "independent_verifier": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
-    "repair": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["stable_cause_id", "attempt", "maximum", "remaining"],
-      "properties": {
-        "stable_cause_id": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
-        "attempt": { "type": "integer", "minimum": 0 },
-        "maximum": { "const": 2 },
-        "remaining": { "type": "integer", "minimum": 0, "maximum": 2 }
-      }
-    },
-    "blockers": { "type": "array", "items": { "type": "string" } },
-    "rollback_subject": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
-    "next_action": { "type": "string", "minLength": 1 }
-  },
   "$defs": {
-    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
-    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "artifacts": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path", "sha256", "schema_version"],
+        "required": [
+          "path",
+          "sha256",
+          "schema_version"
+        ],
         "properties": {
-          "path": { "type": "string", "minLength": 1 },
-          "sha256": { "$ref": "#/$defs/digest" },
-          "schema_version": { "oneOf": [{ "type": "null" }, { "type": "string" }] }
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "$ref": "#/$defs/digest"
+          },
+          "schema_version": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "artifactV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "schema_version",
+        "role"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "schema_version": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+$"
+            }
+          ]
+        },
+        "role": {
+          "enum": [
+            "immutable_policy",
+            "operational_state",
+            "append_only_evidence",
+            "generated_projection",
+            "feature_contract"
+          ]
+        }
+      }
+    },
+    "legacyV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "transition_id",
+        "program_id",
+        "feature_id",
+        "from_state",
+        "to_state",
+        "prior_revision",
+        "new_revision",
+        "state_digest_algorithm",
+        "prior_state_digest",
+        "new_state_digest",
+        "actor",
+        "action",
+        "started_at",
+        "finished_at",
+        "duration_ms",
+        "classification",
+        "git",
+        "inputs",
+        "outputs",
+        "checks",
+        "approval_record",
+        "independent_verifier",
+        "repair",
+        "blockers",
+        "rollback_subject",
+        "next_action"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "1.0"
+        },
+        "transition_id": {
+          "type": "string",
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "feature_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^EPP-[A-Z0-9-]+$"
+            }
+          ]
+        },
+        "from_state": {
+          "type": "string",
+          "minLength": 2
+        },
+        "to_state": {
+          "type": "string",
+          "minLength": 2
+        },
+        "prior_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "new_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state_digest_algorithm": {
+          "const": "wright-json-c14n-v1-sha256"
+        },
+        "prior_state_digest": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/digest"
+            }
+          ]
+        },
+        "new_state_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "actor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "identity"
+          ],
+          "properties": {
+            "role": {
+              "enum": [
+                "human_approver",
+                "coordinator",
+                "feature_owner",
+                "read_only_auditor",
+                "independent_verifier",
+                "release_operator"
+              ]
+            },
+            "identity": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finished_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classification": {
+          "enum": [
+            "passed",
+            "failed_product",
+            "failed_test_contract",
+            "failed_test_isolation",
+            "failed_platform_profile",
+            "failed_packaging",
+            "failed_infrastructure",
+            "failed_benchmark_oracle",
+            "failed_security_policy",
+            "blocked",
+            "stopped",
+            "inconclusive"
+          ]
+        },
+        "git": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "base_commit",
+            "head_before",
+            "head_after",
+            "tree_after",
+            "worktree_clean_before",
+            "worktree_clean_after",
+            "diff_check_passed",
+            "staged_paths_manifest"
+          ],
+          "properties": {
+            "base_commit": {
+              "$ref": "#/$defs/commit"
+            },
+            "head_before": {
+              "$ref": "#/$defs/commit"
+            },
+            "head_after": {
+              "$ref": "#/$defs/commit"
+            },
+            "tree_after": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/commit"
+                }
+              ]
+            },
+            "worktree_clean_before": {
+              "type": "boolean"
+            },
+            "worktree_clean_after": {
+              "type": "boolean"
+            },
+            "diff_check_passed": {
+              "type": "boolean"
+            },
+            "staged_paths_manifest": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "inputs": {
+          "$ref": "#/$defs/artifacts"
+        },
+        "outputs": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/artifacts"
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "pattern": "(^|/)program-state(-revision-[0-9]{4})?\\.json$"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check_id",
+              "command_or_method",
+              "environment",
+              "duration_ms",
+              "result",
+              "failure_class",
+              "evidence"
+            ],
+            "properties": {
+              "check_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "command_or_method": {
+                "type": "string",
+                "minLength": 1
+              },
+              "environment": {
+                "type": "string",
+                "minLength": 1
+              },
+              "duration_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "result": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "blocked",
+                  "skipped",
+                  "not_tested",
+                  "inconclusive"
+                ]
+              },
+              "failure_class": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "approval_record": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "independent_verifier": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "repair": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stable_cause_id",
+            "attempt",
+            "maximum",
+            "remaining"
+          ],
+          "properties": {
+            "stable_cause_id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maximum": {
+              "const": 2
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            }
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rollback_subject": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "next_action": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "currentV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "transition_id",
+        "program_id",
+        "feature_id",
+        "state_domain",
+        "event_kind",
+        "from_state",
+        "to_state",
+        "prior_revision",
+        "new_revision",
+        "state_digest_algorithm",
+        "prior_state_digest",
+        "new_state_digest",
+        "actor",
+        "action",
+        "started_at",
+        "finished_at",
+        "duration_ms",
+        "classification",
+        "git",
+        "inputs",
+        "outputs",
+        "checks",
+        "authority",
+        "independent_verifier",
+        "repair",
+        "blockers",
+        "rollback_subject",
+        "next_action"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "2.0"
+        },
+        "transition_id": {
+          "type": "string",
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "feature_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^EPP-[A-Z0-9-]+$"
+            }
+          ]
+        },
+        "state_domain": {
+          "enum": [
+            "program",
+            "feature",
+            "attempt",
+            "repair"
+          ]
+        },
+        "event_kind": {
+          "enum": [
+            "lifecycle_transition",
+            "failed_attempt",
+            "repair_checkpoint",
+            "verification",
+            "approval_checkpoint"
+          ]
+        },
+        "from_state": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{1,99}$"
+        },
+        "to_state": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{1,99}$"
+        },
+        "prior_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "new_revision": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "state_digest_algorithm": {
+          "const": "wright-json-c14n-v1-sha256"
+        },
+        "prior_state_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "new_state_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "actor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "identity"
+          ],
+          "properties": {
+            "role": {
+              "enum": [
+                "human_approver",
+                "coordinator",
+                "feature_owner",
+                "read_only_auditor",
+                "independent_verifier",
+                "release_operator"
+              ]
+            },
+            "identity": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finished_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classification": {
+          "enum": [
+            "passed",
+            "failed_product",
+            "failed_test_contract",
+            "failed_test_isolation",
+            "failed_platform_profile",
+            "failed_packaging",
+            "failed_infrastructure",
+            "failed_benchmark_oracle",
+            "failed_security_policy",
+            "blocked",
+            "stopped",
+            "inconclusive"
+          ]
+        },
+        "git": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_commit",
+            "source_tree",
+            "source_program_tree",
+            "containing_commit",
+            "containing_commit_rule",
+            "worktree_clean_before",
+            "worktree_clean_after",
+            "diff_check_passed",
+            "changed_paths_manifest",
+            "transition_path"
+          ],
+          "properties": {
+            "source_commit": {
+              "$ref": "#/$defs/commit"
+            },
+            "source_tree": {
+              "$ref": "#/$defs/commit"
+            },
+            "source_program_tree": {
+              "$ref": "#/$defs/commit"
+            },
+            "containing_commit": {
+              "type": "null"
+            },
+            "containing_commit_rule": {
+              "const": "transition_blob_container"
+            },
+            "worktree_clean_before": {
+              "type": "boolean"
+            },
+            "worktree_clean_after": {
+              "type": "boolean"
+            },
+            "diff_check_passed": {
+              "type": "boolean"
+            },
+            "changed_paths_manifest": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            },
+            "transition_path": {
+              "type": "string",
+              "pattern": "^evidence/transitions/TR-[0-9]{4}\\.json$"
+            }
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "schema_version",
+              "role"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "sha256": {
+                "$ref": "#/$defs/digest"
+              },
+              "schema_version": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9]+\\.[0-9]+$"
+                  }
+                ]
+              },
+              "role": {
+                "enum": [
+                  "immutable_policy",
+                  "operational_state",
+                  "append_only_evidence",
+                  "generated_projection",
+                  "feature_contract"
+                ]
+              }
+            }
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "schema_version",
+              "role"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "sha256": {
+                "$ref": "#/$defs/digest"
+              },
+              "schema_version": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9]+\\.[0-9]+$"
+                  }
+                ]
+              },
+              "role": {
+                "enum": [
+                  "immutable_policy",
+                  "operational_state",
+                  "append_only_evidence",
+                  "generated_projection",
+                  "feature_contract"
+                ]
+              }
+            }
+          },
+          "contains": {
+            "properties": {
+              "path": {
+                "pattern": "(^|/)program-state(-revision-[0-9]{4})?\\.json$"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check_id",
+              "method",
+              "environment",
+              "duration_ms",
+              "result",
+              "failure_class",
+              "evidence"
+            ],
+            "properties": {
+              "check_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9-]{3,100}$"
+              },
+              "method": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "environment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "duration_ms": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "result": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "blocked",
+                  "skipped",
+                  "not_tested",
+                  "inconclusive"
+                ]
+              },
+              "failure_class": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  }
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                }
+              }
+            }
+          }
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_scopes",
+            "approval_records",
+            "subject",
+            "legacy_checkpoint",
+            "migration"
+          ],
+          "properties": {
+            "required_scopes": {
+              "const": [
+                "material_change",
+                "feature_implementation"
+              ]
+            },
+            "approval_records": {
+              "const": [
+                "evidence/approvals/APR-EPP-F01-MC-002.json",
+                "evidence/approvals/APR-EPP-F01-IMPL-002.json"
+              ]
+            },
+            "subject": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "git_commit",
+                "git_tree",
+                "program_tree",
+                "artifact_count",
+                "manifest_transition"
+              ],
+              "properties": {
+                "git_commit": {
+                  "$ref": "#/$defs/commit"
+                },
+                "git_tree": {
+                  "$ref": "#/$defs/commit"
+                },
+                "program_tree": {
+                  "$ref": "#/$defs/commit"
+                },
+                "artifact_count": {
+                  "const": 34
+                },
+                "manifest_transition": {
+                  "const": "TR-0018"
+                }
+              }
+            },
+            "legacy_checkpoint": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "profile",
+                "transition",
+                "resolution_rule"
+              ],
+              "properties": {
+                "profile": {
+                  "const": "epp-bridge-v1-r10-r19"
+                },
+                "transition": {
+                  "const": "TR-0018"
+                },
+                "resolution_rule": {
+                  "const": "exact_material_change_approval_subject"
+                }
+              }
+            },
+            "migration": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "from_schema_version",
+                "to_schema_version",
+                "sole_successor"
+              ],
+              "properties": {
+                "from_schema_version": {
+                  "const": "1.0"
+                },
+                "to_schema_version": {
+                  "const": "2.0"
+                },
+                "sole_successor": {
+                  "const": true
+                }
+              }
+            }
+          }
+        },
+        "independent_verifier": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          ]
+        },
+        "repair": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stable_cause_id",
+            "attempt",
+            "maximum",
+            "remaining"
+          ],
+          "properties": {
+            "stable_cause_id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 100
+                }
+              ]
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maximum": {
+              "const": 2
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            }
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "rollback_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "next_action": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_]{3,100}$"
         }
       }
     }

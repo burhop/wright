@@ -8,7 +8,7 @@
 
 **Approved for bounded local implementation.** [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) record separate `material_change` and `feature_implementation` decisions for commit `10d13cbeaa2d038744752e93713ab7671f17f7d4`, repository tree `04f7cfc5cb3226896238ba6d3d060506284aece1`, program tree `321daf5e92f0981322ff0f54632bef56299e17b4`, and the same 34 artifact digests in `TR-0018`. Authority is limited to the 68 local tasks and implementation lease defined by the amended plan. Dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
-The coordinator must validate both records and the frozen subject, emit the sole approved v1-to-v2 migration, reactivate the exact implementation lease, and enter `IMPLEMENTATION_AUTHORIZED` before any task mutation resumes.
+`TR-0019` validates both records and the frozen subject, emits the sole approved v1-to-v2 migration, reactivates the exact implementation lease, and enters `IMPLEMENTATION_AUTHORIZED`. No task mutation may begin until that transition's containing commit is complete and revalidated.
 
 ## Historical EPP-F01 decision — stale
 
