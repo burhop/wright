@@ -2389,8 +2389,10 @@ def _validate_roadmap_and_lease(
         "ROLLED_BACK",
         "STOPPED",
     }
-    if current_feature and not lease_closed and (
-        not isinstance(lease, dict) or lease.get("feature_id") != current_feature
+    if (
+        current_feature
+        and not lease_closed
+        and (not isinstance(lease, dict) or lease.get("feature_id") != current_feature)
     ):
         findings.append(
             _finding(
