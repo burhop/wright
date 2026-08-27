@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 task-complete with one bounded analysis repair on `077-control-plane-validator`; clean read-only analysis rerun next and no implementation approval
+**Status:** EPP-F01 analyzed on `077-control-plane-validator`; exact approval-subject freeze next and no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`ANALYZE_EPP_F01` is the only eligible action. The first read-only pass exposed and the bounded planning repair resolved six findings: the 34-gate count, complete readiness/release report fields, two-record approval bundle, non-circular post-verification dashboard sequencing, complete planned test tree, and explicit 5-second/1-MiB coverage. The corrected 68-task plan has 19 setup/foundation, 12 US1, 10 US2, 8 US3, 7 US4, and 12 cross-cutting/verification tasks. Rerun non-destructive analysis on this exact clean subject; critical/high findings block and medium findings require disposition. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`FREEZE_EPP_F01_APPROVAL_SUBJECT` is the only eligible action. The clean read-only report passes with 34/34 requirements covered, zero active critical/high/medium findings, six schemas valid, both checklists complete, and six resolved findings retained with one repair allowance remaining. Create no implementation: commit the analyzed artifacts, bind the exact commit/tree/program-tree and artifact digests in transition evidence, then request separate same-subject `material_change` and `feature_implementation` approvals. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.

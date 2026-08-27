@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 14,
+  "revision": 13,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -40,7 +40,7 @@
       "docs/programs/engineering-process-platform/**"
     ]
   },
-  "last_transition": "TR-0013",
+  "last_transition": "TR-0012",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -79,10 +79,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "FREEZE_EPP_F01_APPROVAL_SUBJECT",
+      "action": "ANALYZE_EPP_F01",
       "roadmap_item": "EPP-F01",
       "requires_human_approval": false,
-      "reason": "The clean read-only analysis passes with 34/34 requirements covered, zero active critical/high/medium findings, six schemas valid, and both checklists complete; freeze the exact planning subject and enter the human implementation/material-change approval gate."
+      "reason": "The first read-only analysis exposed four high and two medium cross-artifact findings; one bounded planning-only repair resolved all six and preserved the TASKED state. Rerun analysis on the clean corrected subject."
     }
   ],
   "approval": {

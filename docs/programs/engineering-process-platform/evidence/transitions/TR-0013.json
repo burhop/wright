@@ -1,0 +1,181 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0013",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "TASKED",
+  "to_state": "ANALYZED",
+  "prior_revision": 13,
+  "new_revision": 14,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+  "new_state_digest": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Rerun the non-destructive Spec Kit analysis on the clean corrected subject, persist the digest-bound report, and prove zero active critical/high/medium findings with complete requirement/task coverage and constitution alignment.",
+  "started_at": "2026-08-27T00:26:00Z",
+  "finished_at": "2026-08-27T00:29:44Z",
+  "duration_ms": 224000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "819914b8309bf306909f31f4e707710eb186e8e0",
+    "head_after": "819914b8309bf306909f31f4e707710eb186e8e0",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0013.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/analysis.md"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0013.json",
+      "sha256": "6869097ca13d8880797a05c6605c42ea5a9005da7e081c8956ae3bef2dde0210",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0012.json",
+      "sha256": "682fabcae2ea7759158f8673fa4d9bec21ee6888f56bca2a382aa49950268d65",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "2fc8e32cb028d0affaf64aac250e42c83d4945cf18733c454ac9294ec9981e52",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "5c4d1a4ac8e763f03f360719655ad87b8d5ee09e4b0092b2db0bd37707ce1fb0",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+      "sha256": "bf67ef8046fd044165f8d07930253266a8f282fb89f2b4cbee5d43df6a7763b2",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+      "sha256": "2f68c4abd8dadf6c6e7b9bb6d70a4d885b80a1b7ef62d9b30d7cbf8a6284a1a2",
+      "schema_version": null
+    },
+    {
+      "path": "../../../.specify/memory/constitution.md",
+      "sha256": "5d7d558926a0eef0a05b90af41c994aeddcdd2fed7d43673037b34ada931b75b",
+      "schema_version": "3.0.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "90ed5ea95b386e07ceb2a90db8f26a31f9b263932ea591b9baa4002775fa20c5",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a38754d7b6d589cf5532784f855a0c80d69f3ef9d5685e62c465453e711a0c03",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "4e0ca08049aaffa5398b79cdc7fefa5517ee393350dc0e858ee82625b14579ad",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0013.json",
+      "sha256": "6869097ca13d8880797a05c6605c42ea5a9005da7e081c8956ae3bef2dde0210",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/analysis.md",
+      "sha256": "ec075bc78a071473731dda78688a42d02c0d021c9bbf945dd521271a5fdb3a57",
+      "schema_version": null
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "ANALYSIS-CLEAN-RERUN",
+      "command_or_method": "Run duplication, ambiguity, underspecification, constitution, coverage, task-mapping, and inconsistency passes on committed input 819914b8 and persist only the report after the read-only pass completed",
+      "environment": "Spec Kit analyze; Windows PowerShell prerequisite fallback; offline",
+      "duration_ms": 2100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/analysis.md"]
+    },
+    {
+      "check_id": "REQUIREMENT-TASK-COVERAGE",
+      "command_or_method": "Map 24 functional requirements and 10 buildable success criteria to 68 sequential path-specific tasks; confirm 34 of 34 coverage, four independent story tests, and zero unmapped tasks",
+      "environment": "deterministic semantic inventory",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/spec.md", "specs/076-control-plane-validator/tasks.md", "specs/076-control-plane-validator/analysis.md"]
+    },
+    {
+      "check_id": "CONSTITUTION-ALIGNMENT",
+      "command_or_method": "Evaluate every constitution principle; confirm applicable offline, package-boundary, privacy, test, branch, phase, and manual-gate rules and explicit non-applicability of product-only surfaces",
+      "environment": "constitution v3.0.0; non-negotiable",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/memory/constitution.md", "specs/076-control-plane-validator/plan.md", "specs/076-control-plane-validator/analysis.md"]
+    },
+    {
+      "check_id": "CONTRACT-CHECKLIST-QUALITY",
+      "command_or_method": "Meta-validate six Draft 2020-12 schemas and confirm both quality checklists have zero unchecked items or override",
+      "environment": "Python 3; existing jsonschema; deterministic checklist count",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/contracts", "specs/076-control-plane-validator/checklists"]
+    },
+    {
+      "check_id": "ANALYSIS-SEVERITY-GATE",
+      "command_or_method": "Confirm zero active critical/high/medium findings, retain all six resolved iteration-1 findings and repair allowance, and identify approval freeze as the only next action",
+      "environment": "program analysis gate",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/analysis.md", "evidence/transitions/TR-0012.json"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 13 to 14 increment, TASKED to ANALYZED child edge, canonical/raw committed-object digests, exact staged output allowlist, and FREEZE_EPP_F01_APPROVAL_SUBJECT as the sole next action",
+      "environment": "Windows PowerShell; exact Git index bytes",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0013.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-ANALYSIS-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "EPP-F01-MATERIAL-STATE-DOMAINS",
+    "EPP-F01-MATERIAL-LEASE-IDENTITY",
+    "EPP-F01-MATERIAL-DASHBOARD-PROVENANCE",
+    "EPP-F01-MATERIAL-GATE-EVIDENCE",
+    "EPP-F01-MATERIAL-APPROVAL-FRESHNESS"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0013.json",
+  "next_action": "FREEZE_EPP_F01_APPROVAL_SUBJECT"
+}
