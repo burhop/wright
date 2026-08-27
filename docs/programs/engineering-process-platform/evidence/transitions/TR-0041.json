@@ -1,0 +1,157 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0041",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "AUTHOR_VERIFIED",
+  "prior_revision": 41,
+  "new_revision": 42,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "6f6b92a898c0ec421e09030ee5bc68f45aab63640132133003fe791127116b4e",
+  "new_state_digest": "e98d4aba5b2dcafa10968ee8772566ae5e90adcaf502f1863912bec2c0c7bb1a",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Bounded repair attempt 1 for stable cause ACTION_POLICY_MISMATCH: add the omitted AUTHOR_VERIFIED to FREEZE_EPP_F01_CANDIDATE action rule already required by the lifecycle and T065, without changing implementation scope, dependencies, external authority, or feature source.",
+  "started_at": "2026-08-27T21:53:07Z",
+  "finished_at": "2026-08-27T21:57:12Z",
+  "duration_ms": 245000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "d78165d37d6214ca3a2910cc60c2866da9be0f35",
+    "source_tree": "76c3f7e6914dafb7c5f311b564f594b90a70e54e",
+    "source_program_tree": "326df1e5274597bc90605142af5ba121274b36fd",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0042.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0041.json",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0041.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0041.json",
+      "sha256": "21ce8d546fb39bd6de38c371e93b60432f4c1ae1ddff51dc5d43cdda340598f9",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0040.json",
+      "sha256": "56ef9dd7056e88db1e275bd4c0a04a86c9da90cf7e5ee834c69c999c19283e89",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "d9316c6f5a349a179dead8bbb0908daae1d1a50630ca87523330a6364083d217",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0042.json",
+      "sha256": "1c5ce24d7240f47d10dd9a2596a56142c31128687bc09a6b857f8fe9fa56970d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "1c5ce24d7240f47d10dd9a2596a56142c31128687bc09a6b857f8fe9fa56970d",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "83ec4e54d7b5c21db014822b273904ae8a499fc8c12de03e7f5fbd9a5ebd66b1",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "ORIGINAL-ACTION-POLICY-FAILURE",
+      "method": "Run exact validator against d78165d3; retain fatal ACTION_POLICY_MISMATCH because AUTHOR_VERIFIED had no action rule although the lifecycle and T065 require candidate freeze.",
+      "environment": "Exact committed Git source; offline",
+      "duration_ms": 5320,
+      "result": "failed",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "program-state.json",
+        "lifecycle-policy.json"
+      ]
+    },
+    {
+      "check_id": "BOUNDED-POLICY-REPAIR",
+      "method": "Add exactly one action rule mapping PROGRAM_ACTIVE plus AUTHOR_VERIFIED to FREEZE_EPP_F01_CANDIDATE with no human approval, matching the existing legal edge and approved T065 workflow.",
+      "environment": "Local control-plane-only diff; no implementation source mutation",
+      "duration_ms": 420,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "lifecycle-policy.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "REPAIR-SCOPE",
+      "method": "Diff-check only lifecycle policy, operational state, append-only state snapshot and repair transition; no dependencies, product code, benchmark execution, external writes, or authority expansion.",
+      "environment": "Local Git diff; offline",
+      "duration_ms": 280,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/transitions/TR-0041.json",
+        "program-state.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "ACTION_POLICY_MISMATCH",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "git:d78165d37d6214ca3a2910cc60c2866da9be0f35 (original failed action-policy checkpoint)",
+  "next_action": "FREEZE_EPP_F01_CANDIDATE"
+}

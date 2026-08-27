@@ -397,6 +397,12 @@
     },
     {
       "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "AUTHOR_VERIFIED",
+      "action": "FREEZE_EPP_F01_CANDIDATE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
       "feature_state": "CANDIDATE_FROZEN",
       "action": "VERIFY_EPP_F01_CANDIDATE",
       "requires_human_approval": false
