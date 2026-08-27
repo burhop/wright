@@ -106,7 +106,10 @@ def validate_schema(schema: Mapping[str, Any], instance: Any) -> list[Validation
     validator = Draft202012Validator(schema, format_checker=FormatChecker())
     return sorted(
         validator.iter_errors(instance),
-        key=lambda error: (tuple(str(part) for part in error.absolute_path), error.validator or ""),
+        key=lambda error: (
+            tuple(str(part) for part in error.absolute_path),
+            error.validator or "",
+        ),
     )
 
 

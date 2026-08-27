@@ -43,7 +43,9 @@ class GitFixtureBuilder:
         self._git(["config", "user.name", FIXED_GIT_ENV["GIT_AUTHOR_NAME"]])
         self._git(["config", "user.email", FIXED_GIT_ENV["GIT_AUTHOR_EMAIL"]])
 
-    def _git(self, args: list[str], *, check: bool = True) -> subprocess.CompletedProcess[bytes]:
+    def _git(
+        self, args: list[str], *, check: bool = True
+    ) -> subprocess.CompletedProcess[bytes]:
         self.spy.record(args)
         environment = os.environ.copy()
         environment.update(FIXED_GIT_ENV)

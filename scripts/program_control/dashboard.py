@@ -78,9 +78,13 @@ def derive_areas(
         raise DashboardError("GATE_EVIDENCE_SET_MISMATCH")
     if candidate is not None and evidence_set.get("subject") != candidate:
         raise DashboardError("GATE_CANDIDATE_MISMATCH")
-    assertion_by_id = {str(row["gate_id"]): row for row in assertions if "gate_id" in row}
+    assertion_by_id = {
+        str(row["gate_id"]): row for row in assertions if "gate_id" in row
+    }
     manifest_by_path = {
-        str(row.get("path")): row for row in (source_manifest or []) if isinstance(row, Mapping)
+        str(row.get("path")): row
+        for row in (source_manifest or [])
+        if isinstance(row, Mapping)
     }
 
     def validate_artifacts(
@@ -94,10 +98,9 @@ def derive_areas(
             binding = registry.get(class_id)
             if binding is None:
                 raise DashboardError("EVIDENCE_CLASS_UNKNOWN")
-            if (
-                artifact.get("schema_id") != binding.get("schema_id")
-                or artifact.get("source_role") != binding.get("source_role")
-            ):
+            if artifact.get("schema_id") != binding.get("schema_id") or artifact.get(
+                "source_role"
+            ) != binding.get("source_role"):
                 raise DashboardError("EVIDENCE_CLASS_BINDING_MISMATCH")
             classes.add(class_id)
             if passing:
@@ -133,7 +136,9 @@ def derive_areas(
 
     areas: dict[str, dict[str, Any]] = {}
     for area in AREA_ORDER:
-        required = [gate for gate in gates if gate.get("area") == area and gate.get("required")]
+        required = [
+            gate for gate in gates if gate.get("area") == area and gate.get("required")
+        ]
         rows: list[dict[str, Any]] = []
         for gate in required:
             gate_id = str(gate["id"])
@@ -143,7 +148,9 @@ def derive_areas(
             if assertion.get("evaluator") != gate.get("evaluator"):
                 raise DashboardError("GATE_EVALUATOR_MISMATCH")
             results = list(assertion.get("assertion_results", []))
-            expected_result_ids = [row.get("assertion_id") for row in gate.get("assertions", [])]
+            expected_result_ids = [
+                row.get("assertion_id") for row in gate.get("assertions", [])
+            ]
             actual_result_ids = [row.get("assertion_id") for row in results]
             if (
                 len(actual_result_ids) != len(set(actual_result_ids))
@@ -156,7 +163,9 @@ def derive_areas(
             if assertion.get("status") != status:
                 raise DashboardError("GATE_AGGREGATE_MISMATCH")
             row_expires = assertion.get("expires_at")
-            row_expired = row_expires is not None and _parse_time(str(row_expires)) < observed_at
+            row_expired = (
+                row_expires is not None and _parse_time(str(row_expires)) < observed_at
+            )
             derived_fresh = bool(results) and all(
                 result.get("fresh") is True
                 and not (
@@ -168,7 +177,11 @@ def derive_areas(
             if row_expired or bool(assertion.get("fresh")) != derived_fresh:
                 raise DashboardError("GATE_FRESHNESS_MISMATCH")
             passing = status == "passed"
-            row_artifacts = [item for item in assertion.get("evidence", []) if isinstance(item, Mapping)]
+            row_artifacts = [
+                item
+                for item in assertion.get("evidence", [])
+                if isinstance(item, Mapping)
+            ]
             if passing and not row_artifacts:
                 raise DashboardError("GATE_PASS_EVIDENCE_EMPTY")
             row_classes = validate_artifacts(row_artifacts, passing=passing)
@@ -179,7 +192,9 @@ def derive_areas(
                 if isinstance(item, Mapping)
             ]
             validate_artifacts(result_artifacts, passing=passing)
-            required_classes = set(gate.get("evidence_policy", {}).get("required_classes", []))
+            required_classes = set(
+                gate.get("evidence_policy", {}).get("required_classes", [])
+            )
             if passing and not required_classes.issubset(row_classes):
                 raise DashboardError("EVIDENCE_CLASS_COVERAGE_MISSING")
             independent_required = bool(
@@ -187,7 +202,8 @@ def derive_areas(
             )
             if passing and independent_required:
                 if assertion.get("verifier", {}).get("independent") is not True or any(
-                    result.get("verifier", {}).get("independent") is not True for result in results
+                    result.get("verifier", {}).get("independent") is not True
+                    for result in results
                 ):
                     raise DashboardError("GATE_INDEPENDENCE_MISSING")
             rows.append(
@@ -215,15 +231,15 @@ def derive_areas(
             area_status = "passed"
         else:
             area_status = next(
-                (candidate for candidate in NONPASSING_PRECEDENCE if candidate in statuses),
+                (
+                    candidate
+                    for candidate in NONPASSING_PRECEDENCE
+                    if candidate in statuses
+                ),
                 "not_started",
             )
         blockers = sorted(
-            {
-                str(row["reason_code"])
-                for row in rows
-                if row["status"] != "passed"
-            }
+            {str(row["reason_code"]) for row in rows if row["status"] != "passed"}
         )
         evidence = sorted(
             (item for row in rows for item in row["evidence"]),
@@ -244,7 +260,9 @@ def derive_areas(
     return areas
 
 
-def default_benchmark_summary(source: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def default_benchmark_summary(
+    source: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     existing = dict(source or {})
     counters = {
         "counted": 0,
@@ -294,7 +312,9 @@ def make_dashboard(report: Mapping[str, Any]) -> dict[str, Any]:
         "container_relation": {
             "container_commit": None,
             "required_first_parent": subject["source_commit"],
-            "allowed_changed_paths": ["docs/programs/engineering-process-platform/dashboard.json"],
+            "allowed_changed_paths": [
+                "docs/programs/engineering-process-platform/dashboard.json"
+            ],
             "relation_status": "candidate_not_committed",
         },
         "release_candidate": subject["release_candidate"],
@@ -311,7 +331,13 @@ def atomic_replace_json(
     value: Mapping[str, Any],
     schema: Mapping[str, Any],
     *,
-    replace: Callable[[str | bytes | os.PathLike[str] | os.PathLike[bytes], str | bytes | os.PathLike[str] | os.PathLike[bytes]], None] = os.replace,
+    replace: Callable[
+        [
+            str | bytes | os.PathLike[str] | os.PathLike[bytes],
+            str | bytes | os.PathLike[str] | os.PathLike[bytes],
+        ],
+        None,
+    ] = os.replace,
 ) -> None:
     """Validate and atomically replace one JSON file, preserving prior bytes on failure."""
 

@@ -9,7 +9,12 @@ from pathlib import Path
 from typing import Any
 
 from .dashboard import DashboardError, atomic_replace_json, make_dashboard
-from .git_subject import GitReader, GitSubjectError, ensure_safe_checkout_target, normalize_repo_path
+from .git_subject import (
+    GitReader,
+    GitSubjectError,
+    ensure_safe_checkout_target,
+    normalize_repo_path,
+)
 from .json_contracts import ContractError, deterministic_json_bytes, strict_load
 from .validation import validate_program
 
@@ -27,11 +32,17 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     validate = commands.add_parser("validate", help="validate one committed source")
     validate.add_argument("--source", default="HEAD")
-    validate.add_argument("--program-root", default="docs/programs/engineering-process-platform")
+    validate.add_argument(
+        "--program-root", default="docs/programs/engineering-process-platform"
+    )
     validate.add_argument("--format", choices=("text", "json"), default="text")
-    generate = commands.add_parser("generate-dashboard", help="generate one local dashboard candidate")
+    generate = commands.add_parser(
+        "generate-dashboard", help="generate one local dashboard candidate"
+    )
     generate.add_argument("--source", required=True)
-    generate.add_argument("--program-root", default="docs/programs/engineering-process-platform")
+    generate.add_argument(
+        "--program-root", default="docs/programs/engineering-process-platform"
+    )
     generate.add_argument("--output", required=True)
     generate.add_argument("--format", choices=("text", "json"), default="text")
     return parser
@@ -46,12 +57,21 @@ def render_text(report: Mapping[str, Any]) -> str:
         f"program_tree: {subject['program_tree'] or 'unresolved'}",
         f"worktree_clean: {str(subject['worktree_clean']).lower()}",
     ]
-    for area in ("product_readiness", "benchmark_readiness", "commercial_readiness", "program_health"):
+    for area in (
+        "product_readiness",
+        "benchmark_readiness",
+        "commercial_readiness",
+        "program_health",
+    ):
         value = report["areas"][area]
-        lines.append(f"{area}: {value['status']} ({value['passed_gates']}/{value['required_gates']})")
+        lines.append(
+            f"{area}: {value['status']} ({value['passed_gates']}/{value['required_gates']})"
+        )
     lines.append(f"release_eligible: {str(report['release_eligible']).lower()}")
     for finding in report["findings"][:20]:
-        lines.append(f"{finding['severity']} {finding['code']} {finding['artifact']}: {finding['recovery']}")
+        lines.append(
+            f"{finding['severity']} {finding['code']} {finding['artifact']}: {finding['recovery']}"
+        )
     action = report.get("next_action")
     lines.append(f"next_action: {action['action'] if action else 'none'}")
     return "\n".join(lines) + "\n"
@@ -102,9 +122,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         expected = f"{program_root}/dashboard.json"
         output = normalize_repo_path(str(args.output))
         if output != expected:
-            return _bounded_failure("OUTPUT_TARGET_UNDECLARED", output_format, EXIT_USAGE)
+            return _bounded_failure(
+                "OUTPUT_TARGET_UNDECLARED", output_format, EXIT_USAGE
+            )
         target = ensure_safe_checkout_target(reader.repo_root, output)
-        schema_path = reader.repo_root / program_root / "schemas" / "dashboard.schema.json"
+        schema_path = (
+            reader.repo_root / program_root / "schemas" / "dashboard.schema.json"
+        )
         schema = strict_load(schema_path)
         dashboard = make_dashboard(report)
         atomic_replace_json(target, dashboard, schema)
@@ -121,4 +145,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     except DashboardError as exc:
         return _bounded_failure(exc.code, output_format, EXIT_DELIVERY)
     except Exception:
-        return _bounded_failure("INTERNAL_VALIDATION_FAILURE", output_format, EXIT_INTERNAL)
+        return _bounded_failure(
+            "INTERNAL_VALIDATION_FAILURE", output_format, EXIT_INTERNAL
+        )

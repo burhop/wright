@@ -25,20 +25,30 @@ def load(path: Path) -> object:
 
 
 @pytest.mark.parametrize("name", CONTRACT_NAMES)
-def test_planning_contract_is_valid_draft_2020_12(repository_root: Path, name: str) -> None:
-    schema = load(repository_root / "specs/076-control-plane-validator/contracts" / name)
+def test_planning_contract_is_valid_draft_2020_12(
+    repository_root: Path, name: str
+) -> None:
+    schema = load(
+        repository_root / "specs/076-control-plane-validator/contracts" / name
+    )
     validator_for(schema).check_schema(schema)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
 
 
 @pytest.mark.parametrize("name", CONTRACT_NAMES)
-def test_approved_contract_is_promoted_byte_for_byte(repository_root: Path, name: str) -> None:
+def test_approved_contract_is_promoted_byte_for_byte(
+    repository_root: Path, name: str
+) -> None:
     planned = repository_root / "specs/076-control-plane-validator/contracts" / name
-    promoted = repository_root / "docs/programs/engineering-process-platform/schemas" / name
+    promoted = (
+        repository_root / "docs/programs/engineering-process-platform/schemas" / name
+    )
     assert promoted.read_bytes() == planned.read_bytes()
 
 
-def test_frozen_profiles_are_exact_ordered_contract_projections(repository_root: Path) -> None:
+def test_frozen_profiles_are_exact_ordered_contract_projections(
+    repository_root: Path,
+) -> None:
     contract = load(
         repository_root
         / "specs/076-control-plane-validator/contracts/legacy-compatibility-profile.json"
@@ -63,7 +73,10 @@ def test_frozen_profiles_are_exact_ordered_contract_projections(repository_root:
 
 
 def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> None:
-    state = load(repository_root / "docs/programs/engineering-process-platform/program-state.json")
+    state = load(
+        repository_root
+        / "docs/programs/engineering-process-platform/program-state.json"
+    )
     allowed = state["active_mutating_lease"]["allowed_paths"]
     assert "scripts/program_control/**" in allowed
     assert "tests/program_control_plane/**" in allowed
@@ -72,7 +85,9 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
     assert "src/**" not in allowed
 
 
-def test_git_fixture_builder_uses_fixed_identity_space_path_and_raw_mutation(git_builder) -> None:
+def test_git_fixture_builder_uses_fixed_identity_space_path_and_raw_mutation(
+    git_builder,
+) -> None:
     target = git_builder.write_bytes("control/input.json", b'{"value":1}\n')
     commit = git_builder.commit()
     assert len(commit) == 40
