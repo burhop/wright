@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from program_control import validation as validation_module
 from program_control.git_subject import GitReader
 from program_control.dashboard import derive_areas
 from program_control.json_contracts import canonical_digest, sha256_bytes
@@ -28,6 +29,14 @@ CORRECTION_PATH = f"{PROGRAM_ROOT}/evidence/corrections/{CORRECTION_ID}.json"
 APPROVAL_PATHS = (
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-004.json",
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-004.json",
+)
+REPAIR_CORRECTION_ID = "COR-EPP-F01-REPAIR-EVIDENCE-001"
+REPAIR_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{REPAIR_CORRECTION_ID}.json"
+)
+REPAIR_APPROVAL_PATHS = (
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-007.json",
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-007.json",
 )
 
 
@@ -60,6 +69,203 @@ def correction_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
     profile = load(repository_root / CORRECTION_PATH)
     approvals = {path: load(repository_root / path) for path in APPROVAL_PATHS}
     return profile, approvals
+
+
+def repair_correction_inputs(
+    repository_root: Path,
+) -> tuple[dict, dict[str, dict]]:
+    profile = load(repository_root / REPAIR_CORRECTION_PATH)
+    approvals = {
+        path: load(repository_root / path) for path in REPAIR_APPROVAL_PATHS
+    }
+    return profile, approvals
+
+
+def test_exact_repair_evidence_correction_recomputes_two_claims_and_occurrences(
+    repository_root: Path,
+) -> None:
+    profile, approvals = repair_correction_inputs(repository_root)
+    original_profile = copy.deepcopy(profile)
+    original_approvals = copy.deepcopy(approvals)
+    findings, schema_targets, digest_targets = (
+        validation_module.validate_repair_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+        )
+    )
+    cause_findings = [
+        finding
+        for finding in findings
+        if finding.code == "REPAIR_EVIDENCE_CAUSE_ID_MISMATCH"
+    ]
+    digest_findings = [
+        finding
+        for finding in findings
+        if finding.code == "REPAIR_EVIDENCE_DIGEST_MISMATCH"
+    ]
+    assert len(cause_findings) == 2
+    assert len(digest_findings) == 1
+    assert all(finding.resolution_status == "resolved" for finding in findings)
+    assert all(finding.correction_ref == REPAIR_CORRECTION_PATH for finding in findings)
+    assert schema_targets == frozenset(
+        {
+            f"{PROGRAM_ROOT}/evidence/states/program-state-revision-0045.json",
+            f"{PROGRAM_ROOT}/evidence/states/program-state-revision-0046.json",
+        }
+    )
+    assert digest_targets == frozenset(
+        {
+            (
+                f"{PROGRAM_ROOT}/evidence/transitions/TR-0044.json",
+                "/inputs/1/sha256",
+            )
+        }
+    )
+    assert profile == original_profile
+    assert approvals == original_approvals
+
+
+def test_repair_evidence_correction_rejects_closed_profile_mutations(
+    repository_root: Path,
+) -> None:
+    profile, approvals = repair_correction_inputs(repository_root)
+    head = GitReader(repository_root).resolve_commit("HEAD")
+    mutations = (
+        ("omitted", lambda value: value["claims"].pop()),
+        (
+            "added",
+            lambda value: value["claims"].append(copy.deepcopy(value["claims"][0])),
+        ),
+        (
+            "substituted",
+            lambda value: value["claims"][0].__setitem__(
+                "claim_id", "REPAIR-CAUSE-ID-002"
+            ),
+        ),
+        (
+            "reordered",
+            lambda value: value["claims"].__setitem__(
+                slice(0, 2), value["claims"][:2][::-1]
+            ),
+        ),
+        (
+            "relocated",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "path",
+                f"{PROGRAM_ROOT}/evidence/states/program-state-revision-0044.json",
+            ),
+        ),
+        (
+            "wrong-identity",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "git_blob", "0" * 40
+            ),
+        ),
+        (
+            "wrong-pointer",
+            lambda value: value["claims"][1].__setitem__(
+                "json_pointer", "/inputs/0/sha256"
+            ),
+        ),
+        (
+            "wrong-digest",
+            lambda value: value["claims"][1].__setitem__(
+                "authoritative_value", "0" * 64
+            ),
+        ),
+        (
+            "wrong-origin",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "introducing_commit", head
+            ),
+        ),
+        (
+            "current-state",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "path", f"{PROGRAM_ROOT}/program-state.json"
+            ),
+        ),
+        (
+            "wildcard",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "json_pointer", "/active_mutating_lease/recovery/*"
+            ),
+        ),
+        (
+            "future",
+            lambda value: value["claims"][1].__setitem__(
+                "introducing_commit", head
+            ),
+        ),
+        (
+            "new-record",
+            lambda value: value.__setitem__("accept_new_records", True),
+        ),
+        (
+            "correction-of-correction",
+            lambda value: value["claims"][0]["occurrences"][0].__setitem__(
+                "path", REPAIR_CORRECTION_PATH
+            ),
+        ),
+        (
+            "projection-interference",
+            lambda value: value["unchanged_projection_fields"].append(
+                "hand_set_readiness"
+            ),
+        ),
+    )
+    reader = GitReader(repository_root)
+    for label, mutate in mutations:
+        candidate = copy.deepcopy(profile)
+        mutate(candidate)
+        findings, schema_targets, digest_targets = (
+            validation_module.validate_repair_evidence_correction(
+                reader, "HEAD", PROGRAM_ROOT, candidate, approvals
+            )
+        )
+        mismatch_findings = [
+            finding
+            for finding in findings
+            if finding.code
+            in {
+                "REPAIR_EVIDENCE_CAUSE_ID_MISMATCH",
+                "REPAIR_EVIDENCE_DIGEST_MISMATCH",
+            }
+        ]
+        assert len(mismatch_findings) == 3, label
+        assert all(
+            finding.resolution_status == "unresolved"
+            for finding in mismatch_findings
+        ), label
+        assert {
+            "REPAIR_EVIDENCE_CORRECTION_INVALID",
+            "REPAIR_EVIDENCE_CORRECTION_UNAUTHORIZED",
+        } & {finding.code for finding in findings}, label
+        assert schema_targets == frozenset(), label
+        assert digest_targets == frozenset(), label
+
+
+def test_repair_evidence_correction_requires_exact_v7_authority(
+    repository_root: Path,
+) -> None:
+    profile, approvals = repair_correction_inputs(repository_root)
+    approvals.pop(REPAIR_APPROVAL_PATHS[1])
+    findings, schema_targets, digest_targets = (
+        validation_module.validate_repair_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+        )
+    )
+    assert "REPAIR_EVIDENCE_CORRECTION_UNAUTHORIZED" in codes(findings)
+    assert all(
+        finding.resolution_status == "unresolved"
+        for finding in findings
+        if finding.code
+        in {
+            "REPAIR_EVIDENCE_CAUSE_ID_MISMATCH",
+            "REPAIR_EVIDENCE_DIGEST_MISMATCH",
+        }
+    )
+    assert schema_targets == frozenset()
+    assert digest_targets == frozenset()
 
 
 def test_exact_committed_identity_correction_recomputes_37_of_37(
