@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import json
+import shutil
+import sys
+from hashlib import sha256
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
 from program_control.cli import _emit, build_parser
 from program_control.dashboard import DashboardError, atomic_replace_json
-from program_control.json_contracts import deterministic_json_bytes
+from program_control.json_contracts import deterministic_json_bytes, validate_schema
+from program_control.git_subject import GitReader
+from program_control.validation import _validate_runtime_source_bundle
 
 
 SCHEMA = {
@@ -176,3 +182,134 @@ def test_only_declared_target_changes_on_valid_and_invalid_runs(tmp_path: Path) 
         atomic_replace_json(target, {"value": "bad"}, SCHEMA)
     assert source.read_bytes() == before_source
     assert target.read_bytes() == after_valid
+
+
+def _bundle_subject(git_builder) -> tuple[GitReader, str]:
+    git_builder.write_bytes(
+        "scripts/validate-engineering-process-program.py", b"print('entry')\n"
+    )
+    git_builder.write_bytes("scripts/program_control/__init__.py", b"\n")
+    git_builder.write_bytes("scripts/program_control/worker.py", b"VALUE = 1\n")
+    source = git_builder.commit("runtime bundle source")
+    return GitReader(git_builder.root), source
+
+
+@pytest.mark.parametrize(
+    "mutation", ["added", "deleted", "changed", "removed_entrypoint"]
+)
+def test_runtime_bundle_permutations_fail_closed(git_builder, mutation: str) -> None:
+    reader, source = _bundle_subject(git_builder)
+    if mutation == "added":
+        git_builder.write_bytes("scripts/program_control/added.py", b"VALUE = 2\n")
+    elif mutation == "deleted":
+        (git_builder.root / "scripts/program_control/worker.py").unlink()
+    elif mutation == "changed":
+        git_builder.write_bytes("scripts/program_control/worker.py", b"VALUE = 2\n")
+    else:
+        (git_builder.root / "scripts/validate-engineering-process-program.py").unlink()
+    git_builder.commit(f"bundle {mutation}")
+    _, _, findings = _validate_runtime_source_bundle(reader, source)
+    assert "VALIDATOR_RUNTIME_SUBJECT_MISMATCH" in {
+        finding.code for finding in findings
+    }
+
+
+def test_imported_generator_module_outside_exact_source_fails_closed(
+    git_builder, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    reader, source = _bundle_subject(git_builder)
+    imported = ModuleType("program_control.runtime_added")
+    imported.__file__ = str(
+        git_builder.root / "scripts/program_control/runtime_added.py"
+    )
+    git_builder.write_bytes(imported.__file__, b"VALUE = 3\n")
+    monkeypatch.setitem(sys.modules, imported.__name__, imported)
+    _, _, findings = _validate_runtime_source_bundle(reader, source)
+    assert "VALIDATOR_RUNTIME_SUBJECT_MISMATCH" in {
+        finding.code for finding in findings
+    }
+
+
+def test_frozen_prior_profiles_are_ordered_and_single_migration(
+    repository_root,
+) -> None:
+    contract = json.loads(
+        (
+            repository_root
+            / "specs/076-control-plane-validator/contracts/legacy-compatibility-profile.json"
+        ).read_text(encoding="utf-8")
+    )
+    profiles = contract["profiles"]
+    assert [(row["from_revision"], row["through_revision"]) for row in profiles] == [
+        (1, 9),
+        (10, 19),
+    ]
+    assert profiles[1]["successor"]["maximum_count"] == 1
+
+
+def test_complete_frozen_prior_contract_reads_exact_committed_bytes(
+    repository_root,
+) -> None:
+    root = "docs/programs/engineering-process-platform"
+    reader = GitReader(repository_root)
+    contract = json.loads(
+        (
+            repository_root
+            / "specs/076-control-plane-validator/contracts/legacy-compatibility-profile.json"
+        ).read_text(encoding="utf-8")
+    )
+    checked = 0
+    commit = reader.resolve_commit("HEAD")
+    for profile in contract["profiles"]:
+        for row in [*profile["states"], *profile["transitions"]]:
+            if row.get("raw_sha256") is None:
+                continue
+            raw = reader.blob(commit, f"{root}/{row['path']}")
+            assert sha256(raw).hexdigest() == row["raw_sha256"]
+            checked += 1
+    assert checked == 36
+
+
+def test_contract_seed_is_valid_but_explicitly_not_delivery_evidence(
+    repository_root,
+) -> None:
+    root = repository_root / "docs/programs/engineering-process-platform"
+    dashboard = json.loads((root / "dashboard.json").read_text(encoding="utf-8"))
+    schema = json.loads(
+        (root / "schemas/dashboard.schema.json").read_text(encoding="utf-8")
+    )
+    dashboard["generation_status"] = "contract_seed_not_evidence"
+    assert validate_schema(schema, dashboard) == []
+    assert dashboard["generation_status"] != "candidate_not_evidence"
+    assert dashboard["container_relation"]["delivery_evidence_embedded"] is False
+
+
+def test_removed_validator_rollback_preserves_sources_and_stales_snapshot(
+    repository_root, tmp_path: Path
+) -> None:
+    sandbox = tmp_path / "rollback"
+    source_paths = [
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/roadmap.json",
+        "docs/programs/engineering-process-platform/README.md",
+    ]
+    validator = "scripts/validate-engineering-process-program.py"
+    dashboard = "docs/programs/engineering-process-platform/dashboard.json"
+    for relative in [*source_paths, validator, dashboard]:
+        target = sandbox / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(repository_root / relative, target)
+    source_before = {path: (sandbox / path).read_bytes() for path in source_paths}
+    dashboard_before = (sandbox / dashboard).read_bytes()
+    (sandbox / validator).unlink()
+    assert not (sandbox / validator).exists()
+    assert {
+        path: (sandbox / path).read_bytes() for path in source_paths
+    } == source_before
+    assert (sandbox / dashboard).read_bytes() == dashboard_before
+    quickstart = (
+        repository_root / "specs/076-control-plane-validator/quickstart.md"
+    ).read_text(encoding="utf-8")
+    assert (
+        "Manual inspection only; existing snapshot is stale/unsupported" in quickstart
+    )

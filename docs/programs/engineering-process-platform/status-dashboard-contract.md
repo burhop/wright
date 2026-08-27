@@ -8,7 +8,7 @@ The canonical snapshot is [`dashboard.json`](dashboard.json), validated by [`sch
 
 Delivery is intentionally split into two bounded features. `EPP-F01` owns validation, provenance, deterministic snapshot generation and CLI rendering. It does **not** provide a browser page. `EPP-F01B` owns the read-only browser projection of that snapshot after EPP-F01 integrates. Wright's existing workspace landing page (`DashboardPage.tsx`) is not the program-status dashboard and cannot satisfy this requirement without the separately specified EPP-F01B evidence contract. Until EPP-F01B integrates, browser status is explicitly unavailable rather than inferred from `dashboard.json` or the CLI.
 
-The checked-in `dashboard.json` is now a schema-valid v2 `candidate_not_evidence` snapshot generated during T040. It records its exact source subject and data cutoff, but it does not self-claim committed-current delivery. Later delivery work remains T067–T068 and is not authorized at the T041 checkpoint; only the external validation envelope may eventually establish `committed_valid`.
+The checked-in `dashboard.json` is a schema-valid v2 `candidate_not_evidence` snapshot generated during T040. It records its exact source subject and data cutoff, but it does not self-claim committed-current delivery. Only the T067–T068 external validation envelope may establish `committed_valid`.
 
 ## Four independent areas
 
@@ -60,6 +60,8 @@ No data is uploaded automatically. Remote telemetry remains disabled by default 
 Generation is transactional: validate all sources, compute all four areas, write a candidate snapshot, validate it, then replace the prior local/generated snapshot. On failure, retain the prior snapshot byte-for-byte but mark delivery stale/failed through the external delivery layer and expose the generation error; never edit the snapshot merely to change its delivery status and never publish a partial green snapshot.
 
 Refresh never launches product runs, benchmark cases, MCPs, models, applications or release actions. It only projects existing evidence.
+
+Operators inspect the concise text report first, then use JSON only for exact evidence traversal. Support-safe exports contain stable codes, counts, commit/tree/digests, repository-relative pointers, freshness, and bounded recovery. They exclude raw logs, prompts, payloads, credentials, absolute paths, private endpoints, authority material, and command arguments. `INPUT_CONTRACT_INVALID` requires source/schema inspection; `OUTPUT_*_FAILED` and `OUTPUT_INTERRUPTED` preserve the prior snapshot; `INTERNAL_VALIDATION_FAILURE` requires an isolated developer reproduction. None authorizes manual status editing.
 
 ## Minimum dashboard views
 

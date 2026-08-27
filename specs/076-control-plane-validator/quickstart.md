@@ -1,6 +1,6 @@
 # EPP-F01 Quickstart and Acceptance Journey
 
-This is the implemented local journey through the T041 value checkpoint. It validates and projects existing committed evidence only; it does not authorize T042+, integration, benchmark execution, EPP-F01B, or release work.
+This is the implemented local EPP-F01 validation and snapshot journey. It validates and projects existing committed evidence only; it does not authorize integration, benchmark execution, EPP-F01B implementation, or release work.
 
 ## Prerequisites
 
@@ -115,14 +115,22 @@ TR-0027 has one separate known input-origin defect: `/inputs/3` names the planni
 
 ## 6. Compatibility and rollback
 
+| Input or environment | Supported result |
+| --- | --- |
+| Current v2 contracts and exact committed runtime bundle | Validate and project |
+| Frozen v1 revisions 1–9, then 10–19 | One ordered bridge to v2 only |
+| Revision 20+ v1, second migration, unknown major/minor | Fail closed with compatibility exit `6` |
+| Windows/POSIX checkout line-ending difference | Same committed-blob semantics |
+| Missing/removed validator | Manual inspection only; existing snapshot is stale/unsupported |
+
 - Windows and POSIX runs for the same committed blobs must agree semantically even when line endings differ in clean checkouts.
 - Only explicitly listed compatible schema/snapshot versions are accepted. Legacy v1 is limited to the closed revision-1-through-9 bootstrap and revision-10-through-19 bridge profiles; revision 20, any later v1 record, and a second v1-to-v2 migration fail closed. Unknown majors and undeclared minors also fail closed.
 - The committed-identity correction profile is an explicit compatibility boundary. Older readers that do not understand it fail closed; they must not silently ignore it or show a green historical result.
-- Removing the validator restores the README's manual verification path. Source evidence remains unchanged, and any validator-generated snapshot becomes stale/unsupported rather than authoritative.
+- Removing the validator restores the README's manual verification path: inspect `program-state.json`, `roadmap.json`, the referenced transition/approval records, and every recorded Git blob/digest; recompute the sole next action without editing source evidence. Any validator-generated snapshot becomes stale/unsupported rather than authoritative.
 
-## Acceptance Commands (implementation phase only)
+## Acceptance commands
 
-The approved task plan will freeze the focused commands. At minimum:
+Run from the repository root with the existing locked environment:
 
 ```text
 python -m pytest tests/program_control_plane -q -p no:cacheprovider --basetemp <writable-temp-directory>

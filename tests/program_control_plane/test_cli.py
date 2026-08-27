@@ -523,7 +523,9 @@ def test_findings_have_stable_multifault_order_and_exit_precedence() -> None:
         "SEMANTIC_Z",
     ]
     # Structural/schema failures take precedence over semantic failures.
-    structural = [item for item in findings if item.code.startswith(("JSON_", "SCHEMA_"))]
+    structural = [
+        item for item in findings if item.code.startswith(("JSON_", "SCHEMA_"))
+    ]
     assert structural
 
 

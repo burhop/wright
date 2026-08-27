@@ -104,9 +104,7 @@ def _support_safe_report(report: Mapping[str, Any]) -> dict[str, Any]:
 
     safe = copy.deepcopy(dict(report))
     for finding in safe.get("findings", []):
-        finding["code"] = _safe_code(
-            finding.get("code"), "VALIDATION_FAILURE"
-        )
+        finding["code"] = _safe_code(finding.get("code"), "VALIDATION_FAILURE")
         finding["invariant"] = _safe_code(
             finding.get("invariant"), "VALIDATION_INVARIANT"
         )
@@ -142,6 +140,15 @@ def render_text(report: Mapping[str, Any]) -> str:
         f"delivery: {subject['delivery_commit'] or subject['delivery_resolution']}",
         f"worktree_clean: {str(subject['worktree_clean']).lower()}",
     ]
+    validator = report.get("validator", {})
+    if validator:
+        lines.append(
+            f"validator_bundle: {validator.get('bundle_manifest_digest', 'unresolved')}"
+        )
+    if "input_manifest_digest" in subject:
+        lines.append(
+            f"input_manifest: {subject.get('input_manifest_digest') or 'unresolved'}"
+        )
     for area in (
         "product_readiness",
         "benchmark_readiness",
@@ -153,6 +160,17 @@ def render_text(report: Mapping[str, Any]) -> str:
             f"{area}: {value['status']} ({value['passed_gates']}/{value['required_gates']})"
         )
     lines.append(f"release_eligible: {str(report['release_eligible']).lower()}")
+    benchmark = report.get("benchmark_summary")
+    if isinstance(benchmark, Mapping):
+        lines.append(
+            f"benchmark_progress: {benchmark.get('counted', 0)}/{benchmark.get('target', 100)}"
+        )
+    approval = report.get("release_approval")
+    if isinstance(approval, Mapping):
+        lines.append(f"release_approval: {approval.get('status', 'absent')}")
+    eligibility = report.get("eligibility")
+    if isinstance(eligibility, Mapping):
+        lines.append(f"validation_blockers: {len(eligibility.get('blockers', []))}")
     for finding in report["findings"][:20]:
         disposition = _safe_code(
             finding.get("resolution_status", "unresolved").upper(), "UNRESOLVED"
@@ -168,6 +186,9 @@ def render_text(report: Mapping[str, Any]) -> str:
             f"{_safe_message(finding.get('recovery'), 'Inspect repository-relative evidence.')}"
         )
     action = report.get("next_action")
+    omitted = max(0, len(report["findings"]) - 20)
+    if omitted:
+        lines.append(f"findings_omitted: {omitted}")
     lines.append(f"next_action: {action['action'] if action else 'none'}")
     return "\n".join(lines) + "\n"
 

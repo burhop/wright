@@ -84,6 +84,20 @@ python scripts/validate-engineering-process-program.py generate-dashboard --sour
 
 The snapshot always remains `candidate_not_evidence`. Current empty benchmark evidence is rendered honestly as `0/100` counted, `100` not tested, and independent coverage/oracle/artifact/partition/freshness deficits. `COMMITTED_IDENTITY_MISMATCH` and `TRANSITION_INPUT_ORIGIN_MISMATCH` are resolved only by their exact approved `37/37` and `1/1` profiles; any profile, authority, target, Git-object, or source/container mismatch fails closed with a bounded recovery direction.
 
+Operator troubleshooting is deliberately bounded:
+
+| Code or symptom | Operator action | Developer action |
+| --- | --- | --- |
+| `INPUT_CONTRACT_INVALID` | Confirm the repository-relative path and committed subject; retry unchanged | Inspect Git-object/schema resolution without printing raw input |
+| `OUTPUT_*_FAILED` or `OUTPUT_INTERRUPTED` | Keep the prior snapshot; remove no source evidence | Inspect filesystem permissions and the named atomic stage; rerun the focused suite |
+| `INTERNAL_VALIDATION_FAILURE` | Preserve the code and subject only; do not attach secrets or raw logs | Reproduce with an isolated fixture and repair within the bounded attempt limit |
+| exit `6` | Use only the documented compatibility or manual path | Add no implicit migration; require an explicit contract change |
+| `JSON_*`, `SCHEMA_*`, `ARTIFACT_*` | Inspect the named repository-relative contract or artifact | Repair parsing/schema/manifest logic without weakening validation |
+| `APPROVAL_*`, `TRANSITION_*`, `STATE_*`, `ROADMAP_*`, `LEASE_*` | Stop and follow the report's bounded recovery and sole next action | Repair authority/lifecycle derivation only under the active lease |
+| `GATE_*`, `BENCHMARK_*`, `DASHBOARD_*`, `VALIDATOR_*` | Keep readiness non-passing and inspect the cited evidence | Use the focused projection, compatibility, or bundle-boundary tests |
+
+The complete reason-code instance, consequence, and recovery for a run are the schema-valid `findings` in that run's JSON report; [`docs/programs/engineering-process-platform/gates.md`](../docs/programs/engineering-process-platform/gates.md) and the [quickstart](../specs/076-control-plane-validator/quickstart.md) define their policy context. For support, share only the command name, exit code, exact commit/tree, stable reason codes, repository-relative artifact pointers, and approved digests. Never share raw prompts, payloads, tokens, absolute paths, endpoints, command arguments, or logs. Output is limited to the terminal and the declared `docs/programs/engineering-process-platform/dashboard.json` candidate path.
+
 ---
 
 
