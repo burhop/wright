@@ -6,7 +6,7 @@
 
 ## Current EPP-F01 decision
 
-**V5 is approved for local T024–T041 only.** `APR-EPP-F01-MC-005` and `APR-EPP-F01-IMPL-005` bind commit `2f53b49af92d4d6d6619903deec2521919758148`, tree `3bd726941aae300691482d0c35a4028029ccbe3f`, program tree `f0163abcc74379407c96f10dacaa34c0883aa7a1`, and the 32 TR-0034 artifact digests. They accept DEC-P0-017 and the exact one-claim correction. T069 remains complete.
+**V6 is approved with conditions for remaining local EPP-F01 work.** `APR-EPP-F01-MC-006` and `APR-EPP-F01-IMPL-006` bind commit `f70aca5bf190bcfbf2525b308eb3ed9ee476c76b`, tree `79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd`, program tree `24c61d46565c199c35373a71655da122eb988231`, and their 11-artifact manifests. They accept the T041 value checkpoint and authorize T042–T068 locally. Lease revision 9 covers author work only through T065; T066–T068 retain their frozen-candidate role separation.
 
 `TR-0019` through `TR-0025` remain immutable historical authorization/start/repair evidence. `TR-0026` blocks on exact committed evidence and revokes the active lease. [`APR-EPP-F01-REPAIR-PLANNING-001`](evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json) authorizes only the subsequent planning, audit, and analysis amendment. EPP-F01B requires its own future Spec Kit lifecycle and implementation approval.
 
@@ -14,7 +14,7 @@
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
 
-The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069 but is stale for further implementation. V5 authorizes only T024–T041 through the already ordered human value checkpoint. EPP-F01B, T042–T068 after that checkpoint, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069. V5 is complete historical authority for T024–T041. V6 authorizes only remaining local EPP-F01 tasks and local candidate/container/delivery commits. EPP-F01B planning is separately allowed in one isolated dev-based context, but EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
 ## Approval subject
 

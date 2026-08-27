@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 T024–T041 are complete locally. The validator passes the exact committed subject, both historical corrections recompute (`37/37` and `1/1`), and the v2 dashboard candidate shows four independent areas plus honest benchmark progress at `0/100`. The implementation lease is closed and the sole next action is human review of the T041 value demonstration. T042–T068 and EPP-F01B remain unauthorized.
+**Status:** The T041 value checkpoint is accepted. EPP-F01 V6 authorizes local completion of T042–T068: author work T042–T065 under lease revision 9, then the frozen-candidate verifier/coordinator handoffs T066–T068. EPP-F01B may proceed through isolated dev-based Spec Kit planning and analysis only; implementation remains unauthorized.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -57,4 +57,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Review `EPP-F01-US1-repair.json`, `EPP-F01-US2.json`, and the generated `dashboard.json`, then explicitly accept or reject the T041 value checkpoint. No mutating lease is active. T042–T068, EPP-F01B, dependencies, benchmark execution, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.
+Start EPP-F01 T042 under lease revision 9 and continue autonomously through T065 while evidence passes. Freeze the candidate at T065; T066–T068 require the exact independent-verifier/coordinator handoffs. In a separate clean dev-based worktree, EPP-F01B may complete Spec Kit specification, clarification, planning, checklists, tasks, and read-only analysis only. Dependencies, benchmark execution, EPP-F01B implementation, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.

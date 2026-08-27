@@ -1,0 +1,219 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0038",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "approval_checkpoint",
+  "from_state": "BLOCKED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 38,
+  "new_revision": 39,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "91d2fec5282e4983f6074928d5289aaee830dfd2dae7473cbc0b1106212d9c76",
+  "new_state_digest": "782d44d47f03ac5f67d03255e91613616a7a5168462e620e4c84b340fc8cc2a7",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the human acceptance of the T041 value checkpoint, bind the exact V6 approval subject, authorize remaining local EPP-F01 tasks T042 through T068, reactivate author lease revision 9 only through T065, preserve the T066-T068 role handoffs, and authorize one isolated dev-based EPP-F01B planning context without implementation authority.",
+  "started_at": "2026-08-27T20:26:12Z",
+  "finished_at": "2026-08-27T20:34:12Z",
+  "duration_ms": 480000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+    "source_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+    "source_program_tree": "24c61d46565c199c35373a71655da122eb988231",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-006.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-006.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0039.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0038.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0038.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0038.json",
+      "sha256": "3e133515fd07ba58ef84395fd348407bc2af57ccd02b9257005d1ca5d2654d41",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0037.json",
+      "sha256": "404cb308fcffd7aef5da6aa1b51fba484779a5d6400f439af3550e98593603cf",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US1-repair.json",
+      "sha256": "a4f3907c2243241c3c0b8395352b50fea1dd0af44aff73a160220199e6a4b595",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US2.json",
+      "sha256": "cfc8b23e383e1ded4046f09a2987c0b4b3568ef104f5e28e5158b62ff791f762",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "890ccd1c9ad29d72373f037552d10712f1e7697ff39d5b6effe5c1a6077f5f7f",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "approval.md",
+      "sha256": "7ab3a92cfa68b5232cc67d73913dd1457a4ac17ff3fe483a5539250ab93e1d61",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-006.json",
+      "sha256": "2583507436fd21edf1c563aaa0f849b820cfec2f9dfb2a4779d8149bd62ff03b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "sha256": "95bc32d581bf75e085b4c5d285e3ff3c2a86232980df06278f4f5d51ac744551",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0039.json",
+      "sha256": "4da62b9f8b1818b0efa7a5c255620ce4e94b0bc6f70acaf0e80689608d6c4f9d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "4da62b9f8b1818b0efa7a5c255620ce4e94b0bc6f70acaf0e80689608d6c4f9d",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "347a4855cfa1a4ab95063d03beed83f391eb5dff0eb9403c3fa747d4df9b3c82",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T041-HUMAN-ACCEPTANCE",
+      "method": "Bind the user's explicit acceptance to the exact f70aca5b checkpoint and require the recorded US1-repair, US2, clean-worktree and current validator evidence.",
+      "environment": "local exact Git subject and append-only evidence; offline",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-US1-repair.json",
+        "evidence/verification/EPP-F01-US2.json",
+        "evidence/transitions/TR-0037.json"
+      ]
+    },
+    {
+      "check_id": "APPROVAL-BUNDLE-V6",
+      "method": "Validate distinct same-subject material_change and feature_implementation records, exact commit/tree/program-tree identity and all 11 artifact digests; require local T042-T068 scope and every exclusion.",
+      "environment": "local Draft 2020-12 and read-only Git-object access; offline",
+      "duration_ms": 2200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-006.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+      ]
+    },
+    {
+      "check_id": "LEASE-REVISION-9",
+      "method": "Require the exact EPP-F01 branch/worktree/dev baseline, 14-path allowlist, local-only actions, author boundary T042-T065, two bounded repairs and frozen-candidate rollback state.",
+      "environment": "program state, approval conditions and local Git identity",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "approval.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-PLANNING-ONLY",
+      "method": "Require at most one additional isolated dev-based planning context, no change to the active EPP-F01 singleton pointer, no EPP-F01B implementation, and a stop at its exact post-analysis approval subject after EPP-F01 integration.",
+      "environment": "program WIP contract and exact human instruction",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "agent-operating-contract.md",
+        "roadmap.json",
+        "proposed-features.md"
+      ]
+    },
+    {
+      "check_id": "EXTERNAL-AUTHORITY-EXCLUDED",
+      "method": "Confirm no fetch, dependency, benchmark execution, external mutation, push, PR, merge, dev integration, publication or release is granted by V6; require later exact external_write and dev_integration approvals.",
+      "environment": "approval bundle, integration contract and task audit",
+      "duration_ms": 400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "integration-release.md",
+        "program-state.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0038.json",
+  "next_action": "START_EPP_F01_IMPLEMENTATION"
+}

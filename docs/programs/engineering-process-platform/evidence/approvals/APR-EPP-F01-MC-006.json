@@ -1,0 +1,43 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F01-MC-006",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "bundle_id": "APB-EPP-F01-006",
+  "decision": "approved_with_conditions",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+    "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+    "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+    "artifact_digests": [
+      { "path": "README.md", "sha256": "5e37abdb3cf7f1f9638d351705ed94ca77b18cf922cfb59d1a6b952c1430356a" },
+      { "path": "dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" },
+      { "path": "lifecycle-policy.json", "sha256": "d9316c6f5a349a179dead8bbb0908daae1d1a50630ca87523330a6364083d217" },
+      { "path": "program-state.json", "sha256": "3e133515fd07ba58ef84395fd348407bc2af57ccd02b9257005d1ca5d2654d41" },
+      { "path": "roadmap.json", "sha256": "eeb3c0a19491abc7c00f95a9cad23923fd841489fb932459226c59d5624c3e4b" },
+      { "path": "evidence/states/program-state-revision-0038.json", "sha256": "3e133515fd07ba58ef84395fd348407bc2af57ccd02b9257005d1ca5d2654d41" },
+      { "path": "evidence/transitions/TR-0037.json", "sha256": "404cb308fcffd7aef5da6aa1b51fba484779a5d6400f439af3550e98593603cf" },
+      { "path": "evidence/verification/EPP-F01-US1-repair.json", "sha256": "a4f3907c2243241c3c0b8395352b50fea1dd0af44aff73a160220199e6a4b595" },
+      { "path": "evidence/verification/EPP-F01-US2.json", "sha256": "cfc8b23e383e1ded4046f09a2987c0b4b3568ef104f5e28e5158b62ff791f762" },
+      { "path": "../../../specs/076-control-plane-validator/plan.md", "sha256": "86e98d19db2fbf31d8ccc1cd7443a5ab357e5689f9c14a89f564d9b790aa86d7" },
+      { "path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "7a7918d634e6deae797a3053d18f7e369203e00c99cdedc5dda2e2adf30560c2" }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T20:26:12Z",
+  "expires_at": null,
+  "review": {
+    "due_at": null,
+    "last_reviewed_at": "2026-08-27T20:26:12Z"
+  },
+  "supersedes": ["APR-EPP-F01-MC-005"],
+  "revocation_events": [],
+  "conditions": [
+    "The T041 value checkpoint is accepted for the exact f70aca5b subject and its recorded US1-repair and US2 evidence.",
+    "The existing 69-task EPP-F01 contract is unchanged; authority expands only to remaining local tasks T042 through T068 and their bounded verification and delivery commits.",
+    "No dependency, benchmark execution, EPP-F01B implementation, external change, push, PR, merge, dev integration, publication or release is authorized.",
+    "EPP-F01B may proceed through isolated dev-based Spec Kit planning and analysis only; its future exact implementation subject requires a new human approval after EPP-F01 dev integration."
+  ]
+}
