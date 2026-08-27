@@ -1,0 +1,176 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-CANDIDATE-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "candidate",
+  "subject": {
+    "git_commit": "e5a2ade942c0b4a2d474a185cfff0c46e10c508a",
+    "git_tree": "f5b3cca947585d4fd1e852bba868e6da9a2031ef",
+    "artifact_digests": [
+      {
+        "path": "scripts/validate-engineering-process-program.py",
+        "sha256": "584e09a7ddffdcb1acb4720cdad14a1058dcebb1f54f97e383257e32f990b1f8"
+      },
+      {
+        "path": "scripts/program_control/cli.py",
+        "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc"
+      },
+      {
+        "path": "scripts/program_control/dashboard.py",
+        "sha256": "cf68651c7aee2c4603614ee1b10cdbf1018dca7fb7032e211f8de676cedd6fa5"
+      },
+      {
+        "path": "scripts/program_control/validation.py",
+        "sha256": "9e7a557912fc9d831e83c0ba4f5403ce10117cf67524a64ef354af8314d2695f"
+      },
+      {
+        "path": "tests/program_control_plane/test_contract_schemas.py",
+        "sha256": "a349e10324d1053a64e412934a651dc89f4277b4ff72583389d582ca4aa7db20"
+      },
+      {
+        "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+        "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"
+      },
+      {
+        "path": "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "sha256": "7cf36c4640f880158ad80867884cb03de2ac93ecbaacee60ce7a5cb1ef9e490f"
+      },
+      {
+        "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py",
+        "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558"
+      },
+      {
+        "path": "scripts/check-dev-push.sh",
+        "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f"
+      },
+      {
+        "path": "scripts/check-dev-merge.sh",
+        "sha256": "3990e07eb684d6efedfa6e94ef9913ef2c3ade8ccbe86c5573f481f74d8f2626"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/lifecycle-policy.json",
+        "sha256": "83ec4e54d7b5c21db014822b273904ae8a499fc8c12de03e7f5fbd9a5ebd66b1"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-author.json",
+        "sha256": "22acdf22a6b0ed4c0c843f57b438a20f4c8bc11b351132dfb5bf6b0b17b7baff"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-rollback.json",
+        "sha256": "664fdc23fce1970119d5a35bce06e2a420b4ce28f68b37a43841c73e2ad0403d"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-diff-audit.json",
+        "sha256": "0b7a13ded2f275eec2b09e3a346362defeb8655aa3722df9bcda2483f6049abe"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0041.json",
+        "sha256": "b5b77d8ef5974400b75311c49a2693a18e27ed047f4ff6ae7bf24829fcb8109e"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0042.json",
+        "sha256": "1c5ce24d7240f47d10dd9a2596a56142c31128687bc09a6b857f8fe9fa56970d"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T22:11:34Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "CANDIDATE-EXACT-VALIDATION",
+      "method": "Run validate --source e5a2ade9; verdict passed with zero validation blockers, benchmark 0/100, four independent readiness areas, release false, and next action FREEZE_EPP_F01_CANDIDATE. The observed worktree was dirty only because this successor evidence was being prepared; all source reads came from the exact commit.",
+      "environment": "Exact committed Git source; Windows local; offline",
+      "duration_ms": 5430,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0042.json",
+          "sha256": "1c5ce24d7240f47d10dd9a2596a56142c31128687bc09a6b857f8fe9fa56970d"
+        }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-FULL-REGRESSION",
+      "method": "Run the complete control-plane module after making current-state assertions lifecycle-aware and closing mutating leases for post-author states; bounded repairs retained the original failures, then the exact suite passed 197 with one declared Windows symlink skip.",
+      "environment": "Windows local worktree; writable basetemp; offline",
+      "duration_ms": 192330,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_contract_schemas.py",
+          "sha256": "a349e10324d1053a64e412934a651dc89f4277b4ff72583389d582ca4aa7db20"
+        },
+        {
+          "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+          "sha256": "4f6210d828cf63751ef1426f0a13a5f0d73bd319e0442fac2b486e92c2ad0b54"
+        },
+        {
+          "path": "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+          "sha256": "7cf36c4640f880158ad80867884cb03de2ac93ecbaacee60ce7a5cb1ef9e490f"
+        }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-MANIFEST-CLOSURE",
+      "method": "Bind the candidate to exact commit and tree plus 16 critical implementation, test, gate, verification, lifecycle and state digests; complete baseline diff closure is provided by Git tree identity and the passing allowlist audit, with later paths limited to lifecycle evidence and lifecycle-aware tests.",
+      "environment": "Read-only Git object and SHA-256 recomputation; offline",
+      "duration_ms": 2410,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-diff-audit.json",
+          "sha256": "0b7a13ded2f275eec2b09e3a346362defeb8655aa3722df9bcda2483f6049abe"
+        }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-ACCEPTANCE-AND-HANDOFF",
+      "method": "Freeze validator, snapshot/provenance and CLI behavior only; exclude browser UI and all external actions; stop author mutation and require T066 to use a distinct independent-verifier identity on unchanged e5a2ade9.",
+      "environment": "Approved 69-task lease and exact V6 records; local only",
+      "duration_ms": 430,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-author.json",
+          "sha256": "22acdf22a6b0ed4c0c843f57b438a20f4c8bc11b351132dfb5bf6b0b17b7baff"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Initial author-suite sandbox execution failed under inaccessible D:/TEMP; the declared writable basetemp rerun passed.",
+    "MyPy and native dev-push gate runtimes remain unavailable locally and were not installed.",
+    "AUTHOR_VERIFIED first exposed ACTION_POLICY_MISMATCH; bounded repair attempt 1 added only the required freeze action.",
+    "The first post-freeze full suite exposed three static current-state assertions; the uncommitted freeze was invalidated, bounded repair attempt 1 made them lifecycle-aware, and the rerun passed.",
+    "The next freeze check exposed that validation still demanded a lease in CANDIDATE_FROZEN; bounded repair attempt 1 closed leases for post-author states, and the full suite passed 197/1 skipped."
+  ],
+  "findings": [
+    {
+      "code": "LOCAL_GATE_RUNTIME_UNAVAILABLE",
+      "severity": "medium",
+      "artifact": "scripts/check-dev-push.ps1",
+      "disposition": "Retain for independent review; the real gate remains mandatory before separately authorized push."
+    },
+    {
+      "code": "MYPY_RUNNER_UNAVAILABLE",
+      "severity": "low",
+      "artifact": "pyproject.toml",
+      "disposition": "No dependency was added; CI/dev integration must execute MyPy before merge."
+    },
+    {
+      "code": "BROWSER-DASHBOARD-SEPARATE",
+      "severity": "info",
+      "artifact": "specs/078-browser-program-status",
+      "disposition": "EPP-F01B planning is separate and implementation remains unauthorized; this candidate supplies validated evidence only."
+    }
+  ],
+  "rollback_subject": "git:881a6f997ba79adb02f2c25cbbe805c993e79dba (last clean author evidence checkpoint; remove validator via documented manual fallback)",
+  "delivery_relation": null
+}
