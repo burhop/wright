@@ -11,6 +11,7 @@ from jsonschema.validators import validator_for
 
 CONTRACT_NAMES = (
     "committed-identity-correction.schema.json",
+    "transition-input-correction.schema.json",
     "dashboard.schema.json",
     "gate-catalog.schema.json",
     "gate-evidence.schema.json",

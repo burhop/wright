@@ -8,7 +8,6 @@ import sys
 from collections import defaultdict, deque
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime, timezone
-from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import Any
 
@@ -72,6 +71,9 @@ def _finding(
         "COMMITTED_IDENTITY_MISMATCH": "Do not rewrite history; inspect the exact approved correction evidence and recomputation.",
         "COMMITTED_IDENTITY_CORRECTION_INVALID": "Restore the exact closed correction profile or stop for a new material approval.",
         "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V4 authority bundle.",
+        "TRANSITION_INPUT_ORIGIN_MISMATCH": "Do not rewrite history; inspect the exact approved TR-0027 input-origin disposition.",
+        "TRANSITION_INPUT_CORRECTION_INVALID": "Restore the exact closed one-claim correction profile or stop for a new material approval.",
+        "TRANSITION_INPUT_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V5 authority bundle.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -105,78 +107,7 @@ def _enrich_input_manifest(
     policy: Mapping[str, Any],
 ) -> tuple[list[dict[str, Any]], str]:
     """Bind every program input to its first policy role and local schema identity."""
-
-    role_rows = [
-        row for row in policy.get("path_roles", []) if isinstance(row, Mapping)
-    ]
-    excluded = {
-        f"{program_root}/dashboard.json",
-        f"{program_root}/evidence/verification/EPP-F01-dashboard-delivery.json",
-    }
-    tree_rows = reader.tree_entries(commit, "")
-    selected: list[tuple[dict[str, str], Mapping[str, Any]]] = []
-    for tree_row in tree_rows:
-        path = tree_row["path"]
-        role = next(
-            (
-                row
-                for row in role_rows
-                if fnmatchcase(path, str(row.get("pattern", "")))
-            ),
-            None,
-        )
-        if (
-            role is None
-            or path in excluded
-            or role.get("role") == "generated_projection"
-        ):
-            continue
-        if tree_row["type"] != "blob" or tree_row["mode"] not in {"100644", "100755"}:
-            raise GitSubjectError("authoritative input is not a regular blob")
-        selected.append((tree_row, role))
-    by_path = {row["path"]: row for row, _ in selected}
-    role_by_path = {row["path"]: role for row, role in selected}
-    blobs = reader.read_blobs(commit, by_path)
-    parsed: dict[str, Any] = {}
-    for path, raw in blobs.items():
-        if path.endswith(".json"):
-            try:
-                parsed[path] = strict_loads(raw)
-            except ContractError:
-                parsed[path] = None
-    enriched: list[dict[str, Any]] = []
-    for path in sorted(by_path):
-        role = str(role_by_path[path].get("role"))
-        value = parsed.get(path)
-        schema_id: str | None = None
-        schema_version: str | None = None
-        if isinstance(value, Mapping):
-            version = value.get("schema_version")
-            schema_version = str(version) if isinstance(version, str) else None
-            if "/schemas/" in path and isinstance(value.get("$id"), str):
-                schema_id = str(value["$id"])
-            elif isinstance(value.get("$schema"), str):
-                schema_ref = str(value["$schema"])
-                resolved = _schema_path(path, schema_ref, program_root)
-                schema_value = parsed.get(resolved or "")
-                schema_id = (
-                    str(schema_value.get("$id"))
-                    if isinstance(schema_value, Mapping)
-                    and isinstance(schema_value.get("$id"), str)
-                    else schema_ref
-                )
-        source = by_path[path]
-        enriched.append(
-            {
-                "path": path,
-                "role": role,
-                "sha256": sha256_bytes(blobs[path]),
-                "git_blob": source["git_blob"],
-                "schema_id": schema_id,
-                "schema_version": schema_version,
-            }
-        )
-    return enriched, canonical_digest(enriched)
+    return reader.authoritative_manifest(commit, program_root, policy)
 
 
 def _validate_runtime_source_bundle(
@@ -653,6 +584,44 @@ CORRECTION_APPROVAL_SHA256 = (
     "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
 )
 
+INPUT_ORIGIN_CORRECTION_ID = "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001"
+INPUT_ORIGIN_CORRECTION_SUBJECT = "2f53b49af92d4d6d6619903deec2521919758148"
+INPUT_ORIGIN_CORRECTION_SUBJECT_TREE = "3bd726941aae300691482d0c35a4028029ccbe3f"
+INPUT_ORIGIN_CORRECTION_SUBJECT_PROGRAM_TREE = (
+    "f0163abcc74379407c96f10dacaa34c0883aa7a1"
+)
+INPUT_ORIGIN_CORRECTION_PROFILE_SHA256 = (
+    "fdcee78163d218c8bbf3908c12fa09595c4d4984cc2d753487195177ebbda53d"
+)
+INPUT_ORIGIN_CORRECTION_SCHEMA_SHA256 = (
+    "dc3f7d31eb7e43e7453ae9d7c0f060b0429f7a754618ead0f4ec6aa3aad2df5f"
+)
+INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS = (
+    "evidence/approvals/APR-EPP-F01-MC-005.json",
+    "evidence/approvals/APR-EPP-F01-IMPL-005.json",
+)
+INPUT_ORIGIN_CORRECTION_APPROVAL_SHA256 = (
+    "4b4b7f748c2adbb64eddedf75306a2aab694054a62c552699be9ea1ac9802c4d",
+    "33a327cbc1b599976eabb3bcb86b2081580e8bcda17870fdd69e56e789d58c9e",
+)
+INPUT_ORIGIN_CORRECTION_PROFILE_BLOB = (
+    "752c57d14093763393db183f8c7ae16939a2c82d"
+)
+INPUT_ORIGIN_CORRECTION_SCHEMA_BLOB = (
+    "c781ec8fcae67dcb97cd38be625e44c9b5cd449f"
+)
+INPUT_ORIGIN_CORRECTION_APPROVAL_BLOBS = (
+    "34b0c203db7ccb873c5c6bb6e49f9237a9ee4a05",
+    "7f04dd7a6784bc68b77bebd9f576588fe53d1eab",
+)
+INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER = (
+    "91fa3a9867d99f117ff9f41bbcac3d5d674f1f3b"
+)
+INPUT_ORIGIN_TARGET = (
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0027.json",
+    "/inputs/3",
+)
+
 
 def _pointer_value(document: Any, pointer: str) -> Any:
     """Resolve one strict RFC 6901 pointer without accepting wildcards or ranges."""
@@ -729,9 +698,23 @@ def validate_committed_identity_correction(
 
     try:
         current = reader.resolve_commit(source_commit)
-        golden_raw = reader.blob(CORRECTION_SUBJECT, correction_path)
-        promoted_schema_raw = reader.blob(CORRECTION_SUBJECT, promoted_schema_path)
-        planning_schema_raw = reader.blob(CORRECTION_SUBJECT, planning_schema_path)
+        closed_blobs = reader.read_blob_requests(
+            [
+                (CORRECTION_SUBJECT, correction_path),
+                (CORRECTION_SUBJECT, promoted_schema_path),
+                (CORRECTION_SUBJECT, planning_schema_path),
+                (current, correction_path),
+                (current, promoted_schema_path),
+                (current, planning_schema_path),
+            ]
+        )
+        golden_raw = closed_blobs[(CORRECTION_SUBJECT, correction_path)]
+        promoted_schema_raw = closed_blobs[
+            (CORRECTION_SUBJECT, promoted_schema_path)
+        ]
+        planning_schema_raw = closed_blobs[
+            (CORRECTION_SUBJECT, planning_schema_path)
+        ]
         golden_value = strict_loads(golden_raw)
         promoted_schema = strict_loads(promoted_schema_raw)
         if not isinstance(golden_value, Mapping) or not isinstance(
@@ -747,9 +730,9 @@ def validate_committed_identity_correction(
             sha256_bytes(golden_raw) == CORRECTION_PROFILE_SHA256
             and sha256_bytes(promoted_schema_raw) == CORRECTION_SCHEMA_SHA256
             and promoted_schema_raw == planning_schema_raw
-            and reader.blob(current, correction_path) == golden_raw
-            and reader.blob(current, promoted_schema_path) == promoted_schema_raw
-            and reader.blob(current, planning_schema_path) == planning_schema_raw
+            and closed_blobs[(current, correction_path)] == golden_raw
+            and closed_blobs[(current, promoted_schema_path)] == promoted_schema_raw
+            and closed_blobs[(current, planning_schema_path)] == planning_schema_raw
         )
         correction_container = reader.containing_commit(current, correction_path)
         profile_valid = profile_valid and (
@@ -900,6 +883,24 @@ def validate_committed_identity_correction(
         if set(approvals) != set(expected_full_paths):
             raise ValueError("approval path set changed")
         selected = [approvals[path] for path in expected_full_paths]
+        approval_blob_requests: list[tuple[str, str]] = []
+        for approval in selected:
+            subject = approval.get("subject", {})
+            approved_commit = subject.get("git_commit")
+            if not isinstance(approved_commit, str):
+                raise ValueError("approval subject is missing")
+            for artifact in subject.get("artifact_digests", []):
+                approval_blob_requests.append(
+                    (
+                        approved_commit,
+                        normalize_repo_path(
+                            posixpath.normpath(
+                                posixpath.join(root, str(artifact["path"]))
+                            )
+                        ),
+                    )
+                )
+        reader.read_blob_requests(approval_blob_requests)
         expected_subject = {
             "git_commit": CORRECTION_SUBJECT,
             "git_tree": CORRECTION_SUBJECT_TREE,
@@ -1011,6 +1012,329 @@ def validate_committed_identity_correction(
     return sorted(findings, key=Finding.sort_key), transition_targets
 
 
+def validate_transition_input_origin_correction(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+    approvals: Mapping[str, Mapping[str, Any]],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Recompute the one approved TR-0027 input-origin disposition."""
+
+    root = normalize_repo_path(program_root)
+    correction_path = (
+        f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
+    )
+    promoted_schema_path = f"{root}/schemas/transition-input-correction.schema.json"
+    planning_schema_path = (
+        "specs/076-control-plane-validator/contracts/"
+        "transition-input-correction.schema.json"
+    )
+    target = INPUT_ORIGIN_TARGET
+    profile_valid = True
+    authority_valid = True
+    golden: Mapping[str, Any] = {}
+    current = ""
+    introductions: dict[str, str] = {}
+
+    try:
+        current = reader.resolve_commit(source_commit)
+        introductions = reader.added_path_commits(
+            current, f"{root}/evidence"
+        )
+        closed_blobs = reader.read_blob_requests(
+            [
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path),
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path),
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, planning_schema_path),
+                (current, correction_path),
+                (current, promoted_schema_path),
+                (current, planning_schema_path),
+            ]
+        )
+        golden_raw = closed_blobs[
+            (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)
+        ]
+        promoted_schema_raw = closed_blobs[
+            (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path)
+        ]
+        planning_schema_raw = closed_blobs[
+            (INPUT_ORIGIN_CORRECTION_SUBJECT, planning_schema_path)
+        ]
+        closed_object_ids = reader.object_ids(
+            [
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path),
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path),
+                *[
+                    (
+                        INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER,
+                        f"{root}/{relative}",
+                    )
+                    for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
+                ],
+            ]
+        )
+        golden_value = strict_loads(golden_raw)
+        promoted_schema = strict_loads(promoted_schema_raw)
+        if not isinstance(golden_value, Mapping) or not isinstance(
+            promoted_schema, Mapping
+        ):
+            raise ContractError("closed transition-input artifacts are not objects")
+        golden = golden_value
+        check_schema(promoted_schema)
+        profile_valid = profile_valid and not validate_schema(
+            promoted_schema, profile
+        )
+        profile_valid = profile_valid and not validate_schema(
+            promoted_schema, golden
+        )
+        profile_valid = profile_valid and profile == golden
+        profile_valid = profile_valid and (
+            sha256_bytes(golden_raw) == INPUT_ORIGIN_CORRECTION_PROFILE_SHA256
+            and sha256_bytes(promoted_schema_raw)
+            == INPUT_ORIGIN_CORRECTION_SCHEMA_SHA256
+            and promoted_schema_raw == planning_schema_raw
+            and closed_blobs[(current, correction_path)] == golden_raw
+            and closed_blobs[(current, promoted_schema_path)] == promoted_schema_raw
+            and closed_blobs[(current, planning_schema_path)] == planning_schema_raw
+            and closed_object_ids[
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, correction_path)
+            ]
+            == INPUT_ORIGIN_CORRECTION_PROFILE_BLOB
+            and closed_object_ids[
+                (INPUT_ORIGIN_CORRECTION_SUBJECT, promoted_schema_path)
+            ]
+            == INPUT_ORIGIN_CORRECTION_SCHEMA_BLOB
+        )
+        identity = reader.resolve_identity(
+            INPUT_ORIGIN_CORRECTION_SUBJECT, root
+        )
+        profile_valid = profile_valid and (
+            identity.source_tree == INPUT_ORIGIN_CORRECTION_SUBJECT_TREE
+            and identity.program_tree
+            == INPUT_ORIGIN_CORRECTION_SUBJECT_PROGRAM_TREE
+            and introductions.get(correction_path)
+            == INPUT_ORIGIN_CORRECTION_SUBJECT
+            and INPUT_ORIGIN_CORRECTION_SUBJECT != current
+            and reader.is_ancestor(INPUT_ORIGIN_CORRECTION_SUBJECT, current)
+        )
+    except (ContractError, GitSubjectError, TypeError, ValueError):
+        profile_valid = False
+
+    try:
+        if not profile_valid:
+            raise ValueError("presented transition-input correction changed")
+        claim = golden["claim"]
+        transition_path = str(claim["transition_path"])
+        approval_path = str(claim["approval_path"])
+        declared_source = str(claim["declared_source_commit"])
+        container = str(claim["container_commit"])
+        if (transition_path, str(claim["json_pointer"])) != target:
+            raise ValueError("closed correction target changed")
+        transition_raw = reader.blob(container, transition_path)
+        transition = strict_loads(transition_raw)
+        approval_raw = reader.blob(container, approval_path)
+        summaries = reader.commit_summaries([container])
+        object_ids = reader.object_ids(
+            [(container, transition_path), (container, approval_path)]
+        )
+        approval_introduction = introductions.get(approval_path)
+        transition_introduction = introductions.get(transition_path)
+        try:
+            reader.blob(declared_source, approval_path)
+            source_absent = False
+        except GitSubjectError:
+            source_absent = True
+        input_row = _pointer_value(transition, str(claim["json_pointer"]))
+        expected_relative_approval = posixpath.relpath(approval_path, root)
+        manifest = transition.get("git", {}).get("changed_paths_manifest", [])
+        profile_valid = profile_valid and all(
+            (
+                golden.get("expected_claim_count") == 1,
+                claim.get("claim_id") == "IO-01",
+                sha256_bytes(transition_raw) == claim["transition_raw_sha256"],
+                object_ids[(container, transition_path)]
+                == claim["transition_git_blob"],
+                reader.blob(current, transition_path) == transition_raw,
+                sha256_bytes(approval_raw) == claim["approval_raw_sha256"],
+                object_ids[(container, approval_path)]
+                == claim["approval_git_blob"],
+                reader.blob(current, approval_path) == approval_raw,
+                source_absent,
+                approval_introduction == container,
+                transition_introduction == container,
+                summaries[container].get("tree") == claim["container_tree"],
+                transition.get("git", {}).get("source_commit")
+                == declared_source,
+                isinstance(manifest, list),
+                transition_path in manifest,
+                approval_path in manifest,
+                isinstance(input_row, Mapping),
+                input_row.get("path") == expected_relative_approval,
+                input_row.get("sha256") == claim["approval_raw_sha256"],
+                input_row.get("schema_version") == "2.0",
+                input_row.get("role") == "append_only_evidence",
+                container != INPUT_ORIGIN_CORRECTION_SUBJECT,
+                reader.is_ancestor(
+                    container, INPUT_ORIGIN_CORRECTION_SUBJECT
+                ),
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    expected_full_paths = tuple(
+        f"{root}/{relative}"
+        for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
+    )
+    try:
+        if set(approvals) != set(expected_full_paths):
+            raise ValueError("V5 approval path set changed")
+        selected = [approvals[path] for path in expected_full_paths]
+        approval_blob_requests: list[tuple[str, str]] = []
+        for approval in selected:
+            subject = approval.get("subject", {})
+            approved_commit = subject.get("git_commit")
+            if not isinstance(approved_commit, str):
+                raise ValueError("V5 approval subject is missing")
+            for artifact in subject.get("artifact_digests", []):
+                approval_blob_requests.append(
+                    (
+                        approved_commit,
+                        normalize_repo_path(
+                            posixpath.normpath(
+                                posixpath.join(root, str(artifact["path"]))
+                            )
+                        ),
+                    )
+                )
+        reader.read_blob_requests(approval_blob_requests)
+        expected_subject = {
+            "git_commit": INPUT_ORIGIN_CORRECTION_SUBJECT,
+            "git_tree": INPUT_ORIGIN_CORRECTION_SUBJECT_TREE,
+            "program_tree": INPUT_ORIGIN_CORRECTION_SUBJECT_PROGRAM_TREE,
+        }
+        expected_records = (
+            ("APR-EPP-F01-MC-005", "material_change", "APR-EPP-F01-MC-004"),
+            (
+                "APR-EPP-F01-IMPL-005",
+                "feature_implementation",
+                "APR-EPP-F01-IMPL-004",
+            ),
+        )
+        if selected[0].get("subject") != selected[1].get("subject"):
+            raise ValueError("V5 approval subjects differ")
+        for path, approval, expected, expected_raw_sha256, expected_blob in zip(
+            expected_full_paths,
+            selected,
+            expected_records,
+            INPUT_ORIGIN_CORRECTION_APPROVAL_SHA256,
+            INPUT_ORIGIN_CORRECTION_APPROVAL_BLOBS,
+            strict=True,
+        ):
+            approval_id, scope, superseded = expected
+            subject = approval.get("subject", {})
+            artifacts = subject.get("artifact_digests", [])
+            profile_entries = [
+                row
+                for row in artifacts
+                if row.get("path")
+                == f"evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
+            ]
+            if not all(
+                (
+                    approval.get("approval_id") == approval_id,
+                    approval.get("scope") == scope,
+                    approval.get("program_id") == "EPP-2026",
+                    approval.get("feature_id") == "EPP-F01",
+                    approval.get("bundle_id") == "APB-EPP-F01-005",
+                    approval.get("decision") == "approved",
+                    approval.get("approved_at") == "2026-08-27T19:02:07Z",
+                    approval.get("expires_at") is None,
+                    approval.get("revocation_events") == [],
+                    approval.get("supersedes") == [superseded],
+                    all(
+                        subject.get(key) == value
+                        for key, value in expected_subject.items()
+                    ),
+                    len(artifacts) == 32,
+                    len({row.get("path") for row in artifacts}) == 32,
+                    profile_entries
+                    == [
+                        {
+                            "path": (
+                                "evidence/corrections/"
+                                f"{INPUT_ORIGIN_CORRECTION_ID}.json"
+                            ),
+                            "sha256": INPUT_ORIGIN_CORRECTION_PROFILE_SHA256,
+                        }
+                    ],
+                    strict_loads(reader.blob(current, path)) == approval,
+                    sha256_bytes(reader.blob(current, path))
+                    == expected_raw_sha256,
+                    closed_object_ids[
+                        (INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER, path)
+                    ]
+                    == expected_blob,
+                    _verify_approval_artifacts(
+                        reader, current, approval, root
+                    ),
+                )
+            ):
+                raise ValueError("approval record is not the exact V5 bundle")
+            approval_container = reader.containing_commit(current, path)
+            if not (
+                approval_container == INPUT_ORIGIN_CORRECTION_APPROVAL_CONTAINER
+                and reader.is_ancestor(
+                    INPUT_ORIGIN_CORRECTION_SUBJECT, approval_container
+                )
+                and reader.is_ancestor(approval_container, current)
+                and reader.blob(current, path)
+                == reader.blob(approval_container, path)
+            ):
+                raise ValueError("V5 approval history is not append-only")
+    except (GitSubjectError, KeyError, TypeError, ValueError):
+        authority_valid = False
+
+    resolved = profile_valid and authority_valid
+    findings = [
+        _finding(
+            "TRANSITION_INPUT_ORIGIN_MISMATCH",
+            "info" if resolved else "fatal",
+            target[0],
+            "EXACT_APPROVED_TR0027_INPUT_ORIGIN_DISPOSITION",
+            (
+                "IO-01",
+                "declared:source_input",
+                "authoritative:container_added_evidence",
+            ),
+            json_pointer=target[1],
+            resolution_status="resolved" if resolved else "unresolved",
+            correction_ref=correction_path if resolved else None,
+        )
+    ]
+    if not profile_valid:
+        findings.append(
+            _finding(
+                "TRANSITION_INPUT_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "CLOSED_ONE_CLAIM_GIT_RECOMPUTATION",
+            )
+        )
+    if not authority_valid:
+        findings.append(
+            _finding(
+                "TRANSITION_INPUT_CORRECTION_UNAUTHORIZED",
+                "fatal",
+                f"{root}/evidence/approvals",
+                "EXACT_V5_TWO_SCOPE_AUTHORITY",
+            )
+        )
+    targets = frozenset({target}) if resolved else frozenset()
+    return sorted(findings, key=Finding.sort_key), targets
+
+
 def _validate_documents(
     reader: GitReader,
     commit: str,
@@ -1105,10 +1429,21 @@ def _validate_transition_history(
     transitions: Sequence[Mapping[str, Any]],
     program_root: str,
     findings: list[Finding],
+    corrected_input_targets: frozenset[tuple[str, str]] = frozenset(),
 ) -> None:
     """Bind every v2 transition to immutable raw bytes and its complete Git edge."""
 
     current = reader.resolve_commit(source_commit)
+    if not corrected_input_targets.issubset({INPUT_ORIGIN_TARGET}):
+        findings.append(
+            _finding(
+                "TRANSITION_INPUT_CORRECTION_INVALID",
+                "fatal",
+                f"{program_root}/evidence/corrections",
+                "NO_GENERIC_INPUT_ORIGIN_BYPASS",
+            )
+        )
+        corrected_input_targets = frozenset()
     v2 = [row for row in transitions if row.get("schema_version") == "2.0"]
     if not v2:
         return
@@ -1138,7 +1473,10 @@ def _validate_transition_history(
             container = containers[transition_id]
             transition_path = paths[transition_id]
             requests.extend([(current, transition_path), (container, transition_path)])
-            for artifact in row.get("inputs", []):
+            for index, artifact in enumerate(row.get("inputs", [])):
+                input_target = (transition_path, f"/inputs/{index}")
+                if input_target == INPUT_ORIGIN_TARGET:
+                    continue
                 requests.append(
                     (source, _artifact_repo_path(program_root, artifact.get("path")))
                 )
@@ -1208,6 +1546,12 @@ def _validate_transition_history(
             )
         for kind, commit in (("inputs", source), ("outputs", container)):
             for index, item in enumerate(row.get(kind, [])):
+                target = (artifact, f"/{kind}/{index}")
+                if kind == "inputs" and target == INPUT_ORIGIN_TARGET:
+                    # This one immutable historical row is evaluated only by
+                    # the exact closed correction proof. It is never a generic
+                    # exception for another transition, pointer, or artifact.
+                    continue
                 try:
                     path = _artifact_repo_path(program_root, item.get("path"))
                     raw = blobs[(commit, path)]
@@ -1247,6 +1591,7 @@ def _validate_state_chain(
     *,
     reader: GitReader | None = None,
     source_commit: str | None = None,
+    corrected_input_targets: frozenset[tuple[str, str]] = frozenset(),
 ) -> None:
     state_path = f"{program_root}/program-state.json"
     current = documents.get(state_path)
@@ -1288,7 +1633,12 @@ def _validate_state_chain(
     ]
     if reader is not None and source_commit is not None:
         _validate_transition_history(
-            reader, source_commit, transitions, program_root, findings
+            reader,
+            source_commit,
+            transitions,
+            program_root,
+            findings,
+            corrected_input_targets,
         )
     policy_value = documents.get(f"{program_root}/lifecycle-policy.json")
     policy = policy_value if isinstance(policy_value, Mapping) else {}
@@ -2457,12 +2807,39 @@ def validate_program(
     documents = _validate_documents(
         reader, identity.source_commit, root, manifest, findings
     )
+    input_correction_path = (
+        f"{root}/evidence/corrections/{INPUT_ORIGIN_CORRECTION_ID}.json"
+    )
+    input_correction = documents.get(input_correction_path)
+    tr0027 = documents.get(INPUT_ORIGIN_TARGET[0])
+    corrected_input_targets: frozenset[tuple[str, str]] = frozenset()
+    if isinstance(input_correction, Mapping) or isinstance(tr0027, Mapping):
+        input_approval_documents = {
+            f"{root}/{relative}": value
+            for relative in INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS
+            if isinstance(
+                (value := documents.get(f"{root}/{relative}")), Mapping
+            )
+        }
+        input_correction_findings, corrected_input_targets = (
+            validate_transition_input_origin_correction(
+                reader,
+                identity.source_commit,
+                root,
+                input_correction
+                if isinstance(input_correction, Mapping)
+                else {},
+                input_approval_documents,
+            )
+        )
+        findings.extend(input_correction_findings)
     _validate_state_chain(
         documents,
         root,
         findings,
         reader=reader,
         source_commit=identity.source_commit,
+        corrected_input_targets=corrected_input_targets,
     )
     correction_path = f"{root}/evidence/corrections/{CORRECTION_ID}.json"
     correction = documents.get(correction_path)

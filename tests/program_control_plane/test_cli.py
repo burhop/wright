@@ -3,16 +3,48 @@
 from __future__ import annotations
 
 import copy
+import json
 from hashlib import sha256
+from pathlib import Path
+
+import pytest
 
 from program_control.cli import build_parser, render_text
 from program_control.git_subject import GitReader
-from program_control.validation import _resolve_container_and_delivery
+from program_control.validation import (
+    _resolve_container_and_delivery,
+    validate_transition_input_origin_correction,
+)
 
 
 PROGRAM_ROOT = "docs/programs/engineering-process-platform"
 DASHBOARD = f"{PROGRAM_ROOT}/dashboard.json"
 DELIVERY = f"{PROGRAM_ROOT}/evidence/verification/EPP-F01-dashboard-delivery.json"
+INPUT_ORIGIN_CORRECTION = (
+    f"{PROGRAM_ROOT}/evidence/corrections/"
+    "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json"
+)
+INPUT_ORIGIN_TARGET = (
+    f"{PROGRAM_ROOT}/evidence/transitions/TR-0027.json",
+    "/inputs/3",
+)
+
+
+def _load(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _input_origin_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
+    profile = _load(repository_root / INPUT_ORIGIN_CORRECTION)
+    approval_root = (
+        repository_root
+        / "docs/programs/engineering-process-platform/evidence/approvals"
+    )
+    approvals = {
+        f"{PROGRAM_ROOT}/evidence/approvals/{name}": _load(approval_root / name)
+        for name in ("APR-EPP-F01-MC-005.json", "APR-EPP-F01-IMPL-005.json")
+    }
+    return profile, approvals
 
 
 def _delivery_history(git_builder) -> tuple[GitReader, str, str, str]:
@@ -256,3 +288,155 @@ def test_text_render_exposes_committed_identity_disposition() -> None:
     assert "/outputs/0/sha256" in rendered
     assert "resolved" in rendered
     assert "COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json" in rendered
+
+
+def test_exact_tr0027_input_origin_correction_recomputes_one_of_one(
+    repository_root: Path,
+) -> None:
+    profile, approvals = _input_origin_inputs(repository_root)
+    findings, targets = validate_transition_input_origin_correction(
+        GitReader(repository_root),
+        "HEAD",
+        PROGRAM_ROOT,
+        profile,
+        approvals,
+    )
+    mismatch = [
+        finding
+        for finding in findings
+        if finding.code == "TRANSITION_INPUT_ORIGIN_MISMATCH"
+    ]
+    assert targets == frozenset({INPUT_ORIGIN_TARGET})
+    assert len(mismatch) == 1
+    assert mismatch[0].severity == "info"
+    assert mismatch[0].json_pointer == "/inputs/3"
+    assert mismatch[0].resolution_status == "resolved"
+    assert mismatch[0].correction_ref == INPUT_ORIGIN_CORRECTION
+    assert not {
+        "TRANSITION_INPUT_CORRECTION_INVALID",
+        "TRANSITION_INPUT_CORRECTION_UNAUTHORIZED",
+    } & {finding.code for finding in findings}
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "json_pointer", "/inputs/2"
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "declared_source_commit", "0" * 40
+        ),
+        lambda profile, approvals: profile["claim"].__setitem__(
+            "transition_git_blob", "0" * 40
+        ),
+        lambda profile, approvals: profile.__setitem__("expected_claim_count", 2),
+        lambda profile, approvals: profile["unchanged_projection_fields"].append(
+            "unapproved_field"
+        ),
+        lambda profile, approvals: approvals[
+            f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-005.json"
+        ].__setitem__("decision", "rejected"),
+    ],
+)
+def test_tr0027_input_origin_correction_fails_closed_for_any_contract_change(
+    repository_root: Path, mutation
+) -> None:
+    profile, approvals = _input_origin_inputs(repository_root)
+    mutation(profile, approvals)
+    findings, targets = validate_transition_input_origin_correction(
+        GitReader(repository_root),
+        "HEAD",
+        PROGRAM_ROOT,
+        profile,
+        approvals,
+    )
+    assert targets == frozenset()
+    assert any(finding.severity == "fatal" for finding in findings)
+    assert {
+        "TRANSITION_INPUT_CORRECTION_INVALID",
+        "TRANSITION_INPUT_CORRECTION_UNAUTHORIZED",
+    } & {finding.code for finding in findings}
+
+
+@pytest.mark.parametrize(
+    "benchmark_summary",
+    [
+        {
+            "counted": 0,
+            "target": 100,
+            "first_attempt_passed": 0,
+            "eventual_passed": 0,
+            "failed": 0,
+            "blocked": 0,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 100,
+            "t0": 0,
+            "t1": 0,
+            "t2": 0,
+            "t3": 0,
+            "coverage_deficits": ["BENCHMARK_COVERAGE_EMPTY"],
+            "oracle_deficits": ["BENCHMARK_ORACLES_ABSENT"],
+            "artifact_deficits": ["BENCHMARK_ARTIFACTS_ABSENT"],
+            "partition_deficits": ["BENCHMARK_PARTITIONS_ABSENT"],
+            "freshness_deficits": ["BENCHMARK_EVIDENCE_ABSENT"],
+        },
+        {
+            "counted": 4,
+            "target": 100,
+            "first_attempt_passed": 1,
+            "eventual_passed": 2,
+            "failed": 1,
+            "blocked": 1,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 96,
+            "t0": 2,
+            "t1": 1,
+            "t2": 1,
+            "t3": 0,
+            "coverage_deficits": ["COVERAGE_REMAINS"],
+            "oracle_deficits": [],
+            "artifact_deficits": [],
+            "partition_deficits": ["HOLDOUT_REMAINS"],
+            "freshness_deficits": [],
+        },
+    ],
+)
+def test_input_origin_disposition_cannot_change_protected_projection(
+    benchmark_summary: dict,
+) -> None:
+    protected = {
+        "areas": {
+            area: {
+                "status": status,
+                "passed_gates": 0,
+                "required_gates": 1,
+                "gates": [],
+                "blockers": ["EVIDENCE_PENDING"],
+                "evidence": [],
+                "fresh": False,
+                "last_success_at": None,
+            }
+            for area, status in (
+                ("product_readiness", "not_started"),
+                ("benchmark_readiness", "not_started"),
+                ("commercial_readiness", "blocked"),
+                ("program_health", "in_progress"),
+            )
+        },
+        "benchmark_summary": benchmark_summary,
+        "release_candidate": None,
+        "release_approval": {
+            "status": "absent",
+            "approval_id": None,
+            "subject_matches": False,
+        },
+        "release_eligible": False,
+    }
+    unresolved = {**copy.deepcopy(protected), "correction_resolution": "unresolved"}
+    resolved = {**copy.deepcopy(protected), "correction_resolution": "resolved"}
+    unresolved.pop("correction_resolution")
+    resolved.pop("correction_resolution")
+    assert resolved == unresolved

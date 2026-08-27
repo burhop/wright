@@ -3,14 +3,21 @@
 from __future__ import annotations
 
 import os
+import posixpath
 import re
 import subprocess
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from fnmatch import fnmatchcase
 from pathlib import Path, PurePosixPath
-from typing import Final
+from typing import Any, Final
 
-from .json_contracts import canonical_digest, sha256_bytes
+from .json_contracts import (
+    ContractError,
+    canonical_digest,
+    sha256_bytes,
+    strict_loads,
+)
 
 
 HEX40: Final[re.Pattern[str]] = re.compile(r"^[a-f0-9]{40}$")
@@ -23,6 +30,7 @@ SAFE_GIT_COMMANDS: Final[frozenset[str]] = frozenset(
         "ls-tree",
         "merge-base",
         "rev-parse",
+        "rev-list",
         "show",
         "status",
     }
@@ -90,7 +98,11 @@ class GitReader:
         self._identity_cache: dict[tuple[str, str], GitIdentity] = {}
         self._summary_cache: dict[str, dict[str, object]] = {}
         self._object_id_cache: dict[tuple[str, str], str] = {}
+        self._added_path_cache: dict[tuple[str, str], dict[str, str]] = {}
+        self._introduction_cache: dict[tuple[str, str], str] = {}
         self._branch_cache: str | None = None
+        self._ancestor_cache: dict[str, frozenset[str]] = {}
+        self._parent_cache: dict[str, tuple[str, ...]] = {}
 
     @classmethod
     def discover(cls, start: Path | None = None) -> "GitReader":
@@ -264,6 +276,9 @@ class GitReader:
 
         commit = self.resolve_commit(source)
         normalized = normalize_repo_path(root)
+        cached = self._added_path_cache.get((commit, normalized))
+        if cached is not None:
+            return dict(cached)
         raw = self._run(
             [
                 "log",
@@ -280,12 +295,17 @@ class GitReader:
         result: dict[str, str] = {}
         for section in self._parse_commit_sections(raw):
             containing = str(section["commit"])
+            self._commit_cache[containing] = containing
+            for parent in section["parents"]:
+                self._commit_cache[str(parent)] = str(parent)
             for path in section["paths"]:
                 path = str(path)
                 if path in result:
                     raise GitSubjectError("append-only path has multiple introductions")
                 result[path] = containing
-        return result
+                self._introduction_cache[(commit, path)] = containing
+        self._added_path_cache[(commit, normalized)] = dict(result)
+        return dict(result)
 
     def commit_summaries(self, commits: Iterable[str]) -> dict[str, dict[str, object]]:
         """Read parents, tree, and complete changed paths for exact commits."""
@@ -307,7 +327,11 @@ class GitReader:
                 ]
             )
             for section in self._parse_commit_sections(raw):
-                self._summary_cache[str(section["commit"])] = section
+                commit = str(section["commit"])
+                self._summary_cache[commit] = section
+                self._commit_cache[commit] = commit
+                for parent in section["parents"]:
+                    self._commit_cache[str(parent)] = str(parent)
         if any(commit not in self._summary_cache for commit in values):
             raise GitSubjectError("commit summary is incomplete")
         return {commit: self._summary_cache[commit] for commit in values}
@@ -425,22 +449,44 @@ class GitReader:
     def is_ancestor(self, ancestor: str, descendant: str) -> bool:
         left = self.resolve_commit(ancestor)
         right = self.resolve_commit(descendant)
-        result = subprocess.run(
-            ["git", "merge-base", "--is-ancestor", left, right],
-            cwd=self.repo_root,
-            check=False,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            shell=False,
-        )
-        if result.returncode not in {0, 1}:
-            raise GitSubjectError("Git ancestry could not be resolved")
-        return result.returncode == 0
+        reachable = self._ancestor_cache.get(right)
+        if reachable is None:
+            if right not in self._parent_cache:
+                raw = self._run(["rev-list", "--parents", right])
+                try:
+                    lines = raw.decode("ascii", errors="strict").splitlines()
+                except UnicodeDecodeError as exc:
+                    raise GitSubjectError("Git ancestry encoding is invalid") from exc
+                for line in lines:
+                    values = line.split()
+                    if not values or any(not HEX40.fullmatch(value) for value in values):
+                        raise GitSubjectError("Git ancestry could not be resolved")
+                    commit, *parents = values
+                    self._parent_cache[commit] = tuple(parents)
+                    self._commit_cache[commit] = commit
+                    for parent in parents:
+                        self._commit_cache[parent] = parent
+            pending = [right]
+            visited: set[str] = set()
+            while pending:
+                commit = pending.pop()
+                if commit in visited:
+                    continue
+                visited.add(commit)
+                parents = self._parent_cache.get(commit)
+                if parents is None:
+                    raise GitSubjectError("Git ancestry could not be resolved")
+                pending.extend(parents)
+            reachable = frozenset(visited)
+            self._ancestor_cache[right] = reachable
+        return left in reachable
 
     def containing_commit(self, source: str, path: str) -> str:
         commit = self.resolve_commit(source)
         normalized = normalize_repo_path(path)
+        cached = self._introduction_cache.get((commit, normalized))
+        if cached is not None:
+            return cached
         raw = self._run(
             [
                 "log",
@@ -455,7 +501,10 @@ class GitReader:
         commits = [line for line in raw.decode("ascii").splitlines() if line]
         if len(commits) != 1 or not HEX40.fullmatch(commits[0]):
             raise GitSubjectError("append-only containing commit is ambiguous")
-        return commits[0]
+        containing = commits[0]
+        self._commit_cache[containing] = containing
+        self._introduction_cache[(commit, normalized)] = containing
+        return containing
 
     def status_for_paths(self, paths: Iterable[str]) -> list[bytes]:
         normalized = sorted({normalize_repo_path(path) for path in paths})
@@ -564,3 +613,100 @@ class GitReader:
                 }
             )
         return entries, canonical_digest(entries)
+
+    def authoritative_manifest(
+        self,
+        commit: str,
+        program_root: str,
+        policy: Mapping[str, Any],
+    ) -> tuple[list[dict[str, Any]], str]:
+        """Resolve the complete typed authoritative input manifest at one commit."""
+
+        source = self.resolve_commit(commit)
+        root = normalize_repo_path(program_root)
+        role_rows = [
+            row for row in policy.get("path_roles", []) if isinstance(row, Mapping)
+        ]
+        excluded = {
+            f"{root}/dashboard.json",
+            f"{root}/evidence/verification/EPP-F01-dashboard-delivery.json",
+        }
+        selected: list[tuple[dict[str, str], Mapping[str, Any]]] = []
+        for tree_row in self.tree_entries(source, ""):
+            path = tree_row["path"]
+            role = next(
+                (
+                    row
+                    for row in role_rows
+                    if fnmatchcase(path, str(row.get("pattern", "")))
+                ),
+                None,
+            )
+            if (
+                role is None
+                or path in excluded
+                or role.get("role") == "generated_projection"
+            ):
+                continue
+            if tree_row["type"] != "blob" or tree_row["mode"] not in {
+                "100644",
+                "100755",
+            }:
+                raise GitSubjectError(
+                    "authoritative input is not a regular blob"
+                )
+            selected.append((tree_row, role))
+        by_path = {row["path"]: row for row, _ in selected}
+        role_by_path = {row["path"]: role for row, role in selected}
+        blobs = self.read_blobs(source, by_path)
+        parsed: dict[str, Any] = {}
+        for path, raw in blobs.items():
+            if path.endswith(".json"):
+                try:
+                    parsed[path] = strict_loads(raw)
+                except ContractError:
+                    parsed[path] = None
+
+        def schema_path(document_path: str, schema_ref: str) -> str | None:
+            if schema_ref.startswith("https://wright.local/programs/epp/"):
+                return f"{root}/schemas/{schema_ref.rsplit('/', 1)[-1]}"
+            if "://" in schema_ref:
+                return None
+            return normalize_repo_path(
+                posixpath.normpath(
+                    posixpath.join(posixpath.dirname(document_path), schema_ref)
+                )
+            )
+
+        manifest: list[dict[str, Any]] = []
+        for path in sorted(by_path):
+            value = parsed.get(path)
+            schema_id: str | None = None
+            schema_version: str | None = None
+            if isinstance(value, Mapping):
+                version = value.get("schema_version")
+                schema_version = str(version) if isinstance(version, str) else None
+                if "/schemas/" in path and isinstance(value.get("$id"), str):
+                    schema_id = str(value["$id"])
+                elif isinstance(value.get("$schema"), str):
+                    schema_ref = str(value["$schema"])
+                    resolved = schema_path(path, schema_ref)
+                    schema_value = parsed.get(resolved or "")
+                    schema_id = (
+                        str(schema_value.get("$id"))
+                        if isinstance(schema_value, Mapping)
+                        and isinstance(schema_value.get("$id"), str)
+                        else schema_ref
+                    )
+            source_row = by_path[path]
+            manifest.append(
+                {
+                    "path": path,
+                    "role": str(role_by_path[path].get("role")),
+                    "sha256": sha256_bytes(blobs[path]),
+                    "git_blob": source_row["git_blob"],
+                    "schema_id": schema_id,
+                    "schema_version": schema_version,
+                }
+            )
+        return manifest, canonical_digest(manifest)

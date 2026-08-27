@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -147,4 +148,44 @@ def test_reader_allowlist_contains_no_mutating_git_commands() -> None:
             "reset",
             "rm",
         }
+    )
+
+
+def test_authoritative_manifest_is_complete_typed_and_deterministic(
+    repository_root: Path,
+) -> None:
+    reader = GitReader(repository_root)
+    program_root = "docs/programs/engineering-process-platform"
+    policy = json.loads(
+        (repository_root / program_root / "lifecycle-policy.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    first, first_digest = reader.authoritative_manifest(
+        "HEAD", program_root, policy
+    )
+    second, second_digest = reader.authoritative_manifest(
+        "HEAD", program_root, policy
+    )
+    paths = [row["path"] for row in first]
+    assert first == second
+    assert first_digest == second_digest
+    assert paths == sorted(paths)
+    assert len(paths) == len(set(paths))
+    assert f"{program_root}/dashboard.json" not in paths
+    assert (
+        f"{program_root}/evidence/verification/EPP-F01-dashboard-delivery.json"
+        not in paths
+    )
+    correction = next(
+        row
+        for row in first
+        if row["path"].endswith(
+            "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json"
+        )
+    )
+    assert correction["role"] == "append_only_evidence"
+    assert correction["schema_version"] == "1.0"
+    assert correction["schema_id"].endswith(
+        "transition-input-correction.schema.json"
     )
