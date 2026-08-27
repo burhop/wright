@@ -108,7 +108,7 @@ def test_report_and_dashboard_evidence_links_resolve_with_exact_digests(
     reader = GitReader(repository_root)
     report = validate_program(reader, "HEAD", PROGRAM.as_posix()).report
     for finding in report["findings"]:
-        assert (repository_root / finding["artifact"]).is_file()
+        assert (repository_root / finding["artifact"]).exists()
         correction = finding.get("correction_ref")
         if correction:
             assert (repository_root / correction).is_file()

@@ -2136,16 +2136,28 @@ def validate_roadmap_approval_and_lease(
                     )
                 )
     lease = state.get("active_mutating_lease")
-    if blocked_control and lease is not None:
+    lease_closed = feature_state in {
+        "BLOCKED",
+        "CANDIDATE_FROZEN",
+        "INDEPENDENTLY_VERIFIED",
+        "PUSH_AUTHORIZATION_PENDING",
+        "PR_READY",
+        "DEV_MERGE_READY",
+        "DEV_INTEGRATED",
+        "DEV_DEPLOYMENT_VERIFIED",
+        "ROLLED_BACK",
+        "STOPPED",
+    }
+    if lease_closed and lease is not None:
         findings.append(
             _finding(
                 "LEASE_IDENTITY_MISMATCH",
                 "fatal",
                 "program-state.json",
-                "BLOCKED_STATE_HAS_NO_MUTATING_LEASE",
+                "NON_MUTATING_STATE_HAS_NO_LEASE",
             )
         )
-    elif not blocked_control and (
+    elif not lease_closed and (
         not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature
     ):
         findings.append(
@@ -2365,7 +2377,19 @@ def _validate_roadmap_and_lease(
             )
         )
     lease = state.get("active_mutating_lease")
-    if current_feature and (
+    lease_closed = state.get("feature_state") in {
+        "BLOCKED",
+        "CANDIDATE_FROZEN",
+        "INDEPENDENTLY_VERIFIED",
+        "PUSH_AUTHORIZATION_PENDING",
+        "PR_READY",
+        "DEV_MERGE_READY",
+        "DEV_INTEGRATED",
+        "DEV_DEPLOYMENT_VERIFIED",
+        "ROLLED_BACK",
+        "STOPPED",
+    }
+    if current_feature and not lease_closed and (
         not isinstance(lease, dict) or lease.get("feature_id") != current_feature
     ):
         findings.append(
