@@ -4,21 +4,31 @@ from __future__ import annotations
 
 import copy
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
 
 from program_control.git_subject import GitReader
+from program_control.dashboard import derive_areas
 from program_control.json_contracts import canonical_digest, sha256_bytes
 from program_control.validation import (
     _validate_state_chain,
     _validate_transition_history,
+    validate_committed_identity_correction,
     validate_legacy_profiles,
 )
 
 
 PROGRAM_ROOT = "docs/programs/engineering-process-platform"
 APPROVED_SUBJECT = "10d13cbeaa2d038744752e93713ab7671f17f7d4"
+CORRECTION_SUBJECT = "88481d57f1258f59f303f507eafc4e352569bc11"
+CORRECTION_ID = "COR-EPP-F01-US1-COMMITTED-IDENTITY-001"
+CORRECTION_PATH = f"{PROGRAM_ROOT}/evidence/corrections/{CORRECTION_ID}.json"
+APPROVAL_PATHS = (
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-004.json",
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-004.json",
+)
 
 
 def load(path: Path) -> object:
@@ -44,6 +54,312 @@ def profile_set(repository_root: Path) -> dict:
 
 def codes(findings) -> set[str]:
     return {finding.code for finding in findings}
+
+
+def correction_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
+    profile = load(repository_root / CORRECTION_PATH)
+    approvals = {path: load(repository_root / path) for path in APPROVAL_PATHS}
+    return profile, approvals
+
+
+def test_exact_committed_identity_correction_recomputes_37_of_37(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    original_profile = copy.deepcopy(profile)
+    original_approvals = copy.deepcopy(approvals)
+    findings, transition_targets = validate_committed_identity_correction(
+        GitReader(repository_root),
+        "HEAD",
+        PROGRAM_ROOT,
+        profile,
+        approvals,
+    )
+    mismatches = [
+        finding for finding in findings if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+    ]
+    assert len(mismatches) == 37
+    assert all(finding.resolution_status == "resolved" for finding in mismatches)
+    assert all(finding.correction_ref == CORRECTION_PATH for finding in mismatches)
+    assert len(transition_targets) == 6
+    assert "COMMITTED_IDENTITY_CORRECTION_INVALID" not in codes(findings)
+    assert "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED" not in codes(findings)
+    assert profile == original_profile
+    assert approvals == original_approvals
+
+
+@pytest.mark.parametrize(
+    "mutator",
+    [
+        lambda profile: profile["transition_digest_claims"].pop(),
+        lambda profile: profile["historical_state_tree_claims"].append(
+            copy.deepcopy(profile["historical_state_tree_claims"][0])
+        ),
+        lambda profile: profile["transition_digest_claims"][0].__setitem__(
+            "json_pointer", "/outputs/*/sha256"
+        ),
+        lambda profile: profile["historical_state_tree_claims"][0][
+            "json_pointers"
+        ].append("/readiness/product/status"),
+        lambda profile: profile["historical_state_tree_claims"][0].__setitem__(
+            "introducing_commit", CORRECTION_SUBJECT
+        ),
+    ],
+)
+def test_committed_identity_correction_rejects_any_target_set_or_identity_change(
+    repository_root: Path, mutator
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    mutator(profile)
+    findings, transition_targets = validate_committed_identity_correction(
+        GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+    )
+    mismatches = [
+        finding for finding in findings if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+    ]
+    assert len(mismatches) == 37
+    assert all(finding.resolution_status == "unresolved" for finding in mismatches)
+    assert "COMMITTED_IDENTITY_CORRECTION_INVALID" in codes(findings)
+    assert len(transition_targets) == 6
+
+
+def test_committed_identity_correction_requires_exact_v4_bundle(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    approvals.pop(APPROVAL_PATHS[1])
+    findings, _ = validate_committed_identity_correction(
+        GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+    )
+    assert "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED" in codes(findings)
+    assert all(
+        finding.resolution_status == "unresolved"
+        for finding in findings
+        if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+    )
+
+
+def test_committed_identity_correction_rejects_every_closed_target_class(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    head = GitReader(repository_root).resolve_commit("HEAD")
+    mutations = (
+        (
+            "added",
+            lambda value: value["transition_digest_claims"].append(
+                copy.deepcopy(value["transition_digest_claims"][0])
+            ),
+        ),
+        ("omitted", lambda value: value["historical_state_tree_claims"].pop()),
+        (
+            "reordered",
+            lambda value: value["transition_digest_claims"].__setitem__(
+                slice(0, 2), value["transition_digest_claims"][:2][::-1]
+            ),
+        ),
+        (
+            "substituted",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path",
+                value["transition_digest_claims"][4]["target"]["artifact_path"],
+            ),
+        ),
+        (
+            "wildcard",
+            lambda value: value["transition_digest_claims"][0].__setitem__(
+                "json_pointer", "/outputs/*/sha256"
+            ),
+        ),
+        (
+            "range",
+            lambda value: value["transition_digest_claims"][0].__setitem__(
+                "json_pointer", "/outputs/0-2/sha256"
+            ),
+        ),
+        (
+            "same",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "introducing_commit", CORRECTION_SUBJECT
+            ),
+        ),
+        (
+            "future",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "introducing_commit", head
+            ),
+        ),
+        (
+            "correction",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", CORRECTION_PATH
+            ),
+        ),
+        (
+            "authority",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", APPROVAL_PATHS[0]
+            ),
+        ),
+        (
+            "readiness",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/gate-evidence.json"
+            ),
+        ),
+        (
+            "gate",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/gate-catalog.json"
+            ),
+        ),
+        (
+            "benchmark",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/benchmark/coverage-matrix.json"
+            ),
+        ),
+        (
+            "freshness",
+            lambda value: value["transition_digest_claims"][0].__setitem__(
+                "json_pointer", "/freshness/status"
+            ),
+        ),
+        (
+            "candidate",
+            lambda value: value["transition_digest_claims"][0].__setitem__(
+                "json_pointer", "/subject/git_commit"
+            ),
+        ),
+        (
+            "release",
+            lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/evidence/approvals/release.json"
+            ),
+        ),
+    )
+    reader = GitReader(repository_root)
+    for label, mutate in mutations:
+        candidate = copy.deepcopy(profile)
+        mutate(candidate)
+        findings, targets = validate_committed_identity_correction(
+            reader, "HEAD", PROGRAM_ROOT, candidate, approvals
+        )
+        mismatches = [
+            finding
+            for finding in findings
+            if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+        ]
+        assert len(mismatches) == 37, label
+        assert all(
+            finding.resolution_status == "unresolved" for finding in mismatches
+        ), label
+        assert "COMMITTED_IDENTITY_CORRECTION_INVALID" in codes(findings), label
+        assert len(targets) == 6, label
+
+
+def test_committed_identity_correction_rejects_identity_substitutions(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    mutations = (
+        lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+            "artifact_raw_sha256", "0" * 64
+        ),
+        lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+            "artifact_git_blob", "0" * 40
+        ),
+        lambda value: value["transition_digest_claims"][0]["target"].__setitem__(
+            "introducing_tree", "0" * 40
+        ),
+        lambda value: value["transition_digest_claims"][0].__setitem__(
+            "recorded_value", "0" * 64
+        ),
+        lambda value: value["transition_digest_claims"][0].__setitem__(
+            "authoritative_value", "0" * 64
+        ),
+        lambda value: value["historical_state_tree_claims"][0].__setitem__(
+            "canonical_state_digest", "0" * 64
+        ),
+        lambda value: value["tree_resolution"].__setitem__(
+            "authoritative_value", "0" * 40
+        ),
+    )
+    reader = GitReader(repository_root)
+    for mutate in mutations:
+        candidate = copy.deepcopy(profile)
+        mutate(candidate)
+        findings, _ = validate_committed_identity_correction(
+            reader, "HEAD", PROGRAM_ROOT, candidate, approvals
+        )
+        assert "COMMITTED_IDENTITY_CORRECTION_INVALID" in codes(findings)
+        assert (
+            sum(finding.code == "COMMITTED_IDENTITY_MISMATCH" for finding in findings)
+            == 37
+        )
+
+
+def test_committed_identity_correction_rejects_v4_authority_variants(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    mutations = (
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__("scope", "release"),
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__(
+            "bundle_id", "APB-EPP-F01-005"
+        ),
+        lambda value: value[APPROVAL_PATHS[0]]["subject"].__setitem__(
+            "git_commit", "0" * 40
+        ),
+        lambda value: value[APPROVAL_PATHS[0]]["subject"]["artifact_digests"][
+            8
+        ].__setitem__("sha256", "0" * 64),
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__(
+            "expires_at", "2026-08-27T16:24:46Z"
+        ),
+        lambda value: value[APPROVAL_PATHS[0]]["revocation_events"].append(
+            {"revoked_at": "2026-08-27T16:24:46Z"}
+        ),
+    )
+    reader = GitReader(repository_root)
+    for mutate in mutations:
+        candidate = copy.deepcopy(approvals)
+        mutate(candidate)
+        findings, _ = validate_committed_identity_correction(
+            reader, "HEAD", PROGRAM_ROOT, profile, candidate
+        )
+        assert "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED" in codes(findings)
+        assert all(
+            finding.resolution_status == "unresolved"
+            for finding in findings
+            if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+        )
+
+
+def test_committed_identity_correction_is_readiness_neutral(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    catalog = load(repository_root / PROGRAM_ROOT / "gate-catalog.json")
+    evidence = load(repository_root / PROGRAM_ROOT / "gate-evidence.json")
+    assert isinstance(catalog, dict)
+    assert isinstance(evidence, dict)
+    original_catalog = copy.deepcopy(catalog)
+    original_evidence = copy.deepcopy(evidence)
+    observed = datetime(2026, 8, 27, 12, 0, tzinfo=timezone.utc)
+    areas_before = derive_areas(catalog, evidence, observed)
+    findings, _ = validate_committed_identity_correction(
+        GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+    )
+    areas_after = derive_areas(catalog, evidence, observed)
+    assert areas_after == areas_before
+    assert catalog == original_catalog
+    assert evidence == original_evidence
+    assert all(
+        "/evidence/transitions/" in finding.artifact
+        or "/evidence/states/" in finding.artifact
+        for finding in findings
+    )
 
 
 def test_exact_two_closed_profiles_validate_against_approval_subject(

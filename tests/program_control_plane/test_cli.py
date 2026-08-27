@@ -211,3 +211,48 @@ def test_text_render_is_concise_and_includes_provenance() -> None:
     assert "container: absent" in rendered
     assert "delivery: absent" in rendered
     assert rendered.endswith("next_action: EXECUTE_EPP_F01_TASKS\n")
+
+
+def test_text_render_exposes_committed_identity_disposition() -> None:
+    report = {
+        "verdict": "passed",
+        "subject": {
+            "source_commit": "a" * 40,
+            "source_tree": "b" * 40,
+            "program_tree": "c" * 40,
+            "container_resolution": "absent",
+            "container_commit": None,
+            "delivery_resolution": "absent",
+            "delivery_commit": None,
+            "worktree_clean": True,
+        },
+        "areas": {
+            area: {"status": "not_started", "passed_gates": 0, "required_gates": 1}
+            for area in (
+                "product_readiness",
+                "benchmark_readiness",
+                "commercial_readiness",
+                "program_health",
+            )
+        },
+        "release_eligible": False,
+        "findings": [
+            {
+                "severity": "info",
+                "code": "COMMITTED_IDENTITY_MISMATCH",
+                "artifact": f"{PROGRAM_ROOT}/evidence/transitions/TR-0023.json",
+                "json_pointer": "/outputs/0/sha256",
+                "resolution_status": "resolved",
+                "correction_ref": (
+                    f"{PROGRAM_ROOT}/evidence/corrections/"
+                    "COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json"
+                ),
+                "recovery": "No rewrite; inspect the approved correction evidence.",
+            }
+        ],
+        "next_action": {"action": "EXECUTE_EPP_F01_TASKS"},
+    }
+    rendered = render_text(report)
+    assert "/outputs/0/sha256" in rendered
+    assert "resolved" in rendered
+    assert "COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json" in rendered

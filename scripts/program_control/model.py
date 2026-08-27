@@ -20,12 +20,16 @@ class Finding:
     evidence: tuple[str, ...]
     consequence: str
     recovery: str
+    json_pointer: str | None = None
+    resolution_status: str = "unresolved"
+    correction_ref: str | None = None
 
-    def sort_key(self) -> tuple[int, str, str, str]:
+    def sort_key(self) -> tuple[int, str, str, str, str]:
         return (
             SEVERITY_RANK.get(self.severity, 99),
             self.code,
             self.artifact,
+            self.json_pointer or "",
             self.invariant,
         )
 
@@ -34,10 +38,13 @@ class Finding:
             "code": self.code,
             "severity": self.severity,
             "artifact": self.artifact,
+            "json_pointer": self.json_pointer,
             "invariant": self.invariant,
             "evidence": list(self.evidence[:20]),
             "consequence": self.consequence,
             "recovery": self.recovery,
+            "resolution_status": self.resolution_status,
+            "correction_ref": self.correction_ref,
         }
 
 

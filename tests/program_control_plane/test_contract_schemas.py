@@ -10,6 +10,7 @@ from jsonschema.validators import validator_for
 
 
 CONTRACT_NAMES = (
+    "committed-identity-correction.schema.json",
     "dashboard.schema.json",
     "gate-catalog.schema.json",
     "gate-evidence.schema.json",
@@ -77,12 +78,15 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
         repository_root
         / "docs/programs/engineering-process-platform/program-state.json"
     )
-    state = load(
+    archived = load(
         repository_root
-        / "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0026.json"
+        / "docs/programs/engineering-process-platform/evidence/states"
+        / f"program-state-revision-{current['revision']:04d}.json"
     )
-    assert current["active_mutating_lease"] is None
-    allowed = state["active_mutating_lease"]["allowed_paths"]
+    assert archived == current
+    lease = current["active_mutating_lease"]
+    assert lease is not None
+    allowed = lease["allowed_paths"]
     assert "scripts/program_control/**" in allowed
     assert "tests/program_control_plane/**" in allowed
     assert "docs/programs/engineering-process-platform/**" in allowed

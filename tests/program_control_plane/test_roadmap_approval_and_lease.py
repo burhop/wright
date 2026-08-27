@@ -37,7 +37,7 @@ def code_set(findings) -> set[str]:
     return {finding.code for finding in findings}
 
 
-def test_current_blocked_pointer_has_no_lease_and_requires_human_authority(
+def test_current_implementing_pointer_has_active_lease_and_executes_tasks(
     repository_root: Path,
 ) -> None:
     findings, action = validate_roadmap_approval_and_lease(
@@ -48,7 +48,7 @@ def test_current_blocked_pointer_has_no_lease_and_requires_human_authority(
         worktree_id="epp-f01",
     )
     assert findings == []
-    assert action == "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3"
+    assert action == "EXECUTE_EPP_F01_TASKS"
 
 
 def test_cycle_wip_and_pointer_mismatch_are_all_reported(repository_root: Path) -> None:
@@ -245,7 +245,7 @@ def test_next_action_human_flag_must_match_policy(repository_root: Path) -> None
     documents = copy.deepcopy(current_documents(repository_root))
     documents[f"{PROGRAM_ROOT}/program-state.json"]["next_eligible_actions"][0][
         "requires_human_approval"
-    ] = False
+    ] = True
     findings, _ = validate_roadmap_approval_and_lease(
         documents,
         PROGRAM_ROOT,

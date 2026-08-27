@@ -79,8 +79,12 @@ def render_text(report: Mapping[str, Any]) -> str:
         )
     lines.append(f"release_eligible: {str(report['release_eligible']).lower()}")
     for finding in report["findings"][:20]:
+        disposition = str(finding.get("resolution_status", "unresolved"))
+        pointer = finding.get("json_pointer") or "-"
+        correction = finding.get("correction_ref") or "-"
         lines.append(
-            f"{finding['severity']} {finding['code']} {finding['artifact']}: {finding['recovery']}"
+            f"{finding['severity']} {finding['code']} {finding['artifact']} "
+            f"{pointer} [{disposition}] correction={correction}: {finding['recovery']}"
         )
     action = report.get("next_action")
     lines.append(f"next_action: {action['action'] if action else 'none'}")

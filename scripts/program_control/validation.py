@@ -49,6 +49,10 @@ def _finding(
     artifact: str,
     invariant: str,
     evidence: tuple[str, ...] = (),
+    *,
+    json_pointer: str | None = None,
+    resolution_status: str = "unresolved",
+    correction_ref: str | None = None,
 ) -> Finding:
     consequences = {
         "fatal": "The committed subject cannot be trusted.",
@@ -65,6 +69,9 @@ def _finding(
         "LEASE_IDENTITY_MISMATCH": "Reconcile the lease with the active feature and worktree.",
         "LEASE_GIT_IDENTITY_MISMATCH": "Correct the factual lease Git identity through an append-only governed repair.",
         "TRANSITION_ARTIFACT_DIGEST_MISMATCH": "Do not rewrite history; obtain approval for an append-only compatibility or repair rule.",
+        "COMMITTED_IDENTITY_MISMATCH": "Do not rewrite history; inspect the exact approved correction evidence and recomputation.",
+        "COMMITTED_IDENTITY_CORRECTION_INVALID": "Restore the exact closed correction profile or stop for a new material approval.",
+        "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V4 authority bundle.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -74,6 +81,9 @@ def _finding(
         evidence=evidence,
         consequence=consequences[severity],
         recovery=recovery,
+        json_pointer=json_pointer,
+        resolution_status=resolution_status,
+        correction_ref=correction_ref,
     )
 
 
@@ -624,6 +634,373 @@ def validate_legacy_profiles(
     return sorted(findings, key=Finding.sort_key)
 
 
+CORRECTION_ID = "COR-EPP-F01-US1-COMMITTED-IDENTITY-001"
+CORRECTION_SUBJECT = "88481d57f1258f59f303f507eafc4e352569bc11"
+CORRECTION_SUBJECT_TREE = "17ebad227dd02f6b94fa99c006ea360c141a8cae"
+CORRECTION_SUBJECT_PROGRAM_TREE = "a4fbe48595a52ffe6af408067bf4b1d63c660921"
+CORRECTION_PROFILE_SHA256 = (
+    "9bd3bab9215eefbfb951a0d8db8c613433002f1afc44b79cce6063de6e0ff27d"
+)
+CORRECTION_SCHEMA_SHA256 = (
+    "e01b2eda036b69046912945b065c1a7d8aba2334991c37b48179132aedaddc7b"
+)
+CORRECTION_APPROVAL_PATHS = (
+    "evidence/approvals/APR-EPP-F01-MC-004.json",
+    "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+)
+
+
+def _pointer_value(document: Any, pointer: str) -> Any:
+    """Resolve one strict RFC 6901 pointer without accepting wildcards or ranges."""
+
+    if not pointer.startswith("/") or "*" in pointer or "[" in pointer:
+        raise ValueError("unsafe JSON pointer")
+    value = document
+    for encoded in pointer[1:].split("/"):
+        token = encoded.replace("~1", "/").replace("~0", "~")
+        if isinstance(value, Mapping):
+            value = value[token]
+        elif isinstance(value, list) and token.isdigit():
+            value = value[int(token)]
+        else:
+            raise ValueError("JSON pointer target is unavailable")
+    return value
+
+
+def _correction_claim_rows(
+    profile: Mapping[str, Any],
+) -> tuple[list[tuple[str, str, str, str, str]], frozenset[tuple[str, str]]]:
+    """Return the closed 37 visible dispositions and six transition targets."""
+
+    rows: list[tuple[str, str, str, str, str]] = []
+    transition_targets: set[tuple[str, str]] = set()
+    for claim in profile.get("transition_digest_claims", []):
+        target = claim.get("target", {})
+        artifact = str(target.get("artifact_path", "correction-target"))
+        pointer = str(claim.get("json_pointer", ""))
+        claim_id = str(claim.get("claim_id", "transition-claim"))
+        recorded = str(claim.get("recorded_value", ""))
+        authoritative = str(claim.get("authoritative_value", ""))
+        rows.append((artifact, pointer, claim_id, recorded, authoritative))
+        transition_targets.add((artifact, pointer))
+    tree_resolution = profile.get("tree_resolution", {})
+    recorded_tree = str(tree_resolution.get("recorded_value", ""))
+    authoritative_tree = str(tree_resolution.get("authoritative_value", ""))
+    for target in profile.get("historical_state_tree_claims", []):
+        artifact = str(target.get("artifact_path", "correction-target"))
+        revision = target.get("revision", "unknown")
+        for pointer in target.get("json_pointers", []):
+            rows.append(
+                (
+                    artifact,
+                    str(pointer),
+                    f"state-r{revision}",
+                    recorded_tree,
+                    authoritative_tree,
+                )
+            )
+    return rows, frozenset(transition_targets)
+
+
+def validate_committed_identity_correction(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+    approvals: Mapping[str, Mapping[str, Any]],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Recompute the one approved, non-extensible committed-identity correction."""
+
+    root = normalize_repo_path(program_root)
+    correction_path = f"{root}/evidence/corrections/{CORRECTION_ID}.json"
+    promoted_schema_path = f"{root}/schemas/committed-identity-correction.schema.json"
+    planning_schema_path = (
+        "specs/076-control-plane-validator/contracts/"
+        "committed-identity-correction.schema.json"
+    )
+    profile_valid = True
+    authority_valid = True
+    golden: Mapping[str, Any] = {}
+    current = ""
+
+    try:
+        current = reader.resolve_commit(source_commit)
+        golden_raw = reader.blob(CORRECTION_SUBJECT, correction_path)
+        promoted_schema_raw = reader.blob(CORRECTION_SUBJECT, promoted_schema_path)
+        planning_schema_raw = reader.blob(CORRECTION_SUBJECT, planning_schema_path)
+        golden_value = strict_loads(golden_raw)
+        promoted_schema = strict_loads(promoted_schema_raw)
+        if not isinstance(golden_value, Mapping) or not isinstance(
+            promoted_schema, Mapping
+        ):
+            raise ContractError("closed correction artifacts are not objects")
+        golden = golden_value
+        check_schema(promoted_schema)
+        profile_valid = profile_valid and not validate_schema(promoted_schema, profile)
+        profile_valid = profile_valid and not validate_schema(promoted_schema, golden)
+        profile_valid = profile_valid and profile == golden
+        profile_valid = profile_valid and (
+            sha256_bytes(golden_raw) == CORRECTION_PROFILE_SHA256
+            and sha256_bytes(promoted_schema_raw) == CORRECTION_SCHEMA_SHA256
+            and promoted_schema_raw == planning_schema_raw
+            and reader.blob(current, correction_path) == golden_raw
+            and reader.blob(current, promoted_schema_path) == promoted_schema_raw
+            and reader.blob(current, planning_schema_path) == planning_schema_raw
+        )
+        correction_container = reader.containing_commit(current, correction_path)
+        profile_valid = profile_valid and (
+            correction_container == CORRECTION_SUBJECT
+            and CORRECTION_SUBJECT != current
+            and reader.is_ancestor(CORRECTION_SUBJECT, current)
+        )
+        correction_identity = reader.resolve_identity(CORRECTION_SUBJECT, root)
+        profile_valid = profile_valid and (
+            correction_identity.source_tree == CORRECTION_SUBJECT_TREE
+            and correction_identity.program_tree == CORRECTION_SUBJECT_PROGRAM_TREE
+        )
+        checkpoint = golden.get("source_checkpoint", {})
+        checkpoint_identity = reader.resolve_identity(
+            str(checkpoint.get("git_commit")), root
+        )
+        profile_valid = profile_valid and (
+            checkpoint_identity.source_tree == checkpoint.get("git_tree")
+            and checkpoint_identity.program_tree == checkpoint.get("program_tree")
+            and reader.is_ancestor(
+                checkpoint_identity.source_commit, CORRECTION_SUBJECT
+            )
+            and checkpoint_identity.source_commit != CORRECTION_SUBJECT
+        )
+    except (ContractError, GitSubjectError, TypeError, ValueError):
+        profile_valid = False
+
+    # The approved subject is the source of the target set even when a caller
+    # presents a mutated profile. This prevents omission from hiding findings.
+    claim_rows, transition_targets = _correction_claim_rows(golden)
+    if len(claim_rows) != 37 or len(transition_targets) != 6:
+        profile_valid = False
+
+    try:
+        if not profile_valid:
+            raise ValueError("presented correction does not match closed profile")
+        transitions = list(golden.get("transition_digest_claims", []))
+        states = list(golden.get("historical_state_tree_claims", []))
+        tree_resolution = golden.get("tree_resolution", {})
+        if len(transitions) != 6 or len(states) != 26:
+            raise ValueError("closed target cardinality changed")
+        target_paths = {str(row["target"]["artifact_path"]) for row in transitions} | {
+            str(row["artifact_path"]) for row in states
+        }
+        additions = reader.added_path_commits(current, f"{root}/evidence")
+        introducing_commits = {
+            str(row["target"]["introducing_commit"]) for row in transitions
+        } | {str(row["introducing_commit"]) for row in states}
+        authoritative_commit = str(tree_resolution["authoritative_commit"])
+        summaries = reader.commit_summaries(
+            [*introducing_commits, authoritative_commit]
+        )
+        blob_requests: list[tuple[str, str]] = []
+        object_requests: list[tuple[str, str]] = []
+        for row in transitions:
+            target = row["target"]
+            introducing = str(target["introducing_commit"])
+            path = str(target["artifact_path"])
+            resolution = row["resolution"]
+            resolved_subject = str(resolution["subject_commit"])
+            resolved_path = str(resolution["artifact_path"])
+            blob_requests.extend(
+                [
+                    (introducing, path),
+                    (current, path),
+                    (resolved_subject, resolved_path),
+                ]
+            )
+            object_requests.extend(
+                [(introducing, path), (resolved_subject, resolved_path)]
+            )
+        for row in states:
+            introducing = str(row["introducing_commit"])
+            path = str(row["artifact_path"])
+            blob_requests.extend([(introducing, path), (current, path)])
+            object_requests.append((introducing, path))
+        blobs = reader.read_blob_requests(blob_requests)
+        object_ids = reader.object_ids(object_requests)
+
+        for row in transitions:
+            target = row["target"]
+            introducing = str(target["introducing_commit"])
+            path = str(target["artifact_path"])
+            raw = blobs[(introducing, path)]
+            transition = strict_loads(raw)
+            resolution = row["resolution"]
+            resolved_subject = str(resolution["subject_commit"])
+            resolved_path = str(resolution["artifact_path"])
+            resolved_raw = blobs[(resolved_subject, resolved_path)]
+            profile_valid = profile_valid and all(
+                (
+                    path in target_paths,
+                    additions.get(path) == introducing,
+                    summaries[introducing].get("tree") == target["introducing_tree"],
+                    object_ids[(introducing, path)] == target["artifact_git_blob"],
+                    sha256_bytes(raw) == target["artifact_raw_sha256"],
+                    blobs[(current, path)] == raw,
+                    _pointer_value(transition, str(row["json_pointer"]))
+                    == row["recorded_value"],
+                    resolved_subject == introducing,
+                    object_ids[(resolved_subject, resolved_path)]
+                    == resolution["artifact_git_blob"],
+                    sha256_bytes(resolved_raw) == row["authoritative_value"],
+                    row["recorded_value"] != row["authoritative_value"],
+                    introducing != CORRECTION_SUBJECT,
+                    reader.is_ancestor(introducing, CORRECTION_SUBJECT),
+                )
+            )
+
+        authoritative_tree = summaries[authoritative_commit].get("tree")
+        profile_valid = profile_valid and (
+            authoritative_tree == tree_resolution.get("authoritative_value")
+            and tree_resolution.get("recorded_value") != authoritative_tree
+        )
+        for row in states:
+            introducing = str(row["introducing_commit"])
+            path = str(row["artifact_path"])
+            raw = blobs[(introducing, path)]
+            state = strict_loads(raw)
+            profile_valid = profile_valid and all(
+                (
+                    additions.get(path) == introducing,
+                    summaries[introducing].get("tree") == row["introducing_tree"],
+                    object_ids[(introducing, path)] == row["artifact_git_blob"],
+                    sha256_bytes(raw) == row["artifact_raw_sha256"],
+                    blobs[(current, path)] == raw,
+                    canonical_digest(state) == row["canonical_state_digest"],
+                    state.get("revision") == row["revision"],
+                    introducing != CORRECTION_SUBJECT,
+                    reader.is_ancestor(introducing, CORRECTION_SUBJECT),
+                )
+            )
+            for pointer in row["json_pointers"]:
+                parent = str(pointer).rsplit("/", 1)[0]
+                profile_valid = profile_valid and (
+                    _pointer_value(state, str(pointer))
+                    == tree_resolution["recorded_value"]
+                    and _pointer_value(state, f"{parent}/commit")
+                    == authoritative_commit
+                )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    expected_full_paths = tuple(
+        f"{root}/{relative}" for relative in CORRECTION_APPROVAL_PATHS
+    )
+    try:
+        if set(approvals) != set(expected_full_paths):
+            raise ValueError("approval path set changed")
+        selected = [approvals[path] for path in expected_full_paths]
+        expected_subject = {
+            "git_commit": CORRECTION_SUBJECT,
+            "git_tree": CORRECTION_SUBJECT_TREE,
+            "program_tree": CORRECTION_SUBJECT_PROGRAM_TREE,
+        }
+        expected_records = (
+            ("APR-EPP-F01-MC-004", "material_change", "APR-EPP-F01-MC-003"),
+            (
+                "APR-EPP-F01-IMPL-004",
+                "feature_implementation",
+                "APR-EPP-F01-IMPL-003",
+            ),
+        )
+        if selected[0].get("subject") != selected[1].get("subject"):
+            raise ValueError("approval subjects differ")
+        for path, approval, expected in zip(
+            expected_full_paths, selected, expected_records, strict=True
+        ):
+            approval_id, scope, superseded = expected
+            subject = approval.get("subject", {})
+            artifacts = subject.get("artifact_digests", [])
+            profile_entries = [
+                row
+                for row in artifacts
+                if row.get("path") == f"evidence/corrections/{CORRECTION_ID}.json"
+            ]
+            if not all(
+                (
+                    approval.get("approval_id") == approval_id,
+                    approval.get("scope") == scope,
+                    approval.get("program_id") == "EPP-2026",
+                    approval.get("feature_id") == "EPP-F01",
+                    approval.get("bundle_id") == "APB-EPP-F01-004",
+                    approval.get("decision") == "approved",
+                    approval.get("approved_at") == "2026-08-27T16:24:45Z",
+                    approval.get("expires_at") is None,
+                    approval.get("revocation_events") == [],
+                    approval.get("supersedes") == [superseded],
+                    all(
+                        subject.get(key) == value
+                        for key, value in expected_subject.items()
+                    ),
+                    len(artifacts) == 38,
+                    len({row.get("path") for row in artifacts}) == 38,
+                    profile_entries
+                    == [
+                        {
+                            "path": f"evidence/corrections/{CORRECTION_ID}.json",
+                            "sha256": CORRECTION_PROFILE_SHA256,
+                        }
+                    ],
+                    _verify_approval_artifacts(reader, current, approval, root),
+                )
+            ):
+                raise ValueError("approval record is not the exact V4 bundle")
+            container = reader.containing_commit(current, path)
+            if not (
+                container != CORRECTION_SUBJECT
+                and reader.is_ancestor(CORRECTION_SUBJECT, container)
+                and reader.is_ancestor(container, current)
+                and reader.blob(current, path) == reader.blob(container, path)
+            ):
+                raise ValueError("approval history is not append-only after correction")
+    except (GitSubjectError, KeyError, TypeError, ValueError):
+        authority_valid = False
+
+    resolved = profile_valid and authority_valid
+    findings = [
+        _finding(
+            "COMMITTED_IDENTITY_MISMATCH",
+            "info" if resolved else "fatal",
+            artifact,
+            "EXACT_APPROVED_COMMITTED_IDENTITY_DISPOSITION",
+            (
+                claim_id,
+                f"recorded:{recorded}",
+                f"authoritative:{authoritative}",
+            ),
+            json_pointer=pointer,
+            resolution_status="resolved" if resolved else "unresolved",
+            correction_ref=correction_path if resolved else None,
+        )
+        for artifact, pointer, claim_id, recorded, authoritative in claim_rows
+    ]
+    if not profile_valid:
+        findings.append(
+            _finding(
+                "COMMITTED_IDENTITY_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "CLOSED_37_CLAIM_GIT_RECOMPUTATION",
+            )
+        )
+    if not authority_valid:
+        findings.append(
+            _finding(
+                "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED",
+                "fatal",
+                f"{root}/evidence/approvals",
+                "EXACT_V4_TWO_SCOPE_AUTHORITY",
+            )
+        )
+    return sorted(findings, key=Finding.sort_key), transition_targets
+
+
 def _validate_documents(
     reader: GitReader,
     commit: str,
@@ -820,7 +1197,7 @@ def _validate_transition_history(
                 )
             )
         for kind, commit in (("inputs", source), ("outputs", container)):
-            for item in row.get(kind, []):
+            for index, item in enumerate(row.get(kind, [])):
                 try:
                     path = _artifact_repo_path(program_root, item.get("path"))
                     raw = blobs[(commit, path)]
@@ -848,6 +1225,7 @@ def _validate_transition_history(
                                 f"expected:{item.get('sha256')}",
                                 f"actual:{actual_digest}",
                             ),
+                            json_pointer=f"/{kind}/{index}/sha256",
                         )
                     )
 
@@ -2076,6 +2454,33 @@ def validate_program(
         reader=reader,
         source_commit=identity.source_commit,
     )
+    correction_path = f"{root}/evidence/corrections/{CORRECTION_ID}.json"
+    correction = documents.get(correction_path)
+    if isinstance(correction, Mapping):
+        approval_documents = {
+            f"{root}/{relative}": value
+            for relative in CORRECTION_APPROVAL_PATHS
+            if isinstance((value := documents.get(f"{root}/{relative}")), Mapping)
+        }
+        correction_findings, corrected_transition_targets = (
+            validate_committed_identity_correction(
+                reader,
+                identity.source_commit,
+                root,
+                correction,
+                approval_documents,
+            )
+        )
+        findings = [
+            finding
+            for finding in findings
+            if not (
+                finding.code == "TRANSITION_ARTIFACT_DIGEST_MISMATCH"
+                and (finding.artifact, finding.json_pointer)
+                in corrected_transition_targets
+            )
+        ]
+        findings.extend(correction_findings)
     try:
         actual_branch = reader.current_branch()
     except GitSubjectError:
@@ -2137,7 +2542,11 @@ def validate_program(
         if isinstance(dashboard_seed, dict)
         else None
     )
-    fatal_or_error = [item for item in findings if item.severity in {"fatal", "error"}]
+    fatal_or_error = [
+        item
+        for item in findings
+        if item.severity in {"fatal", "error"} and item.resolution_status != "resolved"
+    ]
     verdict = "failed" if fatal_or_error else "passed"
     next_action = None
     if verdict == "passed" and len(actions) == 1:
