@@ -1,0 +1,69 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-ROLLBACK-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "rollback",
+  "subject": {
+    "git_commit": "1bd7ff55e1a7673ccd8c8377b050048a500fba22",
+    "git_tree": "65e5cd05267dfb5f554ec3450d111b256d7b7610",
+    "artifact_digests": [
+      { "path": "specs/076-control-plane-validator/quickstart.md", "sha256": "d1f4e9500f2a5ea6d763c5670df6ffe8685c0f45e1b6213d86117da996f5ba56" },
+      { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" },
+      { "path": "docs/programs/engineering-process-platform/program-state.json", "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc" },
+      { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T21:47:56Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "ROLLBACK-REMOVAL-MANUAL-FALLBACK",
+      "method": "Run the isolated removed-validator test: delete only a copied entrypoint, prove copied source evidence and prior dashboard bytes unchanged, and require the documented manual stale/unsupported path.",
+      "environment": "Disposable Windows pytest directory; authoritative worktree read-only; offline",
+      "duration_ms": 780,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" },
+        { "path": "specs/076-control-plane-validator/quickstart.md", "sha256": "d1f4e9500f2a5ea6d763c5670df6ffe8685c0f45e1b6213d86117da996f5ba56" }
+      ]
+    },
+    {
+      "check_id": "ROLLBACK-PREVIOUS-COMPATIBLE-READ",
+      "method": "Recompute all 36 non-null raw SHA-256 identities in the two ordered frozen v1 profiles, validate seed non-evidence behavior, and run the three focused rollback/compatibility tests; result 3 passed.",
+      "environment": "Exact committed Git blobs; no network or source mutation",
+      "duration_ms": 780,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" }
+      ]
+    },
+    {
+      "check_id": "ROLLBACK-PRIOR-SNAPSHOT-IDENTITY",
+      "method": "Resolve dashboard blob at current 1bd7ff55 and previous compatible 3c601012; both are Git blob 30aed677060b972ad1b216f6f9fd2d96dd8ec685 with SHA-256 7cd405d4....",
+      "environment": "Read-only Git rev-parse and checkout hash; clean worktree",
+      "duration_ms": 580,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+      ]
+    }
+  ],
+  "original_failure_refs": [],
+  "findings": [
+    {
+      "code": "ROLLBACK_DOES_NOT_PROVE_DELIVERY",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "The preserved snapshot remains candidate_not_evidence; rollback never upgrades it to committed-current."
+    }
+  ],
+  "rollback_subject": "git:3c601012f61a4bd09bd826f09feff4c5bb999f64 (previous compatible evidence checkpoint and identical dashboard blob)",
+  "delivery_relation": null
+}
