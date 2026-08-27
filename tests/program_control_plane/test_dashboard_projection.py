@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,9 +16,11 @@ from program_control.dashboard import (
     derive_areas,
     derive_benchmark_summary,
 )
+from program_control.validation import _release_approval
 
 
 OBSERVED = datetime(2026, 8, 27, 12, 0, tzinfo=timezone.utc)
+PROGRAM_ROOT = "docs/programs/engineering-process-platform"
 
 
 def load(path: Path) -> dict:
@@ -482,3 +485,78 @@ def test_hand_set_benchmark_summary_is_never_authoritative() -> None:
     with pytest.raises(DashboardError) as caught:
         default_benchmark_summary({"counted": 100, "eventual_passed": 100})
     assert caught.value.code == "BENCHMARK_SUMMARY_HAND_SET"
+
+
+class _ReleaseReader:
+    def __init__(self, raw: bytes) -> None:
+        self.raw = raw
+
+    def read_blobs(self, _commit: str, paths: list[str]) -> dict[str, bytes]:
+        return {path: self.raw for path in paths}
+
+
+def test_release_approval_requires_full_exact_candidate_and_current_authority() -> None:
+    raw = b"release candidate artifact\n"
+    digest = hashlib.sha256(raw).hexdigest()
+    candidate = {
+        "kind": "release_candidate",
+        "git_commit": "a" * 40,
+        "git_tree": "b" * 40,
+        "artifact_digests": [{"path": "artifact.bin", "sha256": digest}],
+    }
+    approval = {
+        "schema_version": "2.0",
+        "approval_id": "APR-EPP-F01-RELEASE-001",
+        "feature_id": "EPP-F01",
+        "scope": "release",
+        "decision": "approved",
+        "approved_at": "2026-08-27T11:00:00Z",
+        "expires_at": "2026-08-28T11:00:00Z",
+        "revocation_events": [],
+        "subject": {
+            "git_commit": candidate["git_commit"],
+            "git_tree": candidate["git_tree"],
+            "program_tree": "c" * 40,
+            "artifact_digests": copy.deepcopy(candidate["artifact_digests"]),
+        },
+    }
+    documents = {f"{PROGRAM_ROOT}/evidence/approvals/release.json": approval}
+    findings = []
+    result = _release_approval(
+        _ReleaseReader(raw),
+        "d" * 40,
+        documents,
+        PROGRAM_ROOT,
+        candidate,
+        findings,
+        OBSERVED,
+    )
+    assert findings == []
+    assert result == {
+        "status": "approved",
+        "approval_id": "APR-EPP-F01-RELEASE-001",
+        "subject_matches": True,
+    }
+
+    other = copy.deepcopy(candidate)
+    other["artifact_digests"][0]["sha256"] = "f" * 64
+    assert _release_approval(
+        _ReleaseReader(raw),
+        "d" * 40,
+        documents,
+        PROGRAM_ROOT,
+        other,
+        [],
+        OBSERVED,
+    )["status"] == "stale"
+
+    approval["revocation_events"] = [{"event_id": "REV-001"}]
+    assert _release_approval(
+        _ReleaseReader(raw),
+        "d" * 40,
+        documents,
+        PROGRAM_ROOT,
+        candidate,
+        [],
+        OBSERVED,
+    )["status"] == "revoked"
