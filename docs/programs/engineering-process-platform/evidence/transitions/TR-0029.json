@@ -1,0 +1,223 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0029",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 29,
+  "new_revision": 30,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "7567c333f5bb2d1c5817fffb41c49909e398c99156ad7c4ab25975a6fd8804a0",
+  "new_state_digest": "6d86e3b5697ffdb5260e6933a5e2ab4606e61d0fc11d2cb1868831028f9193aa",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter speckit-implement after revalidating the exact V4 approval bundle and 38-artifact subject, lease revision 7, clean authorization checkpoint, 81 completed checklist items, optional hook handling, and current action semantics; execute only the remaining dependency-ordered EPP-F01 tasks and enter the approved repair state before T069 correction mutation.",
+  "started_at": "2026-08-27T16:33:00Z",
+  "finished_at": "2026-08-27T16:36:00Z",
+  "duration_ms": 180000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "26776ea0daa083831dd57584545475292925c84b",
+    "source_tree": "5d67b0c334444816af585bc66a8695cf7ac61e3e",
+    "source_program_tree": "4a26759a755698e2d7f995c0a22b5e6a5199318c",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0030.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0029.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0029.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0029.json",
+      "sha256": "412bd6ad71ee385d9d920be92a98d033e62f10688e6e1045c5c6c366683ea9a2",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0028.json",
+      "sha256": "6c49136fff3bf67032952d02583a36240436f61472604a7b529b8498b8fea30d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "sha256": "63b2c7b48acdd11c263d67b8079b56e686ae2e43c75f870a54eaca11c676a5ad",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+      "sha256": "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "ed41729f6ed3b57dc2bc10c8b9be943db5710edbc3307331e349daf55e39dca9",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "d68bf6443187bcd6d8bc162b8b78cf4d944a24345aafb65ba13c94c66deaba6b",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0030.json",
+      "sha256": "13ec1a94c4bcfb7b236f2057fffa15f724a348421b7d8196b213486ae66b3dc8",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "13ec1a94c4bcfb7b236f2057fffa15f724a348421b7d8196b213486ae66b3dc8",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "IMPLEMENTATION-AUTHORITY-V4-CURRENT",
+      "method": "Revalidate the distinct V4 approval records, exact 88481d57 subject, all 38 TR-0027 artifact digests, DEC-P0-016 acceptance, no expiry/revocation and explicit EPP-F01B exclusion.",
+      "environment": "clean local authorization checkpoint and read-only Git-object access; offline",
+      "duration_ms": 3200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-004.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+        "evidence/transitions/TR-0027.json"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-7-CURRENT",
+      "method": "Require active unexpired lease revision 7 for EPP-F01 in worktree epp-f01 on branch 077-control-plane-validator with exactly 14 path entries, one managed-section restriction, five local actions, two repair attempts and no EPP-F01B authority.",
+      "environment": "program state, approval and local clock audit",
+      "duration_ms": 1100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "approval.md",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-CHECKLISTS",
+      "method": "Count checklist rows and require requirements 16/16 and program-control 65/65 complete with zero overrides.",
+      "environment": "deterministic checklist scan",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "../../../specs/076-control-plane-validator/checklists/program-control.md"
+      ]
+    },
+    {
+      "check_id": "SPECKIT-IMPLEMENT-HOOKS",
+      "method": "Inspect .specify/extensions.yml and skip the optional before_implement Git commit hook because the exact authorization checkpoint is already committed and reviewed allowlist staging is required.",
+      "environment": "Spec Kit implement contract and agent operating contract",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../.specify/extensions.yml",
+        "../../../.specify/feature.json",
+        "agent-operating-contract.md"
+      ]
+    },
+    {
+      "check_id": "CURRENT-ACTION-SEMANTICS",
+      "method": "Run the roadmap/approval/lease evaluator at revision 29 and require zero findings plus EXECUTE_EPP_F01_TASKS; retain the obsolete blocked-state unit assertion as an original planned test update for T069.",
+      "environment": "local Python focused semantic evaluator; no source mutation",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "program-state.json",
+        "roadmap.json"
+      ]
+    },
+    {
+      "check_id": "STATE-30-IMPLEMENTING",
+      "method": "Validate revision 29 to 30, exact canonical digests, legal IMPLEMENTATION_AUTHORIZED to IMPLEMENTING edge, current/archive byte identity, approval and lease continuity, and EXECUTE_EPP_F01_TASKS as the sole next action.",
+      "environment": "local Draft 2020-12, lifecycle policy and canonical state validation",
+      "duration_ms": 1600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0029.json",
+        "evidence/states/program-state-revision-0030.json",
+        "program-state.json",
+        "lifecycle-policy.json"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm no EPP-F01B implementation, dependency, product runtime, benchmark generation/execution, network or external mutation, push, PR, merge, dev integration, publication or release action is permitted or performed.",
+      "environment": "exact human approval, plan, lease and local diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+    ],
+    "subject": {
+      "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+      "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+      "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+      "artifact_count": 38,
+      "manifest_transition": "TR-0027"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0029.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}
