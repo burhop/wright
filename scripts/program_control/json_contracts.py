@@ -35,6 +35,10 @@ def _format_checker() -> FormatChecker:
     return checker
 
 
+_FORMAT_CHECKER = _format_checker()
+_META_VALIDATOR = Draft202012Validator(Draft202012Validator.META_SCHEMA)
+
+
 class ContractError(ValueError):
     """Base class for bounded contract failures."""
 
@@ -128,11 +132,8 @@ def validate_schema(schema: Mapping[str, Any], instance: Any) -> list[Validation
     digest = canonical_digest(schema)
     validator = _VALIDATOR_CACHE.get(digest)
     if validator is None:
-        Draft202012Validator.check_schema(schema)
-        validator = Draft202012Validator(schema, format_checker=_format_checker())
-        if len(_VALIDATOR_CACHE) >= 100:
-            _VALIDATOR_CACHE.clear()
-        _VALIDATOR_CACHE[digest] = validator
+        check_schema(schema)
+        validator = _VALIDATOR_CACHE[digest]
     return sorted(
         validator.iter_errors(instance),
         key=lambda error: (
@@ -146,14 +147,15 @@ def check_schema(schema: Mapping[str, Any]) -> None:
     digest = canonical_digest(schema)
     if digest in _VALIDATOR_CACHE:
         return
-    try:
-        Draft202012Validator.check_schema(schema)
-    except SchemaError as exc:
-        raise ContractError("invalid Draft 2020-12 schema") from exc
+    error = next(_META_VALIDATOR.iter_errors(schema), None)
+    if error is not None:
+        raise ContractError("invalid Draft 2020-12 schema") from SchemaError(
+            error.message
+        )
     if len(_VALIDATOR_CACHE) >= 100:
         _VALIDATOR_CACHE.clear()
     _VALIDATOR_CACHE[digest] = Draft202012Validator(
-        schema, format_checker=_format_checker()
+        schema, format_checker=_FORMAT_CHECKER
     )
 
 
