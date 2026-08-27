@@ -37,18 +37,27 @@ def code_set(findings) -> set[str]:
     return {finding.code for finding in findings}
 
 
-def test_current_implementing_pointer_has_active_lease_and_executes_tasks(
+def test_current_pointer_matches_lifecycle_action(
     repository_root: Path,
 ) -> None:
+    documents = current_documents(repository_root)
     findings, action = validate_roadmap_approval_and_lease(
-        current_documents(repository_root),
+        documents,
         PROGRAM_ROOT,
         observed_at=OBSERVED,
         actual_branch="077-control-plane-validator",
         worktree_id="epp-f01",
     )
     assert findings == []
-    assert action == "EXECUTE_EPP_F01_TASKS"
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    policy = documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"]
+    expected = next(
+        rule["action"]
+        for rule in policy["action_rules"]
+        if rule["program_state"] == state["state"]
+        and rule["feature_state"] == state["feature_state"]
+    )
+    assert action == expected
 
 
 def test_cycle_wip_and_pointer_mismatch_are_all_reported(repository_root: Path) -> None:

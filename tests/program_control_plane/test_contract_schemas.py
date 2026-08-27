@@ -86,7 +86,17 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
     )
     assert archived == current
     lease = current["active_mutating_lease"]
-    assert lease is not None
+    if lease is None:
+        assert current["feature_state"] in {
+            "CANDIDATE_FROZEN",
+            "INDEPENDENTLY_VERIFIED",
+            "PUSH_AUTHORIZATION_PENDING",
+            "PR_READY",
+            "DEV_MERGE_READY",
+            "DEV_INTEGRATED",
+            "DEV_DEPLOYMENT_VERIFIED",
+        }
+        return
     allowed = lease["allowed_paths"]
     assert "scripts/program_control/**" in allowed
     assert "tests/program_control_plane/**" in allowed

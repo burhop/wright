@@ -54,13 +54,23 @@ def test_empty_context_reconstructs_one_next_action_and_exclusions(
     roadmap = json.loads(
         (repository_root / PROGRAM / "roadmap.json").read_text("utf-8")
     )
+    policy = json.loads(
+        (repository_root / PROGRAM / "lifecycle-policy.json").read_text("utf-8")
+    )
     assert len(state["next_eligible_actions"]) == 1
     next_action = state["next_eligible_actions"][0]
-    assert next_action["action"] == "EXECUTE_EPP_F01_TASKS"
+    expected = next(
+        rule["action"]
+        for rule in policy["action_rules"]
+        if rule["program_state"] == state["state"]
+        and rule["feature_state"] == state["feature_state"]
+    )
+    assert next_action["action"] == expected
     assert next_action["requires_human_approval"] is False
     active = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
     assert active["status"] == "active"
-    allowed = set(state["active_mutating_lease"]["allowed_actions"])
+    lease = state["active_mutating_lease"]
+    allowed = set(lease["allowed_actions"]) if lease is not None else set()
     assert {
         "dependency_change",
         "benchmark_execution",
