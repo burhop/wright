@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-US3-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "story",
+  "subject": {
+    "git_commit": "ce8ac98db04ea9ad69050454468fbd6fac174384",
+    "git_tree": "0bce5277fc6e2cbbf78e34beec1888c4f97996d4",
+    "artifact_digests": [
+      { "path": "scripts/program_control/cli.py", "sha256": "6ec30c7c3db01a7c6bbd13938756a796b4dad3cf2a7d633bcffbff9a18ff2ff7" },
+      { "path": "scripts/program_control/dashboard.py", "sha256": "cf68651c7aee2c4603614ee1b10cdbf1018dca7fb7032e211f8de676cedd6fa5" },
+      { "path": "tests/program_control_plane/test_cli.py", "sha256": "aae37b1915645962113f762fa3a125dcc80e77df6e2896e09417cda0fff4bee8" },
+      { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "0b3154dc1c31427e164843e31a00b56f8bb2d189ce9dbb46d911e00591afe31f" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T21:18:13Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "US3-FOCUSED-MATRIX",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/program_control_plane/test_cli.py tests/program_control_plane/test_atomicity_redaction_and_compatibility.py -q.",
+      "environment": "Windows local worktree; short writable pytest temp root; offline",
+      "duration_ms": 35680,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_cli.py", "sha256": "aae37b1915645962113f762fa3a125dcc80e77df6e2896e09417cda0fff4bee8" },
+        { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "0b3154dc1c31427e164843e31a00b56f8bb2d189ce9dbb46d911e00591afe31f" }
+      ]
+    },
+    {
+      "check_id": "US3-WHOLE-MODULE-REGRESSION",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/program_control_plane -q; result 179 passed and 1 skipped.",
+      "environment": "Windows local worktree; short writable pytest temp root; offline",
+      "duration_ms": 71030,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "6ec30c7c3db01a7c6bbd13938756a796b4dad3cf2a7d633bcffbff9a18ff2ff7" },
+        { "path": "scripts/program_control/dashboard.py", "sha256": "cf68651c7aee2c4603614ee1b10cdbf1018dca7fb7032e211f8de676cedd6fa5" }
+      ]
+    },
+    {
+      "check_id": "US3-STATIC-LINT",
+      "method": "Run ./.venv/Scripts/ruff.exe check scripts/program_control tests/program_control_plane/test_cli.py tests/program_control_plane/test_atomicity_redaction_and_compatibility.py.",
+      "environment": "Windows local repository virtual environment; offline",
+      "duration_ms": 5020,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "6ec30c7c3db01a7c6bbd13938756a796b4dad3cf2a7d633bcffbff9a18ff2ff7" }
+      ]
+    },
+    {
+      "check_id": "US3-COMMITTED-SUBJECT-VALIDATION",
+      "method": "Run D:/Users/markb/miniconda3/python.exe scripts/validate-engineering-process-program.py validate --source HEAD --format text at ce8ac98db04ea9ad69050454468fbd6fac174384; result passed with release_eligible false.",
+      "environment": "Clean Windows local worktree; committed source only; offline",
+      "duration_ms": 7300,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "6ec30c7c3db01a7c6bbd13938756a796b4dad3cf2a7d633bcffbff9a18ff2ff7" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Read-only audit at 55499f95291e622ba5b25ded982a6bea5bf7ae33 identified the four-field generate-dashboard delivery-envelope contract defect before repair.",
+    "The first focused verification run found one incorrect test expectation for compact rather than canonical pretty JSON; the expectation was corrected without changing product behavior."
+  ],
+  "findings": [
+    {
+      "code": "MYPY_RUNNER_UNAVAILABLE",
+      "severity": "info",
+      "artifact": "pyproject.toml",
+      "disposition": "The existing local interpreters do not contain MyPy and no dependency was added. The required repository-gate MyPy attempt remains explicitly assigned to T062."
+    },
+    {
+      "code": "DASHBOARD_DELIVERY_NOT_PROVEN",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "Generation remains candidate_not_evidence; only T067-T068 may establish committed-current delivery."
+    }
+  ],
+  "rollback_subject": "git:55499f95291e622ba5b25ded982a6bea5bf7ae33 (pre-US3 implementation checkpoint)",
+  "delivery_relation": null
+}

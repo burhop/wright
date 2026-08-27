@@ -116,17 +116,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T042 [P] [US3] Add multi-fault collection, stable ordering, exit precedence, bounded recovery, and unknown-exception containment cases in `tests/program_control_plane/test_cli.py`
-- [ ] T043 [P] [US3] Add runtime-built credential/token/prompt/log/payload/endpoint/authority/command and Windows/UNC/POSIX absolute-path canaries across JSON/text/stdout/stderr in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
-- [ ] T044 [P] [US3] Add successful atomic replacement plus candidate-validation, write, flush, `fsync`, reread, replace, and interruption failure injection in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
-- [ ] T045 [P] [US3] Add before/after source-identity and allowed-target-only mutation assertions for valid and invalid runs in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
+- [x] T042 [P] [US3] Add multi-fault collection, stable ordering, exit precedence, bounded recovery, and unknown-exception containment cases in `tests/program_control_plane/test_cli.py`
+- [x] T043 [P] [US3] Add runtime-built credential/token/prompt/log/payload/endpoint/authority/command and Windows/UNC/POSIX absolute-path canaries across JSON/text/stdout/stderr in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
+- [x] T044 [P] [US3] Add successful atomic replacement plus candidate-validation, write, flush, `fsync`, reread, replace, and interruption failure injection in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
+- [x] T045 [P] [US3] Add before/after source-identity and allowed-target-only mutation assertions for valid and invalid runs in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
 
 ### Implementation for User Story 3
 
-- [ ] T046 [US3] Implement metadata allowlisting, bounded reason/recovery catalogs, relative-path rendering, and redacted internal failures in `scripts/program_control/cli.py`
-- [ ] T047 [US3] Implement same-directory UTF-8/LF temporary writing, flush, file-`fsync`, reread validation, atomic replace, and cleanup in `scripts/program_control/dashboard.py`
-- [ ] T048 [US3] Implement `generate-dashboard` candidate delivery envelopes plus `validate --delivery D` committed-current independent-passed envelopes and preserve-prior behavior without descendant search or stale-snapshot mutation in `scripts/program_control/cli.py`
-- [ ] T049 [US3] Run the complete US3 failure/redaction/immutability matrix and record exact evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US3.json`
+- [x] T046 [US3] Implement metadata allowlisting, bounded reason/recovery catalogs, relative-path rendering, and redacted internal failures in `scripts/program_control/cli.py`
+- [x] T047 [US3] Implement same-directory UTF-8/LF temporary writing, flush, file-`fsync`, reread validation, atomic replace, and cleanup in `scripts/program_control/dashboard.py`
+- [x] T048 [US3] Implement `generate-dashboard` candidate delivery envelopes plus `validate --delivery D` committed-current independent-passed envelopes and preserve-prior behavior without descendant search or stale-snapshot mutation in `scripts/program_control/cli.py`
+- [x] T049 [US3] Run the complete US3 failure/redaction/immutability matrix and record exact evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US3.json`
 
 **Checkpoint**: Failure behavior is inspectable and recovery is bounded without source mutation or leakage.
 
