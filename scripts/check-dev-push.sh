@@ -15,6 +15,8 @@ fi
 PYTHON_WORKSPACE_PATHS=(
   src/wright_engineering
   scripts/release
+  scripts/validate-engineering-process-program.py
+  scripts/program_control
   apps/api
   packages/core
   packages/agent_adapters
@@ -101,6 +103,19 @@ PLAYWRIGHT_TARGETS=()
 while IFS= read -r changed_file; do
   [[ -z "$changed_file" ]] && continue
   case "$changed_file" in
+    docs/programs/engineering-process-platform/*|specs/076-control-plane-validator/*)
+      CHECK_PYTHON=1
+      CHECK_DOCS=1
+      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      ;;
+    scripts/validate-engineering-process-program.py|scripts/program_control/*)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      ;;
+    tests/program_control_plane/*)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      ;;
     .github/workflows/docker-image-family.yml|docker/*|scripts/docker-*)
       CHECK_PYTHON=1
       PYTHON_TEST_TARGETS+=(

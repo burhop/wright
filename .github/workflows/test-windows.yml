@@ -43,6 +43,7 @@ jobs:
 
       - name: Run pytest
         run: |
+          uv run --extra runtime python -m pytest -q tests/program_control_plane
           uv run python -m pytest -q tests/native_runtime
           $pythonSuites = @(
             'apps/api/tests',

@@ -41,10 +41,10 @@ jobs:
         run: uv sync --all-packages --all-groups --reinstall-package wright-engineering
 
       - name: Lint with Ruff
-        run: uv run ruff check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+        run: uv run ruff check scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Check Formatting with Ruff
-        run: uv run ruff format --check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+        run: uv run ruff format --check scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Lint and package-test optional Hermes integration
         run: |
@@ -55,7 +55,7 @@ jobs:
       - name: Type Check with mypy
         run: |
           uv pip install mypy
-          uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
+          uv run mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
           uv run mypy apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
 
       - name: Validate Python package distributions
@@ -68,6 +68,7 @@ jobs:
 
       - name: Run Tests with pytest
         run: |
+          uv run --extra runtime python -m pytest -q tests/program_control_plane
           uv run python -m pytest -q tests/native_runtime tests/release/test_native_workflow_policy.py
           for python_suite in \
             apps/api/tests \

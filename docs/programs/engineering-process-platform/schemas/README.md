@@ -22,6 +22,10 @@ All machine-readable artifacts use JSON Schema draft 2020-12 and reject unknown 
 
 Schema validity is necessary, not sufficient. Digests, references, allowed transitions, independence, freshness, WIP, and exact-subject rules require semantic validation. Unknown fields fail closed unless a schema explicitly permits an extension point.
 
+The supported current contract is the exact v2 program-state/dashboard/report set plus the schema-v1 approval and verification records named above. Legacy program state is accepted only through the two ordered, byte-bound profiles below. Source `S` is the authoritative validator subject; optional dashboard container `C` must be its dashboard-only first-parent successor; delivery evidence `D` must be supplied explicitly and be a delivery-only successor of `C`. A generated snapshot remains `candidate_not_evidence` until that external envelope passes.
+
+If the validator is absent or incompatible, use the README catch-up protocol and manually verify Git commit/tree/program-tree identities, every referenced blob/digest, state/transition/approval continuity, roadmap acyclicity, lease/WIP, four independent readiness areas, and the sole next action. Do not treat an old dashboard as current and do not edit source evidence to make it parse.
+
 `program-state.schema.json`, `transition-evidence.schema.json`, and `approval.schema.json` retain structural support for immutable schema-v1 history while governing current records with schema v2 where applicable. That structural support is not open-ended compatibility: semantic validation accepts v1 states/transitions only when every byte and edge matches `epp-bootstrap-v1-r1-r9` or `epp-bridge-v1-r10-r19`, and accepts exactly one v2 migration successor.
 
 `committed-identity-correction.schema.json` is intentionally closed to `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` and its exact 37 factual claims. It is append-only evidence, not a general schema extension or waiver. Consumers must recompute every target from Git, require exact V4 approval binding and strict ancestry, retain original findings, and prove zero readiness/release effect. Unsupported consumers fail closed.

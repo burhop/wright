@@ -84,3 +84,9 @@ Before `IMPLEMENTATION_AUTHORIZED`, the feature must have:
 - no overdue blocking decision/risk and one available mutating lease.
 
 Any subject change invalidates approval and returns to the earliest affected lifecycle state.
+
+## EPP-F01 gate impact and evidence boundary
+
+EPP-F01 directly strengthens `PROG-01`, `PROG-02`, `PROG-05`, and `PROG-06` by validating exact committed subjects, compatibility, transitions, approvals, WIP, next-action derivation, and deterministic dashboard projection. Its local and CI gate routing also supports `PROD-10` and `PROD-11`, but it does not make either product gate pass: there is no product capability or browser page in EPP-F01.
+
+Validator success means the control-plane contract is internally valid. A generated dashboard is always `candidate_not_evidence`; a committed dashboard remains non-evidence until independent T068 delivery proof validates exact `S`, dashboard-only `C`, delivery-only `D`, and snapshot bytes. Neither result proves benchmark, commercial, dev-integration, publication, or release readiness.

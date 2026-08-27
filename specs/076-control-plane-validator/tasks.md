@@ -159,11 +159,11 @@
 
 **Purpose**: Integrate the focused suite into Wright's local gates, prove rollback/compatibility, and freeze a candidate for a different verifier.
 
-- [ ] T057 [P] Route `docs/programs/engineering-process-platform/**`, `scripts/program_control/**`, the entrypoint, and `tests/program_control_plane/**` through focused tests in `scripts/check-dev-push.sh`
-- [ ] T058 [P] Add `scripts/program_control` and focused tests to Ruff, formatting, MyPy, and early full-gate tranches in `scripts/check-dev-merge.sh` and `.github/workflows/python-quality.yml`
-- [ ] T059 [P] Add Windows focused program-control execution without duplicating validator semantics in `.github/workflows/test-windows.yml`
-- [ ] T060 Add regression coverage proving docs/control-plane changes cannot bypass validator routing in `tests/release/test_dev_push_process.py`
-- [ ] T061 Reconcile user/operator/developer docs, schema index, compatibility/rollback instructions, gate impacts, and unsupported claims in `docs/programs/engineering-process-platform/schemas/README.md`, `docs/programs/engineering-process-platform/gates.md`, `docs/contributing/dev-push-runbook.md`, and `specs/076-control-plane-validator/quickstart.md`
+- [x] T057 [P] Route `docs/programs/engineering-process-platform/**`, `scripts/program_control/**`, the entrypoint, and `tests/program_control_plane/**` through focused tests in `scripts/check-dev-push.sh`
+- [x] T058 [P] Add `scripts/program_control` and focused tests to Ruff, formatting, MyPy, and early full-gate tranches in `scripts/check-dev-merge.sh` and `.github/workflows/python-quality.yml`
+- [x] T059 [P] Add Windows focused program-control execution without duplicating validator semantics in `.github/workflows/test-windows.yml`
+- [x] T060 Add regression coverage proving docs/control-plane changes cannot bypass validator routing in `tests/release/test_dev_push_process.py`
+- [x] T061 Reconcile user/operator/developer docs, schema index, compatibility/rollback instructions, gate impacts, and unsupported claims in `docs/programs/engineering-process-platform/schemas/README.md`, `docs/programs/engineering-process-platform/gates.md`, `docs/contributing/dev-push-runbook.md`, and `specs/076-control-plane-validator/quickstart.md`
 - [ ] T062 Run focused pytest, Ruff, formatting, MyPy, planning-contract schema validation, manual quickstart, source-mutation audit, and the applicable local pre-push gate; record exact commands, environment, skips, failures, and digests in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-author.json`
 - [ ] T063 Exercise removal/manual-validation rollback and previous-compatible snapshot reading, then record immutable source and prior-dashboard identities in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-rollback.json`
 - [ ] T064 Inspect the full candidate diff for scope, secrets/private payloads, generated/binary artifacts, dependency drift, benchmark/product execution, and unauthorized external/Git changes in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-diff-audit.json`
