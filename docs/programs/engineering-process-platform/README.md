@@ -59,4 +59,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Continue EPP-F01 at T050 under lease revision 9 and proceed through T065 while evidence passes. Freeze the candidate at T065; T066–T068 require the exact independent-verifier/coordinator handoffs. In a separate clean dev-based worktree, EPP-F01B planning and analysis are complete but implementation remains unauthorized. Dependencies, benchmark execution, EPP-F01B implementation, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.
+Continue EPP-F01 at T057 under lease revision 9 and proceed through T065 while evidence passes. Freeze the candidate at T065; T066–T068 require the exact independent-verifier/coordinator handoffs. In a separate clean dev-based worktree, provisional EPP-F01B planning and analysis are complete but unincorporated; implementation remains unauthorized. Dependencies, benchmark execution, EPP-F01B implementation, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.

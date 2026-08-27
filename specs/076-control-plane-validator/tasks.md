@@ -140,16 +140,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T050 [P] [US4] Add fixed-clock, shuffled discovery/insertion order, two-run byte identity, and declared observation-field exclusion cases in `tests/program_control_plane/test_determinism.py`
-- [ ] T051 [P] [US4] Add seed, both ordered byte-bound v1 profiles, future-v1 and second-migration rejection, explicitly supported prior contract, added/deleted/imported/changed non-entrypoint generator module, dirty/helper and runtime-source bundle boundary violations, unsupported major/minor, and removed-validator rollback cases in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
-- [ ] T052 [P] [US4] Add repository-relative evidence resolvability, direct README links to the active Spec Kit subject and exact approval manifest, and empty-context walkthrough assertions in `tests/program_control_plane/test_evidence_walkthrough.py`
+- [x] T050 [P] [US4] Add fixed-clock, shuffled discovery/insertion order, two-run byte identity, and declared observation-field exclusion cases in `tests/program_control_plane/test_determinism.py`
+- [x] T051 [P] [US4] Add seed, both ordered byte-bound v1 profiles, future-v1 and second-migration rejection, explicitly supported prior contract, added/deleted/imported/changed non-entrypoint generator module, dirty/helper and runtime-source bundle boundary violations, unsupported major/minor, and removed-validator rollback cases in `tests/program_control_plane/test_atomicity_redaction_and_compatibility.py`
+- [x] T052 [P] [US4] Add repository-relative evidence resolvability, direct README links to the active Spec Kit subject and exact approval manifest, and empty-context walkthrough assertions in `tests/program_control_plane/test_evidence_walkthrough.py`
 
 ### Implementation for User Story 4
 
-- [ ] T053 [US4] Finalize deterministic semantic JSON and concise human report rendering from one model in `scripts/program_control/cli.py`
-- [ ] T054 [US4] Replace planning-language quickstart with exact supported commands, outputs, compatibility table, manual fallback, and rollback journey in `specs/076-control-plane-validator/quickstart.md` and `docs/programs/engineering-process-platform/README.md`
-- [ ] T055 [US4] Add operator/developer troubleshooting, limitations, reason-code reference, and support-safe evidence inspection in `scripts/README.md` and `docs/programs/engineering-process-platform/status-dashboard-contract.md`
-- [ ] T056 [US4] Run the complete US4 determinism/compatibility/evidence-walkthrough suite and record exact evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US4.json`
+- [x] T053 [US4] Finalize deterministic semantic JSON and concise human report rendering from one model in `scripts/program_control/cli.py`
+- [x] T054 [US4] Replace planning-language quickstart with exact supported commands, outputs, compatibility table, manual fallback, and rollback journey in `specs/076-control-plane-validator/quickstart.md` and `docs/programs/engineering-process-platform/README.md`
+- [x] T055 [US4] Add operator/developer troubleshooting, limitations, reason-code reference, and support-safe evidence inspection in `scripts/README.md` and `docs/programs/engineering-process-platform/status-dashboard-contract.md`
+- [x] T056 [US4] Run the complete US4 determinism/compatibility/evidence-walkthrough suite and record exact evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US4.json`
 
 **Checkpoint**: All four user stories are independently demonstrated locally; no integration or release claim follows.
 
