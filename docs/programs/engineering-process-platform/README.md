@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 implementing on `077-control-plane-validator` under lease revision 3
+**Status:** EPP-F01 blocked before v2 migration; material decisions `DEC-P0-013` and `DEC-P0-014` require human direction
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`EXECUTE_EPP_F01_TASKS` is the only eligible action and does not require another human approval. Execute the 68 dependency-ordered tasks under lease revision 3, retain tests-before-implementation evidence, and stop author mutation after candidate freeze for a separate independent verifier. The approved subject remains commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and all 21 artifact digests in `TR-0014`. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`RESOLVE_EPP_F01_MATERIAL_AMENDMENTS` is the only eligible action and requires the human. `DEC-P0-013` covers the closed compatibility bridge for authoritative v1 revisions 10–17; `DEC-P0-014` covers the non-circular source/container/delivery and generator-identity contract. The implementation approval is stale for these material changes. The preserved script drafts are blocked work-in-progress, no task is claimed complete, and no implementation may resume until the affected planning artifacts are amended, re-analyzed, frozen, and reapproved. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

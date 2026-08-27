@@ -45,11 +45,11 @@
       "last_success_at": null
     },
     "program_health": {
-      "status": "in_progress",
+      "status": "blocked",
       "passed_gates": 0,
       "required_gates": 7,
       "gates": [],
-      "blockers": ["Dashboard generator not implemented", "EPP-F01 implementation is active and no candidate is frozen"],
+      "blockers": ["Dashboard generator not implemented", "DEC-P0-013", "DEC-P0-014", "EPP-F01 implementation stopped before v2 migration"],
       "evidence": ["program-state.json", "roadmap.json", "audits/2026-08-26-omission-audits.md"],
       "fresh": false,
       "last_success_at": null
@@ -75,5 +75,5 @@
   },
   "release_eligible": false,
   "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
-  "next_action": "EXECUTE_EPP_F01_TASKS"
+  "next_action": "RESOLVE_EPP_F01_MATERIAL_AMENDMENTS"
 }

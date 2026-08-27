@@ -2,8 +2,8 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 18,
-  "state": "BLOCKED",
+  "revision": 17,
+  "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
     "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
@@ -50,7 +50,7 @@
       "AGENTS.md (managed Spec Kit section only)"
     ]
   },
-  "last_transition": "TR-0017",
+  "last_transition": "TR-0016",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -68,9 +68,9 @@
       "blockers": ["DEC-P0-001", "DEC-P0-004", "DEC-P0-006", "DEC-P0-011", "DEC-P0-012", "Repository external controls remain evidence requirements"]
     },
     "program_health": {
-      "status": "blocked",
+      "status": "in_progress",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the active unimplemented child feature", "DEC-P0-013", "DEC-P0-014", "EPP-F01 implementation stopped before v2 migration"]
+      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 implementation is active and no candidate is frozen"]
     }
   },
   "open_p0_decisions": [
@@ -85,20 +85,18 @@
     "DEC-P0-009",
     "DEC-P0-010",
     "DEC-P0-011",
-    "DEC-P0-012",
-    "DEC-P0-013",
-    "DEC-P0-014"
+    "DEC-P0-012"
   ],
   "next_eligible_actions": [
     {
-      "action": "RESOLVE_EPP_F01_MATERIAL_AMENDMENTS",
+      "action": "EXECUTE_EPP_F01_TASKS",
       "roadmap_item": "EPP-F01",
-      "requires_human_approval": true,
-      "reason": "Decide DEC-P0-013 and DEC-P0-014; the approved r1-through-r9 profile cannot silently accept v1 revisions 10 through 17, and the approved dashboard contracts contain unresolved S/C/D identity and schema-loop questions."
+      "requires_human_approval": false,
+      "reason": "EPP-F01 is implementing under lease revision 3; execute the 68 dependency-ordered tasks, preserve exclusions, and stop for independent verification after candidate freeze."
     }
   ],
   "approval": {
-    "status": "stale",
+    "status": "approved",
     "record": "evidence/approvals/APR-EPP-F01-IMPL-001.json"
   }
 }
