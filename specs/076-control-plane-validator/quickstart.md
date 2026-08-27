@@ -105,10 +105,17 @@ Status precedence does not average. One failed gate makes its area failed; no ot
 
 If Git metadata is absent, a schema version is unsupported, approval is stale, a digest differs, or lifecycle/roadmap/WIP/lease semantics are impossible, stop. Do not fall back to checkout bytes or manual dashboard edits.
 
+### Known committed-history correction
+
+The immutable history contains one known stable cause, `EPP-F01-US1-COMMITTED-IDENTITY-001`: six v2 transition output-digest mismatches and 31 wrong-tree field occurrences across state revisions 1–26. Do not edit those records. Until exact V4 approval exists, the validator must report the affected artifact, exact JSON pointer, recorded and Git-authoritative values, correction ID, and `resolution_status=unresolved`, emit no implementation authority, and stop.
+
+After V4 approval, only `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` may resolve the cause. A valid run recomputes `37/37`, retains the original findings with `resolution_status=resolved` and the correction reference, and proves that the four readiness areas, benchmark 0–100 counters, freshness, gates, candidate identity, approvals, and release eligibility are unchanged. Any missing/extra/substituted target, profile digest mismatch, non-ancestor target, forbidden readiness/authority target, or unsupported validator version fails closed. There is no manual acceptance flag and no recovery path that edits TR-0023 through TR-0025 or state revisions 1–26.
+
 ## 6. Compatibility and rollback
 
 - Windows and POSIX runs for the same committed blobs must agree semantically even when line endings differ in clean checkouts.
 - Only explicitly listed compatible schema/snapshot versions are accepted. Legacy v1 is limited to the closed revision-1-through-9 bootstrap and revision-10-through-19 bridge profiles; revision 20, any later v1 record, and a second v1-to-v2 migration fail closed. Unknown majors and undeclared minors also fail closed.
+- The committed-identity correction profile is an explicit compatibility boundary. Older readers that do not understand it fail closed; they must not silently ignore it or show a green historical result.
 - Removing the validator restores the README's manual verification path. Source evidence remains unchanged, and any validator-generated snapshot becomes stale/unsupported rather than authoritative.
 
 ## Acceptance Commands (implementation phase only)

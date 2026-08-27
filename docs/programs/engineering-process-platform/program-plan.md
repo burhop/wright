@@ -114,6 +114,8 @@ Every lifecycle transition is an append-only record conforming to [`schemas/tran
 
 The state snapshot is compare-and-swap: its prior revision/digest must match the accepted transition. No transition may be inferred from files merely existing, task boxes being checked, tests passing on another tree, or a dashboard being green.
 
+Historical evidence is never rewritten to repair factual metadata. The sole proposed exception mechanism is the exact closed profile `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`: it may dispose only its six enumerated transition-digest claims and 31 enumerated state-tree pointer claims after exact material-change/implementation approval and `37/37` Git-object recomputation. Original bytes and findings remain visible; partial, extra, generic, future, circular, authority, readiness, benchmark, gate, candidate, freshness, and release targets fail closed. A correction cannot correct another correction. Unsupported readers fail closed.
+
 ## 8. Human approvals and autonomy
 
 Human approval is required for:
@@ -128,6 +130,8 @@ Within an approved feature charter, the owning agent may perform isolated local 
 ## 9. Change control
 
 Material changes include user scope, readiness criteria, dependencies, architecture boundaries, persisted/public schemas, security/privacy, benchmark sampling/oracles/holdouts, compatibility/support claims, release order, approval roles, WIP/repair limits, or roadmap dependencies.
+
+Any committed-identity correction or change to its profile, target set, resolution semantics, compatibility behavior, or readiness non-interference proof is material. It invalidates current feature authority and requires a new exact digest-bound decision; it is never treated as editorial repair.
 
 A material change requires:
 

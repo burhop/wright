@@ -23,7 +23,7 @@ Validator identity uses a separate closed source-bundle manifest. At `S`, it con
 
 1. Resolve and validate `S`, source tree, and program tree.
 2. Load manifest inputs from Git blobs at `S` with strict duplicate-key rejection.
-3. Validate schemas, references, canonical/raw digests, lifecycle/history, roadmap, decisions/risks, approvals, WIP, pointer, and lease.
+3. Validate schemas, references, canonical/raw digests, lifecycle/history, roadmap, decisions/risks, approvals, WIP, pointer, and lease. If the approved closed committed-identity correction is present, recompute its literal `37/37` target set and derive finding disposition before continuing; an absent approval, partial/extra target, or forbidden-class effect fails closed.
 4. Validate the gate catalog and gate evidence for one exact `R`.
 5. Derive every required gate and then each independent area.
 6. Calculate release eligibility: all four areas passed for `R` and current human release approval bound to `R`.
@@ -63,6 +63,8 @@ Every required catalog gate appears exactly once. The catalog's closed evidence-
 
 The benchmark summary additionally reports target/counted, first-attempt/eventual, T0–T3, failed/blocked/stale/contaminated/not-tested, and coverage/oracle/artifact/partition/freshness deficits. The validator derives them from existing governed benchmark records and rejects coverage quota/intersection/equivalence-family defects, illegal qualification transitions, missing case/oracle/output references, incomplete artifact sets, broken holdout chains or contamination rules, invalid attempt ordinals/history, unsupported tier claims, and stale evidence. Exactly 100 target slots are assigned once by precedence to eventual-passed, failed, blocked, stale, contaminated, or not-tested, so those six counts sum to 100; absent slots and counted cases without terminal evidence are not-tested. First-attempt passed is a subset of eventual passed. Tier counts never exceed counted; T1/T2/T3 require T0, T2/T3 also require T1, and T2 and T3 may overlap. Deficit arrays remain independent checks and cannot be cleared by counter arithmetic. These fields never affect another area's status.
 
+The committed-identity correction is disclosed only under program-health provenance as its ID, exact evidence link, approved profile digest, `37/37` verification result, and unresolved/resolved finding counts. It is never a gate result or alternate authority. Applying it must leave all four area objects, the complete benchmark summary, data cutoff/freshness, release candidate, release approval, and `release_eligible` semantically identical to the same input set with the original findings undisposed. Any difference fails validation.
+
 ## Failure Atomicity
 
 Any discovery, read, parse, validation, computation, serialization, write, flush, `fsync`, reread, or replacement failure before the atomic commit point:
@@ -77,4 +79,4 @@ An interrupted process before replacement has the same recovery contract. A proc
 
 ## Seed, Compatibility, and Rollback
 
-The checked-in seed remains `contract_seed_not_evidence`. An output from an unknown generator or unsupported schema is stale. Removing/rolling back the validator leaves source evidence untouched, restores the documented manual validation path, and prevents its generated dashboards from being treated as current.
+The checked-in seed remains `contract_seed_not_evidence`. An output from an unknown generator or unsupported schema is stale. A reader that does not support the exact approved correction profile fails closed rather than ignoring it. Removing/rolling back the validator leaves source evidence untouched, restores the documented manual validation path, returns corrected findings to unresolved, and prevents its generated dashboards from being treated as current.

@@ -21,6 +21,8 @@ The dashboard always renders these separate areas in this order:
 
 Each area has its own status, required/passed gate numerator and denominator, gate IDs/statuses, blockers, evidence links/digests, freshness and last successful qualification. There is no weighted/composite score. Overall release eligibility is true only when every required gate in all four areas passes at the same exact candidate and a current human release approval exists.
 
+Program health also discloses committed-identity correction state: profile ID/link/digest, approved or proposed authority, exact verified/expected claim count, unresolved/resolved finding counts, and last verification subject/time. This disclosure is derived from generated evidence and may not hand-set a gate. Applying a correction must leave the four area objects, benchmark summary, freshness, candidate, release approval and release eligibility unchanged; any difference fails the snapshot.
+
 ## Truth rules
 
 - Status vocabulary: `not_started`, `in_progress`, `passed`, `blocked`, `failed`, `stale`.
@@ -71,3 +73,5 @@ Refresh never launches product runs, benchmark cases, MCPs, models, applications
 All views link to exact evidence and freshness, remain keyboard accessible with non-color status text, usable contrast, narrow/zoomed/reduced-motion behavior, and honest empty, loading, stale, blocked, failed, unavailable and unknown states. The page refreshes automatically only when its committed snapshot/evidence identity changes; refresh never invents status, reads uncommitted author state as authority, or mutates the program.
 
 The browser adapter must verify the snapshot schema and source identity before rendering. A failed refresh preserves the last clearly labeled prior snapshot and exposes staleness/failure; it must never replace it with a partial page or a hand-set green value. The page is a projection, not an approval, transition, next-action grant, or authority source.
+
+EPP-F01B must render the correction disclosure and original/resolved findings without editing them. Automatic refresh occurs only when committed evidence identity changes; a proposed, unauthorized, stale, partial or unsupported correction renders an honest blocker and never changes benchmark progress or another readiness area's color.

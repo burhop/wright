@@ -100,4 +100,6 @@ Missing manager/platform evidence, adapter mismatch, registry failure, digest di
 
 Preserve immutable subjects. Never overwrite PyPI files or rebuild an old OCI version. Publish a corrected patch when subject bytes change; yank only for an approved broken/incompatible/vulnerable/prohibited reason. Restore `latest` only to an already verified digest. Docker Hub recovery copies the recorded GHCR digest; it does not rebuild.
 
+The closed committed-identity correction is a compatibility boundary. Dev integration evidence must prove exact V4 approval, `37/37` target verification, original-finding retention, unsupported-reader fail-closed behavior, and unchanged product/benchmark/commercial/program-health area inputs and release eligibility. Rollback to an older validator returns the findings to unresolved and blocks integration/release; it must not silently ignore the profile or materialize corrected historical bytes.
+
 Native rollback uses only retained compatible runtimes and the packaged schema bounds. `recovery_required`, residue, incompatible state or identity mismatch is a stop condition. Codex failure does not authorize routing through Hermes or vice versa. Keep the GitHub Release absent/draft until all exact public surfaces and docs verify.

@@ -1,0 +1,39 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F01-REPAIR-PLANNING-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "bundle_id": null,
+  "decision": "approved_with_conditions",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47",
+    "git_tree": "574cd8919c62086e7b657f14c116ee4c6b2429ea",
+    "program_tree": "138debc23878ec34991af7e824667091c57b14e7",
+    "artifact_digests": [
+      {
+        "path": "evidence/transitions/TR-0026.json",
+        "sha256": "82859c79a8b0384108fc4c2e66f0b24da86990f520ec06dc0682b63797ab77f4"
+      },
+      {
+        "path": "evidence/verification/EPP-F01-US1.json",
+        "sha256": "3f0ba75078b8afa4e01b3fd68713dd9e43b4edfd576890a8c3331d6c09a96352"
+      }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T15:26:54Z",
+  "expires_at": null,
+  "review": {
+    "due_at": null,
+    "last_reviewed_at": "2026-08-27T15:26:54Z"
+  },
+  "supersedes": [],
+  "revocation_events": [],
+  "conditions": [
+    "Authorize only planning-document, contract and program-control-evidence amendments for stable cause EPP-F01-US1-COMMITTED-IDENTITY-001, bounded read-only audits, Spec Kit analysis, repair design within the existing allowance, and freezing a new exact approval subject.",
+    "Do not rewrite TR-0023 through TR-0025 or archived state revisions 1 through 26, weaken exact Git-object identity, resume implementation, implement EPP-F01B, add dependencies, or execute product or benchmark systems.",
+    "Do not push, open or merge a PR, integrate to dev, make external changes, publish or release; stop for replacement exact material_change and feature_implementation approvals."
+  ]
+}

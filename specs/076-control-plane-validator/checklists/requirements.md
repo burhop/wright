@@ -36,3 +36,4 @@
 - Final bounded repair validation passed after the four independent audits closed deterministic D selection, validator/readiness semantics, authority wording, legacy byte closure, source-bundle closure, delivery independence, and assertion-level benchmark proof.
 - Committed Git object bytes are the exact committed-evidence identity; checkout representation and dirtiness are separate reportable facts.
 - The specification includes UX, failure/recovery, inspectable I/O, tests, closed legacy compatibility, non-circular dashboard delivery, rollback, and benchmark-policy coverage while excluding process generation and execution.
+- Planning validation iteration 3 passed after the four independent committed-identity audits reconciled the defect to a closed 37-claim profile, added explicit user diagnostics and failure behavior, preserved independent readiness/release gates, and left DEC-P0-016 plus V4 exact approval visibly implementation-blocking.

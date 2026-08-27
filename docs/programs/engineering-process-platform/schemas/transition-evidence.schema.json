@@ -839,21 +839,42 @@
             "migration"
           ],
           "properties": {
+            "authority_kind": {
+              "const": "planning_reanalysis"
+            },
             "required_scopes": {
-              "const": [
-                "material_change",
-                "feature_implementation"
+              "oneOf": [
+                {
+                  "const": [
+                    "material_change",
+                    "feature_implementation"
+                  ]
+                },
+                {
+                  "const": [
+                    "material_change"
+                  ]
+                }
               ]
             },
             "approval_records": {
-              "type": "array",
-              "minItems": 2,
-              "maxItems": 2,
-              "uniqueItems": true,
-              "items": {
-                "type": "string",
-                "pattern": "^evidence/approvals/APR-EPP-F01-(MC|IMPL)-[0-9]{3}\\.json$"
-              }
+              "oneOf": [
+                {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^evidence/approvals/APR-EPP-F01-(MC|IMPL)-[0-9]{3}\\.json$"
+                  }
+                },
+                {
+                  "const": [
+                    "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                  ]
+                }
+              ]
             },
             "subject": {
               "type": "object",
@@ -926,7 +947,74 @@
                 }
               }
             }
-          }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "required_scopes": {
+                    "const": [
+                      "material_change"
+                    ]
+                  }
+                },
+                "required": [
+                  "required_scopes"
+                ]
+              },
+              "then": {
+                "required": [
+                  "authority_kind"
+                ],
+                "properties": {
+                  "approval_records": {
+                    "const": [
+                      "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                    ]
+                  },
+                  "subject": {
+                    "properties": {
+                      "git_commit": {
+                        "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47"
+                      },
+                      "git_tree": {
+                        "const": "574cd8919c62086e7b657f14c116ee4c6b2429ea"
+                      },
+                      "program_tree": {
+                        "const": "138debc23878ec34991af7e824667091c57b14e7"
+                      },
+                      "artifact_count": {
+                        "const": 2
+                      },
+                      "manifest_transition": {
+                        "const": "TR-0026"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "required_scopes": {
+                    "const": [
+                      "material_change",
+                      "feature_implementation"
+                    ]
+                  }
+                },
+                "required": [
+                  "required_scopes"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "authority_kind": false
+                }
+              }
+            }
+          ]
         },
         "independent_verifier": {
           "oneOf": [

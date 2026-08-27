@@ -44,6 +44,11 @@
       "class_id": "TRANSITION_RECORD",
       "schema_id": "https://wright.local/programs/epp/transition-evidence.schema.json",
       "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "CONTROL_IDENTITY_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/committed-identity-correction.schema.json",
+      "source_role": "append_only_evidence"
     }
   ],
   "gates": [
@@ -785,7 +790,7 @@
       "assertions": [
         {
           "assertion_id": "PROG-01-A01",
-          "requirement": "Schemas parse, references/digests match, roadmap is acyclic, state revision is monotonic, eligibility is derived, and dashboard is generated from source evidence."
+          "requirement": "Schemas parse, references/digests match, roadmap is acyclic, state revision is monotonic, eligibility is derived, and dashboard is generated from source evidence. Any committed-identity correction has exact V4 approval, strict-ancestor targets, literal 37/37 Git-object proof, retained findings, and zero readiness/release effect."
         }
       ],
       "freshness": {
@@ -798,7 +803,8 @@
       "evidence_policy": {
         "required_classes": [
           "STATE_SNAPSHOT",
-          "TRANSITION_RECORD"
+          "TRANSITION_RECORD",
+          "CONTROL_IDENTITY_CORRECTION"
         ],
         "independent_verifier_required": true
       }
@@ -893,7 +899,7 @@
       "assertions": [
         {
           "assertion_id": "PROG-05-A01",
-          "requirement": "No hidden or overdue P0 question/risk/exception; material changes invalidate affected evidence and approvals; decision register is current."
+          "requirement": "No hidden or overdue P0 question/risk/exception; material changes invalidate affected evidence and approvals; decision register is current; no correction acts as an authority, readiness, benchmark, freshness, candidate, gate, or release waiver."
         }
       ],
       "freshness": {
@@ -906,7 +912,8 @@
       "evidence_policy": {
         "required_classes": [
           "STATE_SNAPSHOT",
-          "TRANSITION_RECORD"
+          "TRANSITION_RECORD",
+          "CONTROL_IDENTITY_CORRECTION"
         ],
         "independent_verifier_required": false
       }

@@ -60,6 +60,7 @@ The following material contract decisions are part of the exact implementation-a
 7. Accept only explicitly declared compatible schema versions. Unknown majors and undeclared newer minors fail closed.
 8. Identify the validator by the canonical digest of the closed, bounded, path-sorted tracked entrypoint-plus-`scripts/program_control/**/*.py` bundle, reject local imports outside it, and test add/delete/change—not by one entrypoint blob. Use one gate-row shape with an explicit per-gate `fresh` value in both validation report and dashboard.
 9. Keep the bytes generated from `S` permanently labeled `candidate_not_evidence`. A `committed_valid` result exists only in the validation delivery envelope after passing evidence from an independent verifier in explicit descendant `D` proves exact dashboard bytes, the `S`/`C` first-parent and diff relation, and a delivery-only `C..D` change. Neither `C` nor `D` is embedded in the dashboard.
+10. Add one closed correction profile, `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`, for the stable committed-identity cause discovered at revision 27. It enumerates a literal 37-claim set: six v2 transition output-digest pointers and 31 wrong-tree pointers in immutable state revisions 1–26. Each target is bound to exact Git identities and is a strict ancestor of the correction-containing commit. The profile is append-only factual disposition, never a rewrite, waiver, wildcard, readiness input, approval, or generic override. It becomes effective only when exact V4 material-change and implementation approvals accept DEC-P0-016 and bind the frozen profile digest. Older validators fail closed. This amendment adds one task, bringing the plan to 69 tasks while preserving all historical task IDs.
 
 Research rationale and rejected alternatives are in [research.md](research.md). Exact entities and migrations are in [data-model.md](data-model.md).
 
@@ -76,6 +77,7 @@ specs/076-control-plane-validator/
 ├── quickstart.md
 ├── contracts/
 │   ├── cli.md
+│   ├── committed-identity-correction.schema.json
 │   ├── dashboard-generation.md
 │   ├── gate-catalog.schema.json
 │   ├── gate-evidence.schema.json
@@ -125,6 +127,7 @@ docs/programs/engineering-process-platform/
 ├── status-dashboard-contract.md
 └── schemas/
     ├── dashboard.schema.json
+    ├── committed-identity-correction.schema.json
     ├── gate-catalog.schema.json
     ├── gate-evidence.schema.json
     ├── legacy-compatibility-profile.schema.json
@@ -142,7 +145,7 @@ docs/programs/engineering-process-platform/
 1. **Resolve subject**: find repository root; record HEAD, tree, worktree status, platform representation, and the requested committed source commit `S` without following untrusted paths. Resolve optional `C` from `--container`; otherwise infer only `HEAD` when its first parent is `S` and the diff is dashboard-only. Resolve `D` only from optional `--delivery`, require resolved `C`, and verify exact first-parent and delivery-only diff rules; never search for or infer `D`. An absent `C` or `D` remains candidate/non-evidence rather than guessed current delivery.
 2. **Load exact inputs and bind the executing validator bundle**: enumerate an allowlisted authoritative set with `git ls-tree`/`git cat-file`; strict-decode UTF-8 JSON while rejecting duplicate keys. Define the complete validator source bundle as the tracked regular blob `scripts/validate-engineering-process-program.py` plus all tracked regular `*.py` blobs recursively below `scripts/program_control/` at `S`, normalized, path-unique, sorted, at most 100 files and 2 MiB total. Require every loaded local validator module to resolve inside those roots; require runtime `HEAD` to carry identical blob IDs for every bundle path and no dirty/untracked/ignored bundle path, permitting only declared Git text/EOL checkout representation. Reject symlinks, submodules, missing/extra bundle entries, out-of-bundle local imports, and any runtime/source mismatch before pass, generation, or recomputation; hash the canonical `S` manifest and never treat checkout bytes as committed evidence.
 3. **Validate contracts**: map each artifact to an explicit compatible schema; validate Draft 2020-12 structure; reject unknown majors and undeclared minors.
-4. **Validate semantics**: check normalized safe references, raw and canonical digests, lifecycle/event graphs, revision chain, complete transition manifests, roadmap DAG and eligibility, approvals, P0 due dates, WIP, pointer, and lease identity/scope.
+4. **Validate semantics**: check normalized safe references, raw and canonical digests, lifecycle/event graphs, revision chain, complete transition manifests, roadmap DAG and eligibility, approvals, P0 due dates, WIP, pointer, and lease identity/scope. If the one known committed-identity correction is present, require exact schema/profile identity, V4 approval binding, strict-ancestor targets, literal target-set equality, `37/37` Git-object recomputation, and zero forbidden-class or readiness effect before classifying the original findings as resolved; otherwise retain them as unresolved and fail closed.
 5. **Derive readiness**: match every catalog assertion to exactly one same-ID evaluator result for one exact release candidate `R`. The catalog carries a closed evidence-class registry mapping each class to expected schema ID and source role; each evidence reference carries all three, resolves to the same path/digest/schema/role in the authoritative source manifest, and cannot satisfy a class by relabeling another artifact. A gate pass must cover every catalog-required class. A gate passes only when every required assertion is passing, supporting, fresh, evidence-backed, class-complete, evaluator-matched, and independently verified when policy requires; aggregate gate rows are derived and never authoritative inputs. Validate the existing benchmark coverage, qualification-transition, process/oracle/output, artifact-completeness, holdout-ledger, attempt-history, tier, contamination, and freshness invariants before deriving benchmark counters. Aggregate each area independently with precedence `failed > blocked > stale > in_progress > not_started`; calculate release eligibility only from four passed areas plus a current exact-subject human release approval. Validator success is independent of the resulting area/release statuses.
 6. **Render one report model**: deterministic findings, shared gate rows including per-gate `fresh`, and next action feed both terminal text and versioned machine JSON. Human output cannot diverge from the model.
 7. **Write a dashboard candidate locally**: serialize UTF-8/LF with `generation_status=candidate_not_evidence`, flush and `fsync`, reread and validate temporary bytes, then `os.replace`. A failure before replacement preserves prior bytes; no fallible validation occurs after the commit point.
@@ -150,16 +153,17 @@ docs/programs/engineering-process-platform/
 
 ## Error, Privacy, and Recovery Contract
 
-- Findings contain stable code, severity, repository-relative artifact, invariant, bounded evidence identity, consequence, and smallest recovery action.
+- Findings contain stable code, severity, repository-relative artifact, exact JSON pointer when applicable, invariant, bounded evidence identity, consequence, smallest recovery action, resolution status, and correction reference. Original findings remain visible after disposition.
 - Findings are sorted by severity, code, normalized artifact, and invariant; safe independent findings are collected in one run.
 - Raw JSON values, schema exception values, shell commands/arguments, prompts, logs, credentials, tokens, cookies, private endpoints, artifact bodies, reusable authority, and unapproved absolute paths are never emitted.
 - Validation never mutates inputs. Generation may change only its declared target and temporary sibling; failure removes the temporary file and leaves the previous snapshot byte-identical.
-- Removing the validator restores the documented manual validation procedure and makes its incompatible snapshots stale; source evidence requires no rollback.
+- Removing the validator restores the documented manual validation procedure and makes its incompatible snapshots stale; source evidence requires no rollback. A validator that cannot interpret the closed correction profile fails closed rather than treating historical identity failures as passing.
 
 ## Verification Strategy
 
 - A frozen valid fixture and the current committed control plane must pass within 5 seconds and produce at most 1 MiB of machine output at current program scale.
 - Parameterized raw-byte or semantic single-fault fixtures cover every fail-closed class in FR-003 through FR-009; a multi-fault fixture proves deterministic aggregation.
+- Correction fixtures prove the exact six transition claims and exact 26 state rows/31 pointers, canonical state digests, strict ancestry, exact approval binding, `37/37` recomputation, rejection of every addition/omission/substitution/range/wildcard/self/future/correction target, preservation of original findings, and byte-identical readiness/release projections before and after disposition.
 - Git fixtures prove LF blob identity survives clean CRLF checkout representation, dirty/mixed endings are separate observations, paths with spaces work, and no mutating Git command runs.
 - A four-by-status dashboard matrix proves area independence; the 100-terminal-success trap proves other areas and release approval remain independent.
 - Atomic failure injection covers candidate validation, write, flush/`fsync`, and replace failures with byte-for-byte prior snapshot preservation and no residue.

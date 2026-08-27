@@ -154,16 +154,27 @@ Every persisted foundation, story, rollback, diff-audit, candidate, independent-
 
 **Alternatives rejected**: silently selecting an arbitrary descendant as `C`, hashing only the entrypoint, inferring gate freshness from area freshness, embedding `C`/`D` evidence in dashboard bytes, or regenerating after every delivery-only record.
 
+## R-016 — Closed committed-identity correction (proposed DEC-P0-016)
+
+**Decision requiring exact V4 approval**: Preserve TR-0023 through TR-0025 and state revisions 1–26 byte-for-byte. Add the single closed profile `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`, whose literal target set contains six transition output-digest pointers plus 31 occurrences of the commit-ID-as-tree factual defect across the 26 state records. Bind every target to its introducing commit/tree, Git blob, raw SHA-256, exact pointer, and canonical state digest where applicable. The wrong recorded tree `255f2424ff11a9300f31b7a5506279d63d149e8f` resolves only by reading commit `ad162cca048ad23d848673ec4f49f588dcc77aff`'s tree object, `e6a7553036a505003a959eebd0efd3e1683c431a`.
+
+The profile is a factual-metadata disposition, not a virtual rewrite or generic exception. Validation must recompute `37/37`, require every target container to be a strict ancestor of the correction-containing commit, retain each original finding with `resolution_status=resolved` and the correction reference, and reject additions, omissions, substitutions, wildcards, ranges, same/future/circular targets, or corrections of corrections. It cannot target or affect state digests/revisions, lifecycle edges, changed-path manifests, approvals, authority, readiness/gate evidence, benchmark/release evidence, candidates, freshness, or the correction record itself. Older validators fail closed.
+
+**Commercial and benchmark non-interference**: Applying the profile changes only program-health reporting of these exact factual findings. Product readiness, benchmark readiness and all 0–100 counters, commercial readiness, program-health gate inputs other than the correction disclosure, freshness, candidate identity, approval status, release eligibility, and rollback obligations remain byte-for-byte/semantically unchanged. PROG-01 and PROG-05 remain blocked until DEC-P0-016 and the exact profile digest are approved and validator evidence proves the constraints.
+
+**Alternatives rejected**: rewriting immutable evidence; weakening Git-blob identity; accepting a generic correction grammar; treating a commit object ID as its tree ID; hiding original findings; or allowing a correction to make any readiness or release obligation green.
+
 ## Independent Audit Synthesis
 
 | Audit | Confirmed strengths | Material omission found | Resolution |
 |---|---|---|---|
-| Repository architecture | Repo-local CLI, existing dependency, modular tests | Markdown-only gate authority | Add gate catalog/evidence contracts |
-| Contract semantics | Revisions 1–9 and approval manifest are intact | State-domain ambiguity, incomplete lease, dashboard self-reference, mutable approval semantics | R-004 through R-008; bootstrap profile; approval required |
-| Verification strategy | Existing atomic/redaction/Git patterns are reusable | Current atomic tests lack injected failure; docs-only changes can skip validator tests | R-011 and R-013 |
+| Engineering usability | Stable codes and one report model | Correction state and exact pointer were not visible; recovery docs could imply rewriting | Add resolution fields, exact pointer/correction ID, honest unresolved/resolved states, and a known-history recovery journey |
+| Architecture | Git-object identity remains authoritative | The wrong tree claim occurs 31 times, not once; v2 authority could not encode planning-only approval | Close the literal 37-claim set and add a closed planning/re-analysis authority variant |
+| Commercial/release | Four readiness areas and release approval remain independent | A correction could be mistaken for a waiver or green signal | DEC-P0-016, PROG-01/PROG-05 disclosure, old-reader fail-closed, and zero readiness/release effect |
+| Benchmark quality | Existing benchmark invariants are separate | A permissive profile could touch counts, qualification, coverage, or freshness | Explicitly forbid all benchmark/readiness targets and prove projection equality before/after correction |
 
 No audit recommended product implementation, benchmark generation/execution, dependency changes, or external activity.
 
 ## Remaining Material Questions
 
-`DEC-P0-013` and `DEC-P0-014` are decided for planning by the human direction recorded in ADRs 0013 and 0014. No material design question remains hidden. R-004 through R-008 and R-014 through R-015 alter or complete approved program semantics and therefore remain **implementation-blocking until the human approves the newly frozen exact combined feature/material-change subject**. The bridge fixture's null checkpoint is resolved at validation time only from that exact approval; it is neither mutated nor a coordinator default. Planning, checklist generation, task regeneration, read-only analysis, and bounded audits may continue; implementation may not.
+`DEC-P0-013` and `DEC-P0-014` are decided. `DEC-P0-016` is the sole material open decision: whether to accept the exact closed 37-claim profile and its strict non-interference semantics. It remains **implementation-blocking until the human approves the newly frozen V4 combined feature/material-change subject**. No generic correction mechanism, history rewrite, or readiness effect is assumed. Planning, checklist/task amendment, read-only analysis, and bounded audits may continue; implementation may not.

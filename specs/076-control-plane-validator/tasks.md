@@ -6,7 +6,7 @@
 
 **Tests**: Required by FR-020 and SC-002–SC-010. Story tests are written first and must fail for the intended missing behavior before implementation.
 
-**Authority gate**: Do not execute any checkbox until a replacement exact approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject, authorizes only these 68 EPP-F01 tasks plus R-004 through R-008 and R-014 through R-015 / `DEC-P0-013`, `DEC-P0-014`, and the EPP-F01 boundary in `DEC-P0-015`, binds this task file and every planning contract by digest, and reactivates the implementation lease for the exact paths below. The earlier approval bundle is stale. Approval does not authorize EPP-F01B browser implementation, push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
+**Authority gate**: Do not execute any checkbox until a replacement exact V4 approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject, authorizes only these 69 EPP-F01 tasks plus R-004 through R-008, R-014 through R-016 / `DEC-P0-013` through `DEC-P0-016`, binds this task file, every planning contract, and the exact closed correction profile by digest, and reactivates the implementation lease for the exact paths below. All earlier implementation bundles are stale. Approval does not authorize EPP-F01B browser implementation, push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -65,17 +65,18 @@
 - [x] T021 [P] [US1] Add exact blob/canonical digest, monotonic revision, append-only history, legal domain/event edge, both closed legacy profiles, bridge approval-subject binding, no-future-v1/single-migration, and complete-manifest cases in `tests/program_control_plane/test_transition_chain.py`
 - [x] T022 [P] [US1] Add DAG cycle, dependency, tie ambiguity, status/evidence, blocking decision/risk, approval scope/freshness/revocation, WIP/pointer, and lease identity/action cases in `tests/program_control_plane/test_roadmap_approval_and_lease.py`
 - [x] T023 [P] [US1] Add LF-blob/clean-CRLF, mixed/dirty checkout, detached/missing Git, path-with-spaces, unsafe path/symlink, dirty/untracked/ignored validator helpers, runtime-HEAD-versus-explicit-S bundle mismatch, loaded-module path escape, and no-mutating-Git-command cases in `tests/program_control_plane/test_git_subject.py`
+- [ ] T069 [US1] Add the exact closed `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` contract and tests for its six transition claims, 26 state rows/31 pointers, Git-object and canonical-state identities, strict ancestry, V4 approval binding, `37/37` recomputation, visible finding disposition, readiness non-interference, and rejection of every added, omitted, substituted, wildcard, range, same/future/circular, correction, authority, readiness, gate, benchmark, freshness, candidate, or release target in `tests/program_control_plane/test_transition_chain.py` and `tests/program_control_plane/test_cli.py`
 - [ ] T024 [US1] Add valid end-to-end and multi-fault deterministic CLI cases including optional `--container`, constrained `HEAD` inference, explicit-only `--delivery`, every C/D rejection path, and proof that valid blocked/not-started readiness still exits zero while invalid/ambiguous authority exits four, with no source changes, current-program runtime under 5 seconds, and machine output at most 1 MiB in `tests/program_control_plane/test_cli.py`
 
 ### Implementation for User Story 1
 
 - [ ] T025 [US1] Implement normalized validation subject and complete authoritative-input manifest resolution in `scripts/program_control/git_subject.py`
-- [ ] T026 [US1] Implement schema/reference/raw/canonical digest and append-only transition/history semantic checks in `scripts/program_control/validation.py`
+- [ ] T026 [US1] Implement schema/reference/raw/canonical digest and append-only transition/history semantic checks, including the exact approval-bound closed correction profile and visible original-finding disposition with zero readiness effect, in `scripts/program_control/validation.py`
 - [ ] T027 [US1] Implement roadmap graph, decision/risk due status, approval freshness/scope, WIP/pointer, lease, and sole-next-action derivation in `scripts/program_control/validation.py`
-- [ ] T028 [US1] Implement stable finding/report entities, deterministic aggregation/sorting, and fail-closed precedence in `scripts/program_control/validation.py`
+- [ ] T028 [US1] Implement stable finding/report entities including exact nullable pointer, resolution status and nullable correction reference; retain original findings after disposition; and implement deterministic aggregation/sorting and fail-closed precedence in `scripts/program_control/validation.py`
 - [ ] T029 [US1] Implement `validate` argument parsing including optional `--container`, explicit/constrained-inferred container resolution, optional explicit-only `--delivery` with no descendant search, validator-versus-readiness verdict separation, versioned JSON/text rendering, bounded exits, and top-level exception containment in `scripts/program_control/cli.py` and `scripts/validate-engineering-process-program.py`
-- [ ] T030 [US1] Document exact validate prerequisites, pass/fail/blocked semantics, evidence inspection, and recovery in `docs/programs/engineering-process-platform/README.md` and `scripts/README.md`
-- [ ] T031 [US1] Run the complete US1 fixture matrix plus current-control-plane validation and record exact evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US1.json`
+- [ ] T030 [US1] Document exact validate prerequisites, pass/fail/blocked semantics, evidence inspection, known-history correction diagnostics, compatibility, and recovery in `docs/programs/engineering-process-platform/README.md` and `scripts/README.md`
+- [ ] T031 [US1] Run the complete US1 fixture matrix plus current-control-plane validation, preserve immutable `EPP-F01-US1.json`, and append exact repair evidence in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US1-repair.json`
 
 **Checkpoint**: US1 is independently useful as a read-only validator and the suggested MVP stopping point.
 
@@ -213,7 +214,7 @@ exact implementation + material-change approval
 
 - Tests precede their corresponding implementation tasks and must fail for the intended missing behavior.
 - T009–T016 depend on T006–T008; T017–T018 may proceed after their relevant schema expectations are fixed; T019 depends on all foundation work.
-- T025–T029 depend on T020–T024; T030–T031 depend on the US1 implementation.
+- T069 follows the already-complete T020–T023 tests and MUST complete before T024 or any remaining US1 implementation. T025–T029 depend on T020–T024 and T069; T030–T031 depend on the US1 implementation.
 - T036–T040 depend on T032–T035; T041 depends on all US2 work.
 - T046–T048 depend on T042–T045; T049 depends on all US3 work.
 - T053–T055 depend on T050–T052 and prior stories; T056 depends on all US4 work.
@@ -248,9 +249,9 @@ exact implementation + material-change approval
 
 ## Task Summary
 
-- Total tasks: 68
+- Total tasks: 69
 - Setup/foundation: 19
-- US1: 12
+- US1: 13
 - US2: 10
 - US3: 8
 - US4: 7
@@ -259,7 +260,8 @@ exact implementation + material-change approval
 
 ## Notes
 
-- These 68 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
+- These 69 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
+- T069 is intentionally numbered append-only while placed at its dependency-ordered execution point. Existing task identities and the 23 completed task records are not renumbered or reinterpreted.
 - No task adds or upgrades a dependency, changes product runtime, creates/executes benchmark cases, contacts external systems, pushes, opens/merges a PR, integrates to `dev`, publishes, or releases.
 - Task checkboxes are progress markers, not lifecycle or approval evidence.
 - Optional Spec Kit auto-commit hooks remain disabled for this workflow because reviewed allowlist staging is required; no `git add .` may be used.

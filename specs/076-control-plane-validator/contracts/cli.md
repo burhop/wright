@@ -41,7 +41,7 @@ Text and JSON are renderings of the same schema-valid validation report. Text is
 
 1. validator verdict, exact source identity, closed validator source-bundle digest, explicit/`HEAD`-inferred/absent container resolution, and explicit/absent delivery resolution;
 2. checkout representation/cleanliness;
-3. highest-severity findings in deterministic order;
+3. highest-severity findings in deterministic order, including exact pointer, expected/actual bounded digests, resolution status, and correction reference for committed-identity findings;
 4. four readiness areas in fixed order;
 5. release eligibility and exact approval status;
 6. sole next action or blocker;
@@ -67,12 +67,15 @@ Any nonzero result emits no authorized next action. Multiple safe independent fi
 
 ## Stable Finding Requirements
 
-Every finding contains a stable code, severity, repository-relative artifact identifier, invariant, bounded digest/ID evidence, consequence, and smallest safe recovery. Sorting is severity rank, code, artifact, invariant. Examples of mandatory classes include:
+Every finding contains a stable code, severity, repository-relative artifact identifier, exact JSON pointer when applicable, invariant, bounded digest/ID evidence, consequence, smallest safe recovery, `resolution_status`, and nullable `correction_ref`. Original findings remain visible after an approved correction resolves them. Sorting is severity rank, code, artifact, invariant. Examples of mandatory classes include:
 
 - `JSON_DUPLICATE_KEY`
 - `SCHEMA_MAJOR_UNSUPPORTED`
 - `SCHEMA_MINOR_UNSUPPORTED`
 - `STATE_DIGEST_MISMATCH`
+- `COMMITTED_IDENTITY_MISMATCH`
+- `COMMITTED_IDENTITY_CORRECTION_INVALID`
+- `COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED`
 - `TRANSITION_EDGE_ILLEGAL`
 - `ROADMAP_CYCLE`
 - `NEXT_ACTION_AMBIGUOUS`
@@ -94,4 +97,4 @@ Git is invoked by argument array with `shell=False`. User-provided revisions and
 
 ## Compatibility
 
-Only explicitly listed producer/consumer versions are accepted. Legacy v1 is limited to `epp-bootstrap-v1-r1-r9` and the enumerated `epp-bridge-v1-r10-r19`; no later v1 record and no second v1-to-v2 migration is accepted. Unknown major and undeclared newer minor versions fail closed. Seed and generated dashboard bytes never claim committed validity; only the external validation delivery envelope can prove it.
+Only explicitly listed producer/consumer versions are accepted. Legacy v1 is limited to `epp-bootstrap-v1-r1-r9` and the enumerated `epp-bridge-v1-r10-r19`; no later v1 record and no second v1-to-v2 migration is accepted. The only committed-identity correction is the exact V4-approved `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`; an older reader, different profile, partial target set, or unauthorized profile fails closed. Unknown major and undeclared newer minor versions fail closed. Seed and generated dashboard bytes never claim committed validity; only the external validation delivery envelope can prove it.

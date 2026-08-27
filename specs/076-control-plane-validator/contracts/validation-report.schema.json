@@ -39,15 +39,18 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["code", "severity", "artifact", "invariant", "evidence", "consequence", "recovery"],
+        "required": ["code", "severity", "artifact", "json_pointer", "invariant", "evidence", "consequence", "recovery", "resolution_status", "correction_ref"],
         "properties": {
           "code": { "$ref": "#/$defs/code" },
           "severity": { "enum": ["fatal", "error", "warning", "info"] },
           "artifact": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "json_pointer": { "type": ["string", "null"], "pattern": "^/", "maxLength": 500 },
           "invariant": { "$ref": "#/$defs/code" },
           "evidence": { "type": "array", "maxItems": 20, "items": { "type": "string", "maxLength": 300 } },
           "consequence": { "type": "string", "minLength": 1, "maxLength": 500 },
-          "recovery": { "type": "string", "minLength": 1, "maxLength": 500 }
+          "recovery": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "resolution_status": { "enum": ["unresolved", "resolved", "not_applicable"] },
+          "correction_ref": { "type": ["string", "null"], "minLength": 1, "maxLength": 500 }
         }
       }
     },

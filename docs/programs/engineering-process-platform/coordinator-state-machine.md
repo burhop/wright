@@ -72,7 +72,9 @@ The current state is authoritative only in [`program-state.json`](program-state.
 | `ROLLED_BACK` | Restore recorded prior exact subject and verify health/state. | terminal or new proposed repair feature |
 | `BLOCKED` / `STOPPED` | Preserve evidence and request exact missing authority/decision. | explicit recovery/restart transition only |
 
-For EPP-F01, the explicit feature recovery edge is `BLOCKED` → `IMPLEMENTATION_AUTHORIZED`. It is legal only when the exact material-change and feature-implementation approval bundle is current, all bound artifact digests match, the blocker is resolved, the bounded lease is reactivated atomically, and the resulting sole next action is `START_EPP_F01_IMPLEMENTATION`. Recovery never jumps directly to `IMPLEMENTING` and never expands the approved task or path envelope.
+For EPP-F01, planning-only repair evidence uses `BLOCKED` → `BLOCKED` with `state_domain=repair`, `event_kind=repair_checkpoint`, no lease, and a closed planning/re-analysis approval bound to the exact discovery checkpoint. It may amend and audit the future approval subject but cannot classify the committed-identity cause resolved or mutate implementation files.
+
+After exact V4 approval, the feature recovery edge is `BLOCKED` → `IMPLEMENTATION_AUTHORIZED`. It is legal only when separate same-subject material-change and feature-implementation records accept DEC-P0-016, bind the frozen 69-task subject and exact correction-profile digest, all manifest digests match, and the bounded lease is reactivated atomically. The sole action is `START_EPP_F01_IMPLEMENTATION`. The coordinator then passes the existing preflight edge `IMPLEMENTATION_AUTHORIZED` → `IMPLEMENTING` and, before any correction mutation, records `IMPLEMENTING` → `REPAIRING` for stable cause `EPP-F01-US1-COMMITTED-IDENTITY-001`. Recovery never jumps directly from `BLOCKED` to `IMPLEMENTING`, never consumes a repair attempt during planning, and never expands the approved task/path envelope.
 
 ## Analyze remediation routing
 

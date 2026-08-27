@@ -360,6 +360,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T12:00:00Z"
       }
+    },
+    {
+      "id": "RISK-018",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Committed-identity correction becomes a hidden waiver channel",
+      "cause": "A broad, editable, partial, or readiness-aware correction mechanism could be used to dispose unrelated control-plane, benchmark, approval, or release failures.",
+      "consequence": "Historical evidence appears valid without exact Git proof, independent readiness gates become coupled, and autonomous work or release can advance on waived defects.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-016", "Recognize one literal 37-claim profile only", "Require strict-ancestor Git-object recomputation and exact V4 approval binding", "Retain original findings and reject corrections of corrections", "Prove readiness, benchmark, freshness, approval and release non-interference"],
+      "triggers": ["Wildcard/range or new correction target accepted", "Partial claim set classified resolved", "Correction changes any readiness area or release result", "Old reader ignores the profile", "Historical evidence is edited"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, revoke the lease, preserve all original bytes, and require a new material decision rather than weakening validation.",
+      "evidence": ["decisions/0016-closed-committed-identity-correction.md", "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json", "specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 correction, compatibility, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T15:26:54Z"
+      }
     }
   ]
 }

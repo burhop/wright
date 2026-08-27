@@ -257,6 +257,23 @@
       "options": ["Keep EPP-F01 machine-only and add independent EPP-F01B browser projection", "Expand EPP-F01 during implementation", "Treat Wright's workspace dashboard or dashboard.json as sufficient"],
       "required_evidence": ["Dependency-ordered EPP-F01B roadmap item", "Read-only browser projection contract", "Accessible empty/stale/failed and traffic-light states", "Automatic committed-evidence refresh rule", "Fresh exact material-change and feature-implementation approvals before EPP-F01 resumes"],
       "decision_record": "decisions/0015-browser-status-surface.md"
+    },
+    {
+      "id": "DEC-P0-016",
+      "priority": "P0",
+      "status": "proposed",
+      "question": "May EPP-F01 resolve the stable committed-identity cause only through the exact closed 37-claim append-only correction profile without changing any readiness or release authority?",
+      "why_material": "The six transition digests and 31 state tree pointers are immutable factual defects. Rewriting history, weakening Git identity, or adopting a generic override would compromise control-plane trust and could become a hidden readiness waiver.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 V4 implementation authorization",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T15:26:54Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": ["Accept only COR-EPP-F01-US1-COMMITTED-IDENTITY-001 and its exact 37 factual claims", "Stop EPP-F01 and redesign immutable-evidence correction semantics", "Reject correction and retain EPP-F01 blocked"],
+      "required_evidence": ["Literal six-transition plus 26-state/31-pointer target set", "Exact Git-object and canonical-state recomputation", "Strict-ancestor and no-correction-of-correction proof", "Readiness/benchmark/commercial/release non-interference proof", "Fresh exact material-change and feature-implementation approvals"],
+      "decision_record": "decisions/0016-closed-committed-identity-correction.md"
     }
   ]
 }

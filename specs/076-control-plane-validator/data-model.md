@@ -172,12 +172,34 @@ Four areas are evaluated independently. No area consumes another area's counts o
 | `code` | Stable uppercase identifier |
 | `severity` | `fatal`, `error`, `warning`, `info` |
 | `artifact` | Repository-relative allowlisted path or stable artifact ID |
+| `json_pointer` | Exact affected pointer when the invariant is field-specific; null otherwise |
 | `invariant` | Stable invariant ID |
 | `evidence` | Bounded IDs/digests only |
 | `consequence` | Bounded approved phrase |
 | `recovery` | Smallest safe next step; cannot grant authority |
+| `resolution_status` | `unresolved`, `resolved`, or `not_applicable`; derived, never hand-set authority |
+| `correction_ref` | Exact approved correction path/ID when resolved; null otherwise |
 
 Sort by severity rank, code, artifact, invariant. Unknown internal exceptions map to a bounded stable failure without raw exception text.
+
+## CommittedIdentityCorrection
+
+This is not an open-ended entity family. Version 1 recognizes exactly one profile ID: `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`.
+
+| Field | Rule |
+|---|---|
+| `correction_id`, `stable_cause_id` | Exact closed identifiers |
+| `source_checkpoint` | Exact revision-27 discovery commit/tree/program tree |
+| `accept_new_records` | Always `false` |
+| `expected_claim_count` | Exactly `37` |
+| `transition_digest_claims` | Exactly six ordered claims, each binding target transition path/raw digest/introducing commit/tree/blob, JSON pointer, recorded digest, authoritative artifact blob and recomputed SHA-256 |
+| `historical_state_tree_claims` | Exactly 26 ordered rows for revisions 1–26 and 31 exact pointers; each binds path/raw digest/introducing commit/tree/blob plus canonical state digest |
+| `tree_resolution` | Wrong recorded commit ID, authoritative commit, and tree obtained from that commit object |
+| `forbidden_target_classes` | Closed list covering state/lifecycle identity, manifests, authority, readiness, gates, benchmark/release evidence, candidate/freshness, and correction records |
+| `resolution_semantics` | Original bytes/findings retained, recomputation mandatory, all claims required, old readers fail closed, correction cannot be corrected, readiness non-interference |
+| `authority` | Exact proposed V4 material-change and implementation approvals plus frozen planning transition |
+
+The profile becomes effective only when both exact V4 approvals bind its frozen digest. All target containers must be strict ancestors of the correction-containing commit. A partial match is failure, never partial resolution. Resolution changes finding disposition only; source values remain the immutable bytes actually present in Git.
 
 ## ValidationReport
 
@@ -213,3 +235,4 @@ Validation failures never authorize or synthesize a transition. A failed attempt
 3. Emit the sole explicit v1-to-v2 migration transition; do not rewrite v1 files and reject a second migration.
 4. Freeze implementation candidate `R`; commit independent-candidate evidence as source `S`; generate v2 dashboard only as dashboard-only successor `C`; then persist independent delivery-only verification in descendant `D` without treating `D` as a source input for the snapshot at `S`.
 5. On rollback/removal, retain all source evidence and v1 manual validation instructions; v2 dashboards become stale/unsupported and cannot be approval evidence.
+6. The closed correction record is append-only and remains inspectable on rollback. Removing or downgrading to a validator that cannot interpret it returns the six digest findings and 31 tree-pointer findings to unresolved/fail-closed status; it never rewrites history or preserves a virtual corrected view.
