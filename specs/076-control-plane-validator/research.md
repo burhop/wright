@@ -177,4 +177,14 @@ No audit recommended product implementation, benchmark generation/execution, dep
 
 ## Remaining Material Questions
 
-`DEC-P0-013` and `DEC-P0-014` are decided. `DEC-P0-016` is the sole material open decision: whether to accept the exact closed 37-claim profile and its strict non-interference semantics. It remains **implementation-blocking until the human approves the newly frozen V4 combined feature/material-change subject**. No generic correction mechanism, history rewrite, or readiness effect is assumed. Planning, checklist/task amendment, read-only analysis, and bounded audits may continue; implementation may not.
+## R-017 — One closed TR-0027 input-origin correction (proposed DEC-P0-017)
+
+**Evidence**: `git log --diff-filter=A` proves both TR-0027 and `APR-EPP-F01-REPAIR-PLANNING-001.json` were introduced by commit `88481d57f1258f59f303f507eafc4e352569bc11`. The approval is absent at TR-0027's declared source `c3012733d358dbbeb4821a2fbf5449d6d1b12c47`. TR-0027's immutable `/inputs/3` therefore describes container-added planning authority as a source input.
+
+**Decision requiring exact V5 approval**: Preserve TR-0027 and the approval bytes. Admit only `COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001`, binding one pointer, both raw SHA-256 values and Git blobs, the declared source, unique container/tree, source absence, container presence, and the unchanged two-path manifest. Retain the original finding and classify only its origin disposition as resolved.
+
+**Rejected alternatives**: rewriting TR-0027; treating every container-added artifact as an input; ignoring all input-origin failures; extending the 37-claim correction; accepting a path or commit range; or letting the correction influence authority, readiness, benchmark, candidate, freshness, delivery, or release results.
+
+**Compatibility and recovery**: Unsupported readers fail closed. Any identity, pointer, origin, target-set, manifest or V5 approval mismatch leaves the finding unresolved. Rollback removes the disposition behavior without changing history.
+
+`DEC-P0-013`, `DEC-P0-014`, and `DEC-P0-016` are decided. `DEC-P0-017` is the sole new material question: whether to accept the exact one-claim TR-0027 input-origin profile and its strict non-interference semantics. It remains **implementation-blocking until the human approves the newly frozen V5 combined feature/material-change subject**. No generic transition exception, history rewrite, task-count expansion, or readiness/authority effect is assumed. Planning, checklist/task amendment, read-only analysis, and bounded audits may continue; T024 and later implementation may not.

@@ -6,7 +6,7 @@
 
 ## Current EPP-F01 decision
 
-**V4 local implementation is approved.** [`APR-EPP-F01-MC-004`](evidence/approvals/APR-EPP-F01-MC-004.json) and [`APR-EPP-F01-IMPL-004`](evidence/approvals/APR-EPP-F01-IMPL-004.json) record the human decision for commit `88481d57f1258f59f303f507eafc4e352569bc11`, repository tree `17ebad227dd02f6b94fa99c006ea360c141a8cae`, program tree `a4fbe48595a52ffe6af408067bf4b1d63c660921`, and the 38 artifact digests in `TR-0027`. They accept DEC-P0-016 and authorize only the revised 69 local EPP-F01 tasks under the reactivated implementation lease. The 37 historical claims remain unresolved until T069 independently recomputes all 37.
+**V5 approval is pending and further implementation is blocked.** V4 authorized completed T069, whose `37/37` correction is now independently accepted. It does not authorize the newly specified TR-0027 input-origin disposition or T024 onward. The next exact subject must receive distinct `APR-EPP-F01-MC-005` and `APR-EPP-F01-IMPL-005` approvals accepting DEC-P0-017 and binding both correction profiles plus the unchanged 69-task plan.
 
 `TR-0019` through `TR-0025` remain immutable historical authorization/start/repair evidence. `TR-0026` blocks on exact committed evidence and revokes the active lease. [`APR-EPP-F01-REPAIR-PLANNING-001`](evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json) authorizes only the subsequent planning, audit, and analysis amendment. EPP-F01B requires its own future Spec Kit lifecycle and implementation approval.
 
@@ -14,7 +14,7 @@
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
 
-The v1 and v3 bundles are stale for current implementation. V4 provides separate same-subject `material_change` and `feature_implementation` approvals, accepts DEC-P0-016, binds the exact correction-profile digest and frozen transition manifest, and limits authority to the revised 69 local tasks and renewed lease. EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069 but is stale for further implementation because DEC-P0-017 and the second closed profile materially change pending T024/T026/T030/T031. V5 may authorize only T024–T041 through the already ordered human value checkpoint. EPP-F01B, T042–T068 after that checkpoint, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
 ## Approval subject
 

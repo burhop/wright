@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/transition-input-correction.schema.json",
+  "title": "Closed Transition Input-Origin Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema", "schema_version", "correction_id", "program_id", "feature_id",
+    "stable_cause_id", "accept_new_records", "expected_claim_count", "claim",
+    "forbidden_target_classes", "resolution_semantics", "unchanged_projection_fields", "authority", "discovery_evidence"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "correction_id": { "const": "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001" },
+    "program_id": { "const": "EPP-2026" },
+    "feature_id": { "const": "EPP-F01" },
+    "stable_cause_id": { "const": "EPP-F01-US1-TR0027-INPUT-ORIGIN-001" },
+    "accept_new_records": { "const": false },
+    "expected_claim_count": { "const": 1 },
+    "claim": { "$ref": "#/$defs/claim" },
+    "forbidden_target_classes": {
+      "const": [
+        "any_other_transition_or_pointer", "changed_paths_manifest", "output_manifest",
+        "approval_content_or_authority", "state_or_lifecycle_identity", "readiness_or_gate_evidence",
+        "benchmark_or_release_evidence", "candidate_or_freshness", "correction_record"
+      ]
+    },
+    "resolution_semantics": {
+      "const": {
+        "effect": "historical_input_origin_disposition_only",
+        "validator_recomputes": true,
+        "original_bytes_immutable": true,
+        "original_finding_retained": true,
+        "resolved_finding_non_authoritative": true,
+        "all_claims_required": true,
+        "old_validator_fails_closed": true,
+        "correction_cannot_be_corrected": true,
+        "readiness_non_interference": true
+      }
+    },
+    "unchanged_projection_fields": {
+      "const": [
+        "benchmark_readiness_area", "benchmark_summary", "benchmark_target_and_counted",
+        "benchmark_outcomes_and_tiers", "benchmark_coverage_and_qualification",
+        "benchmark_oracles_and_artifacts", "benchmark_holdout_and_contamination",
+        "benchmark_attempts_and_freshness", "all_readiness_statuses_and_colors",
+        "candidate_identity", "approval_authority", "release_eligibility"
+      ]
+    },
+    "authority": {
+      "const": {
+        "required_scopes": ["material_change", "feature_implementation"],
+        "proposed_approval_records": [
+          "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-005.json",
+          "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-005.json"
+        ],
+        "planning_subject_transition": "TR-0034"
+      }
+    },
+    "discovery_evidence": {
+      "const": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0033.json",
+          "sha256": "cf61e1283bb68855dba7e3a1817645356fe3cecd8185fc71b8046d20b9f795cd"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "objectId": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id", "transition_path", "transition_raw_sha256", "transition_git_blob",
+        "json_pointer", "declared_source_commit", "container_commit", "container_tree",
+        "approval_path", "approval_raw_sha256", "approval_git_blob", "classification",
+        "verification"
+      ],
+      "properties": {
+        "claim_id": { "const": "IO-01" },
+        "transition_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0027.json" },
+        "transition_raw_sha256": { "const": "1e25905393b62ad41941f86c649d7d37c2549a7f50977c8cee9fc53a2b1a7c0c" },
+        "transition_git_blob": { "const": "ffe050dbb597d147a42d4dd6055fe07e69b3107f" },
+        "json_pointer": { "const": "/inputs/3" },
+        "declared_source_commit": { "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47" },
+        "container_commit": { "const": "88481d57f1258f59f303f507eafc4e352569bc11" },
+        "container_tree": { "const": "17ebad227dd02f6b94fa99c006ea360c141a8cae" },
+        "approval_path": { "const": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json" },
+        "approval_raw_sha256": { "const": "fde4c32d48d4b352f21869304eec6f176bead9312cc2f15ff2da87685dd1580f" },
+        "approval_git_blob": { "const": "985278a3cdb55dd81113370ca3ef324bf20e085f" },
+        "classification": { "const": "container_added_evidence_mislabeled_as_input" },
+        "verification": {
+          "const": {
+            "source_path_must_be_absent": true,
+            "container_path_must_match_exact_blob": true,
+            "container_must_be_unique_introducing_commit": true,
+            "changed_paths_manifest_must_include_both_paths": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -201,6 +201,22 @@ This is not an open-ended entity family. Version 1 recognizes exactly one profil
 
 The profile becomes effective only when both exact V4 approvals bind its frozen digest. All target containers must be strict ancestors of the correction-containing commit. A partial match is failure, never partial resolution. Resolution changes finding disposition only; source values remain the immutable bytes actually present in Git.
 
+## TransitionInputOriginCorrection
+
+This is a separate closed entity, not an extension of `CommittedIdentityCorrection`. Version 1 recognizes exactly `COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001` and one claim.
+
+| Field | Rule |
+|---|---|
+| `correction_id`, `stable_cause_id` | Exact closed identifiers; no aliases |
+| `expected_claim_count` | Exactly `1` |
+| `claim` | Exact TR-0027 path/raw SHA/blob, `/inputs/3`, declared source, unique container/tree, and exact approval path/raw SHA/blob |
+| `verification` | Approval absent at source; exact blob present and first introduced at container; both paths in unchanged manifest |
+| `forbidden_target_classes` | Any other transition/pointer plus manifests, outputs, authority content, state/lifecycle, readiness, benchmark/release, candidate/freshness, and corrections |
+| `resolution_semantics` | Original bytes/finding retained; historical input-origin disposition only; old readers fail closed; zero readiness/authority effect |
+| `authority` | Separate same-subject V5 material-change and implementation approvals plus TR-0034 |
+
+The record cannot legitimize arbitrary container-added inputs. If any exact identity differs, the approval exists at the source, the container is not the unique introducing commit, either manifest path is absent, or the profile changes another result, validation fails closed.
+
 ## ValidationReport
 
 The report contains schema version, validation subject, overall verdict, ordered checks/findings, derived eligibility, four readiness areas with complete gate rows and last-success data, benchmark summary, exact release-approval result, release eligibility, delivery result, and one next action or blocker. Observation time is explicitly nondeterministic; all other semantic fields are deterministic for one subject and validator version.

@@ -1,93 +1,62 @@
-# Specification Analysis Report: EPP-F01 V4 Approval Subject
+# Specification Analysis Report: EPP-F01 V5 Approval Subject
 
-**Analysis method**: `speckit-analyze` non-destructive consistency, ambiguity, coverage and constitution review after the planning-only committed-identity amendment and four independent omission audits
+**Analysis method**: `speckit-analyze` non-destructive consistency, ambiguity, coverage and constitution review after the one-claim TR-0027 input-origin amendment
 
-**Subject**: planning-only candidate to be frozen in `TR-0027`; implementation remains blocked
+**Subject**: planning-only candidate to be frozen in `TR-0034`; implementation remains blocked before T024
 
-**Result**: **PASS** — zero active critical, high or medium findings; all 25 functional requirements and 11 success criteria have task coverage; all four independent audit reruns pass
+**Result**: **PASS after repair** — zero active critical, high or medium findings; all 26 functional requirements and 12 success criteria have task coverage
 
-## Inputs and execution envelope
+## Inputs and authority
 
 - Feature artifacts: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, `tasks.md`, both checklists and every contract.
-- Program artifacts: the exact discovery checkpoint `TR-0026`, planning-only approval, proposed correction profile/schema, DEC-P0-016/ADR 0016, RISK-018, roadmap, gates/catalog, state-machine, dashboard, compatibility/release and audit artifacts.
-- Constitution: `.specify/memory/constitution.md`, version 3.0.0.
-- `.specify/extensions.yml` was inspected before analysis. Its before/after analyze Git hooks are optional and were deliberately not invoked because this program requires reviewed explicit-path staging.
-- The Spec Kit prerequisite script resolved `/mnt/d/repos/wright-epp-worktrees/epp-f01/specs/076-control-plane-validator` and all required design documents. WSL could not identify the Windows worktree as a Git repository, so branch validation was skipped there; native read-only Git independently confirmed branch `077-control-plane-validator` and the exact checkpoint.
-- JSON parse: 108 program/feature JSON files passed at the analysis checkpoint. Draft 2020-12 meta-validation: 30 schemas passed. The focused planning-contract test subset passed 32/32 after using an authorized temporary fixture location.
-- The correction instance validates against both byte-identical schema copies. A separate Git-object recomputation proved the six transition claims, 26 state rows, 31 state pointers, canonical state digests and commit/tree/blob/raw identities: `37/37` passed.
+- Program artifacts: revisions/transitions through 35/TR-0034, both closed correction profiles/schemas, DEC-P0-017/ADR 0017, RISK-019, roadmap, lifecycle, gates/catalog, dashboard contract, compatibility/release and V5 audits.
+- Constitution: `.specify/memory/constitution.md` version 3.0.0.
+- The existing feature branch/worktree is retained; the optional Spec Kit branch/commit/context hooks were not invoked because this is an amendment to the same bounded feature and explicit-path commits remain coordinator-controlled.
+- No implementation, dependency, benchmark, product, external, push/PR/merge, integration, publication, or release action was performed.
 
-## Active findings
+## Material findings resolved
 
-None.
+| ID | Area | Finding | Disposition |
+|---|---|---|---|
+| V5-EU-01 | Usability | Missing TR-0034 and stale V4 catch-up/analysis could send a cold coordinator back to T069. | Add TR-0034; update README, analysis and exact V5/T041 actions. |
+| V5-EU-02 | Authority | “Bind 69 tasks” was conflated with authority to execute all 69. | V5 binds the unchanged plan but authorizes only T024–T041; `REVIEW_EPP_F01_T041_VALUE_CHECKPOINT` gates T042 onward. |
+| V5-ARC-01 | Architecture | A stale V3 action competed with V5 for the same blocked state. | Remove the stale action rule; V5 is the sole action for `PROGRAM_ACTIVE/BLOCKED`. |
+| V5-ARC-02 | Architecture | The new schema was absent from the closed gate evidence-class registry and automated promotion task. | Add `TRANSITION_INPUT_CORRECTION` to PROG-01/PROG-05 and extend T024 contract-schema coverage. |
+| V5-BQ-01 | Benchmark | Generic non-interference language did not require full empty/non-empty benchmark projection equality. | Add a closed unchanged-field list plus deep equality for `0/100` and non-empty synthetic fixtures in FR-020, plan, T024 and T031. |
+| V5-CR-01 | Commercial/release | Audit status and exact approval checkpoint were not yet subject-bound. | Bind the four audit reruns and all material outputs through TR-0034; no readiness or release gate is waived. |
 
-## Finding resolved during this analysis
-
-| ID | Severity | Finding | Resolution |
-|---|---:|---|---|
-| A-001 | MEDIUM | FR-025 and T069 defined correction disposition, but shared finding, automated-verification and compatibility requirements still used pre-correction wording. | FR-016 now requires pointer/resolution/correction fields and original-finding retention; FR-020 requires the exact correction negative/non-interference matrix; FR-021 requires exact-profile support and older-reader fail-closed behavior; T028 matches the report contract. |
-
-The rerun found no remaining inconsistency, ambiguity, underspecification, constitution conflict or uncovered buildable requirement.
-
-## Independent audit synthesis
-
-The durable synthesis is `docs/programs/engineering-process-platform/audits/2026-08-27-epp-f01-committed-identity-repair-audits.md`.
-
-| Audit | Result | Material contribution |
-|---|---|---|
-| Engineering usability | PASS | Exact pointer/value/status diagnostics, honest correction states, immutable-history recovery and distinct task coverage |
-| Architecture | PASS | Reconciled one cause to 37 exact claims; literal profile, strict ancestry, Git/canonical identities and closed planning authority |
-| Commercial/release | PASS | DEC-P0-016/RISK-018, PROG-01/PROG-05 evidence, old-reader rollback behavior and correction-as-waiver prevention |
-| Benchmark quality | PASS | Literal target equality, forbidden benchmark/readiness targets and unchanged-projection proof |
-
-The initial seven-blocker summary and the architecture count are not contradictory: there is one stable cause, two defect forms and 37 exact claim occurrences. No material P0 question is hidden. DEC-P0-016 is explicit and remains human-owned.
-
-## Requirement coverage
+## Coverage
 
 | Requirement group | Coverage | Principal tasks |
 |---|---:|---|
-| FR-001–FR-005: entrypoint, exact S/C/D/runtime identity, strict contracts, closed history, Git identity | 5/5 | T002–T006, T016–T026, T029 |
-| FR-006–FR-009: roadmap, WIP/lease, approvals, semantic invariants | 4/4 | T007, T013–T015, T022, T026–T028 |
-| FR-010–FR-013: independent areas, gate/assertion proof, benchmark summary, release formula | 4/4 | T008, T011–T012, T032–T041 |
-| FR-014–FR-018: no execution/mutation, atomic delivery, inspectable findings, common outputs, privacy | 5/5 | T023–T024, T028–T029, T042–T049, T053 |
-| FR-019–FR-024: journey, verification, compatibility, benchmark semantics, rollback, empty context | 6/6 | T030, T033–T034, T050–T056, T061–T068 |
-| FR-025: one closed committed-identity correction | 1/1 | T069, T026, T028, T030–T031 |
-| SC-001–SC-011 | 11/11 | T023–T069 across the corresponding story and verification phases |
+| FR-001–FR-009: subject, contracts, Git/history, roadmap, authority and semantic invariants | 9/9 | T002–T029, T069 |
+| FR-010–FR-018: four independent areas, release formula, read-only/atomic behavior, findings and privacy | 9/9 | T008, T011–T016, T023–T049 |
+| FR-019–FR-024: journey, tests, compatibility, benchmark policy, rollback and empty context | 6/6 | T024, T030–T068 |
+| FR-025: exact 37-claim committed-identity correction | 1/1 | T069, T026, T028, T030–T031 |
+| FR-026: exact one-claim TR-0027 input-origin correction | 1/1 | T024, T026, T028, T030–T031 |
+| SC-001–SC-012 | 12/12 | T023–T069 across story and verification phases |
 
-Every task maps to setup/foundation, one user story, gate integration, compatibility, rollback, candidate freeze, independent verification or exact delivery evidence. T069 is append-only-numbered but physically and logically precedes T024, preserving historical task identity while maintaining dependency order.
+The task plan remains exactly 69 unique IDs: T001–T023 and T069 are complete; 45 tasks remain. No completed task was redefined. Pending T024/T026/T030/T031 absorb the exact one-claim behavior and automated closure without creating a 70th task.
 
 ## Consistency conclusions
 
-- Historical TR-0023–TR-0025 and state revisions 1–26 remain byte-immutable. The correction is factual finding disposition only; it creates no virtual state and supplies no authority.
-- The exact target set is six transition output pointers plus 31 state pointers represented by 26 state rows. Every target is approval/digest-bound and must be a strict ancestor of the correction-containing commit.
-- Original findings remain visible. A partial, extra, substituted, generic, wildcard/range, same/future/circular, correction, authority, readiness, benchmark, gate, freshness, candidate or release target fails closed.
-- Product, benchmark, commercial and program-health readiness remain independent. Applying the correction cannot change any area object, benchmark counter/deficit, freshness, candidate, approval or release eligibility.
-- Validator success remains distinct from non-passing readiness. EPP-F01B remains a separate browser feature after EPP-F01 and before EPP-F02.
-- The plan contains 69 tasks: 23 historically complete and 46 uncompleted. No completed task was redefined; T069 is the sole added task.
-- Planning/re-analysis did not consume an implementation repair attempt. The stable cause retains its bounded `0/2` implementation repair allowance after exact V4 approval.
+- TR-0027 and the planning approval remain byte-immutable. The correction binds exact TR-0027 `/inputs/3`, both Git blobs/raw hashes, declared source, unique container/tree, source absence and unchanged two-path manifest.
+- The new profile is independent of the approved 37-claim profile. Neither can correct the other, accept a range/wildcard, suppress original findings, create authority, or alter lifecycle/readiness/benchmark/candidate/freshness/release results.
+- `TRANSITION_INPUT_CORRECTION` is a distinct closed class/schema/role required by PROG-01 and PROG-05. Unsupported readers fail closed.
+- Full correction-off/on equality is required for both honest `0/100` and non-empty benchmark fixtures, including coverage, qualification, oracle/artifact, holdout, attempts/tiers, deficits, freshness, colors, candidate, approval and release eligibility.
+- State revision 35 is `BLOCKED`, has no mutating lease, and exposes only exact V5 approval. V5 can authorize T024–T041 only; the T041 demonstration triggers a new human review before T042.
+- EPP-F01B and every external/integration/release action remain separately gated.
 
-## Constitution alignment
+## Validation evidence and limitations
 
-No constitution exception is requested. EPP-F01 remains local, offline, deterministic governance tooling and does not claim Wright product/runtime implementation. Phase isolation, branch/worktree discipline, human gating, compatibility, rollback, privacy, testing and independent-verification obligations are explicit. The current transition stops at human review as constitution section 8 requires.
+- 128 JSON documents parse; 32 schemas pass Draft 2020-12 meta-validation.
+- The two transition-input schema copies are byte-identical and the one-claim profile validates.
+- Independent Git checks reproduced source absence, unique container introduction, transition/approval blobs and raw hashes.
+- The existing focused contract module produced 17 passes. Its active-lease assertion intentionally cannot pass in the legal blocked/no-lease planning state, and the first run's local basetemp path was unavailable. T024 already owns the pending closed schema-matrix update; no implementation test was changed during this planning checkpoint.
+- The current validator is expected to fail closed on the new unsupported profile until V5-approved T024/T026 implementation. This is compatibility behavior, not approval authority.
 
-## Metrics
+## Constitution and next action
 
-- Functional requirements: 25
-- Success criteria: 11
-- Total buildable requirements analyzed: 36
-- Requirements with task coverage: 36
-- Coverage: 100%
-- User stories with independent test criteria: 4/4
-- Tasks: 69 total; 23 complete; 46 uncompleted
-- Program-control checklist: 65/65
-- Active critical findings: 0
-- Active high findings: 0
-- Active medium findings: 0
-- Independent omission-audit reruns passed: 4/4
-- Correction claim verification: 37/37
-- Implementation repair allowance consumed by this planning amendment: 0/2
+The amendment preserves phase isolation, branch/worktree discipline, explicit human gating, offline/read-only planning, test-first implementation, compatibility, rollback, privacy, bounded repair and independent verification. No constitution exception is requested.
 
-## Next action and stop
-
-Freeze the exact planning artifacts, append revision 28 and `TR-0027`, recompute every output digest and Git subject, then stop for separate same-subject V4 `material_change` and `feature_implementation` approvals accepting DEC-P0-016 and binding the exact correction profile.
-
-Do not execute T069 or any other implementation task, rewrite history, implement EPP-F01B, add dependencies, run benchmarks/product systems, push, open/merge a PR, integrate to `dev`, make external changes, publish or release before those approvals and downstream gates.
+Freeze the exact planning artifacts in TR-0034 and stop for separate same-subject V5 `material_change` and `feature_implementation` approvals accepting DEC-P0-017. Do not execute T024 or later work until that gate passes. After approval, stop again immediately after the T041 value demonstration at `REVIEW_EPP_F01_T041_VALUE_CHECKPOINT`.

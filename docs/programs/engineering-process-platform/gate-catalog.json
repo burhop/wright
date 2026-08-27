@@ -49,6 +49,11 @@
       "class_id": "CONTROL_IDENTITY_CORRECTION",
       "schema_id": "https://wright.local/programs/epp/committed-identity-correction.schema.json",
       "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "TRANSITION_INPUT_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/transition-input-correction.schema.json",
+      "source_role": "append_only_evidence"
     }
   ],
   "gates": [
@@ -790,7 +795,7 @@
       "assertions": [
         {
           "assertion_id": "PROG-01-A01",
-          "requirement": "Schemas parse, references/digests match, roadmap is acyclic, state revision is monotonic, eligibility is derived, and dashboard is generated from source evidence. Any committed-identity correction has exact V4 approval, strict-ancestor targets, literal 37/37 Git-object proof, retained findings, and zero readiness/release effect."
+          "requirement": "Schemas parse, references/digests match, roadmap is acyclic, state revision is monotonic, eligibility is derived, and dashboard is generated from source evidence. The committed-identity correction has exact V4 approval and literal 37/37 Git proof. The separate TR-0027 input-origin correction has exact V5 approval and literal 1/1 source-absence/container-introduction proof. Both retain findings and have zero authority/readiness/release effect."
         }
       ],
       "freshness": {
@@ -804,7 +809,8 @@
         "required_classes": [
           "STATE_SNAPSHOT",
           "TRANSITION_RECORD",
-          "CONTROL_IDENTITY_CORRECTION"
+          "CONTROL_IDENTITY_CORRECTION",
+          "TRANSITION_INPUT_CORRECTION"
         ],
         "independent_verifier_required": true
       }
@@ -913,7 +919,8 @@
         "required_classes": [
           "STATE_SNAPSHOT",
           "TRANSITION_RECORD",
-          "CONTROL_IDENTITY_CORRECTION"
+          "CONTROL_IDENTITY_CORRECTION",
+          "TRANSITION_INPUT_CORRECTION"
         ],
         "independent_verifier_required": false
       }

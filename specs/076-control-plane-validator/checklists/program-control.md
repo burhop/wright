@@ -107,9 +107,17 @@
 - [x] CHK064 Do unsupported readers, partial/extra/substituted targets, non-ancestor/self/future/circular targets, missing approval, and profile-digest drift all fail closed? [Compatibility, Research §R-016; Quickstart §6]
 - [x] CHK065 Are DEC-P0-016 plus exact V4 material-change and feature-implementation approvals visibly blocking, with EPP-F01B and every external/integration/release action still excluded? [Authority, Plan §Design Decisions; Research §Remaining Material Questions]
 
+## DEC-P0-017 TR-0027 Input-Origin Quality
+
+- [x] CHK066 Is the second profile closed to exactly TR-0027 `/inputs/3`, with exact transition/approval raw digests, Git blobs, source commit, unique container/tree, and no wildcard/range? [Completeness, Spec §FR-026; Transition Input Correction schema/profile]
+- [x] CHK067 Must validation prove approval absence at the declared source and exact first introduction at the container while retaining the unchanged two-path manifest and original finding? [Evidence, Data Model §TransitionInputOriginCorrection; Research §R-017]
+- [x] CHK068 Are any other transition/pointer, manifest/output, authority, lifecycle, readiness, benchmark/release, candidate/freshness, and correction targets forbidden? [Safety, Transition Input Correction schema/profile]
+- [x] CHK069 Do T024/T026/T030/T031 cover positive proof, every identity/pointer/origin/authority mutation, human diagnostics, recovery, non-mutation, and non-interference without adding a 70th task? [Coverage, Tasks §US1]
+- [x] CHK070 Are DEC-P0-017, RISK-019 and distinct same-subject V5 approvals blocking T024 onward while T069 remains complete and all excluded actions remain unauthorized? [Authority, Tasks §Authority gate; ADR 0017; Program state]
+
 ## Notes
 
 - Formal depth; intended for the feature author and independent reviewer before task decomposition and again before implementation approval.
-- All 65 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the committed-identity audit-repair cycle. No override was used.
+- All 70 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the bounded TR-0027 input-origin amendment. No override was used.
 - This checklist evaluates written requirements. It does not claim that implementation or verification has occurred.
-- Material items in CHK035, CHK041–CHK049, CHK052, and CHK059–CHK065 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.
+- Material items in CHK035, CHK041–CHK049, CHK052, CHK059–CHK065, and CHK066–CHK070 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.

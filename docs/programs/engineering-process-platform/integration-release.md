@@ -102,4 +102,6 @@ Preserve immutable subjects. Never overwrite PyPI files or rebuild an old OCI ve
 
 The closed committed-identity correction is a compatibility boundary. Dev integration evidence must prove exact V4 approval, `37/37` target verification, original-finding retention, unsupported-reader fail-closed behavior, and unchanged product/benchmark/commercial/program-health area inputs and release eligibility. Rollback to an older validator returns the findings to unresolved and blocks integration/release; it must not silently ignore the profile or materialize corrected historical bytes.
 
+The TR-0027 input-origin correction is a separate compatibility boundary. Dev integration evidence must prove exact V5 approval, `1/1` source-absence/unique-container proof, unchanged manifests, original-finding retention, unsupported-reader fail-closed behavior, and zero authority/readiness/release effect. Rollback returns the finding to unresolved and cannot synthesize source-time authority.
+
 Native rollback uses only retained compatible runtimes and the packaged schema bounds. `recovery_required`, residue, incompatible state or identity mismatch is a stop condition. Codex failure does not authorize routing through Hermes or vice versa. Keep the GitHub Release absent/draft until all exact public surfaces and docs verify.

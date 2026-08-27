@@ -76,6 +76,8 @@ For EPP-F01, planning-only repair evidence uses `BLOCKED` → `BLOCKED` with `st
 
 After exact V4 approval, the feature recovery edge is `BLOCKED` → `IMPLEMENTATION_AUTHORIZED`. It is legal only when separate same-subject material-change and feature-implementation records accept DEC-P0-016, bind the frozen 69-task subject and exact correction-profile digest, all manifest digests match, and the bounded lease is reactivated atomically. The sole action is `START_EPP_F01_IMPLEMENTATION`. The coordinator then passes the existing preflight edge `IMPLEMENTATION_AUTHORIZED` → `IMPLEMENTING` and, before any correction mutation, records `IMPLEMENTING` → `REPAIRING` for stable cause `EPP-F01-US1-COMMITTED-IDENTITY-001`. Recovery never jumps directly from `BLOCKED` to `IMPLEMENTING`, never consumes a repair attempt during planning, and never expands the approved task/path envelope.
 
+After T069, the isolated TR-0027 input-origin defect creates a new material boundary. Revision 35 is `BLOCKED` with no mutating lease and sole action `APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V5`. Only separate same-subject V5 approvals accepting DEC-P0-017, binding the exact one-claim profile and unchanged 69-task plan, may restore `IMPLEMENTATION_AUTHORIZED`. The restored lease may cover only T024–T041; the coordinator must stop after the T041 runnable value demonstration. No V5 rule reopens T069 repair attempts or authorizes EPP-F01B, T042–T068, or external/integration/release actions.
+
 ## Analyze remediation routing
 
 - requirement/user-value/scope gap → `SPECIFIED` then rerun all downstream stages;

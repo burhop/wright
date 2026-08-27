@@ -25,12 +25,12 @@
       "kind": "program_control",
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
-      "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP; dispose the one exact approved 37-claim committed-identity cause without rewriting history or changing readiness; then generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
+      "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP; dispose the exact approved 37-claim committed-identity cause and the separate one-claim TR-0027 input-origin defect without rewriting history or changing readiness/authority; then generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
       "status": "active",
       "depends_on": [
         "EPP-P00"
       ],
-      "blocking_decisions": [],
+      "blocking_decisions": ["DEC-P0-017"],
       "gate_impacts": [
         "PROG-01",
         "PROG-02",

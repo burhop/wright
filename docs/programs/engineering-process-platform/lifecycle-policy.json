@@ -374,7 +374,7 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
-      "action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3",
+      "action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V5",
       "requires_human_approval": true
     },
     {

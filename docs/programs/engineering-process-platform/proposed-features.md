@@ -6,7 +6,7 @@ These are proposals, not implementation authority. Each becomes a separate numbe
 
 **Independent outcome:** a maintainer or fresh agent can run one local validation command and receive a truthful, evidence-linked machine snapshot of program state, roadmap eligibility, risks/decisions, transition validity, and four separate readiness areas.
 
-**Boundary:** planning/program tooling only; no process-runtime or benchmark collection. Reject cycles, missing references, digest mismatch, stale approvals, impossible transitions, WIP/lease conflicts, hand-set aggregate green, and unknown schema majors. The only historical correction is the exact V4-approved 37-claim `COR-EPP-F01-US1-COMMITTED-IDENTITY-001`; it preserves original bytes/findings and cannot alter readiness, benchmark, authority, freshness, candidate, or release results.
+**Boundary:** planning/program tooling only; no process-runtime or benchmark collection. Reject cycles, missing references, digest mismatch, stale approvals, impossible transitions, WIP/lease conflicts, hand-set aggregate green, and unknown schema majors. Historical disposition is limited to the exact V4-approved 37-claim committed-identity profile and, after separate V5 approval, the exact one-claim TR-0027 input-origin profile. Both preserve original bytes/findings and cannot alter readiness, benchmark, authority, freshness, candidate, or release results.
 
 **Ship/revert:** ships as local repository tooling/docs; removal does not alter product data. It generates governed data and CLI reports but does not itself satisfy the browser-accessible status-page requirement.
 

@@ -111,6 +111,8 @@ The immutable history contains one known stable cause, `EPP-F01-US1-COMMITTED-ID
 
 After V4 approval, only `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` may resolve the cause. A valid run recomputes `37/37`, retains the original findings with `resolution_status=resolved` and the correction reference, and proves that the four readiness areas, benchmark 0–100 counters, freshness, gates, candidate identity, approvals, and release eligibility are unchanged. Any missing/extra/substituted target, profile digest mismatch, non-ancestor target, forbidden readiness/authority target, or unsupported validator version fails closed. There is no manual acceptance flag and no recovery path that edits TR-0023 through TR-0025 or state revisions 1–26.
 
+TR-0027 has one separate known input-origin defect: `/inputs/3` names the planning approval at source `c3012733`, although Git proves that approval first appears with TR-0027 in container `88481d57`. Do not edit either artifact. Until exact V5 approval, validation must retain the finding and stop. After approval, only `COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001` may dispose it, after exact `1/1` source-absence/container-introduction proof. Any broader exception or change to authority/readiness results fails closed.
+
 ## 6. Compatibility and rollback
 
 - Windows and POSIX runs for the same committed blobs must agree semantically even when line endings differ in clean checkouts.

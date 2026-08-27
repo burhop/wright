@@ -381,6 +381,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T15:26:54Z"
       }
+    },
+    {
+      "id": "RISK-019",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Transition input-origin correction becomes an authority bypass",
+      "cause": "A generic source/container exception could treat evidence created in a transition container as if it were available to authorize that transition.",
+      "consequence": "Append-only transition proof becomes circular and autonomous work may advance on authority that did not exist at the declared source.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-017", "Recognize one exact TR-0027 /inputs/3 claim", "Require source absence and unique container introduction", "Bind exact blobs and unchanged manifest", "Prove zero authority/readiness/release effect"],
+      "triggers": ["Another transition or pointer accepted", "Container evidence grants authority", "Manifest mutation accepted", "Original finding suppressed", "Unsupported reader continues"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, preserve original bytes, and require a new material decision rather than broadening the exception.",
+      "evidence": ["decisions/0017-closed-tr0027-input-origin-correction.md", "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json", "specs/076-control-plane-validator/contracts/transition-input-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 transition-history, compatibility, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T18:15:00Z"
+      }
     }
   ]
 }
