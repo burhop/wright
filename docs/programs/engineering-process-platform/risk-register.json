@@ -19,7 +19,11 @@
       "triggers": ["Benchmark pass cited to waive another gate", "Fixture-specific branch", "Denominator or oracle change after results"],
       "contingency": "Freeze qualification, mark affected results contaminated, return to product/benchmark design, and require human change approval.",
       "evidence": ["gates.md", "benchmark-strategy.md", "DEC-P0-009", "DEC-P0-011"],
-      "review_by": "Before EPP-B01 planning approval"
+      "review": {
+        "cadence": "Before EPP-B01 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-002",
@@ -36,7 +40,11 @@
       "triggers": ["Prototype branch becomes a feature base", "Large code-identical diff", "React Flow or JSON declared permanent without ADR"],
       "contingency": "Stop the feature, discard unauthorized promotion through a reviewed recovery plan, and re-specify the accepted outcome from dev.",
       "evidence": ["prototype-evidence.md", "program-plan.md"],
-      "review_by": "Every feature allocation"
+      "review": {
+        "cadence": "Every feature allocation",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-003",
@@ -53,7 +61,11 @@
       "triggers": ["Pass without oracle", "Screenshot used as correctness proof", "Application accepted command but output not independently inspected"],
       "contingency": "Quarantine the case/claim, classify as benchmark-oracle failure, and obtain independent domain review.",
       "evidence": ["DEC-P0-007", "benchmark-strategy.md", "prototype-evidence.md#ll-020"],
-      "review_by": "Before any benchmark case is qualified"
+      "review": {
+        "cadence": "Before any benchmark case is qualified",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-004",
@@ -70,7 +82,11 @@
       "triggers": ["Action absent from charter", "Credential/license prompt", "Production or physical target", "External write without approval record"],
       "contingency": "Stop before action, preserve evidence and request exact scoped authority.",
       "evidence": ["agent-operating-contract.md", "approval.md"],
-      "review_by": "Every transition"
+      "review": {
+        "cadence": "Every transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-005",
@@ -87,7 +103,11 @@
       "triggers": ["Pointer mismatch", "Second mutating feature", "Feature path outside lease"],
       "contingency": "Stop, audit both worktrees and return affected features to the last verified state.",
       "evidence": ["agent-operating-contract.md", "coordinator-state-machine.md"],
-      "review_by": "Before and after every Spec Kit command"
+      "review": {
+        "cadence": "Before and after every Spec Kit command",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-006",
@@ -104,7 +124,11 @@
       "triggers": ["More than one consumer", "Connected without identity/lease", "Same run produces inconsistent application state"],
       "contingency": "Disable application-backed execution and retain deterministic/read-only functionality until a reviewed identity contract passes.",
       "evidence": ["DEC-P0-003", "prototype-evidence.md#ll-020"],
-      "review_by": "Before EPP-F05 planning approval"
+      "review": {
+        "cadence": "Before EPP-F05 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-007",
@@ -121,7 +145,11 @@
       "triggers": ["Predetermined result with user input", "Mode absent from any projection", "Cause highlight lacks evidence"],
       "contingency": "Stop execution integration, remove false result projection and add regression before resuming.",
       "evidence": ["prototype-evidence.md#ll-001", "gates.md#product-capability-gates"],
-      "review_by": "Every execution-related feature"
+      "review": {
+        "cadence": "Every execution-related feature",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-008",
@@ -138,7 +166,11 @@
       "triggers": ["Production-ready language", "SLA/support implication", "Unchecked external control treated as pass"],
       "contingency": "Block COMM-01 and release; correct claims and obtain approved offering/support evidence.",
       "evidence": ["DEC-P0-001", "gates.md#commercial-readiness-gates"],
-      "review_by": "Before EPP-C01 specification"
+      "review": {
+        "cadence": "Before EPP-C01 specification",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-009",
@@ -155,7 +187,11 @@
       "triggers": ["Persisted/public schema diff", "Old record test absent", "Rollback would require deletion"],
       "contingency": "Block implementation/integration and redesign migration or narrow the feature to a non-persisted increment.",
       "evidence": ["integration-release.md", "gates.md#product-capability-gates"],
-      "review_by": "Every feature plan and merge"
+      "review": {
+        "cadence": "Every feature plan and merge",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-010",
@@ -172,7 +208,11 @@
       "triggers": ["Manual overall status", "Digest mismatch", "Evidence older than policy", "Dashboard/source disagreement"],
       "contingency": "Mark affected area stale, regenerate from source, and block transitions until reconciled.",
       "evidence": ["status-dashboard-contract.md"],
-      "review_by": "Every state transition and dashboard generation"
+      "review": {
+        "cadence": "Every state transition and dashboard generation",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-011",
@@ -189,7 +229,11 @@
       "triggers": ["Second implementing feature", "Push before prior CI terminal", "Same cause exceeds bound"],
       "contingency": "Stop mutation/pushes, freeze evidence, build one deterministic reproducer and request consolidated review.",
       "evidence": ["agent-operating-contract.md", "docs/contributing/dev-push-runbook.md"],
-      "review_by": "Continuously"
+      "review": {
+        "cadence": "Continuously",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-012",
@@ -206,7 +250,11 @@
       "triggers": ["Unexpected binary/payload", "Private path or credential pattern", "Automatic upload destination"],
       "contingency": "Stop, contain/remove through an approved secret/proprietary-data incident process, invalidate exposed evidence and rotate authority if needed.",
       "evidence": ["integration-release.md", "DEC-P0-012"],
-      "review_by": "Before every commit, evidence publication and release"
+      "review": {
+        "cadence": "Before every commit, evidence publication and release",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-013",
@@ -223,7 +271,11 @@
       "triggers": ["Dependency added before approval", "License/maintenance drift", "Native/runtime footprint changes"],
       "contingency": "Block feature, remove or replace dependency, and rerun architecture/packaging/license gates.",
       "evidence": ["gates.md#commercial-readiness-gates"],
-      "review_by": "Before any dependency addition"
+      "review": {
+        "cadence": "Before any dependency addition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-014",
@@ -240,7 +292,11 @@
       "triggers": ["Prototype claim called proven", "100-block fit screenshot treated as legibility", "Human evidence absent"],
       "contingency": "Keep product gate blocked, narrow UI claim and run the approved study before integration/release.",
       "evidence": ["audits/2026-08-26-omission-audits.md", "prototype-evidence.md"],
-      "review_by": "Before EPP-F02 integration and every material UX change"
+      "review": {
+        "cadence": "Before EPP-F02 integration and every material UX change",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-015",
@@ -257,7 +313,11 @@
       "triggers": ["Only output destroyed on cleanup", "Action cannot resolve", "Lifetime/owner absent"],
       "contingency": "Classify product run as failed/incomplete, retain safe evidence and redesign output delivery before release.",
       "evidence": ["DEC-P0-006", "prototype-evidence.md#ll-024"],
-      "review_by": "Before EPP-F03 planning approval"
+      "review": {
+        "cadence": "Before EPP-F03 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     },
     {
       "id": "RISK-016",
@@ -274,7 +334,11 @@
       "triggers": ["Digest mismatch", "Rebuild after registry propagation delay", "Missing manager/platform evidence", "Release created before docs/public verification"],
       "contingency": "Leave release incomplete/draft, recover only with recorded immutable subjects or publish a corrected patch; never overwrite artifacts.",
       "evidence": ["integration-release.md", "docs/release/release-runbook.md"],
-      "review_by": "Every release rehearsal and production step"
+      "review": {
+        "cadence": "Every release rehearsal and production step",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
     }
   ]
 }

@@ -5,7 +5,7 @@ from __future__ import annotations
 import posixpath
 import re
 from collections import defaultdict, deque
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime, timezone
 from typing import Any
 
@@ -90,6 +90,120 @@ def _load_json(
     return None
 
 
+def validate_legacy_profiles(
+    reader: Any,
+    approval_subject_commit: str,
+    program_root: str,
+    profile_set: Mapping[str, Any],
+    *,
+    observed_v1_revisions: Iterable[int] | None = None,
+    migration_count: int = 1,
+) -> list[Finding]:
+    """Validate the only two accepted byte-bound v1 compatibility profiles."""
+
+    findings: list[Finding] = []
+    profiles = list(profile_set.get("profiles", []))
+    if len(profiles) != 2:
+        findings.append(_finding("LEGACY_PROFILE_COUNT", "fatal", "lifecycle-policy.json", "EXACT_TWO_CLOSED_PROFILES"))
+    expected = (
+        ("epp-bootstrap-v1-r1-r9", 1, 9, 1, 8),
+        ("epp-bridge-v1-r10-r19", 10, 19, 9, 18),
+    )
+    all_paths: set[str] = set()
+    for index, profile in enumerate(profiles[:2]):
+        if not isinstance(profile, Mapping):
+            findings.append(_finding("LEGACY_PROFILE_INVALID", "fatal", "lifecycle-policy.json", "PROFILE_OBJECT"))
+            continue
+        profile_id, first_state, last_state, first_transition, last_transition = expected[index]
+        artifact = str(profile.get("profile_id", f"legacy-profile-{index}"))
+        if (
+            profile.get("profile_id") != profile_id
+            or profile.get("from_revision") != first_state
+            or profile.get("through_revision") != last_state
+            or profile.get("schema_major") != 1
+        ):
+            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CLOSED_PROFILE_RANGE"))
+        states = list(profile.get("states", []))
+        if [row.get("revision") for row in states if isinstance(row, Mapping)] != list(
+            range(first_state, last_state + 1)
+        ):
+            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CONTIGUOUS_STATE_RANGE"))
+        transitions = list(profile.get("transitions", []))
+        expected_ids = [f"TR-{number:04d}" for number in range(first_transition, last_transition + 1)]
+        if [row.get("transition_id") for row in transitions if isinstance(row, Mapping)] != expected_ids:
+            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CONTIGUOUS_TRANSITION_RANGE"))
+        for row in [*states, *transitions]:
+            if not isinstance(row, Mapping):
+                findings.append(_finding("LEGACY_PROFILE_INVALID", "fatal", artifact, "PROFILE_ROW_OBJECT"))
+                continue
+            relative = row.get("path")
+            try:
+                path = normalize_repo_path(str(relative))
+            except GitSubjectError:
+                findings.append(_finding("LEGACY_PATH_UNSAFE", "fatal", artifact, "NORMALIZED_PROFILE_PATH"))
+                continue
+            if path in all_paths:
+                findings.append(_finding("LEGACY_PATH_DUPLICATE", "fatal", artifact, "UNIQUE_PROFILE_PATH"))
+            all_paths.add(path)
+            full_path = f"{program_root}/{path}"
+            try:
+                raw = reader.blob(approval_subject_commit, full_path)
+            except GitSubjectError:
+                findings.append(_finding("LEGACY_BLOB_MISSING", "fatal", path, "APPROVAL_SUBJECT_BLOB"))
+                continue
+            if "revision" in row:
+                if sha256_bytes(raw) != row.get("raw_sha256"):
+                    findings.append(_finding("LEGACY_BLOB_MISMATCH", "fatal", path, "EXACT_STATE_BLOB"))
+                try:
+                    if canonical_digest(strict_loads(raw)) != row.get("canonical_digest"):
+                        findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", path, "LEGACY_CANONICAL_DIGEST"))
+                except ContractError:
+                    findings.append(_finding("JSON_INVALID", "fatal", path, "LEGACY_STATE_JSON"))
+            else:
+                is_terminal_checkpoint = row.get("transition_id") == "TR-0018"
+                expected_rule = "checkpoint_commit_blob" if is_terminal_checkpoint else "exact_blob_sha256"
+                if row.get("raw_sha256_rule") != expected_rule:
+                    findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "CLOSED_RAW_RULE"))
+                if is_terminal_checkpoint:
+                    if row.get("raw_sha256") is not None:
+                        findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "IMMUTABLE_NULL_CHECKPOINT"))
+                elif not isinstance(row.get("raw_sha256"), str):
+                    findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "EXACT_RAW_DIGEST_REQUIRED"))
+                elif sha256_bytes(raw) != row.get("raw_sha256"):
+                    findings.append(_finding("LEGACY_BLOB_MISMATCH", "fatal", path, "EXACT_TRANSITION_BLOB"))
+        if index == 0:
+            expected_successor = {
+                "kind": "closed_profile",
+                "target_profile_id": "epp-bridge-v1-r10-r19",
+                "first_transition_id": "TR-0009",
+                "maximum_count": 1,
+            }
+            checkpoint_valid = (
+                profile.get("checkpoint_commit") == "c46ea627a7403ff3e1ce3db6be3d1baeebebb377"
+                and profile.get("checkpoint_commit_rule") == "fixed_commit"
+            )
+        else:
+            expected_successor = {
+                "kind": "schema_migration",
+                "target_schema_version": "2.0",
+                "event_kind": "lifecycle_transition",
+                "maximum_count": 1,
+            }
+            checkpoint_valid = (
+                profile.get("checkpoint_commit") is None
+                and profile.get("checkpoint_commit_rule") == "exact_material_change_approval_subject"
+            )
+        if profile.get("successor") != expected_successor or profile.get("accept_new_records") is not False:
+            findings.append(_finding("LEGACY_SUCCESSOR_INVALID", "fatal", artifact, "SOLE_CLOSED_SUCCESSOR"))
+        if not checkpoint_valid:
+            findings.append(_finding("LEGACY_CHECKPOINT_INVALID", "fatal", artifact, "APPROVAL_SUBJECT_CHECKPOINT"))
+    if observed_v1_revisions is not None and any(revision > 19 for revision in observed_v1_revisions):
+        findings.append(_finding("LEGACY_FUTURE_RECORD", "fatal", "evidence/states", "NO_FUTURE_V1"))
+    if migration_count != 1:
+        findings.append(_finding("LEGACY_MIGRATION_COUNT", "fatal", "evidence/transitions", "SOLE_V2_SUCCESSOR"))
+    return sorted(findings, key=Finding.sort_key)
+
+
 def _validate_documents(
     reader: GitReader,
     commit: str,
@@ -157,8 +271,14 @@ def _validate_state_chain(
     prefix = f"{program_root}/evidence/states/program-state-revision-"
     for path, value in documents.items():
         if path.startswith(prefix) and isinstance(value, dict):
-            states[int(path.removeprefix(prefix).removesuffix(".json"))] = value
-    states[int(current.get("revision", -1))] = current
+            revision = int(path.removeprefix(prefix).removesuffix(".json"))
+            if revision in states and states[revision] != value:
+                findings.append(_finding("STATE_ARCHIVE_MISMATCH", "fatal", path, "UNIQUE_REVISION_BYTES"))
+            states[revision] = value
+    current_revision = int(current.get("revision", -1))
+    if current_revision in states and states[current_revision] != current:
+        findings.append(_finding("STATE_ARCHIVE_MISMATCH", "fatal", state_path, "CURRENT_ARCHIVE_IDENTITY"))
+    states[current_revision] = current
     revisions = sorted(states)
     if revisions and revisions != list(range(revisions[0], revisions[-1] + 1)):
         findings.append(_finding("STATE_REVISION_GAP", "fatal", state_path, "MONOTONIC_REVISION"))
@@ -167,7 +287,20 @@ def _validate_state_chain(
         for path, value in sorted(documents.items())
         if f"{program_root}/evidence/transitions/TR-" in path and isinstance(value, dict)
     ]
+    policy_value = documents.get(f"{program_root}/lifecycle-policy.json")
+    policy = policy_value if isinstance(policy_value, Mapping) else {}
+    program_edges = {
+        (str(row.get("from")), str(row.get("to")))
+        for row in policy.get("program_edges", [])
+        if isinstance(row, Mapping)
+    }
+    feature_edges = {
+        (str(row.get("from")), str(row.get("to")))
+        for row in policy.get("feature_edges", [])
+        if isinstance(row, Mapping)
+    }
     seen_ids: set[str] = set()
+    migration_count = 0
     for transition in transitions:
         transition_id = transition.get("transition_id")
         if not isinstance(transition_id, str) or transition_id in seen_ids:
@@ -185,6 +318,33 @@ def _validate_state_chain(
             findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", transition_id, "PRIOR_STATE_DIGEST"))
         if new is not None and canonical_digest(new) != transition.get("new_state_digest"):
             findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", transition_id, "NEW_STATE_DIGEST"))
+        if transition.get("schema_version") == "2.0":
+            domain = transition.get("state_domain")
+            event = transition.get("event_kind")
+            pair = (str(transition.get("from_state")), str(transition.get("to_state")))
+            if event == "lifecycle_transition":
+                allowed = program_edges if domain == "program" else feature_edges if domain == "feature" else set()
+                if pair not in allowed:
+                    findings.append(_finding("LIFECYCLE_EDGE_INVALID", "fatal", transition_id, "POLICY_EDGE"))
+            if isinstance(prior, Mapping) and isinstance(new, Mapping):
+                if prior.get("schema_version") == "1.0" and new.get("schema_version") == "2.0":
+                    migration_count += 1
+            git_record = transition.get("git")
+            if not isinstance(git_record, Mapping):
+                findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "COMPLETE_CHANGED_PATH_MANIFEST"))
+            else:
+                manifest = git_record.get("changed_paths_manifest", [])
+                if not isinstance(manifest, list) or len(manifest) != len(set(manifest)):
+                    findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "UNIQUE_CHANGED_PATHS"))
+                else:
+                    for path in manifest:
+                        try:
+                            normalize_repo_path(str(path))
+                        except GitSubjectError:
+                            findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "SAFE_CHANGED_PATH"))
+                            break
+    if any(state.get("schema_version") == "2.0" for state in states.values()) and migration_count != 1:
+        findings.append(_finding("LEGACY_MIGRATION_COUNT", "fatal", "evidence/transitions", "SOLE_V2_SUCCESSOR"))
     last = current.get("last_transition")
     if last is not None and last not in seen_ids:
         findings.append(_finding("TRANSITION_REFERENCE_MISSING", "fatal", state_path, "LAST_TRANSITION_EXISTS"))
@@ -216,6 +376,139 @@ def _roadmap_order(items: list[dict[str, Any]], findings: list[Finding]) -> list
     if len(ordered) != len(items):
         findings.append(_finding("ROADMAP_CYCLE", "fatal", "roadmap.json", "ACYCLIC_DEPENDENCIES"))
     return ordered
+
+
+def _parse_utc(value: Any) -> datetime | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(timezone.utc)
+
+
+def evaluate_approval_history(
+    approvals: Sequence[Mapping[str, Any]],
+    *,
+    required_scopes: Sequence[str],
+    exact_subject: Mapping[str, Any],
+    observed_at: datetime,
+) -> tuple[list[Finding], list[Mapping[str, Any]]]:
+    """Resolve one current append-only approval per required scope."""
+
+    findings: list[Finding] = []
+    selected: list[Mapping[str, Any]] = []
+    now = observed_at.astimezone(timezone.utc)
+    for scope in required_scopes:
+        candidates = [row for row in approvals if row.get("scope") == scope]
+        if not candidates:
+            findings.append(_finding("APPROVAL_SCOPE_MISSING", "fatal", "evidence/approvals", "REQUIRED_SCOPE"))
+            continue
+        approval = sorted(candidates, key=lambda row: str(row.get("approved_at", "")))[-1]
+        selected.append(approval)
+        artifact = str(approval.get("approval_id", "approval"))
+        if approval.get("subject") != exact_subject:
+            findings.append(_finding("APPROVAL_SUBJECT_MISMATCH", "fatal", artifact, "EXACT_SHARED_SUBJECT"))
+        revoked = approval.get("revoked") is True or bool(approval.get("revocation_events"))
+        if revoked:
+            findings.append(_finding("APPROVAL_REVOKED", "fatal", artifact, "APPEND_ONLY_REVOCATION"))
+        expiry = _parse_utc(approval.get("expires_at"))
+        if expiry is not None and expiry < now:
+            findings.append(_finding("APPROVAL_EXPIRED", "fatal", artifact, "APPROVAL_FRESHNESS"))
+        if approval.get("decision") != "approved" or approval.get("conditions"):
+            findings.append(_finding("APPROVAL_NOT_CURRENT", "fatal", artifact, "UNCONDITIONAL_APPROVAL"))
+    return sorted(findings, key=Finding.sort_key), selected
+
+
+def validate_roadmap_approval_and_lease(
+    documents: Mapping[str, Any],
+    program_root: str,
+    *,
+    observed_at: datetime,
+    actual_branch: str,
+    worktree_id: str,
+) -> tuple[list[Finding], str | None]:
+    """Validate roadmap selection, structured dates, pointer, WIP, and lease identity."""
+
+    findings: list[Finding] = []
+    roadmap = documents.get(f"{program_root}/roadmap.json")
+    state = documents.get(f"{program_root}/program-state.json")
+    policy = documents.get(f"{program_root}/lifecycle-policy.json")
+    if not isinstance(roadmap, Mapping) or not isinstance(state, Mapping):
+        findings.append(_finding("CONTROL_PLANE_INVALID", "fatal", "program-state.json", "ROADMAP_AND_STATE"))
+        return findings, None
+    items = [dict(item) for item in roadmap.get("items", []) if isinstance(item, Mapping)]
+    _roadmap_order(items, findings)
+    active = [item for item in items if item.get("status") == "active"]
+    if len(active) > 1:
+        findings.append(_finding("WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"))
+    current_feature = state.get("current_feature")
+    if len(active) != 1 or active[0].get("id") != current_feature:
+        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "ACTIVE_FEATURE_POINTER"))
+    lease = state.get("active_mutating_lease")
+    if not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature:
+        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "LEASE_FEATURE_MATCH"))
+    else:
+        expiry = _parse_utc(lease.get("expires_at"))
+        acquired = _parse_utc(lease.get("acquired_at"))
+        if expiry is None or acquired is None or expiry <= acquired or expiry < observed_at.astimezone(timezone.utc):
+            findings.append(_finding("LEASE_EXPIRED", "fatal", "program-state.json", "LEASE_TIME_WINDOW"))
+        if lease.get("branch") != actual_branch:
+            findings.append(_finding("LEASE_BRANCH_MISMATCH", "fatal", "program-state.json", "ACTUAL_BRANCH"))
+        if lease.get("worktree_id") != worktree_id:
+            findings.append(_finding("LEASE_WORKTREE_MISMATCH", "fatal", "program-state.json", "ACTUAL_WORKTREE"))
+        for path in lease.get("allowed_paths", []):
+            try:
+                normalize_repo_path(str(path))
+            except GitSubjectError:
+                findings.append(_finding("LEASE_PATH_UNSAFE", "fatal", "program-state.json", "NORMALIZED_ALLOWED_PATH"))
+                break
+        local_actions = {
+            "inspect",
+            "edit_allowlisted_paths",
+            "run_deterministic_checks",
+            "create_local_artifacts",
+            "create_local_commits",
+        }
+        if not set(lease.get("allowed_actions", [])).issubset(local_actions):
+            findings.append(_finding("LEASE_ACTION_UNAUTHORIZED", "fatal", "program-state.json", "LOCAL_ACTION_VOCABULARY"))
+    decisions = documents.get(f"{program_root}/decision-register.json")
+    if isinstance(decisions, Mapping):
+        for row in decisions.get("records", []):
+            if not isinstance(row, Mapping) or row.get("status") in {"decided", "superseded", "rejected"}:
+                continue
+            due = row.get("due")
+            due_at = _parse_utc(due.get("due_at")) if isinstance(due, Mapping) else None
+            if due_at is not None and due_at < observed_at.astimezone(timezone.utc):
+                findings.append(_finding("DECISION_OVERDUE", "fatal", str(row.get("id")), "STRUCTURED_DUE_DATE"))
+    risks = documents.get(f"{program_root}/risk-register.json")
+    if isinstance(risks, Mapping):
+        for row in risks.get("risks", []):
+            if not isinstance(row, Mapping) or row.get("status") == "closed":
+                continue
+            review = row.get("review")
+            due_at = _parse_utc(review.get("due_at")) if isinstance(review, Mapping) else None
+            if due_at is not None and due_at < observed_at.astimezone(timezone.utc):
+                findings.append(_finding("RISK_REVIEW_OVERDUE", "fatal", str(row.get("id")), "STRUCTURED_REVIEW_DATE"))
+    actions = state.get("next_eligible_actions", [])
+    action = str(actions[0].get("action")) if len(actions) == 1 and isinstance(actions[0], Mapping) else None
+    if action is None:
+        findings.append(_finding("NEXT_ACTION_AMBIGUOUS", "fatal", "program-state.json", "SOLE_NEXT_ACTION"))
+    if isinstance(policy, Mapping) and action is not None:
+        matching = [
+            row
+            for row in policy.get("action_rules", [])
+            if isinstance(row, Mapping)
+            and row.get("program_state") == state.get("state")
+            and row.get("feature_state") == state.get("feature_state")
+            and row.get("action") == action
+        ]
+        if len(matching) != 1:
+            findings.append(_finding("ACTION_POLICY_MISMATCH", "fatal", "program-state.json", "POLICY_DERIVED_ACTION"))
+    return sorted(findings, key=Finding.sort_key), action
 
 
 def _validate_roadmap_and_lease(

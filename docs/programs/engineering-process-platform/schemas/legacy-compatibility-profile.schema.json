@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/legacy-compatibility-profile.schema.json",
+  "title": "EPP-F01 Frozen Legacy Compatibility Profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "profiles"],
+  "properties": {
+    "$schema": { "const": "./legacy-compatibility-profile.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "profiles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "allOf": [
+            { "$ref": "lifecycle-policy.schema.json#/$defs/compatibilityProfile" },
+            { "properties": { "profile_id": { "const": "epp-bootstrap-v1-r1-r9" }, "from_revision": { "const": 1 }, "through_revision": { "const": 9 } } }
+          ]
+        },
+        {
+          "allOf": [
+            { "$ref": "lifecycle-policy.schema.json#/$defs/compatibilityProfile" },
+            { "properties": { "profile_id": { "const": "epp-bridge-v1-r10-r19" }, "from_revision": { "const": 10 }, "through_revision": { "const": 19 } } }
+          ]
+        }
+      ],
+      "items": false
+    }
+  }
+}

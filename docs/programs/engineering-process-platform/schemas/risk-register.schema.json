@@ -15,7 +15,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "priority", "status", "title", "cause", "consequence", "likelihood", "impact", "score", "owner_role", "mitigations", "triggers", "contingency", "evidence", "review_by"],
+        "required": ["id", "priority", "status", "title", "cause", "consequence", "likelihood", "impact", "score", "owner_role", "mitigations", "triggers", "contingency", "evidence", "review"],
         "properties": {
           "id": { "type": "string", "pattern": "^RISK-[0-9]{3}$" },
           "priority": { "enum": ["P0", "P1", "P2"] },
@@ -31,7 +31,16 @@
           "triggers": { "type": "array", "minItems": 1, "items": { "type": "string" } },
           "contingency": { "type": "string", "minLength": 3 },
           "evidence": { "type": "array", "items": { "type": "string" } },
-          "review_by": { "type": "string", "minLength": 1 }
+          "review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cadence", "due_at", "last_reviewed_at"],
+            "properties": {
+              "cadence": { "type": "string", "minLength": 1 },
+              "due_at": { "oneOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] },
+              "last_reviewed_at": { "oneOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] }
+            }
+          }
         }
       }
     }
