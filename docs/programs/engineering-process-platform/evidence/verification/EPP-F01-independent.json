@@ -1,0 +1,173 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-INDEPENDENT-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "independent",
+  "subject": {
+    "git_commit": "e5a2ade942c0b4a2d474a185cfff0c46e10c508a",
+    "git_tree": "f5b3cca947585d4fd1e852bba868e6da9a2031ef",
+    "artifact_digests": [
+      {
+        "path": "scripts/program_control/validation.py",
+        "sha256": "9e7a557912fc9d831e83c0ba4f5403ce10117cf67524a64ef354af8314d2695f"
+      },
+      {
+        "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py",
+        "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558"
+      },
+      {
+        "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+        "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"
+      },
+      {
+        "path": "scripts/check-dev-push.sh",
+        "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f"
+      },
+      {
+        "path": "scripts/check-dev-merge.sh",
+        "sha256": "3990e07eb684d6efedfa6e94ef9913ef2c3ade8ccbe86c5573f481f74d8f2626"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "agent:/root/epp_f01_gate_gap",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-27T22:40:50Z",
+  "verdict": "failed",
+  "checks": [
+    {
+      "check_id": "INDEPENDENT-IDENTITY-MANIFEST",
+      "method": "Confirm R commit/tree exactly and recompute all 16 candidate-manifest digests; 16/16 passed. R through repair container changes only declared freeze/repair evidence, state and T065.",
+      "environment": "Distinct read-only verifier; exact Git objects",
+      "duration_ms": 2840,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate-link-repair.json",
+          "sha256": "b52a8330fc74a024d2aae9674b33436dee1a836e0ce46df08c6fe8ef69a65e53"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-EXACT-VALIDATOR",
+      "method": "Validate exact R in an identity-matched temporary branch/worktree; exit 0 in 7658 ms with zero blockers, four readiness areas, benchmark 0/100, release false and exact manifest 122136a8....",
+      "environment": "Temporary local verifier worktree; offline",
+      "duration_ms": 7658,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "9e7a557912fc9d831e83c0ba4f5403ce10117cf67524a64ef354af8314d2695f"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-REGRESSION-ENVELOPE",
+      "method": "Account for all 198 program-control cases in bounded chunks: 197 passed and one declared Windows symlink skip; deterministic, negative/corruption, redaction, atomicity, compatibility, rollback/removal, quickstart, evidence-link and C/D provenance coverage passed.",
+      "environment": "Distinct read-only verifier; writable temporary basetemps; offline",
+      "duration_ms": 175690,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py",
+          "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558"
+        },
+        {
+          "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+          "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-GATE-ROUTING-RUFF-LINT",
+      "method": "Run test_dev_push_process.py: 9 passed in 0.49 s. Run Ruff lint on approved scope: passed in 3.71 s.",
+      "environment": "Windows repository tools; offline",
+      "duration_ms": 4200,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/check-dev-push.sh",
+          "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-RUFF-FORMAT",
+      "method": "Run .venv Ruff format --check on validation.py and full approved scope; exit 1 because one multiline condition in validation.py requires formatting.",
+      "environment": "Windows repository Ruff; offline",
+      "duration_ms": 2100,
+      "result": "failed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "9e7a557912fc9d831e83c0ba4f5403ce10117cf67524a64ef354af8314d2695f"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-MYPY",
+      "method": "Attempt local MyPy; module/runtime unavailable and no dependency added.",
+      "environment": "Windows local; dependency changes prohibited",
+      "duration_ms": 900,
+      "result": "skipped",
+      "evidence": []
+    },
+    {
+      "check_id": "INDEPENDENT-NATIVE-PRE-PUSH",
+      "method": "Review declared native gate limitation; isolated gate runtime remains unavailable and push is unauthorized.",
+      "environment": "Windows local; no external actions",
+      "duration_ms": 300,
+      "result": "skipped",
+      "evidence": [
+        {
+          "path": "scripts/check-dev-push.sh",
+          "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Author sandbox D:/TEMP failure and successful writable-basetemp rerun retained.",
+    "MyPy and native pre-push runtime remain unavailable; one Windows symlink case remains skipped.",
+    "STALE_NESTED_EVIDENCE_DIGEST was independently found and append-only resolved at 168ac6d2.",
+    "Independent Ruff format check failed on candidate R validation.py."
+  ],
+  "findings": [
+    {
+      "code": "CANDIDATE_RUFF_FORMAT_DRIFT",
+      "severity": "high",
+      "artifact": "scripts/program_control/validation.py",
+      "disposition": "Unresolved on R; format only validation.py, rerun the full envelope, freeze a new exact candidate, and independently reverify."
+    },
+    {
+      "code": "STALE_NESTED_EVIDENCE_DIGEST",
+      "severity": "medium",
+      "artifact": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate-link-repair.json",
+      "disposition": "Resolved append-only; repair recomputes and candidate R was unchanged."
+    },
+    {
+      "code": "LOCAL_GATE_RUNTIME_UNAVAILABLE",
+      "severity": "medium",
+      "artifact": "scripts/check-dev-push.ps1",
+      "disposition": "Retained; real gate remains mandatory before any separately authorized push."
+    },
+    {
+      "code": "MYPY_RUNNER_UNAVAILABLE",
+      "severity": "low",
+      "artifact": "pyproject.toml",
+      "disposition": "Retained; no dependency added and CI/integration must run MyPy."
+    },
+    {
+      "code": "WINDOWS_SYMLINK_CASE_SKIPPED",
+      "severity": "info",
+      "artifact": "tests/program_control_plane/test_git_subject.py",
+      "disposition": "Retained for an environment with symlink privilege."
+    }
+  ],
+  "rollback_subject": "git:e5a2ade942c0b4a2d474a185cfff0c46e10c508a (failed frozen candidate R; do not deliver)",
+  "delivery_relation": null
+}
