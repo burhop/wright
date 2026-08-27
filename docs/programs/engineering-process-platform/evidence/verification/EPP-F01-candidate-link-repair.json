@@ -1,0 +1,70 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-CANDIDATE-LINK-REPAIR-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "candidate",
+  "subject": {
+    "git_commit": "e5a2ade942c0b4a2d474a185cfff0c46e10c508a",
+    "git_tree": "f5b3cca947585d4fd1e852bba868e6da9a2031ef",
+    "artifact_digests": [
+      {
+        "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+        "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json",
+        "sha256": "88b99f9020233c8d94cce601f173e13a080ae06d962939c33fe42cb3fe5bd2c0"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "coordinator",
+    "independent": false
+  },
+  "created_at": "2026-08-27T22:28:40Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "ORIGINAL-STALE-NESTED-DIGEST",
+      "method": "Retain the independent verifier finding that EPP-F01-candidate.json check CANDIDATE-FULL-REGRESSION cites prior blob SHA 4f6210... for test_evidence_walkthrough.py although its authoritative subject manifest correctly cites candidate R SHA a951c4....",
+      "environment": "Read-only exact Git blob recomputation by distinct verifier",
+      "duration_ms": 220,
+      "result": "failed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json",
+          "sha256": "88b99f9020233c8d94cce601f173e13a080ae06d962939c33fe42cb3fe5bd2c0"
+        }
+      ]
+    },
+    {
+      "check_id": "APPEND-ONLY-LINK-REPAIR",
+      "method": "Preserve the original candidate record unchanged and bind the one stale nested link to exact candidate R blob SHA a951c423...; the candidate commit, tree, authoritative manifest, implementation bytes, acceptance envelope, readiness and authority remain unchanged.",
+      "environment": "Append-only local evidence; no candidate mutation",
+      "duration_ms": 310,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+          "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Independent T066 review found the stale nested check-level digest in freeze container c182e573; the candidate subject manifest itself recomputed 16/16 correctly."
+  ],
+  "findings": [
+    {
+      "code": "STALE_NESTED_EVIDENCE_DIGEST",
+      "severity": "medium",
+      "artifact": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json",
+      "disposition": "Resolved append-only by this supplement for exactly test_evidence_walkthrough.py; original bytes and finding remain visible, and candidate R is unchanged."
+    }
+  ],
+  "rollback_subject": "git:c182e573b59ca35711c83ae23a83073869c509c5 (original freeze container and immutable finding source)",
+  "delivery_relation": null
+}
