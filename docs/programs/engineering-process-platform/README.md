@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 analyzed on `077-control-plane-validator`; exact approval-subject freeze next and no implementation approval
+**Status:** EPP-F01 implementation approval pending on `077-control-plane-validator`; no implementation authority
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`FREEZE_EPP_F01_APPROVAL_SUBJECT` is the only eligible action. The clean read-only report passes with 34/34 requirements covered, zero active critical/high/medium findings, six schemas valid, both checklists complete, and six resolved findings retained with one repair allowance remaining. Create no implementation: commit the analyzed artifacts, bind the exact commit/tree/program-tree and artifact digests in transition evidence, then request separate same-subject `material_change` and `feature_implementation` approvals. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`APPROVE_EPP_F01_IMPLEMENTATION_SUBJECT` is the only eligible action and requires the human. The frozen analyzed subject is commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, and program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`; every feature artifact digest is listed in `TR-0014`. Approval must create two same-subject records, one `material_change` and one `feature_implementation`, and authorize the exact implementation paths/actions in `tasks.md`. Until both records exist and the planning lease is replaced by an implementation lease, do not run `speckit-implement`. Dependencies, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
