@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 amended subject approved; v2 implementation lease authorized
+**Status:** EPP-F01 implementing under the approved v2 lease
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -52,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`START_EPP_F01_IMPLEMENTATION` is the only eligible action. [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) bind the exact amended subject and all 34 `TR-0018` artifact digests. `TR-0019` is the sole v1-to-v2 migration and activates implementation lease revision 5 for only the 68 local tasks. The preserved script drafts remain unverified work-in-progress and no task is yet claimed complete. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`EXECUTE_EPP_F01_TASKS` is the only eligible action. [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) bind the exact amended subject and all 34 `TR-0018` artifact digests. `TR-0019` is the sole v1-to-v2 migration, and `TR-0020` enters implementation under lease revision 5 for only the 68 local tasks. The preserved script drafts remain unverified work-in-progress and no task is yet claimed complete. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
