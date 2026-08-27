@@ -1,0 +1,105 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-US2-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "story",
+  "subject": {
+    "git_commit": "59dc93e2f8229be479f0549110eebb0abf6bf080",
+    "git_tree": "b2778736cb3ca1944cceb51f0c854fcb8a252170",
+    "artifact_digests": [
+      { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" },
+      { "path": "scripts/program_control/dashboard.py", "sha256": "094509132d272c985d93eb7bc177cbc23ab27bfdf551f9b4c0b0dddc59f17e4c" },
+      { "path": "scripts/program_control/model.py", "sha256": "80b7360bbde05fb7dbe1e5ca658f3835b28034e030645340940a06e2cbd966bf" },
+      { "path": "tests/program_control_plane/test_dashboard_projection.py", "sha256": "96008149c8b712a64d56ab5391b57cf91e18cb35ec32a9d08ac2c96814bfd1bf" },
+      { "path": "tests/program_control_plane/test_dashboard_provenance.py", "sha256": "2d43b32c2acc34101177154a455fc7dd39568f72692fc78c94be67799edeed7e" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T20:25:00Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "US2-FRESH-CANDIDATE",
+      "method": "Run python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --program-root docs/programs/engineering-process-platform --output docs/programs/engineering-process-platform/dashboard.json --format text; validate the 92002-byte result against dashboard.schema.json.",
+      "environment": "local worktree; offline; candidate bytes only; no delivery claim",
+      "duration_ms": 5700,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+      ]
+    },
+    {
+      "check_id": "US2-FOUR-INDEPENDENT-AREAS",
+      "method": "Derive the four areas independently from catalog assertions and evidence: product not_started 0/11, benchmark not_started 0/8, commercial blocked 0/8, and program_health in_progress 0/7.",
+      "environment": "fixed source observations and governed gate catalog; offline",
+      "duration_ms": 4600,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/dashboard.py", "sha256": "094509132d272c985d93eb7bc177cbc23ab27bfdf551f9b4c0b0dddc59f17e4c" }
+      ]
+    },
+    {
+      "check_id": "US2-BENCHMARK-ZERO-OF-ONE-HUNDRED",
+      "method": "Require the empty governed population to render counted 0, target 100, not_tested 100, with explicit coverage, lifecycle, oracle, artifact and holdout deficits; reject hand-set success.",
+      "environment": "empty committed benchmark evidence; no benchmark execution",
+      "duration_ms": 2700,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_dashboard_projection.py", "sha256": "96008149c8b712a64d56ab5391b57cf91e18cb35ec32a9d08ac2c96814bfd1bf" }
+      ]
+    },
+    {
+      "check_id": "US2-ISOLATED-CORRUPTION",
+      "method": "Corrupt only a copied aggregate-evidence fixture; require GATE_AGGREGATE_MISMATCH with bounded recovery direction and confirm authoritative source hashes are unchanged.",
+      "environment": "isolated copied fixture; read-only source evidence; offline",
+      "duration_ms": 400,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_dashboard_projection.py", "sha256": "96008149c8b712a64d56ab5391b57cf91e18cb35ec32a9d08ac2c96814bfd1bf" }
+      ]
+    },
+    {
+      "check_id": "US2-DETERMINISTIC-REGENERATION",
+      "method": "Generate twice under the same declared source, generated_at and data_cutoff observations; require byte-identical schema-valid output.",
+      "environment": "fixed observations and source bundle; offline",
+      "duration_ms": 5300,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_dashboard_provenance.py", "sha256": "2d43b32c2acc34101177154a455fc7dd39568f72692fc78c94be67799edeed7e" }
+      ]
+    },
+    {
+      "check_id": "US2-RELEASE-FAIL-CLOSED",
+      "method": "Require all four areas passed plus exact non-expired, non-revoked human release approval; reject cross-candidate approval and any manual green override.",
+      "environment": "isolated release fixtures; no external change or release action",
+      "duration_ms": 600,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_dashboard_projection.py", "sha256": "96008149c8b712a64d56ab5391b57cf91e18cb35ec32a9d08ac2c96814bfd1bf" }
+      ]
+    }
+  ],
+  "original_failure_refs": [],
+  "findings": [
+    {
+      "code": "BROWSER_STATUS_UNAVAILABLE",
+      "severity": "info",
+      "artifact": "roadmap.json#EPP-F01B",
+      "disposition": "EPP-F01 intentionally stops at validated snapshot and CLI output. The browser page is the separately proposed and unauthorized EPP-F01B feature."
+    },
+    {
+      "code": "DASHBOARD_DELIVERY_NOT_PROVEN",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "The snapshot is candidate_not_evidence. T067-T068 delivery proof is outside this lease and no committed-current claim is made."
+    }
+  ],
+  "rollback_subject": "git:9ff9e3409ce9e85423968758ec3568572ec876d6 (first schema-valid v2 candidate checkpoint)",
+  "delivery_relation": null
+}

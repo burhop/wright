@@ -76,6 +76,14 @@ that `program-state.json` and policy do not prove.
 
 Both commands are offline. A validator failure authorizes no repair, integration, benchmark execution, or release action; inspect the repository-relative finding and follow the program state's sole eligible action.
 
+Generate the schema-valid local candidate snapshot only at its declared path:
+
+```powershell
+python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --program-root docs/programs/engineering-process-platform --output docs/programs/engineering-process-platform/dashboard.json --format text
+```
+
+The snapshot always remains `candidate_not_evidence`. Current empty benchmark evidence is rendered honestly as `0/100` counted, `100` not tested, and independent coverage/oracle/artifact/partition/freshness deficits. `COMMITTED_IDENTITY_MISMATCH` and `TRANSITION_INPUT_ORIGIN_MISMATCH` are resolved only by their exact approved `37/37` and `1/1` profiles; any profile, authority, target, Git-object, or source/container mismatch fails closed with a bounded recovery direction.
+
 ---
 
 

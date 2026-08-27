@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 V5 is implementation-authorized only for local T024–T041 under lease revision 8. T001–T023 and T069 pass, including independently accepted `37/37` committed-identity disposition. DEC-P0-017 and the exact one-claim TR-0027 correction are approved; implementation must still prove `1/1` and strict non-interference. EPP-F01B remains proposed and unauthorized.
+**Status:** EPP-F01 T024–T041 are complete locally. The validator passes the exact committed subject, both historical corrections recompute (`37/37` and `1/1`), and the v2 dashboard candidate shows four independent areas plus honest benchmark progress at `0/100`. The implementation lease is closed and the sole next action is human review of the T041 value demonstration. T042–T068 and EPP-F01B remain unauthorized.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -28,6 +28,7 @@ Start here, then read only the artifacts needed for the next action:
 14. [`evidence/verification/EPP-F01-US1.json`](evidence/verification/EPP-F01-US1.json) — immutable pre-T069 US1 evidence and its original seven committed-evidence findings; use TR-0031 through TR-0033 for their later bounded repair disposition.
 15. [`evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json`](evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json), [`decisions/0016-closed-committed-identity-correction.md`](decisions/0016-closed-committed-identity-correction.md), [`audits/2026-08-27-epp-f01-committed-identity-repair-audits.md`](audits/2026-08-27-epp-f01-committed-identity-repair-audits.md), and [`evidence/transitions/TR-0033.json`](evidence/transitions/TR-0033.json) — the approved exact 37-claim contract and independently accepted T069 closure. DEC-P0-016 is decided.
 16. [`evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json`](evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json), [`decisions/0017-closed-tr0027-input-origin-correction.md`](decisions/0017-closed-tr0027-input-origin-correction.md), [`evidence/transitions/TR-0034.json`](evidence/transitions/TR-0034.json), and the `APR-EPP-F01-*-005` approval bundle — the exact one-claim contract and V5 authority for local T024–T041 only.
+17. [`evidence/verification/EPP-F01-US1-repair.json`](evidence/verification/EPP-F01-US1-repair.json) and [`evidence/verification/EPP-F01-US2.json`](evidence/verification/EPP-F01-US2.json) — the runnable T041 value checkpoint, exact commands/results, correction non-interference, dashboard digest, limitations, and rollback subject.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -56,4 +57,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Execute only T024–T041 under the exact V5 approval bundle and lease revision 8, then stop at `REVIEW_EPP_F01_T041_VALUE_CHECKPOINT` with the required runnable demonstration. T042–T068, EPP-F01B, dependencies, benchmark execution, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.
+Review `EPP-F01-US1-repair.json`, `EPP-F01-US2.json`, and the generated `dashboard.json`, then explicitly accept or reject the T041 value checkpoint. No mutating lease is active. T042–T068, EPP-F01B, dependencies, benchmark execution, external change, push/PR/merge/dev integration, publication, and release remain unauthorized.

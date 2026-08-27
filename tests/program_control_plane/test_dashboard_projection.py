@@ -540,23 +540,29 @@ def test_release_approval_requires_full_exact_candidate_and_current_authority() 
 
     other = copy.deepcopy(candidate)
     other["artifact_digests"][0]["sha256"] = "f" * 64
-    assert _release_approval(
-        _ReleaseReader(raw),
-        "d" * 40,
-        documents,
-        PROGRAM_ROOT,
-        other,
-        [],
-        OBSERVED,
-    )["status"] == "stale"
+    assert (
+        _release_approval(
+            _ReleaseReader(raw),
+            "d" * 40,
+            documents,
+            PROGRAM_ROOT,
+            other,
+            [],
+            OBSERVED,
+        )["status"]
+        == "stale"
+    )
 
     approval["revocation_events"] = [{"event_id": "REV-001"}]
-    assert _release_approval(
-        _ReleaseReader(raw),
-        "d" * 40,
-        documents,
-        PROGRAM_ROOT,
-        candidate,
-        [],
-        OBSERVED,
-    )["status"] == "revoked"
+    assert (
+        _release_approval(
+            _ReleaseReader(raw),
+            "d" * 40,
+            documents,
+            PROGRAM_ROOT,
+            candidate,
+            [],
+            OBSERVED,
+        )["status"]
+        == "revoked"
+    )

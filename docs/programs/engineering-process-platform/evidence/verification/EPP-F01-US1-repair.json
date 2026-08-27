@@ -1,0 +1,85 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-US1-REPAIR-002",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "story",
+  "subject": {
+    "git_commit": "59dc93e2f8229be479f0549110eebb0abf6bf080",
+    "git_tree": "b2778736cb3ca1944cceb51f0c854fcb8a252170",
+    "artifact_digests": [
+      { "path": "scripts/program_control/cli.py", "sha256": "28176d2ee0b04f98d9aa67275ca7c0cc97c41be590520261c1752d5c33b50e71" },
+      { "path": "scripts/program_control/git_subject.py", "sha256": "b3f86e16305f887cf4240a359e5685638026bbd79f412fe3308146dd1a2168fd" },
+      { "path": "scripts/program_control/json_contracts.py", "sha256": "6579bff3f78ae9cd1f4387fc2c01336c9b388394523bffe5dedb73ffbb3befae" },
+      { "path": "scripts/program_control/validation.py", "sha256": "b7ddbf0643adf5a883379fb0cb64c5bb5eb9bf94246e0c8ac027df53ed65046e" },
+      { "path": "tests/program_control_plane/test_cli.py", "sha256": "257a1b6eb4c987efd7cacf9967e017d7771c319ab1503a9b5860a5122f0abde9" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T20:20:00Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "US1-CURRENT-SUBJECT",
+      "method": "Run python scripts/validate-engineering-process-program.py validate --source HEAD --format json against committed 59dc93e2; require exit 0, schema-valid bounded output, and runtime below five seconds.",
+      "environment": "clean local Git worktree; offline; read-only Git plumbing",
+      "duration_ms": 4500,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/validation.py", "sha256": "b7ddbf0643adf5a883379fb0cb64c5bb5eb9bf94246e0c8ac027df53ed65046e" }
+      ]
+    },
+    {
+      "check_id": "US1-CORRECTION-ONE-OF-ONE",
+      "method": "Recompute the approved TR-0027 input-origin profile and require exactly 1/1 resolved while the earlier committed-identity profile remains exactly 37/37 resolved.",
+      "environment": "temporary repositories and exact committed Git objects; no source mutation",
+      "duration_ms": 4100,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_cli.py", "sha256": "257a1b6eb4c987efd7cacf9967e017d7771c319ab1503a9b5860a5122f0abde9" }
+      ]
+    },
+    {
+      "check_id": "US1-NON-INTERFERENCE",
+      "method": "Deep-compare correction-off/on benchmark, readiness, candidate, approval and release projections for honest empty and non-empty benchmark fixtures; require byte-preserved authoritative source evidence.",
+      "environment": "isolated copied fixtures; fixed observations; offline",
+      "duration_ms": 3300,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_cli.py", "sha256": "257a1b6eb4c987efd7cacf9967e017d7771c319ab1503a9b5860a5122f0abde9" }
+      ]
+    },
+    {
+      "check_id": "US1-FOCUSED-MODULE",
+      "method": "Run python -m pytest tests/program_control_plane -q -p no:cacheprovider with a writable basetemp; require the complete authorized module to pass except the documented platform symlink skip.",
+      "environment": "Windows local Python; offline; writable repository temp root",
+      "duration_ms": 51510,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_cli.py", "sha256": "257a1b6eb4c987efd7cacf9967e017d7771c319ab1503a9b5860a5122f0abde9" }
+      ]
+    },
+    {
+      "check_id": "US1-BOUNDS",
+      "method": "Repeat current-subject validation three times; require 3.64, 3.74 and 4.50 second runs and 125092-byte JSON output, below the five-second and one-MiB limits.",
+      "environment": "same committed source, local fixed program evidence, offline",
+      "duration_ms": 11880,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "28176d2ee0b04f98d9aa67275ca7c0cc97c41be590520261c1752d5c33b50e71" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "TR-0027 /inputs/3 recorded a planning-tree path as though it existed in the source commit",
+    "COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001 required exact 1/1 recomputation and strict projection non-interference"
+  ],
+  "findings": [],
+  "rollback_subject": "git:c946075f79b1d0477223b315cb6390b353084c4a (first exact-subject validator checkpoint)",
+  "delivery_relation": null
+}

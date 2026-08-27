@@ -1,6 +1,6 @@
 # EPP-F01 Quickstart and Acceptance Journey
 
-This is the intended post-implementation journey. At the planning checkpoint described by this file, the command does not yet exist and must not be represented as available.
+This is the implemented local journey through the T041 value checkpoint. It validates and projects existing committed evidence only; it does not authorize T042+, integration, benchmark execution, EPP-F01B, or release work.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This is the intended post-implementation journey. At the planning checkpoint des
 From the repository root:
 
 ```text
-uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source HEAD --format text
+python scripts/validate-engineering-process-program.py validate --source HEAD --format text
 ```
 
 Expected success behavior:
@@ -36,7 +36,7 @@ Expected failure behavior:
 Machine output is produced from the same report model:
 
 ```text
-uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source HEAD --format json
+python scripts/validate-engineering-process-program.py validate --source HEAD --format json
 ```
 
 To validate a committed dashboard container, identify `S` explicitly and either provide `C`:
@@ -58,7 +58,7 @@ uv run --extra runtime python scripts/validate-engineering-process-program.py va
 ## 2. Generate a local candidate dashboard
 
 ```text
-uv run --extra runtime python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --output docs/programs/engineering-process-platform/dashboard.json
+python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --output docs/programs/engineering-process-platform/dashboard.json --format text
 ```
 
 The command validates all sources before writing, builds all four areas for the same exact candidate, validates temporary output, and atomically replaces the target. Its output bytes always remain `candidate_not_evidence`; committing them does not edit that self-description.
@@ -125,9 +125,9 @@ TR-0027 has one separate known input-origin defect: `/inputs/3` names the planni
 The approved task plan will freeze the focused commands. At minimum:
 
 ```text
-uv run pytest tests/program_control_plane
-uv run ruff check scripts/program_control scripts/validate-engineering-process-program.py tests/program_control_plane
-uv run mypy scripts/program_control
+python -m pytest tests/program_control_plane -q -p no:cacheprovider --basetemp <writable-temp-directory>
+python -m ruff check scripts/program_control tests/program_control_plane
+python -m ruff format --check scripts/program_control tests/program_control_plane
 ```
 
 Before any push or merge, the repository's documented Wright Git gates remain the source of truth. EPP-F01 implementation approval will not itself authorize push, PR, merge, dev integration, publication, or release.
