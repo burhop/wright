@@ -41,7 +41,9 @@ def codes(findings) -> set[str]:
     return {finding.code for finding in findings}
 
 
-def test_exact_two_closed_profiles_validate_against_approval_subject(repository_root: Path) -> None:
+def test_exact_two_closed_profiles_validate_against_approval_subject(
+    repository_root: Path,
+) -> None:
     findings = validate_legacy_profiles(
         GitReader(repository_root),
         APPROVED_SUBJECT,
@@ -56,14 +58,73 @@ def test_exact_two_closed_profiles_validate_against_approval_subject(repository_
 @pytest.mark.parametrize(
     ("mutator", "expected"),
     [
-        (lambda value: value["profiles"].append(copy.deepcopy(value["profiles"][0])), "LEGACY_PROFILE_COUNT"),
-        (lambda value: value["profiles"][1].__setitem__("from_revision", 11), "LEGACY_PROFILE_RANGE"),
-        (lambda value: value["profiles"][1]["states"][0].__setitem__("path", value["profiles"][0]["states"][0]["path"]), "LEGACY_PATH_DUPLICATE"),
-        (lambda value: value["profiles"][0]["transitions"][0].__setitem__("raw_sha256", None), "LEGACY_RAW_RULE_INVALID"),
-        (lambda value: value["profiles"][1]["successor"].__setitem__("maximum_count", 2), "LEGACY_SUCCESSOR_INVALID"),
+        (lambda value: value["profiles"].pop(), "LEGACY_PROFILE_COUNT"),
+        (
+            lambda value: value["profiles"].append(copy.deepcopy(value["profiles"][0])),
+            "LEGACY_PROFILE_COUNT",
+        ),
+        (
+            lambda value: value["profiles"][1].__setitem__("from_revision", 11),
+            "LEGACY_PROFILE_RANGE",
+        ),
+        (lambda value: value["profiles"][1]["states"].pop(3), "LEGACY_PROFILE_RANGE"),
+        (
+            lambda value: value["profiles"][1]["transitions"].pop(3),
+            "LEGACY_PROFILE_RANGE",
+        ),
+        (
+            lambda value: value["profiles"][1]["states"][0].__setitem__(
+                "path", value["profiles"][0]["states"][0]["path"]
+            ),
+            "LEGACY_PATH_DUPLICATE",
+        ),
+        (
+            lambda value: value["profiles"][1]["states"][0].__setitem__(
+                "path", "program-state.json"
+            ),
+            "LEGACY_PATH_MUTABLE",
+        ),
+        (
+            lambda value: value["profiles"][0]["transitions"][0].__setitem__(
+                "raw_sha256", None
+            ),
+            "LEGACY_RAW_RULE_INVALID",
+        ),
+        (
+            lambda value: value["profiles"][1]["transitions"][-1].__setitem__(
+                "raw_sha256", "0" * 64
+            ),
+            "LEGACY_RAW_RULE_INVALID",
+        ),
+        (
+            lambda value: value["profiles"][1]["transitions"][0].__setitem__(
+                "prior_state_digest", "0" * 64
+            ),
+            "LEGACY_TRANSITION_METADATA_MISMATCH",
+        ),
+        (
+            lambda value: value["profiles"][1].__setitem__(
+                "checkpoint_commit", APPROVED_SUBJECT
+            ),
+            "LEGACY_CHECKPOINT_INVALID",
+        ),
+        (
+            lambda value: value["profiles"][1].__setitem__(
+                "terminal_feature_state", "IMPLEMENTING"
+            ),
+            "LEGACY_TERMINAL_MISMATCH",
+        ),
+        (
+            lambda value: value["profiles"][1]["successor"].__setitem__(
+                "maximum_count", 2
+            ),
+            "LEGACY_SUCCESSOR_INVALID",
+        ),
     ],
 )
-def test_closed_profile_shape_rejects_expansion(repository_root: Path, mutator, expected: str) -> None:
+def test_closed_profile_shape_rejects_expansion(
+    repository_root: Path, mutator, expected: str
+) -> None:
     value = copy.deepcopy(profile_set(repository_root))
     mutator(value)
     findings = validate_legacy_profiles(
@@ -89,7 +150,9 @@ def test_changed_historical_transition_blob_is_rejected(repository_root: Path) -
         GitReader(repository_root),
         f"{PROGRAM_ROOT}/evidence/transitions/TR-0017.json",
     )
-    findings = validate_legacy_profiles(reader, APPROVED_SUBJECT, PROGRAM_ROOT, profile_set(repository_root))
+    findings = validate_legacy_profiles(
+        reader, APPROVED_SUBJECT, PROGRAM_ROOT, profile_set(repository_root)
+    )
     assert "LEGACY_BLOB_MISMATCH" in codes(findings)
 
 
@@ -101,13 +164,17 @@ def test_current_v2_chain_has_exact_legal_edges(repository_root: Path) -> None:
         for path in directory.glob("*.json")
     }
     documents[f"{PROGRAM_ROOT}/program-state.json"] = load(root / "program-state.json")
-    documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"] = load(root / "lifecycle-policy.json")
+    documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"] = load(
+        root / "lifecycle-policy.json"
+    )
     findings = []
     _validate_state_chain(documents, PROGRAM_ROOT, findings)
     assert findings == []
 
 
-def test_illegal_feature_edge_and_second_v2_migration_fail(repository_root: Path) -> None:
+def test_illegal_feature_edge_and_second_v2_migration_fail(
+    repository_root: Path,
+) -> None:
     root = repository_root / PROGRAM_ROOT
     documents = {
         f"{PROGRAM_ROOT}/{path.relative_to(root).as_posix()}": load(path)
@@ -115,14 +182,22 @@ def test_illegal_feature_edge_and_second_v2_migration_fail(repository_root: Path
         for path in directory.glob("*.json")
     }
     documents[f"{PROGRAM_ROOT}/program-state.json"] = load(root / "program-state.json")
-    documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"] = load(root / "lifecycle-policy.json")
+    documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"] = load(
+        root / "lifecycle-policy.json"
+    )
     documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0020.json"] = copy.deepcopy(
         documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0020.json"]
     )
-    documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0020.json"]["to_state"] = "VERIFIED"
-    duplicate = copy.deepcopy(documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0019.json"])
+    documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0020.json"]["to_state"] = (
+        "VERIFIED"
+    )
+    duplicate = copy.deepcopy(
+        documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0019.json"]
+    )
     duplicate["transition_id"] = "TR-0021"
     documents[f"{PROGRAM_ROOT}/evidence/transitions/TR-0021.json"] = duplicate
     findings = []
     _validate_state_chain(documents, PROGRAM_ROOT, findings)
-    assert {"LIFECYCLE_EDGE_INVALID", "LEGACY_MIGRATION_COUNT"}.issubset(codes(findings))
+    assert {"LIFECYCLE_EDGE_INVALID", "LEGACY_MIGRATION_COUNT"}.issubset(
+        codes(findings)
+    )

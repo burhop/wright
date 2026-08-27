@@ -21,15 +21,22 @@ def load(path: Path) -> dict:
 
 @pytest.fixture
 def catalog(repository_root: Path) -> dict:
-    return load(repository_root / "docs/programs/engineering-process-platform/gate-catalog.json")
+    return load(
+        repository_root / "docs/programs/engineering-process-platform/gate-catalog.json"
+    )
 
 
 @pytest.fixture
 def evidence(repository_root: Path) -> dict:
-    return load(repository_root / "docs/programs/engineering-process-platform/gate-evidence.json")
+    return load(
+        repository_root
+        / "docs/programs/engineering-process-platform/gate-evidence.json"
+    )
 
 
-def test_catalog_has_exact_four_areas_and_34_unique_required_gates(catalog: dict) -> None:
+def test_catalog_has_exact_four_areas_and_34_unique_required_gates(
+    catalog: dict,
+) -> None:
     ids = [gate["id"] for gate in catalog["gates"]]
     assert catalog["area_order"] == [
         "product_readiness",
@@ -56,14 +63,56 @@ def test_honest_initial_evidence_projects_four_independent_nonpassing_areas(
 @pytest.mark.parametrize(
     ("mutation", "expected"),
     [
-        (lambda c, e: e["assertions"].append(copy.deepcopy(e["assertions"][0])), "GATE_EVIDENCE_DUPLICATE"),
-        (lambda c, e: e["assertions"][0].__setitem__("evaluator", "WRONG_EVALUATOR"), "GATE_EVALUATOR_MISMATCH"),
-        (lambda c, e: e["assertions"][0].__setitem__("assertion_results", []), "GATE_ASSERTION_SET_MISMATCH"),
-        (lambda c, e: e["assertions"][0]["assertion_results"][0].__setitem__("assertion_id", "PROD-01-A99"), "GATE_ASSERTION_SET_MISMATCH"),
-        (lambda c, e: e["assertions"][0].__setitem__("status", "passed"), "GATE_AGGREGATE_MISMATCH"),
+        (
+            lambda c, e: e["assertions"].append(copy.deepcopy(e["assertions"][0])),
+            "GATE_EVIDENCE_DUPLICATE",
+        ),
+        (
+            lambda c, e: e["assertions"][0].__setitem__("evaluator", "WRONG_EVALUATOR"),
+            "GATE_EVALUATOR_MISMATCH",
+        ),
+        (
+            lambda c, e: e["assertions"][0].__setitem__("assertion_results", []),
+            "GATE_ASSERTION_SET_MISMATCH",
+        ),
+        (
+            lambda c, e: e["assertions"][0]["assertion_results"][0].__setitem__(
+                "assertion_id", "PROD-01-A99"
+            ),
+            "GATE_ASSERTION_SET_MISMATCH",
+        ),
+        (
+            lambda c, e: e["assertions"][0].__setitem__("status", "passed"),
+            "GATE_AGGREGATE_MISMATCH",
+        ),
     ],
 )
 def test_catalog_evidence_contract_rejects_incomplete_or_hand_set_rows(
+    catalog: dict, evidence: dict, mutation, expected: str
+) -> None:
+    mutation(catalog, evidence)
+    with pytest.raises(DashboardError) as caught:
+        derive_areas(catalog, evidence, OBSERVED)
+    assert caught.value.code == expected
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected"),
+    [
+        (
+            lambda c, e: c["gates"].append(copy.deepcopy(c["gates"][0])),
+            "GATE_ID_DUPLICATE",
+        ),
+        (
+            lambda c, e: c["evidence_classes"].append(
+                copy.deepcopy(c["evidence_classes"][0])
+            ),
+            "EVIDENCE_CLASS_DUPLICATE",
+        ),
+        (lambda c, e: e["assertions"].pop(), "GATE_EVIDENCE_SET_MISMATCH"),
+    ],
+)
+def test_closed_catalog_rejects_duplicate_or_incomplete_membership(
     catalog: dict, evidence: dict, mutation, expected: str
 ) -> None:
     mutation(catalog, evidence)
@@ -78,7 +127,9 @@ def make_first_gate_pass(catalog: dict, evidence: dict) -> list[dict]:
     registry = {item["class_id"]: item for item in catalog["evidence_classes"]}
     artifacts = []
     manifest = []
-    for index, class_id in enumerate(gate["evidence_policy"]["required_classes"], start=1):
+    for index, class_id in enumerate(
+        gate["evidence_policy"]["required_classes"], start=1
+    ):
         binding = registry[class_id]
         artifact = {
             "path": f"evidence/verification/prod-01-{index}.json",
@@ -97,7 +148,11 @@ def make_first_gate_pass(catalog: dict, evidence: dict) -> list[dict]:
                 "role": artifact["source_role"],
             }
         )
-    verifier = {"identity": "independent fixture", "role": "verifier", "independent": True}
+    verifier = {
+        "identity": "independent fixture",
+        "role": "verifier",
+        "independent": True,
+    }
     row.update(
         {
             "status": "passed",
@@ -124,7 +179,9 @@ def make_first_gate_pass(catalog: dict, evidence: dict) -> list[dict]:
     return manifest
 
 
-def test_one_product_gate_pass_cannot_change_other_areas(catalog: dict, evidence: dict) -> None:
+def test_one_product_gate_pass_cannot_change_other_areas(
+    catalog: dict, evidence: dict
+) -> None:
     manifest = make_first_gate_pass(catalog, evidence)
     before = derive_areas(catalog, load_initial(evidence), OBSERVED)
     after = derive_areas(
@@ -169,13 +226,54 @@ def load_initial(evidence: dict) -> dict:
 @pytest.mark.parametrize(
     ("mutation", "expected"),
     [
-        (lambda c, e, m: e["assertions"][0].__setitem__("evidence", []), "GATE_PASS_EVIDENCE_EMPTY"),
-        (lambda c, e, m: e["assertions"][0]["evidence"][0].__setitem__("evidence_class", "UNKNOWN_CLASS"), "EVIDENCE_CLASS_UNKNOWN"),
-        (lambda c, e, m: e["assertions"][0]["evidence"][0].__setitem__("schema_id", "wrong"), "EVIDENCE_CLASS_BINDING_MISMATCH"),
-        (lambda c, e, m: m[0].__setitem__("sha256", "f" * 64), "EVIDENCE_SOURCE_MISMATCH"),
-        (lambda c, e, m: e["assertions"][0]["evidence"].pop(), "EVIDENCE_CLASS_COVERAGE_MISSING"),
-        (lambda c, e, m: e["assertions"][0]["verifier"].__setitem__("independent", False), "GATE_INDEPENDENCE_MISSING"),
-        (lambda c, e, m: e["assertions"][0].__setitem__("expires_at", "2026-08-27T11:59:59Z"), "GATE_FRESHNESS_MISMATCH"),
+        (
+            lambda c, e, m: e["assertions"][0].__setitem__("evidence", []),
+            "GATE_PASS_EVIDENCE_EMPTY",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["evidence"][0].__setitem__(
+                "evidence_class", "UNKNOWN_CLASS"
+            ),
+            "EVIDENCE_CLASS_UNKNOWN",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["evidence"][0].__setitem__(
+                "schema_id", "wrong"
+            ),
+            "EVIDENCE_CLASS_BINDING_MISMATCH",
+        ),
+        (
+            lambda c, e, m: m[0].__setitem__("sha256", "f" * 64),
+            "EVIDENCE_SOURCE_MISMATCH",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["evidence"].pop(),
+            "EVIDENCE_CLASS_COVERAGE_MISSING",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["verifier"].__setitem__(
+                "independent", False
+            ),
+            "GATE_INDEPENDENCE_MISSING",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0].__setitem__(
+                "expires_at", "2026-08-27T11:59:59Z"
+            ),
+            "GATE_FRESHNESS_MISMATCH",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["assertion_results"][0].__setitem__(
+                "classification", "not_tested"
+            ),
+            "GATE_PASS_CLASSIFICATION_INVALID",
+        ),
+        (
+            lambda c, e, m: e["assertions"][0]["assertion_results"][0].__setitem__(
+                "evidence", []
+            ),
+            "GATE_PASS_EVIDENCE_EMPTY",
+        ),
     ],
 )
 def test_passing_gate_rejects_unbound_incomplete_or_stale_evidence(
@@ -200,5 +298,7 @@ def test_exact_candidate_mismatch_fails(catalog: dict, evidence: dict) -> None:
     candidate = copy.deepcopy(evidence["subject"])
     candidate["git_tree"] = "f" * 40
     with pytest.raises(DashboardError) as caught:
-        derive_areas(catalog, evidence, OBSERVED, source_manifest=manifest, candidate=candidate)
+        derive_areas(
+            catalog, evidence, OBSERVED, source_manifest=manifest, candidate=candidate
+        )
     assert caught.value.code == "GATE_CANDIDATE_MISMATCH"

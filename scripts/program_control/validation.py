@@ -26,6 +26,12 @@ from .model import Finding, ValidationResult
 
 
 SAFE_CODE = re.compile(r"^[A-Z][A-Z0-9_-]{2,99}$")
+LEGACY_STATE_PATH = re.compile(
+    r"^evidence/states/program-state-revision-(?P<revision>[0-9]{4})\.json$"
+)
+LEGACY_TRANSITION_PATH = re.compile(
+    r"^evidence/transitions/(?P<transition>TR-[0-9]{4})\.json$"
+)
 REQUIRED_JSON = (
     "program-state.json",
     "roadmap.json",
@@ -71,7 +77,9 @@ def _schema_path(document_path: str, schema_ref: str, program_root: str) -> str 
         return f"{program_root}/schemas/{schema_ref.rsplit('/', 1)[-1]}"
     if "://" in schema_ref:
         return None
-    return normalize_repo_path(posixpath.normpath(posixpath.join(posixpath.dirname(document_path), schema_ref)))
+    return normalize_repo_path(
+        posixpath.normpath(posixpath.join(posixpath.dirname(document_path), schema_ref))
+    )
 
 
 def _load_json(
@@ -83,10 +91,16 @@ def _load_json(
     try:
         return strict_loads(reader.blob(commit, path))
     except ContractError as exc:
-        code = "JSON_DUPLICATE_KEY" if exc.__class__.__name__ == "DuplicateKeyError" else "JSON_INVALID"
+        code = (
+            "JSON_DUPLICATE_KEY"
+            if exc.__class__.__name__ == "DuplicateKeyError"
+            else "JSON_INVALID"
+        )
         findings.append(_finding(code, "fatal", path, "JSON_STRICT_PARSE"))
     except GitSubjectError:
-        findings.append(_finding("ARTIFACT_MISSING", "fatal", path, "REQUIRED_ARTIFACT"))
+        findings.append(
+            _finding("ARTIFACT_MISSING", "fatal", path, "REQUIRED_ARTIFACT")
+        )
     return None
 
 
@@ -104,17 +118,35 @@ def validate_legacy_profiles(
     findings: list[Finding] = []
     profiles = list(profile_set.get("profiles", []))
     if len(profiles) != 2:
-        findings.append(_finding("LEGACY_PROFILE_COUNT", "fatal", "lifecycle-policy.json", "EXACT_TWO_CLOSED_PROFILES"))
+        findings.append(
+            _finding(
+                "LEGACY_PROFILE_COUNT",
+                "fatal",
+                "lifecycle-policy.json",
+                "EXACT_TWO_CLOSED_PROFILES",
+            )
+        )
     expected = (
         ("epp-bootstrap-v1-r1-r9", 1, 9, 1, 8),
         ("epp-bridge-v1-r10-r19", 10, 19, 9, 18),
     )
     all_paths: set[str] = set()
+    state_digests: dict[int, str] = {}
+    transition_rows: list[Mapping[str, Any]] = []
     for index, profile in enumerate(profiles[:2]):
         if not isinstance(profile, Mapping):
-            findings.append(_finding("LEGACY_PROFILE_INVALID", "fatal", "lifecycle-policy.json", "PROFILE_OBJECT"))
+            findings.append(
+                _finding(
+                    "LEGACY_PROFILE_INVALID",
+                    "fatal",
+                    "lifecycle-policy.json",
+                    "PROFILE_OBJECT",
+                )
+            )
             continue
-        profile_id, first_state, last_state, first_transition, last_transition = expected[index]
+        profile_id, first_state, last_state, first_transition, last_transition = (
+            expected[index]
+        )
         artifact = str(profile.get("profile_id", f"legacy-profile-{index}"))
         if (
             profile.get("profile_id") != profile_id
@@ -122,55 +154,208 @@ def validate_legacy_profiles(
             or profile.get("through_revision") != last_state
             or profile.get("schema_major") != 1
         ):
-            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CLOSED_PROFILE_RANGE"))
+            findings.append(
+                _finding(
+                    "LEGACY_PROFILE_RANGE", "fatal", artifact, "CLOSED_PROFILE_RANGE"
+                )
+            )
         states = list(profile.get("states", []))
         if [row.get("revision") for row in states if isinstance(row, Mapping)] != list(
             range(first_state, last_state + 1)
         ):
-            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CONTIGUOUS_STATE_RANGE"))
+            findings.append(
+                _finding(
+                    "LEGACY_PROFILE_RANGE", "fatal", artifact, "CONTIGUOUS_STATE_RANGE"
+                )
+            )
         transitions = list(profile.get("transitions", []))
-        expected_ids = [f"TR-{number:04d}" for number in range(first_transition, last_transition + 1)]
-        if [row.get("transition_id") for row in transitions if isinstance(row, Mapping)] != expected_ids:
-            findings.append(_finding("LEGACY_PROFILE_RANGE", "fatal", artifact, "CONTIGUOUS_TRANSITION_RANGE"))
+        expected_ids = [
+            f"TR-{number:04d}"
+            for number in range(first_transition, last_transition + 1)
+        ]
+        if [
+            row.get("transition_id") for row in transitions if isinstance(row, Mapping)
+        ] != expected_ids:
+            findings.append(
+                _finding(
+                    "LEGACY_PROFILE_RANGE",
+                    "fatal",
+                    artifact,
+                    "CONTIGUOUS_TRANSITION_RANGE",
+                )
+            )
+        # Both immutable profiles are materialized and byte-bound in the later
+        # approved subject.  The first profile's fixed checkpoint identifies
+        # its historical terminus; it is not a promise that the append-only
+        # archive files had already been materialized in that older commit.
+        effective_commit = approval_subject_commit
         for row in [*states, *transitions]:
             if not isinstance(row, Mapping):
-                findings.append(_finding("LEGACY_PROFILE_INVALID", "fatal", artifact, "PROFILE_ROW_OBJECT"))
+                findings.append(
+                    _finding(
+                        "LEGACY_PROFILE_INVALID",
+                        "fatal",
+                        artifact,
+                        "PROFILE_ROW_OBJECT",
+                    )
+                )
                 continue
             relative = row.get("path")
             try:
                 path = normalize_repo_path(str(relative))
             except GitSubjectError:
-                findings.append(_finding("LEGACY_PATH_UNSAFE", "fatal", artifact, "NORMALIZED_PROFILE_PATH"))
+                findings.append(
+                    _finding(
+                        "LEGACY_PATH_UNSAFE",
+                        "fatal",
+                        artifact,
+                        "NORMALIZED_PROFILE_PATH",
+                    )
+                )
                 continue
             if path in all_paths:
-                findings.append(_finding("LEGACY_PATH_DUPLICATE", "fatal", artifact, "UNIQUE_PROFILE_PATH"))
+                findings.append(
+                    _finding(
+                        "LEGACY_PATH_DUPLICATE",
+                        "fatal",
+                        artifact,
+                        "UNIQUE_PROFILE_PATH",
+                    )
+                )
             all_paths.add(path)
+            if "revision" in row:
+                path_match = LEGACY_STATE_PATH.fullmatch(path)
+                expected_revision = int(row.get("revision", -1))
+                if (
+                    path_match is None
+                    or int(path_match.group("revision")) != expected_revision
+                ):
+                    findings.append(
+                        _finding(
+                            "LEGACY_PATH_MUTABLE",
+                            "fatal",
+                            path,
+                            "IMMUTABLE_STATE_ARCHIVE_PATH",
+                        )
+                    )
+            else:
+                path_match = LEGACY_TRANSITION_PATH.fullmatch(path)
+                if path_match is None or path_match.group("transition") != row.get(
+                    "transition_id"
+                ):
+                    findings.append(
+                        _finding(
+                            "LEGACY_PATH_MUTABLE",
+                            "fatal",
+                            path,
+                            "IMMUTABLE_TRANSITION_ARCHIVE_PATH",
+                        )
+                    )
             full_path = f"{program_root}/{path}"
             try:
-                raw = reader.blob(approval_subject_commit, full_path)
+                raw = reader.blob(effective_commit, full_path)
             except GitSubjectError:
-                findings.append(_finding("LEGACY_BLOB_MISSING", "fatal", path, "APPROVAL_SUBJECT_BLOB"))
+                findings.append(
+                    _finding(
+                        "LEGACY_BLOB_MISSING", "fatal", path, "APPROVAL_SUBJECT_BLOB"
+                    )
+                )
                 continue
             if "revision" in row:
+                revision = int(row.get("revision", -1))
+                state_digests[revision] = str(row.get("canonical_digest", ""))
                 if sha256_bytes(raw) != row.get("raw_sha256"):
-                    findings.append(_finding("LEGACY_BLOB_MISMATCH", "fatal", path, "EXACT_STATE_BLOB"))
+                    findings.append(
+                        _finding(
+                            "LEGACY_BLOB_MISMATCH", "fatal", path, "EXACT_STATE_BLOB"
+                        )
+                    )
                 try:
-                    if canonical_digest(strict_loads(raw)) != row.get("canonical_digest"):
-                        findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", path, "LEGACY_CANONICAL_DIGEST"))
+                    if canonical_digest(strict_loads(raw)) != row.get(
+                        "canonical_digest"
+                    ):
+                        findings.append(
+                            _finding(
+                                "STATE_DIGEST_MISMATCH",
+                                "fatal",
+                                path,
+                                "LEGACY_CANONICAL_DIGEST",
+                            )
+                        )
                 except ContractError:
-                    findings.append(_finding("JSON_INVALID", "fatal", path, "LEGACY_STATE_JSON"))
+                    findings.append(
+                        _finding("JSON_INVALID", "fatal", path, "LEGACY_STATE_JSON")
+                    )
             else:
+                transition_rows.append(row)
                 is_terminal_checkpoint = row.get("transition_id") == "TR-0018"
-                expected_rule = "checkpoint_commit_blob" if is_terminal_checkpoint else "exact_blob_sha256"
+                expected_rule = (
+                    "checkpoint_commit_blob"
+                    if is_terminal_checkpoint
+                    else "exact_blob_sha256"
+                )
                 if row.get("raw_sha256_rule") != expected_rule:
-                    findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "CLOSED_RAW_RULE"))
+                    findings.append(
+                        _finding(
+                            "LEGACY_RAW_RULE_INVALID", "fatal", path, "CLOSED_RAW_RULE"
+                        )
+                    )
                 if is_terminal_checkpoint:
                     if row.get("raw_sha256") is not None:
-                        findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "IMMUTABLE_NULL_CHECKPOINT"))
+                        findings.append(
+                            _finding(
+                                "LEGACY_RAW_RULE_INVALID",
+                                "fatal",
+                                path,
+                                "IMMUTABLE_NULL_CHECKPOINT",
+                            )
+                        )
                 elif not isinstance(row.get("raw_sha256"), str):
-                    findings.append(_finding("LEGACY_RAW_RULE_INVALID", "fatal", path, "EXACT_RAW_DIGEST_REQUIRED"))
+                    findings.append(
+                        _finding(
+                            "LEGACY_RAW_RULE_INVALID",
+                            "fatal",
+                            path,
+                            "EXACT_RAW_DIGEST_REQUIRED",
+                        )
+                    )
                 elif sha256_bytes(raw) != row.get("raw_sha256"):
-                    findings.append(_finding("LEGACY_BLOB_MISMATCH", "fatal", path, "EXACT_TRANSITION_BLOB"))
+                    findings.append(
+                        _finding(
+                            "LEGACY_BLOB_MISMATCH",
+                            "fatal",
+                            path,
+                            "EXACT_TRANSITION_BLOB",
+                        )
+                    )
+                try:
+                    transition_value = strict_loads(raw)
+                except ContractError:
+                    transition_value = None
+                    findings.append(
+                        _finding(
+                            "JSON_INVALID", "fatal", path, "LEGACY_TRANSITION_JSON"
+                        )
+                    )
+                compared_fields = (
+                    "transition_id",
+                    "prior_revision",
+                    "new_revision",
+                    "prior_state_digest",
+                    "new_state_digest",
+                )
+                if not isinstance(transition_value, Mapping) or any(
+                    transition_value.get(field) != row.get(field)
+                    for field in compared_fields
+                ):
+                    findings.append(
+                        _finding(
+                            "LEGACY_TRANSITION_METADATA_MISMATCH",
+                            "fatal",
+                            path,
+                            "PROFILE_TRANSITION_MATCHES_BLOB",
+                        )
+                    )
         if index == 0:
             expected_successor = {
                 "kind": "closed_profile",
@@ -179,7 +364,8 @@ def validate_legacy_profiles(
                 "maximum_count": 1,
             }
             checkpoint_valid = (
-                profile.get("checkpoint_commit") == "c46ea627a7403ff3e1ce3db6be3d1baeebebb377"
+                profile.get("checkpoint_commit")
+                == "c46ea627a7403ff3e1ce3db6be3d1baeebebb377"
                 and profile.get("checkpoint_commit_rule") == "fixed_commit"
             )
         else:
@@ -191,16 +377,81 @@ def validate_legacy_profiles(
             }
             checkpoint_valid = (
                 profile.get("checkpoint_commit") is None
-                and profile.get("checkpoint_commit_rule") == "exact_material_change_approval_subject"
+                and profile.get("checkpoint_commit_rule")
+                == "exact_material_change_approval_subject"
             )
-        if profile.get("successor") != expected_successor or profile.get("accept_new_records") is not False:
-            findings.append(_finding("LEGACY_SUCCESSOR_INVALID", "fatal", artifact, "SOLE_CLOSED_SUCCESSOR"))
+        if (
+            profile.get("successor") != expected_successor
+            or profile.get("accept_new_records") is not False
+        ):
+            findings.append(
+                _finding(
+                    "LEGACY_SUCCESSOR_INVALID",
+                    "fatal",
+                    artifact,
+                    "SOLE_CLOSED_SUCCESSOR",
+                )
+            )
         if not checkpoint_valid:
-            findings.append(_finding("LEGACY_CHECKPOINT_INVALID", "fatal", artifact, "APPROVAL_SUBJECT_CHECKPOINT"))
-    if observed_v1_revisions is not None and any(revision > 19 for revision in observed_v1_revisions):
-        findings.append(_finding("LEGACY_FUTURE_RECORD", "fatal", "evidence/states", "NO_FUTURE_V1"))
+            findings.append(
+                _finding(
+                    "LEGACY_CHECKPOINT_INVALID",
+                    "fatal",
+                    artifact,
+                    "APPROVAL_SUBJECT_CHECKPOINT",
+                )
+            )
+        expected_terminal = (
+            ("PROGRAM_ACTIVE", "CLARIFIED")
+            if index == 0
+            else ("PROGRAM_ACTIVE", "IMPLEMENTATION_APPROVAL_PENDING")
+        )
+        if (
+            profile.get("terminal_program_state"),
+            profile.get("terminal_feature_state"),
+        ) != expected_terminal or profile.get(
+            "checkpoint_state_digest"
+        ) != state_digests.get(last_state):
+            findings.append(
+                _finding(
+                    "LEGACY_TERMINAL_MISMATCH",
+                    "fatal",
+                    artifact,
+                    "CLOSED_TERMINAL_STATE",
+                )
+            )
+    for row in transition_rows:
+        prior_revision = row.get("prior_revision")
+        new_revision = row.get("new_revision")
+        if (
+            not isinstance(prior_revision, int)
+            or new_revision != prior_revision + 1
+            or row.get("prior_state_digest") != state_digests.get(prior_revision)
+            or row.get("new_state_digest") != state_digests.get(new_revision)
+        ):
+            findings.append(
+                _finding(
+                    "LEGACY_TRANSITION_METADATA_MISMATCH",
+                    "fatal",
+                    str(row.get("transition_id", "legacy-transition")),
+                    "PROFILE_EDGE_MATCHES_STATES",
+                )
+            )
+    if observed_v1_revisions is not None and any(
+        revision > 19 for revision in observed_v1_revisions
+    ):
+        findings.append(
+            _finding("LEGACY_FUTURE_RECORD", "fatal", "evidence/states", "NO_FUTURE_V1")
+        )
     if migration_count != 1:
-        findings.append(_finding("LEGACY_MIGRATION_COUNT", "fatal", "evidence/transitions", "SOLE_V2_SUCCESSOR"))
+        findings.append(
+            _finding(
+                "LEGACY_MIGRATION_COUNT",
+                "fatal",
+                "evidence/transitions",
+                "SOLE_V2_SUCCESSOR",
+            )
+        )
     return sorted(findings, key=Finding.sort_key)
 
 
@@ -220,41 +471,63 @@ def _validate_documents(
     for relative in REQUIRED_JSON:
         path = f"{program_root}/{relative}"
         if path not in documents:
-            findings.append(_finding("ARTIFACT_MISSING", "fatal", path, "CONTROL_PLANE_REQUIRED_SET"))
+            findings.append(
+                _finding(
+                    "ARTIFACT_MISSING", "fatal", path, "CONTROL_PLANE_REQUIRED_SET"
+                )
+            )
     for path, value in sorted(documents.items()):
         if "/schemas/" in path:
             if isinstance(value, dict):
                 try:
                     check_schema(value)
                 except ContractError:
-                    findings.append(_finding("SCHEMA_META_INVALID", "fatal", path, "DRAFT_2020_12_META"))
+                    findings.append(
+                        _finding(
+                            "SCHEMA_META_INVALID", "fatal", path, "DRAFT_2020_12_META"
+                        )
+                    )
             continue
         if not isinstance(value, dict):
-            findings.append(_finding("JSON_TOP_LEVEL_INVALID", "fatal", path, "OBJECT_REQUIRED"))
+            findings.append(
+                _finding("JSON_TOP_LEVEL_INVALID", "fatal", path, "OBJECT_REQUIRED")
+            )
             continue
         version = value.get("schema_version")
         if version is not None:
             try:
                 require_compatible_version(version)
             except UnsupportedVersionError as exc:
-                findings.append(_finding(exc.kind, "fatal", path, "EXPLICIT_COMPATIBILITY"))
+                findings.append(
+                    _finding(exc.kind, "fatal", path, "EXPLICIT_COMPATIBILITY")
+                )
                 continue
         schema_ref = value.get("$schema")
         if not isinstance(schema_ref, str):
-            findings.append(_finding("SCHEMA_REFERENCE_MISSING", "fatal", path, "SCHEMA_REFERENCE"))
+            findings.append(
+                _finding("SCHEMA_REFERENCE_MISSING", "fatal", path, "SCHEMA_REFERENCE")
+            )
             continue
         resolved = _schema_path(path, schema_ref, program_root)
         schema = documents.get(resolved or "")
         if not isinstance(schema, dict):
-            findings.append(_finding("SCHEMA_REFERENCE_MISSING", "fatal", path, "SCHEMA_REFERENCE"))
+            findings.append(
+                _finding("SCHEMA_REFERENCE_MISSING", "fatal", path, "SCHEMA_REFERENCE")
+            )
             continue
-        schema_version = schema.get("properties", {}).get("schema_version", {}).get("const")
-        if version == "1.0" and schema_version == "2.0" and (
-            "/evidence/states/" in path or "/evidence/transitions/" in path
+        schema_version = (
+            schema.get("properties", {}).get("schema_version", {}).get("const")
+        )
+        if (
+            version == "1.0"
+            and schema_version == "2.0"
+            and ("/evidence/states/" in path or "/evidence/transitions/" in path)
         ):
             continue
         if validate_schema(schema, value):
-            findings.append(_finding("SCHEMA_VALIDATION_FAILED", "fatal", path, "SCHEMA_INSTANCE"))
+            findings.append(
+                _finding("SCHEMA_VALIDATION_FAILED", "fatal", path, "SCHEMA_INSTANCE")
+            )
     return documents
 
 
@@ -273,19 +546,33 @@ def _validate_state_chain(
         if path.startswith(prefix) and isinstance(value, dict):
             revision = int(path.removeprefix(prefix).removesuffix(".json"))
             if revision in states and states[revision] != value:
-                findings.append(_finding("STATE_ARCHIVE_MISMATCH", "fatal", path, "UNIQUE_REVISION_BYTES"))
+                findings.append(
+                    _finding(
+                        "STATE_ARCHIVE_MISMATCH", "fatal", path, "UNIQUE_REVISION_BYTES"
+                    )
+                )
             states[revision] = value
     current_revision = int(current.get("revision", -1))
     if current_revision in states and states[current_revision] != current:
-        findings.append(_finding("STATE_ARCHIVE_MISMATCH", "fatal", state_path, "CURRENT_ARCHIVE_IDENTITY"))
+        findings.append(
+            _finding(
+                "STATE_ARCHIVE_MISMATCH",
+                "fatal",
+                state_path,
+                "CURRENT_ARCHIVE_IDENTITY",
+            )
+        )
     states[current_revision] = current
     revisions = sorted(states)
     if revisions and revisions != list(range(revisions[0], revisions[-1] + 1)):
-        findings.append(_finding("STATE_REVISION_GAP", "fatal", state_path, "MONOTONIC_REVISION"))
+        findings.append(
+            _finding("STATE_REVISION_GAP", "fatal", state_path, "MONOTONIC_REVISION")
+        )
     transitions = [
         value
         for path, value in sorted(documents.items())
-        if f"{program_root}/evidence/transitions/TR-" in path and isinstance(value, dict)
+        if f"{program_root}/evidence/transitions/TR-" in path
+        and isinstance(value, dict)
     ]
     policy_value = documents.get(f"{program_root}/lifecycle-policy.json")
     policy = policy_value if isinstance(policy_value, Mapping) else {}
@@ -304,67 +591,163 @@ def _validate_state_chain(
     for transition in transitions:
         transition_id = transition.get("transition_id")
         if not isinstance(transition_id, str) or transition_id in seen_ids:
-            findings.append(_finding("TRANSITION_ID_INVALID", "fatal", "evidence/transitions", "APPEND_ONLY_ID"))
+            findings.append(
+                _finding(
+                    "TRANSITION_ID_INVALID",
+                    "fatal",
+                    "evidence/transitions",
+                    "APPEND_ONLY_ID",
+                )
+            )
             continue
         seen_ids.add(transition_id)
         prior_revision = transition.get("prior_revision")
         new_revision = transition.get("new_revision")
         if not isinstance(prior_revision, int) or new_revision != prior_revision + 1:
-            findings.append(_finding("TRANSITION_REVISION_INVALID", "fatal", transition_id, "REVISION_INCREMENT"))
+            findings.append(
+                _finding(
+                    "TRANSITION_REVISION_INVALID",
+                    "fatal",
+                    transition_id,
+                    "REVISION_INCREMENT",
+                )
+            )
             continue
         prior = states.get(prior_revision)
         new = states.get(new_revision)
-        if prior is not None and canonical_digest(prior) != transition.get("prior_state_digest"):
-            findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", transition_id, "PRIOR_STATE_DIGEST"))
-        if new is not None and canonical_digest(new) != transition.get("new_state_digest"):
-            findings.append(_finding("STATE_DIGEST_MISMATCH", "fatal", transition_id, "NEW_STATE_DIGEST"))
+        if prior is not None and canonical_digest(prior) != transition.get(
+            "prior_state_digest"
+        ):
+            findings.append(
+                _finding(
+                    "STATE_DIGEST_MISMATCH",
+                    "fatal",
+                    transition_id,
+                    "PRIOR_STATE_DIGEST",
+                )
+            )
+        if new is not None and canonical_digest(new) != transition.get(
+            "new_state_digest"
+        ):
+            findings.append(
+                _finding(
+                    "STATE_DIGEST_MISMATCH", "fatal", transition_id, "NEW_STATE_DIGEST"
+                )
+            )
         if transition.get("schema_version") == "2.0":
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
             if event == "lifecycle_transition":
-                allowed = program_edges if domain == "program" else feature_edges if domain == "feature" else set()
+                allowed = (
+                    program_edges
+                    if domain == "program"
+                    else feature_edges
+                    if domain == "feature"
+                    else set()
+                )
                 if pair not in allowed:
-                    findings.append(_finding("LIFECYCLE_EDGE_INVALID", "fatal", transition_id, "POLICY_EDGE"))
+                    findings.append(
+                        _finding(
+                            "LIFECYCLE_EDGE_INVALID",
+                            "fatal",
+                            transition_id,
+                            "POLICY_EDGE",
+                        )
+                    )
             if isinstance(prior, Mapping) and isinstance(new, Mapping):
-                if prior.get("schema_version") == "1.0" and new.get("schema_version") == "2.0":
+                if (
+                    prior.get("schema_version") == "1.0"
+                    and new.get("schema_version") == "2.0"
+                ):
                     migration_count += 1
             git_record = transition.get("git")
             if not isinstance(git_record, Mapping):
-                findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "COMPLETE_CHANGED_PATH_MANIFEST"))
+                findings.append(
+                    _finding(
+                        "TRANSITION_MANIFEST_INVALID",
+                        "fatal",
+                        transition_id,
+                        "COMPLETE_CHANGED_PATH_MANIFEST",
+                    )
+                )
             else:
                 manifest = git_record.get("changed_paths_manifest", [])
-                if not isinstance(manifest, list) or len(manifest) != len(set(manifest)):
-                    findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "UNIQUE_CHANGED_PATHS"))
+                if not isinstance(manifest, list) or len(manifest) != len(
+                    set(manifest)
+                ):
+                    findings.append(
+                        _finding(
+                            "TRANSITION_MANIFEST_INVALID",
+                            "fatal",
+                            transition_id,
+                            "UNIQUE_CHANGED_PATHS",
+                        )
+                    )
                 else:
                     for path in manifest:
                         try:
                             normalize_repo_path(str(path))
                         except GitSubjectError:
-                            findings.append(_finding("TRANSITION_MANIFEST_INVALID", "fatal", transition_id, "SAFE_CHANGED_PATH"))
+                            findings.append(
+                                _finding(
+                                    "TRANSITION_MANIFEST_INVALID",
+                                    "fatal",
+                                    transition_id,
+                                    "SAFE_CHANGED_PATH",
+                                )
+                            )
                             break
-    if any(state.get("schema_version") == "2.0" for state in states.values()) and migration_count != 1:
-        findings.append(_finding("LEGACY_MIGRATION_COUNT", "fatal", "evidence/transitions", "SOLE_V2_SUCCESSOR"))
+    if (
+        any(state.get("schema_version") == "2.0" for state in states.values())
+        and migration_count != 1
+    ):
+        findings.append(
+            _finding(
+                "LEGACY_MIGRATION_COUNT",
+                "fatal",
+                "evidence/transitions",
+                "SOLE_V2_SUCCESSOR",
+            )
+        )
     last = current.get("last_transition")
     if last is not None and last not in seen_ids:
-        findings.append(_finding("TRANSITION_REFERENCE_MISSING", "fatal", state_path, "LAST_TRANSITION_EXISTS"))
+        findings.append(
+            _finding(
+                "TRANSITION_REFERENCE_MISSING",
+                "fatal",
+                state_path,
+                "LAST_TRANSITION_EXISTS",
+            )
+        )
 
 
 def _roadmap_order(items: list[dict[str, Any]], findings: list[Finding]) -> list[str]:
     by_id = {str(item.get("id")): item for item in items}
     if len(by_id) != len(items):
-        findings.append(_finding("ROADMAP_ID_DUPLICATE", "fatal", "roadmap.json", "UNIQUE_ITEM_ID"))
+        findings.append(
+            _finding("ROADMAP_ID_DUPLICATE", "fatal", "roadmap.json", "UNIQUE_ITEM_ID")
+        )
         return []
     indegree = {item_id: 0 for item_id in by_id}
     children: dict[str, list[str]] = defaultdict(list)
     for item_id, item in by_id.items():
         for dependency in item.get("depends_on", []):
             if dependency not in by_id:
-                findings.append(_finding("ROADMAP_DEPENDENCY_MISSING", "fatal", "roadmap.json", "DEPENDENCY_EXISTS"))
+                findings.append(
+                    _finding(
+                        "ROADMAP_DEPENDENCY_MISSING",
+                        "fatal",
+                        "roadmap.json",
+                        "DEPENDENCY_EXISTS",
+                    )
+                )
                 continue
             indegree[item_id] += 1
             children[dependency].append(item_id)
-    queue = deque(sorted(item_id for item_id, degree in indegree.items() if degree == 0))
+    queue = deque(
+        sorted(item_id for item_id, degree in indegree.items() if degree == 0)
+    )
     ordered: list[str] = []
     while queue:
         item_id = queue.popleft()
@@ -374,7 +757,9 @@ def _roadmap_order(items: list[dict[str, Any]], findings: list[Finding]) -> list
             if indegree[child] == 0:
                 queue.append(child)
     if len(ordered) != len(items):
-        findings.append(_finding("ROADMAP_CYCLE", "fatal", "roadmap.json", "ACYCLIC_DEPENDENCIES"))
+        findings.append(
+            _finding("ROADMAP_CYCLE", "fatal", "roadmap.json", "ACYCLIC_DEPENDENCIES")
+        )
     return ordered
 
 
@@ -405,21 +790,53 @@ def evaluate_approval_history(
     for scope in required_scopes:
         candidates = [row for row in approvals if row.get("scope") == scope]
         if not candidates:
-            findings.append(_finding("APPROVAL_SCOPE_MISSING", "fatal", "evidence/approvals", "REQUIRED_SCOPE"))
+            findings.append(
+                _finding(
+                    "APPROVAL_SCOPE_MISSING",
+                    "fatal",
+                    "evidence/approvals",
+                    "REQUIRED_SCOPE",
+                )
+            )
             continue
-        approval = sorted(candidates, key=lambda row: str(row.get("approved_at", "")))[-1]
+        approval = sorted(candidates, key=lambda row: str(row.get("approved_at", "")))[
+            -1
+        ]
         selected.append(approval)
         artifact = str(approval.get("approval_id", "approval"))
         if approval.get("subject") != exact_subject:
-            findings.append(_finding("APPROVAL_SUBJECT_MISMATCH", "fatal", artifact, "EXACT_SHARED_SUBJECT"))
-        revoked = approval.get("revoked") is True or bool(approval.get("revocation_events"))
+            findings.append(
+                _finding(
+                    "APPROVAL_SUBJECT_MISMATCH",
+                    "fatal",
+                    artifact,
+                    "EXACT_SHARED_SUBJECT",
+                )
+            )
+        revoked = approval.get("revoked") is True or bool(
+            approval.get("revocation_events")
+        )
         if revoked:
-            findings.append(_finding("APPROVAL_REVOKED", "fatal", artifact, "APPEND_ONLY_REVOCATION"))
+            findings.append(
+                _finding(
+                    "APPROVAL_REVOKED", "fatal", artifact, "APPEND_ONLY_REVOCATION"
+                )
+            )
         expiry = _parse_utc(approval.get("expires_at"))
         if expiry is not None and expiry < now:
-            findings.append(_finding("APPROVAL_EXPIRED", "fatal", artifact, "APPROVAL_FRESHNESS"))
-        if approval.get("decision") != "approved" or approval.get("conditions"):
-            findings.append(_finding("APPROVAL_NOT_CURRENT", "fatal", artifact, "UNCONDITIONAL_APPROVAL"))
+            findings.append(
+                _finding("APPROVAL_EXPIRED", "fatal", artifact, "APPROVAL_FRESHNESS")
+            )
+        decision = approval.get("decision")
+        conditions = approval.get("conditions")
+        if decision not in {"approved", "approved_with_conditions"} or (
+            decision == "approved_with_conditions" and not conditions
+        ):
+            findings.append(
+                _finding(
+                    "APPROVAL_NOT_CURRENT", "fatal", artifact, "UNCONDITIONAL_APPROVAL"
+                )
+            )
     return sorted(findings, key=Finding.sort_key), selected
 
 
@@ -438,33 +855,90 @@ def validate_roadmap_approval_and_lease(
     state = documents.get(f"{program_root}/program-state.json")
     policy = documents.get(f"{program_root}/lifecycle-policy.json")
     if not isinstance(roadmap, Mapping) or not isinstance(state, Mapping):
-        findings.append(_finding("CONTROL_PLANE_INVALID", "fatal", "program-state.json", "ROADMAP_AND_STATE"))
+        findings.append(
+            _finding(
+                "CONTROL_PLANE_INVALID",
+                "fatal",
+                "program-state.json",
+                "ROADMAP_AND_STATE",
+            )
+        )
         return findings, None
-    items = [dict(item) for item in roadmap.get("items", []) if isinstance(item, Mapping)]
+    items = [
+        dict(item) for item in roadmap.get("items", []) if isinstance(item, Mapping)
+    ]
     _roadmap_order(items, findings)
     active = [item for item in items if item.get("status") == "active"]
     if len(active) > 1:
-        findings.append(_finding("WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"))
+        findings.append(
+            _finding(
+                "WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"
+            )
+        )
     current_feature = state.get("current_feature")
     if len(active) != 1 or active[0].get("id") != current_feature:
-        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "ACTIVE_FEATURE_POINTER"))
+        findings.append(
+            _finding(
+                "LEASE_IDENTITY_MISMATCH",
+                "fatal",
+                "program-state.json",
+                "ACTIVE_FEATURE_POINTER",
+            )
+        )
     lease = state.get("active_mutating_lease")
     if not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature:
-        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "LEASE_FEATURE_MATCH"))
+        findings.append(
+            _finding(
+                "LEASE_IDENTITY_MISMATCH",
+                "fatal",
+                "program-state.json",
+                "LEASE_FEATURE_MATCH",
+            )
+        )
     else:
         expiry = _parse_utc(lease.get("expires_at"))
         acquired = _parse_utc(lease.get("acquired_at"))
-        if expiry is None or acquired is None or expiry <= acquired or expiry < observed_at.astimezone(timezone.utc):
-            findings.append(_finding("LEASE_EXPIRED", "fatal", "program-state.json", "LEASE_TIME_WINDOW"))
+        if (
+            expiry is None
+            or acquired is None
+            or expiry <= acquired
+            or expiry < observed_at.astimezone(timezone.utc)
+        ):
+            findings.append(
+                _finding(
+                    "LEASE_EXPIRED", "fatal", "program-state.json", "LEASE_TIME_WINDOW"
+                )
+            )
         if lease.get("branch") != actual_branch:
-            findings.append(_finding("LEASE_BRANCH_MISMATCH", "fatal", "program-state.json", "ACTUAL_BRANCH"))
+            findings.append(
+                _finding(
+                    "LEASE_BRANCH_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "ACTUAL_BRANCH",
+                )
+            )
         if lease.get("worktree_id") != worktree_id:
-            findings.append(_finding("LEASE_WORKTREE_MISMATCH", "fatal", "program-state.json", "ACTUAL_WORKTREE"))
+            findings.append(
+                _finding(
+                    "LEASE_WORKTREE_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "ACTUAL_WORKTREE",
+                )
+            )
         for path in lease.get("allowed_paths", []):
             try:
                 normalize_repo_path(str(path))
             except GitSubjectError:
-                findings.append(_finding("LEASE_PATH_UNSAFE", "fatal", "program-state.json", "NORMALIZED_ALLOWED_PATH"))
+                findings.append(
+                    _finding(
+                        "LEASE_PATH_UNSAFE",
+                        "fatal",
+                        "program-state.json",
+                        "NORMALIZED_ALLOWED_PATH",
+                    )
+                )
                 break
         local_actions = {
             "inspect",
@@ -474,29 +948,69 @@ def validate_roadmap_approval_and_lease(
             "create_local_commits",
         }
         if not set(lease.get("allowed_actions", [])).issubset(local_actions):
-            findings.append(_finding("LEASE_ACTION_UNAUTHORIZED", "fatal", "program-state.json", "LOCAL_ACTION_VOCABULARY"))
+            findings.append(
+                _finding(
+                    "LEASE_ACTION_UNAUTHORIZED",
+                    "fatal",
+                    "program-state.json",
+                    "LOCAL_ACTION_VOCABULARY",
+                )
+            )
     decisions = documents.get(f"{program_root}/decision-register.json")
     if isinstance(decisions, Mapping):
         for row in decisions.get("records", []):
-            if not isinstance(row, Mapping) or row.get("status") in {"decided", "superseded", "rejected"}:
+            if not isinstance(row, Mapping) or row.get("status") in {
+                "decided",
+                "superseded",
+                "rejected",
+            }:
                 continue
             due = row.get("due")
             due_at = _parse_utc(due.get("due_at")) if isinstance(due, Mapping) else None
             if due_at is not None and due_at < observed_at.astimezone(timezone.utc):
-                findings.append(_finding("DECISION_OVERDUE", "fatal", str(row.get("id")), "STRUCTURED_DUE_DATE"))
+                findings.append(
+                    _finding(
+                        "DECISION_OVERDUE",
+                        "fatal",
+                        str(row.get("id")),
+                        "STRUCTURED_DUE_DATE",
+                    )
+                )
     risks = documents.get(f"{program_root}/risk-register.json")
     if isinstance(risks, Mapping):
         for row in risks.get("risks", []):
             if not isinstance(row, Mapping) or row.get("status") == "closed":
                 continue
             review = row.get("review")
-            due_at = _parse_utc(review.get("due_at")) if isinstance(review, Mapping) else None
+            due_at = (
+                _parse_utc(review.get("due_at"))
+                if isinstance(review, Mapping)
+                else None
+            )
             if due_at is not None and due_at < observed_at.astimezone(timezone.utc):
-                findings.append(_finding("RISK_REVIEW_OVERDUE", "fatal", str(row.get("id")), "STRUCTURED_REVIEW_DATE"))
+                findings.append(
+                    _finding(
+                        "RISK_REVIEW_OVERDUE",
+                        "fatal",
+                        str(row.get("id")),
+                        "STRUCTURED_REVIEW_DATE",
+                    )
+                )
     actions = state.get("next_eligible_actions", [])
-    action = str(actions[0].get("action")) if len(actions) == 1 and isinstance(actions[0], Mapping) else None
+    action = (
+        str(actions[0].get("action"))
+        if len(actions) == 1 and isinstance(actions[0], Mapping)
+        else None
+    )
     if action is None:
-        findings.append(_finding("NEXT_ACTION_AMBIGUOUS", "fatal", "program-state.json", "SOLE_NEXT_ACTION"))
+        findings.append(
+            _finding(
+                "NEXT_ACTION_AMBIGUOUS",
+                "fatal",
+                "program-state.json",
+                "SOLE_NEXT_ACTION",
+            )
+        )
     if isinstance(policy, Mapping) and action is not None:
         matching = [
             row
@@ -507,7 +1021,14 @@ def validate_roadmap_approval_and_lease(
             and row.get("action") == action
         ]
         if len(matching) != 1:
-            findings.append(_finding("ACTION_POLICY_MISMATCH", "fatal", "program-state.json", "POLICY_DERIVED_ACTION"))
+            findings.append(
+                _finding(
+                    "ACTION_POLICY_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "POLICY_DERIVED_ACTION",
+                )
+            )
     return sorted(findings, key=Finding.sort_key), action
 
 
@@ -524,17 +1045,48 @@ def _validate_roadmap_and_lease(
     _roadmap_order(items, findings)
     active = [item for item in items if item.get("status") == "active"]
     if len(active) > 1:
-        findings.append(_finding("WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"))
+        findings.append(
+            _finding(
+                "WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"
+            )
+        )
     current_feature = state.get("current_feature")
     if active and active[0].get("id") != current_feature:
-        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "ACTIVE_FEATURE_MATCH"))
+        findings.append(
+            _finding(
+                "LEASE_IDENTITY_MISMATCH",
+                "fatal",
+                "program-state.json",
+                "ACTIVE_FEATURE_MATCH",
+            )
+        )
     lease = state.get("active_mutating_lease")
-    if current_feature and (not isinstance(lease, dict) or lease.get("feature_id") != current_feature):
-        findings.append(_finding("LEASE_IDENTITY_MISMATCH", "fatal", "program-state.json", "LEASE_FEATURE_MATCH"))
+    if current_feature and (
+        not isinstance(lease, dict) or lease.get("feature_id") != current_feature
+    ):
+        findings.append(
+            _finding(
+                "LEASE_IDENTITY_MISMATCH",
+                "fatal",
+                "program-state.json",
+                "LEASE_FEATURE_MATCH",
+            )
+        )
     next_actions = state.get("next_eligible_actions", [])
     if len(next_actions) != 1:
-        findings.append(_finding("NEXT_ACTION_AMBIGUOUS", "fatal", "program-state.json", "SOLE_NEXT_ACTION"))
-        return str(current_feature) if current_feature else None, [], ["NEXT_ACTION_AMBIGUOUS"]
+        findings.append(
+            _finding(
+                "NEXT_ACTION_AMBIGUOUS",
+                "fatal",
+                "program-state.json",
+                "SOLE_NEXT_ACTION",
+            )
+        )
+        return (
+            str(current_feature) if current_feature else None,
+            [],
+            ["NEXT_ACTION_AMBIGUOUS"],
+        )
     action = next_actions[0]
     return (
         str(current_feature) if current_feature else None,
@@ -559,7 +1111,9 @@ def _verify_approval_artifacts(
         if not isinstance(artifact, dict):
             return False
         try:
-            path = normalize_repo_path(posixpath.normpath(posixpath.join(program_root, str(artifact["path"]))))
+            path = normalize_repo_path(
+                posixpath.normpath(posixpath.join(program_root, str(artifact["path"])))
+            )
             try:
                 raw = reader.blob(approved_commit, path)
             except GitSubjectError:
@@ -588,7 +1142,11 @@ def _release_approval(
         if approval.get("decision") == "approved" and not _verify_approval_artifacts(
             reader, commit, approval, program_root
         ):
-            findings.append(_finding("APPROVAL_STALE", "fatal", "evidence/approvals", "ARTIFACT_DIGESTS"))
+            findings.append(
+                _finding(
+                    "APPROVAL_STALE", "fatal", "evidence/approvals", "ARTIFACT_DIGESTS"
+                )
+            )
     release = [approval for approval in approvals if approval.get("scope") == "release"]
     if not release:
         return {"status": "absent", "approval_id": None, "subject_matches": False}
@@ -605,11 +1163,20 @@ def _release_approval(
         status = "stale"
     else:
         status = str(approval.get("decision", "pending"))
-    return {"status": status, "approval_id": approval.get("approval_id"), "subject_matches": matches}
+    return {
+        "status": status,
+        "approval_id": approval.get("approval_id"),
+        "subject_matches": matches,
+    }
 
 
 def _empty_areas() -> dict[str, dict[str, Any]]:
-    counts = {"product_readiness": 11, "benchmark_readiness": 8, "commercial_readiness": 8, "program_health": 7}
+    counts = {
+        "product_readiness": 11,
+        "benchmark_readiness": 8,
+        "commercial_readiness": 8,
+        "program_health": 7,
+    }
     return {
         area: {
             "status": "not_started",
@@ -642,12 +1209,18 @@ def validate_program(
         identity = reader.resolve_identity(source, root)
         manifest, manifest_digest = reader.manifest(identity.source_commit, root)
     except GitSubjectError:
-        findings.append(_finding("SUBJECT_UNRESOLVED", "fatal", "git-subject", "EXACT_COMMIT_TREE"))
+        findings.append(
+            _finding("SUBJECT_UNRESOLVED", "fatal", "git-subject", "EXACT_COMMIT_TREE")
+        )
         report = _unresolved_report(timestamp, findings)
         return ValidationResult(report=report, findings=findings, exit_code=2)
-    documents = _validate_documents(reader, identity.source_commit, root, manifest, findings)
+    documents = _validate_documents(
+        reader, identity.source_commit, root, manifest, findings
+    )
     _validate_state_chain(documents, root, findings)
-    roadmap_item, actions, eligibility_blockers = _validate_roadmap_and_lease(documents, root, findings)
+    roadmap_item, actions, eligibility_blockers = _validate_roadmap_and_lease(
+        documents, root, findings
+    )
     catalog = documents.get(f"{root}/gate-catalog.json")
     evidence = documents.get(f"{root}/gate-evidence.json")
     candidate = evidence.get("subject") if isinstance(evidence, dict) else None
@@ -655,22 +1228,41 @@ def validate_program(
         try:
             areas = derive_areas(catalog, evidence, now)
         except DashboardError as exc:
-            findings.append(_finding(exc.code, "fatal", "gate-catalog.json", "GATE_PROJECTION"))
+            findings.append(
+                _finding(exc.code, "fatal", "gate-catalog.json", "GATE_PROJECTION")
+            )
             areas = _empty_areas()
     else:
         areas = _empty_areas()
-        findings.append(_finding("GATE_CATALOG_MISSING", "fatal", "gate-catalog.json", "MACHINE_GATE_SOURCE"))
-    approval = _release_approval(reader, identity.source_commit, documents, root, candidate, findings)
+        findings.append(
+            _finding(
+                "GATE_CATALOG_MISSING",
+                "fatal",
+                "gate-catalog.json",
+                "MACHINE_GATE_SOURCE",
+            )
+        )
+    approval = _release_approval(
+        reader, identity.source_commit, documents, root, candidate, findings
+    )
     dashboard_seed = documents.get(f"{root}/dashboard.json")
     benchmark = default_benchmark_summary(
-        dashboard_seed.get("benchmark_summary") if isinstance(dashboard_seed, dict) else None
+        dashboard_seed.get("benchmark_summary")
+        if isinstance(dashboard_seed, dict)
+        else None
     )
     generator_path = "scripts/validate-engineering-process-program.py"
     try:
-        generator_digest = sha256_bytes(reader.blob(identity.source_commit, generator_path))
+        generator_digest = sha256_bytes(
+            reader.blob(identity.source_commit, generator_path)
+        )
     except GitSubjectError:
         generator_digest = "0" * 64
-        findings.append(_finding("GENERATOR_BLOB_MISSING", "fatal", generator_path, "GENERATOR_IDENTITY"))
+        findings.append(
+            _finding(
+                "GENERATOR_BLOB_MISSING", "fatal", generator_path, "GENERATOR_IDENTITY"
+            )
+        )
     fatal_or_error = [item for item in findings if item.severity in {"fatal", "error"}]
     verdict = "failed" if fatal_or_error else "passed"
     next_action = None
@@ -708,14 +1300,22 @@ def validate_program(
         "verdict": verdict,
         "checks": [
             {"id": "SUBJECT_IDENTITY", "result": "passed"},
-            {"id": "JSON_AND_SCHEMAS", "result": "failed" if fatal_or_error else "passed"},
-            {"id": "PROGRAM_SEMANTICS", "result": "failed" if fatal_or_error else "passed"},
+            {
+                "id": "JSON_AND_SCHEMAS",
+                "result": "failed" if fatal_or_error else "passed",
+            },
+            {
+                "id": "PROGRAM_SEMANTICS",
+                "result": "failed" if fatal_or_error else "passed",
+            },
         ],
         "findings": [item.as_dict() for item in sorted(findings, key=Finding.sort_key)],
         "eligibility": {
             "roadmap_item": roadmap_item,
             "allowed_actions": actions if verdict == "passed" else [],
-            "blockers": sorted(set(eligibility_blockers + [item.code for item in fatal_or_error])),
+            "blockers": sorted(
+                set(eligibility_blockers + [item.code for item in fatal_or_error])
+            ),
         },
         "areas": areas,
         "benchmark_summary": benchmark,
@@ -729,7 +1329,18 @@ def validate_program(
         },
         "next_action": next_action,
     }
-    exit_code = 0 if verdict == "passed" else (6 if any(item.code.startswith("SCHEMA_") and "UNSUPPORTED" in item.code for item in findings) else 3)
+    exit_code = (
+        0
+        if verdict == "passed"
+        else (
+            6
+            if any(
+                item.code.startswith("SCHEMA_") and "UNSUPPORTED" in item.code
+                for item in findings
+            )
+            else 3
+        )
+    )
     return ValidationResult(report=report, findings=findings, exit_code=exit_code)
 
 
@@ -748,18 +1359,35 @@ def _unresolved_report(timestamp: str, findings: list[Finding]) -> dict[str, Any
             "container_commit": None,
             "release_candidate": None,
             "worktree_clean": False,
-            "checkout_representation": {"platform": "unknown", "autocrlf": "unknown", "dirty_path_count": 0},
+            "checkout_representation": {
+                "platform": "unknown",
+                "autocrlf": "unknown",
+                "dirty_path_count": 0,
+            },
             "input_manifest_digest": None,
             "input_manifest": [],
         },
         "verdict": "failed",
         "checks": [{"id": "SUBJECT_IDENTITY", "result": "failed"}],
         "findings": [item.as_dict() for item in findings],
-        "eligibility": {"roadmap_item": None, "allowed_actions": [], "blockers": ["SUBJECT_UNRESOLVED"]},
+        "eligibility": {
+            "roadmap_item": None,
+            "allowed_actions": [],
+            "blockers": ["SUBJECT_UNRESOLVED"],
+        },
         "areas": _empty_areas(),
         "benchmark_summary": default_benchmark_summary(),
-        "release_approval": {"status": "absent", "approval_id": None, "subject_matches": False},
+        "release_approval": {
+            "status": "absent",
+            "approval_id": None,
+            "subject_matches": False,
+        },
         "release_eligible": False,
-        "delivery": {"mode": "validate", "status": "not_requested", "target_changed": False, "prior_snapshot_preserved": True},
+        "delivery": {
+            "mode": "validate",
+            "status": "not_requested",
+            "target_changed": False,
+            "prior_snapshot_preserved": True,
+        },
         "next_action": None,
     }
