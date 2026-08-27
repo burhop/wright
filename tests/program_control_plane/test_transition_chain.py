@@ -320,6 +320,15 @@ def test_committed_identity_correction_rejects_v4_authority_variants(
         lambda value: value[APPROVAL_PATHS[0]]["revocation_events"].append(
             {"revoked_at": "2026-08-27T16:24:46Z"}
         ),
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__(
+            "conditions", ["Benchmark execution authorized"]
+        ),
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__(
+            "approver", "substituted approver"
+        ),
+        lambda value: value[APPROVAL_PATHS[0]].__setitem__(
+            "review", {"due_at": None, "last_reviewed_at": None}
+        ),
     )
     reader = GitReader(repository_root)
     for mutate in mutations:
@@ -334,6 +343,33 @@ def test_committed_identity_correction_rejects_v4_authority_variants(
             for finding in findings
             if finding.code == "COMMITTED_IDENTITY_MISMATCH"
         )
+
+
+def test_committed_identity_correction_rejects_valid_digest_manifest_substitution(
+    repository_root: Path,
+) -> None:
+    profile, approvals = correction_inputs(repository_root)
+    reader = GitReader(repository_root)
+    substitute_path = "benchmark-coverage.json"
+    substitute_digest = sha256_bytes(
+        reader.blob(CORRECTION_SUBJECT, f"{PROGRAM_ROOT}/{substitute_path}")
+    )
+    candidate = copy.deepcopy(approvals)
+    for approval in candidate.values():
+        approval["subject"]["artifact_digests"][0] = {
+            "path": substitute_path,
+            "sha256": substitute_digest,
+        }
+        approval["conditions"] = ["Benchmark execution authorized"]
+    findings, _ = validate_committed_identity_correction(
+        reader, "HEAD", PROGRAM_ROOT, profile, candidate
+    )
+    assert "COMMITTED_IDENTITY_CORRECTION_UNAUTHORIZED" in codes(findings)
+    assert all(
+        finding.resolution_status == "unresolved"
+        for finding in findings
+        if finding.code == "COMMITTED_IDENTITY_MISMATCH"
+    )
 
 
 def test_committed_identity_correction_is_readiness_neutral(

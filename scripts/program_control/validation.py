@@ -648,6 +648,10 @@ CORRECTION_APPROVAL_PATHS = (
     "evidence/approvals/APR-EPP-F01-MC-004.json",
     "evidence/approvals/APR-EPP-F01-IMPL-004.json",
 )
+CORRECTION_APPROVAL_SHA256 = (
+    "63b2c7b48acdd11c263d67b8079b56e686ae2e43c75f870a54eaca11c676a5ad",
+    "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
+)
 
 
 def _pointer_value(document: Any, pointer: str) -> Any:
@@ -911,8 +915,12 @@ def validate_committed_identity_correction(
         )
         if selected[0].get("subject") != selected[1].get("subject"):
             raise ValueError("approval subjects differ")
-        for path, approval, expected in zip(
-            expected_full_paths, selected, expected_records, strict=True
+        for path, approval, expected, expected_raw_sha256 in zip(
+            expected_full_paths,
+            selected,
+            expected_records,
+            CORRECTION_APPROVAL_SHA256,
+            strict=True,
         ):
             approval_id, scope, superseded = expected
             subject = approval.get("subject", {})
@@ -947,6 +955,8 @@ def validate_committed_identity_correction(
                             "sha256": CORRECTION_PROFILE_SHA256,
                         }
                     ],
+                    strict_loads(reader.blob(current, path)) == approval,
+                    sha256_bytes(reader.blob(current, path)) == expected_raw_sha256,
                     _verify_approval_artifacts(reader, current, approval, root),
                 )
             ):
