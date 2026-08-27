@@ -131,8 +131,8 @@ def test_repair_evidence_disposition_cannot_change_protected_projection(
     original = validation_module.validate_repair_evidence_correction
     monkeypatch.setattr(
         validation_module,
-        "default_benchmark_summary",
-        lambda _source=None: copy.deepcopy(benchmark_summary),
+        "derive_benchmark_summary",
+        lambda *_args, **_kwargs: copy.deepcopy(benchmark_summary),
     )
 
     def run(*, correction_on: bool) -> dict:
@@ -174,9 +174,14 @@ def test_repair_evidence_disposition_cannot_change_protected_projection(
             "areas": report["areas"],
             "benchmark_summary": report["benchmark_summary"],
             "candidate_identity": report["subject"]["release_candidate"],
+            "source_identity": {
+                key: report["subject"][key]
+                for key in ("source_commit", "source_tree", "program_tree")
+            },
             "approval_authority": report["release_approval"],
             "delivery": report["delivery"],
             "release_eligibility": report["release_eligible"],
+            "roadmap_item": report["eligibility"]["roadmap_item"],
         }
 
     assert protected(run(correction_on=True)) == protected(run(correction_on=False))

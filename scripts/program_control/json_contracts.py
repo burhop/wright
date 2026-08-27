@@ -143,6 +143,21 @@ def validate_schema(schema: Mapping[str, Any], instance: Any) -> list[Validation
     )
 
 
+def exact_schema_instance(
+    schema: Mapping[str, Any],
+    presented: Any,
+    golden: Any,
+) -> bool:
+    """Accept only one schema-valid, structurally exact closed instance."""
+
+    return (
+        presented == golden
+        and not validate_schema(schema, presented)
+        and not validate_schema(schema, golden)
+        and canonical_json_bytes(presented) == canonical_json_bytes(golden)
+    )
+
+
 def check_schema(schema: Mapping[str, Any]) -> None:
     digest = canonical_digest(schema)
     if digest in _VALIDATOR_CACHE:

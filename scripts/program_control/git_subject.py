@@ -87,6 +87,16 @@ class GitIdentity:
     program_tree: str
 
 
+@dataclass(frozen=True)
+class GitBlobFact:
+    """Exact immutable identity for one path at one commit."""
+
+    commit: str
+    path: str
+    git_blob: str
+    sha256: str
+
+
 class GitReader:
     """Read Git objects using argument arrays and an explicit command allowlist."""
 
@@ -300,6 +310,26 @@ class GitReader:
             if cursor != len(output):
                 raise GitSubjectError("Git batch response has trailing bytes")
         return {request: self._blob_cache[request] for request in normalized}
+
+    def blob_facts(
+        self, requests: Iterable[tuple[str, str]]
+    ) -> dict[tuple[str, str], GitBlobFact]:
+        """Batch exact Git-blob IDs and SHA-256 values for closed claims."""
+
+        normalized = sorted(
+            {(commit, normalize_repo_path(path)) for commit, path in requests}
+        )
+        blobs = self.read_blob_requests(normalized)
+        object_ids = self.object_ids(normalized)
+        return {
+            request: GitBlobFact(
+                commit=request[0],
+                path=request[1],
+                git_blob=object_ids[request],
+                sha256=sha256_bytes(blobs[request]),
+            )
+            for request in normalized
+        }
 
     @staticmethod
     def _parse_commit_sections(raw: bytes) -> list[dict[str, object]]:
