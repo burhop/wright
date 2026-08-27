@@ -217,6 +217,24 @@ This is a separate closed entity, not an extension of `CommittedIdentityCorrecti
 
 The record cannot legitimize arbitrary container-added inputs. If any exact identity differs, the approval exists at the source, the container is not the unique introducing commit, either manifest path is absent, or the profile changes another result, validation fails closed.
 
+## RepairEvidenceCorrection
+
+This is a third separate closed entity. Version 1 recognizes exactly `COR-EPP-F01-REPAIR-EVIDENCE-001` and exactly two ordered claims; it cannot be combined with or substituted for either earlier correction profile.
+
+| Field | Rule |
+|---|---|
+| `correction_id`, `stable_cause_id` | Exact closed identifiers; no aliases |
+| `source_checkpoint` | Exact discovery commit `b61b069c6a68688193a60c7f39d9f2b8044027bf`, tree `3b06b5c8412b7ad006a69499f1b94515bc9f4db4`, and program tree `2d5681ac6f152bd90e1977dd37501000657a1b7a` |
+| `accept_new_records` | Always `false` |
+| `expected_claim_count` | Exactly `2` |
+| `repair_cause_id_claim` | Exactly revisions 45 and 46 at `/active_mutating_lease/recovery/active_cause_id`, each bound to raw SHA-256, Git blob, introducing commit/tree, canonical state digest, recorded underscore value, and authoritative hyphenated value |
+| `transition_input_digest_claim` | Exactly TR-0044 `/inputs/1/sha256`, bound to TR-0044 raw SHA/blob/introducing commit/tree and the exact TR-0043 raw SHA/blob |
+| `forbidden_target_classes` | Any other state, transition or pointer; current-state mutation; lifecycle, authority, readiness, benchmark/release, candidate/delivery, manifest, correction, or wildcard target |
+| `resolution_semantics` | Original bytes/findings retained; `2/2` claims and `2/2` occurrences recomputed; no new records; old readers fail closed; zero projection or authority effect |
+| `authority` | Separate same-subject V7 `material_change` and `feature_implementation` approvals accepting DEC-P0-018 and binding the frozen profile digest |
+
+The profile may dispose only the two named findings. It does not make either invalid historical value syntactically valid, change the current state or transition chain, reactivate a lease, bless the failed candidate, or authorize a T066 retry. Any mismatch or non-interference failure leaves validation blocked.
+
 ## ValidationReport
 
 The report contains schema version, validation subject, overall verdict, ordered checks/findings, derived eligibility, four readiness areas with complete gate rows and last-success data, benchmark summary, exact release-approval result, release eligibility, delivery result, and one next action or blocker. Observation time is explicitly nondeterministic; all other semantic fields are deterministic for one subject and validator version.

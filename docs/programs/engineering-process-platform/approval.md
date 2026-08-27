@@ -6,19 +6,19 @@
 
 ## Current EPP-F01 decision
 
-**V6 is approved with conditions for remaining local EPP-F01 work.** `APR-EPP-F01-MC-006` and `APR-EPP-F01-IMPL-006` bind commit `f70aca5bf190bcfbf2525b308eb3ed9ee476c76b`, tree `79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd`, program tree `24c61d46565c199c35373a71655da122eb988231`, and their 11-artifact manifests. They accept the T041 value checkpoint and authorize T042–T068 locally. Lease revision 9 covers author work only through T065; T066–T068 retain their frozen-candidate role separation.
+**Blocked at a new exact V7 approval gate.** V6 authorized the now-complete author work through T065 and the first T066 verification attempt. That attempt exposed exactly two immutable repair-evidence defects. The proposed `COR-EPP-F01-REPAIR-EVIDENCE-001` amendment and DEC-P0-018 do not acquire implementation authority merely by being planned or committed.
 
-`TR-0019` through `TR-0025` remain immutable historical authorization/start/repair evidence. `TR-0026` blocks on exact committed evidence and revokes the active lease. [`APR-EPP-F01-REPAIR-PLANNING-001`](evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json) authorizes only the subsequent planning, audit, and analysis amendment. EPP-F01B requires its own future Spec Kit lifecycle and implementation approval.
+All existing approval and transition records remain immutable historical evidence. The current planning authority permits only this closed amendment, local consistency checks, read-only analysis, bounded independent review, and exact-subject freeze. T070–T072, T066 retry, EPP-F01B implementation, and every excluded action remain blocked.
 
 ## Historical EPP-F01 decision — stale
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
 
-The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069. V5 is complete historical authority for T024–T041. V6 authorizes only remaining local EPP-F01 tasks and local candidate/container/delivery commits. EPP-F01B planning is separately allowed in one isolated dev-based context, but EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069. V5 is complete historical authority for T024–T041. V6 is historical authority for completed T042–T065 and the failed first T066 attempt; it cannot authorize this material correction or another implementation attempt. Exact same-subject V7 `material_change` and `feature_implementation` approvals must accept DEC-P0-018 and the frozen two-claim profile before T070–T072 or T066 retry. EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
 ## Approval subject
 
-After the planning commit is created and local validation is green, resolve and present:
+After the planning commit is created and the planning JSON/schema/consistency checks plus bounded independent audit are green, resolve and present the exact subject below. The pre-V7 validator is expected to fail closed on the unsupported two-claim profile; that exact bounded failure must remain visible and must not be described as green before T070–T072 are separately approved and executed.
 
 ```powershell
 git rev-parse HEAD
@@ -26,7 +26,7 @@ git rev-parse HEAD^{tree}
 git rev-parse HEAD:docs/programs/engineering-process-platform
 ```
 
-Also produce `evidence/artifact-manifest.json`, a sorted SHA-256 manifest of every other file under `docs/programs/engineering-process-platform/`, excluding only the manifest itself and any future approval record whose subject is this planning commit. Bind the manifest file's own SHA-256 separately; together those values cover the complete non-self-referential planning subject. The approval must bind:
+For the V7 feature amendment, use TR-0046's sorted output-digest manifest as the exact non-self-referential artifact bundle; the transition blob itself is bound by the enclosing Git commit/tree. The program-plan bootstrap `evidence/artifact-manifest.json` remains historical and is not regenerated merely to create a circular feature-transition manifest. The approval must bind:
 
 - Git commit;
 - repository tree;

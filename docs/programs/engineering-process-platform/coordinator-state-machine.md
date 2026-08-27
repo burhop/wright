@@ -78,6 +78,8 @@ After exact V4 approval, the feature recovery edge is `BLOCKED` → `IMPLEMENTAT
 
 After T069, the isolated TR-0027 input-origin defect creates a new material boundary. Revision 35 is `BLOCKED` with no mutating lease and sole action `APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V5`. Only separate same-subject V5 approvals accepting DEC-P0-017, binding the exact one-claim profile and unchanged 69-task plan, may restore `IMPLEMENTATION_AUTHORIZED`. The restored lease may cover only T024–T041; the coordinator must stop after the T041 runnable value demonstration. No V5 rule reopens T069 repair attempts or authorizes EPP-F01B, T042–T068, or external/integration/release actions.
 
+After the first T066 attempt, the two repair-evidence defects create another material boundary. The coordinator must record `IMPLEMENTING` → `BLOCKED`, set the mutating lease to null, and expose only `APPROVE_EPP_F01_REPAIR_CORRECTION_V7`. Planning may add the exact two-claim profile and append-only T070–T072, but it may not execute them. Only separate same-subject V7 approvals accepting DEC-P0-018 and binding the exact profile may restore `IMPLEMENTATION_AUTHORIZED`; the reactivated lease is limited to T070–T072 and a subsequent T066 retry. The coordinator then follows `IMPLEMENTATION_AUTHORIZED` → `IMPLEMENTING` and test-first T070 → implementation T071 → verification/re-freeze T072. No V7 edge authorizes T067–T068 until T066 passes, EPP-F01B implementation, or any external/integration/release action.
+
 ## Analyze remediation routing
 
 - requirement/user-value/scope gap → `SPECIFIED` then rerun all downstream stages;

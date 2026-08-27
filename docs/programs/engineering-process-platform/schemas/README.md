@@ -10,6 +10,7 @@ All machine-readable artifacts use JSON Schema draft 2020-12 and reject unknown 
 - every approval with `approval.schema.json`;
 - the closed committed-identity correction with `committed-identity-correction.schema.json`;
 - the separate one-claim TR-0027 input-origin correction with `transition-input-correction.schema.json`;
+- the separate two-claim repair-evidence correction with `repair-evidence-correction.schema.json`;
 - the exact approval candidate's non-self-referential file inventory with `artifact-manifest.schema.json`;
 - `gate-catalog.json` with `gate-catalog.schema.json` and `gate-evidence.json` with `gate-evidence.schema.json`;
 - `benchmark-coverage.json` with `benchmark-coverage.schema.json`;
@@ -31,3 +32,5 @@ If the validator is absent or incompatible, use the README catch-up protocol and
 `committed-identity-correction.schema.json` is intentionally closed to `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` and its exact 37 factual claims. It is append-only evidence, not a general schema extension or waiver. Consumers must recompute every target from Git, require exact V4 approval binding and strict ancestry, retain original findings, and prove zero readiness/release effect. Unsupported consumers fail closed.
 
 `transition-input-correction.schema.json` is independently closed to `COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001` and TR-0027 `/inputs/3`. It requires exact source absence and unique container introduction of the exact approval blob under V5 approval. It cannot authorize any other container-added input or change authority/readiness results; unsupported consumers fail closed.
+
+`repair-evidence-correction.schema.json` is independently closed to `COR-EPP-F01-REPAIR-EVIDENCE-001`: exactly two historical cause-ID occurrences plus one TR-0044 input-digest pointer represented as two ordered claims. It requires exact Git-object recomputation, immutable-source retention, `2/2` claim and occurrence equality, strict V7 approval binding, and zero lifecycle/authority/readiness/benchmark/candidate/delivery/release effect. It admits no new record, generic waiver, or current-state mutation; unsupported consumers fail closed.

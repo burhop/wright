@@ -113,6 +113,8 @@ After V4 approval, only `COR-EPP-F01-US1-COMMITTED-IDENTITY-001` may resolve the
 
 TR-0027 has one separate known input-origin defect: `/inputs/3` names the planning approval at source `c3012733`, although Git proves that approval first appears with TR-0027 in container `88481d57`. Do not edit either artifact. Until exact V5 approval, validation must retain the finding and stop. After approval, only `COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001` may dispose it, after exact `1/1` source-absence/container-introduction proof. Any broader exception or change to authority/readiness results fails closed.
 
+The failed first T066 candidate exposed one later repair-evidence cause: state revisions 45 and 46 use an underscore-form stable cause identifier that violates the closed grammar, and TR-0044 truncates the exact TR-0043 SHA-256 at `/inputs/1/sha256`. Do not edit those records. Only `COR-EPP-F01-REPAIR-EVIDENCE-001`, after exact V7 approval, may dispose the two ordered claims. A valid reader must rehash the exact Git blobs, prove exactly two affected cause-ID occurrences and the full 64-character TR-0043 digest, retain the original findings, and leave state, lifecycle, lease, authority, all four readiness areas, benchmark counters, candidate, delivery, and release results unchanged. Until then, stop before T070–T072 or any T066 retry.
+
 ## 6. Compatibility and rollback
 
 | Input or environment | Supported result |

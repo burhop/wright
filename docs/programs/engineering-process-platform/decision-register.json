@@ -500,14 +500,14 @@
     {
       "id": "DEC-P0-017",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "May EPP-F01 dispose only the exact TR-0027 /inputs/3 source-versus-container origin defect through a separately approval-bound one-claim profile?",
       "why_material": "A broad transition-origin exception would weaken append-only history and could admit authority created only in a transition container as if it existed at the source.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due": {
         "before_event": "EPP-F01 T024 or later implementation resumes",
         "due_at": null,
-        "last_reviewed_at": "2026-08-27T19:02:07Z"
+        "last_reviewed_at": "2026-08-27T22:43:44Z"
       },
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
       "options": [
@@ -523,6 +523,33 @@
         "Fresh exact material-change and feature-implementation approvals"
       ],
       "decision_record": "decisions/0017-closed-tr0027-input-origin-correction.md"
+    },
+    {
+      "id": "DEC-P0-018",
+      "priority": "P0",
+      "status": "proposed",
+      "question": "May EPP-F01 dispose only the invalid repair-cause identifier at two exact historical state pointers and the truncated TR-0043 digest at one exact TR-0044 pointer through a closed two-claim append-only profile?",
+      "why_material": "The evidence defects are real and immutable, but a broad repair-evidence exception could hide audit failures, rewrite history semantically, or reactivate verification without exact human authority.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 T070, T071, T072 or T066 retry",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T22:43:44Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": [
+        "Accept only COR-EPP-F01-REPAIR-EVIDENCE-001 and its exact two claims",
+        "Stop EPP-F01 and redesign repair-evidence disposition semantics",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Exact state-revision 45 and 46 Git-object identities and cause-ID pointers",
+        "Exact TR-0044 pointer plus independently recomputed TR-0043 digest and blob",
+        "Literal two-claim target set with no new records or historical rewrites",
+        "Lifecycle/authority/readiness/benchmark/candidate/delivery/release non-interference proof",
+        "Fresh exact V7 material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0018-closed-repair-evidence-correction.md"
     }
   ]
 }

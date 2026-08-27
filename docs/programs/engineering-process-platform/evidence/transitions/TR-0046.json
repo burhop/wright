@@ -1,0 +1,209 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0046",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "BLOCKED",
+  "prior_revision": 46,
+  "new_revision": 47,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "1a05372edce58a11a7ea416774c207cbbfd6ad946d923083b7ac22fbce8487d8",
+  "new_state_digest": "2e5cb6fa292a0ce031bde4aa1623367c8a1c5f50e11b8bfef058de682092a768",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Preserve state revisions 45 and 46 and TR-0044 byte-for-byte; specify one exact two-claim append-only repair-evidence correction; add dependency-ordered T070-T072 without executing them; revoke lease revision 10; complete bounded independent re-analysis; and stop for exact V7 material-change and feature-implementation approval before any T066 retry.",
+  "started_at": "2026-08-27T22:30:00Z",
+  "finished_at": "2026-08-27T22:55:00Z",
+  "duration_ms": 1500000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "b61b069c6a68688193a60c7f39d9f2b8044027bf",
+    "source_tree": "3b06b5c8412b7ad006a69499f1b94515bc9f4db4",
+    "source_program_tree": "2d5681ac6f152bd90e1977dd37501000657a1b7a",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/audits/2026-08-27-epp-f01-repair-evidence-audit.md",
+      "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0018-closed-repair-evidence-correction.md",
+      "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0047.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0046.json",
+      "docs/programs/engineering-process-platform/gate-catalog.json",
+      "docs/programs/engineering-process-platform/gates.md",
+      "docs/programs/engineering-process-platform/integration-release.md",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-plan.md",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/proposed-features.md",
+      "docs/programs/engineering-process-platform/risk-register.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/schemas/repair-evidence-correction.schema.json",
+      "docs/programs/engineering-process-platform/status-dashboard-contract.md",
+      "specs/076-control-plane-validator/analysis.md",
+      "specs/076-control-plane-validator/checklists/program-control.md",
+      "specs/076-control-plane-validator/checklists/requirements.md",
+      "specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md",
+      "specs/076-control-plane-validator/spec.md",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_contract_schemas.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0046.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0046.json",
+      "sha256": "61da3dc822c5c6c18a544fc684f923e060f172da8a29b72e60e5b4798ca1a6ac",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0045.json",
+      "sha256": "aa905918c993aea3461d3120474c2522307ff188f1d5c5dbb76101fa6a5faf63",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {"path":"approval.md","sha256":"8e1ab6a138676833ab97ad2ef05d3bd0f4c0c38a1e86931b663c4856146eb5ac","schema_version":null,"role":"immutable_policy"},
+    {"path":"audits/2026-08-27-epp-f01-repair-evidence-audit.md","sha256":"feb4c7ba8cf2ae94fdd2ad6daa78fa25c25ad6aa414f662d840e8574e55c1e95","schema_version":null,"role":"append_only_evidence"},
+    {"path":"coordinator-state-machine.md","sha256":"2629fc8241a1896c624c796705a4f4d74d94f08062b7212280734d16c9285a9b","schema_version":null,"role":"immutable_policy"},
+    {"path":"decision-register.json","sha256":"75f93f4ab8d6fd24aa195808b1e9051c1a8256777ffa31006ae2830490ae2735","schema_version":"1.0","role":"immutable_policy"},
+    {"path":"decisions/0018-closed-repair-evidence-correction.md","sha256":"ec33058aec0da211fa2067d2b3fe6a61c132b0dbef673958b5e8051adf688f58","schema_version":null,"role":"immutable_policy"},
+    {"path":"evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json","sha256":"5df46132d8f8cf38a0c6a31fa03bc6363f5d222e3c71fe14c45bb9b9e51a1677","schema_version":"1.0","role":"append_only_evidence"},
+    {"path":"evidence/states/program-state-revision-0047.json","sha256":"185ad562314b383567d130ef1504791ef6c4e292fb55aacfbbd80eccb05ae7d3","schema_version":"2.0","role":"append_only_evidence"},
+    {"path":"gate-catalog.json","sha256":"29c3c497aa98a8c2bcf9fd6cca13d4e6dc2bf7787e6650fdb88f93878f6c03aa","schema_version":"1.0","role":"immutable_policy"},
+    {"path":"gates.md","sha256":"750fca7eae6add4a10386b67153d64ae6ac7551747581e2f443f351a01a1ae28","schema_version":null,"role":"immutable_policy"},
+    {"path":"integration-release.md","sha256":"8f8f75a9dedd99fded05102d436f9071b7ce47a2a8a7cdab5c924ec9647c2d11","schema_version":null,"role":"immutable_policy"},
+    {"path":"lifecycle-policy.json","sha256":"37b864d779925c9010fd2faef86751c0f0d872f01442b27b92b534b969269eb3","schema_version":"1.0","role":"immutable_policy"},
+    {"path":"program-plan.md","sha256":"1d816665919d9d710c21b5a96bd0b0c295f1e4e64e3ce8cfe1d570d0f13fedd1","schema_version":null,"role":"immutable_policy"},
+    {"path":"program-state.json","sha256":"185ad562314b383567d130ef1504791ef6c4e292fb55aacfbbd80eccb05ae7d3","schema_version":"2.0","role":"operational_state"},
+    {"path":"proposed-features.md","sha256":"d59fb7bc4a7fdfd7463ef68167d51e44d16ca04c3775c971d9712b64261b008d","schema_version":null,"role":"immutable_policy"},
+    {"path":"README.md","sha256":"76e01c408210f64d461f61100392b0f3eecf08a29ded87341ec62f8d547f0bd1","schema_version":null,"role":"immutable_policy"},
+    {"path":"risk-register.json","sha256":"cd50545d464f37a8f8e2c5c68653841449b5c4b018f3188e6738fabe74b9e6a6","schema_version":"1.0","role":"immutable_policy"},
+    {"path":"roadmap.json","sha256":"ae2afa90cbc2778f39d2c791aa61f623ce69113e53ad545f74fe737f0b2a08a9","schema_version":"1.0","role":"immutable_policy"},
+    {"path":"schemas/README.md","sha256":"26d4882a36bc4f7a4ce254c39a708a5aa221b8edaed230552a1b8f3440edd9e4","schema_version":null,"role":"immutable_policy"},
+    {"path":"schemas/repair-evidence-correction.schema.json","sha256":"50676373c395aed7534eff8b3001bc248346a3e184cf580eb6a6fd101cb43691","schema_version":null,"role":"immutable_policy"},
+    {"path":"status-dashboard-contract.md","sha256":"5b5ee1b8624dd845abacd32fa1484ab203059693848fd9a3a3afc48179ae7383","schema_version":null,"role":"immutable_policy"},
+    {"path":"../../../specs/076-control-plane-validator/analysis.md","sha256":"f36dfc18083d699ad79bbe61357acb73acdeca813dab8479bc61de9d94c547e7","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/checklists/program-control.md","sha256":"ffe050454bec2ef1bfc6023362ba0691df917e25279133c0e1a598c298cc4eec","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/checklists/requirements.md","sha256":"181d5dea1c52351c378092421cbe0f572f47ba1c0ac8ff04e5591848bf4182b4","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json","sha256":"50676373c395aed7534eff8b3001bc248346a3e184cf580eb6a6fd101cb43691","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/data-model.md","sha256":"7dcbe0b33c5aaf134fc10c1f24f6884c33cca313c928b79583dc6df6fe026716","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/plan.md","sha256":"3c91c3ccf7d75ab8c26e1a9bb6b75efb80de8db7a08daefbc05c7811faeb1e32","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/quickstart.md","sha256":"1ad51f2f6cfa6b2cd1ce0411a405cf4622546a63de23eedbe859860e7822ab2b","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/research.md","sha256":"fe97217a150d8ab16b143b6aba5348b340e584c1b2483a2905739916bcfd2796","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/spec.md","sha256":"609a4abbf87424259b7259aef7f74d6432f9a4b9b6a79630fd730def28918435","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../specs/076-control-plane-validator/tasks.md","sha256":"55a831ef5ff213c7c0ef6c3d4685a6efa4c6dae68af0a49361c1d786537286e8","schema_version":null,"role":"feature_contract"},
+    {"path":"../../../tests/program_control_plane/test_contract_schemas.py","sha256":"87847a38f682568273f0e0ea2a4e75bb30d7e752eb2d97f6684d385dc3dfc1c4","schema_version":null,"role":"feature_contract"}
+  ],
+  "checks": [
+    {
+      "check_id": "V7-EXACT-TWO-CLAIM-PROOF",
+      "method": "Recompute both historical state raw/canonical digests, exact Git blobs and introducing trees; verify the invalid value at exactly the two declared pointers; recompute TR-0044 and the full TR-0043 digest; and validate the literal closed schema/profile copies.",
+      "environment": "local read-only Git plus Python json/jsonschema; offline",
+      "duration_ms": 5100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json",
+        "schemas/repair-evidence-correction.schema.json"
+      ]
+    },
+    {
+      "check_id": "V7-SPECKIT-ANALYSIS",
+      "method": "Analyze specification, plan, research, data model, checklists and tasks; require FR-027/SC-013 coverage, 72 unique task IDs, test-first T070-T072 ordering before T066 retry, and no constitution exception.",
+      "environment": "Spec Kit artifact analysis; direct Windows reads after WSL prerequisite helper was unavailable",
+      "duration_ms": 8400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/analysis.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "V7-INDEPENDENT-OMISSION-AUDIT",
+      "method": "A bounded independent read-only reviewer verified exact identities, closure, authority, dependencies, stop truth, empty-context guidance and readiness/benchmark/commercial/release non-interference; all five planning findings were dispositioned by the sole writer.",
+      "environment": "independent bounded agent; offline; no write authority",
+      "duration_ms": 420000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "audits/2026-08-27-epp-f01-repair-evidence-audit.md"
+      ]
+    },
+    {
+      "check_id": "V7-SCOPE-AND-STOP",
+      "method": "Require a schema-valid revision-47 BLOCKED state, null mutating lease, DEC-P0-018 pending, sole human approval action, expected pre-V7 validator failure, and no product, EPP-F01B implementation, dependency, benchmark, external, integration, publication or release action.",
+      "environment": "local JSON/schema and diff analysis; offline",
+      "duration_ms": 2300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "lifecycle-policy.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-007.json"
+    ],
+    "subject": {
+      "git_commit": "b61b069c6a68688193a60c7f39d9f2b8044027bf",
+      "git_tree": "3b06b5c8412b7ad006a69499f1b94515bc9f4db4",
+      "program_tree": "2d5681ac6f152bd90e1977dd37501000657a1b7a",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0046"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Bounded read-only repair-evidence omission auditor; PASS after four planning-only dispositions.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-REPAIR-EVIDENCE-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "DEC-P0-018 remains proposed until exact V7 human approval",
+    "The two-claim correction is specified but not implemented or activated",
+    "No mutating lease exists; T070-T072, T066 retry and every excluded action remain unauthorized",
+    "The pre-V7 validator is expected to fail closed on the new profile"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0046.json",
+  "next_action": "APPROVE_EPP_F01_REPAIR_CORRECTION_V7"
+}

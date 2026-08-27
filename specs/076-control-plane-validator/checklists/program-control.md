@@ -82,7 +82,7 @@
 - [x] CHK045 Do validation-report and dashboard gate rows share all fields, including a required per-gate `fresh` boolean distinct from area freshness? [Consistency, Spec §FR-011; Validation Report and Dashboard schemas]
 - [x] CHK046 Are dashboard bytes permanently candidate-only while committed-current delivery is proved solely by an external report envelope and independent descendant-`D` evidence? [Clarity, Spec §FR-015; Dashboard Generation §Committed-Current Delivery Envelope; ADR 0014]
 - [x] CHK047 Does delivery evidence bind exact `S`, `C`, dashboard bytes, dashboard-only `S..C`, delivery-only `C..D`, and unchanged source inputs without embedding `C` or `D` in dashboard bytes? [Completeness, Verification Evidence schema; Data Model §DeliveryEnvelope]
-- [x] CHK048 Do the 69 append-only-identified tasks cover both legacy profiles, the exact correction profile, container resolution, generator-bundle mutation, per-gate freshness parity, candidate-only bytes, and descendant delivery proof with tests preceding implementation? [Coverage, Tasks T002, T006, T016, T021, T069, T024, T034, T039–T040, T048, T051, T067–T068]
+- [x] CHK048 Do the 72 append-only-identified tasks cover both legacy profiles, all three exact correction profiles, container resolution, generator-bundle mutation, per-gate freshness parity, candidate-only bytes, and descendant delivery proof with tests preceding implementation? [Coverage, Tasks T002, T006, T016, T021, T069–T072, T024, T034, T039–T040, T048, T051, T067–T068]
 - [x] CHK049 Are the earlier approvals explicitly stale and the replacement exact `material_change` plus `feature_implementation` approvals required before any task or implementation mutation resumes? [Dependency, Tasks §Authority gate; Research §Remaining Material Questions; Program State §next_eligible_actions]
 
 ## Final Independent-Audit Repair Cycle
@@ -115,9 +115,18 @@
 - [x] CHK069 Do T024/T026/T030/T031 cover positive proof, every identity/pointer/origin/authority mutation, human diagnostics, recovery, non-mutation, and non-interference without adding a 70th task? [Coverage, Tasks §US1]
 - [x] CHK070 Are DEC-P0-017, RISK-019 and distinct same-subject V5 approvals blocking T024 onward while T069 remains complete and all excluded actions remain unauthorized? [Authority, Tasks §Authority gate; ADR 0017; Program state]
 
+## DEC-P0-018 Repair-Evidence Correction Quality
+
+- [x] CHK071 Is the third profile closed to exactly two ordered claims: two exact historical cause-ID occurrences and one exact TR-0044 digest pointer, with no open range, wildcard, or new record? [Completeness, Spec §FR-027; Repair Evidence Correction schema/profile]
+- [x] CHK072 Does each target bind exact path, raw SHA-256, Git blob, introducing commit/tree, pointer, recorded value, authoritative value, and canonical state digest where applicable? [Evidence, Data Model §RepairEvidenceCorrection]
+- [x] CHK073 Are omissions, additions, substitutions, reordered/relocated targets, wrong identities/origins/digests, current/future records, correction-of-correction, and missing V7 authority all required to fail closed? [Coverage, Tasks T070]
+- [x] CHK074 Must the original bytes and findings remain visible while all lifecycle, state, lease, authority, readiness, benchmark, candidate, delivery, and release outputs remain unchanged? [Safety, Spec §FR-027, §SC-013; Tasks T071–T072]
+- [x] CHK075 Are T070–T072 dependency-ordered before any T066 retry and explicitly unexecuted until exact same-subject V7 approvals bind DEC-P0-018 and the frozen profile digest? [Authority, Tasks §Current V7 repair gate]
+- [x] CHK076 Do the plan and gate preserve every exclusion: product and EPP-F01B implementation, dependencies, benchmarks, external changes, push/PR/merge/dev integration, publication, and release? [Scope, Plan §Delivery and Gate Impact; Tasks §Current V7 repair gate]
+
 ## Notes
 
 - Formal depth; intended for the feature author and independent reviewer before task decomposition and again before implementation approval.
-- All 70 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the bounded TR-0027 input-origin amendment. No override was used.
+- All 76 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the bounded two-claim repair-evidence amendment. No override was used.
 - This checklist evaluates written requirements. It does not claim that implementation or verification has occurred.
-- Material items in CHK035, CHK041–CHK049, CHK052, CHK059–CHK065, and CHK066–CHK070 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.
+- Material items in CHK071–CHK076 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.

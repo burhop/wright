@@ -402,6 +402,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T18:15:00Z"
       }
+    },
+    {
+      "id": "RISK-020",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Repair-evidence correction becomes a generic audit waiver",
+      "cause": "A repair correction broader than the two exact targets could accept malformed identifiers, partial digests, current-state mutations, or unrelated historical defects.",
+      "consequence": "The validator could hide evidence corruption, alter authority or readiness, and resume candidate verification on an untrustworthy control plane.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-018", "Recognize one exact two-claim profile only", "Preserve and independently rehash every original blob", "Reject new/current/wildcard/correction targets", "Require exact V7 approval and full non-interference"],
+      "triggers": ["A third target is accepted", "A current state or transition is mutated", "A truncated digest is prefix-matched", "Original finding is suppressed", "Correction changes authority, readiness, benchmark, candidate, delivery, or release output"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, preserve all original evidence, and require a new material decision rather than broadening the profile.",
+      "evidence": ["decisions/0018-closed-repair-evidence-correction.md", "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json", "specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 repair, candidate-verification, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T22:43:44Z"
+      }
     }
   ]
 }

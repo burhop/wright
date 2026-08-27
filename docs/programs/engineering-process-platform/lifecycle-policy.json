@@ -374,7 +374,7 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
-      "action": "REVIEW_EPP_F01_T041_VALUE_CHECKPOINT",
+      "action": "APPROVE_EPP_F01_REPAIR_CORRECTION_V7",
       "requires_human_approval": true
     },
     {

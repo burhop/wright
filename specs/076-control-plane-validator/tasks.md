@@ -4,9 +4,11 @@
 
 **Prerequisites**: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, and both completed checklists
 
-**Tests**: Required by FR-020 and SC-002–SC-012. Story tests are written first and must fail for the intended missing behavior before implementation.
+**Tests**: Required by FR-020 and SC-002–SC-013. Story tests are written first and must fail for the intended missing behavior before implementation.
 
 **Authority gate**: Do not execute T024 or any later checkbox until an exact V5 approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject; binds the unchanged 69-task plan, every planning contract, and both exact closed correction profiles by digest; accepts R-004 through R-008, R-014 through R-017 / `DEC-P0-013` through `DEC-P0-017`; and reactivates a lease authorizing execution only from T024 through T041. V4 remains historical authority for completed T069 but is stale for further implementation. After the T041 demonstration, the sole action is `REVIEW_EPP_F01_T041_VALUE_CHECKPOINT`; T042–T068 require a new explicit human instruction and authority checkpoint. V5 does not authorize EPP-F01B, push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
+
+**Current V7 repair gate**: The prior approvals are historical authority for completed work only. Do not execute T070, T071, T072, retry T066, or perform any later mutation until two new approved records—`APR-EPP-F01-MC-007.json` and `APR-EPP-F01-IMPL-007.json`—bind the same frozen commit/tree/program tree and exact artifact-digest manifest, accept DEC-P0-018 and `COR-EPP-F01-REPAIR-EVIDENCE-001`, and reactivate a lease limited to T070–T072 plus the subsequent T066 retry. Planning and read-only analysis do not satisfy this gate. Product work, EPP-F01B implementation, dependencies, benchmarks, external changes, push/PR/merge/dev integration, publication, and release remain excluded.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -168,6 +170,9 @@
 - [x] T063 Exercise removal/manual-validation rollback and previous-compatible snapshot reading, then record immutable source and prior-dashboard identities in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-rollback.json`
 - [x] T064 Inspect the full candidate diff for scope, secrets/private payloads, generated/binary artifacts, dependency drift, benchmark/product execution, and unauthorized external/Git changes in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-diff-audit.json`
 - [x] T065 Freeze the exact candidate commit/tree/artifact manifest, author identity, commands, acceptance envelope, remaining limitations, and rollback pointer in `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json`
+- [ ] T070 Add failing exact-profile tests in `tests/program_control_plane/test_transition_chain.py` and `tests/program_control_plane/test_cli.py` for `COR-EPP-F01-REPAIR-EVIDENCE-001`: the positive `2/2` claim and `2/2` occurrence proof plus every omitted, added, substituted, reordered, relocated, wrong-identity, wrong-pointer, wrong-digest, wrong-origin, current-state, wildcard, future, new-record, correction-of-correction, missing-V7-authority, and projection-interference case
+- [ ] T071 Implement recognition of only the exact repair-evidence correction in `scripts/program_control/validation.py`, `scripts/program_control/git_subject.py`, and `scripts/program_control/json_contracts.py`; retain immutable source findings, emit bounded diagnostics and recovery, require exact Git-object recomputation and V7 authority, and change no lifecycle, authority, readiness, benchmark, candidate, delivery, or release result
+- [ ] T072 Run correction-off/on non-interference for honest `0/100` and non-empty synthetic benchmark inputs, focused validator tests, Ruff/format, full regression, source-mutation audit, and exact-subject verification; record the bounded result and freeze a replacement T066 candidate only if every check passes, otherwise stop under the existing repair limit
 - [ ] T066 Stop author mutation and have a different independent-verifier identity rerun the critical deterministic, negative, platform, quickstart, evidence-link, rollback, and original-failure/skip review on unchanged candidate `R`; persist its candidate verdict in source commit `S` via `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json`
 - [ ] T067 Have the coordinator validate source commit `S`, generate exact deterministic `candidate_not_evidence` dashboard bytes without code/source mutation, commit only `docs/programs/engineering-process-platform/dashboard.json` as successor `C`, and prove the first-parent, diff-allowlist, source-bundle, input-manifest, and byte-digest relation
 - [ ] T068 Have the independent verifier inspect exact container `C`, dashboard bytes, schema/semantic and per-assertion/per-gate-freshness recomputation, and `S`/`C` relation; then persist a passing `kind=delivery` record in descendant `D` at `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json`, prove the `C..D` delivery-only diff, and run `validate --source S --container C --delivery D` to show that only the external validation envelope—not dashboard bytes—reports `committed_valid`
@@ -208,7 +213,7 @@ exact implementation + material-change approval
 - US2 depends on US1's validated source/report model.
 - US3 depends on US2's candidate-generation path.
 - US4 depends on the complete report/projection behavior from US1–US3.
-- Phase 7 depends on all stories. T066 depends on candidate freeze at T065 and a distinct verifier; T067 depends on T066 and must be a dashboard-only successor; T068 depends on T067 and changes only delivery evidence.
+- Phase 7 depends on all stories. The failed first T066 attempt routes through approval-gated T070–T072; a T066 retry depends on a passing T072 replacement freeze and a distinct verifier. T067 depends on passing T066 and must be a dashboard-only successor; T068 depends on T067 and changes only delivery evidence.
 
 ### Within-Phase Dependencies
 
@@ -218,7 +223,7 @@ exact implementation + material-change approval
 - T036–T040 depend on T032–T035; T041 depends on all US2 work.
 - T046–T048 depend on T042–T045; T049 depends on all US3 work.
 - T053–T055 depend on T050–T052 and prior stories; T056 depends on all US4 work.
-- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064; T066 depends on T065; T067 depends on T066; T068 depends on T067.
+- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064. T070 depends on the frozen two-claim profile and exact V7 approvals; T071 depends on failing T070 tests; T072 depends on T071. The T066 retry depends on passing T072; T067 depends on passing T066; T068 depends on T067.
 
 ### Parallel Opportunities
 
@@ -249,19 +254,19 @@ exact implementation + material-change approval
 
 ## Task Summary
 
-- Total tasks: 69
+- Total tasks: 72
 - Setup/foundation: 19
 - US1: 13
 - US2: 10
 - US3: 8
 - US4: 7
-- Cross-cutting/verification: 12
+- Cross-cutting/verification: 15
 - Suggested MVP: Phases 1–3 (US1), followed by a deliberate validation checkpoint
 
 ## Notes
 
-- These 69 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
-- T069 is intentionally numbered append-only while placed at its dependency-ordered execution point. Existing task identities and the 23 completed task records are not renumbered or reinterpreted.
+- These 72 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
+- T069–T072 are intentionally numbered append-only while placed at their dependency-ordered execution points. Existing task identities and completed task records are not renumbered or reinterpreted.
 - No task adds or upgrades a dependency, changes product runtime, creates/executes benchmark cases, contacts external systems, pushes, opens/merges a PR, integrates to `dev`, publishes, or releases.
 - Task checkboxes are progress markers, not lifecycle or approval evidence.
 - Optional Spec Kit auto-commit hooks remain disabled for this workflow because reviewed allowlist staging is required; no `git add .` may be used.

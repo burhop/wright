@@ -104,4 +104,6 @@ The closed committed-identity correction is a compatibility boundary. Dev integr
 
 The TR-0027 input-origin correction is a separate compatibility boundary. Dev integration evidence must prove exact V5 approval, `1/1` source-absence/unique-container proof, unchanged manifests, original-finding retention, unsupported-reader fail-closed behavior, and zero authority/readiness/release effect. Rollback returns the finding to unresolved and cannot synthesize source-time authority.
 
+The two-claim repair-evidence correction is a third compatibility boundary. Dev integration evidence must prove exact V7 approval, exact `2/2` claim and two-occurrence cause-ID recomputation, exact TR-0043 blob/digest provenance, original-finding and immutable-byte retention, unsupported-reader fail-closed behavior, and zero lifecycle/lease/authority/readiness/benchmark/candidate/delivery/release effect. Rollback returns both findings to unresolved and cannot make malformed historical values valid or authorize a T066 retry.
+
 Native rollback uses only retained compatible runtimes and the packaged schema bounds. `recovery_required`, residue, incompatible state or identity mismatch is a stop condition. Codex failure does not authorize routing through Hermes or vice versa. Keep the GitHub Release absent/draft until all exact public surfaces and docs verify.

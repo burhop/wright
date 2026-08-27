@@ -54,6 +54,11 @@
       "class_id": "TRANSITION_INPUT_CORRECTION",
       "schema_id": "https://wright.local/programs/epp/transition-input-correction.schema.json",
       "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "REPAIR_EVIDENCE_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
+      "source_role": "append_only_evidence"
     }
   ],
   "gates": [
@@ -795,7 +800,7 @@
       "assertions": [
         {
           "assertion_id": "PROG-01-A01",
-          "requirement": "Schemas parse, references/digests match, roadmap is acyclic, state revision is monotonic, eligibility is derived, and dashboard is generated from source evidence. The committed-identity correction has exact V4 approval and literal 37/37 Git proof. The separate TR-0027 input-origin correction has exact V5 approval and literal 1/1 source-absence/container-introduction proof. Both retain findings and have zero authority/readiness/release effect."
+          "requirement": "Schemas, references, digests, roadmap, revisions, eligibility and dashboard source evidence are valid. Corrections require exact approvals and Git proof: V4 37/37 committed identity; V5 1/1 TR-0027 origin; V7 2/2 repair claims, two cause-ID occurrences and exact TR-0043 digest. Original findings remain visible and corrections have zero lifecycle, authority, readiness, benchmark, candidate, delivery or release effect."
         }
       ],
       "freshness": {
@@ -810,7 +815,8 @@
           "STATE_SNAPSHOT",
           "TRANSITION_RECORD",
           "CONTROL_IDENTITY_CORRECTION",
-          "TRANSITION_INPUT_CORRECTION"
+          "TRANSITION_INPUT_CORRECTION",
+          "REPAIR_EVIDENCE_CORRECTION"
         ],
         "independent_verifier_required": true
       }
@@ -920,7 +926,8 @@
           "STATE_SNAPSHOT",
           "TRANSITION_RECORD",
           "CONTROL_IDENTITY_CORRECTION",
-          "TRANSITION_INPUT_CORRECTION"
+          "TRANSITION_INPUT_CORRECTION",
+          "REPAIR_EVIDENCE_CORRECTION"
         ],
         "independent_verifier_required": false
       }

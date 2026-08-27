@@ -88,6 +88,7 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
     lease = current["active_mutating_lease"]
     if lease is None:
         assert current["feature_state"] in {
+            "BLOCKED",
             "CANDIDATE_FROZEN",
             "INDEPENDENTLY_VERIFIED",
             "PUSH_AUTHORIZATION_PENDING",
@@ -96,6 +97,11 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             "DEV_INTEGRATED",
             "DEV_DEPLOYMENT_VERIFIED",
         }
+        if current["feature_state"] == "BLOCKED":
+            assert all(
+                action["requires_human_approval"]
+                for action in current["next_eligible_actions"]
+            )
         return
     allowed = lease["allowed_paths"]
     assert "scripts/program_control/**" in allowed

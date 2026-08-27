@@ -187,4 +187,16 @@ No audit recommended product implementation, benchmark generation/execution, dep
 
 **Compatibility and recovery**: Unsupported readers fail closed. Any identity, pointer, origin, target-set, manifest or V5 approval mismatch leaves the finding unresolved. Rollback removes the disposition behavior without changing history.
 
-`DEC-P0-013`, `DEC-P0-014`, and `DEC-P0-016` are decided. `DEC-P0-017` is the sole new material question: whether to accept the exact one-claim TR-0027 input-origin profile and its strict non-interference semantics. It remains **implementation-blocking until the human approves the newly frozen V5 combined feature/material-change subject**. No generic transition exception, history rewrite, task-count expansion, or readiness/authority effect is assumed. Planning, checklist/task amendment, read-only analysis, and bounded audits may continue; T024 and later implementation may not.
+`DEC-P0-013`, `DEC-P0-014`, `DEC-P0-016`, and `DEC-P0-017` are decided. The V5 subject governed the completed T024–T041 work; it is historical authority and cannot authorize a new correction or a T066 retry.
+
+## R-018 — Closed two-claim repair-evidence correction (proposed DEC-P0-018)
+
+**Evidence**: Exact Git-object inspection found two defects in immutable repair evidence produced after the first T066 candidate. State revisions 45 and 46 each record `CANDIDATE_RUFF_FORMAT_DRIFT` at `/active_mutating_lease/recovery/active_cause_id`, although the governing identifier grammar permits only uppercase letters, digits, and hyphens. TR-0044 records a 63-character value at `/inputs/1/sha256`; rehashing the exact TR-0043 blob yields `24c6f2833bf06f74f25e93f0c7e7158e5d659bfbdbd1fb2a6015553bf874fcfe`.
+
+**Decision requiring exact V7 approval**: Preserve every historical byte. Admit only `COR-EPP-F01-REPAIR-EVIDENCE-001`, with two ordered claims: one claim enumerating exactly the two invalid cause-ID occurrences and their authoritative hyphenated value, and one claim binding TR-0044's exact pointer to the recomputed TR-0043 digest. Bind each source container to raw SHA-256, Git blob, introducing commit/tree, exact pointer, and canonical state digest when applicable. Require `2/2` claim equality, `2/2` occurrence equality, no new records, original findings retained, and zero effect on lifecycle, authority, readiness, benchmark, candidate, delivery, or release results.
+
+**Rejected alternatives**: rewriting revisions 45–46 or TR-0044; accepting underscores in the stable-cause grammar; padding or prefix-matching a digest; hiding the original findings; creating a generic historical-evidence waiver; extending either prior correction profile; or using this correction as authority to resume verification.
+
+**Compatibility and recovery**: Unsupported readers fail closed. An omitted, added, substituted, relocated, current-state, wildcard, future, or correction-of-correction target leaves validation blocked. Rollback removes only the new disposition behavior; immutable source evidence remains unchanged.
+
+`DEC-P0-018` is the sole open material question: whether to accept this exact two-claim append-only disposition and its strict non-interference semantics. T070–T072 and any retry of T066 remain **implementation-blocking until the human approves a newly frozen V7 same-subject `material_change` and `feature_implementation` bundle**. Planning, read-only analysis, and bounded audits may continue; no product, EPP-F01B, dependency, benchmark, external, integration, publication, or release work is authorized.
