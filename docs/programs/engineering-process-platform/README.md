@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 checklist-complete on `077-control-plane-validator`; task decomposition next and no implementation approval
+**Status:** EPP-F01 task-complete on `077-control-plane-validator`; read-only cross-artifact analysis next and no implementation approval
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`TASKS_EPP_F01` is the only eligible action. The formal program-control requirements checklist passes 40/40 with complete traceability and no override, covering UX, failure/recovery, inspectable I/O, tests, compatibility, benchmark boundaries, privacy/security, rollback, and material change control. Generate dependency-ordered tasks with independently testable stories and explicit verification. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.
+`ANALYZE_EPP_F01` is the only eligible action. The 66-task plan is sequential, story-traceable, independently testable, role-bounded, and path-specific: 19 setup/foundation, 12 US1, 10 US2, 8 US3, 7 US4, and 10 cross-cutting/verification tasks. Run non-destructive consistency analysis across the exact specification, plan, tasks, contracts, and constitution; critical/high findings block and medium findings require disposition. The lease does not authorize implementation, dependencies, push, PR, merge, benchmark generation, publication, or other external mutation.

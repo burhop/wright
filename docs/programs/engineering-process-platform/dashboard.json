@@ -75,5 +75,5 @@
   },
   "release_eligible": false,
   "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
-  "next_action": "TASKS_EPP_F01"
+  "next_action": "ANALYZE_EPP_F01"
 }
