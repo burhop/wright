@@ -1217,14 +1217,24 @@ def validate_roadmap_approval_and_lease(
     _roadmap_order(items, findings)
     by_id = {str(item.get("id")): item for item in items}
     active = [item for item in items if item.get("status") == "active"]
-    if len(active) != 1:
+    feature_state = state.get("feature_state")
+    current_feature = state.get("current_feature")
+    current_item = by_id.get(str(current_feature))
+    blocked_control = feature_state == "BLOCKED"
+    if (blocked_control and active) or (not blocked_control and len(active) != 1):
         findings.append(
             _finding(
                 "WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"
             )
         )
-    current_feature = state.get("current_feature")
-    if len(active) != 1 or active[0].get("id") != current_feature:
+    if (
+        current_item is None
+        or (blocked_control and current_item.get("status") != "blocked")
+        or (
+            not blocked_control
+            and (len(active) != 1 or active[0].get("id") != current_feature)
+        )
+    ):
         findings.append(
             _finding(
                 "LEASE_IDENTITY_MISMATCH",
@@ -1233,9 +1243,9 @@ def validate_roadmap_approval_and_lease(
                 "ACTIVE_FEATURE_POINTER",
             )
         )
-    if len(active) == 1 and any(
+    if current_item is not None and any(
         by_id.get(str(dependency), {}).get("status") != "complete"
-        for dependency in active[0].get("depends_on", [])
+        for dependency in current_item.get("depends_on", [])
     ):
         findings.append(
             _finding(
@@ -1286,10 +1296,10 @@ def validate_roadmap_approval_and_lease(
                     "GATE_IMPACT_EXISTS",
                 )
             )
-    if len(active) == 1 and any(
+    if current_item is not None and any(
         decision_by_id.get(str(decision_id), {}).get("status")
         not in {"decided", "superseded"}
-        for decision_id in active[0].get("blocking_decisions", [])
+        for decision_id in current_item.get("blocking_decisions", [])
     ):
         findings.append(
             _finding(
@@ -1299,7 +1309,7 @@ def validate_roadmap_approval_and_lease(
                 "ACTIVE_ITEM_DECISIONS_RESOLVED",
             )
         )
-    if not active:
+    if not active and current_feature is None:
         eligible = [
             item
             for item in items
@@ -1344,7 +1354,18 @@ def validate_roadmap_approval_and_lease(
                     )
                 )
     lease = state.get("active_mutating_lease")
-    if not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature:
+    if blocked_control and lease is not None:
+        findings.append(
+            _finding(
+                "LEASE_IDENTITY_MISMATCH",
+                "fatal",
+                "program-state.json",
+                "BLOCKED_STATE_HAS_NO_MUTATING_LEASE",
+            )
+        )
+    elif not blocked_control and (
+        not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature
+    ):
         findings.append(
             _finding(
                 "LEASE_IDENTITY_MISMATCH",
@@ -1353,7 +1374,7 @@ def validate_roadmap_approval_and_lease(
                 "LEASE_FEATURE_MATCH",
             )
         )
-    else:
+    elif isinstance(lease, Mapping):
         expiry = _parse_utc(lease.get("expires_at"))
         acquired = _parse_utc(lease.get("acquired_at"))
         if (
