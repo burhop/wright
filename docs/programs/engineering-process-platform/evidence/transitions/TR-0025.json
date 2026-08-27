@@ -1,0 +1,221 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0025",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "verification",
+  "from_state": "IMPLEMENTING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 25,
+  "new_revision": 26,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5ddd07fe047ab522d55afd4ef6ca40b1e121c723b339bf0e97b05af3be9b4fd7",
+  "new_state_digest": "46bdef19d305fdb7ff0c454c5d6934a4bd25dad2b6a15d550c16e492b4edb31e",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Verify all 14 Phase 2 foundation tasks against clean immutable source daa700f9, preserve original repair evidence and the open US1 runtime target, advance the task ledger to 19 of 68 complete, and continue only to the bounded US1 task set.",
+  "started_at": "2026-08-27T13:21:22Z",
+  "finished_at": "2026-08-27T13:27:22Z",
+  "duration_ms": 360000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "daa700f9d0019457c1b142e817d8db76c75e8963",
+    "source_tree": "823f138e8fd6ac16367f0a73f2105a7a27bf312a",
+    "source_program_tree": "2d85e0ef3c9f2d022811dcb46a008703f39ad984",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0026.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0025.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-foundation.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0025.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0025.json",
+      "sha256": "da21622a8c3f15ce5dbb4954a6bd9473c3a341bc6d0e6c462499bc9556c03f66",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0024.json",
+      "sha256": "e63a9e90f7356b30b5e9af4de3a8ec701a64f24847e6c34d89da060113311c42",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-003.json",
+      "sha256": "644962b29061d02842af1478077be6cf78bff83ea9ae8160a868fc0011760fb6",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-003.json",
+      "sha256": "28d628f16149f4e9e035b84a8d30272a899d3b9e5628b5bff3fa5cb93ef21606",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "55693eaca8fabe12e94680cc12c21ca8b8ef560364464f7ff1246ccfa9deed0f",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "7fdc5fbb97afbcea8300ab05782abcf0569cb8430954cd6d56f5301b23d2135e",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0026.json",
+      "sha256": "817beddb2010169e2c574ae96844d66e939606146c6bf6b098c2cbbd868e8911",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-foundation.json",
+      "sha256": "a71f9e67cadc1628d8c8eb365de8e135cab76e11c59b229d79ddda679d7d8ff8",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "817beddb2010169e2c574ae96844d66e939606146c6bf6b098c2cbbd868e8911",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "d3d88acaafb4f188e36fe816c8a6249b3cc68cf4ada0d87dbf58d66d631d5c29",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "FOUNDATION-EVIDENCE-INTEGRITY",
+      "method": "Validate EPP-F01-foundation.json against the promoted verification-evidence schema and recompute all 29 artifact SHA-256 values from clean source commit daa700f9.",
+      "environment": "local Draft 2020-12, Git object bytes and deterministic SHA-256",
+      "duration_ms": 3500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-foundation.json",
+        "schemas/verification-evidence.schema.json"
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-CONTRACT-MATRIX",
+      "method": "Require the clean-source foundation evidence to record 63 passed tests, zero lint findings, 14 formatted files, legal closed history, current v3 approvals with restrictive conditions, a passed current-subject verdict and honest independent non-passing readiness areas.",
+      "environment": "local Python, Ruff and read-only Git-object validation",
+      "duration_ms": 66400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-foundation.json",
+        "../../../tests/program_control_plane"
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-TASK-LEDGER",
+      "method": "Require T001 through T019 checked, T020 through T068 unchecked, exactly 19 of 68 tasks complete, and every checked Phase 2 task backed by its named artifact plus EPP-F01-foundation.json.",
+      "environment": "deterministic task-ledger scan and artifact existence review",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/tasks.md",
+        "evidence/verification/EPP-F01-foundation.json"
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-RUNTIME-GAP-EXPLICIT",
+      "method": "Require the 34.627-second current-subject validation measurement to remain an explicit medium finding assigned to T024/T025; do not claim US1 complete or hide the under-five-second target.",
+      "environment": "foundation evidence and US1 success-criteria cross-check",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-foundation.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "STATE-26-FOUNDATION",
+      "method": "Validate revision 25 to 26 as a state-preserving IMPLEMENTING verification, exact prior/new canonical digests, byte-identical current/archive state, unchanged lease revision 6 and approval bundle, 49 tasks remaining, and EXECUTE_EPP_F01_TASKS as the sole next action.",
+      "environment": "local Draft 2020-12, lifecycle-policy, canonical-digest and state archive validation",
+      "duration_ms": 1800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0025.json",
+        "evidence/states/program-state-revision-0026.json",
+        "program-state.json"
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-EXCLUDED-AUTHORITY",
+      "method": "Confirm the checkpoint contains no EPP-F01B implementation, dependency, product runtime, benchmark generation or execution, network or external mutation, push, PR, merge, dev integration, publication or release action.",
+      "environment": "exact approval, lease, source diff and task evidence audit",
+      "duration_ms": 400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "evidence/verification/EPP-F01-foundation.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-003.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-003.json"
+    ],
+    "subject": {
+      "git_commit": "d308d03bc59bf83afc260cf60a9b9bd1729f9b96",
+      "git_tree": "e6a04a4de8c52148331b5d3a75209ef58122ad79",
+      "program_tree": "e3ffc793a3dea088b27d9067eaf219f668c68c2e",
+      "artifact_count": 43,
+      "manifest_transition": "TR-0022"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0025.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}
