@@ -63,6 +63,8 @@ def _finding(
         "ROADMAP_CYCLE": "Break the dependency cycle and re-run analysis.",
         "APPROVAL_STALE": "Request a new approval for the exact unchanged subject.",
         "LEASE_IDENTITY_MISMATCH": "Reconcile the lease with the active feature and worktree.",
+        "LEASE_GIT_IDENTITY_MISMATCH": "Correct the factual lease Git identity through an append-only governed repair.",
+        "TRANSITION_ARTIFACT_DIGEST_MISMATCH": "Do not rewrite history; obtain approval for an append-only compatibility or repair rule.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -832,13 +834,20 @@ def _validate_transition_history(
                         )
                     )
                     continue
-                if sha256_bytes(raw) != item.get("sha256"):
+                actual_digest = sha256_bytes(raw)
+                if actual_digest != item.get("sha256"):
                     findings.append(
                         _finding(
                             "TRANSITION_ARTIFACT_DIGEST_MISMATCH",
                             "fatal",
                             artifact,
                             "RAW_BLOB_SHA256",
+                            (
+                                kind,
+                                path,
+                                f"expected:{item.get('sha256')}",
+                                f"actual:{actual_digest}",
+                            ),
                         )
                     )
 
@@ -1385,10 +1394,13 @@ def validate_roadmap_approval_and_lease(
                 if not isinstance(start, str) or not isinstance(baseline_commit, str):
                     raise GitSubjectError("lease Git identity is missing")
                 summaries = reader.commit_summaries([start, baseline_commit])
+                actual_start_tree = str(summaries[start].get("tree"))
+                actual_baseline_tree = str(summaries[baseline_commit].get("tree"))
+                ancestor = reader.is_ancestor(start, source_commit)
                 if (
-                    summaries[start].get("tree") != start_tree
-                    or not reader.is_ancestor(start, source_commit)
-                    or summaries[baseline_commit].get("tree") != baseline.get("tree")
+                    actual_start_tree != start_tree
+                    or not ancestor
+                    or actual_baseline_tree != baseline.get("tree")
                 ):
                     raise GitSubjectError("lease Git identity is invalid")
             except (AttributeError, GitSubjectError):
@@ -1398,6 +1410,14 @@ def validate_roadmap_approval_and_lease(
                         "fatal",
                         "program-state.json",
                         "WORKTREE_START_AND_BASELINE",
+                        (
+                            f"worktree_start:{start if isinstance(start, str) else 'invalid'}",
+                            f"expected_start_tree:{start_tree if isinstance(start_tree, str) else 'invalid'}",
+                            f"actual_start_tree:{locals().get('actual_start_tree', 'unresolved')}",
+                            f"baseline:{baseline_commit if isinstance(baseline_commit, str) else 'invalid'}",
+                            f"expected_baseline_tree:{baseline.get('tree') if isinstance(baseline, Mapping) else 'invalid'}",
+                            f"actual_baseline_tree:{locals().get('actual_baseline_tree', 'unresolved')}",
+                        ),
                     )
                 )
         for path in lease.get("allowed_paths", []):
