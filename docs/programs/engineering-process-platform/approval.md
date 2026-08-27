@@ -6,7 +6,7 @@
 
 ## Current EPP-F01 decision
 
-**V5 approval is pending and further implementation is blocked.** V4 authorized completed T069, whose `37/37` correction is now independently accepted. It does not authorize the newly specified TR-0027 input-origin disposition or T024 onward. The next exact subject must receive distinct `APR-EPP-F01-MC-005` and `APR-EPP-F01-IMPL-005` approvals accepting DEC-P0-017 and binding both correction profiles plus the unchanged 69-task plan.
+**V5 is approved for local T024–T041 only.** `APR-EPP-F01-MC-005` and `APR-EPP-F01-IMPL-005` bind commit `2f53b49af92d4d6d6619903deec2521919758148`, tree `3bd726941aae300691482d0c35a4028029ccbe3f`, program tree `f0163abcc74379407c96f10dacaa34c0883aa7a1`, and the 32 TR-0034 artifact digests. They accept DEC-P0-017 and the exact one-claim correction. T069 remains complete.
 
 `TR-0019` through `TR-0025` remain immutable historical authorization/start/repair evidence. `TR-0026` blocks on exact committed evidence and revokes the active lease. [`APR-EPP-F01-REPAIR-PLANNING-001`](evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json) authorizes only the subsequent planning, audit, and analysis amendment. EPP-F01B requires its own future Spec Kit lifecycle and implementation approval.
 
@@ -14,7 +14,7 @@
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
 
-The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069 but is stale for further implementation because DEC-P0-017 and the second closed profile materially change pending T024/T026/T030/T031. V5 may authorize only T024–T041 through the already ordered human value checkpoint. EPP-F01B, T042–T068 after that checkpoint, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069 but is stale for further implementation. V5 authorizes only T024–T041 through the already ordered human value checkpoint. EPP-F01B, T042–T068 after that checkpoint, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
 ## Approval subject
 

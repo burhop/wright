@@ -30,7 +30,7 @@
       "depends_on": [
         "EPP-P00"
       ],
-      "blocking_decisions": ["DEC-P0-017"],
+      "blocking_decisions": [],
       "gate_impacts": [
         "PROG-01",
         "PROG-02",

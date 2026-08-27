@@ -1,0 +1,161 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "bundle_id": "APB-EPP-F01-005",
+  "decision": "approved",
+  "subject": {
+    "git_commit": "2f53b49af92d4d6d6619903deec2521919758148",
+    "git_tree": "3bd726941aae300691482d0c35a4028029ccbe3f",
+    "program_tree": "f0163abcc74379407c96f10dacaa34c0883aa7a1",
+    "artifact_digests": [
+      {
+        "path": "approval.md",
+        "sha256": "2d3853bcdd89ccadf2d90f4e8f9f37cdb5d827aa93a6d42b81fd670cf0b7bd9d"
+      },
+      {
+        "path": "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md",
+        "sha256": "e699f5736d435279d0aaebc7a85648970089db9a098c3c9e0ebc55c622906f8e"
+      },
+      {
+        "path": "audits/audit-status.json",
+        "sha256": "f65aaadee43d37623c5da6387d70a24ffb508fa8ca50c121d1a3acd85703fc28"
+      },
+      {
+        "path": "coordinator-state-machine.md",
+        "sha256": "b81909b91fb0a8d57aa91170374e832ed0c376751c35213f101814fa6bbb1e84"
+      },
+      {
+        "path": "decision-register.json",
+        "sha256": "cdb17e4ff8fb6034afb1396f7e5d40bdbf2e2759fde4d463ce3d64d80368e5c0"
+      },
+      {
+        "path": "decisions/0017-closed-tr0027-input-origin-correction.md",
+        "sha256": "927ce9523f2fb6380eeb08639eae7d52df380984c44b7296a897db028ecaf45a"
+      },
+      {
+        "path": "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json",
+        "sha256": "fdcee78163d218c8bbf3908c12fa09595c4d4984cc2d753487195177ebbda53d"
+      },
+      {
+        "path": "evidence/states/program-state-revision-0035.json",
+        "sha256": "e8a4eeee30d8a38f28338e399371bf9e2ac550b0e343b165dba0903843c3b47c"
+      },
+      {
+        "path": "gate-catalog.json",
+        "sha256": "36d8c83251f58c7409c72cbfc13788968762953ed8ce518df36fccb3955952f7"
+      },
+      {
+        "path": "gates.md",
+        "sha256": "43d3141dbd19167043f013cd7510f48a3680dc7b7c70b1a343fbd7d8f94e528d"
+      },
+      {
+        "path": "integration-release.md",
+        "sha256": "59b1df9b5e6a922e07638c9a70da777a1b77ef2d305dbbee200a3f2e11e6faac"
+      },
+      {
+        "path": "lifecycle-policy.json",
+        "sha256": "3fefc98cbad002d4881c48fdac51444cc76ab39c314f7bee381318ab68c7027f"
+      },
+      {
+        "path": "program-plan.md",
+        "sha256": "13f3ba97126b5c7250e246a7bb7d2b558857d13c9c9eed4a9428836fc7d5644c"
+      },
+      {
+        "path": "program-state.json",
+        "sha256": "e8a4eeee30d8a38f28338e399371bf9e2ac550b0e343b165dba0903843c3b47c"
+      },
+      {
+        "path": "proposed-features.md",
+        "sha256": "113f641839082375a68c7496217fdf1bf744f9a5e6f479a1c0d09da6ecb69e37"
+      },
+      {
+        "path": "README.md",
+        "sha256": "9580e2ce3d2d85257ada0342a9e93d5d143b60dfd0cd7409d413eea696896704"
+      },
+      {
+        "path": "risk-register.json",
+        "sha256": "9e6862e96f91fef14fa8fd741ef51153e59af5b1ad6fa72638dc70c742b06283"
+      },
+      {
+        "path": "roadmap.json",
+        "sha256": "e0d8db5fdf87c5426ca86971192822429470ca342025e7deb2c1195ab6e6d3af"
+      },
+      {
+        "path": "schemas/README.md",
+        "sha256": "651283f01de6d4ffa4d0dbddbc71fce9bfd36da63bfeadc4c4f2c5c79acc4127"
+      },
+      {
+        "path": "schemas/transition-input-correction.schema.json",
+        "sha256": "dc3f7d31eb7e43e7453ae9d7c0f060b0429f7a754618ead0f4ec6aa3aad2df5f"
+      },
+      {
+        "path": "status-dashboard-contract.md",
+        "sha256": "4df4d0f2b4fa2420d8a014094a883fac3fb858a31b68bb8abd3231bac1ebf522"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/analysis.md",
+        "sha256": "979a38fb336aedeeb71ffc3d595f78c8193b80bf8856433da8de49c0f07f6369"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+        "sha256": "ff7b0d1467db66cbd282918b0d3c0d2a6f6deeca469e680feaf0142842af2a12"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "sha256": "c75a57f92c5efb4fc071bfd74d3d1778b1f811429853fcd697216ed820b1d4b8"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/cli.md",
+        "sha256": "7da01df64acb4951404624b08d3ae1b1b799a9e4feef43e9ff878c9c206d1728"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/contracts/transition-input-correction.schema.json",
+        "sha256": "dc3f7d31eb7e43e7453ae9d7c0f060b0429f7a754618ead0f4ec6aa3aad2df5f"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/data-model.md",
+        "sha256": "6ce89240c68d0fea43b3b28840efabf68fc5d5aa18867e4b91c1ee049667fe9d"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/plan.md",
+        "sha256": "86e98d19db2fbf31d8ccc1cd7443a5ab357e5689f9c14a89f564d9b790aa86d7"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/quickstart.md",
+        "sha256": "16f8c35c9038eb827752a4b2a32f0c845d6afe1b6962a00b3071e22c095ea362"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/research.md",
+        "sha256": "7fe465fd1c655745b3aaeaaa28f09dc474057bcc2c9682200c8724942fbf332b"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/spec.md",
+        "sha256": "6801e3dde61140e272d969803c0f9bce443e57bfb87f2d8bfca91f985e181dee"
+      },
+      {
+        "path": "../../../specs/076-control-plane-validator/tasks.md",
+        "sha256": "b2407c01775d19414f468119988758e591d2eea2e04aacf00910710c40d436bd"
+      }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T19:02:07Z",
+  "expires_at": null,
+  "review": {
+    "due_at": null,
+    "last_reviewed_at": "2026-08-27T19:02:07Z"
+  },
+  "revocation_events": [],
+  "conditions": [
+    "Authority is limited to local EPP-F01 tasks T024 through T041 under the reactivated bounded implementation lease; T069 remains complete.",
+    "DEC-P0-017 and only COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001 are accepted; the claim remains unresolved until implementation independently recomputes the exact 1/1 proof and non-interference.",
+    "T042 through T068, EPP-F01B, dependency changes, benchmark execution, external changes, push, PR, merge, dev integration, publication and release remain unauthorized."
+  ],
+  "approval_id": "APR-EPP-F01-IMPL-005",
+  "scope": "feature_implementation",
+  "supersedes": [
+    "APR-EPP-F01-IMPL-004"
+  ]
+}

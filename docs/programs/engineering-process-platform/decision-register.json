@@ -309,7 +309,7 @@
     {
       "id": "DEC-P0-011",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "What frozen benchmark thresholds, profile mix, repeats and freshness cadence authorize release?",
       "why_material": "Thresholds selected after results enable retry-until-green and denominator manipulation. The plan proposes all 100 T0/T1 current passes, but live/profile/holdout and first-attempt thresholds require human acceptance before execution.",
       "owner_role": "human_product_benchmark_release_approver",
@@ -507,7 +507,7 @@
       "due": {
         "before_event": "EPP-F01 T024 or later implementation resumes",
         "due_at": null,
-        "last_reviewed_at": "2026-08-27T18:15:00Z"
+        "last_reviewed_at": "2026-08-27T19:02:07Z"
       },
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
       "options": [
