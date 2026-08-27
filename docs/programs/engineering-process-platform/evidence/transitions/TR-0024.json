@@ -1,0 +1,242 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0024",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 24,
+  "new_revision": 25,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "b9ce0b90ad651dc0bd56f9ee48b90232aea4da4aac4a1c9f729b702d5778c5dc",
+  "new_state_digest": "5ddd07fe047ab522d55afd4ef6ca40b1e121c723b339bf0e97b05af3be9b4fd7",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter speckit-implement after revalidating the exact v3 approval bundle, lease revision 6, clean authorization checkpoint, complete checklists, preserved five-task checkpoint, optional hook handling, and the pre-start test guard; execute only the remaining tasks within the approved 68-task EPP-F01 boundary.",
+  "started_at": "2026-08-27T12:59:59Z",
+  "finished_at": "2026-08-27T13:03:45Z",
+  "duration_ms": 226000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "fa98c4cb6557a49bb87a669281da5772f4b0f878",
+    "source_tree": "b32e67b1b2b909b10fd569d58376743ca5801454",
+    "source_program_tree": "4916768c50a461a038ed54bf32dc8e1d7072290e",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0025.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0024.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0024.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0024.json",
+      "sha256": "a589704d68fb038be4967c1f6c11de55ddac39f5fa189d41523ec88ceab68920",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0023.json",
+      "sha256": "f28e01ac226cb8238e4e2257e043d618cf490c17b3487553c4e5030ea3c5b263",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-003.json",
+      "sha256": "644962b29061d02842af1478077be6cf78bff83ea9ae8160a868fc0011760fb6",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-003.json",
+      "sha256": "28d628f16149f4e9e035b84a8d30272a899d3b9e5628b5bff3fa5cb93ef21606",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "55693eaca8fabe12e94680cc12c21ca8b8ef560364464f7ff1246ccfa9deed0f",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "4adf637924e2f546ca4bf4fed6eb02178ccbe7a8de33d9a113b5d568c0d6b415",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "1cafe3bc94201004f36beae158af625139ea550138225ed5819af927e0d38cab",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0025.json",
+      "sha256": "da21622a8c3f15ce5dbb4954a6bd9473c3a341bc6d0e6c462499bc9556c03f66",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "da21622a8c3f15ce5dbb4954a6bd9473c3a341bc6d0e6c462499bc9556c03f66",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "IMPLEMENTATION-AUTHORITY-V3-CURRENT",
+      "method": "Revalidate the two distinct v3 approval records, their exact d308d03c subject, all 43 TR-0022 artifact digests, no expiry or revocation, the DEC-P0-015 acceptance, and the explicit EPP-F01B exclusion.",
+      "environment": "clean authorization commit fa98c4cb; offline Git-object access",
+      "duration_ms": 2900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-003.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-003.json",
+        "evidence/transitions/TR-0022.json"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-6-CURRENT",
+      "method": "Require active, unexpired lease revision 6 for EPP-F01 in the isolated epp-f01 worktree on branch 077-control-plane-validator with exactly 14 path entries, one managed-section restriction, five local actions, one remaining recovery attempt, and no EPP-F01B authority.",
+      "environment": "read-only Git worktree, program-state and clock audit",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "approval.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-CHECKLISTS",
+      "method": "Count checklist rows and require requirements 16 of 16 complete and program-control 58 of 58 complete with zero overrides.",
+      "environment": "PowerShell deterministic checklist scan",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "../../../specs/076-control-plane-validator/checklists/program-control.md"
+      ]
+    },
+    {
+      "check_id": "SPECKIT-IMPLEMENT-HOOKS",
+      "method": "Inspect .specify/extensions.yml and skip the optional before_implement Git commit hook because the immutable authorization checkpoint is already committed and reviewed allowlist staging is required.",
+      "environment": "Spec Kit implement contract and agent operating contract",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../.specify/extensions.yml",
+        "../../../.specify/feature.json",
+        "agent-operating-contract.md"
+      ]
+    },
+    {
+      "check_id": "PRESERVED-WIP-CHECKPOINT",
+      "method": "Require the preserved implementation checkpoint 40458d19e to remain reachable, exactly five Phase 1 tasks checked, no Phase 2 task checked, 63 tasks remaining, and the recorded 49-test focused pass to remain the restart baseline.",
+      "environment": "local Git ancestry, task ledger and TR-0021 review",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/transitions/TR-0021.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "PRESTART-TEST-GUARD",
+      "method": "Run the 49-test control-plane suite at the authorization checkpoint and require exactly the intentional next-action guard: 48 pass and the sole failure expects EXECUTE_EPP_F01_TASKS while revision 24 correctly exposes START_EPP_F01_IMPLEMENTATION.",
+      "environment": "local Python, no network, authorization state revision 24",
+      "duration_ms": 19267,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "evidence/states/program-state-revision-0024.json"
+      ]
+    },
+    {
+      "check_id": "STATE-25-IMPLEMENTING",
+      "method": "Validate revision 24 to 25, the IMPLEMENTATION_AUTHORIZED to IMPLEMENTING feature edge, unchanged PROGRAM_ACTIVE state, exact prior/new canonical digests, current/archive byte identity, approval and lease continuity, clean source identity, exact path manifest, and EXECUTE_EPP_F01_TASKS as the sole next action.",
+      "environment": "local Draft 2020-12 validation and exact Git index bytes",
+      "duration_ms": 1900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0024.json",
+        "evidence/states/program-state-revision-0025.json",
+        "program-state.json",
+        "lifecycle-policy.json",
+        "coordinator-state-machine.md"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm no EPP-F01B implementation, dependency, product runtime, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, or release action is permitted or performed.",
+      "environment": "exact human approval, plan, lease and local diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-003.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-003.json"
+    ],
+    "subject": {
+      "git_commit": "d308d03bc59bf83afc260cf60a9b9bd1729f9b96",
+      "git_tree": "e6a04a4de8c52148331b5d3a75209ef58122ad79",
+      "program_tree": "e3ffc793a3dea088b27d9067eaf219f668c68c2e",
+      "artifact_count": 43,
+      "manifest_transition": "TR-0022"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0024.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 implementation authorized under the v3 exact-subject bundle; EPP-F01B remains proposed and unauthorized
+**Status:** EPP-F01 implementation is active under the v3 exact-subject bundle and lease revision 6; EPP-F01B remains proposed and unauthorized
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -23,7 +23,7 @@ Start here, then read only the artifacts needed for the next action:
 9. [`prototype-evidence.md`](prototype-evidence.md) and [`audits/2026-08-26-omission-audits.md`](audits/2026-08-26-omission-audits.md) — read-only prototype lessons and four independent plan audits.
 10. [`approval.md`](approval.md) — the recorded approval subject, scope, and downstream limits.
 11. [`../../../specs/076-control-plane-validator/spec.md`](../../../specs/076-control-plane-validator/spec.md), [`plan.md`](../../../specs/076-control-plane-validator/plan.md), [`tasks.md`](../../../specs/076-control-plane-validator/tasks.md), completed [`requirements checklist`](../../../specs/076-control-plane-validator/checklists/requirements.md) and [`program-control checklist`](../../../specs/076-control-plane-validator/checklists/program-control.md) — the active bounded EPP-F01 feature subject. Its [`analysis.md`](../../../specs/076-control-plane-validator/analysis.md) is the historical pre-browser-gap analysis and is superseded for the current gate by item 12.
-12. [`decisions/0015-browser-status-surface.md`](decisions/0015-browser-status-surface.md), [`evidence/transitions/TR-0021.json`](evidence/transitions/TR-0021.json), and [`TR-0022.json`](evidence/transitions/TR-0022.json) — the material browser-page omission, bounded EPP-F01B split, preserved EPP-F01 WIP checkpoint, full approval-subject manifest, and current human stop gate.
+12. [`decisions/0015-browser-status-surface.md`](decisions/0015-browser-status-surface.md), [`evidence/transitions/TR-0021.json`](evidence/transitions/TR-0021.json), [`TR-0022.json`](evidence/transitions/TR-0022.json), and [`TR-0023.json`](evidence/transitions/TR-0023.json) — the material browser-page omission, bounded EPP-F01B split, preserved EPP-F01 WIP checkpoint, full approval-subject manifest, accepted v3 approval bundle, and bounded lease recovery.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -52,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`START_EPP_F01_IMPLEMENTATION` is the only eligible action. `APR-EPP-F01-MC-003` and `APR-EPP-F01-IMPL-003` bind the exact 43-artifact `TR-0022` subject and accept `DEC-P0-015`. `TR-0023` records bounded repair attempt 1 for the previously missing `BLOCKED` recovery edge, reactivates lease revision 6, and stops at `IMPLEMENTATION_AUTHORIZED`; implementation mutation begins only after the separate start transition. EPP-F01 remains limited to its 68 validator/snapshot/provenance/CLI tasks. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`EXECUTE_EPP_F01_TASKS` is the only eligible action. `APR-EPP-F01-MC-003` and `APR-EPP-F01-IMPL-003` bind the exact 43-artifact `TR-0022` subject and accept `DEC-P0-015`. `TR-0023` records bounded repair attempt 1 for the previously missing `BLOCKED` recovery edge and reactivates lease revision 6; `TR-0024` records the separate implementation-start preflight. EPP-F01 remains limited to its 68 validator/snapshot/provenance/CLI tasks, with 5 complete and 63 remaining at the resumed checkpoint. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
