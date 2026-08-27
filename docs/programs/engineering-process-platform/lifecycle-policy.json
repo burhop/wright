@@ -374,7 +374,7 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
-      "action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V5",
+      "action": "REVIEW_EPP_F01_T041_VALUE_CHECKPOINT",
       "requires_human_approval": true
     },
     {
