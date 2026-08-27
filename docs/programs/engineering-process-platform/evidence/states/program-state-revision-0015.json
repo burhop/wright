@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "1.0",
   "program_id": "EPP-2026",
-  "revision": 16,
+  "revision": 15,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -30,27 +30,17 @@
     "branch": "077-control-plane-validator",
     "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
     "holder_role": "feature_owner",
-    "lease_revision": 3,
-    "acquired_at": "2026-08-27T00:47:01Z",
-    "expires_at": "2026-08-27T12:47:01Z",
+    "lease_revision": 2,
+    "acquired_at": "2026-08-26T23:33:43Z",
+    "expires_at": "2026-08-27T11:33:43Z",
     "allowed_paths": [
-      "scripts/validate-engineering-process-program.py",
-      "scripts/program_control/**",
-      "tests/program_control_plane/**",
-      "docs/programs/engineering-process-platform/**",
       "specs/076-control-plane-validator/**",
-      "scripts/README.md",
-      "scripts/check-dev-push.sh",
-      "scripts/check-dev-merge.sh",
-      ".github/workflows/python-quality.yml",
-      ".github/workflows/test-windows.yml",
-      "tests/release/test_dev_push_process.py",
-      "docs/contributing/dev-push-runbook.md",
       ".specify/feature.json",
-      "AGENTS.md (managed Spec Kit section only)"
+      "AGENTS.md (managed Spec Kit section only)",
+      "docs/programs/engineering-process-platform/**"
     ]
   },
-  "last_transition": "TR-0015",
+  "last_transition": "TR-0014",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -70,7 +60,7 @@
     "program_health": {
       "status": "in_progress",
       "gate_file": "gates.md",
-      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 implementation is approved but has not started"]
+      "blockers": ["Dashboard generator is the active unimplemented child feature", "EPP-F01 material contract decisions and implementation have no exact approval"]
     }
   },
   "open_p0_decisions": [
@@ -89,14 +79,14 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "START_EPP_F01_IMPLEMENTATION",
+      "action": "APPROVE_EPP_F01_IMPLEMENTATION_SUBJECT",
       "roadmap_item": "EPP-F01",
-      "requires_human_approval": false,
-      "reason": "Both exact-subject approval records are current, all 21 TR-0014 digests revalidated, and implementation lease revision 3 limits mutation to the 68 approved local tasks."
+      "requires_human_approval": true,
+      "reason": "Approve two same-subject records (material_change and feature_implementation) for analyzed commit 5279c51740a0352961c92a70bce9003923d8ca20, tree 7e2eb93a9faed14b609075b72373a473a22fdbff, program tree 8b6d5d6b3b0341f952e30c065b8dd289b9735213, and the artifact digests in TR-0014; no implementation may begin before both records exist and the lease is expanded."
     }
   ],
   "approval": {
-    "status": "approved",
-    "record": "evidence/approvals/APR-EPP-F01-IMPL-001.json"
+    "status": "pending",
+    "record": null
   }
 }

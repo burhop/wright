@@ -4,6 +4,12 @@
 
 **Approved.** [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json) records the human decision made on 2026-08-26 for the exact subject below. The approval has no added conditions and is limited by its `program_plan` scope and the authorization boundaries in this document.
 
+## Current EPP-F01 decision
+
+**Approved for bounded local implementation.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) record separate `material_change` and `feature_implementation` decisions for the same frozen subject: commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`.
+
+That approval authorizes only the 68 local tasks and implementation lease recorded in the approved plan. It does not authorize dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, or release.
+
 ## Approval subject
 
 After the planning commit is created and local validation is green, resolve and present:

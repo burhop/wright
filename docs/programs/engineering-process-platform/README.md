@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 implementation approval pending on `077-control-plane-validator`; no implementation authority
+**Status:** EPP-F01 implementation authorized on `077-control-plane-validator`; implementation has not started
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -50,4 +50,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`APPROVE_EPP_F01_IMPLEMENTATION_SUBJECT` is the only eligible action and requires the human. The frozen analyzed subject is commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, and program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`; every feature artifact digest is listed in `TR-0014`. Approval must create two same-subject records, one `material_change` and one `feature_implementation`, and authorize the exact implementation paths/actions in `tasks.md`. Until both records exist and the planning lease is replaced by an implementation lease, do not run `speckit-implement`. Dependencies, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
+`START_EPP_F01_IMPLEMENTATION` is the only eligible action and does not require another human approval. The human approved separate `material_change` and `feature_implementation` records for commit `5279c51740a0352961c92a70bce9003923d8ca20`, tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and all 21 artifact digests in `TR-0014`. Lease revision 3 limits the sole writer to the 68 approved local tasks and their exact paths. Dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.

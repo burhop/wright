@@ -1,0 +1,158 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0015",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "IMPLEMENTATION_APPROVAL_PENDING",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 15,
+  "new_revision": 16,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634",
+  "new_state_digest": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the user's exact-subject material_change and feature_implementation approvals, revalidate all 21 TR-0014 digests, and replace the planning lease with the bounded 68-task implementation lease while preserving every excluded action.",
+  "started_at": "2026-08-27T00:46:01Z",
+  "finished_at": "2026-08-27T00:49:59Z",
+  "duration_ms": 238000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "5b06ae3ffcc277cbc164cbf84d885c468554a32f",
+    "head_after": "5b06ae3ffcc277cbc164cbf84d885c468554a32f",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-001.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0015.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0015.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0015.json",
+      "sha256": "92240e5068323b4f152ef7d8cca72bdca9d40966f1447aadf945a3cf545943b2",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0014.json",
+      "sha256": "b612022cfed263ccab1bc214c99b0580af4fb9eec914bc68a158c1e0295c083d",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-001.json",
+      "sha256": "a8e5612a6b7eb1d754d12fc49dce7023a4602d908a2c7234036499757a1fd444",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-001.json",
+      "sha256": "70a6b930d3bead15cba0c0e5d010a929dc2ad692004306ed524d1ef93d644168",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "b7124ed84199e1be0c8b180a743f479dde240f5f957459e096dc339226646e12",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "95861202fc64448e3b16b696d40c20f87dee62f784146ba45707a673a80fd8e3",
+      "schema_version": null
+    },
+    {
+      "path": "approval.md",
+      "sha256": "3c5c52bae2360fdcc16ae4f6a6fe81d96a063c43218f148cc9681ebb46a72069",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "8da10d6ccbd30bbc62a90e290a8b71e21f058154250794598ce618c4e767dab1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0015.json",
+      "sha256": "92240e5068323b4f152ef7d8cca72bdca9d40966f1447aadf945a3cf545943b2",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "APPROVAL-BUNDLE-SCHEMA",
+      "command_or_method": "Validate both approval records against approval schema v1; require decision approved, no conditions, no expiry, no revocation, and the distinct material_change and feature_implementation scopes",
+      "environment": "Python jsonschema Draft 2020-12; local committed-input preparation",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["schemas/approval.schema.json", "evidence/approvals/APR-EPP-F01-MC-001.json", "evidence/approvals/APR-EPP-F01-IMPL-001.json"]
+    },
+    {
+      "check_id": "APPROVAL-SAME-SUBJECT",
+      "command_or_method": "Require both records to bind commit 5279c51740a0352961c92a70bce9003923d8ca20, tree 7e2eb93a9faed14b609075b72373a473a22fdbff, program tree 8b6d5d6b3b0341f952e30c065b8dd289b9735213, and the same 21 path/digest pairs",
+      "environment": "exact JSON structural comparison",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/approvals/APR-EPP-F01-MC-001.json", "evidence/approvals/APR-EPP-F01-IMPL-001.json"]
+    },
+    {
+      "check_id": "APPROVED-ARTIFACT-INTEGRITY",
+      "command_or_method": "Resolve every TR-0014 input path from committed Git blobs and recompute SHA-256; require 21 checked and zero mismatches",
+      "environment": "clean isolated feature worktree; git show read-only object access",
+      "duration_ms": 3000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/transitions/TR-0014.json"]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-SCOPE",
+      "command_or_method": "Replace lease revision 2 with revision 3, preserve the exact branch/base/holder identity, bound expiry to 12 hours, and allow only paths named by the 68 approved tasks and required Spec Kit pointers",
+      "environment": "program-state schema v1 compatibility; approved task path inventory",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "../../../specs/076-control-plane-validator/tasks.md", "../../../specs/076-control-plane-validator/plan.md"]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "command_or_method": "Confirm dependencies, product runtime, benchmark collection/execution, network/external mutation, push, PR, merge, dev integration, publication, and release remain outside approval and lease scope",
+      "environment": "approval wording, approved plan, and task authority boundary",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["README.md", "program-state.json", "../../../specs/076-control-plane-validator/tasks.md"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 15 to 16 increment, IMPLEMENTATION_APPROVAL_PENDING to IMPLEMENTATION_AUTHORIZED child edge, canonical/raw digests, exact staged allowlist, current approvals, active lease, and START_EPP_F01_IMPLEMENTATION as the sole next action",
+      "environment": "Windows PowerShell; exact Git index bytes",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0015.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-F01-IMPL-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-ANALYSIS-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0015.json",
+  "next_action": "START_EPP_F01_IMPLEMENTATION"
+}
