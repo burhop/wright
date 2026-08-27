@@ -4,6 +4,12 @@
 
 **Approved.** [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json) records the human decision made on 2026-08-26 for the exact subject below. The approval has no added conditions and is limited by its `program_plan` scope and the authorization boundaries in this document.
 
+## Current EPP-F01 decision
+
+**Approved for bounded local implementation.** [`APR-EPP-F01-MC-002`](evidence/approvals/APR-EPP-F01-MC-002.json) and [`APR-EPP-F01-IMPL-002`](evidence/approvals/APR-EPP-F01-IMPL-002.json) record separate `material_change` and `feature_implementation` decisions for commit `10d13cbeaa2d038744752e93713ab7671f17f7d4`, repository tree `04f7cfc5cb3226896238ba6d3d060506284aece1`, program tree `321daf5e92f0981322ff0f54632bef56299e17b4`, and the same 34 artifact digests in `TR-0018`. Authority is limited to the 68 local tasks and implementation lease defined by the amended plan. Dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+
+The coordinator must validate both records and the frozen subject, emit the sole approved v1-to-v2 migration, reactivate the exact implementation lease, and enter `IMPLEMENTATION_AUTHORIZED` before any task mutation resumes.
+
 ## Historical EPP-F01 decision — stale
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
