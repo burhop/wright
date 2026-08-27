@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/lifecycle-policy.schema.json",
+  "title": "Engineering Process Platform Lifecycle Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "program_edges", "feature_edges", "event_rules", "approval_boundaries", "action_rules", "wip_limits", "path_roles", "compatibility_profiles"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "policy_id": { "type": "string", "pattern": "^EPP-LIFECYCLE-[0-9]+$" },
+    "program_edges": { "$ref": "#/$defs/edges" },
+    "feature_edges": { "$ref": "#/$defs/edges" },
+    "event_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_kind", "state_domain", "may_preserve_state", "required_evidence"],
+        "properties": {
+          "event_kind": { "enum": ["lifecycle_transition", "failed_attempt", "repair_checkpoint", "verification", "approval_checkpoint"] },
+          "state_domain": { "enum": ["program", "feature", "attempt", "repair"] },
+          "may_preserve_state": { "type": "boolean" },
+          "required_evidence": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/id" } }
+        }
+      }
+    },
+    "approval_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state_domain", "to_state", "approval_scope"],
+        "properties": {
+          "state_domain": { "enum": ["program", "feature"] },
+          "to_state": { "$ref": "#/$defs/id" },
+          "approval_scope": { "enum": ["program_plan", "feature_implementation", "material_change", "external_write", "dev_integration", "release"] }
+        }
+      }
+    },
+    "action_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["program_state", "feature_state", "action", "requires_human_approval"],
+        "properties": {
+          "program_state": { "$ref": "#/$defs/id" },
+          "feature_state": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/id" }] },
+          "action": { "$ref": "#/$defs/id" },
+          "requires_human_approval": { "type": "boolean" }
+        }
+      }
+    },
+    "wip_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutating_leases", "implementing_or_repairing_features", "read_only_auditors"],
+      "properties": {
+        "mutating_leases": { "const": 1 },
+        "implementing_or_repairing_features": { "const": 1 },
+        "read_only_auditors": { "const": 3 }
+      }
+    },
+    "path_roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern", "role", "mutability", "allowed_actions"],
+        "properties": {
+          "pattern": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "role": { "enum": ["immutable_policy", "operational_state", "append_only_evidence", "generated_projection", "feature_contract"] },
+          "mutability": { "enum": ["immutable", "append_only", "replaceable_projection", "lease_scoped"] },
+          "allowed_actions": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/id" } }
+        }
+      }
+    },
+    "compatibility_profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["profile_id", "through_revision", "checkpoint_state_digest", "checkpoint_commit", "accept_new_records"],
+        "properties": {
+          "profile_id": { "type": "string", "minLength": 1 },
+          "through_revision": { "type": "integer", "minimum": 1 },
+          "checkpoint_state_digest": { "$ref": "#/$defs/digest" },
+          "checkpoint_commit": { "$ref": "#/$defs/commit" },
+          "accept_new_records": { "const": false }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{1,99}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to"],
+        "properties": { "from": { "$ref": "#/$defs/id" }, "to": { "$ref": "#/$defs/id" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+# EPP-F01 Quickstart and Acceptance Journey
+
+This is the intended post-implementation journey. At the planning checkpoint described by this file, the command does not yet exist and must not be represented as available.
+
+## Prerequisites
+
+- A local Wright Git checkout on a supported Windows or POSIX host.
+- Git metadata for the committed subject.
+- The repository's existing locked Python environment with the `runtime` extra; no network, product runtime, MCP, model, benchmark system, container, or proprietary application is required.
+- A clean checkout is required to claim a committed-current result. Dirty checkout observations may be diagnosed but are never approval evidence.
+
+## 1. Validate without writing
+
+From the repository root:
+
+```text
+uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source HEAD --format text
+```
+
+Expected success behavior:
+
+- exit `0`;
+- exact source commit, source tree, program tree, validator identity, and input-manifest digest;
+- clean/dirty checkout reported separately from committed evidence;
+- all required structural and semantic checks terminal;
+- four readiness areas shown independently;
+- one proven next action or an explicit no-action blocker.
+
+Expected failure behavior:
+
+- nonzero documented exit status;
+- stable, deterministically ordered findings with bounded evidence and recovery;
+- no authorized next action;
+- no changed source or dashboard file.
+
+Machine output is produced from the same report model:
+
+```text
+uv run --extra runtime python scripts/validate-engineering-process-program.py validate --source HEAD --format json
+```
+
+## 2. Generate a local candidate dashboard
+
+```text
+uv run --extra runtime python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --output docs/programs/engineering-process-platform/dashboard.json
+```
+
+The command validates all sources before writing, builds all four areas for the same exact candidate, validates temporary output, and atomically replaces the target. Until the output is committed in the required source/container relationship, it is `candidate_not_evidence`.
+
+On any write, flush, `fsync`, candidate-validation, or replace failure:
+
+- the command returns nonzero;
+- the prior dashboard remains byte-for-byte unchanged;
+- no temporary residue remains;
+- the delivery result says failed/stale without editing the prior snapshot.
+
+## 3. Inspect evidence
+
+For every gate and finding, follow only repository-relative artifact references and exact Git subjects shown in the output. Do not use conversation history, checked task boxes, or the dashboard as replacement authority. A seed, stale, failed, uncommitted, unsupported-version, or source/container-mismatched dashboard is not evidence.
+
+The four areas remain independent:
+
+- product readiness;
+- benchmark readiness;
+- commercial readiness;
+- program health.
+
+Even `100/100` terminal benchmark success leaves release eligibility false when any other area is not passed or exact release approval is absent/stale.
+
+## 4. Interpret empty, stale, blocked, and failed
+
+- `not_started`: required governed evidence does not yet exist; no progress is inferred.
+- `in_progress`: valid partial work exists but at least one required gate is not terminally passing.
+- `stale`: evidence once existed but no longer binds the candidate/policy/environment or exceeded freshness.
+- `blocked`: progress needs an explicit decision, authority, external control, or prerequisite.
+- `failed`: current evidence disproves a required assertion.
+
+Status precedence does not average. One failed gate makes its area failed; no other area can compensate.
+
+## 5. Recover safely
+
+1. Preserve the exact failing report and subject IDs.
+2. Start with the highest-severity finding in deterministic order.
+3. Apply only the bounded recovery named in the finding and only with current lease/authority.
+4. Rerun the complete required check set for the affected transition.
+5. Respect the two-repair-cycle stable-cause limit; never weaken rules or rerun until green without a cause record.
+
+If Git metadata is absent, a schema version is unsupported, approval is stale, a digest differs, or lifecycle/roadmap/WIP/lease semantics are impossible, stop. Do not fall back to checkout bytes or manual dashboard edits.
+
+## 6. Compatibility and rollback
+
+- Windows and POSIX runs for the same committed blobs must agree semantically even when line endings differ in clean checkouts.
+- Only explicitly listed compatible schema/snapshot versions are accepted; unknown majors and undeclared minors fail closed.
+- Removing the validator restores the README's manual verification path. Source evidence remains unchanged, and any validator-generated snapshot becomes stale/unsupported rather than authoritative.
+
+## Acceptance Commands (implementation phase only)
+
+The approved task plan will freeze the focused commands. At minimum:
+
+```text
+uv run pytest tests/program_control_plane
+uv run ruff check scripts/program_control scripts/validate-engineering-process-program.py tests/program_control_plane
+uv run mypy scripts/program_control
+```
+
+Before any push or merge, the repository's documented Wright Git gates remain the source of truth. EPP-F01 implementation approval will not itself authorize push, PR, merge, dev integration, publication, or release.

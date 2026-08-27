@@ -49,7 +49,7 @@
       "passed_gates": 0,
       "required_gates": 7,
       "gates": [],
-      "blockers": ["Dashboard generator not implemented", "EPP-F01 implementation not approved"],
+      "blockers": ["Dashboard generator not implemented", "EPP-F01 material contract decisions and implementation not approved"],
       "evidence": ["program-state.json", "roadmap.json", "audits/2026-08-26-omission-audits.md"],
       "fresh": false,
       "last_success_at": null
@@ -75,5 +75,5 @@
   },
   "release_eligible": false,
   "release_formula": "product_readiness && benchmark_readiness && commercial_readiness && program_health && human_release_approval",
-  "next_action": "PLAN_EPP_F01"
+  "next_action": "CHECKLIST_EPP_F01"
 }
