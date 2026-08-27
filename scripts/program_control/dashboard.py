@@ -305,7 +305,7 @@ def make_dashboard(report: Mapping[str, Any]) -> dict[str, Any]:
             "git_tree": subject["source_tree"],
             "program_tree": subject["program_tree"],
             "generator_version": report["validator"]["version"],
-            "generator_digest": report["validator"]["blob_sha256"],
+            "generator_digest": report["validator"]["bundle_manifest_digest"],
             "input_manifest_digest": subject["input_manifest_digest"],
             "input_manifest": subject["input_manifest"],
         },

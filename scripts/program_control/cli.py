@@ -33,6 +33,14 @@ def build_parser() -> argparse.ArgumentParser:
     validate = commands.add_parser("validate", help="validate one committed source")
     validate.add_argument("--source", default="HEAD")
     validate.add_argument(
+        "--container",
+        help="explicit dashboard-only successor commit C (otherwise only HEAD may be inferred)",
+    )
+    validate.add_argument(
+        "--delivery",
+        help="explicit delivery-evidence successor commit D; never discovered implicitly",
+    )
+    validate.add_argument(
         "--program-root", default="docs/programs/engineering-process-platform"
     )
     validate.add_argument("--format", choices=("text", "json"), default="text")
@@ -55,6 +63,8 @@ def render_text(report: Mapping[str, Any]) -> str:
         f"source: {subject['source_commit'] or 'unresolved'}",
         f"tree: {subject['source_tree'] or 'unresolved'}",
         f"program_tree: {subject['program_tree'] or 'unresolved'}",
+        f"container: {subject['container_commit'] or subject['container_resolution']}",
+        f"delivery: {subject['delivery_commit'] or subject['delivery_resolution']}",
         f"worktree_clean: {str(subject['worktree_clean']).lower()}",
     ]
     for area in (
@@ -105,7 +115,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         program_root = normalize_repo_path(str(args.program_root))
         reader = GitReader.discover(Path.cwd())
-        result = validate_program(reader, str(args.source), program_root)
+        result = validate_program(
+            reader,
+            str(args.source),
+            program_root,
+            container=getattr(args, "container", None),
+            delivery=getattr(args, "delivery", None),
+        )
         report = result.report
         if args.command == "validate":
             _emit(report, output_format)

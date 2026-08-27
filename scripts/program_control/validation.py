@@ -4,14 +4,17 @@ from __future__ import annotations
 
 import posixpath
 import re
+import sys
 from collections import defaultdict, deque
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime, timezone
+from fnmatch import fnmatchcase
+from pathlib import Path
 from typing import Any
 
 from . import __version__
 from .dashboard import DashboardError, default_benchmark_summary, derive_areas
-from .git_subject import GitReader, GitSubjectError, normalize_repo_path
+from .git_subject import HEX40, GitReader, GitSubjectError, normalize_repo_path
 from .json_contracts import (
     ContractError,
     UnsupportedVersionError,
@@ -80,6 +83,153 @@ def _schema_path(document_path: str, schema_ref: str, program_root: str) -> str 
     return normalize_repo_path(
         posixpath.normpath(posixpath.join(posixpath.dirname(document_path), schema_ref))
     )
+
+
+def _enrich_input_manifest(
+    reader: GitReader,
+    commit: str,
+    program_root: str,
+    _base_manifest: Sequence[Mapping[str, str]],
+    policy: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], str]:
+    """Bind every program input to its first policy role and local schema identity."""
+
+    role_rows = [
+        row for row in policy.get("path_roles", []) if isinstance(row, Mapping)
+    ]
+    excluded = {
+        f"{program_root}/dashboard.json",
+        f"{program_root}/evidence/verification/EPP-F01-dashboard-delivery.json",
+    }
+    tree_rows = reader.tree_entries(commit, "")
+    selected: list[tuple[dict[str, str], Mapping[str, Any]]] = []
+    for tree_row in tree_rows:
+        path = tree_row["path"]
+        role = next(
+            (
+                row
+                for row in role_rows
+                if fnmatchcase(path, str(row.get("pattern", "")))
+            ),
+            None,
+        )
+        if (
+            role is None
+            or path in excluded
+            or role.get("role") == "generated_projection"
+        ):
+            continue
+        if tree_row["type"] != "blob" or tree_row["mode"] not in {"100644", "100755"}:
+            raise GitSubjectError("authoritative input is not a regular blob")
+        selected.append((tree_row, role))
+    by_path = {row["path"]: row for row, _ in selected}
+    role_by_path = {row["path"]: role for row, role in selected}
+    blobs = reader.read_blobs(commit, by_path)
+    parsed: dict[str, Any] = {}
+    for path, raw in blobs.items():
+        if path.endswith(".json"):
+            try:
+                parsed[path] = strict_loads(raw)
+            except ContractError:
+                parsed[path] = None
+    enriched: list[dict[str, Any]] = []
+    for path in sorted(by_path):
+        role = str(role_by_path[path].get("role"))
+        value = parsed.get(path)
+        schema_id: str | None = None
+        schema_version: str | None = None
+        if isinstance(value, Mapping):
+            version = value.get("schema_version")
+            schema_version = str(version) if isinstance(version, str) else None
+            if "/schemas/" in path and isinstance(value.get("$id"), str):
+                schema_id = str(value["$id"])
+            elif isinstance(value.get("$schema"), str):
+                schema_ref = str(value["$schema"])
+                resolved = _schema_path(path, schema_ref, program_root)
+                schema_value = parsed.get(resolved or "")
+                schema_id = (
+                    str(schema_value.get("$id"))
+                    if isinstance(schema_value, Mapping)
+                    and isinstance(schema_value.get("$id"), str)
+                    else schema_ref
+                )
+        source = by_path[path]
+        enriched.append(
+            {
+                "path": path,
+                "role": role,
+                "sha256": sha256_bytes(blobs[path]),
+                "git_blob": source["git_blob"],
+                "schema_id": schema_id,
+                "schema_version": schema_version,
+            }
+        )
+    return enriched, canonical_digest(enriched)
+
+
+def _validate_runtime_source_bundle(
+    reader: GitReader,
+    source_commit: str,
+) -> tuple[list[dict[str, object]], str, list[Finding]]:
+    """Bind loaded validator code and checkout state to the exact source bundle."""
+
+    findings: list[Finding] = []
+    try:
+        manifest, digest = reader.source_bundle(source_commit)
+        head_manifest, _ = reader.source_bundle(reader.current_head())
+    except GitSubjectError:
+        findings.append(
+            _finding(
+                "VALIDATOR_SOURCE_BUNDLE_INVALID",
+                "fatal",
+                "scripts/program_control",
+                "CLOSED_SOURCE_BUNDLE",
+            )
+        )
+        return [], "0" * 64, findings
+    source_ids = {str(row["path"]): str(row["git_blob"]) for row in manifest}
+    head_ids = {str(row["path"]): str(row["git_blob"]) for row in head_manifest}
+    try:
+        dirty = reader.status_for_paths(
+            [
+                "scripts/validate-engineering-process-program.py",
+                "scripts/program_control",
+            ]
+        )
+    except GitSubjectError:
+        dirty = [b"unresolved"]
+    runtime_mismatch = source_ids != head_ids or bool(dirty)
+    repository_root = reader.repo_root.resolve(strict=True)
+    loaded_paths: set[str] = set()
+    for name, module in sorted(sys.modules.items()):
+        if name != "program_control" and not name.startswith("program_control."):
+            continue
+        module_file = getattr(module, "__file__", None)
+        if not isinstance(module_file, str):
+            runtime_mismatch = True
+            continue
+        try:
+            relative = (
+                Path(module_file).resolve(strict=True).relative_to(repository_root)
+            )
+            normalized = normalize_repo_path(relative.as_posix())
+        except (OSError, ValueError, GitSubjectError):
+            runtime_mismatch = True
+            continue
+        loaded_paths.add(normalized)
+    if not loaded_paths.issubset(source_ids):
+        runtime_mismatch = True
+    if runtime_mismatch:
+        findings.append(
+            _finding(
+                "VALIDATOR_RUNTIME_SUBJECT_MISMATCH",
+                "fatal",
+                "scripts/program_control",
+                "RUNTIME_HEAD_SOURCE_BUNDLE_AND_LOADED_MODULES",
+                (digest,),
+            )
+        )
+    return manifest, digest, findings
 
 
 def _load_json(
@@ -189,6 +339,17 @@ def validate_legacy_profiles(
         # its historical terminus; it is not a promise that the append-only
         # archive files had already been materialized in that older commit.
         effective_commit = approval_subject_commit
+        if hasattr(reader, "read_blobs"):
+            prefetch: list[str] = []
+            for row in [*states, *transitions]:
+                if not isinstance(row, Mapping):
+                    continue
+                try:
+                    relative = normalize_repo_path(str(row.get("path")))
+                except GitSubjectError:
+                    continue
+                prefetch.append(f"{program_root}/{relative}")
+            reader.read_blobs(effective_commit, prefetch)
         for row in [*states, *transitions]:
             if not isinstance(row, Mapping):
                 findings.append(
@@ -463,7 +624,12 @@ def _validate_documents(
     findings: list[Finding],
 ) -> dict[str, Any]:
     documents: dict[str, Any] = {}
-    paths = [item["path"] for item in manifest if item["path"].endswith(".json")]
+    paths = [
+        item["path"]
+        for item in manifest
+        if item["path"].startswith(f"{program_root}/")
+        and item["path"].endswith(".json")
+    ]
     for path in paths:
         value = _load_json(reader, commit, path, findings)
         if value is not None:
@@ -531,10 +697,153 @@ def _validate_documents(
     return documents
 
 
+def _artifact_repo_path(program_root: str, relative: object) -> str:
+    if not isinstance(relative, str):
+        raise GitSubjectError("artifact path is not a string")
+    joined = posixpath.normpath(posixpath.join(program_root, relative))
+    return normalize_repo_path(joined)
+
+
+def _validate_transition_history(
+    reader: GitReader,
+    source_commit: str,
+    transitions: Sequence[Mapping[str, Any]],
+    program_root: str,
+    findings: list[Finding],
+) -> None:
+    """Bind every v2 transition to immutable raw bytes and its complete Git edge."""
+
+    current = reader.resolve_commit(source_commit)
+    v2 = [row for row in transitions if row.get("schema_version") == "2.0"]
+    if not v2:
+        return
+    transition_root = f"{program_root}/evidence/transitions"
+    try:
+        additions = reader.added_path_commits(current, transition_root)
+        paths = {
+            str(
+                row.get("transition_id")
+            ): f"{transition_root}/{row.get('transition_id')}.json"
+            for row in v2
+        }
+        containers = {
+            transition_id: additions[path] for transition_id, path in paths.items()
+        }
+        source_commits = {str(row.get("git", {}).get("source_commit")) for row in v2}
+        if any(not HEX40.fullmatch(commit) for commit in source_commits):
+            raise GitSubjectError("transition source identity is invalid")
+        summaries = reader.commit_summaries([*containers.values(), *source_commits])
+        program_trees = reader.object_ids(
+            (commit, program_root) for commit in source_commits
+        )
+        requests: list[tuple[str, str]] = []
+        for row in v2:
+            transition_id = str(row.get("transition_id"))
+            source = str(row["git"]["source_commit"])
+            container = containers[transition_id]
+            transition_path = paths[transition_id]
+            requests.extend([(current, transition_path), (container, transition_path)])
+            for artifact in row.get("inputs", []):
+                requests.append(
+                    (source, _artifact_repo_path(program_root, artifact.get("path")))
+                )
+            for artifact in row.get("outputs", []):
+                requests.append(
+                    (container, _artifact_repo_path(program_root, artifact.get("path")))
+                )
+        blobs = reader.read_blob_requests(requests)
+    except (GitSubjectError, KeyError, TypeError):
+        findings.append(
+            _finding(
+                "TRANSITION_HISTORY_UNRESOLVED",
+                "fatal",
+                transition_root,
+                "APPEND_ONLY_GIT_HISTORY",
+            )
+        )
+        return
+
+    for row in v2:
+        transition_id = str(row.get("transition_id"))
+        artifact = f"{transition_root}/{transition_id}.json"
+        git_record = row.get("git")
+        if not isinstance(git_record, Mapping):
+            continue
+        source = str(git_record.get("source_commit"))
+        container = containers[transition_id]
+        source_summary = summaries[source]
+        container_summary = summaries[container]
+        manifest = git_record.get("changed_paths_manifest")
+        actual_paths = set(container_summary.get("paths", []))
+        declared_paths = set(manifest) if isinstance(manifest, list) else set()
+        # The transition path is already bound by transition_path and its unique
+        # introducing commit, so the two historically used complete encodings
+        # (explicit self path or implicit self path) are semantically identical.
+        declared_complete = declared_paths | {artifact}
+        history_invalid = (
+            container_summary.get("parents") != [source]
+            or git_record.get("source_tree") != source_summary.get("tree")
+            or git_record.get("source_program_tree")
+            != program_trees.get((source, program_root))
+            or git_record.get("containing_commit") is not None
+            or git_record.get("containing_commit_rule") != "transition_blob_container"
+            or not isinstance(manifest, list)
+            or manifest != sorted(declared_paths)
+            or declared_complete != actual_paths
+            or git_record.get("transition_path")
+            != f"evidence/transitions/{transition_id}.json"
+        )
+        if history_invalid:
+            findings.append(
+                _finding(
+                    "TRANSITION_MANIFEST_MISMATCH",
+                    "fatal",
+                    artifact,
+                    "EXACT_SOURCE_CONTAINER_AND_CHANGED_PATHS",
+                )
+            )
+        if blobs[(current, artifact)] != blobs[(container, artifact)]:
+            findings.append(
+                _finding(
+                    "TRANSITION_BLOB_CHANGED",
+                    "fatal",
+                    artifact,
+                    "APPEND_ONLY_RAW_BYTES",
+                )
+            )
+        for kind, commit in (("inputs", source), ("outputs", container)):
+            for item in row.get(kind, []):
+                try:
+                    path = _artifact_repo_path(program_root, item.get("path"))
+                    raw = blobs[(commit, path)]
+                except (GitSubjectError, KeyError, TypeError):
+                    findings.append(
+                        _finding(
+                            "TRANSITION_ARTIFACT_MISSING",
+                            "fatal",
+                            artifact,
+                            "COMMITTED_INPUT_OUTPUT",
+                        )
+                    )
+                    continue
+                if sha256_bytes(raw) != item.get("sha256"):
+                    findings.append(
+                        _finding(
+                            "TRANSITION_ARTIFACT_DIGEST_MISMATCH",
+                            "fatal",
+                            artifact,
+                            "RAW_BLOB_SHA256",
+                        )
+                    )
+
+
 def _validate_state_chain(
     documents: Mapping[str, Any],
     program_root: str,
     findings: list[Finding],
+    *,
+    reader: GitReader | None = None,
+    source_commit: str | None = None,
 ) -> None:
     state_path = f"{program_root}/program-state.json"
     current = documents.get(state_path)
@@ -574,6 +883,10 @@ def _validate_state_chain(
         if f"{program_root}/evidence/transitions/TR-" in path
         and isinstance(value, dict)
     ]
+    if reader is not None and source_commit is not None:
+        _validate_transition_history(
+            reader, source_commit, transitions, program_root, findings
+        )
     policy_value = documents.get(f"{program_root}/lifecycle-policy.json")
     policy = policy_value if isinstance(policy_value, Mapping) else {}
     program_edges = {
@@ -584,6 +897,11 @@ def _validate_state_chain(
     feature_edges = {
         (str(row.get("from")), str(row.get("to")))
         for row in policy.get("feature_edges", [])
+        if isinstance(row, Mapping)
+    }
+    event_rules = {
+        (str(row.get("event_kind")), str(row.get("state_domain"))): row
+        for row in policy.get("event_rules", [])
         if isinstance(row, Mapping)
     }
     seen_ids: set[str] = set()
@@ -638,6 +956,18 @@ def _validate_state_chain(
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
+            event_rule = event_rules.get((str(event), str(domain)))
+            if event_rule is None or (
+                event_rule.get("may_preserve_state") is False and pair[0] == pair[1]
+            ):
+                findings.append(
+                    _finding(
+                        "EVENT_RULE_INVALID",
+                        "fatal",
+                        transition_id,
+                        "DECLARED_DOMAIN_EVENT_RULE",
+                    )
+                )
             if event == "lifecycle_transition":
                 allowed = (
                     program_edges
@@ -847,6 +1177,8 @@ def validate_roadmap_approval_and_lease(
     observed_at: datetime,
     actual_branch: str,
     worktree_id: str,
+    reader: GitReader | None = None,
+    source_commit: str | None = None,
 ) -> tuple[list[Finding], str | None]:
     """Validate roadmap selection, structured dates, pointer, WIP, and lease identity."""
 
@@ -868,8 +1200,9 @@ def validate_roadmap_approval_and_lease(
         dict(item) for item in roadmap.get("items", []) if isinstance(item, Mapping)
     ]
     _roadmap_order(items, findings)
+    by_id = {str(item.get("id")): item for item in items}
     active = [item for item in items if item.get("status") == "active"]
-    if len(active) > 1:
+    if len(active) != 1:
         findings.append(
             _finding(
                 "WIP_LIMIT_EXCEEDED", "fatal", "roadmap.json", "ONE_ACTIVE_FEATURE"
@@ -885,6 +1218,116 @@ def validate_roadmap_approval_and_lease(
                 "ACTIVE_FEATURE_POINTER",
             )
         )
+    if len(active) == 1 and any(
+        by_id.get(str(dependency), {}).get("status") != "complete"
+        for dependency in active[0].get("depends_on", [])
+    ):
+        findings.append(
+            _finding(
+                "ROADMAP_DEPENDENCY_INCOMPLETE",
+                "fatal",
+                "roadmap.json",
+                "ACTIVE_DEPENDENCIES_COMPLETE",
+            )
+        )
+    decision_doc = documents.get(f"{program_root}/decision-register.json")
+    decision_rows = (
+        decision_doc.get("records", []) if isinstance(decision_doc, Mapping) else []
+    )
+    decision_by_id = {
+        str(row.get("id")): row for row in decision_rows if isinstance(row, Mapping)
+    }
+    risk_doc = documents.get(f"{program_root}/risk-register.json")
+    risk_ids = {
+        str(row.get("id"))
+        for row in (risk_doc.get("risks", []) if isinstance(risk_doc, Mapping) else [])
+        if isinstance(row, Mapping)
+    }
+    gate_doc = documents.get(f"{program_root}/gate-catalog.json")
+    gate_ids = {
+        str(row.get("id"))
+        for row in (gate_doc.get("gates", []) if isinstance(gate_doc, Mapping) else [])
+        if isinstance(row, Mapping)
+    }
+    for item in items:
+        for decision_id in item.get("blocking_decisions", []):
+            if decision_id not in decision_by_id:
+                findings.append(
+                    _finding(
+                        "ROADMAP_DECISION_REFERENCE_INVALID",
+                        "fatal",
+                        "roadmap.json",
+                        "BLOCKING_DECISION_EXISTS",
+                    )
+                )
+        if gate_ids and any(
+            gate_id not in gate_ids for gate_id in item.get("gate_impacts", [])
+        ):
+            findings.append(
+                _finding(
+                    "ROADMAP_GATE_REFERENCE_INVALID",
+                    "fatal",
+                    "roadmap.json",
+                    "GATE_IMPACT_EXISTS",
+                )
+            )
+    if len(active) == 1 and any(
+        decision_by_id.get(str(decision_id), {}).get("status")
+        not in {"decided", "superseded"}
+        for decision_id in active[0].get("blocking_decisions", [])
+    ):
+        findings.append(
+            _finding(
+                "ROADMAP_BLOCKING_DECISION_OPEN",
+                "fatal",
+                "roadmap.json",
+                "ACTIVE_ITEM_DECISIONS_RESOLVED",
+            )
+        )
+    if not active:
+        eligible = [
+            item
+            for item in items
+            if item.get("status") == "proposed"
+            and all(
+                by_id.get(str(dependency), {}).get("status") == "complete"
+                for dependency in item.get("depends_on", [])
+            )
+            and all(
+                decision_by_id.get(str(decision_id), {}).get("status")
+                in {"decided", "superseded"}
+                for decision_id in item.get("blocking_decisions", [])
+            )
+        ]
+        if eligible:
+            best = min(int(item.get("priority", 2**31)) for item in eligible)
+            if sum(int(item.get("priority", 2**31)) == best for item in eligible) != 1:
+                findings.append(
+                    _finding(
+                        "ROADMAP_ELIGIBILITY_AMBIGUOUS",
+                        "fatal",
+                        "roadmap.json",
+                        "DEPENDENCY_PRIORITY_TIE_BREAK",
+                    )
+                )
+    for area in state.get("readiness", {}).values():
+        if not isinstance(area, Mapping):
+            continue
+        for blocker in area.get("blockers", []):
+            match = re.match(r"^(DEC-P0-[0-9]{3}|RISK-[0-9]{3})(?::|$)", str(blocker))
+            if (
+                match
+                and match.group(1) not in decision_by_id
+                and match.group(1) not in risk_ids
+            ):
+                findings.append(
+                    _finding(
+                        "CONTROL_REFERENCE_INVALID",
+                        "fatal",
+                        "program-state.json",
+                        "DECISION_OR_RISK_EXISTS",
+                    )
+                )
     lease = state.get("active_mutating_lease")
     if not isinstance(lease, Mapping) or lease.get("feature_id") != current_feature:
         findings.append(
@@ -927,6 +1370,30 @@ def validate_roadmap_approval_and_lease(
                     "ACTUAL_WORKTREE",
                 )
             )
+        if reader is not None and source_commit is not None:
+            try:
+                start = lease.get("worktree_start", {}).get("commit")
+                start_tree = lease.get("worktree_start", {}).get("tree")
+                baseline = lease.get("dev_baseline", {})
+                baseline_commit = baseline.get("commit")
+                if not isinstance(start, str) or not isinstance(baseline_commit, str):
+                    raise GitSubjectError("lease Git identity is missing")
+                summaries = reader.commit_summaries([start, baseline_commit])
+                if (
+                    summaries[start].get("tree") != start_tree
+                    or not reader.is_ancestor(start, source_commit)
+                    or summaries[baseline_commit].get("tree") != baseline.get("tree")
+                ):
+                    raise GitSubjectError("lease Git identity is invalid")
+            except (AttributeError, GitSubjectError):
+                findings.append(
+                    _finding(
+                        "LEASE_GIT_IDENTITY_MISMATCH",
+                        "fatal",
+                        "program-state.json",
+                        "WORKTREE_START_AND_BASELINE",
+                    )
+                )
         for path in lease.get("allowed_paths", []):
             try:
                 normalize_repo_path(str(path))
@@ -1020,7 +1487,15 @@ def validate_roadmap_approval_and_lease(
             and row.get("feature_state") == state.get("feature_state")
             and row.get("action") == action
         ]
-        if len(matching) != 1:
+        declared_human = (
+            actions[0].get("requires_human_approval")
+            if len(actions) == 1 and isinstance(actions[0], Mapping)
+            else None
+        )
+        if (
+            len(matching) != 1
+            or matching[0].get("requires_human_approval") != declared_human
+        ):
             findings.append(
                 _finding(
                     "ACTION_POLICY_MISMATCH",
@@ -1097,7 +1572,7 @@ def _validate_roadmap_and_lease(
 
 def _verify_approval_artifacts(
     reader: GitReader,
-    source_commit: str,
+    _source_commit: str,
     approval: Mapping[str, Any],
     program_root: str,
 ) -> bool:
@@ -1107,6 +1582,7 @@ def _verify_approval_artifacts(
     approved_commit = subject.get("git_commit")
     if not isinstance(approved_commit, str):
         return False
+    resolved: list[tuple[Mapping[str, Any], str]] = []
     for artifact in subject.get("artifact_digests", []):
         if not isinstance(artifact, dict):
             return False
@@ -1114,15 +1590,126 @@ def _verify_approval_artifacts(
             path = normalize_repo_path(
                 posixpath.normpath(posixpath.join(program_root, str(artifact["path"])))
             )
-            try:
-                raw = reader.blob(approved_commit, path)
-            except GitSubjectError:
-                raw = reader.blob(source_commit, path)
         except (GitSubjectError, KeyError):
             return False
+        resolved.append((artifact, path))
+    try:
+        blobs = reader.read_blobs(approved_commit, [path for _, path in resolved])
+    except GitSubjectError:
+        return False
+    for artifact, path in resolved:
+        raw = blobs[path]
         if sha256_bytes(raw) != artifact.get("sha256"):
             return False
     return True
+
+
+def _validate_current_authority(
+    reader: GitReader,
+    documents: Mapping[str, Any],
+    program_root: str,
+    observed_at: datetime,
+    findings: list[Finding],
+) -> None:
+    """Resolve the state's exact two-record implementation authority bundle."""
+
+    state = documents.get(f"{program_root}/program-state.json")
+    if not isinstance(state, Mapping):
+        return
+    approval_state = state.get("approval")
+    required = (
+        approval_state.get("required_records", [])
+        if isinstance(approval_state, Mapping)
+        else []
+    )
+    if len(required) != 2 or len(set(required)) != 2:
+        findings.append(
+            _finding(
+                "APPROVAL_BUNDLE_INVALID",
+                "fatal",
+                "program-state.json",
+                "EXACT_TWO_SCOPE_BUNDLE",
+            )
+        )
+        return
+    approvals: list[Mapping[str, Any]] = []
+    for relative in required:
+        try:
+            path = f"{program_root}/{normalize_repo_path(str(relative))}"
+        except GitSubjectError:
+            path = ""
+        value = documents.get(path)
+        if not isinstance(value, Mapping):
+            findings.append(
+                _finding(
+                    "APPROVAL_RECORD_MISSING",
+                    "fatal",
+                    "program-state.json",
+                    "REQUIRED_APPROVAL_RECORD",
+                )
+            )
+        else:
+            approvals.append(value)
+    if len(approvals) != 2:
+        return
+    subject = approvals[0].get("subject")
+    if not isinstance(subject, Mapping):
+        findings.append(
+            _finding(
+                "APPROVAL_SUBJECT_MISMATCH",
+                "fatal",
+                "evidence/approvals",
+                "EXACT_SHARED_SUBJECT",
+            )
+        )
+        return
+    history_findings, selected = evaluate_approval_history(
+        approvals,
+        required_scopes=("material_change", "feature_implementation"),
+        exact_subject=subject,
+        observed_at=observed_at,
+    )
+    findings.extend(history_findings)
+    if (
+        len(selected) != 2
+        or len({row.get("bundle_id") for row in selected}) != 1
+        or any(
+            row.get("feature_id") != state.get("current_feature") for row in selected
+        )
+    ):
+        findings.append(
+            _finding(
+                "APPROVAL_BUNDLE_INVALID",
+                "fatal",
+                "evidence/approvals",
+                "SAME_FEATURE_AND_BUNDLE",
+            )
+        )
+    try:
+        approved = reader.resolve_identity(str(subject.get("git_commit")), program_root)
+        if approved.source_tree != subject.get(
+            "git_tree"
+        ) or approved.program_tree != subject.get("program_tree"):
+            raise GitSubjectError("approval subject tree mismatch")
+    except GitSubjectError:
+        findings.append(
+            _finding(
+                "APPROVAL_SUBJECT_MISMATCH",
+                "fatal",
+                "evidence/approvals",
+                "COMMIT_TREE_PROGRAM_TREE",
+            )
+        )
+    for approval in selected:
+        if not _verify_approval_artifacts(reader, "", approval, program_root):
+            findings.append(
+                _finding(
+                    "APPROVAL_STALE",
+                    "fatal",
+                    str(approval.get("approval_id", "approval")),
+                    "ARTIFACT_DIGESTS",
+                )
+            )
 
 
 def _release_approval(
@@ -1138,7 +1725,22 @@ def _release_approval(
         for path, value in documents.items()
         if f"{program_root}/evidence/approvals/" in path and isinstance(value, dict)
     ]
+    current_by_boundary: dict[tuple[str | None, str], dict[str, Any]] = {}
     for approval in approvals:
+        feature_id = approval.get("feature_id")
+        approval_id = str(approval.get("approval_id", ""))
+        if feature_id is None and approval_id.startswith("APR-EPP-F01-"):
+            feature_id = "EPP-F01"
+        key = (
+            str(feature_id) if feature_id is not None else None,
+            str(approval.get("scope")),
+        )
+        existing = current_by_boundary.get(key)
+        if existing is None or str(approval.get("approved_at", "")) > str(
+            existing.get("approved_at", "")
+        ):
+            current_by_boundary[key] = approval
+    for approval in current_by_boundary.values():
         if approval.get("decision") == "approved" and not _verify_approval_artifacts(
             reader, commit, approval, program_root
         ):
@@ -1192,11 +1794,170 @@ def _empty_areas() -> dict[str, dict[str, Any]]:
     }
 
 
+def _resolve_container_and_delivery(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    *,
+    container: str | None,
+    delivery: str | None,
+    findings: list[Finding],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Resolve only explicit C/D or the one constrained HEAD-as-C case."""
+
+    dashboard_path = f"{program_root}/dashboard.json"
+    delivery_path = (
+        f"{program_root}/evidence/verification/EPP-F01-dashboard-delivery.json"
+    )
+    container_resolution = "absent"
+    container_commit: str | None = None
+    if container is not None:
+        container_resolution = "explicit"
+        try:
+            container_commit = reader.resolve_commit(container)
+        except GitSubjectError:
+            container_resolution = "unresolved"
+    else:
+        try:
+            head = reader.current_head()
+            if head != source_commit:
+                if reader.first_parent(head) == source_commit and reader.diff_paths(
+                    source_commit, head
+                ) == [dashboard_path]:
+                    container_resolution = "inferred_head"
+                    container_commit = head
+                else:
+                    container_resolution = "unresolved"
+        except GitSubjectError:
+            container_resolution = "unresolved"
+    if container_resolution in {"explicit", "inferred_head"}:
+        try:
+            assert container_commit is not None
+            if reader.first_parent(
+                container_commit
+            ) != source_commit or reader.diff_paths(
+                source_commit, container_commit
+            ) != [dashboard_path]:
+                raise GitSubjectError("container relation is invalid")
+            reader.blob(container_commit, dashboard_path)
+        except (AssertionError, GitSubjectError):
+            container_resolution = "unresolved"
+            container_commit = None
+    if container_resolution == "unresolved":
+        findings.append(
+            _finding(
+                "DASHBOARD_CONTAINER_MISMATCH",
+                "fatal",
+                dashboard_path,
+                "EXPLICIT_OR_CONSTRAINED_HEAD_CONTAINER",
+            )
+        )
+
+    delivery_resolution = "absent"
+    delivery_commit: str | None = None
+    evidence_record: dict[str, str] | None = None
+    delivery_valid = False
+    if delivery is not None:
+        if container_commit is None:
+            delivery_resolution = "unresolved"
+            findings.append(
+                _finding(
+                    "DASHBOARD_DELIVERY_UNRESOLVED",
+                    "fatal",
+                    delivery_path,
+                    "DELIVERY_REQUIRES_RESOLVED_CONTAINER",
+                )
+            )
+        else:
+            delivery_resolution = "explicit"
+            try:
+                delivery_commit = reader.resolve_commit(delivery)
+                if reader.first_parent(
+                    delivery_commit
+                ) != container_commit or reader.diff_paths(
+                    container_commit, delivery_commit
+                ) != [delivery_path]:
+                    raise GitSubjectError("delivery relation is invalid")
+                raw = reader.blob(delivery_commit, delivery_path)
+                value = strict_loads(raw)
+                schema = strict_loads(
+                    reader.blob(
+                        source_commit,
+                        f"{program_root}/schemas/verification-evidence.schema.json",
+                    )
+                )
+                relation = (
+                    value.get("delivery_relation")
+                    if isinstance(value, Mapping)
+                    else None
+                )
+                dashboard_raw = reader.blob(container_commit, dashboard_path)
+                if (
+                    not isinstance(value, Mapping)
+                    or not isinstance(schema, Mapping)
+                    or validate_schema(schema, value)
+                    or value.get("kind") != "delivery"
+                    or value.get("verdict") != "passed"
+                    or value.get("actor", {}).get("role") != "independent_verifier"
+                    or value.get("actor", {}).get("independent") is not True
+                    or not isinstance(relation, Mapping)
+                    or relation.get("source_commit") != source_commit
+                    or relation.get("container_commit") != container_commit
+                    or relation.get("dashboard", {}).get("sha256")
+                    != sha256_bytes(dashboard_raw)
+                ):
+                    raise ContractError("delivery evidence is invalid")
+                evidence_record = {
+                    "path": delivery_path,
+                    "sha256": sha256_bytes(raw),
+                    "git_blob": reader.blob_id(delivery_commit, delivery_path),
+                }
+                delivery_valid = True
+            except (ContractError, GitSubjectError):
+                delivery_resolution = "unresolved"
+                delivery_commit = None
+                findings.append(
+                    _finding(
+                        "DASHBOARD_DELIVERY_RELATION_INVALID",
+                        "fatal",
+                        delivery_path,
+                        "EXPLICIT_INDEPENDENT_DELIVERY_RELATION",
+                    )
+                )
+
+    status = (
+        "committed_valid"
+        if delivery_valid
+        else "failed"
+        if container_resolution == "unresolved" or delivery_resolution == "unresolved"
+        else "candidate_not_evidence"
+        if container_commit is not None
+        else "not_requested"
+    )
+    subject_fields = {
+        "container_resolution": container_resolution,
+        "container_commit": container_commit,
+        "delivery_resolution": delivery_resolution,
+        "delivery_commit": delivery_commit,
+    }
+    envelope = {
+        "mode": "validate",
+        "status": status,
+        "target_changed": False,
+        "prior_snapshot_preserved": True,
+        **subject_fields,
+        "evidence_record": evidence_record,
+    }
+    return subject_fields, envelope
+
+
 def validate_program(
     reader: GitReader,
     source: str = "HEAD",
     program_root: str = "docs/programs/engineering-process-platform",
     *,
+    container: str | None = None,
+    delivery: str | None = None,
     observed_at: datetime | None = None,
 ) -> ValidationResult:
     """Validate a committed subject without mutating the repository."""
@@ -1207,20 +1968,84 @@ def validate_program(
     findings: list[Finding] = []
     try:
         identity = reader.resolve_identity(source, root)
-        manifest, manifest_digest = reader.manifest(identity.source_commit, root)
+        policy = strict_loads(
+            reader.blob(identity.source_commit, f"{root}/lifecycle-policy.json")
+        )
+        if not isinstance(policy, Mapping):
+            raise ContractError("lifecycle policy must be an object")
+        manifest, manifest_digest = _enrich_input_manifest(
+            reader, identity.source_commit, root, (), policy
+        )
     except GitSubjectError:
         findings.append(
             _finding("SUBJECT_UNRESOLVED", "fatal", "git-subject", "EXACT_COMMIT_TREE")
         )
         report = _unresolved_report(timestamp, findings)
         return ValidationResult(report=report, findings=findings, exit_code=2)
+    except ContractError:
+        findings.append(
+            _finding(
+                "JSON_INVALID",
+                "fatal",
+                f"{root}/lifecycle-policy.json",
+                "INPUT_MANIFEST_POLICY",
+            )
+        )
+        report = _unresolved_report(timestamp, findings)
+        return ValidationResult(report=report, findings=findings, exit_code=3)
+    bundle_manifest, bundle_digest, bundle_findings = _validate_runtime_source_bundle(
+        reader, identity.source_commit
+    )
+    findings.extend(bundle_findings)
+    subject_delivery, delivery_envelope = _resolve_container_and_delivery(
+        reader,
+        identity.source_commit,
+        root,
+        container=container,
+        delivery=delivery,
+        findings=findings,
+    )
     documents = _validate_documents(
         reader, identity.source_commit, root, manifest, findings
     )
-    _validate_state_chain(documents, root, findings)
-    roadmap_item, actions, eligibility_blockers = _validate_roadmap_and_lease(
-        documents, root, findings
+    _validate_state_chain(
+        documents,
+        root,
+        findings,
+        reader=reader,
+        source_commit=identity.source_commit,
     )
+    try:
+        actual_branch = reader.current_branch()
+    except GitSubjectError:
+        actual_branch = ""
+        findings.append(
+            _finding(
+                "CHECKOUT_BRANCH_UNRESOLVED",
+                "fatal",
+                "git-subject",
+                "ATTACHED_FEATURE_BRANCH",
+            )
+        )
+    roadmap_findings, action = validate_roadmap_approval_and_lease(
+        documents,
+        root,
+        observed_at=now,
+        actual_branch=actual_branch,
+        worktree_id=reader.repo_root.name,
+        reader=reader,
+        source_commit=identity.source_commit,
+    )
+    findings.extend(roadmap_findings)
+    state_value = documents.get(f"{root}/program-state.json")
+    roadmap_item = (
+        str(state_value.get("current_feature"))
+        if isinstance(state_value, Mapping) and state_value.get("current_feature")
+        else None
+    )
+    actions = [action] if action is not None else []
+    eligibility_blockers = [item.code for item in roadmap_findings]
+    _validate_current_authority(reader, documents, root, now, findings)
     catalog = documents.get(f"{root}/gate-catalog.json")
     evidence = documents.get(f"{root}/gate-evidence.json")
     candidate = evidence.get("subject") if isinstance(evidence, dict) else None
@@ -1251,18 +2076,6 @@ def validate_program(
         if isinstance(dashboard_seed, dict)
         else None
     )
-    generator_path = "scripts/validate-engineering-process-program.py"
-    try:
-        generator_digest = sha256_bytes(
-            reader.blob(identity.source_commit, generator_path)
-        )
-    except GitSubjectError:
-        generator_digest = "0" * 64
-        findings.append(
-            _finding(
-                "GENERATOR_BLOB_MISSING", "fatal", generator_path, "GENERATOR_IDENTITY"
-            )
-        )
     fatal_or_error = [item for item in findings if item.severity in {"fatal", "error"}]
     verdict = "failed" if fatal_or_error else "passed"
     next_action = None
@@ -1279,21 +2092,26 @@ def validate_program(
         and approval["status"] == "approved"
         and approval["subject_matches"]
     )
+    checkout = reader.worktree_observation()
     report = {
         "$schema": "./schemas/validation-report.schema.json",
         "schema_version": "1.0",
         "program_id": "EPP-2026",
-        "validator": {"version": __version__, "blob_sha256": generator_digest},
+        "validator": {
+            "version": __version__,
+            "bundle_manifest_digest": bundle_digest,
+            "bundle_manifest": bundle_manifest,
+        },
         "observed_at": timestamp,
         "subject": {
             "resolution_status": "resolved",
             "source_commit": identity.source_commit,
             "source_tree": identity.source_tree,
             "program_tree": identity.program_tree,
-            "container_commit": None,
+            **subject_delivery,
             "release_candidate": candidate,
-            "worktree_clean": reader.worktree_observation()["dirty_path_count"] == 0,
-            "checkout_representation": reader.worktree_observation(),
+            "worktree_clean": checkout["dirty_path_count"] == 0,
+            "checkout_representation": checkout,
             "input_manifest_digest": manifest_digest,
             "input_manifest": manifest,
         },
@@ -1321,26 +2139,24 @@ def validate_program(
         "benchmark_summary": benchmark,
         "release_approval": approval,
         "release_eligible": release_eligible,
-        "delivery": {
-            "mode": "validate",
-            "status": "not_requested",
-            "target_changed": False,
-            "prior_snapshot_preserved": True,
-        },
+        "delivery": delivery_envelope,
         "next_action": next_action,
     }
-    exit_code = (
-        0
-        if verdict == "passed"
-        else (
-            6
-            if any(
-                item.code.startswith("SCHEMA_") and "UNSUPPORTED" in item.code
-                for item in findings
-            )
-            else 3
-        )
-    )
+    if verdict == "passed":
+        exit_code = 0
+    elif any(
+        item.code.startswith("SCHEMA_") and "UNSUPPORTED" in item.code
+        for item in findings
+    ):
+        exit_code = 6
+    elif any(
+        item.code.startswith(("JSON_", "SCHEMA_"))
+        or item.code in {"ARTIFACT_MISSING", "JSON_TOP_LEVEL_INVALID"}
+        for item in findings
+    ):
+        exit_code = 3
+    else:
+        exit_code = 4
     return ValidationResult(report=report, findings=findings, exit_code=exit_code)
 
 
@@ -1349,14 +2165,21 @@ def _unresolved_report(timestamp: str, findings: list[Finding]) -> dict[str, Any
         "$schema": "./schemas/validation-report.schema.json",
         "schema_version": "1.0",
         "program_id": "EPP-2026",
-        "validator": {"version": __version__, "blob_sha256": "0" * 64},
+        "validator": {
+            "version": __version__,
+            "bundle_manifest_digest": "0" * 64,
+            "bundle_manifest": [],
+        },
         "observed_at": timestamp,
         "subject": {
             "resolution_status": "unresolved",
             "source_commit": None,
             "source_tree": None,
             "program_tree": None,
+            "container_resolution": "unresolved",
             "container_commit": None,
+            "delivery_resolution": "unresolved",
+            "delivery_commit": None,
             "release_candidate": None,
             "worktree_clean": False,
             "checkout_representation": {
@@ -1385,9 +2208,14 @@ def _unresolved_report(timestamp: str, findings: list[Finding]) -> dict[str, Any
         "release_eligible": False,
         "delivery": {
             "mode": "validate",
-            "status": "not_requested",
+            "status": "failed",
             "target_changed": False,
             "prior_snapshot_preserved": True,
+            "container_resolution": "unresolved",
+            "container_commit": None,
+            "delivery_resolution": "unresolved",
+            "delivery_commit": None,
+            "evidence_record": None,
         },
         "next_action": None,
     }

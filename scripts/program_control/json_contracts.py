@@ -4,12 +4,35 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError, ValidationError
+
+
+_VALIDATOR_CACHE: dict[str, Draft202012Validator] = {}
+_RFC3339 = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+)
+
+
+def _format_checker() -> FormatChecker:
+    checker = FormatChecker()
+
+    @checker.checks("date-time", raises=ValueError)
+    def valid_datetime(value: object) -> bool:
+        if not isinstance(value, str) or not _RFC3339.fullmatch(value):
+            return False
+        from datetime import datetime
+
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed.tzinfo is not None
+
+    return checker
 
 
 class ContractError(ValueError):
@@ -102,8 +125,14 @@ def canonical_digest(value: Any) -> str:
 def validate_schema(schema: Mapping[str, Any], instance: Any) -> list[ValidationError]:
     """Validate with Draft 2020-12 and return deterministically sorted errors."""
 
-    Draft202012Validator.check_schema(schema)
-    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    digest = canonical_digest(schema)
+    validator = _VALIDATOR_CACHE.get(digest)
+    if validator is None:
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema, format_checker=_format_checker())
+        if len(_VALIDATOR_CACHE) >= 100:
+            _VALIDATOR_CACHE.clear()
+        _VALIDATOR_CACHE[digest] = validator
     return sorted(
         validator.iter_errors(instance),
         key=lambda error: (
@@ -114,10 +143,18 @@ def validate_schema(schema: Mapping[str, Any], instance: Any) -> list[Validation
 
 
 def check_schema(schema: Mapping[str, Any]) -> None:
+    digest = canonical_digest(schema)
+    if digest in _VALIDATOR_CACHE:
+        return
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
         raise ContractError("invalid Draft 2020-12 schema") from exc
+    if len(_VALIDATOR_CACHE) >= 100:
+        _VALIDATOR_CACHE.clear()
+    _VALIDATOR_CACHE[digest] = Draft202012Validator(
+        schema, format_checker=_format_checker()
+    )
 
 
 def parse_version(version: Any) -> tuple[int, int]:

@@ -29,6 +29,7 @@ def current_documents(repository_root: Path) -> dict[str, dict]:
         f"{PROGRAM_ROOT}/decision-register.json": load(root / "decision-register.json"),
         f"{PROGRAM_ROOT}/risk-register.json": load(root / "risk-register.json"),
         f"{PROGRAM_ROOT}/lifecycle-policy.json": load(root / "lifecycle-policy.json"),
+        f"{PROGRAM_ROOT}/gate-catalog.json": load(root / "gate-catalog.json"),
     }
 
 
@@ -183,3 +184,87 @@ def test_conditional_decision_requires_an_explicit_condition(
         observed_at=OBSERVED,
     )
     assert "APPROVAL_NOT_CURRENT" in code_set(findings)
+
+
+def test_active_item_requires_complete_dependencies_and_resolved_decisions(
+    repository_root: Path,
+) -> None:
+    documents = copy.deepcopy(current_documents(repository_root))
+    roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
+    active = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
+    next(item for item in roadmap["items"] if item["id"] == "EPP-P00")["status"] = (
+        "proposed"
+    )
+    active["blocking_decisions"] = ["DEC-P0-001"]
+    findings, _ = validate_roadmap_approval_and_lease(
+        documents,
+        PROGRAM_ROOT,
+        observed_at=OBSERVED,
+        actual_branch="077-control-plane-validator",
+        worktree_id="epp-f01",
+    )
+    assert {
+        "ROADMAP_DEPENDENCY_INCOMPLETE",
+        "ROADMAP_BLOCKING_DECISION_OPEN",
+    }.issubset(code_set(findings))
+
+
+def test_missing_decision_gate_and_risk_references_fail(repository_root: Path) -> None:
+    documents = copy.deepcopy(current_documents(repository_root))
+    roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
+    active = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
+    active["blocking_decisions"] = ["DEC-P0-999"]
+    active["gate_impacts"] = ["PROG-99"]
+    documents[f"{PROGRAM_ROOT}/program-state.json"]["readiness"]["program_health"][
+        "blockers"
+    ].append("RISK-999: missing")
+    findings, _ = validate_roadmap_approval_and_lease(
+        documents,
+        PROGRAM_ROOT,
+        observed_at=OBSERVED,
+        actual_branch="077-control-plane-validator",
+        worktree_id="epp-f01",
+    )
+    assert {
+        "ROADMAP_DECISION_REFERENCE_INVALID",
+        "ROADMAP_GATE_REFERENCE_INVALID",
+        "CONTROL_REFERENCE_INVALID",
+    }.issubset(code_set(findings))
+
+
+def test_next_action_human_flag_must_match_policy(repository_root: Path) -> None:
+    documents = copy.deepcopy(current_documents(repository_root))
+    documents[f"{PROGRAM_ROOT}/program-state.json"]["next_eligible_actions"][0][
+        "requires_human_approval"
+    ] = True
+    findings, _ = validate_roadmap_approval_and_lease(
+        documents,
+        PROGRAM_ROOT,
+        observed_at=OBSERVED,
+        actual_branch="077-control-plane-validator",
+        worktree_id="epp-f01",
+    )
+    assert "ACTION_POLICY_MISMATCH" in code_set(findings)
+
+
+def test_dependency_priority_tie_is_ambiguous(repository_root: Path) -> None:
+    documents = copy.deepcopy(current_documents(repository_root))
+    roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
+    for item in roadmap["items"]:
+        if item["id"] == "EPP-F01":
+            item["status"] = "proposed"
+        if item["id"] in {"EPP-F01", "EPP-F01B"}:
+            item["depends_on"] = ["EPP-P00"]
+            item["blocking_decisions"] = []
+            item["priority"] = 10
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    state["current_feature"] = None
+    state["active_mutating_lease"] = None
+    findings, _ = validate_roadmap_approval_and_lease(
+        documents,
+        PROGRAM_ROOT,
+        observed_at=OBSERVED,
+        actual_branch="077-control-plane-validator",
+        worktree_id="epp-f01",
+    )
+    assert "ROADMAP_ELIGIBILITY_AMBIGUOUS" in code_set(findings)
