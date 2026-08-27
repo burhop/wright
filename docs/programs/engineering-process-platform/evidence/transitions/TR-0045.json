@@ -1,0 +1,131 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0045",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 45,
+  "new_revision": 46,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "8685b8074ceb3a2047072e28464200daa9913cd633707cfdc8af42e4479ab1ad",
+  "new_state_digest": "1a05372edce58a11a7ea416774c207cbbfd6ad946d923083b7ac22fbce8487d8",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter implementing state under repair lease revision 10 to apply exactly the Ruff formatting change identified by the independent verifier, rerun the full local envelope, and refreeze a new candidate.",
+  "started_at": "2026-08-27T22:45:10Z",
+  "finished_at": "2026-08-27T22:46:20Z",
+  "duration_ms": 70000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "8daa38ce0240ea17d590841c0b610c64161bf9d1",
+    "source_tree": "06d536e0be1b9622bcc3d124e262fad738ae9cb0",
+    "source_program_tree": "84f1c87762ce1b8ad47a978c8e8d60dd296f8447",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0046.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0045.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0045.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0045.json",
+      "sha256": "d91e36e153df66aee730b4cc6a16c36079bec1a9add6c21fc2079cff37f02313",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0044.json",
+      "sha256": "b61c8aba74032a267b4d95ffd9d55cd9d5b120c1c6fa4e15e633ef14d1540604",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0046.json",
+      "sha256": "61da3dc822c5c6c18a544fc684f923e060f172da8a29b72e60e5b4798ca1a6ac",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "61da3dc822c5c6c18a544fc684f923e060f172da8a29b72e60e5b4798ca1a6ac",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "REPAIR-LEASE-CURRENT",
+      "method": "Require lease revision 10, stable cause CANDIDATE_RUFF_FORMAT_DRIFT, one remaining attempt and allowed local formatting/test/commit paths only.",
+      "environment": "Operational state and exact approvals",
+      "duration_ms": 180,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json"
+      ]
+    },
+    {
+      "check_id": "REPAIR-SCOPE-BOUNDED",
+      "method": "Require only Ruff formatting of validation.py plus local checks and exact refreeze; prohibit T067, dependencies, benchmark execution and external actions.",
+      "environment": "Failed verifier evidence and task contract",
+      "duration_ms": 170,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-independent.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "agent:/root/epp_f01_gate_gap",
+  "repair": {
+    "stable_cause_id": "CANDIDATE_RUFF_FORMAT_DRIFT",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0045.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}
