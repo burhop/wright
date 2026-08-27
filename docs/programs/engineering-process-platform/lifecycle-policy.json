@@ -158,6 +158,10 @@
       "to": "BLOCKED"
     },
     {
+      "from": "BLOCKED",
+      "to": "IMPLEMENTATION_AUTHORIZED"
+    },
+    {
       "from": "IMPLEMENTATION_AUTHORIZED",
       "to": "IMPLEMENTING"
     },
@@ -367,6 +371,12 @@
     }
   ],
   "action_rules": [
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "BLOCKED",
+      "action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3",
+      "requires_human_approval": true
+    },
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "IMPLEMENTATION_APPROVAL_PENDING",

@@ -72,6 +72,8 @@ The current state is authoritative only in [`program-state.json`](program-state.
 | `ROLLED_BACK` | Restore recorded prior exact subject and verify health/state. | terminal or new proposed repair feature |
 | `BLOCKED` / `STOPPED` | Preserve evidence and request exact missing authority/decision. | explicit recovery/restart transition only |
 
+For EPP-F01, the explicit feature recovery edge is `BLOCKED` → `IMPLEMENTATION_AUTHORIZED`. It is legal only when the exact material-change and feature-implementation approval bundle is current, all bound artifact digests match, the blocker is resolved, the bounded lease is reactivated atomically, and the resulting sole next action is `START_EPP_F01_IMPLEMENTATION`. Recovery never jumps directly to `IMPLEMENTING` and never expands the approved task or path envelope.
+
 ## Analyze remediation routing
 
 - requirement/user-value/scope gap → `SPECIFIED` then rerun all downstream stages;

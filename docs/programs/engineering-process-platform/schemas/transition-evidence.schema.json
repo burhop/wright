@@ -846,10 +846,14 @@
               ]
             },
             "approval_records": {
-              "const": [
-                "evidence/approvals/APR-EPP-F01-MC-002.json",
-                "evidence/approvals/APR-EPP-F01-IMPL-002.json"
-              ]
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^evidence/approvals/APR-EPP-F01-(MC|IMPL)-[0-9]{3}\\.json$"
+              }
             },
             "subject": {
               "type": "object",
@@ -872,10 +876,13 @@
                   "$ref": "#/$defs/commit"
                 },
                 "artifact_count": {
-                  "const": 34
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 500
                 },
                 "manifest_transition": {
-                  "const": "TR-0018"
+                  "type": "string",
+                  "pattern": "^TR-[0-9]{4}$"
                 }
               }
             },

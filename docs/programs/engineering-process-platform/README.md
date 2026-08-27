@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 blocked at an exact material-change and feature-implementation approval gate; EPP-F01B browser-status follow-up proposed
+**Status:** EPP-F01 implementation authorized under the v3 exact-subject bundle; EPP-F01B remains proposed and unauthorized
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -52,4 +52,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-`APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3` is the only eligible action and requires the human. `TR-0022` freezes the exact subject and complete non-circular artifact manifest for proposed `APR-EPP-F01-MC-003` and `APR-EPP-F01-IMPL-003`. `DEC-P0-015` records that EPP-F01 remains bounded to its validator/snapshot/CLI work while the browser-accessible page becomes dependency-ordered `EPP-F01B` immediately before EPP-F02. The existing workspace `DashboardPage.tsx` is not accepted as that page. EPP-F01 Phase 1 is committed; incomplete Phase 2 WIP is preserved in local commit `40458d19e53882638e791339f7f3303053412795` with `49 passed`, but no Phase 2 task is claimed. Both prior EPP-F01 approvals are stale and the mutating lease is released. No EPP-F01 or EPP-F01B implementation, dependency, product runtime change, push, PR, merge, benchmark generation/execution, external mutation, publication, or release is authorized.
+`START_EPP_F01_IMPLEMENTATION` is the only eligible action. `APR-EPP-F01-MC-003` and `APR-EPP-F01-IMPL-003` bind the exact 43-artifact `TR-0022` subject and accept `DEC-P0-015`. `TR-0023` records bounded repair attempt 1 for the previously missing `BLOCKED` recovery edge, reactivates lease revision 6, and stops at `IMPLEMENTATION_AUTHORIZED`; implementation mutation begins only after the separate start transition. EPP-F01 remains limited to its 68 validator/snapshot/provenance/CLI tasks. EPP-F01B, dependencies, product runtime changes, push, PR, merge, benchmark generation/execution, external mutation, publication, and release remain unauthorized.
