@@ -1,0 +1,137 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-AUTHOR-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "author",
+  "subject": {
+    "git_commit": "7b34282eb7c56e5e87ecd20ecd3b9df2c0aed734",
+    "git_tree": "214f078b41bb26005063cfa933789e2b8a409c6f",
+    "artifact_digests": [
+      { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" },
+      { "path": "scripts/program_control/dashboard.py", "sha256": "cf68651c7aee2c4603614ee1b10cdbf1018dca7fb7032e211f8de676cedd6fa5" },
+      { "path": "scripts/check-dev-push.sh", "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f" },
+      { "path": "scripts/check-dev-merge.sh", "sha256": "3990e07eb684d6efedfa6e94ef9913ef2c3ade8ccbe86c5573f481f74d8f2626" },
+      { "path": ".github/workflows/python-quality.yml", "sha256": "dd83294f4569edb182aeafb4e26825f733d16bad645d14af98371a0bd5330376" },
+      { "path": ".github/workflows/test-windows.yml", "sha256": "302720fb99ce80208dcb26aa919ec46193259d3d706e4625b56e62f3790529d5" },
+      { "path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "66964c5050d1e6222a54e33e50fc6dcf6de63de891e1b2453b454fa6452fdda8" },
+      { "path": "tests/release/test_dev_push_process.py", "sha256": "380263cb161011946fbf4ca5e6c5dc62cc69ae499327abbcddfe5fbec43d8f57" },
+      { "path": "docs/contributing/dev-push-runbook.md", "sha256": "ff9200c762e7766762ff51a5d2e8c050de78c2600291dbd82989e4bffe5e8ed6" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T21:45:50Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "AUTHOR-FOCUSED-REGRESSION",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/program_control_plane -q; result 197 passed and 1 skipped.",
+      "environment": "Windows local worktree; short writable pytest temp root; offline",
+      "duration_ms": 122840,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-GATE-ROUTING",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/release/test_dev_push_process.py -q; result 9 passed.",
+      "environment": "Windows local worktree; offline static gate-contract review",
+      "duration_ms": 80,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/release/test_dev_push_process.py", "sha256": "380263cb161011946fbf4ca5e6c5dc62cc69ae499327abbcddfe5fbec43d8f57" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-RUFF-FORMAT",
+      "method": "Run ./.venv/Scripts/ruff.exe check and format --check over the entrypoint, scripts/program_control, tests/program_control_plane, and test_dev_push_process.py; all 22 files passed.",
+      "environment": "Windows repository virtual environment; offline",
+      "duration_ms": 640,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-SCHEMA-EMPTY-CONTEXT",
+      "method": "Run contract-schema and empty-context walkthrough tests; result 26 passed.",
+      "environment": "Windows local worktree; exact approvals and Git-object digests; offline",
+      "duration_ms": 10470,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "66964c5050d1e6222a54e33e50fc6dcf6de63de891e1b2453b454fa6452fdda8" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-MANUAL-QUICKSTART",
+      "method": "Run text and JSON validate commands against exact HEAD 7b34282e; both exit 0 with four independent areas, benchmark 0/100, release false, and EXECUTE_EPP_F01_TASKS.",
+      "environment": "Clean Windows committed source; offline; no dashboard write",
+      "duration_ms": 19640,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-SOURCE-MUTATION-AUDIT",
+      "method": "Compare Git status and SHA-256 of program-state.json and dashboard.json before and after manual validation; status remained clean and hashes remained 8df3c6c0... and 7cd405d4... respectively.",
+      "environment": "Clean Windows committed worktree; read-only validation",
+      "duration_ms": 810,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+      ]
+    },
+    {
+      "check_id": "AUTHOR-MYPY",
+      "method": "Attempt ./.venv/Scripts/python.exe -m mypy scripts/program_control; the existing environment has no MyPy module and no dependency was added.",
+      "environment": "Windows local repository environment; dependency changes prohibited",
+      "duration_ms": 840,
+      "result": "skipped",
+      "evidence": []
+    },
+    {
+      "check_id": "AUTHOR-PRE-PUSH-GATE",
+      "method": "Run WRIGHT_DEV_BASE_REF=dev scripts/check-dev-push.ps1 after reading the runbook; wrapper exited 1 after git diff --check because the isolated gate runtime executable was unavailable.",
+      "environment": "Windows host; no dependency/network changes authorized",
+      "duration_ms": 3930,
+      "result": "skipped",
+      "evidence": [
+        { "path": "scripts/check-dev-push.sh", "sha256": "f666e2b357e3ba92149f1d1d047546bef2eb6f96935510a0da10a4cf468e743f" },
+        { "path": "docs/contributing/dev-push-runbook.md", "sha256": "ff9200c762e7766762ff51a5d2e8c050de78c2600291dbd82989e4bffe5e8ed6" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "The first full-suite sandbox run at the implementation start produced permission errors under D:/TEMP; rerun outside the restricted sandbox passed.",
+    "Bash syntax checking and the native pre-push gate could not use the missing/inaccessible local gate runtime; no dependency was installed and the limitation is retained for independent/integration verification."
+  ],
+  "findings": [
+    {
+      "code": "LOCAL_GATE_RUNTIME_UNAVAILABLE",
+      "severity": "medium",
+      "artifact": "scripts/check-dev-push.ps1",
+      "disposition": "Static gate-routing tests, focused suites, and direct Ruff checks pass. T066 must retain this limitation; the real gate remains mandatory before any separately authorized push."
+    },
+    {
+      "code": "MYPY_RUNNER_UNAVAILABLE",
+      "severity": "low",
+      "artifact": "pyproject.toml",
+      "disposition": "No dependency was added. Linux CI and the dev gate include MyPy over scripts/program_control; this must pass before integration."
+    },
+    {
+      "code": "WINDOWS_SYMLINK_CASE_SKIPPED",
+      "severity": "info",
+      "artifact": "tests/program_control_plane/test_git_subject.py",
+      "disposition": "The single unprivileged Windows symlink test remains visible for the independent platform review."
+    }
+  ],
+  "rollback_subject": "git:3c601012f61a4bd09bd826f09feff4c5bb999f64 (US4 evidence checkpoint)",
+  "delivery_relation": null
+}
