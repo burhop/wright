@@ -32,4 +32,5 @@
 ## Notes
 
 - Validation iteration 1 passed all checklist items.
+- Validation iteration 2 rechecked all 16 items after adding evidence-bound historical graphs, benchmark hold/blocker explanation, feature-local task context, separate catalog/benchmark populations, and the two delivery lanes; all items remain passing.
 - The feature is ready for governed clarification or planning, but implementation remains blocked pending a frozen exact planning subject and explicit approval.

@@ -1,12 +1,12 @@
 # Feature Specification: Browser Program Status
 
-**Feature Branch**: `codex/epp-continued-development`
+**Feature Branch**: `codex/epp-continued-development-reconciled`
 
 **Created**: 2026-08-28
 
-**Status**: Draft — planning only; implementation is not yet authorized
+**Status**: Specified — planning only; implementation is not yet authorized
 
-**Input**: User description: "Begin the smallest independently shippable customer-visible Engineering Process Platform capability allowed after frozen EPP-F01 candidate F while preserving one integration lane and one feature-development lane."
+**Input**: User description: "Deliver a browser-visible, evidence-derived program dashboard that lets one developer manage customer value and the AI development process, with meaningful metrics and graphs over committed checkpoints."
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -23,10 +23,29 @@ As a Wright maintainer, I can open one read-only browser page and immediately un
 1. **Given** a validated committed snapshot with four different readiness states, **When** a maintainer opens the overview, **Then** the four areas appear separately in the required order with status text, non-color cues, gate numerators and denominators, freshness, and blockers.
 2. **Given** three passing areas and one non-passing area, **When** the overview is displayed, **Then** release eligibility remains false and the page explains that all required gates and current release approval must pass for one exact candidate.
 3. **Given** benchmark progress of zero qualified processes, **When** the overview is displayed, **Then** the page reports `0/100` honestly and does not imply product, commercial, or program-health readiness.
+4. **Given** the governed benchmark remains at `0/100`, **When** a maintainer opens its primary progress view, **Then** the page states whether qualification is inactive, on hold, blocked, or failing; identifies the blocking dependency or authorization; and shows the next action that can change the count.
+5. **Given** a 100-item proposed customer-story catalog and zero qualified benchmark processes, **When** both are displayed, **Then** the page labels them as separate populations and never presents proposed stories as executed or qualified.
 
 ---
 
-### User Story 2 - Trace a Blocker to Evidence (Priority: P2)
+### User Story 2 - Understand Progress Across Checkpoints (Priority: P2)
+
+As a product-minded solo developer, I can see how customer capability, quality, process automation, governance, readiness, benchmark qualification, and delivery have changed across exact committed checkpoints so that I can identify imbalance and choose the next useful investment.
+
+**Why this priority**: A current-state score alone cannot show whether work is converging on customer value, cycling on governance, or stalled behind one dependency.
+
+**Independent Test**: Open a history fixture spanning specification, implementation, integration, and customer-capability checkpoints; confirm every point has an exact time and commit identity, each series has a defined unit, and the page explains the latest change and next action without using elapsed days as an effort estimate.
+
+**Acceptance Scenarios**:
+
+1. **Given** multiple committed checkpoints, **When** a trend is shown, **Then** its title, unit, time axis, legend, exact checkpoint time and commit, latest change, and decision use are understandable without reading control-plane internals.
+2. **Given** quality and governance checkpoints rise while customer capability remains flat, **When** the history view is opened, **Then** the imbalance is explicit and the page identifies the next customer-value milestone rather than implying the program is nearly complete.
+3. **Given** task completion is high for one bounded feature, **When** task history is shown, **Then** it is labeled as feature-local throughput and is paired with program-level customer, roadmap, readiness, and release context.
+4. **Given** a checkpoint lacks a trustworthy timestamp or source identity, **When** history is rendered, **Then** the point is omitted or labeled unavailable rather than assigned an inferred time or order.
+
+---
+
+### User Story 3 - Trace a Blocker to Evidence (Priority: P3)
 
 As a maintainer investigating a blocked or stale result, I can move from an area to its gate, assertion, exact evidence identity, age, and bounded recovery guidance while the original finding remains visible.
 
@@ -42,7 +61,7 @@ As a maintainer investigating a blocked or stale result, I can move from an area
 
 ---
 
-### User Story 3 - Follow Current Work and the Next Safe Action (Priority: P3)
+### User Story 4 - Follow Current Work and the Next Safe Action (Priority: P4)
 
 As a program coordinator, I can see the current customer milestone, active branch and lease, completed and total feature tasks, lifecycle checkpoints, blockers, and the sole next eligible action so that work stays within the approved WIP limit.
 
@@ -55,10 +74,12 @@ As a program coordinator, I can see the current customer milestone, active branc
 1. **Given** one integration lane and one feature-development lane, **When** the roadmap and work view opens, **Then** each lane's branch, milestone, latest demonstrated capability, blocker, and next action are distinguishable.
 2. **Given** a proposed feature without implementation approval, **When** its status is viewed, **Then** planning progress may be shown but no implementation action is presented as authorized.
 3. **Given** a roadmap dependency or P0 blocker, **When** the maintainer reviews the next action, **Then** the blocker and required authority are shown without inventing an alternative action.
+4. **Given** feature tasks are nearly complete while the wider product program is still early, **When** progress is displayed, **Then** the page distinguishes feature-scope completion from customer-capability, roadmap, and release-gate maturity.
+5. **Given** an integration lane and continued-development lane, **When** their status is displayed, **Then** the integration lane shows its frozen/pushed/PR/CI/dev state and the continued lane shows its customer milestone, demonstrated capability, blocker, and next action without implying shared branch ownership.
 
 ---
 
-### User Story 4 - Stay Oriented During Stale or Failed Refresh (Priority: P4)
+### User Story 5 - Stay Oriented During Stale or Failed Refresh (Priority: P5)
 
 As a maintainer, I retain a clearly labeled last known valid view when new committed evidence cannot be validated, and I can tell whether the page is empty, loading, stale, blocked, failed, unavailable, or current.
 
@@ -86,6 +107,9 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - A refresh is interrupted after validation begins but before all views can be updated.
 - Long identifiers, blocker lists, and evidence descriptions are viewed on a narrow screen or at 200% zoom.
 - Status colors are unavailable, indistinguishable, or motion is disabled.
+- A checkpoint has a commit identity but no trustworthy event or commit time.
+- A nearly complete task list belongs to a narrow control-plane feature while no customer journey is yet demoable.
+- A push or CI event is unavailable, still running, superseded, or associated with a different branch/PR head.
 
 ## Requirements *(mandatory)*
 
@@ -121,12 +145,21 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **FR-028**: Content MUST remain understandable at 200% zoom, on narrow viewports, with reduced motion, and with status colors unavailable.
 - **FR-029**: The page MUST provide usable contrast and programmatically meaningful names, relationships, and status announcements.
 - **FR-030**: The existing general workspace dashboard MUST remain distinct from the program-status page and MUST NOT be treated as satisfying this feature merely because it displays adjacent operational data.
+- **FR-031**: The page MUST provide checkpoint history for customer capability, quality, process automation, governance, the four readiness areas, benchmark qualification, bounded feature tasks, and integration/CI delivery when the validated source contains those observations.
+- **FR-032**: Every historical point MUST bind a defined metric and unit to an exact committed checkpoint identity and trustworthy timestamp; missing identities or timestamps MUST remain visibly unavailable and MUST NOT be inferred.
+- **FR-033**: Every graph MUST state what changed, why the metric matters, its current limitation or blocker, and the next action that can move it; unlabeled sequence numbers and unexplained flat lines are insufficient.
+- **FR-034**: The benchmark progress view MUST be a primary metric and MUST pair `qualified/100` history with the current qualification phase, hold or blocker reason, dependencies, authorization state, and next qualifying action.
+- **FR-035**: Task metrics MUST be scoped to their feature and MUST be displayed alongside customer-capability, roadmap, readiness, and release context so a nearly complete task list cannot imply that the overall product is nearly complete.
+- **FR-036**: The page MUST separately report the proposed customer-story catalog total and definition-maturity counts from the governed qualified benchmark count; proposed stories MUST never be counted as benchmark executions or qualifications.
+- **FR-037**: The integration view MUST show branch, target, frozen candidate, last pushed identity and time, PR identity/link, phase, passing/failing/pending checks, CI age, first actionable failure, dev synchronization, merge-gate state, next action, and a bounded push/CI event history when present.
+- **FR-038**: The continued-development view MUST show its exclusive branch, current customer milestone, latest demonstrated capability, blocker, and next action independently from the integration lane.
+- **FR-039**: The page MUST avoid calendar-duration estimates as a proxy for work and MUST express remaining progress through observable capabilities, gates, dependencies, checkpoints, and evidence.
 
 ### Scope Boundaries
 
 - This feature presents existing validated committed evidence; it does not create, edit, approve, or repair that evidence.
 - This feature does not generate or qualify benchmark cases and does not execute the 100-process benchmark.
-- This feature does not implement the canonical process definition, process execution, authoring, commercial release, or historical trend graphs.
+- This feature does not implement the canonical process definition, process execution, authoring, commercial release, predictive schedules, or hand-authored trend values.
 - This feature does not add remote telemetry, hosted status services, automatic uploads, or manual score controls.
 - Planning artifacts may be created in this lane, but implementation remains blocked until an exact approved planning subject and current implementation lease exist.
 
@@ -139,6 +172,9 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **Work Lane**: A committed record of a branch, current customer milestone, latest demonstrated capability, blocker, lease or authority state, and next action.
 - **Benchmark Progress**: Counted and target qualification populations plus tiers, attempts, deficits, completeness, contamination, and evidence cutoff.
 - **Correction Disclosure**: A correction profile and its exact claim counts, original findings, resolutions, authority, and verification subject.
+- **Checkpoint Observation**: An immutable metric value with a declared unit, exact commit/evidence identity, trustworthy timestamp, source classification, and optional change explanation.
+- **Customer Story Catalog Summary**: Derived counts of proposed stories by definition maturity, kept categorically separate from benchmark qualification.
+- **Delivery Lane Status**: A read-only integration/CI or continued-development projection with exclusive branch ownership, current phase, evidence, blocker, and next action.
 
 ## Success Criteria *(mandatory)*
 
@@ -152,13 +188,18 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **SC-006**: A newly available validated committed identity is reflected consistently across all views within 10 seconds, while an unchanged identity produces no authoritative-content change.
 - **SC-007**: Security and privacy inspection finds zero raw prompts, engineering payloads, artifact bodies, credentials, private endpoints, raw logs, command arguments, reusable authority, or unapproved absolute paths in the page or its support-safe diagnostics.
 - **SC-008**: Verification confirms that no page interaction or refresh can mutate program evidence, authorize a transition, launch product or benchmark work, publish, integrate, or release.
+- **SC-009**: In usability verification, at least 90% of representative maintainers correctly explain what each displayed graph measures, the latest material change, the current blocker, and one actionable next step within three minutes.
+- **SC-010**: Across the history fixture set, 100% of plotted points retain their exact committed identity, trustworthy timestamp, metric unit, and source classification; no point is ordered or dated by an invented value.
+- **SC-011**: In 100% of fixtures where a bounded feature is at least 90% task-complete but the product program is not customer-ready, the page clearly reports the feature-local scope and does not present the program as nearly complete.
+- **SC-012**: Across catalog and benchmark fixtures, the page always preserves `100 proposed` and `0/100 qualified` as distinct labeled populations until governed qualification evidence changes the latter.
 
 ## Assumptions
 
 - EPP-F01 integrates before EPP-F01B implementation begins and supplies the validated committed snapshot and independent delivery identity this page projects.
-- Candidate F commit `3a7e5d605b37f85e2866776b69e7763f1d947068` is an immutable planning base; continuation commits are transplanted onto then-current `origin/dev` after branch `077-control-plane-validator` merges, followed by diff verification and normal gates.
+- EPP-F01 is integrated on `dev` at commit `b776b1182d5b6ee41364eb40b1bc95bf4eff797c` with tree `f22f61791a2385723934558d8557881862221eb1`; EPP-F01B planning is based on that immutable integrated result plus the separately verified continuation artifacts.
 - The initial audience is a local Wright maintainer who already has authorized access to the repository and existing Wright browser workspace.
 - The validated source remains the sole authority for vocabulary, ordering, counts, evidence identities, freshness, blockers, corrections, next action, and release eligibility.
 - Safe evidence references resolve within the local, authorized repository context; external browsing and automatic upload are not required.
 - Existing Wright navigation and design conventions may provide entry and visual consistency, but the program-status purpose and data authority remain distinct from the general workspace dashboard.
 - Planning, clarification, design, tasks, and analysis remain separate governed phases; no implementation code is permitted from this draft alone.
+- Historical graphs are derived only from committed checkpoint observations with trustworthy times; they are descriptive evidence, never schedules or token-to-time forecasts.
