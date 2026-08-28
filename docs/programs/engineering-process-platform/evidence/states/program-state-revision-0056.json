@@ -1,0 +1,110 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 56,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {
+    "ref": "dev",
+    "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "tree": "e6a7553036a505003a959eebd0efd3e1683c431a",
+    "observed_clean": true
+  },
+  "prototype_evidence": {
+    "branch": "076-engineering-workflow-prototype",
+    "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d",
+    "remote_matches": true,
+    "registered_worktree": false,
+    "mode": "read_only_evidence",
+    "uncommitted_evidence_status": "none_detected"
+  },
+  "control_plane": {
+    "root": "docs/programs/engineering-process-platform",
+    "candidate_subject_resolution": "V9 implementation is frozen at commit 64914e8a52cc34685fb249280dd507df5e69e8aa, tree 4736bae1c2bacf4976709553ba39ab84b07ace35 and program tree 1c1589cc57bad540b8ab72ca9f7b3e9b1c9deb0e; EPP-F01-V9.json records terminal evidence. No next implementation subject is frozen.",
+    "schema_status": "passed",
+    "audit_status": "passed"
+  },
+  "current_feature": "EPP-F01",
+  "active_mutating_lease": null,
+  "last_transition": "TR-0055",
+  "readiness": {
+    "product": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No product child feature is implemented or implementation-approved",
+        "The browser-accessible program-status page is unimplemented and assigned to proposed EPP-F01B"
+      ]
+    },
+    "benchmark": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No 100-process collection has been generated or qualified",
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ]
+    },
+    "commercial": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "DEC-P0-001",
+        "DEC-P0-004",
+        "DEC-P0-006",
+        "DEC-P0-011",
+        "DEC-P0-012",
+        "Repository external controls remain evidence requirements"
+      ]
+    },
+    "program_health": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "V9 T077-T080 completed and passed bounded independent verification; lease revision 13 is closed and non-replayable.",
+        "The exact two V9 findings resolve without changing readiness, 34 gates, benchmark 0/100, authority, candidate, delivery, dashboard or release eligibility.",
+        "Incomplete T073 work is preserved only in local stash bf05abcc37236d030fbcd08830a9d065703b9a46 (base 9f30322859e8039863b47cdcb0e4c8f29354c9dc; one file, 286 insertions), outside V9; its absence does not block V9 and it must not be recreated or applied under V9 authority.",
+        "The separate roadmap-policy inversion test remains excluded and keeps T066 ineligible.",
+        "T066-T068 remain ineligible; the separately recorded roadmap-policy test defect requires its later bounded disposition.",
+        "The checked-in dashboard remains candidate_not_evidence; T067 and T068 remain unauthorized.",
+        "RISK-021 and RISK-022 prevent V8/V9 from widening policy, inferring schemas, tolerating generic manifest defects, or changing lifecycle, authority, readiness, benchmark, candidate, delivery or release results.",
+        "RISK-017: EPP-F01B browser program-status implementation remains future and separately gated."
+      ]
+    }
+  },
+  "open_p0_decisions": [
+    "DEC-P0-001",
+    "DEC-P0-002",
+    "DEC-P0-003",
+    "DEC-P0-004",
+    "DEC-P0-005",
+    "DEC-P0-006",
+    "DEC-P0-007",
+    "DEC-P0-008",
+    "DEC-P0-009",
+    "DEC-P0-010",
+    "DEC-P0-011",
+    "DEC-P0-012"
+  ],
+  "next_eligible_actions": [
+    {
+      "action": "APPROVE_EPP_F01_NEXT_BOUNDED_LEASE",
+      "roadmap_item": "EPP-F01",
+      "requires_human_approval": true,
+      "reason": "V9 authority is consumed. A human must select and approve any later bounded EPP-F01 repair, resumption or delivery scope; no next subject or lease is inferred."
+    }
+  ],
+  "approval": {
+    "status": "stale",
+    "record": "evidence/approvals/APR-EPP-F01-MC-009.json",
+    "required_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ]
+  },
+  "feature_state": "BLOCKED",
+  "policy_version": "EPP-LIFECYCLE-1"
+}

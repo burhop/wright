@@ -1,0 +1,28 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "1.0",
+  "approval_id": "APR-EPP-F01-AMEND-PLANNING-001",
+  "program_id": "EPP-2026",
+  "decision": "approved_with_conditions",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "fedc2b439511780264a1897d326dc7a64560514b",
+    "git_tree": "659b36ba298285e81260dfe0e87a1ffbc09cb261",
+    "program_tree": "eecae625813b52a131c1f033368a6e39ce898766",
+    "artifact_digests": [
+      { "path": "evidence/audits/2026-08-27-epp-f01-material-contract-audit.md", "sha256": "5ca57c62ebbffb16158502bdafb3dee7684bdf964daf4c40f845c435447242c4" },
+      { "path": "evidence/transitions/TR-0017.json", "sha256": "d64ce99a90a2f084cecb5d011142b146fb4474bd4f597d2665fa71cb0db7ea08" },
+      { "path": "program-state.json", "sha256": "68be520040541eb3949349dd038a8caa96ce3bf5363d39e406d0a4f82ffdfeb8" },
+      { "path": "decision-register.json", "sha256": "63652cd8bac65019de9ec71f6eea253e85f060a27eff725fc2a2fdbd13c65c16" }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T01:50:48Z",
+  "expires_at": null,
+  "revoked": false,
+  "conditions": [
+    "Authorize only planning-document and program-control-evidence amendments for DEC-P0-013 and DEC-P0-014, bounded read-only audits, Spec Kit analysis, repairs within the existing allowance, and freezing a new exact approval subject.",
+    "Do not resume implementation, execute any task checkbox, add or upgrade dependencies, execute product or benchmark systems, or make network/external mutations.",
+    "Do not push, open or merge a PR, integrate to dev, publish, or release; stop for replacement exact material_change and feature_implementation approvals."
+  ]
+}

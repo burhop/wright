@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -41,10 +43,10 @@ jobs:
         run: uv sync --all-packages --all-groups --reinstall-package wright-engineering
 
       - name: Lint with Ruff
-        run: uv run ruff check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+        run: uv run ruff check scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Check Formatting with Ruff
-        run: uv run ruff format --check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+        run: uv run ruff format --check scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Lint and package-test optional Hermes integration
         run: |
@@ -55,7 +57,7 @@ jobs:
       - name: Type Check with mypy
         run: |
           uv pip install mypy
-          uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
+          uv run mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
           uv run mypy apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
 
       - name: Validate Python package distributions
@@ -68,6 +70,7 @@ jobs:
 
       - name: Run Tests with pytest
         run: |
+          uv run --extra runtime python -m pytest -q tests/program_control_plane
           uv run python -m pytest -q tests/native_runtime tests/release/test_native_workflow_policy.py
           for python_suite in \
             apps/api/tests \
@@ -76,10 +79,12 @@ jobs:
             packages/data_vault/tests \
             packages/model_registry/tests \
             packages/tool_registry/tests \
-            packages/workspace_service/tests \
-            tests; do
+            packages/workspace_service/tests; do
             uv run --extra runtime --extra engineering-models python -m pytest -q "$python_suite"
           done
+          uv run --extra runtime --extra engineering-models python -m pytest -q tests \
+            --ignore=tests/program_control_plane \
+            --ignore=tests/native_runtime
 
       - name: Enforce ratcheted release-code coverage
         run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85

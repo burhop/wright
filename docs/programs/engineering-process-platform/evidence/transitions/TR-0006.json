@@ -1,0 +1,124 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0006",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "WORKTREE_ALLOCATED",
+  "to_state": "WORKTREE_ALLOCATED",
+  "prior_revision": 6,
+  "new_revision": 7,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+  "new_state_digest": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the rejected first specification outline, discard its unaccepted artifacts, and repair the planning lease to allow Spec Kit's independently numbered feature directory without rerunning the branch hook.",
+  "started_at": "2026-08-26T23:38:00Z",
+  "finished_at": "2026-08-26T23:43:00Z",
+  "duration_ms": 300000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "10a544734f9ac7edcd1a0a3fe10f6f1d1a0e1a0a",
+    "head_after": "10a544734f9ac7edcd1a0a3fe10f6f1d1a0e1a0a",
+    "tree_after": null,
+    "worktree_clean_before": false,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0006.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0006.json",
+      "sha256": "f86cc305a36d0f935ff3fc0227b2d77b7683fe74d502955c3e8f24f13d9217e1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0005.json",
+      "sha256": "22225aebee2ce25f2407c07736f48caf710c56f7fa2625273f9648dc4ce8fd2f",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-2026-001.json",
+      "sha256": "072c23eb9db41d23adb1b1a914dda43050822a6a7c6eef1a265cac39c5ba3e27",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "2e69af63a803b357234986209e7d29dbd33732cc08f8363838150167f17e713b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a12a5c0ef20e64210e4730a6725d245b35b0dab669b1414f4dfb32ea786cd73e",
+      "schema_version": null
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "SPECIFY-ATTEMPT-001-RECORDED",
+      "command_or_method": "Confirm the first outline targeted specs/076-control-plane-validator while lease revision 1 allowed only specs/077-control-plane-validator; stop before acceptance and classify stable cause EPP-F01-LEASE-PATH-001",
+      "environment": "isolated feature worktree",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0006.json", "agent-operating-contract.md"]
+    },
+    {
+      "check_id": "UNACCEPTED-ARTIFACT-REMOVAL",
+      "command_or_method": "Remove the newly created untracked spec and checklist and restore .specify/feature.json to its accepted pre-attempt content; preserve the already allocated branch",
+      "environment": "isolated feature worktree",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json"]
+    },
+    {
+      "check_id": "LEASE-PATH-REPAIR",
+      "command_or_method": "Advance the lease to revision 2 and replace the incorrect branch-derived path with specs/076-control-plane-validator/**; retain all other planning-only restrictions and expiry",
+      "environment": "planning control plane",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "coordinator-state-machine.md"]
+    },
+    {
+      "check_id": "BRANCH-HOOK-NONREPETITION",
+      "command_or_method": "Verify the worktree remains on 077-control-plane-validator and no second speckit-git-feature invocation occurred or is authorized",
+      "environment": "local Git worktree",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/transitions/TR-0005.json", ".specify/extensions.yml"]
+    },
+    {
+      "check_id": "STATE-REPAIR-TRANSITION",
+      "command_or_method": "Validate revision 6 to 7 increment, unchanged WORKTREE_ALLOCATED child state, canonical/raw state digests, lease revision increment, repair allowance, and specification-only next action",
+      "environment": "Windows PowerShell; Python jsonschema Draft 2020-12",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0006.json", "program-state.json"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-LEASE-PATH-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0006.json",
+  "next_action": "SPECIFY_EPP_F01_WITHOUT_BRANCH_HOOK"
+}

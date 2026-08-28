@@ -1,0 +1,180 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0054",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "approval_checkpoint",
+  "from_state": "BLOCKED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 54,
+  "new_revision": 55,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "f643f792aac8d82ff00d2355f3f7fdc70f9160f36e63de60c91cdabee41d18cb",
+  "new_state_digest": "39e064bad9d0a0cb95e6ae4a66006000e86d921be969df418b7306f0a79bf1c0",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the user's exact V9 same-subject material-change and feature-implementation approval, decide DEC-P0-020, activate bounded lease revision 13 for only local T077 through T080, preserve all four readiness statuses, and retain every excluded action.",
+  "started_at": "2026-08-28T12:15:45Z",
+  "finished_at": "2026-08-28T12:21:24Z",
+  "duration_ms": 339000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "d96e8b68c9fda08eea84065186452581727ec4fa",
+    "source_tree": "d16d81afaabac73e4374ecb186089cb0a95dd1bc",
+    "source_program_tree": "ee2fbf3b1a15920701289a083431f0afd41ed4ec",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0020-closed-v9-preflight-evidence-correction.md",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-009.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-009.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0055.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0054.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0054.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0054.json",
+      "sha256": "7d1dcb73c8f1f8795a1467df6eb77e07307129de7fdda90b87dc26b3e27fec24",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0053.json",
+      "sha256": "371fcfb03fc40e580f2dfec774451372fcd913dceb625b94577b9946eb55ed51",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {"path": "README.md", "sha256": "bb04b1094565e2c38e382001a479c68f4c4a41d6ffea97d3a24f9d74d2db8a9b", "schema_version": null, "role": "immutable_policy"},
+    {"path": "approval.md", "sha256": "24f1dd9b549301bab79286b22d44a507fa6dc72d9452ae620acaa19a2a1d9aee", "schema_version": null, "role": "immutable_policy"},
+    {"path": "decision-register.json", "sha256": "04e626056e11be730eef664940ece9bdf570650b4a2d86a4ddc4a5b3e4cf4834", "schema_version": "1.0", "role": "immutable_policy"},
+    {"path": "decisions/0020-closed-v9-preflight-evidence-correction.md", "sha256": "68ea5819a2c473fd4aec26efc08cef8c091741982d05807788759dec9f814c18", "schema_version": null, "role": "immutable_policy"},
+    {"path": "evidence/approvals/APR-EPP-F01-IMPL-009.json", "sha256": "dda0972b8a13fa3fad63655698bfefbab54aa77aca054f7200c13dc730023575", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/approvals/APR-EPP-F01-MC-009.json", "sha256": "aef627acfda197661c96a8e15eabb7082a6ee74c2912332cf7ed1e3bb90565ee", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/states/program-state-revision-0055.json", "sha256": "bbc9b73af4734c184ed7e5823b3620dc3e9f6b450441d2d3c03afe488f11d7d3", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "bbc9b73af4734c184ed7e5823b3620dc3e9f6b450441d2d3c03afe488f11d7d3", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "f21c5670c168459a0be9ca8dac2c5b05b1404a69e9f6bdd32a80efd4a1dcbcfe", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "128b5728184a801ddc1de255fe8f0a2ede305ba0700d6a5d09af3ebed67c9ee3", "schema_version": null, "role": "feature_contract"}
+  ],
+  "checks": [
+    {
+      "check_id": "V9-EXACT-SUBJECT-APPROVAL",
+      "method": "Require two same-bundle approved-with-conditions records for material_change and feature_implementation, exact commit/tree/program tree and the exact ordered 31-output TR-0053 manifest.",
+      "environment": "Local read-only Git-object and Draft 2020-12 validation; offline",
+      "duration_ms": 2100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-009.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-009.json",
+        "evidence/transitions/TR-0053.json"
+      ]
+    },
+    {
+      "check_id": "DEC-P0-020-ACCEPTED",
+      "method": "Bind approval to exactly the immutable V8 discovery schema-reference claim and the immutable TR-0051 complete-set/self-path-order claim without generic inference or waiver.",
+      "environment": "Exact approval text, decision record and correction profile",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "decisions/0020-closed-v9-preflight-evidence-correction.md",
+        "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json"
+      ]
+    },
+    {
+      "check_id": "READINESS-UNCHANGED",
+      "method": "Compare revision 54 and revision 55 and require product not_started, benchmark not_started, commercial blocked and program_health blocked without any readiness promotion.",
+      "environment": "Immutable state snapshots and exact user authorization",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0054.json",
+        "evidence/states/program-state-revision-0055.json"
+      ]
+    },
+    {
+      "check_id": "LEASE-REVISION-13",
+      "method": "Require branch 077-control-plane-validator, worktree epp-f01, local-only allowlist, stable cause EPP-F01-V9-PREFLIGHT-001, two bounded repairs and T077-T080 ordering.",
+      "environment": "Program state, task contract and V9 approval conditions",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "EXCLUSIONS-PRESERVED",
+      "method": "Confirm T073-T076, the roadmap-policy repair, T066-T068, EPP-F01B implementation, dependencies, benchmarks, external changes, push, PR, merge, dev integration, publication and release remain unauthorized.",
+      "environment": "Approval bundle, state, roadmap and diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "roadmap.json",
+        "program-state.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "subject": {
+      "git_commit": "d96e8b68c9fda08eea84065186452581727ec4fa",
+      "git_tree": "d16d81afaabac73e4374ecb186089cb0a95dd1bc",
+      "program_tree": "ee2fbf3b1a15920701289a083431f0afd41ed4ec",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0053"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-V9-PREFLIGHT-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "T077 must demonstrate the exact failing V9 matrix before T078 changes validator recognition.",
+    "T073-T076, the roadmap-policy inversion defect and T066-T068 remain outside this lease.",
+    "Every action excluded by the V9 approval remains blocked."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0054.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

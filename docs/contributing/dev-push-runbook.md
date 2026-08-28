@@ -52,6 +52,21 @@ the environment-variable override instead of surfacing after the test matrix.
 The fast browser slice is a Chromium smoke; the full merge gate retains
 cross-browser coverage.
 
+Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
+
+```text
+uv run --extra runtime python -m pytest -q tests/program_control_plane
+```
+
+The corresponding Ruff and format checks cover the entrypoint, package, and focused tests. No gate copies validator semantics; all invoke the same committed implementation and tests.
+
+The Linux quality job and Windows backend job fetch full Git history because the
+program-control tests verify immutable historical objects. After their focused
+program-control and native-runtime runs, their broad `tests` pass excludes those
+two already-executed roots. The workflow-policy test selected by the fast gate
+enforces both requirements so CI does not silently fall back to shallow history
+or duplicate pytest collection.
+
 ## Before merge to dev
 
 1. Fetch `origin/dev` and resolve integration drift on the feature branch.

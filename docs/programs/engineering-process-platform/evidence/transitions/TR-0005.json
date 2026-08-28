@@ -1,0 +1,134 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0005",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "SELECTING_FEATURE",
+  "to_state": "PROGRAM_ACTIVE",
+  "prior_revision": 5,
+  "new_revision": 6,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+  "new_state_digest": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Allocate the isolated EPP-F01 worktree, capture the single mandatory Spec Kit branch hook result, and acquire the singleton planning-only lease.",
+  "started_at": "2026-08-26T23:33:43Z",
+  "finished_at": "2026-08-26T23:35:30Z",
+  "duration_ms": 107000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "87bbffade9cef3033d6212b2f9d3bb28f16ccbeb",
+    "head_after": "87bbffade9cef3033d6212b2f9d3bb28f16ccbeb",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": []
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0005.json",
+      "sha256": "5189f2defedab9fe7eb524b9117479d8ba150f2b15d9a664b67561778c178259",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-2026-001.json",
+      "sha256": "072c23eb9db41d23adb1b1a914dda43050822a6a7c6eef1a265cac39c5ba3e27",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "f86cc305a36d0f935ff3fc0227b2d77b7683fe74d502955c3e8f24f13d9217e1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "4724ace51f71f5bc613668e9c8139d1ab55eb5a4686c4e107121fba308be5dfd",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b2f8a788b3342a1e9b9d0df48204a8fbd7638621a97ce0a66386f497cdad5121",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "eaca678ab4d2701782636267bc72041e845e56135add0780d12770d1d48e1435",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "ISOLATED-CLEAN-WORKTREE",
+      "command_or_method": "git worktree add --detach D:/repos/wright-epp-worktrees/epp-f01 87bbffade9cef3033d6212b2f9d3bb28f16ccbeb; verify clean status before allocation",
+      "environment": "local Git worktree; no merge, push, or prototype mutation",
+      "duration_ms": 5500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "agent-operating-contract.md"]
+    },
+    {
+      "check_id": "EXACT-DEV-DERIVATION",
+      "command_or_method": "Confirm local dev and origin/dev both resolve to ad162cca048ad23d848673ec4f49f588dcc77aff and are the merge-base of the approved overlay and feature branch",
+      "environment": "local Git refs after the branch hook read-only numbering check",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "evidence/transitions/TR-0004.json"]
+    },
+    {
+      "check_id": "SPECKIT-BRANCH-ALLOCATION",
+      "command_or_method": "Single mandatory before_specify hook result: {\"BRANCH_NAME\":\"077-control-plane-validator\",\"FEATURE_NUM\":\"077\",\"HAS_GIT\":true}",
+      "environment": "PowerShell Spec Kit git extension; exactly one invocation",
+      "duration_ms": 35500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/extensions.yml", ".specify/extensions/git/git-config.yml", "program-state.json"]
+    },
+    {
+      "check_id": "SINGLETON-LEASE",
+      "command_or_method": "Require no prior active lease; acquire lease revision 1 for EPP-F01 with planning-only paths, 12-hour expiry, and one feature owner",
+      "environment": "isolated feature worktree",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0005.json", "program-state.json", "agent-operating-contract.md"]
+    },
+    {
+      "check_id": "COMMITTED-BYTE-DIGEST-POLICY",
+      "command_or_method": "Use exact committed Git blob bytes for committed-artifact SHA-256 validation; Windows checkout CRLF conversion is not a change to the committed subject and must be surfaced separately from content mismatch",
+      "environment": "Windows core.autocrlf=true; Git object database",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["coordinator-state-machine.md", "status-dashboard-contract.md"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 5 to 6 increment, legal SELECTING_FEATURE to PROGRAM_ACTIVE edge, child WORKTREE_ALLOCATED evidence, canonical state digests, and planning-only next action",
+      "environment": "Windows PowerShell; Python jsonschema Draft 2020-12",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0005.json", "program-state.json", "roadmap.json"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0005.json",
+  "next_action": "SPECIFY_EPP_F01"
+}

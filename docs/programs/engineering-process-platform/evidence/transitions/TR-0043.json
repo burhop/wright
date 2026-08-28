@@ -1,0 +1,155 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0043",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 43,
+  "new_revision": 44,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "d9e9cb4432ef4b14e6204f4e6c3e459e855fc63d68ac7e39074bc8b5c4126e27",
+  "new_state_digest": "59d00a84174a954fc609af7dc37a2c2e1a61c85e50c8abb2f2d95d9d04c9bcf9",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Bounded repair attempt 1 for STALE_CANDIDATE_CHECK_DIGEST: preserve candidate R and the original freeze record, append one supplement binding the stale nested check link to R's exact test blob, and return the unchanged candidate to the distinct verifier.",
+  "started_at": "2026-08-27T22:25:10Z",
+  "finished_at": "2026-08-27T22:30:24Z",
+  "duration_ms": 314000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "c182e573b59ca35711c83ae23a83073869c509c5",
+    "source_tree": "32ae805fca7379416f9f9a1e45f9c11343309879",
+    "source_program_tree": "583750f1aa86d57bcd1f0473404d4f23aa25a294",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0044.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0043.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate-link-repair.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0043.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0043.json",
+      "sha256": "68f430ec6eebedc55c2c4360c5ecda180cfd0a518775de5388f152288af2ff36",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0042.json",
+      "sha256": "6a14d1f3de6c09f1929b5f462ba45b291fd5d98e911a92686b481d8e90802630",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-candidate.json",
+      "sha256": "88b99f9020233c8d94cce601f173e13a080ae06d962939c33fe42cb3fe5bd2c0",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0044.json",
+      "sha256": "ff9db3aaf6f55ca63d3551f1b3257416e73a52d12f6635501e7c5f8aef11823d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "ff9db3aaf6f55ca63d3551f1b3257416e73a52d12f6635501e7c5f8aef11823d",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-candidate-link-repair.json",
+      "sha256": "b52a8330fc74a024d2aae9674b33436dee1a836e0ce46df08c6fe8ef69a65e53",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "INDEPENDENT-ORIGINAL-FINDING",
+      "method": "Distinct verifier recomputed 16/16 authoritative candidate-manifest digests and found exactly one stale nested check link for test_evidence_walkthrough.py: declared 4f6210..., exact R blob a951c4....",
+      "environment": "Independent read-only Git-object audit; no edits",
+      "duration_ms": 220,
+      "result": "failed",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "evidence/verification/EPP-F01-candidate.json"
+      ]
+    },
+    {
+      "check_id": "APPEND-ONLY-ONE-LINK-REPAIR",
+      "method": "Add one supplement with exact R commit, tree, original candidate record digest and correct a951c423... test digest; preserve original bytes, candidate implementation, authority, readiness and acceptance envelope.",
+      "environment": "Local evidence-only diff; offline",
+      "duration_ms": 310,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-candidate-link-repair.json"
+      ]
+    },
+    {
+      "check_id": "REPAIR-SCOPE",
+      "method": "Require only operational state, one state snapshot, one transition and one candidate supplement; candidate R e5a2ade9 remains unchanged and no dependencies, benchmark, product, external or Git integration actions occur.",
+      "environment": "Local Git diff and exact candidate identity",
+      "duration_ms": 180,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "evidence/transitions/TR-0043.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "agent:/root/epp_f01_gate_gap",
+  "repair": {
+    "stable_cause_id": "STALE_CANDIDATE_CHECK_DIGEST",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0043.json",
+  "next_action": "VERIFY_EPP_F01_CANDIDATE"
+}

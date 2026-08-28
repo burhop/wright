@@ -1,0 +1,121 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-T072-BLOCKED-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "author",
+  "subject": {
+    "git_commit": "6a5363c8d7f04c27fe745df415d4e68de2304fad",
+    "git_tree": "117223a5532901d00b0bce85eb964e8ebdbee25e",
+    "artifact_digests": [
+      {"path": "scripts/program_control/validation.py", "sha256": "ebf9d69a27f31774b864bcf9acefabf40557b4ec88f7f9e7ffbb6fb1c86b7dad"},
+      {"path": "scripts/program_control/git_subject.py", "sha256": "523c95a8eaca80bcaf50b71692af8565209ced5694fc504a9990fea6218198dd"},
+      {"path": "scripts/program_control/json_contracts.py", "sha256": "aadcaa8efad1ebafee17938fc1dbd4376104ab4c342868862a5d924a0df9e582"},
+      {"path": "tests/program_control_plane/test_transition_chain.py", "sha256": "3db5350136bd368878cbb8a5b598baceadddea5f46d6b3d2af80f544dd49bafa"},
+      {"path": "tests/program_control_plane/test_cli.py", "sha256": "390ac236af81fe2ac0655397409a01e0f2e7cb2284af89ca67bb680aded86b69"}
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T23:57:35Z",
+  "verdict": "blocked",
+  "checks": [
+    {
+      "check_id": "T072-EXACT-CORRECTION-PROFILE",
+      "method": "Run the exact V7 positive and negative matrix, including live Git tamper and correction-off/on projection equality for honest 0/100 and non-empty synthetic benchmark inputs.",
+      "environment": "Windows local; offline; committed Git subject",
+      "duration_ms": 12100,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_transition_chain.py", "sha256": "3db5350136bd368878cbb8a5b598baceadddea5f46d6b3d2af80f544dd49bafa"},
+        {"path": "tests/program_control_plane/test_cli.py", "sha256": "390ac236af81fe2ac0655397409a01e0f2e7cb2284af89ca67bb680aded86b69"}
+      ]
+    },
+    {
+      "check_id": "T072-STATIC-QUALITY",
+      "method": "Run Ruff lint and format checks over the changed validator and tests.",
+      "environment": "Windows local; offline",
+      "duration_ms": 3200,
+      "result": "passed",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "ebf9d69a27f31774b864bcf9acefabf40557b4ec88f7f9e7ffbb6fb1c86b7dad"}
+      ]
+    },
+    {
+      "check_id": "T072-EXACT-SUBJECT-VALIDATION",
+      "method": "Validate committed HEAD 6a5363c8 and require a passing exact subject before replacement candidate freeze.",
+      "environment": "Windows local; read-only Git objects; offline",
+      "duration_ms": 10100,
+      "result": "failed",
+      "evidence": [
+        {"path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json", "sha256": "18370590f454d1ee2144e0c5be1f8d260520884ae0b47acbf868f5b1d129bbde"},
+        {"path": "docs/programs/engineering-process-platform/gate-evidence.json", "sha256": "e976ad9c8ec32f7489ccac74d2c49375af1653807fcc48a326cd6baeac6fd09f"}
+      ]
+    },
+    {
+      "check_id": "T072-FULL-REGRESSION",
+      "method": "Run the complete program-control suite with a writable isolated base temp; 211 passed, one declared platform skip, and two contract tests failed.",
+      "environment": "Windows local; D:/repos/wright/.tmp-epp-f01-t072-full-2345; offline",
+      "duration_ms": 173050,
+      "result": "failed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "a951c423279c4b0082b88782c33f870a589f652d875285a3daeb86aafc1f610c"}
+      ]
+    },
+    {
+      "check_id": "T072-SOURCE-MUTATION-AUDIT",
+      "method": "Verify HEAD, tree and program tree, confirm the feature worktree was clean before this stop evidence, and independently recompute the three fatal validator findings.",
+      "environment": "Primary plus bounded independent read-only audit; offline",
+      "duration_ms": 8400,
+      "result": "passed",
+      "evidence": [
+        {"path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json", "sha256": "18370590f454d1ee2144e0c5be1f8d260520884ae0b47acbf868f5b1d129bbde"}
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "TR-0047#/outputs/0/sha256",
+    "TR-0047#/outputs/1/sha256",
+    "gate-evidence.json#/catalog_digest",
+    "tests/program_control_plane/test_evidence_walkthrough.py::test_readme_directly_links_current_subject_authority_and_start",
+    "tests/program_control_plane/test_evidence_walkthrough.py::test_report_and_dashboard_evidence_links_resolve_with_exact_digests"
+  ],
+  "findings": [
+    {
+      "code": "TR0047_README_COMMITTED_DIGEST_MISMATCH",
+      "severity": "critical",
+      "artifact": "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json#/outputs/0/sha256",
+      "disposition": "Unresolved. Preserve TR-0047; V7 does not authorize a new transition claim. Stop for bounded planning and exact material-change authority."
+    },
+    {
+      "code": "TR0047_APPROVAL_COMMITTED_DIGEST_MISMATCH",
+      "severity": "critical",
+      "artifact": "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json#/outputs/1/sha256",
+      "disposition": "Unresolved. Preserve TR-0047; V7 does not authorize a new transition claim. Stop for bounded planning and exact material-change authority."
+    },
+    {
+      "code": "GATE_CATALOG_DIGEST_MISMATCH",
+      "severity": "high",
+      "artifact": "docs/programs/engineering-process-platform/gate-evidence.json#/catalog_digest",
+      "disposition": "Unresolved. The evidence retains the pre-V7 catalog digest; do not refresh it while the material TR-0047 blockers remain outside authority."
+    },
+    {
+      "code": "README_CATCHUP_TEST_STALE",
+      "severity": "medium",
+      "artifact": "tests/program_control_plane/test_evidence_walkthrough.py::test_readme_directly_links_current_subject_authority_and_start",
+      "disposition": "Unresolved. The test still expects the historical T057 instruction and is outside the exact T071 correction."
+    },
+    {
+      "code": "GATE_FINDING_ARTIFACT_PATH_NOT_ROOTED",
+      "severity": "high",
+      "artifact": "tests/program_control_plane/test_evidence_walkthrough.py::test_report_and_dashboard_evidence_links_resolve_with_exact_digests",
+      "disposition": "Unresolved. The fatal gate finding reports gate-catalog.json without its program-root prefix; repair requires separate authority."
+    }
+  ],
+  "rollback_subject": "6a5363c8d7f04c27fe745df415d4e68de2304fad",
+  "delivery_relation": null
+}

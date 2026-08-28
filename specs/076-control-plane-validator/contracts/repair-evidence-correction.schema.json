@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
+  "title": "Closed EPP-F01 Repair Evidence Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "correction_id", "program_id", "feature_id", "stable_cause_id", "source_checkpoint", "accept_new_records", "expected_claim_count", "claims", "forbidden_target_classes", "resolution_semantics", "unchanged_projection_fields", "authority", "discovery_evidence"],
+  "properties": {
+    "$schema": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0"},
+    "correction_id": {"const": "COR-EPP-F01-REPAIR-EVIDENCE-001"},
+    "program_id": {"const": "EPP-2026"},
+    "feature_id": {"const": "EPP-F01"},
+    "stable_cause_id": {"const": "EPP-F01-REPAIR-EVIDENCE-001"},
+    "source_checkpoint": {"const": {"git_commit": "b61b069c6a68688193a60c7f39d9f2b8044027bf", "git_tree": "3b06b5c8412b7ad006a69499f1b94515bc9f4db4", "program_tree": "2d5681ac6f152bd90e1977dd37501000657a1b7a"}},
+    "accept_new_records": {"const": false},
+    "expected_claim_count": {"const": 2},
+    "claims": {"const": [{"claim_id":"REPAIR-CAUSE-ID-001","classification":"invalid_identifier_spelling","recorded_value":"CANDIDATE_RUFF_FORMAT_DRIFT","authoritative_value":"CANDIDATE-RUFF-FORMAT-DRIFT","expected_occurrence_count":2,"occurrences":[{"path":"docs/programs/engineering-process-platform/evidence/states/program-state-revision-0045.json","json_pointer":"/active_mutating_lease/recovery/active_cause_id","raw_sha256":"d91e36e153df66aee730b4cc6a16c36079bec1a9add6c21fc2079cff37f02313","git_blob":"2c8847c90e592315c71a6839843f91f6b07a122e","introducing_commit":"8daa38ce0240ea17d590841c0b610c64161bf9d1","introducing_tree":"06d536e0be1b9622bcc3d124e262fad738ae9cb0","canonical_state_digest":"8685b8074ceb3a2047072e28464200daa9913cd633707cfdc8af42e4479ab1ad"},{"path":"docs/programs/engineering-process-platform/evidence/states/program-state-revision-0046.json","json_pointer":"/active_mutating_lease/recovery/active_cause_id","raw_sha256":"61da3dc822c5c6c18a544fc684f923e060f172da8a29b72e60e5b4798ca1a6ac","git_blob":"ffce68e83becf447e3fe4c4108e30872c562424f","introducing_commit":"4ab291871d78b13c53f59f2650ca1a42b9d17399","introducing_tree":"c356f198a533faf3637853ee8a6b4d9706f573e0","canonical_state_digest":"1a05372edce58a11a7ea416774c207cbbfd6ad946d923083b7ac22fbce8487d8"}],"verification":{"exact_occurrence_set":true,"schema_violation_only":true,"successor_state_must_not_repeat_value":true}},{"claim_id":"TR0044-INPUT-DIGEST-001","classification":"truncated_sha256","transition_path":"docs/programs/engineering-process-platform/evidence/transitions/TR-0044.json","transition_raw_sha256":"b61c8aba74032a267b4d95ffd9d55cd9d5b120c1c6fa4e15e633ef14d1540604","transition_git_blob":"71dcffedc15d1fdbdb9d20fa5936e23751f41574","introducing_commit":"8daa38ce0240ea17d590841c0b610c64161bf9d1","introducing_tree":"06d536e0be1b9622bcc3d124e262fad738ae9cb0","json_pointer":"/inputs/1/sha256","recorded_value":"24c6f2833bf06f74f25e93f0c7e7158e5d659bfdbd1fb2a6015553bf874fcfe","authoritative_value":"24c6f2833bf06f74f25e93f0c7e7158e5d659bfbdbd1fb2a6015553bf874fcfe","authoritative_artifact":{"path":"docs/programs/engineering-process-platform/evidence/transitions/TR-0043.json","raw_sha256":"24c6f2833bf06f74f25e93f0c7e7158e5d659bfbdbd1fb2a6015553bf874fcfe","git_blob":"f5217db43b1a6479254cd0f0b2ae5f4b1657ca82"},"verification":{"exact_pointer_only":true,"target_blob_recomputed":true,"original_transition_immutable":true}}]},
+    "forbidden_target_classes": {"const": ["any_other_state_or_transition","program-state.json operational pointer","lifecycle edge or action","approval content or authority","roadmap or task completion","readiness or gate evidence","benchmark or release evidence","candidate or delivery identity","correction record","wildcard range or future record"]},
+    "resolution_semantics": {"const": {"effect":"two_historical_repair_evidence_findings_only","original_bytes_immutable":true,"original_findings_retained":true,"validator_recomputes":true,"all_claims_required":true,"old_validator_fails_closed":true,"correction_cannot_be_corrected":true,"readiness_non_interference":true,"authority_non_interference":true,"candidate_non_interference":true}},
+    "unchanged_projection_fields": {"const": ["all readiness statuses and colors","all gate results and freshness","benchmark target counted and 0/100 state","commercial readiness","candidate commit tree and artifact identities","approval authority and expiry","release eligibility","dashboard delivery status","roadmap ordering and feature scope"]},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_scopes", "proposed_approval_records", "planning_subject_transition"],
+      "properties": {
+        "required_scopes": {"const": ["material_change", "feature_implementation"]},
+        "proposed_approval_records": {"const": ["docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-007.json", "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-007.json"]},
+        "planning_subject_transition": {"const": "TR-0046"}
+      }
+    },
+    "discovery_evidence": {"const": [{"path":"docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json","sha256":"f75b48b658c008541e4bdd5c7c10c292142b1035ec234f3eda642148c3ccd098"},{"path":"docs/programs/engineering-process-platform/evidence/transitions/TR-0044.json","sha256":"b61c8aba74032a267b4d95ffd9d55cd9d5b120c1c6fa4e15e633ef14d1540604"}]}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "artifact": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/digest"}}},
+    "gitSubject": {"type": "object", "additionalProperties": false, "required": ["git_commit", "git_tree", "program_tree"], "properties": {"git_commit": {"$ref": "#/$defs/commit"}, "git_tree": {"$ref": "#/$defs/commit"}, "program_tree": {"$ref": "#/$defs/commit"}}},
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "json_pointer", "raw_sha256", "git_blob", "introducing_commit", "introducing_tree", "canonical_state_digest"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^docs/programs/engineering-process-platform/evidence/states/program-state-revision-004[56]\\.json$"},
+        "json_pointer": {"const": "/active_mutating_lease/recovery/active_cause_id"},
+        "raw_sha256": {"$ref": "#/$defs/digest"},
+        "git_blob": {"$ref": "#/$defs/commit"},
+        "introducing_commit": {"$ref": "#/$defs/commit"},
+        "introducing_tree": {"$ref": "#/$defs/commit"},
+        "canonical_state_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "causeClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "classification", "recorded_value", "authoritative_value", "expected_occurrence_count", "occurrences", "verification"],
+      "properties": {
+        "claim_id": {"const": "REPAIR-CAUSE-ID-001"},
+        "classification": {"const": "invalid_identifier_spelling"},
+        "recorded_value": {"const": "CANDIDATE_RUFF_FORMAT_DRIFT"},
+        "authoritative_value": {"const": "CANDIDATE-RUFF-FORMAT-DRIFT"},
+        "expected_occurrence_count": {"const": 2},
+        "occurrences": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/occurrence"}},
+        "verification": {"type": "object", "additionalProperties": false, "required": ["exact_occurrence_set", "schema_violation_only", "successor_state_must_not_repeat_value"], "properties": {"exact_occurrence_set": {"const": true}, "schema_violation_only": {"const": true}, "successor_state_must_not_repeat_value": {"const": true}}}
+      }
+    },
+    "digestClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "classification", "transition_path", "transition_raw_sha256", "transition_git_blob", "introducing_commit", "introducing_tree", "json_pointer", "recorded_value", "authoritative_value", "authoritative_artifact", "verification"],
+      "properties": {
+        "claim_id": {"const": "TR0044-INPUT-DIGEST-001"},
+        "classification": {"const": "truncated_sha256"},
+        "transition_path": {"const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0044.json"},
+        "transition_raw_sha256": {"$ref": "#/$defs/digest"},
+        "transition_git_blob": {"$ref": "#/$defs/commit"},
+        "introducing_commit": {"$ref": "#/$defs/commit"},
+        "introducing_tree": {"$ref": "#/$defs/commit"},
+        "json_pointer": {"const": "/inputs/1/sha256"},
+        "recorded_value": {"type": "string", "pattern": "^[a-f0-9]{63}$"},
+        "authoritative_value": {"$ref": "#/$defs/digest"},
+        "authoritative_artifact": {"type": "object", "additionalProperties": false, "required": ["path", "raw_sha256", "git_blob"], "properties": {"path": {"const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0043.json"}, "raw_sha256": {"$ref": "#/$defs/digest"}, "git_blob": {"$ref": "#/$defs/commit"}}},
+        "verification": {"type": "object", "additionalProperties": false, "required": ["exact_pointer_only", "target_blob_recomputed", "original_transition_immutable"], "properties": {"exact_pointer_only": {"const": true}, "target_blob_recomputed": {"const": true}, "original_transition_immutable": {"const": true}}}
+      }
+    }
+  }
+}

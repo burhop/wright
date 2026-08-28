@@ -1,0 +1,609 @@
+{
+  "$schema": "./schemas/decision-register.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "records": [
+    {
+      "id": "DEC-P0-001",
+      "priority": "P0",
+      "status": "open",
+      "question": "Is this program's commercial target a supportable public-alpha evaluation or a production-supported commercial offer?",
+      "why_material": "The current repository promises public alpha with no production SLA. Support claims, terms, response ownership, compatibility scope and release evidence differ materially between the two postures.",
+      "owner_role": "human_program_approver_and_product_owner",
+      "due": {
+        "before_event": "EPP-C01 specification and COMM-01",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-C01",
+        "EPP-R01",
+        "COMM-01",
+        "COMM-06",
+        "COMM-08"
+      ],
+      "options": [
+        "Supportable public-alpha evaluation",
+        "Production-supported commercial offer"
+      ],
+      "required_evidence": [
+        "Approved offering and exclusions",
+        "Support/SLA and incident ownership",
+        "Customer-facing terms and contact-path test"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-002",
+      "priority": "P0",
+      "status": "open",
+      "question": "What is the production canonical process representation and the validation/apply boundary between text and diagram?",
+      "why_material": "The prototype's strict JSON and explicit Apply interaction were experiments. Persisted identity, authoring UX, compatibility and migration depend on this choice.",
+      "owner_role": "human_architecture_approver",
+      "due": {
+        "before_event": "EPP-F02 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F02",
+        "EPP-F06",
+        "PROD-01",
+        "PROD-10"
+      ],
+      "options": [
+        "Versioned JSON with explicit Apply",
+        "Versioned YAML with explicit Apply",
+        "Purpose-built textual DSL",
+        "No editable text in first production increment"
+      ],
+      "required_evidence": [
+        "Human and LLM edit study",
+        "Round-trip and invalid-edit behavior",
+        "Compatibility and migration analysis"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-003",
+      "priority": "P0",
+      "status": "open",
+      "question": "How will application-backed MCP execution enforce authoritative surface identity, exclusivity, liveness and lost-client recovery?",
+      "why_material": "The prototype observed two BREP control surfaces consuming one queue and returning inconsistent models. A connected flag does not prove an authoritative application subject.",
+      "owner_role": "human_architecture_and_safety_approver",
+      "due": {
+        "before_event": "EPP-F05 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F05",
+        "PROD-06",
+        "BENCH-04"
+      ],
+      "options": [
+        "Exclusive renewable lease",
+        "Immutable application candidate identity",
+        "Application-native transaction/session identity",
+        "Disallow application-backed execution until a contract exists"
+      ],
+      "required_evidence": [
+        "Competing-client failure tests",
+        "Kill/reconnect/recovery tests",
+        "Exact surface/run identity contract"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-004",
+      "priority": "P0",
+      "status": "open",
+      "question": "What executor capability and evidence are sufficient to claim hard tool isolation for an AI step?",
+      "why_material": "Skipping Wright MCP activation and observing no tool call did not prove that the underlying manager could not load other toolsets.",
+      "owner_role": "human_security_approver",
+      "due": {
+        "before_event": "Any live AI execution claim in EPP-F05 or EPP-F06",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F05",
+        "EPP-F06",
+        "PROD-06",
+        "PROD-09",
+        "COMM-03"
+      ],
+      "options": [
+        "Backend-acknowledged hard-no-tools capability",
+        "Dedicated executor that cannot load tools",
+        "Do not offer a hard-no-tools claim"
+      ],
+      "required_evidence": [
+        "Negative tool-call proof",
+        "Executor capability identity",
+        "Policy-violation event behavior"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-005",
+      "priority": "P0",
+      "status": "open",
+      "question": "What connection, first-event, first-output, inactivity, total-execution and cleanup deadlines apply by execution profile?",
+      "why_material": "One undifferentiated timeout cannot distinguish connection failure, provider silence, progress heartbeats, total duration or cleanup hang.",
+      "owner_role": "human_product_and_runtime_approver",
+      "due": {
+        "before_event": "EPP-F03 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-05"
+      ],
+      "options": [
+        "Fixed profile-specific deadlines",
+        "Policy-bounded workflow overrides",
+        "Executor-declared defaults with product ceilings"
+      ],
+      "required_evidence": [
+        "Observed workload distributions",
+        "Cancellation and cleanup behavior",
+        "User-facing recovery study"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-006",
+      "priority": "P0",
+      "status": "open",
+      "question": "Who owns output retention, presenter resolution, reauthorization, expiry, cleanup and deletion for each artifact lifetime?",
+      "why_material": "The prototype could complete successfully while destroying or failing to reopen its only useful output. Durable and session outputs require different lifecycle contracts.",
+      "owner_role": "human_product_data_and_security_approver",
+      "due": {
+        "before_event": "EPP-F03 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-07",
+        "PROD-10",
+        "COMM-03",
+        "COMM-05"
+      ],
+      "options": [
+        "Workspace-governed durable artifacts plus explicit ephemeral outputs",
+        "Run-scoped retention only",
+        "Capability-owned retention with Wright references"
+      ],
+      "required_evidence": [
+        "Lifetime and ownership matrix",
+        "Reopen/expiry/cleanup tests",
+        "Authorization and deletion policy"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-007",
+      "priority": "P0",
+      "status": "open",
+      "question": "Who has independent engineering authority to approve each benchmark oracle family, and what disagreement/quarantine policy applies?",
+      "why_material": "Transport or syntactic success cannot prove engineering correctness; self-authored oracles can confirm the same defect as the implementation.",
+      "owner_role": "human_benchmark_and_domain_approver",
+      "due": {
+        "before_event": "EPP-B01 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-03",
+        "BENCH-07"
+      ],
+      "options": [
+        "Named qualified domain reviewers per family",
+        "Independent standards/reference-tool review",
+        "Mixed reviewer plus reference-tool panel"
+      ],
+      "required_evidence": [
+        "Oracle-authority matrix",
+        "Negative-control policy",
+        "Reviewer independence and disagreement process"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-008",
+      "priority": "P0",
+      "status": "open",
+      "question": "What exact evidence proves UI-started and headless runs are semantically equivalent?",
+      "why_material": "Prototype paths initially diverged. Comparing only terminal status or output summary can hide different inputs, bindings, events, artifacts or cleanup.",
+      "owner_role": "human_architecture_and_product_approver",
+      "due": {
+        "before_event": "EPP-F03 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F03",
+        "EPP-F05",
+        "PROD-01",
+        "PROD-05",
+        "BENCH-04"
+      ],
+      "options": [
+        "Normalized full run-record equivalence",
+        "Contract-selected material-field equivalence with declared observational differences",
+        "No cross-entrypoint support claim"
+      ],
+      "required_evidence": [
+        "Equivalence field contract",
+        "Paired-run tests",
+        "Declared nondeterministic observation policy"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-009",
+      "priority": "P0",
+      "status": "open",
+      "question": "Who controls the blind holdout and where do definitions, assets and oracles live beyond development-agent visibility?",
+      "why_material": "Autonomous agents can read committed fixtures. A holdout visible in Git is not blind and cannot detect overfitting.",
+      "owner_role": "human_benchmark_custodian",
+      "due": {
+        "before_event": "EPP-B01 implementation approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-05"
+      ],
+      "options": [
+        "Human-controlled evaluator service/store",
+        "Access-separated local encrypted store",
+        "External evaluator organization"
+      ],
+      "required_evidence": [
+        "Custodian and access policy",
+        "Contamination ledger",
+        "Replacement and evaluation cadence"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-010",
+      "priority": "P0",
+      "status": "open",
+      "question": "What exact customer/process population and claims must the 100-process sample represent?",
+      "why_material": "Without a population and claim boundary, quotas may be convenient rather than representative and 100 rows can falsely imply general engineering reliability.",
+      "owner_role": "human_product_benchmark_approver",
+      "due": {
+        "before_event": "EPP-B01 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "BENCH-01",
+        "BENCH-06"
+      ],
+      "options": [
+        "Mechanical-product-development teams",
+        "Cross-discipline engineering organizations",
+        "Wright public-alpha evaluation use cases only"
+      ],
+      "required_evidence": [
+        "Sampling frame and exclusions",
+        "Customer/user research",
+        "Maximum contribution per equivalence family"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-011",
+      "priority": "P0",
+      "status": "decided",
+      "question": "What frozen benchmark thresholds, profile mix, repeats and freshness cadence authorize release?",
+      "why_material": "Thresholds selected after results enable retry-until-green and denominator manipulation. The plan proposes all 100 T0/T1 current passes, but live/profile/holdout and first-attempt thresholds require human acceptance before execution.",
+      "owner_role": "human_product_benchmark_release_approver",
+      "due": {
+        "before_event": "EPP-B01 implementation approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "EPP-R01",
+        "BENCH-04",
+        "BENCH-07",
+        "COMM-08"
+      ],
+      "options": [
+        "Adopt the proposed all-100 T0/T1 plus declared T2/T3 subset policy",
+        "Adopt stricter per-stratum first-attempt and repeat thresholds",
+        "Limit initial claims and reduce required live profiles explicitly"
+      ],
+      "required_evidence": [
+        "Frozen benchmark policy",
+        "First-attempt/eventual/retry semantics",
+        "Per-stratum/profile and staleness thresholds"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-012",
+      "priority": "P0",
+      "status": "open",
+      "question": "Which third-party process definitions, inputs, artifacts, standards and proprietary-host evidence may be stored, redistributed or used commercially?",
+      "why_material": "A technically representative benchmark or support claim may be legally unusable; blind/proprietary assets also need controlled storage and evidence-only publication.",
+      "owner_role": "human_legal_commercial_and_benchmark_approver",
+      "due": {
+        "before_event": "Any benchmark case is counted or EPP-C01 implementation approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-B01",
+        "EPP-B02",
+        "EPP-C01",
+        "COMM-02",
+        "BENCH-02"
+      ],
+      "options": [
+        "Publicly redistributable assets only",
+        "Mixed public and access-controlled licensed assets",
+        "Customer-provided evaluation assets under separate agreements"
+      ],
+      "required_evidence": [
+        "License/provenance policy",
+        "Redistribution and commercial-use review",
+        "Public versus access-controlled storage rules"
+      ],
+      "decision_record": null
+    },
+    {
+      "id": "DEC-P0-013",
+      "priority": "P0",
+      "status": "decided",
+      "question": "How must the v2 validator recognize the authoritative v1 revisions 10 through 19 without weakening the approved closed r1-through-r9 bootstrap profile?",
+      "why_material": "The approved profile ends at revision 9, while the governed planning, approval, implementation-start, material-stop, and amended-freeze lifecycle reaches v1 revision 19. Accepting those records silently would change compatibility and append-only-history semantics.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 v1-to-v2 schema migration",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-05"
+      ],
+      "options": [
+        "Add a closed exact-digest bridge profile for revisions 10 through 19 while retaining r1-through-r9",
+        "Replace the bootstrap profile with one closed revisions-1-through-19 profile",
+        "Stop EPP-F01 and redesign migration/history semantics"
+      ],
+      "required_evidence": [
+        "Exact revision-19 checkpoint",
+        "Enumerated revisions 10 through 19 and TR-0009 through TR-0018",
+        "No-future-v1 and single-migration acceptance rules",
+        "Fresh exact material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0013-closed-v1-bridge.md"
+    },
+    {
+      "id": "DEC-P0-014",
+      "priority": "P0",
+      "status": "decided",
+      "question": "What exact source/container, per-gate freshness, multi-module generator identity, and descendant delivery-evidence rules eliminate the dashboard provenance loop?",
+      "why_material": "The approved CLI and schemas cannot unambiguously prove container C from source S, share one gate model, bind a multi-module generator, and represent later independent delivery evidence without a self-reference or regeneration loop.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 dashboard/report schema implementation",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      },
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-03",
+        "PROG-05"
+      ],
+      "options": [
+        "Adopt explicit or constrained inferred container identity, per-gate fresh, a source-bundle digest, and external descendant delivery evidence",
+        "Redesign the S/C/D delivery sequence and regenerate the affected contracts",
+        "Stop dashboard delivery and ship validator-only scope after reapproval"
+      ],
+      "required_evidence": [
+        "Non-circular S/C/D proof",
+        "One shared gate-row schema",
+        "Canonical generator bundle manifest",
+        "Fresh material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0014-dashboard-provenance.md"
+    },
+    {
+      "id": "DEC-P0-015",
+      "priority": "P0",
+      "status": "decided",
+      "question": "How will Wright satisfy the required browser-accessible live program-status page without silently expanding EPP-F01's approved 68-task implementation boundary?",
+      "why_material": "EPP-F01 governs validation, dashboard.json, provenance and CLI reporting but contains no browser route/page; treating the workspace landing page or JSON as the required status surface would hide a user-facing program outcome and change approved scope.",
+      "owner_role": "human_program_approver_and_product_approver",
+      "due": {
+        "before_event": "EPP-F01 implementation resumes or EPP-F02 becomes eligible",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T12:00:00Z"
+      },
+      "blocks": [
+        "EPP-F01",
+        "EPP-F01B",
+        "EPP-F02",
+        "PROD-02",
+        "PROD-11",
+        "BENCH-08",
+        "PROG-01",
+        "PROG-06"
+      ],
+      "options": [
+        "Keep EPP-F01 machine-only and add independent EPP-F01B browser projection",
+        "Expand EPP-F01 during implementation",
+        "Treat Wright's workspace dashboard or dashboard.json as sufficient"
+      ],
+      "required_evidence": [
+        "Dependency-ordered EPP-F01B roadmap item",
+        "Read-only browser projection contract",
+        "Accessible empty/stale/failed and traffic-light states",
+        "Automatic committed-evidence refresh rule",
+        "Fresh exact material-change and feature-implementation approvals before EPP-F01 resumes"
+      ],
+      "decision_record": "decisions/0015-browser-status-surface.md"
+    },
+    {
+      "id": "DEC-P0-016",
+      "priority": "P0",
+      "status": "decided",
+      "question": "May EPP-F01 resolve the stable committed-identity cause only through the exact closed 37-claim append-only correction profile without changing any readiness or release authority?",
+      "why_material": "The six transition digests and 31 state tree pointers are immutable factual defects. Rewriting history, weakening Git identity, or adopting a generic override would compromise control-plane trust and could become a hidden readiness waiver.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 V4 implementation authorization",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T16:24:45Z"
+      },
+      "blocks": [
+        "EPP-F01",
+        "PROG-01",
+        "PROG-05"
+      ],
+      "options": [
+        "Accept only COR-EPP-F01-US1-COMMITTED-IDENTITY-001 and its exact 37 factual claims",
+        "Stop EPP-F01 and redesign immutable-evidence correction semantics",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Literal six-transition plus 26-state/31-pointer target set",
+        "Exact Git-object and canonical-state recomputation",
+        "Strict-ancestor and no-correction-of-correction proof",
+        "Readiness/benchmark/commercial/release non-interference proof",
+        "Fresh exact material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0016-closed-committed-identity-correction.md"
+    },
+    {
+      "id": "DEC-P0-017",
+      "priority": "P0",
+      "status": "decided",
+      "question": "May EPP-F01 dispose only the exact TR-0027 /inputs/3 source-versus-container origin defect through a separately approval-bound one-claim profile?",
+      "why_material": "A broad transition-origin exception would weaken append-only history and could admit authority created only in a transition container as if it existed at the source.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 T024 or later implementation resumes",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T22:43:44Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": [
+        "Accept only COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001 and its exact one-claim source/container proof",
+        "Stop EPP-F01 and redesign transition evidence semantics",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Exact TR-0027 and approval Git-object identities",
+        "Proof that the approval is absent at source and first added at the unique container",
+        "One-pointer target-set and unchanged-manifest proof",
+        "Authority/readiness/benchmark/release non-interference proof",
+        "Fresh exact material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0017-closed-tr0027-input-origin-correction.md"
+    },
+    {
+      "id": "DEC-P0-018",
+      "priority": "P0",
+      "status": "decided",
+      "question": "May EPP-F01 dispose only the invalid repair-cause identifier at two exact historical state pointers and the truncated TR-0043 digest at one exact TR-0044 pointer through a closed two-claim append-only profile?",
+      "why_material": "The evidence defects are real and immutable, but a broad repair-evidence exception could hide audit failures, rewrite history semantically, or reactivate verification without exact human authority.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 T070, T071, T072 or T066 retry",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T23:30:50Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": [
+        "Accept only COR-EPP-F01-REPAIR-EVIDENCE-001 and its exact two claims",
+        "Stop EPP-F01 and redesign repair-evidence disposition semantics",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Exact state-revision 45 and 46 Git-object identities and cause-ID pointers",
+        "Exact TR-0044 pointer plus independently recomputed TR-0043 digest and blob",
+        "Literal two-claim target set with no new records or historical rewrites",
+        "Lifecycle/authority/readiness/benchmark/candidate/delivery/release non-interference proof",
+        "Fresh exact V7 material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0018-closed-repair-evidence-correction.md"
+    },
+    {
+      "id": "DEC-P0-019",
+      "priority": "P0",
+      "status": "decided",
+      "question": "May EPP-F01 disposition exactly the two TR-0047 output-digest claims and TR-0050 event-domain claim, then repair only the final catalog binding and two walkthrough causes under a closed V8 lease?",
+      "why_material": "A generic digest or event exception would weaken immutable evidence; conflating current-source repairs with historical claims could silently widen authority or readiness.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 T073 through T076",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T01:44:40Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": [
+        "Accept only COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001 plus the named direct-current repairs",
+        "Stop EPP-F01 and redesign checkpoint evidence",
+        "Reject correction and retain EPP-F01 blocked"
+      ],
+      "required_evidence": [
+        "Exact three-claim Git-object identities and required event evidence",
+        "Final gate-catalog digest with one-field gate-evidence rebind",
+        "Two walkthrough-cause coverage with rooted negative fixtures",
+        "Four-area, 34-row, 0/100, synthetic benchmark and release non-interference",
+        "Fresh exact V8 material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0019-closed-checkpoint-evidence-correction.md"
+    },
+    {
+      "id": "DEC-P0-020",
+      "priority": "P0",
+      "status": "decided",
+      "question": "May EPP-F01 disposition exactly the immutable V8 discovery schema-reference finding and the immutable TR-0051 complete-set/self-path-order finding under a closed V9 profile?",
+      "why_material": "Inferring schemas or accepting arbitrary unordered manifests would weaken fail-closed evidence validation; rewriting either historical record would destroy append-only provenance.",
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "due": {
+        "before_event": "EPP-F01 T077 through T080",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T12:21:24Z"
+      },
+      "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
+      "options": [
+        "Accept only COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001",
+        "Stop EPP-F01 and redesign preflight evidence",
+        "Reject correction and retain both findings as blockers"
+      ],
+      "required_evidence": [
+        "Exact two-claim Git-object and strict-ancestry proof",
+        "Exact-value external schema validating only the immutable discovery blob",
+        "TR-0051 35-path complete-set equality and sole self-path position proof",
+        "Near-miss rejection and full readiness/benchmark/policy/release non-interference",
+        "Fresh exact V9 material-change and feature-implementation approvals"
+      ],
+      "decision_record": "decisions/0020-closed-v9-preflight-evidence-correction.md"
+    }
+  ]
+}

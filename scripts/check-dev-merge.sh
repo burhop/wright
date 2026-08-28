@@ -16,6 +16,9 @@ fi
 PYTHON_WORKSPACE_PATHS=(
   src/wright_engineering
   scripts/release
+  scripts/validate-engineering-process-program.py
+  scripts/program_control
+  tests/program_control_plane
   scripts/build-native-runtime.py
   scripts/test-native-hermes-install.py
   scripts/test-published-native-hermes.py
@@ -101,13 +104,14 @@ else
 fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
-run uv run --with mypy mypy scripts/release src/wright_engineering --ignore-missing-imports
+run uv run --with mypy mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
 run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
 }
 
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
+run uv run --extra runtime python -m pytest -q tests/program_control_plane
 run uv run python -m pytest -q tests/release
 run uv run python -m pytest -q \
   tests/native_runtime \

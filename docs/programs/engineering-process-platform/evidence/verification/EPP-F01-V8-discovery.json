@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "evidence_id": "EPP-F01-V8-DISCOVERY",
+  "subject": {
+    "git_commit": "0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2",
+    "git_tree": "ea473cfbab2802f4894ebf47b7c223cb5638e00b",
+    "program_tree": "6f4cafefc6eeea94ad2eadbf41a080b88b24bf4a"
+  },
+  "authorized_historical_claims": [
+    "TR-0047#/outputs/0/sha256",
+    "TR-0047#/outputs/1/sha256",
+    "TR-0050 event-rule tuple"
+  ],
+  "authorized_direct_contract_causes": [
+    "stale empty-context README and blocked-state expectations",
+    "non-resolving validator finding artifact paths"
+  ],
+  "validator_findings": [
+    {"code":"TRANSITION_ARTIFACT_DIGEST_MISMATCH","artifact":"docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json","pointer":"/outputs/0/sha256"},
+    {"code":"TRANSITION_ARTIFACT_DIGEST_MISMATCH","artifact":"docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json","pointer":"/outputs/1/sha256"},
+    {"code":"GATE_CATALOG_DIGEST_MISMATCH","artifact":"docs/programs/engineering-process-platform/gate-evidence.json","pointer":"/catalog_digest"},
+    {"code":"EVENT_RULE_INVALID","artifact":"docs/programs/engineering-process-platform/evidence/transitions/TR-0050.json","pointer":"/state_domain"}
+  ],
+  "walkthrough_failures": [
+    "tests/program_control_plane/test_evidence_walkthrough.py::test_readme_directly_links_current_subject_authority_and_start",
+    "tests/program_control_plane/test_evidence_walkthrough.py::test_empty_context_reconstructs_one_next_action_and_exclusions",
+    "tests/program_control_plane/test_evidence_walkthrough.py::test_report_and_dashboard_evidence_links_resolve_with_exact_digests"
+  ],
+  "walkthrough_cause_count": 2,
+  "excluded_material_question": {
+    "test": "tests/program_control_plane/test_roadmap_approval_and_lease.py::test_next_action_human_flag_must_match_policy",
+    "reason": "Separate test-only policy inversion defect discovered during audit; not one of the authorized historical claims, catalog rebind, or two walkthrough causes.",
+    "status": "requires_separate_human_disposition_before_T066"
+  },
+  "preflight_result": "4 failed, 2 passed across the walkthrough module plus the separately sampled excluded test",
+  "mutation": "none"
+}

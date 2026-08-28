@@ -1,0 +1,1409 @@
+{
+  "$schema": "./schemas/gate-evidence.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "subject": {
+    "kind": "feature_candidate",
+    "git_commit": "87360afe495ad0aa3e29c9bb3253f0660996daa9",
+    "git_tree": "9992b8f6d5349cd6206bf6287d3d3fbd8c473d8f",
+    "artifact_digests": []
+  },
+  "catalog_digest": "3b9ca76219ce84ab610b1b77193dfdbf81459d567acae9c0bade1be7478cc9d1",
+  "data_cutoff": "2026-08-27T11:40:00Z",
+  "assertions": [
+    {
+      "gate_id": "PROD-01",
+      "evaluator": "EVAL_PROD_01",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-01-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-02",
+      "evaluator": "EVAL_PROD_02",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-02-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-03",
+      "evaluator": "EVAL_PROD_03",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-03-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-04",
+      "evaluator": "EVAL_PROD_04",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-04-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-05",
+      "evaluator": "EVAL_PROD_05",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-05-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-06",
+      "evaluator": "EVAL_PROD_06",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-06-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-07",
+      "evaluator": "EVAL_PROD_07",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-07-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-08",
+      "evaluator": "EVAL_PROD_08",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-08-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-09",
+      "evaluator": "EVAL_PROD_09",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-09-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-10",
+      "evaluator": "EVAL_PROD_10",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-10-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROD-11",
+      "evaluator": "EVAL_PROD_11",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROD-11-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "PRODUCT_EVIDENCE_NOT_RECORDED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-01",
+      "evaluator": "EVAL_BENCH_01",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-01-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-02",
+      "evaluator": "EVAL_BENCH_02",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-02-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-03",
+      "evaluator": "EVAL_BENCH_03",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-03-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-04",
+      "evaluator": "EVAL_BENCH_04",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-04-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-05",
+      "evaluator": "EVAL_BENCH_05",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-05-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-06",
+      "evaluator": "EVAL_BENCH_06",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-06-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-07",
+      "evaluator": "EVAL_BENCH_07",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-07-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "BENCH-08",
+      "evaluator": "EVAL_BENCH_08",
+      "status": "not_started",
+      "classification": "not_tested",
+      "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "BENCH-08-A01",
+          "status": "not_started",
+          "classification": "not_tested",
+          "reason_code": "BENCHMARK_COLLECTION_UNAUTHORIZED",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-01",
+      "evaluator": "EVAL_COMM_01",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-01-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-02",
+      "evaluator": "EVAL_COMM_02",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-02-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-03",
+      "evaluator": "EVAL_COMM_03",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-03-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-04",
+      "evaluator": "EVAL_COMM_04",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-04-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-05",
+      "evaluator": "EVAL_COMM_05",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-05-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-06",
+      "evaluator": "EVAL_COMM_06",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-06-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-07",
+      "evaluator": "EVAL_COMM_07",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-07-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "COMM-08",
+      "evaluator": "EVAL_COMM_08",
+      "status": "blocked",
+      "classification": "unavailable",
+      "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "COMM-08-A01",
+          "status": "blocked",
+          "classification": "unavailable",
+          "reason_code": "COMMERCIAL_DECISIONS_OPEN",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-01",
+      "evaluator": "EVAL_PROG_01",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-01-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-02",
+      "evaluator": "EVAL_PROG_02",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-02-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-03",
+      "evaluator": "EVAL_PROG_03",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-03-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-04",
+      "evaluator": "EVAL_PROG_04",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-04-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-05",
+      "evaluator": "EVAL_PROG_05",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-05-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-06",
+      "evaluator": "EVAL_PROG_06",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-06-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "gate_id": "PROG-07",
+      "evaluator": "EVAL_PROG_07",
+      "status": "in_progress",
+      "classification": "partial",
+      "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+      "fresh": false,
+      "observed_at": "2026-08-27T11:40:00Z",
+      "expires_at": null,
+      "stale_triggers": [
+        "candidate_changed",
+        "source_evidence_changed"
+      ],
+      "verifier": {
+        "identity": "Codex primary sole writer",
+        "role": "feature_owner",
+        "independent": false
+      },
+      "evidence": [],
+      "assertion_results": [
+        {
+          "assertion_id": "PROG-07-A01",
+          "status": "in_progress",
+          "classification": "partial",
+          "reason_code": "PROGRAM_CONTROL_IMPLEMENTING",
+          "fresh": false,
+          "observed_at": "2026-08-27T11:40:00Z",
+          "expires_at": null,
+          "stale_triggers": [
+            "candidate_changed",
+            "source_evidence_changed"
+          ],
+          "verifier": {
+            "identity": "Codex primary sole writer",
+            "role": "feature_owner",
+            "independent": false
+          },
+          "evidence": []
+        }
+      ]
+    }
+  ]
+}

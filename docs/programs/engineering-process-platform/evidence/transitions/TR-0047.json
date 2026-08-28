@@ -1,0 +1,211 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0047",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "approval_checkpoint",
+  "from_state": "BLOCKED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 47,
+  "new_revision": 48,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "2e5cb6fa292a0ce031bde4aa1623367c8a1c5f50e11b8bfef058de682092a768",
+  "new_state_digest": "314a22933e96576b4c2a8ef85790d3ec68a44d2cdb38515ed93d54368a2b9c0a",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the user's exact V7 same-subject material-change and feature-implementation approval, decide DEC-P0-018, reactivate bounded lease revision 11 for only T070-T072 plus the subsequent T066 retry, preserve every historical evidence byte, and retain all exclusions.",
+  "started_at": "2026-08-27T23:30:50Z",
+  "finished_at": "2026-08-27T23:38:50Z",
+  "duration_ms": 480000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+    "source_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+    "source_program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0018-closed-repair-evidence-correction.md",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-007.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-007.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0048.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0047.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0047.json",
+      "sha256": "185ad562314b383567d130ef1504791ef6c4e292fb55aacfbbd80eccb05ae7d3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0046.json",
+      "sha256": "a7fefc0057c1b90e3eae29c230905b5066aa05e5dda17c961c0e38a29a43791b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "7f83080352b7c8051adee2c8164d38d609a492222ea257c1886d3930a67db37a",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "approval.md",
+      "sha256": "1d7b8ebad81473255ae214a84e20bbef36c96f366c70f65441b430d635f352a5",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "decision-register.json",
+      "sha256": "d639cbf56d2f407af8f809613f42992f4dc1513616ca476c5d98ff672aef0952",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "decisions/0018-closed-repair-evidence-correction.md",
+      "sha256": "813f910b1a7401a6f6aec3360dc48440dc13fd444d4d36c84b6ae71cfb4e6d2e",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-007.json",
+      "sha256": "03ddbdca2090956df4a27b39b6552ed4c438f0cbcd3919e31e2c93e24848b4b3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "sha256": "1b99586cd62f94d5007a4942d82b7b8b4e3ab617141e620ac76281e61ec43288",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0048.json",
+      "sha256": "951afd7d8287363234ea74c75ae2817650ae1538c91bdc5bab3922e728079db1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "951afd7d8287363234ea74c75ae2817650ae1538c91bdc5bab3922e728079db1",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "aedf49c97e24c19ba8f69707908be6d317a6c81a8ded8da02560eac4a4497255",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "V7-EXACT-SUBJECT-APPROVAL",
+      "method": "Require two separate same-bundle approved-with-conditions records for material_change and feature_implementation, exact commit/tree/program tree and all 31 TR-0046 output digests.",
+      "environment": "Local read-only Git-object and Draft 2020-12 validation; offline",
+      "duration_ms": 2100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-007.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-007.json",
+        "evidence/transitions/TR-0046.json"
+      ]
+    },
+    {
+      "check_id": "DEC-P0-018-ACCEPTED",
+      "method": "Bind the human approval to only COR-EPP-F01-REPAIR-EVIDENCE-001 and its exact ordered two-claim/two-occurrence semantics; preserve all source evidence bytes.",
+      "environment": "Exact approval text, decision record and correction profile",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "decisions/0018-closed-repair-evidence-correction.md",
+        "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json"
+      ]
+    },
+    {
+      "check_id": "LEASE-REVISION-11",
+      "method": "Require branch 077-control-plane-validator, worktree epp-f01, local-only allowlist, stable cause EPP-F01-REPAIR-EVIDENCE-001, two bounded repairs, T070-T072 ordering and independent T066 handoff.",
+      "environment": "Program state, task contract and V7 approval conditions",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "EXCLUSIONS-PRESERVED",
+      "method": "Confirm T067-T068, product changes, EPP-F01B implementation, dependencies, benchmarks, external changes, push, PR, merge, dev integration, publication and release remain unauthorized.",
+      "environment": "Approval bundle, state, roadmap and clean diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "roadmap.json",
+        "program-state.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-007.json"
+    ],
+    "subject": {
+      "git_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+      "git_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+      "program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0046"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-REPAIR-EVIDENCE-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "The pre-V7 validator is expected to fail closed until T071; T070 must demonstrate the failing matrix first.",
+    "T066 retry remains blocked until T072 freezes a passing unchanged candidate.",
+    "Every action excluded by the V7 approval remains blocked."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0047.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

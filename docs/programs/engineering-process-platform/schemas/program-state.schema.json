@@ -1,0 +1,842 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/program-state.schema.json",
+  "title": "Engineering Process Platform Program State",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/legacyV1"
+    },
+    {
+      "$ref": "#/$defs/currentV2"
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^(sha256:)?[a-f0-9]{64}$"
+    },
+    "gitSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "commit",
+        "tree",
+        "observed_clean"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "tree": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            }
+          ]
+        },
+        "observed_clean": {
+          "type": "boolean"
+        }
+      }
+    },
+    "prototype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "commit",
+        "remote_matches",
+        "registered_worktree",
+        "mode",
+        "uncommitted_evidence_status"
+      ],
+      "properties": {
+        "branch": {
+          "const": "076-engineering-workflow-prototype"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "remote_matches": {
+          "type": "boolean"
+        },
+        "registered_worktree": {
+          "type": "boolean"
+        },
+        "mode": {
+          "const": "read_only_evidence"
+        },
+        "uncommitted_evidence_status": {
+          "enum": [
+            "none_detected",
+            "detected",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "lease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_id",
+        "branch",
+        "base_commit",
+        "holder_role",
+        "lease_revision",
+        "acquired_at",
+        "expires_at",
+        "allowed_paths"
+      ],
+      "properties": {
+        "feature_id": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "base_commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "holder_role": {
+          "const": "feature_owner"
+        },
+        "lease_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "acquired_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "allowed_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "gate_file",
+        "blockers"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_started",
+            "in_progress",
+            "passed",
+            "blocked",
+            "failed",
+            "stale"
+          ]
+        },
+        "gate_file": {
+          "const": "gates.md"
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "commitTree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "tree"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        }
+      }
+    },
+    "leaseV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_id",
+        "branch",
+        "worktree_id",
+        "dev_baseline",
+        "worktree_start",
+        "holder_role",
+        "lease_mode",
+        "lease_revision",
+        "acquired_at",
+        "expires_at",
+        "allowed_paths",
+        "path_restrictions",
+        "allowed_actions",
+        "recovery"
+      ],
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "pattern": "^EPP-[A-Z0-9-]+$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "worktree_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,99}$"
+        },
+        "dev_baseline": {
+          "$ref": "#/$defs/commitTree"
+        },
+        "worktree_start": {
+          "$ref": "#/$defs/commitTree"
+        },
+        "holder_role": {
+          "const": "feature_owner"
+        },
+        "lease_mode": {
+          "enum": [
+            "planning",
+            "implementation",
+            "verification"
+          ]
+        },
+        "lease_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "acquired_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "allowed_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        },
+        "allowed_actions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "inspect",
+              "edit_allowlisted_paths",
+              "run_deterministic_checks",
+              "create_local_artifacts",
+              "create_local_commits"
+            ]
+          }
+        },
+        "recovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "last_audit_transition",
+            "rollback_state",
+            "exhausted_cause_ids",
+            "active_cause_id",
+            "repair_maximum",
+            "repair_remaining"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "audit_current",
+                "reactivated",
+                "interrupted",
+                "expired",
+                "blocked"
+              ]
+            },
+            "last_audit_transition": {
+              "type": "string",
+              "pattern": "^TR-[0-9]{4}$"
+            },
+            "rollback_state": {
+              "type": "string",
+              "pattern": "^evidence/states/program-state-revision-[0-9]{4}\\.json$"
+            },
+            "exhausted_cause_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9-]{3,100}$"
+              }
+            },
+            "active_cause_id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[A-Z0-9-]{3,100}$"
+                }
+              ]
+            },
+            "repair_maximum": {
+              "const": 2
+            },
+            "repair_remaining": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            }
+          }
+        },
+        "path_restrictions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "restriction"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "restriction": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
+            }
+          }
+        }
+      }
+    },
+    "legacyV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "program_id",
+        "revision",
+        "state",
+        "baseline",
+        "prototype_evidence",
+        "control_plane",
+        "current_feature",
+        "active_mutating_lease",
+        "last_transition",
+        "readiness",
+        "open_p0_decisions",
+        "next_eligible_actions",
+        "approval"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "1.0"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state": {
+          "enum": [
+            "PLAN_DRAFT",
+            "PLAN_AUDITED",
+            "AWAITING_PROGRAM_APPROVAL",
+            "PROGRAM_APPROVED",
+            "SELECTING_FEATURE",
+            "PROGRAM_ACTIVE",
+            "PROGRAM_RELEASE_REVIEW",
+            "RELEASE_AUTHORIZED",
+            "PROGRAM_COMPLETE",
+            "BLOCKED",
+            "STOPPED"
+          ]
+        },
+        "baseline": {
+          "$ref": "#/$defs/gitSubject"
+        },
+        "prototype_evidence": {
+          "$ref": "#/$defs/prototype"
+        },
+        "control_plane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "candidate_subject_resolution",
+            "schema_status",
+            "audit_status"
+          ],
+          "properties": {
+            "root": {
+              "const": "docs/programs/engineering-process-platform"
+            },
+            "candidate_subject_resolution": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schema_status": {
+              "enum": [
+                "pending",
+                "passed",
+                "failed"
+              ]
+            },
+            "audit_status": {
+              "enum": [
+                "pending",
+                "passed",
+                "failed"
+              ]
+            }
+          }
+        },
+        "current_feature": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^EPP-[A-Z0-9-]+$"
+            }
+          ]
+        },
+        "active_mutating_lease": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lease"
+            }
+          ]
+        },
+        "last_transition": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^TR-[0-9]{4}$"
+            }
+          ]
+        },
+        "readiness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "product",
+            "benchmark",
+            "commercial",
+            "program_health"
+          ],
+          "properties": {
+            "product": {
+              "$ref": "#/$defs/readiness"
+            },
+            "benchmark": {
+              "$ref": "#/$defs/readiness"
+            },
+            "commercial": {
+              "$ref": "#/$defs/readiness"
+            },
+            "program_health": {
+              "$ref": "#/$defs/readiness"
+            }
+          }
+        },
+        "open_p0_decisions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^DEC-P0-[0-9]{3}$"
+          }
+        },
+        "next_eligible_actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "roadmap_item",
+              "requires_human_approval",
+              "reason"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{3,100}$"
+              },
+              "roadmap_item": {
+                "type": "string",
+                "pattern": "^EPP-[A-Z0-9-]+$"
+              },
+              "requires_human_approval": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "record"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "stale",
+                "revoked"
+              ]
+            },
+            "record": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "currentV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "program_id",
+        "revision",
+        "state",
+        "baseline",
+        "prototype_evidence",
+        "control_plane",
+        "current_feature",
+        "active_mutating_lease",
+        "last_transition",
+        "readiness",
+        "open_p0_decisions",
+        "next_eligible_actions",
+        "approval",
+        "feature_state",
+        "policy_version"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "2.0"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state": {
+          "enum": [
+            "PLAN_DRAFT",
+            "PLAN_AUDITED",
+            "AWAITING_PROGRAM_APPROVAL",
+            "PROGRAM_APPROVED",
+            "SELECTING_FEATURE",
+            "PROGRAM_ACTIVE",
+            "PROGRAM_RELEASE_REVIEW",
+            "RELEASE_AUTHORIZED",
+            "PROGRAM_COMPLETE",
+            "BLOCKED",
+            "STOPPED"
+          ]
+        },
+        "baseline": {
+          "$ref": "#/$defs/gitSubject"
+        },
+        "prototype_evidence": {
+          "$ref": "#/$defs/prototype"
+        },
+        "control_plane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "candidate_subject_resolution",
+            "schema_status",
+            "audit_status"
+          ],
+          "properties": {
+            "root": {
+              "const": "docs/programs/engineering-process-platform"
+            },
+            "candidate_subject_resolution": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schema_status": {
+              "enum": [
+                "pending",
+                "passed",
+                "failed"
+              ]
+            },
+            "audit_status": {
+              "enum": [
+                "pending",
+                "passed",
+                "failed"
+              ]
+            }
+          }
+        },
+        "current_feature": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^EPP-[A-Z0-9-]+$"
+            }
+          ]
+        },
+        "active_mutating_lease": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/leaseV2"
+            }
+          ]
+        },
+        "last_transition": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^TR-[0-9]{4}$"
+            }
+          ]
+        },
+        "readiness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "product",
+            "benchmark",
+            "commercial",
+            "program_health"
+          ],
+          "properties": {
+            "product": {
+              "$ref": "#/$defs/readiness"
+            },
+            "benchmark": {
+              "$ref": "#/$defs/readiness"
+            },
+            "commercial": {
+              "$ref": "#/$defs/readiness"
+            },
+            "program_health": {
+              "$ref": "#/$defs/readiness"
+            }
+          }
+        },
+        "open_p0_decisions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^DEC-P0-[0-9]{3}$"
+          }
+        },
+        "next_eligible_actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "roadmap_item",
+              "requires_human_approval",
+              "reason"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{3,100}$"
+              },
+              "roadmap_item": {
+                "type": "string",
+                "pattern": "^EPP-[A-Z0-9-]+$"
+              },
+              "requires_human_approval": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "record",
+            "required_records"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "stale",
+                "revoked"
+              ]
+            },
+            "record": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+                }
+              ]
+            },
+            "required_records": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+              }
+            }
+          }
+        },
+        "feature_state": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": [
+                "PROPOSED",
+                "ELIGIBLE",
+                "WORKTREE_ALLOCATED",
+                "SPECIFIED",
+                "CLARIFIED",
+                "PLANNED",
+                "CHECKLISTED",
+                "TASKED",
+                "ANALYZED",
+                "IMPLEMENTATION_APPROVAL_PENDING",
+                "IMPLEMENTATION_AUTHORIZED",
+                "IMPLEMENTING",
+                "AUTHOR_VERIFIED",
+                "CANDIDATE_FROZEN",
+                "INDEPENDENTLY_VERIFIED",
+                "REPAIRING",
+                "PUSH_AUTHORIZATION_PENDING",
+                "PR_READY",
+                "DEV_MERGE_READY",
+                "DEV_INTEGRATED",
+                "DEV_DEPLOYMENT_VERIFIED",
+                "SUPERSEDED",
+                "ROLLED_BACK",
+                "BLOCKED",
+                "STOPPED"
+              ]
+            }
+          ]
+        },
+        "policy_version": {
+          "const": "EPP-LIFECYCLE-1"
+        }
+      }
+    }
+  }
+}

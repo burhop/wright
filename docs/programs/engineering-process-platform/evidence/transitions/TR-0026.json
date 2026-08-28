@@ -1,0 +1,183 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0026",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "BLOCKED",
+  "prior_revision": 26,
+  "new_revision": 27,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "46bdef19d305fdb7ff0c454c5d6934a4bd25dad2b6a15d550c16e492b4edb31e",
+  "new_state_digest": "aa715125fa65b241a833c70045b2f7bbc7e7d5567b4d84866ee7adcf9144eebc",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Fail closed at the US1 acceptance boundary after exact Git-object validation proves six immutable transition output digest mismatches and a factual lease baseline commit/tree mismatch; release the mutating lease and request human authority for planning and re-analysis only.",
+  "started_at": "2026-08-27T15:20:00Z",
+  "finished_at": "2026-08-27T15:45:00Z",
+  "duration_ms": 1500000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "fe79e3db68007a4576af28bd5081fbe1488b7900",
+    "source_tree": "f8b3470655ccaf5ce643f293497ab584e0826a9c",
+    "source_program_tree": "b9a91e1c965d48cbd50efc6fd622a9b4a2209084",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0027.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0026.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US1.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "scripts/README.md",
+      "scripts/program_control/validation.py",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_contract_schemas.py",
+      "tests/program_control_plane/test_roadmap_approval_and_lease.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0026.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0026.json",
+      "sha256": "817beddb2010169e2c574ae96844d66e939606146c6bf6b098c2cbbd868e8911",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0025.json",
+      "sha256": "8f0fece3aabc9110646eba52be246c7c0f271fbbe6e2e135a2f7c570c8172037",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../scripts/program_control/validation.py",
+      "sha256": "baab8621e8016eb83e67dc73d4bfc98e03cad4b172e0834653d29a2855558239",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "764224c6cb6130d934ee997ba84b65ecde7ebbc6885f724db6958323e4571238",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0027.json",
+      "sha256": "764224c6cb6130d934ee997ba84b65ecde7ebbc6885f724db6958323e4571238",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US1.json",
+      "sha256": "3f0ba75078b8afa4e01b3fd68713dd9e43b4edfd576890a8c3331d6c09a96352",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "US1-CONTRACT-MATRIX",
+      "method": "Run the focused EPP-F01 suite and require 103 passed tests, one explicit host symlink skip, and zero Ruff lint/format findings.",
+      "environment": "local Windows Python and temporary Git repositories; offline",
+      "duration_ms": 26650,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-US1.json",
+        "../../../tests/program_control_plane"
+      ]
+    },
+    {
+      "check_id": "US1-EXACT-CURRENT-SUBJECT",
+      "method": "Validate clean source fe79e3db in 2.2 seconds with an 80,994-byte schema-valid report; require semantic exit 4 and seven exact committed-evidence findings.",
+      "environment": "read-only Git objects and Draft 2020-12 validation; no checkout-byte fallback",
+      "duration_ms": 2200,
+      "result": "blocked",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "evidence/verification/EPP-F01-US1.json",
+        "evidence/transitions/TR-0023.json",
+        "evidence/transitions/TR-0024.json",
+        "evidence/transitions/TR-0025.json"
+      ]
+    },
+    {
+      "check_id": "US1-APPEND-ONLY-STOP",
+      "method": "Preserve TR-0023 through TR-0025 byte-for-byte, correct only the current factual baseline tree, release the mutating lease, leave T024 and dependent tasks unchecked, and require a human planning/re-analysis gate.",
+      "environment": "program-state schema, lifecycle policy, roadmap and task-ledger audit",
+      "duration_ms": 800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0026.json",
+        "evidence/states/program-state-revision-0027.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "US1-EXCLUDED-AUTHORITY",
+      "method": "Confirm no EPP-F01B implementation, dependency, product-runtime, benchmark generation/execution, external mutation, push, PR, merge, dev integration, publication or release action occurred.",
+      "environment": "exact approval conditions, Git diff and local action audit",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "evidence/verification/EPP-F01-US1.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-003.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-003.json"
+    ],
+    "subject": {
+      "git_commit": "d308d03bc59bf83afc260cf60a9b9bd1729f9b96",
+      "git_tree": "e6a04a4de8c52148331b5d3a75209ef58122ad79",
+      "program_tree": "e3ffc793a3dea088b27d9067eaf219f668c68c2e",
+      "artifact_count": 43,
+      "manifest_transition": "TR-0022"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Six immutable transition output digests do not match exact containing-commit Git blobs",
+    "Revision 26 records a commit object where the dev baseline tree identity is required",
+    "No authority exists to invent an append-only v2 correction/supersession contract"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0026.json",
+  "next_action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V3"
+}

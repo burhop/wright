@@ -1,0 +1,125 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0004",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "PROGRAM_APPROVED",
+  "to_state": "SELECTING_FEATURE",
+  "prior_revision": 4,
+  "new_revision": 5,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+  "new_state_digest": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Select EPP-F01 as the sole dependency-eligible child feature and advance to worktree allocation without authorizing implementation or external mutation.",
+  "started_at": "2026-08-26T23:27:00Z",
+  "finished_at": "2026-08-26T23:31:30Z",
+  "duration_ms": 270000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "eefb4f5b52c7657726e5592ebf151b4abf6171a3",
+    "head_after": "eefb4f5b52c7657726e5592ebf151b4abf6171a3",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": []
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0004.json",
+      "sha256": "a4692eac947839ca96c7e00bc0c1cddf2fa22e9464f57003a66e8edb478efbe6",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "741b0ac9a5cfdbfb75dd07b0b79ab547ff352eedd7414f6b29e9b39909678539",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-2026-001.json",
+      "sha256": "072c23eb9db41d23adb1b1a914dda43050822a6a7c6eef1a265cac39c5ba3e27",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "5189f2defedab9fe7eb524b9117479d8ba150f2b15d9a664b67561778c178259",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b686a2cc39eb3280f5407a9a5fbed17b3fc04ef5e53d36187aa70bae7b225816",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "e91de75b81a4350beb5ea9b1c41f682ddc1d1ca0d436aaa239f56c53201cd7ce",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "PROGRAM-APPROVAL-CURRENT",
+      "command_or_method": "Validate APR-EPP-2026-001 and confirm the approved planning subject and child-specification scope remain current",
+      "environment": "clean local Git worktree",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/approvals/APR-EPP-2026-001.json", "approval.md"]
+    },
+    {
+      "check_id": "ROADMAP-ELIGIBILITY",
+      "command_or_method": "Derive EPP-F01 eligibility from the acyclic roadmap: EPP-P00 complete, priority 10, no blocking decisions, no competing eligible feature",
+      "environment": "planning control plane",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["roadmap.json", "proposed-features.md"]
+    },
+    {
+      "check_id": "DEV-BASELINE-ANCESTRY",
+      "command_or_method": "Resolve local dev and origin/dev to ad162cca048ad23d848673ec4f49f588dcc77aff and verify that commit is the merge-base of the approved control-plane HEAD",
+      "environment": "local Git refs; no fetch or external write",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "README.md"]
+    },
+    {
+      "check_id": "WIP-AND-LEASE",
+      "command_or_method": "Require current_feature=null and active_mutating_lease=null in accepted revision 4 before selecting exactly one feature",
+      "environment": "planning control plane",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0004.json", "agent-operating-contract.md"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 4 to 5 increment, legal PROGRAM_APPROVED to SELECTING_FEATURE edge, canonical/raw state digests, and the singular allocation action",
+      "environment": "Windows PowerShell; Python jsonschema Draft 2020-12",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0004.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0004.json",
+  "next_action": "ALLOCATE_EPP_F01_WORKTREE"
+}

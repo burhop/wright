@@ -1,0 +1,209 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0031",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 31,
+  "new_revision": 32,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "14b592dce49a867b51f5b45101f8f5d11540ba072af39c3c832b4f8ff945531f",
+  "new_state_digest": "3e909e615c7098f873690e4acf3bac085c133d7675d492cfa096ffe8d87f62ef",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Complete bounded repair attempt 1 for EPP-F01-US1-COMMITTED-IDENTITY-001: implement the exact closed T069 verifier, independently recompute and visibly resolve all 37 approved factual metadata findings, reject every closed-target and V4-authority mutation class, preserve readiness non-interference and immutable history, mark T069 complete, and resume IMPLEMENTING with the human stop boundary narrowed to T024 through T041.",
+  "started_at": "2026-08-27T16:39:00Z",
+  "finished_at": "2026-08-27T17:01:04Z",
+  "duration_ms": 1324000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "6aaf5983aae687122b0d496323e959ddbee55ef0",
+    "source_tree": "b92be53478f432ff04cc146d93ce5137e07b9db8",
+    "source_program_tree": "37dfb6c4e8212b88881462a3792716b92dcea964",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0032.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0031.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "scripts/program_control/cli.py",
+      "scripts/program_control/model.py",
+      "scripts/program_control/validation.py",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_cli.py",
+      "tests/program_control_plane/test_contract_schemas.py",
+      "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+      "tests/program_control_plane/test_transition_chain.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0031.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0031.json",
+      "sha256": "65565da454d8a203efeed8247ee6425981dc18f860900937fe9fe10626cc0907",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0030.json",
+      "sha256": "dcd1501c57e3d0f0083749b7620d596f0dfe46f3b39ecf0ab3927e1dad33aea3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+      "sha256": "9bd3bab9215eefbfb951a0d8db8c613433002f1afc44b79cce6063de6e0ff27d",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "sha256": "63b2c7b48acdd11c263d67b8079b56e686ae2e43c75f870a54eaca11c676a5ad",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+      "sha256": "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0032.json",
+      "sha256": "283e95113708f6ebc6ae818803fa558734f663f0b03e392792237979a5b27be4",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "283e95113708f6ebc6ae818803fa558734f663f0b03e392792237979a5b27be4",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T069-EXACT-37-OF-37",
+      "method": "Load the immutable approved profile from the V4 subject, recompute six transition digests and 31 historical state-tree pointers from exact Git blobs, object IDs, commit trees, canonical state values and strict ancestry, then retain all original findings with resolved disposition and correction reference.",
+      "environment": "offline Git object database; current local worktree; no authoritative evidence mutation",
+      "duration_ms": 30560,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_transition_chain.py",
+        "../../../scripts/program_control/validation.py",
+        "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json"
+      ]
+    },
+    {
+      "check_id": "T069-CLOSED-NEGATIVE-MATRIX",
+      "method": "Reject every added, omitted, reordered, substituted, wildcard, range, same/future/circular, correction, authority, readiness, gate, benchmark, freshness, candidate, release, identity and approval mutation while preserving 37 visible unresolved findings.",
+      "environment": "58 focused pytest cases with bounded temporary Git repositories; offline",
+      "duration_ms": 100850,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_transition_chain.py",
+        "../../../tests/program_control_plane/test_cli.py"
+      ]
+    },
+    {
+      "check_id": "T069-READINESS-NON-INTERFERENCE",
+      "method": "Derive the four readiness areas before and after correction verification and require byte-equivalent source inputs, identical projections, unchanged candidate/gate evidence and findings limited to the immutable transition/state targets.",
+      "environment": "deterministic fixed observation 2026-08-27T12:00:00Z; offline",
+      "duration_ms": 4200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_transition_chain.py",
+        "gate-catalog.json",
+        "gate-evidence.json"
+      ]
+    },
+    {
+      "check_id": "T069-WHOLE-MODULE-REGRESSION",
+      "method": "Run the complete program-control-plane pytest module after returning the current pointer to IMPLEMENTING and require zero failures; separately require Ruff lint and formatting checks on every changed Python file.",
+      "environment": "local Python test environment with cache disabled and bounded basetemp; offline",
+      "duration_ms": 70190,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane",
+        "../../../scripts/program_control"
+      ]
+    },
+    {
+      "check_id": "T069-REPAIR-BOUNDARY",
+      "method": "Confirm repair attempt 1 resolved the approved stable cause without rewriting TR-0023 through TR-0025, state revisions 1 through 26, correction profile, schemas or approvals, without spending attempt 2, and without touching any excluded EPP-F01B, benchmark, dependency or external action.",
+      "environment": "local diff, immutable Git history and exact approval/lease audit",
+      "duration_ms": 1400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md",
+        "approval.md"
+      ]
+    },
+    {
+      "check_id": "HUMAN-VALUE-STOP-NARROWED",
+      "method": "Record the superseding authority boundary: after this green T069 checkpoint execute only T024 through T041 and stop for human review with the required runnable demonstration before T042.",
+      "environment": "human directive and minimum truthful state update",
+      "duration_ms": 100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+    ],
+    "subject": {
+      "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+      "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+      "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+      "artifact_count": 38,
+      "manifest_transition": "TR-0027"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Pending bounded independent post-commit T069 review.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0031.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

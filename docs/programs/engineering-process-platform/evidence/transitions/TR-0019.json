@@ -1,0 +1,305 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0019",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_APPROVAL_PENDING",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 19,
+  "new_revision": 20,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20",
+  "new_state_digest": "6183025090f892ed8323f69f9e1961f4ee0f01d3f84e04a4c522063c9e6ac03b",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Validate the exact amended approval bundle and its 34 committed artifact digests, perform the coordinator-only authorization bootstrap, emit the sole closed-v1-to-v2 migration, and reactivate the bounded 68-task implementation lease without beginning feature-owner task mutation.",
+  "started_at": "2026-08-27T11:04:37Z",
+  "finished_at": "2026-08-27T11:21:49Z",
+  "duration_ms": 1032000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "a206b4395a9fe677624a8f7fb955272aaaf3f019",
+    "source_tree": "34996710c89d1072d4b3d0df88d37aeed7547371",
+    "source_program_tree": "c2562b1246080e97b4e8d389ee3d3f4de0399364",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0020.json",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/schemas/approval.schema.json",
+      "docs/programs/engineering-process-platform/schemas/lifecycle-policy.schema.json",
+      "docs/programs/engineering-process-platform/schemas/program-state.schema.json",
+      "docs/programs/engineering-process-platform/schemas/transition-evidence.schema.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0019.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0019.json",
+      "sha256": "2d03b9e5294b7d09fe31f264537093918731ddd32a2fb408b1b5e4b222e00283",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0018.json",
+      "sha256": "9ccc4ad6558afe9f1284793e313775904455e4eabce8f7a356747181a9e26bb2",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-002.json",
+      "sha256": "0551b79f1a816e4aeb93a89971b53ef5726ad4bf4f2bdd4a77e267205da1edf9",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-002.json",
+      "sha256": "23b9b5a2f020c41c143d2548dddfeb47f6fd1a62a3bfc56175e336ec8f66f613",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/legacy-compatibility-profile.json",
+      "sha256": "b9e97f16846f555d808d73f76ef9b2ac93a1ac757ed685cbe6a0c90e577a7ef9",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json",
+      "sha256": "af26354427990e736dc5b559c4aec41b22c0f079574b7f6449f80b220a7754e7",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "0a22ec184a6eb25d70a036545fe192e80295ce161fd9c4bd8f6b310b08c08428",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "approval.md",
+      "sha256": "7502e2d3be8503bacdf244433745964a9c4f807ee65eff7cf59708830b52ed7a",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "coordinator-state-machine.md",
+      "sha256": "d07419314b8b0a52255fa7eeddd2a4426da4352dac9a6f0c26a642a6f7b81bbf",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0020.json",
+      "sha256": "0fad20d2da476e41257db5175e17729f34012169bd78b66752eff238cfb0ee24",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "f0f53c40736e7ba32683ea128296c9cd66dbdec32dedd0e013a9b4376ec49e51",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "0fad20d2da476e41257db5175e17729f34012169bd78b66752eff238cfb0ee24",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "4724ace51f71f5bc613668e9c8139d1ab55eb5a4686c4e107121fba308be5dfd",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "schemas/README.md",
+      "sha256": "936a04098b63a628df09950a95d36449dfff62a2a5e01f251b4a6f1b42f1acd7",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "schemas/approval.schema.json",
+      "sha256": "d3f691bf399f546c1d537c90ba0e316c4ccaf2c8e48a499bc34535059749bd5a",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "schemas/lifecycle-policy.schema.json",
+      "sha256": "af26354427990e736dc5b559c4aec41b22c0f079574b7f6449f80b220a7754e7",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "schemas/program-state.schema.json",
+      "sha256": "aef5534355efcdc1c38f8c182df95fe1998befba757485ab94f2ce041eaa4264",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "schemas/transition-evidence.schema.json",
+      "sha256": "27e19a3e271c41cff6867a658bd0d32724ea741a2605e8b14c442d872890dcdb",
+      "schema_version": null,
+      "role": "immutable_policy"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "APPROVAL-BUNDLE-SCHEMA",
+      "method": "Validate both committed approval records against approval schema v1; require distinct approved scopes, identical exact subjects, no conditions, no expiry, and no revocation. The first verifier invocation failed before execution from command-line quoting; one bounded corrected invocation passed.",
+      "environment": "local Python jsonschema Draft 2020-12 and committed Git objects",
+      "duration_ms": 4200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-002.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-002.json"
+      ]
+    },
+    {
+      "check_id": "APPROVED-ARTIFACT-INTEGRITY",
+      "method": "Resolve all 34 TR-0018 output paths from commit 10d13cbeaa2d038744752e93713ab7671f17f7d4 and recompute exact Git-blob SHA-256 values; require zero mismatch.",
+      "environment": "read-only Git plumbing; no checkout-byte identity",
+      "duration_ms": 3000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/transitions/TR-0018.json"
+      ]
+    },
+    {
+      "check_id": "LEGACY-CHECKPOINT-RESOLUTION",
+      "method": "Require the unchanged two-profile contract, revision-19 terminal digest, sole null checkpoint_commit_blob rule, and exact TR-0018 blob at the material-change approval subject; reject any later v1 record.",
+      "environment": "committed profile and transition blobs at exact approval subject",
+      "duration_ms": 1800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/contracts/legacy-compatibility-profile.json",
+        "evidence/transitions/TR-0018.json"
+      ]
+    },
+    {
+      "check_id": "V2-SCHEMA-POLICY-MIGRATION",
+      "method": "Meta-validate the promoted approval, lifecycle-policy, program-state, and transition schemas; validate all 19 legacy states, 18 legacy transitions, six approvals, the unchanged two-profile policy, and revision-20 v2 state.",
+      "environment": "local Python jsonschema Draft 2020-12",
+      "duration_ms": 1900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "schemas/approval.schema.json",
+        "schemas/lifecycle-policy.schema.json",
+        "schemas/program-state.schema.json",
+        "schemas/transition-evidence.schema.json",
+        "lifecycle-policy.json",
+        "program-state.json"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-RECOVERY",
+      "method": "Audit exact worktree/branch/start/baseline, clean source parent, current diff, process ownership, and secret patterns; the first Windows process query was access-denied and one approved read-only retry found only the coordinator process. The initial path-role check exposed a non-path AGENTS.md annotation; repair attempt 1 normalized the path and encoded the managed-section restriction separately without broadening authority. Activate lease revision 5 for the exact 14-path, five-action local implementation envelope.",
+      "environment": "isolated linked worktree; read-only Git and Windows process audit",
+      "duration_ms": 5400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    },
+    {
+      "check_id": "PRETASK-BOOTSTRAP-BOUNDARY",
+      "method": "Treat schema/policy promotion, revision 20, TR-0019, roadmap activation, and lease reactivation as one coordinator-only administrative bootstrap; confirm no task checkbox or feature-owner source mutation is claimed before its containing commit.",
+      "environment": "agent operating contract and exact approved task authority",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "coordinator-state-machine.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm dependencies, product runtime changes, benchmark collection/execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain outside the approval, lease, and transition.",
+      "environment": "exact human approval, approval records, plan, and local diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "method": "Validate r19 v1 to r20 v2 increment, exact prior/new canonical digests, PROGRAM_ACTIVE plus IMPLEMENTATION_APPROVAL_PENDING to IMPLEMENTATION_AUTHORIZED, current/archive byte identity, EPP-F01 roadmap/lease/pointer agreement, and START_EPP_F01_IMPLEMENTATION as the sole next action.",
+      "environment": "local deterministic JSON and exact Git source-parent identities",
+      "duration_ms": 1800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0019.json",
+        "evidence/states/program-state-revision-0020.json",
+        "program-state.json",
+        "roadmap.json",
+        "lifecycle-policy.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-002.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "10d13cbeaa2d038744752e93713ab7671f17f7d4",
+      "git_tree": "04f7cfc5cb3226896238ba6d3d060506284aece1",
+      "program_tree": "321daf5e92f0981322ff0f54632bef56299e17b4",
+      "artifact_count": 34,
+      "manifest_transition": "TR-0018"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-LEASE-PATH-IDENTITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0019.json",
+  "next_action": "START_EPP_F01_IMPLEMENTATION"
+}

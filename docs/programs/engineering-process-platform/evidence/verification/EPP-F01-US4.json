@@ -1,0 +1,94 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-US4-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "story",
+  "subject": {
+    "git_commit": "bee51183d806a5b0a0b2253ee66de80a768542f6",
+    "git_tree": "63626a528e9cd8ffcae608982313270e2c1b4ce5",
+    "artifact_digests": [
+      { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" },
+      { "path": "tests/program_control_plane/test_determinism.py", "sha256": "bed6bff69977bb33cc3baf941de4eae872e5b0172e3261c6413eb59660cdce6e" },
+      { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" },
+      { "path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "312ae6b6a43b6288a18986d9aaabc13590fbc2945121abca3b175b1e6759bf74" },
+      { "path": "docs/programs/engineering-process-platform/README.md", "sha256": "5b61261b84f36c5fac899e76aaba5c4e6eb07d20337f17092756f3471dd1b7bf" },
+      { "path": "specs/076-control-plane-validator/quickstart.md", "sha256": "d1f4e9500f2a5ea6d763c5670df6ffe8685c0f45e1b6213d86117da996f5ba56" },
+      { "path": "scripts/README.md", "sha256": "82f75fcef64ce14d5dea6104600dacd70cf39d970ed1b23ee534a2ab3a5c76e5" },
+      { "path": "docs/programs/engineering-process-platform/status-dashboard-contract.md", "sha256": "a3d545a4cc1187d2b0b6a4a8971be6020690676932bd1b888257c821dc6aa575" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T21:37:21Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "US4-DETERMINISM-COMPATIBILITY-WALKTHROUGH",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/program_control_plane/test_determinism.py tests/program_control_plane/test_atomicity_redaction_and_compatibility.py tests/program_control_plane/test_evidence_walkthrough.py -q after bounded repair; result 42 passed.",
+      "environment": "Windows local worktree; short writable pytest temp root; offline",
+      "duration_ms": 24990,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_determinism.py", "sha256": "bed6bff69977bb33cc3baf941de4eae872e5b0172e3261c6413eb59660cdce6e" },
+        { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" },
+        { "path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "312ae6b6a43b6288a18986d9aaabc13590fbc2945121abca3b175b1e6759bf74" }
+      ]
+    },
+    {
+      "check_id": "US4-INDEPENDENT-OMISSION-REVIEW",
+      "method": "Independent read-only reviewer reran the repaired US4 slice and checked the exact bee51183 subject; result PASS with 42 passed and no material blocker before T056.",
+      "environment": "Distinct bounded read-only agent; exact clean committed subject; offline",
+      "duration_ms": 28720,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "312ae6b6a43b6288a18986d9aaabc13590fbc2945121abca3b175b1e6759bf74" }
+      ]
+    },
+    {
+      "check_id": "US4-WHOLE-MODULE-REGRESSION",
+      "method": "Run D:/Users/markb/miniconda3/python.exe -m pytest tests/program_control_plane -q; result 197 passed and 1 skipped.",
+      "environment": "Windows local worktree; short writable pytest temp root; offline",
+      "duration_ms": 98130,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" }
+      ]
+    },
+    {
+      "check_id": "US4-LINT-FORMAT-VALIDATION",
+      "method": "Run Ruff check and format --check over scripts/program_control and tests/program_control_plane, then validate committed source bee51183 in text mode; all passed.",
+      "environment": "Windows local repository virtual environment; clean committed source; offline",
+      "duration_ms": 7100,
+      "result": "passed",
+      "evidence": [
+        { "path": "scripts/program_control/cli.py", "sha256": "8f0cdcf82f60c40b952d77058601a14a4990739fa444dce47e0b69fbfbaf9ddc" },
+        { "path": "specs/076-control-plane-validator/quickstart.md", "sha256": "d1f4e9500f2a5ea6d763c5670df6ffe8685c0f45e1b6213d86117da996f5ba56" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Independent review of 150762713b0d9144db913f04b26fa2db2b9fdbe0 found shallow discovery-order, prior-contract/rollback, and approval/evidence-traversal proof; bounded repair 1 closed all three causes.",
+    "The first repaired focused run exposed an offline schema-reference test harness issue and an incorrect GitIdentity field name; the test harness was corrected without changing product behavior."
+  ],
+  "findings": [
+    {
+      "code": "WINDOWS_SYMLINK_CASE_SKIPPED",
+      "severity": "info",
+      "artifact": "tests/program_control_plane/test_git_subject.py",
+      "disposition": "One existing unprivileged Windows symlink case remains skipped; POSIX and independent candidate verification retain the platform handoff requirement."
+    },
+    {
+      "code": "EPP_F01B_PLANNING_SEPARATE",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/README.md",
+      "disposition": "Provisional EPP-F01B planning is recorded as isolated and unincorporated; implementation remains unauthorized and reconciliation follows EPP-F01 dev integration."
+    }
+  ],
+  "rollback_subject": "git:b87bd4b30fd388c8e6d7c294bfdf7093c7fd2995 (US3 evidence checkpoint)",
+  "delivery_relation": null
+}

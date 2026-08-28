@@ -1,0 +1,336 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/committed-identity-correction.schema.json",
+  "title": "Closed Committed-Identity Correction Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "correction_id",
+    "program_id",
+    "feature_id",
+    "stable_cause_id",
+    "source_checkpoint",
+    "accept_new_records",
+    "expected_claim_count",
+    "transition_digest_claims",
+    "historical_state_tree_claims",
+    "tree_resolution",
+    "forbidden_target_classes",
+    "resolution_semantics",
+    "authority",
+    "discovery_evidence"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "correction_id": { "const": "COR-EPP-F01-US1-COMMITTED-IDENTITY-001" },
+    "program_id": { "const": "EPP-2026" },
+    "feature_id": { "const": "EPP-F01" },
+    "stable_cause_id": { "const": "EPP-F01-US1-COMMITTED-IDENTITY-001" },
+    "source_checkpoint": {
+      "const": {
+        "git_commit": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47",
+        "git_tree": "574cd8919c62086e7b657f14c116ee4c6b2429ea",
+        "program_tree": "138debc23878ec34991af7e824667091c57b14e7"
+      }
+    },
+    "accept_new_records": { "const": false },
+    "expected_claim_count": { "const": 37 },
+    "transition_digest_claims": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "prefixItems": [
+        { "$ref": "#/$defs/ic01" },
+        { "$ref": "#/$defs/ic02" },
+        { "$ref": "#/$defs/ic03" },
+        { "$ref": "#/$defs/ic04" },
+        { "$ref": "#/$defs/ic05" },
+        { "$ref": "#/$defs/ic06" }
+      ],
+      "items": false
+    },
+    "historical_state_tree_claims": {
+      "type": "array",
+      "minItems": 26,
+      "maxItems": 26,
+      "prefixItems": [
+        { "$ref": "#/$defs/stateR01" },
+        { "$ref": "#/$defs/stateR02" },
+        { "$ref": "#/$defs/stateR03" },
+        { "$ref": "#/$defs/stateR04" },
+        { "$ref": "#/$defs/stateR05" },
+        { "$ref": "#/$defs/stateR06" },
+        { "$ref": "#/$defs/stateR07" },
+        { "$ref": "#/$defs/stateR08" },
+        { "$ref": "#/$defs/stateR09" },
+        { "$ref": "#/$defs/stateR10" },
+        { "$ref": "#/$defs/stateR11" },
+        { "$ref": "#/$defs/stateR12" },
+        { "$ref": "#/$defs/stateR13" },
+        { "$ref": "#/$defs/stateR14" },
+        { "$ref": "#/$defs/stateR15" },
+        { "$ref": "#/$defs/stateR16" },
+        { "$ref": "#/$defs/stateR17" },
+        { "$ref": "#/$defs/stateR18" },
+        { "$ref": "#/$defs/stateR19" },
+        { "$ref": "#/$defs/stateR20" },
+        { "$ref": "#/$defs/stateR21" },
+        { "$ref": "#/$defs/stateR22" },
+        { "$ref": "#/$defs/stateR23" },
+        { "$ref": "#/$defs/stateR24" },
+        { "$ref": "#/$defs/stateR25" },
+        { "$ref": "#/$defs/stateR26" }
+      ],
+      "items": false
+    },
+    "tree_resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recorded_value", "authoritative_commit", "authoritative_value", "method"],
+      "properties": {
+        "recorded_value": { "$ref": "#/$defs/objectId" },
+        "authoritative_commit": { "$ref": "#/$defs/objectId" },
+        "authoritative_value": { "$ref": "#/$defs/objectId" },
+        "method": { "const": "git_commit_tree_object" }
+      }
+    },
+    "forbidden_target_classes": {
+      "const": [
+          "state_digest",
+          "state_revision",
+          "lifecycle_edge",
+          "event_kind",
+          "changed_paths_manifest",
+          "approval_or_authority",
+          "readiness_or_gate_evidence",
+          "benchmark_or_release_evidence",
+          "candidate_or_freshness",
+          "correction_record"
+      ]
+    },
+    "resolution_semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect",
+        "validator_recomputes",
+        "original_bytes_immutable",
+        "original_finding_retained",
+        "resolved_finding_non_authoritative",
+        "all_claims_required",
+        "old_validator_fails_closed",
+        "correction_cannot_be_corrected",
+        "readiness_non_interference"
+      ],
+      "properties": {
+        "effect": { "const": "factual_metadata_disposition_only" },
+        "validator_recomputes": { "const": true },
+        "original_bytes_immutable": { "const": true },
+        "original_finding_retained": { "const": true },
+        "resolved_finding_non_authoritative": { "const": true },
+        "all_claims_required": { "const": true },
+        "old_validator_fails_closed": { "const": true },
+        "correction_cannot_be_corrected": { "const": true },
+        "readiness_non_interference": { "const": true }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_scopes", "proposed_approval_records", "planning_subject_transition"],
+      "properties": {
+        "required_scopes": { "const": ["material_change", "feature_implementation"] },
+        "proposed_approval_records": {
+          "const": [
+            "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-004.json",
+            "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-004.json"
+          ]
+        },
+        "planning_subject_transition": { "const": "TR-0027" }
+      }
+    },
+    "discovery_evidence": {
+      "const": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0026.json",
+          "sha256": "82859c79a8b0384108fc4c2e66f0b24da86990f520ec06dc0682b63797ab77f4"
+        },
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-US1.json",
+          "sha256": "3f0ba75078b8afa4e01b3fd68713dd9e43b4edfd576890a8c3331d6c09a96352"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "objectId": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["git_commit", "git_tree", "program_tree"],
+      "properties": {
+        "git_commit": { "$ref": "#/$defs/objectId" },
+        "git_tree": { "$ref": "#/$defs/objectId" },
+        "program_tree": { "$ref": "#/$defs/objectId" }
+      }
+    },
+    "artifactDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "targetArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_path",
+        "artifact_raw_sha256",
+        "introducing_commit",
+        "introducing_tree",
+        "artifact_git_blob"
+      ],
+      "properties": {
+        "artifact_path": { "$ref": "#/$defs/path" },
+        "artifact_raw_sha256": { "$ref": "#/$defs/digest" },
+        "introducing_commit": { "$ref": "#/$defs/objectId" },
+        "introducing_tree": { "$ref": "#/$defs/objectId" },
+        "artifact_git_blob": { "$ref": "#/$defs/objectId" }
+      }
+    },
+    "transitionDigestClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "target", "json_pointer", "recorded_value", "authoritative_value", "resolution"],
+      "properties": {
+        "claim_id": { "type": "string", "pattern": "^IC-[0-9]{2}$" },
+        "target": { "$ref": "#/$defs/targetArtifact" },
+        "json_pointer": { "type": "string", "pattern": "^/outputs/[0-9]+/sha256$" },
+        "recorded_value": { "$ref": "#/$defs/digest" },
+        "authoritative_value": { "$ref": "#/$defs/digest" },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "subject_commit", "artifact_path", "artifact_git_blob", "algorithm"],
+          "properties": {
+            "method": { "const": "git_blob_at_commit" },
+            "subject_commit": { "$ref": "#/$defs/objectId" },
+            "artifact_path": { "$ref": "#/$defs/path" },
+            "artifact_git_blob": { "$ref": "#/$defs/objectId" },
+            "algorithm": { "const": "sha256_exact_git_blob_bytes" }
+          }
+        }
+      }
+    },
+    "stateTreeTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "artifact_path",
+        "artifact_raw_sha256",
+        "introducing_commit",
+        "introducing_tree",
+        "artifact_git_blob",
+        "canonical_state_digest",
+        "json_pointers"
+      ],
+      "properties": {
+        "revision": { "type": "integer", "minimum": 1, "maximum": 26 },
+        "artifact_path": {
+          "type": "string",
+          "pattern": "^docs/programs/engineering-process-platform/evidence/states/program-state-revision-[0-9]{4}\\.json$"
+        },
+        "artifact_raw_sha256": { "$ref": "#/$defs/digest" },
+        "introducing_commit": { "$ref": "#/$defs/objectId" },
+        "introducing_tree": { "$ref": "#/$defs/objectId" },
+        "artifact_git_blob": { "$ref": "#/$defs/objectId" },
+        "canonical_state_digest": { "$ref": "#/$defs/digest" },
+        "json_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "/baseline/tree",
+              "/active_mutating_lease/dev_baseline/tree"
+            ]
+          },
+          "contains": { "const": "/baseline/tree" }
+        }
+      }
+    },
+    "ic01": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-01" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0023.json" } } }, "json_pointer": { "const": "/outputs/0/sha256" } } }] },
+    "ic02": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-02" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0023.json" } } }, "json_pointer": { "const": "/outputs/1/sha256" } } }] },
+    "ic03": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-03" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0023.json" } } }, "json_pointer": { "const": "/outputs/2/sha256" } } }] },
+    "ic04": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-04" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0023.json" } } }, "json_pointer": { "const": "/outputs/6/sha256" } } }] },
+    "ic05": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-05" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0024.json" } } }, "json_pointer": { "const": "/outputs/0/sha256" } } }] },
+    "ic06": { "allOf": [{ "$ref": "#/$defs/transitionDigestClaim" }, { "properties": { "claim_id": { "const": "IC-06" }, "target": { "properties": { "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/transitions/TR-0025.json" } } }, "json_pointer": { "const": "/outputs/0/sha256" } } }] },
+    "stateR01": { "$ref": "#/$defs/stateR01Base" },
+    "stateR02": { "$ref": "#/$defs/stateR02Base" },
+    "stateR03": { "$ref": "#/$defs/stateR03Base" },
+    "stateR04": { "$ref": "#/$defs/stateR04Base" },
+    "stateR05": { "$ref": "#/$defs/stateR05Base" },
+    "stateR06": { "$ref": "#/$defs/stateR06Base" },
+    "stateR07": { "$ref": "#/$defs/stateR07Base" },
+    "stateR08": { "$ref": "#/$defs/stateR08Base" },
+    "stateR09": { "$ref": "#/$defs/stateR09Base" },
+    "stateR10": { "$ref": "#/$defs/stateR10Base" },
+    "stateR11": { "$ref": "#/$defs/stateR11Base" },
+    "stateR12": { "$ref": "#/$defs/stateR12Base" },
+    "stateR13": { "$ref": "#/$defs/stateR13Base" },
+    "stateR14": { "$ref": "#/$defs/stateR14Base" },
+    "stateR15": { "$ref": "#/$defs/stateR15Base" },
+    "stateR16": { "$ref": "#/$defs/stateR16Base" },
+    "stateR17": { "$ref": "#/$defs/stateR17Base" },
+    "stateR18": { "$ref": "#/$defs/stateR18Base" },
+    "stateR19": { "$ref": "#/$defs/stateR19Base" },
+    "stateR20": { "$ref": "#/$defs/stateR20Base" },
+    "stateR21": { "$ref": "#/$defs/stateR21Base" },
+    "stateR22": { "$ref": "#/$defs/stateR22Base" },
+    "stateR23": { "$ref": "#/$defs/stateR23Base" },
+    "stateR24": { "$ref": "#/$defs/stateR24Base" },
+    "stateR25": { "$ref": "#/$defs/stateR25Base" },
+    "stateR26": { "$ref": "#/$defs/stateR26Base" },
+    "stateR01Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 1 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0001.json" }, "canonical_state_digest": { "const": "309a92e99e333e868ef13881faf9b2b379a36651cf2ac1224111fb16a3ce7ca7" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR02Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 2 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0002.json" }, "canonical_state_digest": { "const": "882e3532d0b9e1abeea28103e5cd00ff01f497252799bc696dfd12427edefcd9" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR03Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 3 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0003.json" }, "canonical_state_digest": { "const": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR04Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 4 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0004.json" }, "canonical_state_digest": { "const": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR05Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 5 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0005.json" }, "canonical_state_digest": { "const": "dce39c5247647f6ab831d0d47a3f3b964ff7baaf5fc9ebbe64ba1ecc3086f6ba" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR06Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 6 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0006.json" }, "canonical_state_digest": { "const": "9d535e4e8c23ddfca4ef5d9dcd706d0f87dd1ff37e797aff52a591427e67e705" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR07Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 7 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0007.json" }, "canonical_state_digest": { "const": "b60ea72250a336c8b23e4408a4ec4525ae431b5c901f3d9e0886df25878f37e2" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR08Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 8 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0008.json" }, "canonical_state_digest": { "const": "40ab763b78abe6f80fb414beae42cd58d07ad81af9f2193ae4eeb95f191e4886" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR09Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 9 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0009.json" }, "canonical_state_digest": { "const": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR10Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 10 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0010.json" }, "canonical_state_digest": { "const": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR11Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 11 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0011.json" }, "canonical_state_digest": { "const": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR12Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 12 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0012.json" }, "canonical_state_digest": { "const": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR13Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 13 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0013.json" }, "canonical_state_digest": { "const": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR14Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 14 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0014.json" }, "canonical_state_digest": { "const": "0e080e57011f40aed505bcb978f5661cc06b40aa5b62d1a157f63ce6fb04093e" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR15Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 15 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0015.json" }, "canonical_state_digest": { "const": "34739a7367d20b0aa24530306248645765dc8c52280910f681e091348e1c8634" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR16Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 16 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0016.json" }, "canonical_state_digest": { "const": "eba07662ba71a833fd71736ed426349c1f0fbeeb5ece00dce7ef885466ca40f2" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR17Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 17 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0017.json" }, "canonical_state_digest": { "const": "10eb93e8f85818e67dd103525962148a0a0f64f79813ba3f3fda022872a17658" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR18Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 18 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0018.json" }, "canonical_state_digest": { "const": "ef9bd2dc3fd7400f3b5587d565ef35bf1c866139b01ac5d25a2710990eaad52d" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR19Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 19 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0019.json" }, "canonical_state_digest": { "const": "1a99f737ce2cc4fe3c433e65064bb598aa5ece1f39d42ea79e985c7ee8a48d20" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR20Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 20 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0020.json" }, "canonical_state_digest": { "const": "6183025090f892ed8323f69f9e1961f4ee0f01d3f84e04a4c522063c9e6ac03b" }, "json_pointers": { "const": ["/baseline/tree", "/active_mutating_lease/dev_baseline/tree"] } } }] },
+    "stateR21Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 21 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0021.json" }, "canonical_state_digest": { "const": "5ed070365ffbe1d8530e01dc7f33e61c5f553007aefe5719e7ecb09bf9cd74a6" }, "json_pointers": { "const": ["/baseline/tree", "/active_mutating_lease/dev_baseline/tree"] } } }] },
+    "stateR22Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 22 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0022.json" }, "canonical_state_digest": { "const": "d18e0a313a3463dded733db5d574a167e268afa2e04a19120263301d4f34d5f9" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR23Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 23 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0023.json" }, "canonical_state_digest": { "const": "bfbd97f2459f69381ce8e381ea1ab450bf4c12b488fa946ffb122c51ea8c7807" }, "json_pointers": { "const": ["/baseline/tree"] } } }] },
+    "stateR24Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 24 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0024.json" }, "canonical_state_digest": { "const": "b9ce0b90ad651dc0bd56f9ee48b90232aea4da4aac4a1c9f729b702d5778c5dc" }, "json_pointers": { "const": ["/baseline/tree", "/active_mutating_lease/dev_baseline/tree"] } } }] },
+    "stateR25Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 25 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0025.json" }, "canonical_state_digest": { "const": "5ddd07fe047ab522d55afd4ef6ca40b1e121c723b339bf0e97b05af3be9b4fd7" }, "json_pointers": { "const": ["/baseline/tree", "/active_mutating_lease/dev_baseline/tree"] } } }] },
+    "stateR26Base": { "allOf": [{ "$ref": "#/$defs/stateTreeTarget" }, { "properties": { "revision": { "const": 26 }, "artifact_path": { "const": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0026.json" }, "canonical_state_digest": { "const": "46bdef19d305fdb7ff0c454c5d6934a4bd25dad2b6a15d550c16e492b4edb31e" }, "json_pointers": { "const": ["/baseline/tree", "/active_mutating_lease/dev_baseline/tree"] } } }] }
+  }
+}

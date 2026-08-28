@@ -1,0 +1,165 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0042",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 42,
+  "new_revision": 43,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "e98d4aba5b2dcafa10968ee8772566ae5e90adcaf502f1863912bec2c0c7bb1a",
+  "new_state_digest": "d9e9cb4432ef4b14e6204f4e6c3e459e855fc63d68ac7e39074bc8b5c4126e27",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Freeze exact validator candidate R e5a2ade9 after exact committed-source validation and the repaired lifecycle-aware full regression pass, mark T065 complete, release the mutating lease, prohibit further author mutation, and hand unchanged R to a distinct independent verifier.",
+  "started_at": "2026-08-27T22:03:04Z",
+  "finished_at": "2026-08-27T22:13:50Z",
+  "duration_ms": 646000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "e5a2ade942c0b4a2d474a185cfff0c46e10c508a",
+    "source_tree": "f5b3cca947585d4fd1e852bba868e6da9a2031ef",
+    "source_program_tree": "695ea400b1aa625b5ddd33163935a2f5e667b263",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0043.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0042.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-candidate.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0042.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0042.json",
+      "sha256": "1c5ce24d7240f47d10dd9a2596a56142c31128687bc09a6b857f8fe9fa56970d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0041.json",
+      "sha256": "b5b77d8ef5974400b75311c49a2693a18e27ed047f4ff6ae7bf24829fcb8109e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "83ec4e54d7b5c21db014822b273904ae8a499fc8c12de03e7f5fbd9a5ebd66b1",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0043.json",
+      "sha256": "68f430ec6eebedc55c2c4360c5ecda180cfd0a518775de5388f152288af2ff36",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "68f430ec6eebedc55c2c4360c5ecda180cfd0a518775de5388f152288af2ff36",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-candidate.json",
+      "sha256": "88b99f9020233c8d94cce601f173e13a080ae06d962939c33fe42cb3fe5bd2c0",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "fcbd87352fbd2f2fb25dd7fa7aa0ffe6d517d35e8403674294004bbfa8608b8d",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "CANDIDATE-R-VALID",
+      "method": "Run exact validator against committed source e5a2ade9 and require passed verdict, zero blockers, input manifest 122136a8..., four independent readiness areas, benchmark 0/100 and release false; the observed dirty flag reflects only preparation of this successor evidence.",
+      "environment": "Exact Git source R reads; Windows local; offline",
+      "duration_ms": 5550,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-candidate.json"
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-FULL-REGRESSION",
+      "method": "Retain the static-state and post-author lease failures, make affected tests and lease validation lifecycle-aware under bounded repair attempt 1 for each stable cause, and require the exact full rerun to pass 197 with one declared platform skip.",
+      "environment": "Windows local; writable basetemp; offline",
+      "duration_ms": 192330,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-candidate.json",
+        "../../../tests/program_control_plane/test_contract_schemas.py",
+        "../../../tests/program_control_plane/test_evidence_walkthrough.py",
+        "../../../tests/program_control_plane/test_roadmap_approval_and_lease.py"
+      ]
+    },
+    {
+      "check_id": "LEASE-RELEASE-AND-HANDOFF",
+      "method": "Set active_mutating_lease to null and next action VERIFY_EPP_F01_CANDIDATE; require distinct independent_verifier identity and unchanged R for T066.",
+      "environment": "Operational state and lifecycle policy",
+      "duration_ms": 220,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "lifecycle-policy.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "STATIC_CURRENT_STATE_TESTS",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0042.json",
+  "next_action": "VERIFY_EPP_F01_CANDIDATE"
+}

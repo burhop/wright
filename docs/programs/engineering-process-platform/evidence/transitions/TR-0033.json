@@ -1,0 +1,146 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0033",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "REPAIRING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 33,
+  "new_revision": 34,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cf0138ee13864064ce2bfee93a9b7e883690535099f4121efcc43954484f9f34",
+  "new_state_digest": "358945783238f592dbd3d0d3eee08b29311ba361e34baa67a70aa7a6bcea8070",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Close T069 repair attempt 2 after bounded independent acceptance proved exact APR-*004 raw-record binding, adversarial authority rejection and positive 37/37 disposition; mark T069 complete, return to IMPLEMENTING with no repair attempts remaining, and limit the next action to freezing an exact subject for the separate TR-0027 historical-input correction.",
+  "started_at": "2026-08-27T17:37:54Z",
+  "finished_at": "2026-08-27T17:44:07Z",
+  "duration_ms": 373000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "276f5ff51a3632db813a7ffb54657c4ae4c8509b",
+    "source_tree": "33a124578ba3293ec0daeb22895fa14f6d0afa89",
+    "source_program_tree": "c52b147dc03d1bfe295026ad07940157f03f296c",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0034.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0033.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0033.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0033.json",
+      "sha256": "fac0ea38b1ebbbeae3998c5bc72a689d2bc145bd75996fa263325430b905df5f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0032.json",
+      "sha256": "31f3e85b0e4423d6639413c03c4d360c4be62cbc47869205e29f158c91fc99f9",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0034.json",
+      "sha256": "baa23f925e599ca5525f5d9d44ecc0d917d8d6acd68162950371fbbf143c86c3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "baa23f925e599ca5525f5d9d44ecc0d917d8d6acd68162950371fbbf143c86c3",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T069-REPAIR2-INDEPENDENT-ACCEPTANCE",
+      "method": "An independent verifier replayed valid-digest manifest substitution, conditions, approver, review and mapping/blob divergence; all were unauthorized with 37 unresolved findings, while the exact positive path resolved 37/37 and pinned both raw approval hashes.",
+      "environment": "bounded read-only independent agent on commit 276f5ff5; offline",
+      "duration_ms": 59900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../scripts/program_control/validation.py",
+        "../../../tests/program_control_plane/test_transition_chain.py",
+        "evidence/transitions/TR-0032.json"
+      ]
+    },
+    {
+      "check_id": "T069-REPAIR2-POSTCOMMIT-TESTS",
+      "method": "Run the exact positive, authority-variant and valid-digest substitution tests against committed repair attempt 2 and require all three to pass.",
+      "environment": "local Python environment; offline; bounded basetemp",
+      "duration_ms": 56730,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_transition_chain.py"
+      ]
+    },
+    {
+      "check_id": "T069-WHOLE-MODULE-FINAL",
+      "method": "Run the complete program-control-plane module in the restored IMPLEMENTING state and require zero failures before closing T069.",
+      "environment": "local Python environment; offline; bounded basetemp",
+      "duration_ms": 110680,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+    ],
+    "subject": {
+      "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+      "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+      "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+      "artifact_count": 38,
+      "manifest_transition": "TR-0027"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Bounded independent verifier accepted T069 repair-attempt-2 commit 276f5ff5 with no blocking findings.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "T024 current-subject validation is blocked by TR-0027 input APR-EPP-F01-REPAIR-PLANNING-001 being introduced in its containing commit rather than its declared source commit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0033.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

@@ -1,0 +1,260 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0027",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "BLOCKED",
+  "to_state": "BLOCKED",
+  "prior_revision": 27,
+  "new_revision": 28,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "aa715125fa65b241a833c70045b2f7bbc7e7d5567b4d84866ee7adcf9144eebc",
+  "new_state_digest": "db1b2f6114b9d52805f9a0c9686a18423e4483debdc4795cab70fde130d60487",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Use the exact planning-only approval to define one closed 37-claim committed-identity correction, reconcile four independent omission audits, resolve the bounded Spec Kit analysis finding, freeze a revised 69-task subject, keep EPP-F01 blocked without a lease, and request exact V4 material-change and feature-implementation approval.",
+  "started_at": "2026-08-27T15:26:54Z",
+  "finished_at": "2026-08-27T16:00:43Z",
+  "duration_ms": 2029000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47",
+    "source_tree": "574cd8919c62086e7b657f14c116ee4c6b2429ea",
+    "source_program_tree": "138debc23878ec34991af7e824667091c57b14e7",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/audits/2026-08-27-epp-f01-committed-identity-repair-audits.md",
+      "docs/programs/engineering-process-platform/audits/audit-status.json",
+      "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0016-closed-committed-identity-correction.md",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json",
+      "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0028.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0027.json",
+      "docs/programs/engineering-process-platform/gate-catalog.json",
+      "docs/programs/engineering-process-platform/gates.md",
+      "docs/programs/engineering-process-platform/integration-release.md",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-plan.md",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/proposed-features.md",
+      "docs/programs/engineering-process-platform/risk-register.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/schemas/committed-identity-correction.schema.json",
+      "docs/programs/engineering-process-platform/schemas/transition-evidence.schema.json",
+      "docs/programs/engineering-process-platform/schemas/validation-report.schema.json",
+      "docs/programs/engineering-process-platform/status-dashboard-contract.md",
+      "specs/076-control-plane-validator/analysis.md",
+      "specs/076-control-plane-validator/checklists/program-control.md",
+      "specs/076-control-plane-validator/checklists/requirements.md",
+      "specs/076-control-plane-validator/contracts/cli.md",
+      "specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json",
+      "specs/076-control-plane-validator/contracts/dashboard-generation.md",
+      "specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md",
+      "specs/076-control-plane-validator/spec.md",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0027.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0027.json",
+      "sha256": "764224c6cb6130d934ee997ba84b65ecde7ebbc6885f724db6958323e4571238",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0026.json",
+      "sha256": "82859c79a8b0384108fc4c2e66f0b24da86990f520ec06dc0682b63797ab77f4",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US1.json",
+      "sha256": "3f0ba75078b8afa4e01b3fd68713dd9e43b4edfd576890a8c3331d6c09a96352",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json",
+      "sha256": "fde4c32d48d4b352f21869304eec6f176bead9312cc2f15ff2da87685dd1580f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    { "path": "README.md", "sha256": "57403f500d5eebf5e0dbecb8e11b00442fb1db81104fa3527dcf67a728064b25", "schema_version": null, "role": "feature_contract" },
+    { "path": "approval.md", "sha256": "470e20a5ce09053afb73d6a4ec66110e0ca1dbe8f77a039c866f77b50838e4ac", "schema_version": null, "role": "feature_contract" },
+    { "path": "audits/2026-08-27-epp-f01-committed-identity-repair-audits.md", "sha256": "cad5e2b311b27fe01a646511ae1fb4b4690bacf390660f4bca6f83f5331057f2", "schema_version": null, "role": "feature_contract" },
+    { "path": "audits/audit-status.json", "sha256": "f814924b98a2df28b0c3267d57a832e0b9efcac542d586a16eb058572d79fa6e", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "coordinator-state-machine.md", "sha256": "7ce381005154183a5fb0b8e2c1e04305d2226cad09e5d86461d0b32972787df5", "schema_version": null, "role": "feature_contract" },
+    { "path": "decision-register.json", "sha256": "5a74d95f0e7ed7472552986b3e63bdd14a69d4e731b4f0321841d329ebb054af", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "decisions/0016-closed-committed-identity-correction.md", "sha256": "c6bd4415fb8db91db74cfe819393ef38a5e5b1aa47daff65b014af394defb0b6", "schema_version": null, "role": "append_only_evidence" },
+    { "path": "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json", "sha256": "fde4c32d48d4b352f21869304eec6f176bead9312cc2f15ff2da87685dd1580f", "schema_version": "2.0", "role": "append_only_evidence" },
+    { "path": "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json", "sha256": "9bd3bab9215eefbfb951a0d8db8c613433002f1afc44b79cce6063de6e0ff27d", "schema_version": "1.0", "role": "append_only_evidence" },
+    { "path": "evidence/states/README.md", "sha256": "1b4e193095104cc2c9108e7de1697cb6d35cc570e1db53661650574506a01e01", "schema_version": null, "role": "append_only_evidence" },
+    { "path": "evidence/states/program-state-revision-0028.json", "sha256": "5313bb58c294ee2c6f48cdb17393bb88e8c67edc0c2c24833b23f6706a89982f", "schema_version": "2.0", "role": "append_only_evidence" },
+    { "path": "gate-catalog.json", "sha256": "a2d64c918b5fe4c0f77a9618ce1135da7d5539c58513eb0526548b00d394e251", "schema_version": "1.0", "role": "immutable_policy" },
+    { "path": "gates.md", "sha256": "674c49b484d52e5a8bfe3040dbd31b66da6e22b3557e2ca00f52e3d42e0cafeb", "schema_version": null, "role": "feature_contract" },
+    { "path": "integration-release.md", "sha256": "00049f96bda972a29ad4cf0ca6ba4f18a7c79ccb9d0be38717515582e71b1044", "schema_version": null, "role": "feature_contract" },
+    { "path": "lifecycle-policy.json", "sha256": "d68bf6443187bcd6d8bc162b8b78cf4d944a24345aafb65ba13c94c66deaba6b", "schema_version": "1.0", "role": "immutable_policy" },
+    { "path": "program-plan.md", "sha256": "a42524165b04c2af234ff6f9f444898ad834dbe358a325cabbc9771eb7020b74", "schema_version": null, "role": "feature_contract" },
+    { "path": "program-state.json", "sha256": "5313bb58c294ee2c6f48cdb17393bb88e8c67edc0c2c24833b23f6706a89982f", "schema_version": "2.0", "role": "operational_state" },
+    { "path": "proposed-features.md", "sha256": "94f6451c955770f7a57d87cd797b74b39d0bf86bddce77caef4c8c5835a6070a", "schema_version": null, "role": "feature_contract" },
+    { "path": "risk-register.json", "sha256": "a431f8fb7e0c3defeb1c7c9d4a460e3f55dfd462078b503ce009db5fe0fdd230", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "roadmap.json", "sha256": "8eafc90195585936f08074fd83be0d1b289924d8c66636fc77d363da8494c0b0", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "schemas/README.md", "sha256": "d6d3189c1e19080c2b76fc7ae5203b3ab10ad2ae9e9216596a6e41cbf5a3320d", "schema_version": null, "role": "immutable_policy" },
+    { "path": "schemas/committed-identity-correction.schema.json", "sha256": "e01b2eda036b69046912945b065c1a7d8aba2334991c37b48179132aedaddc7b", "schema_version": null, "role": "immutable_policy" },
+    { "path": "schemas/transition-evidence.schema.json", "sha256": "50fc533d00091e19544cd11071cbb1d022d58969cec32ab16dd064c0d0c0a0fb", "schema_version": null, "role": "immutable_policy" },
+    { "path": "schemas/validation-report.schema.json", "sha256": "547e6004a50a8972c755f0aa2102c5fd8ea80510264cd7acc9b7169c6b63e5d8", "schema_version": null, "role": "immutable_policy" },
+    { "path": "status-dashboard-contract.md", "sha256": "2fde0d81995d4ffd383e51750e3528d947a64fbef470a7cb1af13820ecd6f0f6", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/analysis.md", "sha256": "c4951074d6fe2b74dd8797b93ad2d8f79339e11662043f943511cfc7456fd2c6", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/checklists/program-control.md", "sha256": "ca8d8abf24399b1419087b6e10dbcad85d32a9dc0538fa72fb2e85203c21269d", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/checklists/requirements.md", "sha256": "3ec5dd11b93f80c0b2b389199b25be624946261cc54db518737d37f9ff7b8034", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/contracts/cli.md", "sha256": "5a97859bc068c4340e389d9dd2c5dd08f2a110a10f8208cd86db656665e862e1", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json", "sha256": "e01b2eda036b69046912945b065c1a7d8aba2334991c37b48179132aedaddc7b", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/contracts/dashboard-generation.md", "sha256": "007cab5b7be8f0abced6d015a1d1c567f167defb3a7f9ea3e63ecc0382cd106f", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json", "sha256": "547e6004a50a8972c755f0aa2102c5fd8ea80510264cd7acc9b7169c6b63e5d8", "schema_version": "1.0", "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/data-model.md", "sha256": "102efb70abf53dbc21d3b1d8555e312aa81eecd475195947859a6d659016b577", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/plan.md", "sha256": "456213dbbf145c626fcc4ab78969e31ae676784c496f6f2ac1fb12567c6b8375", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/quickstart.md", "sha256": "5647fe5f9dbd9de8fac30e5ec4647bfb071776156e6cce6a7fb444fbd116262d", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/research.md", "sha256": "dfdae0540b2111ead39fd6b2bd230427c3cd72fec87a22d54e2ff64a60922ab5", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/spec.md", "sha256": "be2469bd5b3cc3abd5b8de947661911a08ffbc4af5d2273c1b97c3e3120b9899", "schema_version": null, "role": "feature_contract" },
+    { "path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "ed41729f6ed3b57dc2bc10c8b9be943db5710edbc3307331e349daf55e39dca9", "schema_version": null, "role": "feature_contract" }
+  ],
+  "checks": [
+    {
+      "check_id": "REPAIR-AUTHORITY-SCOPE",
+      "method": "Validate the exact human planning/re-analysis approval against c3012733, its tree/program tree, TR-0026 and EPP-F01-US1 digests; require every implementation and external action excluded.",
+      "environment": "local read-only Git and schema validation",
+      "duration_ms": 400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json",
+        "evidence/transitions/TR-0026.json"
+      ]
+    },
+    {
+      "check_id": "REPAIR-EXACT-CLAIM-SET",
+      "method": "Validate the closed correction schema/profile and recompute exact Git commit/tree/blob/raw SHA-256, canonical-state and pointer values for six transition claims plus 26 state rows and 31 pointers.",
+      "environment": "native Git object database and Draft 2020-12; offline",
+      "duration_ms": 9700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+        "schemas/committed-identity-correction.schema.json",
+        "37/37 claims verified"
+      ]
+    },
+    {
+      "check_id": "REPAIR-FOUR-AUDITS",
+      "method": "Require bounded independent read-only engineering-usability, architecture, commercial/release and benchmark-quality omission reviews; synthesize contradictions with the coordinator as sole writer.",
+      "environment": "four read-only audit agents and durable coordinator synthesis",
+      "duration_ms": 1200000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "audits/2026-08-27-epp-f01-committed-identity-repair-audits.md",
+        "audits/audit-status.json"
+      ]
+    },
+    {
+      "check_id": "REPAIR-SPECKIT-ANALYSIS",
+      "method": "Run non-destructive Spec Kit cross-artifact and constitution analysis after task/checklist amendment; resolve one medium shared-requirement wording gap and require zero active critical/high/medium findings with 36/36 requirement coverage.",
+      "environment": "speckit-analyze inputs and constitution v3.0.0; optional Git hooks disabled",
+      "duration_ms": 300000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/analysis.md",
+        "../../../specs/076-control-plane-validator/checklists/program-control.md"
+      ]
+    },
+    {
+      "check_id": "REPAIR-CONTRACT-CONSISTENCY",
+      "method": "Parse all JSON, meta-validate Draft 2020-12 schemas, validate changed program instances, run 32 focused contract tests, require byte-identical schema copies and no diff-check errors.",
+      "environment": "local Windows Python, jsonschema and temporary Git fixtures; offline",
+      "duration_ms": 840,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "32 focused tests passed",
+        "108 JSON files parsed at analysis checkpoint",
+        "30 schemas meta-validated at analysis checkpoint"
+      ]
+    },
+    {
+      "check_id": "REPAIR-IMMUTABILITY-AND-EXCLUSIONS",
+      "method": "Require no diff in TR-0023 through TR-0025 or archived state revisions 1 through 26; no product code, dependency, EPP-F01B, benchmark execution, push, PR, merge, dev integration, external, publication or release action; leave feature blocked and lease null.",
+      "environment": "native Git diff/status and authority audit",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md",
+        "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "planning_reanalysis",
+    "required_scopes": [
+      "material_change"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+    ],
+    "subject": {
+      "git_commit": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47",
+      "git_tree": "574cd8919c62086e7b657f14c116ee4c6b2429ea",
+      "program_tree": "138debc23878ec34991af7e824667091c57b14e7",
+      "artifact_count": 2,
+      "manifest_transition": "TR-0026"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "DEC-P0-016 remains proposed until exact V4 human approval",
+    "The closed 37-claim correction is specified but not implemented or activated",
+    "No implementation lease exists and all excluded actions remain unauthorized"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0027.json",
+  "next_action": "APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V4"
+}

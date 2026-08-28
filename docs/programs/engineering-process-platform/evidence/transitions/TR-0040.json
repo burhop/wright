@@ -1,0 +1,161 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0040",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "AUTHOR_VERIFIED",
+  "prior_revision": 40,
+  "new_revision": 41,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "7606a2480611a96a28121fff0ed76eaf65ecef1ec6971db63c65b2b27eb68efa",
+  "new_state_digest": "6f6b92a898c0ec421e09030ee5bc68f45aab63640132133003fe791127116b4e",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Close author mutation after T062-T064 passed: preserve the exact verified implementation, rollback and full-diff evidence; transition to AUTHOR_VERIFIED so the next bounded action can freeze candidate T065 without modifying product or validator source.",
+  "started_at": "2026-08-27T21:47:56Z",
+  "finished_at": "2026-08-27T21:51:09Z",
+  "duration_ms": 193000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "881a6f997ba79adb02f2c25cbbe805c993e79dba",
+    "source_tree": "0b6a46fd78c130dc48704e1478c512fbc55cd4d4",
+    "source_program_tree": "a017225d5d47c43d3a8e65c3ace624a72201d688",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0041.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0040.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0040.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0040.json",
+      "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-author.json",
+      "sha256": "22acdf22a6b0ed4c0c843f57b438a20f4c8bc11b351132dfb5bf6b0b17b7baff",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-rollback.json",
+      "sha256": "664fdc23fce1970119d5a35bce06e2a420b4ce28f68b37a43841c73e2ad0403d",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-diff-audit.json",
+      "sha256": "0b7a13ded2f275eec2b09e3a346362defeb8655aa3722df9bcda2483f6049abe",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "d9316c6f5a349a179dead8bbb0908daae1d1a50630ca87523330a6364083d217",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0041.json",
+      "sha256": "21ce8d546fb39bd6de38c371e93b60432f4c1ae1ddff51dc5d43cdda340598f9",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "21ce8d546fb39bd6de38c371e93b60432f4c1ae1ddff51dc5d43cdda340598f9",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "AUTHOR-VERIFICATION-TERMINAL",
+      "method": "Require author verification evidence to report 197 passed, one declared Windows symlink skip, passing Ruff/format, schema and manual quickstart checks, and retain unavailable MyPy/gate-runtime limitations.",
+      "environment": "Exact committed local evidence; offline",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-author.json"
+      ]
+    },
+    {
+      "check_id": "ROLLBACK-AND-DIFF-AUDIT",
+      "method": "Require passing removal/manual fallback, previous-compatible snapshot identity, full 216-path allowlist audit, no dependency/product/benchmark execution, and no unauthorized external or Git actions.",
+      "environment": "Exact committed local evidence and Git objects; offline",
+      "duration_ms": 1100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-rollback.json",
+        "evidence/verification/EPP-F01-diff-audit.json"
+      ]
+    },
+    {
+      "check_id": "AUTHOR-MUTATION-CLOSED",
+      "method": "Confirm the source worktree was clean at 881a6f99 and this transition changes only append-only state evidence and operational state; any later source mutation invalidates independent verification.",
+      "environment": "Local Git status and diff check",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "git:881a6f997ba79adb02f2c25cbbe805c993e79dba (last clean author checkpoint)",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

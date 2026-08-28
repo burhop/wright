@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/approval.schema.json",
+  "title": "Digest-bound Human Approval",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/legacyV1"
+    },
+    {
+      "$ref": "#/$defs/currentV2"
+    }
+  ],
+  "$defs": {
+    "legacyV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "approval_id",
+        "program_id",
+        "decision",
+        "scope",
+        "subject",
+        "approver",
+        "approved_at",
+        "expires_at",
+        "revoked",
+        "conditions"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "1.0"
+        },
+        "approval_id": {
+          "type": "string",
+          "pattern": "^APR-[A-Z0-9-]{3,100}$"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "approved_with_conditions",
+            "rejected",
+            "revision_requested"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "program_plan",
+            "feature_implementation",
+            "material_change",
+            "external_write",
+            "dev_integration",
+            "release"
+          ]
+        },
+        "subject": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_commit",
+            "git_tree",
+            "program_tree",
+            "artifact_digests"
+          ],
+          "properties": {
+            "git_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "git_tree": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "program_tree": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "artifact_digests": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "approver": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "date-time"
+            }
+          ]
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "currentV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "schema_version",
+        "approval_id",
+        "program_id",
+        "feature_id",
+        "bundle_id",
+        "decision",
+        "scope",
+        "subject",
+        "approver",
+        "approved_at",
+        "expires_at",
+        "review",
+        "supersedes",
+        "revocation_events",
+        "conditions"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "const": "2.0"
+        },
+        "approval_id": {
+          "type": "string",
+          "pattern": "^APR-[A-Z0-9-]{3,100}$"
+        },
+        "program_id": {
+          "const": "EPP-2026"
+        },
+        "feature_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^EPP-[A-Z0-9-]+$"
+            }
+          ]
+        },
+        "bundle_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^APB-[A-Z0-9-]{3,100}$"
+            }
+          ]
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "approved_with_conditions",
+            "rejected",
+            "revision_requested"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "program_plan",
+            "feature_implementation",
+            "material_change",
+            "external_write",
+            "dev_integration",
+            "release"
+          ]
+        },
+        "subject": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_commit",
+            "git_tree",
+            "program_tree",
+            "artifact_digests"
+          ],
+          "properties": {
+            "git_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "git_tree": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "program_tree": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "artifact_digests": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "approver": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "date-time"
+            }
+          ]
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "due_at",
+            "last_reviewed_at"
+          ],
+          "properties": {
+            "due_at": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              ]
+            },
+            "last_reviewed_at": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              ]
+            }
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^APR-[A-Z0-9-]{3,100}$"
+          }
+        },
+        "revocation_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "event_id",
+              "recorded_at",
+              "actor",
+              "reason"
+            ],
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "pattern": "^ARV-[A-Z0-9-]{3,100}$"
+              },
+              "recorded_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "actor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        }
+      }
+    }
+  }
+}

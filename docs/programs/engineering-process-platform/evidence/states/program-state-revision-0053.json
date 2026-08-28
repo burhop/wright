@@ -1,0 +1,168 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 53,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {
+    "ref": "dev",
+    "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "tree": "e6a7553036a505003a959eebd0efd3e1683c431a",
+    "observed_clean": true
+  },
+  "prototype_evidence": {
+    "branch": "076-engineering-workflow-prototype",
+    "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d",
+    "remote_matches": true,
+    "registered_worktree": false,
+    "mode": "read_only_evidence",
+    "uncommitted_evidence_status": "none_detected"
+  },
+  "control_plane": {
+    "root": "docs/programs/engineering-process-platform",
+    "candidate_subject_resolution": "The exact V8 approval subject is commit c12eb00308cb72d96977846c4ae876dc0baa7e7e, tree 7323b292d279fde752004bc744a2db850ab670d0, program tree 18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b and the exact ordered 34-output TR-0051 manifest.",
+    "schema_status": "pending",
+    "audit_status": "passed"
+  },
+  "current_feature": "EPP-F01",
+  "active_mutating_lease": {
+    "feature_id": "EPP-F01",
+    "branch": "077-control-plane-validator",
+    "worktree_id": "epp-f01",
+    "dev_baseline": {
+      "commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+      "tree": "e6a7553036a505003a959eebd0efd3e1683c431a"
+    },
+    "worktree_start": {
+      "commit": "c12eb00308cb72d96977846c4ae876dc0baa7e7e",
+      "tree": "7323b292d279fde752004bc744a2db850ab670d0"
+    },
+    "holder_role": "feature_owner",
+    "lease_mode": "implementation",
+    "lease_revision": 12,
+    "acquired_at": "2026-08-28T01:44:40Z",
+    "expires_at": "2026-08-28T13:44:40Z",
+    "allowed_paths": [
+      "scripts/program_control/validation.py",
+      "scripts/program_control/git_subject.py",
+      "scripts/program_control/json_contracts.py",
+      "tests/program_control_plane/test_transition_chain.py",
+      "tests/program_control_plane/test_cli.py",
+      "tests/program_control_plane/test_evidence_walkthrough.py",
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0019-closed-checkpoint-evidence-correction.md",
+      "docs/programs/engineering-process-platform/gate-evidence.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-008.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-008.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0053.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0052.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8*.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "path_restrictions": [],
+    "allowed_actions": [
+      "inspect",
+      "edit_allowlisted_paths",
+      "run_deterministic_checks",
+      "create_local_artifacts",
+      "create_local_commits"
+    ],
+    "recovery": {
+      "status": "reactivated",
+      "last_audit_transition": "TR-0052",
+      "rollback_state": "evidence/states/program-state-revision-0052.json",
+      "exhausted_cause_ids": [
+        "EPP-F01-ANALYSIS-001",
+        "EPP-F01-US1-COMMITTED-IDENTITY-001",
+        "EPP-F01-REPAIR-EVIDENCE-001"
+      ],
+      "active_cause_id": "EPP-F01-T072-VERIFICATION-001",
+      "repair_maximum": 2,
+      "repair_remaining": 2
+    }
+  },
+  "last_transition": "TR-0052",
+  "readiness": {
+    "product": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No product child feature is implemented or implementation-approved",
+        "The browser-accessible program-status page is unimplemented and assigned to proposed EPP-F01B"
+      ]
+    },
+    "benchmark": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No 100-process collection has been generated or qualified",
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ]
+    },
+    "commercial": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "DEC-P0-001",
+        "DEC-P0-004",
+        "DEC-P0-006",
+        "DEC-P0-011",
+        "DEC-P0-012",
+        "Repository external controls remain evidence requirements"
+      ]
+    },
+    "program_health": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "Exact V8 approval is recorded; lease revision 12 permits only local T073 through T076.",
+        "T073 must establish the exact negative matrix before T074 recognizes the three-claim correction profile.",
+        "A separate roadmap-policy inversion test is outside V8 and keeps T066 ineligible even after V8.",
+        "T066-T068 remain ineligible; the separately recorded roadmap-policy test defect requires its later bounded disposition.",
+        "The checked-in dashboard remains candidate_not_evidence; T067 and T068 remain unauthorized.",
+        "RISK-021 prevents V8 from widening policy or changing lifecycle, authority, readiness, benchmark, candidate, delivery or release results.",
+        "RISK-017: EPP-F01B browser program-status implementation remains future and separately gated."
+      ]
+    }
+  },
+  "open_p0_decisions": [
+    "DEC-P0-001",
+    "DEC-P0-002",
+    "DEC-P0-003",
+    "DEC-P0-004",
+    "DEC-P0-005",
+    "DEC-P0-006",
+    "DEC-P0-007",
+    "DEC-P0-008",
+    "DEC-P0-009",
+    "DEC-P0-010",
+    "DEC-P0-011",
+    "DEC-P0-012"
+  ],
+  "next_eligible_actions": [
+    {
+      "action": "START_EPP_F01_IMPLEMENTATION",
+      "roadmap_item": "EPP-F01",
+      "requires_human_approval": false,
+      "reason": "The exact V8 same-subject approval bundle accepts DEC-P0-019 and authorizes only local T073 through T076 under lease revision 12."
+    }
+  ],
+  "approval": {
+    "status": "approved",
+    "record": "evidence/approvals/APR-EPP-F01-MC-008.json",
+    "required_records": [
+      "evidence/approvals/APR-EPP-F01-MC-008.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-008.json"
+    ]
+  },
+  "feature_state": "IMPLEMENTATION_AUTHORIZED",
+  "policy_version": "EPP-LIFECYCLE-1"
+}

@@ -1,0 +1,997 @@
+{
+  "$schema": "./schemas/gate-catalog.schema.json",
+  "schema_version": "1.0",
+  "catalog_id": "EPP-GATES-1",
+  "candidate_policy": "All gate assertions bind the same exact candidate commit and tree; no gate status, benchmark count, or approval may substitute for another readiness area.",
+  "area_order": [
+    "product_readiness",
+    "benchmark_readiness",
+    "commercial_readiness",
+    "program_health"
+  ],
+  "evidence_classes": [
+    {
+      "class_id": "FEATURE_CONTRACT",
+      "schema_id": "https://wright.local/programs/epp/verification-evidence.schema.json",
+      "source_role": "feature_contract"
+    },
+    {
+      "class_id": "TEST_VERIFICATION",
+      "schema_id": "https://wright.local/programs/epp/verification-evidence.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "BENCHMARK_EVIDENCE",
+      "schema_id": "https://wright.local/programs/epp/benchmark-evidence.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "RELEASE_EVIDENCE",
+      "schema_id": "https://wright.local/programs/epp/verification-evidence.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "APPROVAL_RECORD",
+      "schema_id": "https://wright.local/programs/epp/approval.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "STATE_SNAPSHOT",
+      "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
+      "source_role": "operational_state"
+    },
+    {
+      "class_id": "TRANSITION_RECORD",
+      "schema_id": "https://wright.local/programs/epp/transition-evidence.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "CONTROL_IDENTITY_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/committed-identity-correction.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "TRANSITION_INPUT_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/transition-input-correction.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "REPAIR_EVIDENCE_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
+      "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "CHECKPOINT_EVIDENCE_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
+      "source_role": "append_only_evidence"
+    }
+  ],
+  "gates": [
+    {
+      "id": "PROD-01",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Canonical process semantics",
+      "evaluator": "EVAL_PROD_01",
+      "assertions": [
+        {
+          "assertion_id": "PROD-01-A01",
+          "requirement": "One versioned definition projects consistently to code/text, diagram, UI, CLI, and headless paths; invalid edits preserve the last valid version; definition and immutable run state are separate."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-02",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Engineer-readable UX",
+      "evaluator": "EVAL_PROD_02",
+      "assertions": [
+        {
+          "assertion_id": "PROD-02-A01",
+          "requirement": "Before the affected feature is implementation-approved, freeze a digest-bound moderated protocol with representative roles/tasks, an equivalent baseline where making a comparative claim, minimum independent sample, completion/error/recovery/comprehension thresholds, scale/focus scenarios, accessibility criteria, and rejection of coached/duplicate/incomplete trials. Current evidence must meet those frozen thresholds and cover empty/loading/blocked/failure/cancel/reconnect/stale/recovery, keyboard"
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROD-03",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Truthful execution modes and provenance",
+      "evaluator": "EVAL_PROD_03",
+      "assertions": [
+        {
+          "assertion_id": "PROD-03-A01",
+          "requirement": "Validate-only, fixture, unconnected, and live modes are unmistakable in UI/history/export/dashboard; current-run evidence alone drives findings; no fixture-specific semantic result is applied to arbitrary input."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-04",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Layered failure and recovery",
+      "evaluator": "EVAL_PROD_04",
+      "assertions": [
+        {
+          "assertion_id": "PROD-04-A01",
+          "requirement": "Definition, preflight, semantic needs-input, mapping/schema, approval, execution, outcome, and cleanup are distinct; dependents report why they did not run; each non-success has a bounded recovery or explicit external intervention."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-05",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Inspectable liveness and control",
+      "evaluator": "EVAL_PROD_05",
+      "assertions": [
+        {
+          "assertion_id": "PROD-05-A01",
+          "requirement": "Durable run/step IDs and registered/connected/first-event/first-output/terminal timestamps; activity, elapsed/last activity, cancellation, boundary and total deadlines, reconnect reconciliation, bounded cleanup, and typed terminal causes."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-06",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Exact governed authority",
+      "evaluator": "EVAL_PROD_06",
+      "assertions": [
+        {
+          "assertion_id": "PROD-06-A01",
+          "requirement": "Provider/model/tool/schema/application identity is exact and reviewable; bindings are revalidated; application-backed execution proves authoritative identity/exclusivity; hard no-tools claims have executor evidence; approvals and revocation are enforced."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-07",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Inspectable and actionable results",
+      "evaluator": "EVAL_PROD_07",
+      "assertions": [
+        {
+          "assertion_id": "PROD-07-A01",
+          "requirement": "Every executable step exposes bounded inputs, readable output, exact data/evidence, redaction/truncation, provenance, and recovery; successful runs expose usable output references with lifetime, ownership, allowed actions, expiry, and cleanup."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-08",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Generic architecture",
+      "evaluator": "EVAL_PROD_08",
+      "assertions": [
+        {
+          "assertion_id": "PROD-08-A01",
+          "requirement": "Static/dependency review proves no benchmark-case, domain, vendor, tool-name, or file-format dispatch in generic orchestration; renderer and syntax choices are ADR-backed and replaceable where required."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROD-09",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Security, privacy, and safety",
+      "evaluator": "EVAL_PROD_09",
+      "assertions": [
+        {
+          "assertion_id": "PROD-09-A01",
+          "requirement": "Threat/authority model, secret and proprietary-data boundary, egress destinations/categories, telemetry opt-in, redaction, resource limits, cleanup, and no physical/production mutation without explicit authority."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROD-10",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Quality and compatibility",
+      "evaluator": "EVAL_PROD_10",
+      "assertions": [
+        {
+          "assertion_id": "PROD-10-A01",
+          "requirement": "Focused/full tests, human evidence, current public/durable contract schemas, migrations, previous-stable reading, restart/offline/update/rollback/uninstall behavior, and historical-state tests pass for the exact candidate."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROD-11",
+      "area": "product_readiness",
+      "required": true,
+      "title": "Documentation and supportability",
+      "evaluator": "EVAL_PROD_11",
+      "assertions": [
+        {
+          "assertion_id": "PROD-11-A01",
+          "requirement": "User/operator/developer docs, limitations, recovery, support diagnostics, and known-issue paths match the candidate and contain no unsupported claims."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "FEATURE_CONTRACT",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "BENCH-01",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Governed sampling and distinctness",
+      "evaluator": "EVAL_BENCH_01",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-01-A01",
+          "requirement": "Exactly 100 current counted process identities satisfy the approved primary/cross-coverage matrix; equivalence-family and duplicate review prevents variants inflating count."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-02",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Qualified manifests",
+      "evaluator": "EVAL_BENCH_02",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-02-A01",
+          "requirement": "Every counted process has source/provenance/license/safety review, stable revision, user outcome, actors, preconditions, exact inputs/outputs, capability graph, time/resource budget, cleanup, failure injections, and supported qualification level."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-03",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Valid oracles and artifacts",
+      "evaluator": "EVAL_BENCH_03",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-03-A01",
+          "requirement": "Every required output has an independent oracle with units/tolerances/assertion version and producer trace; existence, transport success, screenshots, or syntactic parse alone never establish engineering correctness."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-04",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Reproducible execution",
+      "evaluator": "EVAL_BENCH_04",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-04-A01",
+          "requirement": "All 100 pass T0 manifest and T1 deterministic qualification at the exact candidate; declared T2/T3 subsets pass on their exact environments; failures/skips/stale evidence remain in denominator."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-05",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Holdout and anti-overfitting",
+      "evaluator": "EVAL_BENCH_05",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-05-A01",
+          "requirement": "60 `development`, 20 `frozen_qualification`, and 20 `blind_holdout` cases obey access rules; candidate freezes before holdout; case/domain dispatch review and perturbation/metamorphic checks pass."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-06",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Coverage and failure behavior",
+      "evaluator": "EVAL_BENCH_06",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-06-A01",
+          "requirement": "Coverage quotas, multi-step structure, feedback/approval, offline/live/provider/platform mix, and required failure-injection/recovery classes meet the matrix without prohibited substitution."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-07",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Independent qualification and freshness",
+      "evaluator": "EVAL_BENCH_07",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-07-A01",
+          "requirement": "Qualifier is independent of the candidate implementation for claimed gates; source/runtime/oracle/environment digests and maximum ages are current; changed subjects invalidate evidence."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "BENCH-08",
+      "area": "benchmark_readiness",
+      "required": true,
+      "title": "Truthful reporting",
+      "evaluator": "EVAL_BENCH_08",
+      "assertions": [
+        {
+          "assertion_id": "BENCH-08-A01",
+          "requirement": "Dashboard shows numerator/denominator, failed/blocked/skipped/stale/not-tested counts, levels, evidence age, and last success; `100/100` never implies product/commercial/program readiness."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "BENCHMARK_EVIDENCE",
+          "TEST_VERIFICATION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "COMM-01",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Approved offering posture",
+      "evaluator": "EVAL_COMM_01",
+      "assertions": [
+        {
+          "assertion_id": "COMM-01-A01",
+          "requirement": "Human decision states whether the target is supportable public-alpha evaluation or a production-supported commercial offer, including supported uses/exclusions, support/SLA boundaries, owner, incident/security response, and terms."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "COMM-02",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Packaging and supply chain",
+      "evaluator": "EVAL_COMM_02",
+      "assertions": [
+        {
+          "assertion_id": "COMM-02-A01",
+          "requirement": "Clean candidate contents, dependency/license review, notices, SBOM, provenance, attestations, vulnerability policy/exceptions, and immutable artifact manifests pass."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "COMM-03",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Privacy and operational safety",
+      "evaluator": "EVAL_COMM_03",
+      "assertions": [
+        {
+          "assertion_id": "COMM-03-A01",
+          "requirement": "Telemetry/egress/retention/deletion/proprietary-data/support-export policies and customer-facing disclosures are approved and tested; support data stays local/inert by default."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "COMM-04",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Evidence-backed compatibility",
+      "evaluator": "EVAL_COMM_04",
+      "assertions": [
+        {
+          "assertion_id": "COMM-04-A01",
+          "requirement": "Each claimed platform/architecture/manager/storage profile has current supporting artifact/host evidence; fixture, contract, skipped, stale, or other-platform results are non-supporting."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "COMM-05",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Lifecycle, upgrade, and rollback",
+      "evaluator": "EVAL_COMM_05",
+      "assertions": [
+        {
+          "assertion_id": "COMM-05-A01",
+          "requirement": "Clean install/start/status/doctor/use/stop/update/persist/rollback/uninstall/offline and retained-state behavior pass against previous stable and current candidate; rollback targets immutable subjects."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "COMM-06",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Documentation and support operations",
+      "evaluator": "EVAL_COMM_06",
+      "assertions": [
+        {
+          "assertion_id": "COMM-06-A01",
+          "requirement": "Onboarding, failure recovery, limitations, compatibility, privacy, backup, rollback, release notes, support owner/triage/contact-path smoke, and known issues are ready."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "COMM-07",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Repository and release controls",
+      "evaluator": "EVAL_COMM_07",
+      "assertions": [
+        {
+          "assertion_id": "COMM-07-A01",
+          "requirement": "Branch protection, required checks, protected environments, secret scanning/push protection, registry configuration, and release permissions are verified external evidence, not assumptions."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "COMM-08",
+      "area": "commercial_readiness",
+      "required": true,
+      "title": "Exact-subject release train",
+      "evaluator": "EVAL_COMM_08",
+      "assertions": [
+        {
+          "assertion_id": "COMM-08-A01",
+          "requirement": "Dev deployment, `dev` to `main` production gate, build-once Python/OCI candidates, TestPyPI/PyPI, Hermes/Codex, identical GHCR/Docker Hub digest, published lifecycle on Linux/macOS/Windows, public bounded-retry verification, versioned docs, and GitHub Release last all pass."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "RELEASE_EVIDENCE",
+          "APPROVAL_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROG-01",
+      "area": "program_health",
+      "required": true,
+      "title": "Valid control plane",
+      "evaluator": "EVAL_PROG_01",
+      "assertions": [
+        {
+          "assertion_id": "PROG-01-A01",
+          "requirement": "Schemas, references, digests, roadmap, revisions, eligibility and dashboard source evidence are valid. Corrections require exact approvals and Git proof: V4 37/37 committed identity; V5 1/1 TR-0027 origin; V7 2/2 repair claims, two cause-ID occurrences and exact TR-0043 digest. Original findings remain visible and corrections have zero lifecycle, authority, readiness, benchmark, candidate, delivery or release effect."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD",
+          "CONTROL_IDENTITY_CORRECTION",
+          "TRANSITION_INPUT_CORRECTION",
+          "REPAIR_EVIDENCE_CORRECTION",
+          "CHECKPOINT_EVIDENCE_CORRECTION"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROG-02",
+      "area": "program_health",
+      "required": true,
+      "title": "Bounded WIP and isolation",
+      "evaluator": "EVAL_PROG_02",
+      "assertions": [
+        {
+          "assertion_id": "PROG-02-A01",
+          "requirement": "One mutating feature lease, isolated worktree/branch, no shared writable worktree, no singleton-pointer conflict, and lease recovery evidence."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROG-03",
+      "area": "program_health",
+      "required": true,
+      "title": "Independent verification",
+      "evaluator": "EVAL_PROG_03",
+      "assertions": [
+        {
+          "assertion_id": "PROG-03-A01",
+          "requirement": "Every integrated feature has a separate verifier on an unchanged exact tree; original failures/skips and findings remain visible."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    },
+    {
+      "id": "PROG-04",
+      "area": "program_health",
+      "required": true,
+      "title": "Repair and CI discipline",
+      "evaluator": "EVAL_PROG_04",
+      "assertions": [
+        {
+          "assertion_id": "PROG-04-A01",
+          "requirement": "Stable failure causes, bounded local repairs, two-same-cause push stop, deterministic reproducer before further push, and no CI-as-debug loop."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROG-05",
+      "area": "program_health",
+      "required": true,
+      "title": "Risk/decision/change health",
+      "evaluator": "EVAL_PROG_05",
+      "assertions": [
+        {
+          "assertion_id": "PROG-05-A01",
+          "requirement": "No hidden or overdue P0 question/risk/exception; material changes invalidate affected evidence and approvals; decision register is current; no correction acts as an authority, readiness, benchmark, freshness, candidate, gate, or release waiver."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD",
+          "CONTROL_IDENTITY_CORRECTION",
+          "TRANSITION_INPUT_CORRECTION",
+          "REPAIR_EVIDENCE_CORRECTION",
+          "CHECKPOINT_EVIDENCE_CORRECTION"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROG-06",
+      "area": "program_health",
+      "required": true,
+      "title": "Delivery flow",
+      "evaluator": "EVAL_PROG_06",
+      "assertions": [
+        {
+          "assertion_id": "PROG-06-A01",
+          "requirement": "Roadmap dependency/WIP metrics, review age, evidence freshness, defect escape, rollback readiness, and token/context efficiency stay within declared thresholds."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD"
+        ],
+        "independent_verifier_required": false
+      }
+    },
+    {
+      "id": "PROG-07",
+      "area": "program_health",
+      "required": true,
+      "title": "Integration truth",
+      "evaluator": "EVAL_PROG_07",
+      "assertions": [
+        {
+          "assertion_id": "PROG-07-A01",
+          "requirement": "Feature completion includes exact merged `dev` deployment, health, changed-journey smoke, digest, and rollback identity; release completion is not inferred from merge."
+        }
+      ],
+      "freshness": {
+        "maximum_age_seconds": 86400,
+        "invalidation_triggers": [
+          "candidate_changed",
+          "source_evidence_changed"
+        ]
+      },
+      "evidence_policy": {
+        "required_classes": [
+          "STATE_SNAPSHOT",
+          "TRANSITION_RECORD"
+        ],
+        "independent_verifier_required": true
+      }
+    }
+  ]
+}

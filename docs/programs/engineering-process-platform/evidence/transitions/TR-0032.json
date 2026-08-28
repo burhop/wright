@@ -1,0 +1,159 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0032",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "REPAIRING",
+  "prior_revision": 32,
+  "new_revision": 33,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "3e909e615c7098f873690e4acf3bac085c133d7675d492cfa096ffe8d87f62ef",
+  "new_state_digest": "cf0138ee13864064ce2bfee93a9b7e883690535099f4121efcc43954484f9f34",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter and implement bounded T069 repair attempt 2 after independent verification rejected incomplete V4 authority closure; pin both exact APR-*004 raw committed JSON records, require caller mappings to equal those blobs, add adversarial valid-digest manifest and metadata-substitution tests, and permit no other T069 or historical-evidence change.",
+  "started_at": "2026-08-27T17:25:00Z",
+  "finished_at": "2026-08-27T17:37:54Z",
+  "duration_ms": 774000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "14ed189df4fcc5ed946ecc8d24a8c4f19117696d",
+    "source_tree": "d55474bb762a7e60bc89f8d3f5e6ef9641b9873a",
+    "source_program_tree": "39cd9d5a9d06274bc3355c4f8c80feb4f1b25e5b",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0033.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0032.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "scripts/program_control/validation.py",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_transition_chain.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0032.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0032.json",
+      "sha256": "283e95113708f6ebc6ae818803fa558734f663f0b03e392792237979a5b27be4",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0031.json",
+      "sha256": "44251845b09c8f04c9a1b050ac4255028347c657f69790fa30ee026883a64d15",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "sha256": "63b2c7b48acdd11c263d67b8079b56e686ae2e43c75f870a54eaca11c676a5ad",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+      "sha256": "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0033.json",
+      "sha256": "fac0ea38b1ebbbeae3998c5bc72a689d2bc145bd75996fa263325430b905df5f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "fac0ea38b1ebbbeae3998c5bc72a689d2bc145bd75996fa263325430b905df5f",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T069-REPAIR2-EXACT-APPROVAL-BYTES",
+      "method": "Require each supplied APR-*004 mapping to equal its current immutable Git blob and require the exact pinned raw SHA-256 for both complete approval records, thereby closing ordered artifacts, approver, review, conditions and all remaining fields.",
+      "environment": "offline Git object database and exact V4 approval records",
+      "duration_ms": 10130,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../scripts/program_control/validation.py",
+        "evidence/approvals/APR-EPP-F01-MC-004.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+      ]
+    },
+    {
+      "check_id": "T069-REPAIR2-ADVERSARIAL-AUTHORITY",
+      "method": "Mutate valid-digest artifact entries, conditions, approver, review, scope, bundle, subject, expiry and revocation data and require correction unauthorized with all 37 original findings unresolved.",
+      "environment": "three focused pytest cases; offline; no authoritative source mutation",
+      "duration_ms": 62180,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_transition_chain.py"
+      ]
+    },
+    {
+      "check_id": "T069-REPAIR2-SCOPE",
+      "method": "Confirm the repair changes only validator authority binding, its tests, T069 completion state and append-only checkpoint evidence; preserve approvals, correction profile, schemas and every historical target byte.",
+      "environment": "local allowlist diff and Git history",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+    ],
+    "subject": {
+      "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+      "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+      "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+      "artifact_count": 38,
+      "manifest_transition": "TR-0027"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Pending bounded independent post-commit T069 repair-attempt-2 review.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0032.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

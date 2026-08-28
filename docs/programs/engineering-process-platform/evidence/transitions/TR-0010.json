@@ -1,0 +1,147 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0010",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "PLANNED",
+  "to_state": "CHECKLISTED",
+  "prior_revision": 10,
+  "new_revision": 11,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+  "new_state_digest": "60e5e78e233d8de5c0f3919baf05d3024d26358f6f2887e753b1eece5131523a",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Run the Spec Kit checklist workflow as formal reviewer-level unit tests for EPP-F01 requirements, preserving the existing specification checklist and adding a fully traceable program-control checklist.",
+  "started_at": "2026-08-27T00:07:00Z",
+  "finished_at": "2026-08-27T00:10:33Z",
+  "duration_ms": 213000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "c713627925b4e8326858718e4e9dbfa23b72d6a8",
+    "head_after": "c713627925b4e8326858718e4e9dbfa23b72d6a8",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0010.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/checklists/program-control.md"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0010.json",
+      "sha256": "08cf2927158fda8448eea61a731db44f49fce73709b80e39b8f27d25d652b5b1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0009.json",
+      "sha256": "5f985ee5b1214cdd2c1d970648ad042fdd2f61fd74251979c06f154bb240b3df",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "a52739433e80016e88491dbed9f87ceebd3291e54eec745f437e4201b29dae3f",
+      "schema_version": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "dd36c61a7434e69663dbce1c90e6970349d46ae1c7cedf71175690536fdb229f",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "22bbf850ab60c02a73bac030d1eebb1eda3c9368878a572721532304689d4259",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "f60184526d33e678e611d811159c72f5fb6051bb64773d39200938559f5579a9",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0010.json",
+      "sha256": "08cf2927158fda8448eea61a731db44f49fce73709b80e39b8f27d25d652b5b1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+      "sha256": "2f68c4abd8dadf6c6e7b9bb6d70a4d885b80a1b7ef62d9b30d7cbf8a6284a1a2",
+      "schema_version": null
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "CHECKLIST-PREREQUISITE-FALLBACK",
+      "command_or_method": "No Bash runtime is installed; resolve FEATURE_DIR and available documents from .specify/feature.json and inspect the optional before/after checklist commit hooks without executing bulk auto-commit",
+      "environment": "Windows PowerShell fallback; clean committed planning checkpoint",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json", ".specify/extensions.yml"]
+    },
+    {
+      "check_id": "REQUIREMENTS-QUALITY-COVERAGE",
+      "command_or_method": "Evaluate 40 reviewer-level questions for completeness, clarity, consistency, measurability, primary/alternate/exception/recovery/non-functional scenarios, UX, I/O, compatibility, benchmark independence, privacy, atomicity, rollback, and approval boundaries",
+      "environment": "Spec Kit unit-tests-for-English checklist",
+      "duration_ms": 1600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/checklists/program-control.md"]
+    },
+    {
+      "check_id": "CHECKLIST-TRACEABILITY",
+      "command_or_method": "Count 40 unique CHK IDs, 40 checked items, 40 traceability references, zero unchecked items, and zero override",
+      "environment": "deterministic checklist audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/checklists/program-control.md"]
+    },
+    {
+      "check_id": "CHECKLIST-NONIMPLEMENTATION",
+      "command_or_method": "Confirm every item evaluates written requirements and the notes explicitly disclaim implementation or verification completion",
+      "environment": "Spec Kit checklist prohibition review",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/checklists/program-control.md"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 10 to 11 increment, PLANNED to CHECKLISTED child edge, canonical/raw committed-object digests, exact staged output allowlist, and TASKS_EPP_F01 as the sole next action",
+      "environment": "Windows PowerShell; exact Git index bytes",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0010.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "EPP-F01-MATERIAL-STATE-DOMAINS",
+    "EPP-F01-MATERIAL-LEASE-IDENTITY",
+    "EPP-F01-MATERIAL-DASHBOARD-PROVENANCE",
+    "EPP-F01-MATERIAL-GATE-EVIDENCE",
+    "EPP-F01-MATERIAL-APPROVAL-FRESHNESS"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0010.json",
+  "next_action": "TASKS_EPP_F01"
+}

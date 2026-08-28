@@ -1,0 +1,183 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0049",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "verification",
+  "from_state": "IMPLEMENTING",
+  "to_state": "BLOCKED",
+  "prior_revision": 49,
+  "new_revision": 50,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "3ca49a0ae22447709b3f6975e48a3fa3f2d7adf13fa7495ebefba052d32ab745",
+  "new_state_digest": "a172a6e1d5f913ab4ee6de5160386c1185c0d3009ff83c726fd229c0d8a7a10f",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Execute T072 verification against the committed T071 candidate; retain its passing exact-profile tests and static checks; record three fatal exact-subject findings and two full-regression contract failures; freeze no replacement candidate; close lease revision 11; and stop before T066 for new human authority.",
+  "started_at": "2026-08-27T23:49:00Z",
+  "finished_at": "2026-08-27T23:58:00Z",
+  "duration_ms": 540000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "6a5363c8d7f04c27fe745df415d4e68de2304fad",
+    "source_tree": "117223a5532901d00b0bce85eb964e8ebdbee25e",
+    "source_program_tree": "ec4f26cee67b5cda2106a61fa57aecf0426ad058",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0050.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0049.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-T072-blocked.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0049.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0049.json",
+      "sha256": "31263ba8e57fd619ea1062491f145508823d589854990dc60585152a87aa27d1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0048.json",
+      "sha256": "635544705428819d212216e0cebaa66f03e11d90dd5eac00adfea575166abc3f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0050.json",
+      "sha256": "1857c07673ddf71b613c79aa580afab229320485241cfbe95ccaabc292a20899",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-T072-blocked.json",
+      "sha256": "faa2ba784e522437d639ce79a7eb940dbee6e5dd71f7e28a912c80b995b388cc",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "1857c07673ddf71b613c79aa580afab229320485241cfbe95ccaabc292a20899",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T072-EXACT-PROFILE-AND-QUALITY",
+      "method": "Require the exact V7 positive/negative and projection non-interference matrix plus Ruff lint and format checks to pass before exact-subject validation.",
+      "environment": "Windows local; offline",
+      "duration_ms": 15300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-T072-blocked.json",
+        "../../../tests/program_control_plane/test_transition_chain.py",
+        "../../../tests/program_control_plane/test_cli.py"
+      ]
+    },
+    {
+      "check_id": "T072-EXACT-SUBJECT",
+      "method": "Validate committed HEAD and require zero fatal findings; instead observe exactly two TR-0047 output-digest mismatches and one gate-catalog/evidence mismatch.",
+      "environment": "Read-only Git objects at 6a5363c8; offline",
+      "duration_ms": 10100,
+      "result": "failed",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "evidence/transitions/TR-0047.json",
+        "gate-catalog.json",
+        "gate-evidence.json"
+      ]
+    },
+    {
+      "check_id": "T072-FULL-REGRESSION",
+      "method": "Run the complete module in a writable isolated base temp; 211 tests pass, one declared Windows symlink test skips, and two evidence-walkthrough contracts fail.",
+      "environment": "Windows local; writable isolated temp; offline",
+      "duration_ms": 173050,
+      "result": "failed",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "evidence/verification/EPP-F01-T072-blocked.json",
+        "../../../tests/program_control_plane/test_evidence_walkthrough.py"
+      ]
+    },
+    {
+      "check_id": "T072-INDEPENDENT-CAUSE-AUDIT",
+      "method": "A bounded independent read-only auditor recomputed all three fatal findings, proved the two TR-0047 values came from checkout CRLF bytes, and confirmed V7 forbids extending its exact correction profile.",
+      "environment": "Independent bounded agent; offline; no write authority",
+      "duration_ms": 8400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/transitions/TR-0047.json",
+        "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json"
+      ]
+    },
+    {
+      "check_id": "T072-STOP-BOUNDARY",
+      "method": "Require no replacement candidate, no T066 retry, no attempt to rewrite TR-0047, a null mutating lease, and a human-gated planning action for the new blockers.",
+      "environment": "State, authority, task and diff audit",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "evidence/verification/EPP-F01-T072-blocked.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-007.json"
+    ],
+    "subject": {
+      "git_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+      "git_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+      "program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0046"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Bounded independent read-only T072 cause auditor; confirmed the stop boundary.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-T072-VERIFICATION-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "TR-0047 contains two immutable committed-byte digest mismatches outside the exact V7 correction profile",
+    "gate-evidence.json is bound to the pre-V7 gate-catalog digest",
+    "Two evidence-walkthrough contracts fail in the full regression",
+    "No mutating lease exists; T066 retry and all later or excluded actions remain unauthorized"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0049.json",
+  "next_action": "AUTHORIZE_EPP_F01_T072_BLOCKER_PLANNING"
+}

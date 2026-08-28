@@ -1,0 +1,195 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0039",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 39,
+  "new_revision": 40,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "782d44d47f03ac5f67d03255e91613616a7a5168462e620e4c84b340fc8cc2a7",
+  "new_state_digest": "7606a2480611a96a28121fff0ed76eaf65ecef1ec6971db63c65b2b27eb68efa",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter speckit-implement after the repaired V6 authorization checkpoint passes, the clean local subject and lease revision 9 are current, all 86 checklist rows pass, and the Spec Kit prerequisites identify feature 076; execute only author tasks T042 through T065 before the required T066-T068 role handoffs.",
+  "started_at": "2026-08-27T21:02:41Z",
+  "finished_at": "2026-08-27T21:05:11Z",
+  "duration_ms": 150000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "fccf80f755c835bbded067a7aac39bb308ed3ba7",
+    "source_tree": "1a4dcecf6a5afda458d6fe32d5a9180aca0bb58e",
+    "source_program_tree": "17417c87e9ba5112219ffe9af608e9bffd803c15",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0040.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0039.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0039.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0039.json",
+      "sha256": "4da62b9f8b1818b0efa7a5c255620ce4e94b0bc6f70acaf0e80689608d6c4f9d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0038.json",
+      "sha256": "e8f8d5fbf9b1e88864521e685ecceaca5f0d73877aee458838726fa8c9ab1c1b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "sha256": "95bc32d581bf75e085b4c5d285e3ff3c2a86232980df06278f4f5d51ac744551",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-006.json",
+      "sha256": "2583507436fd21edf1c563aaa0f849b820cfec2f9dfb2a4779d8149bd62ff03b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "7a7918d634e6deae797a3053d18f7e369203e00c99cdedc5dda2e2adf30560c2",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "d9316c6f5a349a179dead8bbb0908daae1d1a50630ca87523330a6364083d217",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0040.json",
+      "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "IMPLEMENTATION-AUTHORITY-V6-CURRENT",
+      "method": "Run the validator against exact clean commit fccf80f7 and require both non-expired, non-revoked V6 approval records to match source f70aca5b, all 11 committed-blob digests, T042-T068 local scope and exclusions.",
+      "environment": "local read-only Git-object validation; offline",
+      "duration_ms": 6700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-006.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-006.json",
+        "evidence/transitions/TR-0038.json"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-9-CURRENT",
+      "method": "Require active lease revision 9 in worktree epp-f01 on branch 077-control-plane-validator, author boundary T042-T065, two bounded repairs per stable cause and local-only actions.",
+      "environment": "program state, approval and local clock audit",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "approval.md",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-CHECKLISTS",
+      "method": "Require requirements 16/16 and program-control 70/70 checklist rows complete with zero override.",
+      "environment": "deterministic local checklist scan",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "../../../specs/076-control-plane-validator/checklists/program-control.md"
+      ]
+    },
+    {
+      "check_id": "SPECKIT-IMPLEMENT-PREREQUISITE",
+      "method": "Run check-prerequisites.sh with --json --require-tasks --include-tasks and require feature directory 076 plus tasks; use native Git identity because the WSL helper reports the registered worktree as non-Git.",
+      "environment": "local Spec Kit helper and native Git; offline",
+      "duration_ms": 700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/tasks.md",
+        "../../../.specify/feature.json"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm EPP-F01B implementation, dependencies, benchmark execution, external mutation, push, PR, merge, dev integration, publication and release remain unauthorized; reserve T066-T068 for independent-verifier/coordinator roles.",
+      "environment": "exact approvals, plan, lease and clean diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0039.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

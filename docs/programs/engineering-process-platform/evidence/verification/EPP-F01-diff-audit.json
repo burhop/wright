@@ -1,0 +1,82 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-DIFF-AUDIT-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "diff_audit",
+  "subject": {
+    "git_commit": "1bd7ff55e1a7673ccd8c8377b050048a500fba22",
+    "git_tree": "65e5cd05267dfb5f554ec3450d111b256d7b7610",
+    "artifact_digests": [
+      { "path": "docs/programs/engineering-process-platform/program-state.json", "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc" },
+      { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T21:47:56Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "DIFF-SCOPE-ALLOWLIST",
+      "method": "Inspect all 216 paths in ad162cca048ad23d848673ec4f49f588dcc77aff..1bd7ff55; every path is within the approved control-plane, feature-contract, test, gate, workflow, or managed-pointer allowlist.",
+      "environment": "Read-only Git diff; full branch baseline; offline",
+      "duration_ms": 3300,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/program-state.json", "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc" }
+      ]
+    },
+    {
+      "check_id": "DIFF-SECRETS-PRIVATE-PAYLOADS",
+      "method": "Scan added diff lines for credential/authorization assignments. Four matches are policy prose or deliberate runtime-built fake redaction canaries; no reusable secret, private endpoint, raw payload, or authority material is present.",
+      "environment": "Read-only full Git diff inspection; no export",
+      "duration_ms": 2200,
+      "result": "passed",
+      "evidence": [
+        { "path": "tests/program_control_plane/test_atomicity_redaction_and_compatibility.py", "sha256": "d221489e2d51fdbb32ea3e74336031fe2dcbe40862e8b0727a20d07927c66558" }
+      ]
+    },
+    {
+      "check_id": "DIFF-BINARY-GENERATED-DEPENDENCY",
+      "method": "Inspect numstat and changed dependency/package paths: zero binary rows; no package.json, package-lock.json, uv.lock, pyproject.toml, app/src/package/integration/benchmark change; dashboard is the declared candidate projection only.",
+      "environment": "Read-only Git name/numstat diff",
+      "duration_ms": 900,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/dashboard.json", "sha256": "7cd405d4fdb15fbb0c10f19ab7df20e1cffe6f26475c4feb8671480fd966d0e2" }
+      ]
+    },
+    {
+      "check_id": "DIFF-AUTHORITY-EXECUTION-EXTERNAL",
+      "method": "Review commands and diff: no benchmark or product execution, dependency mutation, push, PR, merge, dev integration, publication, release, remote write, ref rewrite, or prototype promotion occurred.",
+      "environment": "Local Git history and command audit; external actions excluded",
+      "duration_ms": 1100,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/program-state.json", "sha256": "8df3c6c01b1d95583346805a89facce7c5ab7f670323822cbaf306445edcf8bc" }
+      ]
+    }
+  ],
+  "original_failure_refs": [],
+  "findings": [
+    {
+      "code": "LARGE_CONTROL_PLANE_DIFF",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform",
+      "disposition": "The 216-path diff includes the complete approved planning control plane plus EPP-F01 implementation/evidence; size is disclosed and every path remains allowlisted."
+    },
+    {
+      "code": "DASHBOARD_CANDIDATE_NOT_EVIDENCE",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "The generated projection remains candidate_not_evidence; T067-T068 own delivery and no current claim is made."
+    }
+  ],
+  "rollback_subject": "git:3c601012f61a4bd09bd826f09feff4c5bb999f64 (US4 evidence checkpoint)",
+  "delivery_relation": null
+}

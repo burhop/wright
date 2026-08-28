@@ -1,0 +1,24 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "1.0",
+  "approval_id": "APR-EPP-2026-001",
+  "program_id": "EPP-2026",
+  "decision": "approved",
+  "scope": "program_plan",
+  "subject": {
+    "git_commit": "bef27ad9913b5246cbb1913afaf1c8b75de0ed89",
+    "git_tree": "75ddab4ca3774c9f9e298c34f8ca61bbe0611f26",
+    "program_tree": "59aef2b7a025a9fced908a7237ffd6dc409142d3",
+    "artifact_digests": [
+      {
+        "path": "evidence/artifact-manifest.json",
+        "sha256": "ecaf5b750dc587d0e5c0cb65bbe0d6a94685a4648450efc2ad2360a06886bdb1"
+      }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-26T23:19:39Z",
+  "expires_at": null,
+  "revoked": false,
+  "conditions": []
+}

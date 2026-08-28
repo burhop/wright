@@ -1,0 +1,184 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0055",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "BLOCKED",
+  "prior_revision": 55,
+  "new_revision": 56,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "39e064bad9d0a0cb95e6ae4a66006000e86d921be969df418b7306f0a79bf1c0",
+  "new_state_digest": "fc28726477b6d9b1422d91d94a5a50c635bf0229abe848f8f49155a3dce8e7bc",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Complete T077 through T080 for only the two approved V9 preflight-evidence claims, freeze terminal implementation evidence at commit 64914e8a, record bounded independent verification, preserve every readiness and release value, close lease revision 13, and stop for human selection and exact approval of any next bounded action.",
+  "started_at": "2026-08-28T12:44:21Z",
+  "finished_at": "2026-08-28T12:56:17Z",
+  "duration_ms": 716000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "64914e8a52cc34685fb249280dd507df5e69e8aa",
+    "source_tree": "4736bae1c2bacf4976709553ba39ab84b07ace35",
+    "source_program_tree": "1c1589cc57bad540b8ab72ca9f7b3e9b1c9deb0e",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0056.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0055.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V9.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0055.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0055.json",
+      "sha256": "bbc9b73af4734c184ed7e5823b3620dc3e9f6b450441d2d3c03afe488f11d7d3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0054.json",
+      "sha256": "c297767bacb35657fe85a401b6bb202094c2a8a5ce699e22478c3948fcc840c6",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {"path": "README.md", "sha256": "3b13709d0fac6574b812aa564d9ae944222ec723460c273114a6c6ee739a91d4", "schema_version": null, "role": "immutable_policy"},
+    {"path": "approval.md", "sha256": "bbd11db1cebc25e31c0c896efc21029dbf394fd72237f66c105bc5e9f10348bf", "schema_version": null, "role": "immutable_policy"},
+    {"path": "evidence/states/program-state-revision-0056.json", "sha256": "dbd842e9b01edc3c3bf15fdf336a6ab3e9403d1e2fcb69f55a6014ec495d7b8a", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/verification/EPP-F01-V9.json", "sha256": "739b2984b7bd5c1d6b78dbd54aa1fead838626034178c902610a377e8d48cea1", "schema_version": "1.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "dbd842e9b01edc3c3bf15fdf336a6ab3e9403d1e2fcb69f55a6014ec495d7b8a", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "be6b7c32ed5d824e334f618c98207192471c49d3623923246f404a6e932ed635", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "7fe912773d05e90ae9f432374507c0ab910ca5c37301a13b85148e1c64e857a1", "schema_version": null, "role": "feature_contract"}
+  ],
+  "checks": [
+    {
+      "check_id": "V9-FOCUSED-MATRIX",
+      "method": "Require all 21 exact-profile, near-miss, Git-object, approval and non-interference tests to pass on frozen implementation commit 64914e8a.",
+      "environment": "Windows local isolated worktree; offline; no excluded repair",
+      "duration_ms": 92540,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-V9.json",
+        "../../../tests/program_control_plane/test_preflight_evidence_correction.py"
+      ]
+    },
+    {
+      "check_id": "V9-FULL-REGRESSION",
+      "method": "Require 239 passed, one Windows symlink skip and exactly the three known excluded V8 failures; reject any additional failure or repair of excluded causes.",
+      "environment": "Windows local isolated worktree; offline",
+      "duration_ms": 187720,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-V9.json"
+      ]
+    },
+    {
+      "check_id": "V9-QUALITY-AND-CONTRACTS",
+      "method": "Require 29 contract-schema tests, Ruff lint and focused formatting to pass; require no new MyPy finding while retaining the ten-error historical baseline and adding no dependency.",
+      "environment": "Existing local Python, Ruff and MyPy tools; offline",
+      "duration_ms": 11920,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-V9.json"
+      ]
+    },
+    {
+      "check_id": "V9-SUBJECT-AND-SOURCE-INTEGRITY",
+      "method": "Validate the exact committed subject, immutable historical Git blobs, exact APR-009 authority and byte-identical source state/dashboard; require only the excluded V8 findings to remain.",
+      "environment": "Read-only Git-object and committed CLI validation; offline",
+      "duration_ms": 6759,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-V9.json",
+        "evidence/approvals/APR-EPP-F01-MC-009.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+      ]
+    },
+    {
+      "check_id": "V9-INDEPENDENT-VERIFICATION",
+      "method": "A different read-only agent reran the frozen subject checks and verified exact scope, two-claim resolution, non-interference and exclusions; require PASS without writes.",
+      "environment": "Bounded independent agent; frozen commit 64914e8a; offline",
+      "duration_ms": 300000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-V9.json"
+      ]
+    },
+    {
+      "check_id": "READINESS-AND-EXCLUSIONS-UNCHANGED",
+      "method": "Compare state revisions 55 and 56 and require product not_started, benchmark not_started at 0/100, commercial blocked, program health blocked, release ineligible and every explicit exclusion preserved.",
+      "environment": "Immutable state snapshots, roadmap and exact user authorization",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0055.json",
+        "evidence/states/program-state-revision-0056.json",
+        "roadmap.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "subject": {
+      "git_commit": "d96e8b68c9fda08eea84065186452581727ec4fa",
+      "git_tree": "d16d81afaabac73e4374ecb186089cb0a95dd1bc",
+      "program_tree": "ee2fbf3b1a15920701289a083431f0afd41ed4ec",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0053"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Codex independent read-only agent /root/v9_terminal_verifier; PASS on frozen commit 64914e8a after rejecting an earlier mixed-HEAD run.",
+  "repair": {
+    "stable_cause_id": "EPP-F01-V9-PREFLIGHT-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "The two TR-0047 output-digest claims, TR-0050 event-rule claim and two evidence-walkthrough causes remain excluded and unresolved.",
+    "T073-T076, the roadmap-policy repair and T066-T068 remain unauthorized.",
+    "EPP-F01B implementation, dependencies, benchmarks, external changes, push, PR, merge, dev integration, publication and release remain unauthorized.",
+    "Lease revision 13 is closed and cannot be replayed; no next mutating lease exists."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0055.json",
+  "next_action": "APPROVE_EPP_F01_NEXT_BOUNDED_LEASE"
+}

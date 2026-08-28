@@ -1,0 +1,51 @@
+{
+  "$schema": "../schemas/audit-status.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "audits": [
+    {
+      "id": "AUD-01",
+      "area": "engineering_usability",
+      "auditor_role": "read_only_auditor",
+      "independent_read_only": true,
+      "status": "passed",
+      "finding_ids": ["EU-P0-01", "EU-P0-02", "EU-P0-03", "EU-P0-04", "EU-P0-05", "EU-P0-06", "EU-P0-07", "EU-P0-08", "EU-P0-09", "EU-P0-10", "EU-P0-11", "EU-P0-12", "EPPF01-COR-EU-01", "EPPF01-COR-EU-02", "EPPF01-COR-EU-03", "V5-EU-01", "V5-EU-02", "V5-EU-03", "V9-EU-01", "V9-EU-02", "V9-EU-03"],
+      "disposition_evidence": ["README.md", "coordinator-state-machine.md", "prototype-lesson-dispositions.json", "agent-operating-contract.md", "benchmark-strategy.md", "approval.md", "audits/2026-08-27-epp-f01-committed-identity-repair-audits.md", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "audits/2026-08-28-epp-f01-v9-preflight-audits.md", "specs/076-control-plane-validator/analysis.md", "specs/076-control-plane-validator/tasks.md"],
+      "final_review": "PASS for V9 planning after catch-up, analysis, exact negative matrix, APR-009/TR-0053 baseline, durable T080 evidence, and local-stash identity all agree on BLOCKED/no lease/T077-T080 only."
+    },
+    {
+      "id": "AUD-02",
+      "area": "architecture",
+      "auditor_role": "read_only_auditor",
+      "independent_read_only": true,
+      "status": "passed",
+      "finding_ids": ["ARC-P0-01", "ARC-P0-02", "ARC-P0-03", "ARC-P0-04", "ARC-P0-05", "ARC-P0-06", "ARC-P0-07", "ARC-P0-08", "ARC-P0-09", "ARC-P0-10", "ARC-P0-11", "ARC-P0-12", "EPPF01-COR-ARC-01", "EPPF01-COR-ARC-02", "EPPF01-COR-ARC-03", "V5-ARC-01", "V5-ARC-02", "V5-ARC-03", "V5-ARC-04", "V5-ARC-05", "V9-ARC-01"],
+      "disposition_evidence": ["coordinator-state-machine.md", "lifecycle-policy.json", "gate-catalog.json", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "audits/2026-08-28-epp-f01-v9-preflight-audits.md", "schemas/transition-input-correction.schema.json", "schemas/preflight-evidence-correction.schema.json", "schemas/v8-discovery-evidence.schema.json", "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json", "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "specs/076-control-plane-validator/tasks.md"],
+      "final_review": "PASS for V9 planning after independently recomputing the literal 2/2 Git identities, exact external schema, complete 35-path container set, sole self-path index difference, strict ancestry, and no generic waiver."
+    },
+    {
+      "id": "AUD-03",
+      "area": "commercial_release",
+      "auditor_role": "read_only_auditor",
+      "independent_read_only": true,
+      "status": "passed",
+      "finding_ids": ["CR-P0-01", "CR-P0-02", "CR-P0-03", "CR-P0-04", "CR-P0-05", "CR-P0-06", "CR-P0-07", "EPPF01-COR-CR-01", "EPPF01-COR-CR-02", "EPPF01-COR-CR-03", "V5-CR-01", "V5-CR-02", "V5-CR-03", "V9-CR-01", "V9-CR-02"],
+      "disposition_evidence": ["approval.md", "gates.md", "decision-register.json", "integration-release.md", "status-dashboard-contract.md", "risk-register.json", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "audits/2026-08-28-epp-f01-v9-preflight-audits.md", "decisions/0020-closed-v9-preflight-evidence-correction.md", "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json"],
+      "final_review": "PASS for V9 planning after preserving null lease, stale V8 authority, all four independent areas, 34 gates, candidate/dashboard/delivery/release truth and every external/product/EPP-F01B exclusion."
+    },
+    {
+      "id": "AUD-04",
+      "area": "benchmark_quality",
+      "auditor_role": "read_only_auditor",
+      "independent_read_only": true,
+      "status": "passed",
+      "finding_ids": ["BQ-P0-01", "BQ-P0-02", "BQ-P0-03", "BQ-P0-04", "BQ-P0-05", "BQ-P0-06", "BQ-P0-07", "BQ-P0-08", "BQ-P0-09", "EPPF01-COR-BQ-01", "EPPF01-COR-BQ-02", "EPPF01-COR-BQ-03", "V5-BQ-01", "V9-BQ-01", "V9-BQ-02"],
+      "disposition_evidence": ["benchmark-strategy.md", "benchmark-coverage.json", "status-dashboard-contract.md", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "audits/2026-08-28-epp-f01-v9-preflight-audits.md", "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "specs/076-control-plane-validator/spec.md", "specs/076-control-plane-validator/plan.md", "specs/076-control-plane-validator/tasks.md"],
+      "final_review": "PASS for V9 planning after extending tests through SC-015 and enumerating complete benchmark projection equality, honest 0/100, synthetic non-authority, future trend inputs and execution prohibition."
+    }
+  ],
+  "all_required_audits_passed": true,
+  "material_unresolved_findings": [
+    "V8-P0-EXCLUDED-001: test_next_action_human_flag_must_match_policy is a separate test-only inversion defect outside V8; T066 requires separate human disposition."
+  ]
+}

@@ -1,0 +1,470 @@
+{
+  "$schema": "./schemas/risk-register.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "scoring": "likelihood_1_to_5_times_impact_1_to_5",
+  "risks": [
+    {
+      "id": "RISK-001",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Benchmark optimization displaces product quality",
+      "cause": "Agents optimize for 100 terminal passes or visible fixtures instead of user value, failure behavior and independent readiness.",
+      "consequence": "A green benchmark ships an unusable, unsafe, unsupported or commercially unready product.",
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["Four independent gates with AND release logic", "Sealed holdout and contamination policy", "Feature readiness envelope", "Static review for case/domain dispatch"],
+      "triggers": ["Benchmark pass cited to waive another gate", "Fixture-specific branch", "Denominator or oracle change after results"],
+      "contingency": "Freeze qualification, mark affected results contaminated, return to product/benchmark design, and require human change approval.",
+      "evidence": ["gates.md", "benchmark-strategy.md", "DEC-P0-009", "DEC-P0-011"],
+      "review": {
+        "cadence": "Before EPP-B01 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-002",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Prototype code is promoted as production architecture",
+      "cause": "The prototype contains working UI, tests and live narratives that appear cheaper to copy than re-specify.",
+      "consequence": "Unreviewed schema, renderer, executor and trust failures enter production with hidden coupling.",
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["Frozen branch is read-only evidence", "No merge/cherry-pick/wholesale promotion", "Every child starts from dev", "Prototype lesson disposition register"],
+      "triggers": ["Prototype branch becomes a feature base", "Large code-identical diff", "React Flow or JSON declared permanent without ADR"],
+      "contingency": "Stop the feature, discard unauthorized promotion through a reviewed recovery plan, and re-specify the accepted outcome from dev.",
+      "evidence": ["prototype-evidence.md", "program-plan.md"],
+      "review": {
+        "cadence": "Every feature allocation",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-003",
+      "priority": "P0",
+      "status": "open",
+      "title": "Transport success is misrepresented as engineering correctness",
+      "cause": "MCP/application acceptance, artifact existence or syntactic parsing is easier to measure than engineering validity.",
+      "consequence": "Wright makes unsafe or false engineering claims and loses user trust.",
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "owner_role": "human_benchmark_and_product_approver",
+      "mitigations": ["Versioned independent oracles", "Units/tolerances/negative controls", "Human review for subjective results", "Truthful limitation language"],
+      "triggers": ["Pass without oracle", "Screenshot used as correctness proof", "Application accepted command but output not independently inspected"],
+      "contingency": "Quarantine the case/claim, classify as benchmark-oracle failure, and obtain independent domain review.",
+      "evidence": ["DEC-P0-007", "benchmark-strategy.md", "prototype-evidence.md#ll-020"],
+      "review": {
+        "cadence": "Before any benchmark case is qualified",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-004",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Autonomy exceeds authority",
+      "cause": "A long-running coordinator treats program intent as permission for dependencies, external writes, credentials, paid systems, destructive actions or release.",
+      "consequence": "Unauthorized external mutation, cost, data exposure, legal risk or unsafe physical action.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["Explicit action charters and human gates", "One mutating lease", "Stop conditions", "No physical/paid/proprietary activity by implication"],
+      "triggers": ["Action absent from charter", "Credential/license prompt", "Production or physical target", "External write without approval record"],
+      "contingency": "Stop before action, preserve evidence and request exact scoped authority.",
+      "evidence": ["agent-operating-contract.md", "approval.md"],
+      "review": {
+        "cadence": "Every transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-005",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Spec Kit singleton state targets the wrong feature",
+      "cause": ".specify/feature.json and the managed AGENTS.md pointer are shared mutable coordination files.",
+      "consequence": "One agent plans or implements another feature, corrupting scope and evidence.",
+      "likelihood": 4,
+      "impact": 4,
+      "score": 16,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["One mutating Spec Kit lease", "Isolated worktree per feature", "Verify singleton pointers after each command", "Restore program pointer before dev integration"],
+      "triggers": ["Pointer mismatch", "Second mutating feature", "Feature path outside lease"],
+      "contingency": "Stop, audit both worktrees and return affected features to the last verified state.",
+      "evidence": ["agent-operating-contract.md", "coordinator-state-machine.md"],
+      "review": {
+        "cadence": "Before and after every Spec Kit command",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-006",
+      "priority": "P0",
+      "status": "open",
+      "title": "Application-backed MCP has no authoritative subject",
+      "cause": "Multiple surfaces or stale clients can share a command queue while owning different in-memory engineering state.",
+      "consequence": "Inconsistent observations are retried until a desired result appears, destroying reproducibility and correctness.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_architecture_and_safety_approver",
+      "mitigations": ["Resolve DEC-P0-003", "Exclusive/immutable application identity", "Reject competing observations", "Kill/reconnect tests"],
+      "triggers": ["More than one consumer", "Connected without identity/lease", "Same run produces inconsistent application state"],
+      "contingency": "Disable application-backed execution and retain deterministic/read-only functionality until a reviewed identity contract passes.",
+      "evidence": ["DEC-P0-003", "prototype-evidence.md#ll-020"],
+      "review": {
+        "cadence": "Before EPP-F05 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-007",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Fixture output masquerades as current analysis",
+      "cause": "Scenario fixtures include convenient semantic findings and UI components can project them onto arbitrary input.",
+      "consequence": "False causal claims, unsafe recovery and severe user-trust failure.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "feature_owner_and_independent_verifier",
+      "mitigations": ["Explicit modes", "Current-run evidence only", "Fixture/user-input negative tests", "Persistent provenance in history/export/dashboard"],
+      "triggers": ["Predetermined result with user input", "Mode absent from any projection", "Cause highlight lacks evidence"],
+      "contingency": "Stop execution integration, remove false result projection and add regression before resuming.",
+      "evidence": ["prototype-evidence.md#ll-001", "gates.md#product-capability-gates"],
+      "review": {
+        "cadence": "Every execution-related feature",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-008",
+      "priority": "P0",
+      "status": "open",
+      "title": "Commercial readiness is claimed without an offering decision",
+      "cause": "Technical progress is described as production-ready despite current public-alpha/no-SLA policy and unverified external controls.",
+      "consequence": "Unsupported customer expectations, operational exposure and inaccurate marketing/release claims.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_product_and_commercial_approver",
+      "mitigations": ["Resolve DEC-P0-001", "Independent COMM gates", "Verify repository settings externally", "Exact support and compatibility claims"],
+      "triggers": ["Production-ready language", "SLA/support implication", "Unchecked external control treated as pass"],
+      "contingency": "Block COMM-01 and release; correct claims and obtain approved offering/support evidence.",
+      "evidence": ["DEC-P0-001", "gates.md#commercial-readiness-gates"],
+      "review": {
+        "cadence": "Before EPP-C01 specification",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-009",
+      "priority": "P1",
+      "status": "mitigating",
+      "title": "Durable schema or interface strands historical state",
+      "cause": "A process/run/artifact/API change ships without reader ranges, migration, old-reader behavior or rollback proof.",
+      "consequence": "Users cannot open prior work or safely downgrade/recover.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "feature_owner_and_compatibility_verifier",
+      "mitigations": ["Feature compatibility envelope", "Previous-stable tests", "Additive migration and quarantine", "Exact rollback identity"],
+      "triggers": ["Persisted/public schema diff", "Old record test absent", "Rollback would require deletion"],
+      "contingency": "Block implementation/integration and redesign migration or narrow the feature to a non-persisted increment.",
+      "evidence": ["integration-release.md", "gates.md#product-capability-gates"],
+      "review": {
+        "cadence": "Every feature plan and merge",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-010",
+      "priority": "P1",
+      "status": "mitigating",
+      "title": "Evidence and dashboard become stale or drift",
+      "cause": "Summaries are hand-edited or remain green after source, environment, oracle or candidate identity changes.",
+      "consequence": "Agents select invalid work and release decisions use obsolete evidence.",
+      "likelihood": 4,
+      "impact": 4,
+      "score": 16,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["Generated dashboard", "Source/digest/freshness links", "Change-triggered invalidation", "Unknown/stale visible and blocking"],
+      "triggers": ["Manual overall status", "Digest mismatch", "Evidence older than policy", "Dashboard/source disagreement"],
+      "contingency": "Mark affected area stale, regenerate from source, and block transitions until reconciled.",
+      "evidence": ["status-dashboard-contract.md"],
+      "review": {
+        "cadence": "Every state transition and dashboard generation",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-011",
+      "priority": "P1",
+      "status": "mitigating",
+      "title": "Parallel WIP and CI thrash obscure causes",
+      "cause": "Multiple writers, broad changes, reruns and replacement pushes proceed before prior evidence is terminal.",
+      "consequence": "Conflicting mutations, repeated failures, token waste and unreliable attribution.",
+      "likelihood": 4,
+      "impact": 4,
+      "score": 16,
+      "owner_role": "top_level_coordinator",
+      "mitigations": ["Numeric WIP limits", "Stable failure cause IDs", "Two-repair and two-push bounds", "Collect all CI failures before edit"],
+      "triggers": ["Second implementing feature", "Push before prior CI terminal", "Same cause exceeds bound"],
+      "contingency": "Stop mutation/pushes, freeze evidence, build one deterministic reproducer and request consolidated review.",
+      "evidence": ["agent-operating-contract.md", "docs/contributing/dev-push-runbook.md"],
+      "review": {
+        "cadence": "Continuously",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-012",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Proprietary data or reusable authority leaks through evidence",
+      "cause": "Run, benchmark, dashboard or support artifacts capture raw payloads, paths, credentials, commands, tokens or proprietary inputs/outputs.",
+      "consequence": "Security/privacy breach and unusable commercial evidence.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "security_and_privacy_approver",
+      "mitigations": ["Allowlisted bounded evidence", "Shared redaction", "Local inert support exports", "Holdout/access-controlled storage", "Leak scans before commit"],
+      "triggers": ["Unexpected binary/payload", "Private path or credential pattern", "Automatic upload destination"],
+      "contingency": "Stop, contain/remove through an approved secret/proprietary-data incident process, invalidate exposed evidence and rotate authority if needed.",
+      "evidence": ["integration-release.md", "DEC-P0-012"],
+      "review": {
+        "cadence": "Before every commit, evidence publication and release",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-013",
+      "priority": "P1",
+      "status": "open",
+      "title": "New dependency or third-party asset is commercially unsuitable",
+      "cause": "Prototype popularity or technical fit is mistaken for current license, maintenance, vulnerability, redistribution and support suitability.",
+      "consequence": "Supply-chain, legal, bundle, platform or abandonment risk.",
+      "likelihood": 3,
+      "impact": 4,
+      "score": 12,
+      "owner_role": "human_dependency_and_commercial_approver",
+      "mitigations": ["Separate dependency approval", "Current license/security/maintenance review", "SBOM/notices", "Adapter and deletion-cost evidence"],
+      "triggers": ["Dependency added before approval", "License/maintenance drift", "Native/runtime footprint changes"],
+      "contingency": "Block feature, remove or replace dependency, and rerun architecture/packaging/license gates.",
+      "evidence": ["gates.md#commercial-readiness-gates"],
+      "review": {
+        "cadence": "Before any dependency addition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-014",
+      "priority": "P1",
+      "status": "open",
+      "title": "Engineer usability is inferred from prototype screenshots/tests",
+      "cause": "The prototype human comprehension study remained incomplete while screenshots and component tests appear convincing.",
+      "consequence": "Dense or confusing workflows ship, especially at scale, narrow view or failure states.",
+      "likelihood": 4,
+      "impact": 4,
+      "score": 16,
+      "owner_role": "human_product_approver",
+      "mitigations": ["Representative moderated tasks", "Equivalent baseline", "No invented/coached/duplicate trials", "Accessibility and scale/focus evidence"],
+      "triggers": ["Prototype claim called proven", "100-block fit screenshot treated as legibility", "Human evidence absent"],
+      "contingency": "Keep product gate blocked, narrow UI claim and run the approved study before integration/release.",
+      "evidence": ["audits/2026-08-26-omission-audits.md", "prototype-evidence.md"],
+      "review": {
+        "cadence": "Before EPP-F02 integration and every material UX change",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-015",
+      "priority": "P1",
+      "status": "open",
+      "title": "Successful output has no usable lifetime or action",
+      "cause": "Runtime cleanup destroys session output or the UI exposes raw payload without a view/open/download/application contract.",
+      "consequence": "Green runs produce no actionable engineer outcome and cannot be reproduced or supported.",
+      "likelihood": 4,
+      "impact": 4,
+      "score": 16,
+      "owner_role": "human_product_data_approver",
+      "mitigations": ["Resolve DEC-P0-006", "Typed output reference lifecycle", "Reopen/expiry/cleanup tests", "No unsupported actions"],
+      "triggers": ["Only output destroyed on cleanup", "Action cannot resolve", "Lifetime/owner absent"],
+      "contingency": "Classify product run as failed/incomplete, retain safe evidence and redesign output delivery before release.",
+      "evidence": ["DEC-P0-006", "prototype-evidence.md#ll-024"],
+      "review": {
+        "cadence": "Before EPP-F03 planning approval",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-016",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Release surfaces diverge or completion is reported early",
+      "cause": "Candidates are rebuilt between validation/publication, registries diverge, native profiles are skipped, or merge/main checks are called a release.",
+      "consequence": "Users receive unverified artifacts and rollback/recovery cannot identify an immutable subject.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "release_operator_and_human_release_approver",
+      "mitigations": ["Build once", "Exact file/digest promotion", "Public bounded-retry verification", "Native lifecycle on all claimed platforms", "GitHub Release last"],
+      "triggers": ["Digest mismatch", "Rebuild after registry propagation delay", "Missing manager/platform evidence", "Release created before docs/public verification"],
+      "contingency": "Leave release incomplete/draft, recover only with recorded immutable subjects or publish a corrected patch; never overwrite artifacts.",
+      "evidence": ["integration-release.md", "docs/release/release-runbook.md"],
+      "review": {
+        "cadence": "Every release rehearsal and production step",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T11:04:37Z"
+      }
+    },
+    {
+      "id": "RISK-017",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Machine dashboard is mistaken for the required browser status experience",
+      "cause": "EPP-F01 generates dashboard.json and CLI reports while the original program outcome also requires a browser-accessible page; Wright's existing workspace landing dashboard looks adjacent but consumes different state.",
+      "consequence": "The program can report governance tooling complete while maintainers cannot see four-area readiness, 0-to-100 benchmark progress, active work, blockers, next action, evidence and freshness in the required accessible browser surface.",
+      "likelihood": 4,
+      "impact": 5,
+      "score": 20,
+      "owner_role": "human_program_approver_and_product_approver",
+      "mitigations": ["DEC-P0-015", "Separate EPP-F01B after EPP-F01 and before EPP-F02", "Keep browser projection read-only and evidence-derived", "Test honest empty/stale/failed states and accessible traffic-light presentation", "Require fresh exact approvals before EPP-F01 resumes"],
+      "triggers": ["EPP-F01 called a browser dashboard", "DashboardPage.tsx treated as program status", "Status hand-set outside generated evidence", "EPP-F02 becomes eligible before EPP-F01B integrates"],
+      "contingency": "Keep EPP-F01 blocked, preserve validator WIP, and require a newly approved exact program subject; do not implement browser work inside EPP-F01 or claim the browser outcome complete.",
+      "evidence": ["decisions/0015-browser-status-surface.md", "status-dashboard-contract.md", "roadmap.json", "specs/076-control-plane-validator/tasks.md"],
+      "review": {
+        "cadence": "Every EPP-F01/EPP-F01B transition and before EPP-F02 eligibility",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T12:00:00Z"
+      }
+    },
+    {
+      "id": "RISK-018",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Committed-identity correction becomes a hidden waiver channel",
+      "cause": "A broad, editable, partial, or readiness-aware correction mechanism could be used to dispose unrelated control-plane, benchmark, approval, or release failures.",
+      "consequence": "Historical evidence appears valid without exact Git proof, independent readiness gates become coupled, and autonomous work or release can advance on waived defects.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-016", "Recognize one literal 37-claim profile only", "Require strict-ancestor Git-object recomputation and exact V4 approval binding", "Retain original findings and reject corrections of corrections", "Prove readiness, benchmark, freshness, approval and release non-interference"],
+      "triggers": ["Wildcard/range or new correction target accepted", "Partial claim set classified resolved", "Correction changes any readiness area or release result", "Old reader ignores the profile", "Historical evidence is edited"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, revoke the lease, preserve all original bytes, and require a new material decision rather than weakening validation.",
+      "evidence": ["decisions/0016-closed-committed-identity-correction.md", "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json", "specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 correction, compatibility, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T15:26:54Z"
+      }
+    },
+    {
+      "id": "RISK-019",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Transition input-origin correction becomes an authority bypass",
+      "cause": "A generic source/container exception could treat evidence created in a transition container as if it were available to authorize that transition.",
+      "consequence": "Append-only transition proof becomes circular and autonomous work may advance on authority that did not exist at the declared source.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-017", "Recognize one exact TR-0027 /inputs/3 claim", "Require source absence and unique container introduction", "Bind exact blobs and unchanged manifest", "Prove zero authority/readiness/release effect"],
+      "triggers": ["Another transition or pointer accepted", "Container evidence grants authority", "Manifest mutation accepted", "Original finding suppressed", "Unsupported reader continues"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, preserve original bytes, and require a new material decision rather than broadening the exception.",
+      "evidence": ["decisions/0017-closed-tr0027-input-origin-correction.md", "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json", "specs/076-control-plane-validator/contracts/transition-input-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 transition-history, compatibility, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T18:15:00Z"
+      }
+    },
+    {
+      "id": "RISK-020",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "Repair-evidence correction becomes a generic audit waiver",
+      "cause": "A repair correction broader than the two exact targets could accept malformed identifiers, partial digests, current-state mutations, or unrelated historical defects.",
+      "consequence": "The validator could hide evidence corruption, alter authority or readiness, and resume candidate verification on an untrustworthy control plane.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_architecture_approver",
+      "mitigations": ["DEC-P0-018", "Recognize one exact two-claim profile only", "Preserve and independently rehash every original blob", "Reject new/current/wildcard/correction targets", "Require exact V7 approval and full non-interference"],
+      "triggers": ["A third target is accepted", "A current state or transition is mutated", "A truncated digest is prefix-matched", "Original finding is suppressed", "Correction changes authority, readiness, benchmark, candidate, delivery, or release output"],
+      "contingency": "Keep EPP-F01 and PROG-01/PROG-05 blocked, preserve all original evidence, and require a new material decision rather than broadening the profile.",
+      "evidence": ["decisions/0018-closed-repair-evidence-correction.md", "evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json", "specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json"],
+      "review": {
+        "cadence": "Every EPP-F01 repair, candidate-verification, integration and release gate",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-27T22:43:44Z"
+      }
+    },
+    {
+      "id": "RISK-021",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "V8 checkpoint correction widens into policy or readiness waiver",
+      "cause": "Historical digest/event claims, current catalog binding, and walkthrough contracts could be conflated or expanded to make a failing candidate appear verifiable.",
+      "consequence": "Immutable evidence, lifecycle semantics, benchmark truth, and release authority become untrustworthy.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_independent_verifier",
+      "mitigations": ["DEC-P0-019", "Literal three-claim schema", "Final one-field catalog rebind", "Two-cause walkthrough boundary", "Full correction-off/on and projection non-interference", "Keep the separate roadmap-policy test question visible"],
+      "triggers": ["Sixth target", "Generic lifecycle rule", "Any gate row or 0/100 change", "Dashboard regeneration", "T066 included", "Excluded regression hidden"],
+      "contingency": "Keep EPP-F01 BLOCKED with null lease, preserve all source bytes, and require a new material decision.",
+      "evidence": ["decisions/0019-closed-checkpoint-evidence-correction.md", "evidence/verification/EPP-F01-V8-discovery.json", "evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json"],
+      "review": {
+        "cadence": "Every V8 planning, implementation, verification and approval transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T01:30:00Z"
+      }
+    },
+    {
+      "id": "RISK-022",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "V9 preflight correction becomes a reusable schema or manifest waiver",
+      "cause": "A narrow historical schema-reference and path-order disposition could be generalized to infer schemas, sort manifests before validation, or conceal changed path sets.",
+      "consequence": "Malformed, incomplete, duplicated, future, or untyped evidence could pass while immutable provenance and release authority appear trustworthy.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_independent_verifier",
+      "mitigations": ["DEC-P0-020", "Literal two-claim schema", "Exact-value discovery contract", "Exact 35-path set and two order digests", "Strict Git-object ancestry and recomputation", "Full projection and roadmap-policy non-interference"],
+      "triggers": ["A third target", "Schema inference", "Another schema-less artifact", "Generic manifest sorting", "Changed count/set/duplicate tolerated", "T073 or roadmap-policy change included", "Any readiness, benchmark, authority, candidate, delivery, dashboard, or release change"],
+      "contingency": "Keep EPP-F01 BLOCKED with no lease, preserve both original blobs and findings, and require a new material decision rather than widening V9.",
+      "evidence": ["decisions/0020-closed-v9-preflight-evidence-correction.md", "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "schemas/preflight-evidence-correction.schema.json", "schemas/v8-discovery-evidence.schema.json"],
+      "review": {
+        "cadence": "Every V9 planning, implementation, verification and approval transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T12:30:00Z"
+      }
+    }
+  ]
+}

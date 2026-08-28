@@ -1,0 +1,399 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0051",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "verification",
+  "from_state": "BLOCKED",
+  "to_state": "BLOCKED",
+  "prior_revision": 51,
+  "new_revision": 52,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "fc46f9dcaa3bc8e7172dfe131410ba14953e964016a82991d6c9a8dcff38530e",
+  "new_state_digest": "e67fbb79e960bc13bccb59cb8cad06969b7b9cbba1a006415dff280e1977e4ac",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Specify and audit only the closed V8 six-target boundary: three historical claims, final catalog binding and two walkthrough causes; retain BLOCKED/null-lease state; expose exact V8 approval and the separate excluded roadmap-policy P0 question.",
+  "started_at": "2026-08-28T01:30:00Z",
+  "finished_at": "2026-08-28T01:55:00Z",
+  "duration_ms": 1500000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2",
+    "source_tree": "ea473cfbab2802f4894ebf47b7c223cb5638e00b",
+    "source_program_tree": "6f4cafefc6eeea94ad2eadbf41a080b88b24bf4a",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/audits/2026-08-28-epp-f01-v8-checkpoint-audits.md",
+      "docs/programs/engineering-process-platform/audits/audit-status.json",
+      "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0019-closed-checkpoint-evidence-correction.md",
+      "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0052.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json",
+      "docs/programs/engineering-process-platform/gate-catalog.json",
+      "docs/programs/engineering-process-platform/gate-evidence.json",
+      "docs/programs/engineering-process-platform/gates.md",
+      "docs/programs/engineering-process-platform/integration-release.md",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-plan.md",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/proposed-features.md",
+      "docs/programs/engineering-process-platform/risk-register.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/schemas/checkpoint-evidence-correction.schema.json",
+      "docs/programs/engineering-process-platform/status-dashboard-contract.md",
+      "specs/076-control-plane-validator/analysis.md",
+      "specs/076-control-plane-validator/checklists/program-control.md",
+      "specs/076-control-plane-validator/checklists/requirements.md",
+      "specs/076-control-plane-validator/contracts/checkpoint-evidence-correction.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md",
+      "specs/076-control-plane-validator/spec.md",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_contract_schemas.py",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0051.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0051.json",
+      "sha256": "b3c44e995c9ba4c260bcadd06f28bda0a63509c5238446a8d6e0a9caa8eeb6e9",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0050.json",
+      "sha256": "f3a0d050b8b560f2d6caf9cdcb82c33ba8e1ba0ebd82b8a1c89ac865e85591c8",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "b4daf15bbbdc573c29ee4255f3eed9ec01a9f38d8ccd79e9d49b2f14b5451f42",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "approval.md",
+      "sha256": "0f9b03150b07697a1c30cdaa7f0bf37cc196ab7323344569da41c9bac14b5a46",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "audits/2026-08-28-epp-f01-v8-checkpoint-audits.md",
+      "sha256": "9208437b83791c07488780dd67ee961a374aa91773e9bdab643d046359fa0294",
+      "schema_version": null,
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "audits/audit-status.json",
+      "sha256": "e30eeda649fb137ecda19f7873f0994dbdef5005aeaf3e42bb298d26732d230d",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "coordinator-state-machine.md",
+      "sha256": "7dc97c177d9cef34d49ff756f45a247a6708a398236fc247e76b54cc659f0558",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "decision-register.json",
+      "sha256": "e43965982e8d1c4a9ccd828ecf7658910e8e84d2f1897c183911dbd781e47019",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "decisions/0019-closed-checkpoint-evidence-correction.md",
+      "sha256": "273f33db80075069438ca683350e5733301b875e3b23afbc28a2099d651dd625",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json",
+      "sha256": "755aa27fb27b4d5eac1e04d07fa938b16f4c38e9be8d9d7de0bc8aed7b19d1d6",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0052.json",
+      "sha256": "d3270a83979cec15e6872a5f61b6372a31ed2031666879404b3235774631d743",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-V8-discovery.json",
+      "sha256": "b6def7c089398b083bf9be118b9d428ac0179c001f2b048df0808c335bb9e6f5",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "gate-catalog.json",
+      "sha256": "3b9ca76219ce84ab610b1b77193dfdbf81459d567acae9c0bade1be7478cc9d1",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "gate-evidence.json",
+      "sha256": "dd88d1cf7bc1e96711fc1d6fc45631672cb76b8def0b02692c56d50fe87966f2",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "gates.md",
+      "sha256": "559ac53ae153126e484e580665be079d8cc99b170f3aae2197d485dc2821fe8c",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "integration-release.md",
+      "sha256": "849c45be4b5165671c7dcc705cc8b8e23f6d3088f7c3dfade3cd049bb32f88e1",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "c587f4acca819c013ab89f5e0f5cac05925146ec700ab95f730b337c55bcb7b6",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "program-plan.md",
+      "sha256": "0d9cb9f0c9b0c533e73ed06a312aeab5cf161740977f56f699908511939b58e1",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "d3270a83979cec15e6872a5f61b6372a31ed2031666879404b3235774631d743",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "proposed-features.md",
+      "sha256": "f952c1bbfe63facbb24790eb7d2446c57e493eaae387bdbbe35044d27a0a3023",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "risk-register.json",
+      "sha256": "14c7af029ee4ef0d74f37e2d3616e15f6282d64ce2563d86fd06c53d576c5fb0",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "a9929bb6e725a1aba075a7dac18a709c2f51158a3c2a96f93184c3fb1f4debb7",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "schemas/README.md",
+      "sha256": "9a53f22af063b9e6faf74af66c2cb713f566fb49c2d8ff3b9c79c2bc48992a99",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "schemas/checkpoint-evidence-correction.schema.json",
+      "sha256": "1728309b49889e6c2f8101f3a887575f7e9e8a833b5c28e3472cd242b03b1224",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "status-dashboard-contract.md",
+      "sha256": "f1cee2ec1628314c6adaafea1d53b0fb65d38814fc0910363ce84b25475e391b",
+      "schema_version": null,
+      "role": "immutable_policy"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/analysis.md",
+      "sha256": "e35404583a0b6e595306b37956c6c31779cf8bfde598ac4acabe5bd74147baf9",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/program-control.md",
+      "sha256": "93ce6aea3670a90c5c051a20d17a122a81e191b84e4dd4b089d97744600351cf",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/checklists/requirements.md",
+      "sha256": "b545878b76d06916d8a909f24bd695e9aaf6d3e3fe2a70c48fd9b9f95f11e0f2",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/checkpoint-evidence-correction.schema.json",
+      "sha256": "1728309b49889e6c2f8101f3a887575f7e9e8a833b5c28e3472cd242b03b1224",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/data-model.md",
+      "sha256": "63237756987fb658c95ef54b9f26a5394fb6f111127299023291de7a12f32cdd",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "c26d6c8184aacc7d163d7910c67238fcf44e1afde6a6dc2ef7cf2fd3c1132a4b",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/quickstart.md",
+      "sha256": "6ce91475e6a0f6a78c93a9929e862b8cfe454b01303e71ed4cf1d170026e3723",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/research.md",
+      "sha256": "7009ea82c557bc7379be817373c11b828278a7e2cdc1f8c4e08c14969288167e",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "6fa63343183cd64c9ee54624a5254e65fa8a5e90eeee1b214cf3d89f9abe7e0c",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "bd5e65dfe1f5ac38a9a4e72c8d0e3bf9324fe7e97c286ec5bb8a5c50b2554a04",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../tests/program_control_plane/test_contract_schemas.py",
+      "sha256": "3c4a642290474fe4949d1617da9949534add2dc678a0114c357e53d295d252c2",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "V8-EXACT-THREE-CLAIM-CONTRACT",
+      "method": "Validate promoted schema copies and exact 3/3 profile; recompute source/container Git identities, strict ancestry and committed bytes; prohibit policy widening.",
+      "environment": "Windows local isolated worktree; offline",
+      "duration_ms": 2160,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "schemas/checkpoint-evidence-correction.schema.json",
+        "evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json",
+        "../../../tests/program_control_plane/test_contract_schemas.py"
+      ]
+    },
+    {
+      "check_id": "V8-FINAL-CATALOG-REBIND",
+      "method": "Register one closed evidence class, hash the final staged catalog Git blob, and change only gate-evidence.json#/catalog_digest while preserving all 34 assertion rows.",
+      "environment": "Git index and semantic diff; offline",
+      "duration_ms": 5000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "gate-catalog.json",
+        "gate-evidence.json"
+      ]
+    },
+    {
+      "check_id": "V8-FOUR-LENS-AUDIT",
+      "method": "Independent engineering-usability, architecture/evidence, commercial/release and benchmark-quality audits; primary writer resolves contradictions, the six-target count and excluded P0 question.",
+      "environment": "Four bounded read-only audit roles; committed source subject",
+      "duration_ms": 900000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "audits/2026-08-28-epp-f01-v8-checkpoint-audits.md",
+        "audits/audit-status.json"
+      ]
+    },
+    {
+      "check_id": "V8-SPECKIT-ANALYSIS",
+      "method": "Analyze specification, plan, research, data model, quickstart, checklists and 76 tasks; require FR-028/SC-014 and no constitution exception.",
+      "environment": "Read-only cross-artifact analysis; direct feature pointer because WSL helper was unavailable",
+      "duration_ms": 180000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/analysis.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "V8-SCOPE-AND-STOP",
+      "method": "Require exactly six targets, a seventh-target stop, BLOCKED state/roadmap, null lease, V8 approval action, T073-T076 only, T066 excluded, separate P0 visible, and no product, EPP-F01B, dependency, benchmark, external, integration, publication or release action.",
+      "environment": "State, policy, roadmap and staged-diff inspection",
+      "duration_ms": 3000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "lifecycle-policy.json",
+        "roadmap.json",
+        "approval.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-008.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-008.json"
+    ],
+    "subject": {
+      "git_commit": "0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2",
+      "git_tree": "ea473cfbab2802f4894ebf47b7c223cb5638e00b",
+      "program_tree": "6f4cafefc6eeea94ad2eadbf41a080b88b24bf4a",
+      "artifact_count": 34,
+      "manifest_transition": "TR-0051"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-T072-VERIFICATION-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "No V8 material-change or feature-implementation approval exists; T073-T076 are unauthorized",
+    "The separate roadmap-policy inversion test is outside V8 and blocks T066",
+    "T067-T068, EPP-F01B implementation and every external/integration/release action remain unauthorized"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0051.json",
+  "next_action": "APPROVE_EPP_F01_CHECKPOINT_CORRECTION_V8"
+}

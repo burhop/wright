@@ -1,0 +1,127 @@
+{
+  "$schema": "./schemas/benchmark-coverage.schema.json",
+  "schema_version": "1.0",
+  "program_id": "EPP-2026",
+  "policy_status": "proposed",
+  "total_target": 100,
+  "partitions": {
+    "development": 60,
+    "frozen_qualification": 20,
+    "blind_holdout": 20
+  },
+  "primary_dimensions": {
+    "domain": {
+      "mechanical_product_design": 20,
+      "analysis_and_simulation": 15,
+      "manufacturing_and_process_planning": 15,
+      "quality_and_metrology": 10,
+      "electrical_and_electronics": 10,
+      "software_controls_and_automation": 10,
+      "operations_maintenance_and_diagnosis": 10,
+      "technical_documentation_procurement_and_handoff": 10
+    },
+    "lifecycle": {
+      "requirements_and_research": 10,
+      "concept_and_specification": 10,
+      "detailed_design": 15,
+      "analysis_and_verification": 15,
+      "manufacturing_planning": 15,
+      "quality_and_inspection": 10,
+      "release_change_and_approval": 10,
+      "procurement_handoff_and_documentation": 5,
+      "operations_diagnosis_and_maintenance": 10
+    },
+    "complexity": {
+      "single_capability_bounded": 10,
+      "linear_multi_step": 20,
+      "branched_or_conditional": 20,
+      "feedback_or_iteration": 20,
+      "human_review_or_approval": 15,
+      "long_running_recoverable_or_multi_party": 15
+    },
+    "primary_input": {
+      "text_or_structured_parameters": 25,
+      "documents": 15,
+      "images_or_scans": 15,
+      "cad_mesh_or_geometry": 15,
+      "tabular_or_time_series": 10,
+      "multimodal_package": 20
+    },
+    "primary_output": {
+      "structured_data_or_text": 15,
+      "document_or_report": 15,
+      "cad_or_geometry": 20,
+      "mesh_simulation_or_analysis_results": 15,
+      "manufacturing_toolpath_or_package": 10,
+      "inspection_or_quality_record": 10,
+      "decision_approval_or_procurement_record": 10,
+      "multi_artifact_release_package": 5
+    }
+  },
+  "cross_cutting_requirements": {
+    "compatibility_regression_sentinels_min": 10,
+    "processes_with_at_least_one_failure_injection": 100,
+    "definition_failure_min": 10,
+    "preflight_missing_input_or_permission_min": 20,
+    "semantic_needs_input_min": 15,
+    "mapping_or_schema_rejection_min": 15,
+    "approval_denial_or_expiry_min": 10,
+    "execution_timeout_cancel_or_disconnect_min": 15,
+    "outcome_oracle_rejection_min": 10,
+    "cleanup_residue_or_output_expiry_min": 5,
+    "offline_capable_t1": 100,
+    "clean_integration_t2_min": 30,
+    "live_platform_or_application_t3_min": 15,
+    "windows_profiles_min": 10,
+    "linux_container_profiles_min": 15,
+    "macos_profiles_min": 5,
+    "credentialed_remote_profiles_min": 5,
+    "proprietary_host_profiles_min": 5,
+    "high_risk_validate_only_or_simulated_min": 10,
+    "physical_actuation_required": 0,
+    "keyboard_and_inspectability_user_journeys_min": 20,
+    "previous_stable_compatibility_cases_min": 10
+  },
+  "critical_intersections": [
+    { "id": "INT-01", "requirement": "Every primary domain includes at least two distinct failure layers with recoveries", "minimum": 2 },
+    { "id": "INT-02", "requirement": "Every primary artifact family appears in at least two lifecycle phases", "minimum": 2 },
+    { "id": "INT-03", "requirement": "Each T3 platform profile includes one cancellation or reconnect case and one artifact reopen/cleanup case", "minimum": 2 },
+    { "id": "INT-04", "requirement": "Every blind-holdout domain stratum contains at least one non-linear or approval-bearing process", "minimum": 1 },
+    { "id": "INT-05", "requirement": "Each claimed supported platform has a previous-stable compatibility sentinel", "minimum": 1 },
+    { "id": "INT-06", "requirement": "At least five process families run through two materially different provider or tool bindings without runtime case branches", "minimum": 5 },
+    { "id": "INT-07", "requirement": "At least ten processes pair human-readable user verification with machine artifact assertions", "minimum": 10 }
+  ],
+  "qualification_targets": {
+    "t0_manifest_oracle_and_policy": 100,
+    "t1_deterministic_local": 100,
+    "t2_clean_integration_min": 30,
+    "t3_live_platform_application_min": 15,
+    "t4_physical": 0,
+    "independently_reproduced": 100,
+    "current_not_stale": 100
+  },
+  "release_threshold_proposal": {
+    "status": "pending_DEC-P0-011",
+    "eventual_t0_t1_passes_required": 100,
+    "blind_holdout_product_failures_allowed": 0,
+    "blind_holdout_infrastructure_retries_per_case_max": 1,
+    "required_artifact_assertion_completeness_percent": 100,
+    "required_evidence_completeness_percent": 100,
+    "stale_quarantined_contaminated_or_blocked_allowed": 0,
+    "first_attempt_metrics_must_be_reported": true,
+    "per_stratum_and_profile_thresholds_must_be_frozen_before_execution": true
+  },
+  "current_status": {
+    "counted": 0,
+    "qualified_t0": 0,
+    "qualified_t1": 0,
+    "qualified_t2": 0,
+    "qualified_t3": 0,
+    "passed": 0,
+    "failed": 0,
+    "blocked": 0,
+    "stale": 0,
+    "contaminated": 0,
+    "not_tested": 100
+  }
+}

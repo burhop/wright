@@ -1,0 +1,205 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0012",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "TASKED",
+  "to_state": "TASKED",
+  "prior_revision": 12,
+  "new_revision": 13,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "45f2af54282ed267a6f9bc256e8c7a76301373499e841e89166476fbf134b85b",
+  "new_state_digest": "29a94716649391e2c8034f38ed93bd4a7866268b61045126ea86c0aa1280edbd",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the first read-only cross-artifact findings and apply one bounded planning-only repair for gate count, report fields, approval encoding, dashboard verification sequencing, planned test structure, performance coverage, and durable verification evidence.",
+  "started_at": "2026-08-27T00:15:00Z",
+  "finished_at": "2026-08-27T00:25:29Z",
+  "duration_ms": 629000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "b4262e4c98ca0b3e5026ab1ad3516f222aa971f9",
+    "head_after": "b4262e4c98ca0b3e5026ab1ad3516f222aa971f9",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0012.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/contracts/cli.md",
+      "specs/076-control-plane-validator/contracts/dashboard-generation.md",
+      "specs/076-control-plane-validator/contracts/dashboard.schema.json",
+      "specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "specs/076-control-plane-validator/contracts/verification-evidence.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md",
+      "specs/076-control-plane-validator/tasks.md"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0012.json",
+      "sha256": "35e17041ad7ec86182904ace9d9ec86a16285402e6537a8b77fa520b59bb1c4c",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0011.json",
+      "sha256": "2f25c9b705e906fe6d560f1f30fe9ccf07d45fd0872399ca442ca6d5bdc5008d",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "a52739433e80016e88491dbed9f87ceebd3291e54eec745f437e4201b29dae3f",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "2fc69a4cb3edab9e7686633f7878d130633cc8b6a69b7d878f3bfb446613ffed",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "sha256": "970012c0de28329bff49cc87231bcd322d6540557b311f66926ebd463ee6a25c",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "6869097ca13d8880797a05c6605c42ea5a9005da7e081c8956ae3bef2dde0210",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "044a6374f9c3b4a6a1528991cbb6c1dab8ed95624b406faa8e8ec19a3a48f62a",
+      "schema_version": null
+    },
+    {
+      "path": "evidence/states/program-state-revision-0012.json",
+      "sha256": "35e17041ad7ec86182904ace9d9ec86a16285402e6537a8b77fa520b59bb1c4c",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "2fc8e32cb028d0affaf64aac250e42c83d4945cf18733c454ac9294ec9981e52",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/research.md",
+      "sha256": "247d6dcbfd5c971b5a2fa525d304c7b2e853a45d6ad9c3e1a757d113e72b1167",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/data-model.md",
+      "sha256": "8ef728962339eb874d5630f8a8d70d3497488f374bb0d275575c4c76145e5281",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/quickstart.md",
+      "sha256": "6491e698ee2d41c4e0d5a25e06721e6f23842c5e7417ca2383c420ed0905a7a9",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "5c4d1a4ac8e763f03f360719655ad87b8d5ee09e4b0092b2db0bd37707ce1fb0",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/cli.md",
+      "sha256": "d6da2f9681dabd423913ff85acdea9b1f622cf543c38ac3e8c3a3e3609dab955",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/dashboard-generation.md",
+      "sha256": "6700f9004b252e97041b15f86df176000069eacf485cb6184f1091fe00c145f5",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/dashboard.schema.json",
+      "sha256": "36ab378ff4e6a3560c6ca2b7923c30a49f42ddfba0896422369e83d783dd25ad",
+      "schema_version": "2.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "sha256": "dc7c477d50a7da0da430858e76648d4432ed453d4257faa923bd7ce7b6e1b270",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/verification-evidence.schema.json",
+      "sha256": "0f54615973c918c9314bb3092f0f125ef973b3c072251affa601225f4b01a10a",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "ANALYSIS-ITERATION-1",
+      "command_or_method": "Run read-only semantic models and duplication, ambiguity, underspecification, constitution, coverage, and inconsistency passes over spec, plan, tasks, contracts, and constitution",
+      "environment": "Spec Kit analyze; TASKED commit b4262e4c",
+      "duration_ms": 2200,
+      "result": "failed",
+      "failure_class": "EPP-F01-ANALYSIS-001",
+      "evidence": ["specs/076-control-plane-validator/spec.md", "specs/076-control-plane-validator/plan.md", "specs/076-control-plane-validator/tasks.md"]
+    },
+    {
+      "check_id": "BOUNDED-PLANNING-REPAIR",
+      "command_or_method": "Correct four high and two medium findings without implementation: 34 gate count, complete report/dashboard/verification contracts, two-record approval bundle, S/C/D verifier sequencing, complete test tree, and explicit 5-second/1-MiB task coverage",
+      "environment": "planning-only repair; existing safe-document authority",
+      "duration_ms": 610000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/plan.md", "specs/076-control-plane-validator/contracts", "specs/076-control-plane-validator/tasks.md"]
+    },
+    {
+      "check_id": "REMEDIATED-SCHEMA-META-VALIDATION",
+      "command_or_method": "Parse and meta-validate all six proposed Draft 2020-12 schemas, including honest unresolved validation reports and seed dashboards without circular identities",
+      "environment": "Python 3; existing jsonschema dependency; offline",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/contracts"]
+    },
+    {
+      "check_id": "REMEDIATED-TASK-FORMAT",
+      "command_or_method": "Validate 68 unique sequential path-specific tasks, user-story labels, approval entry gate, candidate/verifier/coordinator role separation, and S/C/D delivery ordering",
+      "environment": "deterministic task-format and dependency audit",
+      "duration_ms": 400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/tasks.md"]
+    },
+    {
+      "check_id": "STATE-REPAIR-CHECKPOINT",
+      "command_or_method": "Validate revision 12 to 13 TASKED repair checkpoint, canonical/raw committed-object digests, exact staged output allowlist, stable cause attempt 1 of 2, and ANALYZE_EPP_F01 remaining the sole next action",
+      "environment": "Windows PowerShell; exact Git index bytes",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0012.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-ANALYSIS-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "EPP-F01-MATERIAL-STATE-DOMAINS",
+    "EPP-F01-MATERIAL-LEASE-IDENTITY",
+    "EPP-F01-MATERIAL-DASHBOARD-PROVENANCE",
+    "EPP-F01-MATERIAL-GATE-EVIDENCE",
+    "EPP-F01-MATERIAL-APPROVAL-FRESHNESS"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0012.json",
+  "next_action": "ANALYZE_EPP_F01"
+}

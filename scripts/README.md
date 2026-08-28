@@ -26,6 +26,7 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`check-dev-merge.sh`](#check-dev-mergesh) | Bash | Runs the CI-equivalent gate before merging a feature branch to `dev` | Python 3, uv, npm, Playwright |
 | [`check-prod-merge.sh`](#check-prod-mergesh) | Bash | Runs the release gate before merging `dev` to `main` | Python 3, uv, npm, Docker, Hermes |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
+| [`validate-engineering-process-program.py`](#validate-engineering-process-program) | Python | Validates an exact committed engineering-process program subject and generates a local candidate dashboard | Python 3.11+, Git 2.39+, existing `jsonschema` runtime |
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, Hermes dependencies, permissions, and self-healing behaviors | Docker, Python 3 |
@@ -36,6 +37,66 @@ launcher in the user's Startup folder. The workstation setup uses
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
 | [`patch-submodule.sh`](#patch-submodulesh) | Bash | Applies localized patches to the FreeCAD MCP submodule | Git |
 | [`setup-wright-profile.sh`](#setup-wright-profilesh) | Bash | Provisions and configures a Hermes profile for native Wright development | `hermes` CLI |
+
+---
+
+### Validate engineering process program
+
+This validator is deliberately repo-local and adds no dependency. It requires Python 3.11 or newer, Git 2.39 or newer, and the `jsonschema` package already present in Wright's runtime/test environment. It reads committed Git objects through argument-array, read-only commands; it does not treat checkout line endings as artifact identity.
+
+Run the focused suite without pytest cache writes:
+
+```powershell
+python -m pytest -p no:cacheprovider tests/program_control_plane -q
+```
+
+Validate the current committed program subject:
+
+```powershell
+python scripts/validate-engineering-process-program.py validate --source HEAD --format text
+```
+
+Validate an explicit source `S` with a dashboard-only successor `C` and an
+explicit delivery-evidence successor `D`:
+
+```powershell
+python scripts/validate-engineering-process-program.py validate --source <S> --container <C> --delivery <D> --format json
+```
+
+`--container` is optional; without it, only `HEAD` may be inferred and only
+when its first parent is `S` and the diff is exactly `dashboard.json`.
+`--delivery` is always explicit, requires a resolved `C`, and never searches
+descendants. Exit `0` means the validator contract passed even when readiness
+areas are honestly blocked/not-started; `2` is usage/subject resolution, `3`
+schema/raw JSON, `4` semantic authority, `5` dashboard delivery, `6`
+compatibility, and `70` contained internal failure. Inspect the JSON finding's
+repository-relative artifact, invariant, bounded evidence, and recovery. A
+valid report never makes non-passing readiness green and never grants an action
+that `program-state.json` and policy do not prove.
+
+Both commands are offline. A validator failure authorizes no repair, integration, benchmark execution, or release action; inspect the repository-relative finding and follow the program state's sole eligible action.
+
+Generate the schema-valid local candidate snapshot only at its declared path:
+
+```powershell
+python scripts/validate-engineering-process-program.py generate-dashboard --source HEAD --program-root docs/programs/engineering-process-platform --output docs/programs/engineering-process-platform/dashboard.json --format text
+```
+
+The snapshot always remains `candidate_not_evidence`. Current empty benchmark evidence is rendered honestly as `0/100` counted, `100` not tested, and independent coverage/oracle/artifact/partition/freshness deficits. `COMMITTED_IDENTITY_MISMATCH` and `TRANSITION_INPUT_ORIGIN_MISMATCH` are resolved only by their exact approved `37/37` and `1/1` profiles; any profile, authority, target, Git-object, or source/container mismatch fails closed with a bounded recovery direction.
+
+Operator troubleshooting is deliberately bounded:
+
+| Code or symptom | Operator action | Developer action |
+| --- | --- | --- |
+| `INPUT_CONTRACT_INVALID` | Confirm the repository-relative path and committed subject; retry unchanged | Inspect Git-object/schema resolution without printing raw input |
+| `OUTPUT_*_FAILED` or `OUTPUT_INTERRUPTED` | Keep the prior snapshot; remove no source evidence | Inspect filesystem permissions and the named atomic stage; rerun the focused suite |
+| `INTERNAL_VALIDATION_FAILURE` | Preserve the code and subject only; do not attach secrets or raw logs | Reproduce with an isolated fixture and repair within the bounded attempt limit |
+| exit `6` | Use only the documented compatibility or manual path | Add no implicit migration; require an explicit contract change |
+| `JSON_*`, `SCHEMA_*`, `ARTIFACT_*` | Inspect the named repository-relative contract or artifact | Repair parsing/schema/manifest logic without weakening validation |
+| `APPROVAL_*`, `TRANSITION_*`, `STATE_*`, `ROADMAP_*`, `LEASE_*` | Stop and follow the report's bounded recovery and sole next action | Repair authority/lifecycle derivation only under the active lease |
+| `GATE_*`, `BENCHMARK_*`, `DASHBOARD_*`, `VALIDATOR_*` | Keep readiness non-passing and inspect the cited evidence | Use the focused projection, compatibility, or bundle-boundary tests |
+
+The complete reason-code instance, consequence, and recovery for a run are the schema-valid `findings` in that run's JSON report; [`docs/programs/engineering-process-platform/gates.md`](../docs/programs/engineering-process-platform/gates.md) and the [quickstart](../specs/076-control-plane-validator/quickstart.md) define their policy context. For support, share only the command name, exit code, exact commit/tree, stable reason codes, repository-relative artifact pointers, and approved digests. Never share raw prompts, payloads, tokens, absolute paths, endpoints, command arguments, or logs. Output is limited to the terminal and the declared `docs/programs/engineering-process-platform/dashboard.json` candidate path.
 
 ---
 

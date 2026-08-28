@@ -1,0 +1,176 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0048",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 48,
+  "new_revision": 49,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "314a22933e96576b4c2a8ef85790d3ec68a44d2cdb38515ed93d54368a2b9c0a",
+  "new_state_digest": "3ca49a0ae22447709b3f6975e48a3fa3f2d7adf13fa7495ebefba052d32ab745",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter speckit-implement under exact V7 authority and lease revision 11; execute T070 test-first, T071 exact correction implementation, and T072 verification/freeze only, then hand an unchanged candidate to a distinct T066 verifier.",
+  "started_at": "2026-08-27T23:42:00Z",
+  "finished_at": "2026-08-27T23:44:00Z",
+  "duration_ms": 120000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "826760ea995cea2f639f6e291e25659a7ccf56c5",
+    "source_tree": "f660262655508a1893406f855982282327f88686",
+    "source_program_tree": "47a25c39645f9df72ebb891304753c822aa41568",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0049.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0048.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0048.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0048.json",
+      "sha256": "951afd7d8287363234ea74c75ae2817650ae1538c91bdc5bab3922e728079db1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0047.json",
+      "sha256": "18370590f454d1ee2144e0c5be1f8d260520884ae0b47acbf868f5b1d129bbde",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "sha256": "1b99586cd62f94d5007a4942d82b7b8b4e3ab617141e620ac76281e61ec43288",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-007.json",
+      "sha256": "03ddbdca2090956df4a27b39b6552ed4c438f0cbcd3919e31e2c93e24848b4b3",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "55a831ef5ff213c7c0ef6c3d4685a6efa4c6dae68af0a49361c1d786537286e8",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0049.json",
+      "sha256": "31263ba8e57fd619ea1062491f145508823d589854990dc60585152a87aa27d1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "31263ba8e57fd619ea1062491f145508823d589854990dc60585152a87aa27d1",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "IMPLEMENTATION-AUTHORITY-V7-CURRENT",
+      "method": "Require both V7 approval records to match the a2b9727a subject, all 31 TR-0046 digests, DEC-P0-018 acceptance, exact correction profile and narrow task/exclusion conditions.",
+      "environment": "Local read-only Git-object validation; offline",
+      "duration_ms": 1700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-007.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-007.json",
+        "evidence/transitions/TR-0047.json"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-LEASE-11-CURRENT",
+      "method": "Require current branch/worktree identity, local-only allowlist, T070-T072 then T066 boundary, stable cause and two bounded repairs.",
+      "environment": "Program state and task contract",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "IMPLEMENTATION-CHECKLISTS",
+      "method": "Require requirements 16/16 and program-control 76/76 checklist rows complete with zero override.",
+      "environment": "Deterministic local checklist scan",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/checklists/requirements.md",
+        "../../../specs/076-control-plane-validator/checklists/program-control.md"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm T067-T068 and all V7-excluded actions remain unauthorized and reserve T066 for a distinct verifier on the unchanged replacement candidate.",
+      "environment": "Approval, task, state and diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-007.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-007.json"
+    ],
+    "subject": {
+      "git_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+      "git_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+      "program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0046"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-REPAIR-EVIDENCE-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0048.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

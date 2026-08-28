@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/prototype-lesson-dispositions.schema.json",
+  "title": "Prototype Lesson Dispositions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "prototype_commit", "lessons"],
+  "properties": {
+    "$schema": { "const": "./schemas/prototype-lesson-dispositions.schema.json" },
+    "schema_version": { "const": "1.0" },
+    "program_id": { "const": "EPP-2026" },
+    "prototype_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "lessons": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "disposition", "program_rule", "rationale", "owner_role", "due_gate", "evidence"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^LL-0(0[1-9]|1[0-9]|2[0-5])$" },
+          "disposition": { "enum": ["accepted", "revised", "superseded", "rejected", "deferred"] },
+          "program_rule": { "type": "string", "minLength": 5 },
+          "rationale": { "type": "string", "minLength": 5 },
+          "owner_role": { "type": "string", "minLength": 1 },
+          "due_gate": { "type": "string", "minLength": 1 },
+          "evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

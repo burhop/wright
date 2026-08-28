@@ -70,6 +70,37 @@ def test_fast_gate_routes_container_changes_to_image_contract_tests() -> None:
     assert "tests/release/test_workflow_policy.py" in gate
 
 
+def test_program_control_changes_route_through_focused_quality_gates() -> None:
+    push = _read("scripts/check-dev-push.sh")
+    merge = _read("scripts/check-dev-merge.sh")
+    linux = _read(".github/workflows/python-quality.yml")
+    windows = _read(".github/workflows/test-windows.yml")
+
+    for path_pattern in (
+        "docs/programs/engineering-process-platform/*",
+        "scripts/validate-engineering-process-program.py",
+        "scripts/program_control/*",
+        "tests/program_control_plane/*",
+    ):
+        assert path_pattern in push
+    assert "PYTHON_TEST_TARGETS+=(tests/program_control_plane)" in push
+
+    focused = "python -m pytest -q tests/program_control_plane"
+    for gate in (merge, linux, windows):
+        assert focused in gate
+    for workflow in (linux, windows):
+        assert "fetch-depth: 0" in workflow
+        assert "--ignore=tests/program_control_plane" in workflow
+        assert "--ignore=tests/native_runtime" in workflow
+    for gate in (push, merge, linux):
+        assert "scripts/program_control" in gate
+        assert "tests/program_control_plane" in gate
+        assert "ruff check" in gate
+        assert "ruff format --check" in gate
+    assert "mypy scripts/release scripts/program_control" in merge
+    assert "mypy scripts/release scripts/program_control" in linux
+
+
 def test_browser_gate_uses_isolated_configurable_ports() -> None:
     push_gate = _read("scripts/check-dev-push.sh")
     merge_gate = _read("scripts/check-dev-merge.sh")
@@ -113,7 +144,7 @@ def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None
     frontend_build = "run npm run build --workspace=apps/web"
     native_package_build = (
         'run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" '
-        'scripts/build-python-distributions.sh --dist-root '
+        "scripts/build-python-distributions.sh --dist-root "
     )
 
     assert gate.count(frontend_build) == 1

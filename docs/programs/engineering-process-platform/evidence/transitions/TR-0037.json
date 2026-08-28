@@ -1,0 +1,209 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0037",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "BLOCKED",
+  "prior_revision": 37,
+  "new_revision": 38,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "524d0c882d3dbc984d4abe99a1f81fca127881a2292f8379ce463428d1d56d6f",
+  "new_state_digest": "91d2fec5282e4983f6074928d5289aaee830dfd2dae7473cbc0b1106212d9c76",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Close implementation lease revision 8 after completing only T024 through T041, freeze the runnable US1 repair and US2 dashboard evidence, and stop at the explicit human review gate without beginning T042 through T068, EPP-F01B, benchmark execution, integration, publication or release.",
+  "started_at": "2026-08-27T20:20:00Z",
+  "finished_at": "2026-08-27T20:45:00Z",
+  "duration_ms": 1500000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "2a3f40fa854d44b012f8422b50de8806ba38c76f",
+    "source_tree": "e369cfaab4bdc87f229ba17c1697da67d82cb9ca",
+    "source_program_tree": "ee3f30588d90c35bca1dc80574ca98cc5a4415ea",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0038.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0037.json",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0037.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0037.json",
+      "sha256": "689b0e58a188edceab4508cdf646b6ab1033c6281c71fba4484aaa52e3e5ec9c",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0036.json",
+      "sha256": "5c7ba6ffc0be4eb8b687bdeff44705bc7e1601171a909976b556945fa5f6f1c2",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US1-repair.json",
+      "sha256": "a4f3907c2243241c3c0b8395352b50fea1dd0af44aff73a160220199e6a4b595",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US2.json",
+      "sha256": "cfc8b23e383e1ded4046f09a2987c0b4b3568ef104f5e28e5158b62ff791f762",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0038.json",
+      "sha256": "3e133515fd07ba58ef84395fd348407bc2af57ccd02b9257005d1ca5d2654d41",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "d9316c6f5a349a179dead8bbb0908daae1d1a50630ca87523330a6364083d217",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "3e133515fd07ba58ef84395fd348407bc2af57ccd02b9257005d1ca5d2654d41",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "eeb3c0a19491abc7c00f95a9cad23923fd841489fb932459226c59d5624c3e4b",
+      "schema_version": "1.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "T024-T041-COMPLETE",
+      "method": "Require every task checkbox from T024 through T041 complete, T069 retained complete, and T042 through T068 untouched.",
+      "environment": "local task contract and exact Git diff; offline",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "US1-REPAIR-PASSED",
+      "method": "Require current-subject validation exit 0 under five seconds and one MiB, exact 37/37 plus 1/1 correction recomputation, non-interference for empty and non-empty benchmark fixtures, and no source mutation.",
+      "environment": "committed source subject 59dc93e2; read-only Git objects and isolated fixtures; offline",
+      "duration_ms": 51510,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-US1-repair.json"
+      ]
+    },
+    {
+      "check_id": "US2-VALUE-DEMO-PASSED",
+      "method": "Require a schema-valid fresh candidate, four independently derived readiness areas, honest 0/100 benchmark state, bounded isolated corruption diagnostic, deterministic fixed-observation regeneration and exact commands and limitations.",
+      "environment": "local generated candidate and focused fixture matrix; no benchmark execution; offline",
+      "duration_ms": 72610,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-US2.json",
+        "dashboard.json"
+      ]
+    },
+    {
+      "check_id": "FOCUSED-REGRESSION",
+      "method": "Run the complete tests/program_control_plane module and require 150 passed with only the documented Windows platform symlink skip; run Ruff check and format check over the authorized Python source and tests.",
+      "environment": "Windows local Python; writable repository basetemp; offline",
+      "duration_ms": 72610,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane",
+        "../../../scripts/program_control"
+      ]
+    },
+    {
+      "check_id": "LEASE-CLOSED",
+      "method": "Set active_mutating_lease to null, roadmap EPP-F01 to blocked, feature state to BLOCKED and the sole next action to REVIEW_EPP_F01_T041_VALUE_CHECKPOINT requiring human approval.",
+      "environment": "revision-38 state, roadmap and lifecycle policy",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "roadmap.json",
+        "lifecycle-policy.json"
+      ]
+    },
+    {
+      "check_id": "EXCLUSIONS-PRESERVED",
+      "method": "Confirm no T042-T068, EPP-F01B, dependency, benchmark execution, external mutation, push, PR, merge, dev integration, publication or release action was performed or authorized.",
+      "environment": "exact lease, task and local Git audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-005.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-005.json"
+    ],
+    "subject": {
+      "git_commit": "2f53b49af92d4d6d6619903deec2521919758148",
+      "git_tree": "3bd726941aae300691482d0c35a4028029ccbe3f",
+      "program_tree": "f0163abcc74379407c96f10dacaa34c0883aa7a1",
+      "artifact_count": 32,
+      "manifest_transition": "TR-0034"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-TR0027-INPUT-ORIGIN-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Human review of the T041 value checkpoint is required before any further EPP-F01 work",
+    "T042 through T068 and EPP-F01B remain unauthorized"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0037.json",
+  "next_action": "REVIEW_EPP_F01_T041_VALUE_CHECKPOINT"
+}

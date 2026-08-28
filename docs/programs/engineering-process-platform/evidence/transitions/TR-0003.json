@@ -1,0 +1,126 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0003",
+  "program_id": "EPP-2026",
+  "feature_id": null,
+  "from_state": "AWAITING_PROGRAM_APPROVAL",
+  "to_state": "PROGRAM_APPROVED",
+  "prior_revision": 3,
+  "new_revision": 4,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5bc0c4f470db55aedd23d4d21a4066ab006bdc942694e57cf2603036ce710105",
+  "new_state_digest": "42af3b42179490c7966be8354704247dfe136d1737358d3c8609a807d6fa7be7",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the user's exact-subject program-plan approval and advance the control plane without selecting or implementing a child feature.",
+  "started_at": "2026-08-26T23:19:39Z",
+  "finished_at": "2026-08-26T23:21:12Z",
+  "duration_ms": 93000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "bef27ad9913b5246cbb1913afaf1c8b75de0ed89",
+    "head_before": "bef27ad9913b5246cbb1913afaf1c8b75de0ed89",
+    "head_after": "bef27ad9913b5246cbb1913afaf1c8b75de0ed89",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": []
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0003.json",
+      "sha256": "515e154d640295ab5b171ca3b2d160cd8dc4767a8d9f4977b35e2c4380ea183b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-2026-001.json",
+      "sha256": "072c23eb9db41d23adb1b1a914dda43050822a6a7c6eef1a265cac39c5ba3e27",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/artifact-manifest.json",
+      "sha256": "ecaf5b750dc587d0e5c0cb65bbe0d6a94685a4648450efc2ad2360a06886bdb1",
+      "schema_version": "1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "a4692eac947839ca96c7e00bc0c1cddf2fa22e9464f57003a66e8edb478efbe6",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "741b0ac9a5cfdbfb75dd07b0b79ab547ff352eedd7414f6b29e9b39909678539",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "ab47fb1bddc70baff9a3a740d5712d056dcee36faddff77bb0a371c70dbc9b20",
+      "schema_version": null
+    },
+    {
+      "path": "approval.md",
+      "sha256": "2e2efdb16b7d034b5305f927280ba0a1a13db276552a0f9258b2b8c7d146b67f",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "653047fbe2f356a2370444e7b85ab0a1b3ea787ea106c3f97a93d1b4e678d273",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "EXACT-APPROVAL-SUBJECT",
+      "command_or_method": "Resolve and compare approved commit, repository tree, program tree, manifest digest, and all 42 manifest entries against the frozen commit",
+      "environment": "clean local Git worktree",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/approvals/APR-EPP-2026-001.json", "evidence/artifact-manifest.json"]
+    },
+    {
+      "check_id": "APPROVAL-SCHEMA-AND-DECISION",
+      "command_or_method": "Validate approval schema and require decision=approved, scope=program_plan, no expiry, no revocation, and no added conditions",
+      "environment": "Python jsonschema Draft 2020-12",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["schemas/approval.schema.json", "evidence/approvals/APR-EPP-2026-001.json"]
+    },
+    {
+      "check_id": "APPROVAL-SCOPE-BOUNDARY",
+      "command_or_method": "Confirm approval authorizes only program state advancement and bounded child-feature selection/specification, not implementation or external mutation",
+      "environment": "planning control plane",
+      "duration_ms": 200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["approval.md", "README.md", "program-state.json"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 3 to 4 increment, legal AWAITING_PROGRAM_APPROVAL to PROGRAM_APPROVED edge, canonical digests, raw output digests, and singular next action",
+      "environment": "Windows PowerShell; Python",
+      "duration_ms": 500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0003.json", "program-state.json", "roadmap.json"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0003.json",
+  "next_action": "SELECT_FIRST_ELIGIBLE_CHILD_FEATURE"
+}

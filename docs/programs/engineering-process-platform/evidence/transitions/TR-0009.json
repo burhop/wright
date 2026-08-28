@@ -1,0 +1,235 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "1.0",
+  "transition_id": "TR-0009",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "from_state": "CLARIFIED",
+  "to_state": "PLANNED",
+  "prior_revision": 9,
+  "new_revision": 10,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "d5b1c4d1c72848110b48982c93d4e1e2e0c58d1bf14db3529e9e7e69d589a327",
+  "new_state_digest": "cf1938ba7ff34d4a14765d5e1268a79678b5457ba1a94f19a2c158ed51e9d7f2",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Run the Spec Kit planning workflow, synthesize three bounded read-only research audits, create the implementation plan and design contracts, perform pre/post-design constitution checks, and expose material contract decisions for exact approval.",
+  "started_at": "2026-08-26T23:50:00Z",
+  "finished_at": "2026-08-27T00:06:46Z",
+  "duration_ms": 1006000,
+  "classification": "passed",
+  "git": {
+    "base_commit": "ad162cca048ad23d848673ec4f49f588dcc77aff",
+    "head_before": "c46ea627a7403ff3e1ce3db6be3d1baeebebb377",
+    "head_after": "c46ea627a7403ff3e1ce3db6be3d1baeebebb377",
+    "tree_after": null,
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "staged_paths_manifest": [
+      "AGENTS.md",
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/dashboard.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0009.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/076-control-plane-validator/contracts/cli.md",
+      "specs/076-control-plane-validator/contracts/dashboard-generation.md",
+      "specs/076-control-plane-validator/contracts/gate-catalog.schema.json",
+      "specs/076-control-plane-validator/contracts/gate-evidence.schema.json",
+      "specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json",
+      "specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0009.json",
+      "sha256": "dab12e6d70fbe29a85a6120fd3a7ca2a7d3e7e283db5757672815a253997c9aa",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/transitions/TR-0008.json",
+      "sha256": "593da4b53a971dc5aca45ae1ac8a6ed77a41f74a0ce54d6e1ebfff7fdc7dead7",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029",
+      "schema_version": null
+    },
+    {
+      "path": "../../../.specify/templates/plan-template.md",
+      "sha256": "cc7f7979cf8d8836ec26492785affd80791d3422a2b745062ec695be8c985ef7",
+      "schema_version": null
+    },
+    {
+      "path": "../../../.specify/memory/constitution.md",
+      "sha256": "5d7d558926a0eef0a05b90af41c994aeddcdd2fed7d43673037b34ada931b75b",
+      "schema_version": "3.0.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "08cf2927158fda8448eea61a731db44f49fce73709b80e39b8f27d25d652b5b1",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a5e5202e0bcf9ce017a737c1ad0cbeeacb03020797102883e207024b9062fabc",
+      "schema_version": null
+    },
+    {
+      "path": "dashboard.json",
+      "sha256": "8133bd310892c2dec20caea8bf240c70afa6db42e0b644ae13d16abc56c8597b",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0009.json",
+      "sha256": "dab12e6d70fbe29a85a6120fd3a7ca2a7d3e7e283db5757672815a253997c9aa",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../AGENTS.md",
+      "sha256": "b8e5d032b0a93258df0448e737237fac8a6f52306e1ca9ad6b0494aff8c6c4e6",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "a52739433e80016e88491dbed9f87ceebd3291e54eec745f437e4201b29dae3f",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/research.md",
+      "sha256": "369784205d405210ae5b3eb170b1acf13ffc66fd633cda3b40d6ae947e9fa63b",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/data-model.md",
+      "sha256": "f17e852d8b2724604428733722696e18a80860aa152e8dd0278fb2c7928c7d56",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/quickstart.md",
+      "sha256": "1c159ae61bbc2627d4f9c56521d92bb94f8e1fafb8b0ac67693d1087f7afeb01",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/cli.md",
+      "sha256": "e5c207888cd3628bb94d7c7f1db983fd79f0767875468ac4db0c77ed98ed72d2",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/dashboard-generation.md",
+      "sha256": "bd50018628f2fb591da00074bcf90608846afad4c990c573b5b51f1bfcdb09dc",
+      "schema_version": null
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/gate-catalog.schema.json",
+      "sha256": "4f1008fa5a3819722a89ec9ce15932574c9acd66bdde710fdc11f38aba4f31b7",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/gate-evidence.schema.json",
+      "sha256": "4c7c78ace1662dd3f871d0e770a05d4cf96c3b585688c60da06fd3609cecaac7",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json",
+      "sha256": "81296e0afed0b9abd3922c3ff85c098d61f7743a5c1259502792a170a4d36e18",
+      "schema_version": "1.0"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json",
+      "sha256": "970012c0de28329bff49cc87231bcd322d6540557b311f66926ebd463ee6a25c",
+      "schema_version": "1.0"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "PLAN-SETUP-FALLBACK",
+      "command_or_method": "The installed Spec Kit plan setup is Bash-only and no Bash runtime is available; resolve the feature paths from .specify/feature.json and apply the complete plan template directly without rerunning branch allocation",
+      "environment": "Windows PowerShell fallback; isolated feature worktree",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/feature.json", ".specify/templates/plan-template.md", ".specify/scripts/bash/setup-plan.sh"]
+    },
+    {
+      "check_id": "BOUNDED-RESEARCH-SYNTHESIS",
+      "command_or_method": "Synthesize independent read-only repository architecture, contract semantics, and verification-strategy audits; resolve contradictions under one writer and persist material decisions and rejected alternatives",
+      "environment": "three bounded read-only auditors; no mutations",
+      "duration_ms": 720000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/research.md", "specs/076-control-plane-validator/plan.md"]
+    },
+    {
+      "check_id": "CONSTITUTION-PRE-POST-DESIGN",
+      "command_or_method": "Evaluate every constitution principle before research and after contracts; record non-applicable product surfaces and confirm offline, package-boundary, testing, privacy, branch, and approval isolation",
+      "environment": "constitution v3.0.0",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [".specify/memory/constitution.md", "specs/076-control-plane-validator/plan.md"]
+    },
+    {
+      "check_id": "DESIGN-SCHEMA-META-VALIDATION",
+      "command_or_method": "Parse all four proposed JSON contracts and validate each schema itself with jsonschema Draft202012Validator.check_schema",
+      "environment": "Python 3; existing jsonschema dependency; offline",
+      "duration_ms": 400,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator/contracts"]
+    },
+    {
+      "check_id": "AGENT-CONTEXT-UPDATE",
+      "command_or_method": "Run the installed Spec Kit agent-context updater after plan creation and verify only the managed AGENTS.md plan pointer changed",
+      "environment": "speckit-agent-context-update PowerShell script",
+      "duration_ms": 5000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["AGENTS.md", "specs/076-control-plane-validator/plan.md"]
+    },
+    {
+      "check_id": "PLANNING-ARTIFACT-COVERAGE",
+      "command_or_method": "Verify plan, research, data model, quickstart, CLI/dashboard behavior contracts, four schema contracts, no unresolved template placeholders, material decisions, compatibility, rollback, tests, Git gates, and implementation authority boundary",
+      "environment": "Spec Kit plan Phase 0 and Phase 1",
+      "duration_ms": 1500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/076-control-plane-validator"]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "command_or_method": "Validate revision 9 to 10 increment, CLARIFIED to PLANNED child edge, canonical/raw committed-object digests, exact staged output allowlist, and CHECKLIST_EPP_F01 as the sole next action",
+      "environment": "Windows PowerShell; exact Git index bytes",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/states/program-state-revision-0009.json", "program-state.json", "coordinator-state-machine.md"]
+    }
+  ],
+  "approval_record": "evidence/approvals/APR-EPP-2026-001.json",
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "EPP-F01-MATERIAL-STATE-DOMAINS",
+    "EPP-F01-MATERIAL-LEASE-IDENTITY",
+    "EPP-F01-MATERIAL-DASHBOARD-PROVENANCE",
+    "EPP-F01-MATERIAL-GATE-EVIDENCE",
+    "EPP-F01-MATERIAL-APPROVAL-FRESHNESS"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0009.json",
+  "next_action": "CHECKLIST_EPP_F01"
+}

@@ -1,0 +1,118 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-INDEPENDENT-003",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "independent",
+  "subject": {
+    "git_commit": "87360afe495ad0aa3e29c9bb3253f0660996daa9",
+    "git_tree": "9992b8f6d5349cd6206bf6287d3d3fbd8c473d8f",
+    "artifact_digests": [
+      {"path": "scripts/program_control/validation.py", "sha256": "021e0628fa2d55d1e267d7af948c292143f4c09a2c2cc4d2d4151b72c2b0c975"},
+      {"path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "4e2aa0a1f59ba4f13c951b580e78e4c0a2f77bb3e6802ba39da918e958721611"},
+      {"path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json", "sha256": "0ba26ac9d9787ce84e626b6a4ddb937ddbd31e3c51c142bb6b1c89360b9f0a08"},
+      {"path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json", "sha256": "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"},
+      {"path": "docs/programs/engineering-process-platform/evidence/verification/VER-EPP-F01-REV58-RAW-IDENTITY-001.json", "sha256": "6eb5815cbeafbbca42c1e50816aa00be98c2e2a4bfd6b3de9e0d8e3142f0ca18"},
+      {"path": "specs/076-control-plane-validator/quickstart.md", "sha256": "5b625b57864318a6384b11bcfd32502d934b46dd988c2b79e460aee2208afc43"}
+    ]
+  },
+  "actor": {
+    "identity": "agent:/root/v9_terminal_verifier",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-28T16:30:57Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "INDEPENDENT-REV58-RAW-IDENTITY",
+      "method": "Compare cf19f19b and 87360afe Git blobs; require exactly one removed trailing LF, byte-identical current/archive revision 58, unchanged canonical state, and exact original TR-0057 bytes.",
+      "environment": "Distinct read-only verifier; local committed Git objects; offline",
+      "duration_ms": 1000,
+      "result": "passed",
+      "evidence": [
+        {"path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json", "sha256": "0ba26ac9d9787ce84e626b6a4ddb937ddbd31e3c51c142bb6b1c89360b9f0a08"},
+        {"path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json", "sha256": "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"}
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-REV58-NEGATIVE-GUARD",
+      "method": "Mutate artifact path, digest, check ID and finding code independently; require every near miss to emit REV58_RAW_IDENTITY_REPAIR_INVALID and authorize no corrected target.",
+      "environment": "Distinct read-only verifier; in-memory single-fault fixtures; offline",
+      "duration_ms": 1000,
+      "result": "passed",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "021e0628fa2d55d1e267d7af948c292143f4c09a2c2cc4d2d4151b72c2b0c975"},
+        {"path": "docs/programs/engineering-process-platform/evidence/verification/VER-EPP-F01-REV58-RAW-IDENTITY-001.json", "sha256": "6eb5815cbeafbbca42c1e50816aa00be98c2e2a4bfd6b3de9e0d8e3142f0ca18"}
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-EXACT-VALIDATOR",
+      "method": "Validate exact 87360afe; require exit zero, zero blockers, four independently derived readiness areas, benchmark 0/100, release false, and a clean worktree.",
+      "environment": "Windows local Python 3; exact committed subject; offline",
+      "duration_ms": 14300,
+      "result": "passed",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "021e0628fa2d55d1e267d7af948c292143f4c09a2c2cc4d2d4151b72c2b0c975"}
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-FOCUSED-REGRESSION",
+      "method": "Run contract, walkthrough, transition and roadmap suites; require 106 passing tests.",
+      "environment": "Windows local Python 3; offline; no pytest cache",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "4e2aa0a1f59ba4f13c951b580e78e4c0a2f77bb3e6802ba39da918e958721611"}
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-FULL-REGRESSION",
+      "method": "Run the entire program-control suite with no pytest cache; 258 passed and one declared Windows unprivileged-symlink test skipped.",
+      "environment": "Windows local Python 3; offline; isolated pytest temporary directories",
+      "duration_ms": 302140,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_evidence_walkthrough.py", "sha256": "4e2aa0a1f59ba4f13c951b580e78e4c0a2f77bb3e6802ba39da918e958721611"}
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-STYLE-SCOPE",
+      "method": "Require Ruff lint and format checks, git diff --check origin/dev...HEAD, clean worktree, and no product, dependency, benchmark, release, roadmap, authority, dashboard or transition mutation.",
+      "environment": "Distinct read-only verifier; local Git and Ruff; offline",
+      "duration_ms": 1000,
+      "result": "passed",
+      "evidence": [
+        {"path": "specs/076-control-plane-validator/quickstart.md", "sha256": "5b625b57864318a6384b11bcfd32502d934b46dd988c2b79e460aee2208afc43"}
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "cf19f19b passed semantic validation but independent review found revision 58 had an extra trailing LF and failed branch diff hygiene.",
+    "The first raw-identity attempt changed TR-0057 and was rejected; the final repair restores the original transition and uses one exact append-only digest disposition.",
+    "The sole full-suite skip remains the declared Windows unprivileged-symlink limitation."
+  ],
+  "findings": [
+    {
+      "code": "REV58_RAW_IDENTITY_RESOLVED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json",
+      "disposition": "Current and archived revision-58 bytes now match exactly with one trailing LF; semantic state and historical TR-0057 bytes remain unchanged."
+    },
+    {
+      "code": "WINDOWS_SYMLINK_LIMITATION",
+      "severity": "low",
+      "artifact": "tests/program_control_plane",
+      "disposition": "One platform test remains skipped because this host cannot create unprivileged symlinks; all 258 executable tests pass."
+    },
+    {
+      "code": "REMOTE_GATES_NOT_YET_RUN",
+      "severity": "info",
+      "artifact": "docs/contributing/dev-push-runbook.md",
+      "disposition": "The read-only independent review did not run the later dev-push gate or remote CI; those belong to the authorized integration lane."
+    }
+  ],
+  "rollback_subject": "git:cf19f19b47484afb66a28bd3f93c041d86553c89 (semantically correct pre-raw-identity candidate; independently blocked by diff hygiene)",
+  "delivery_relation": null
+}

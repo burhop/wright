@@ -1,0 +1,379 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0021",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "BLOCKED",
+  "prior_revision": 21,
+  "new_revision": 22,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "5ed070365ffbe1d8530e01dc7f33e61c5f553007aefe5719e7ecb09bf9cd74a6",
+  "new_state_digest": "d18e0a313a3463dded733db5d574a167e268afa2e04a19120263301d4f34d5f9",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Stop EPP-F01 on discovery of the omitted browser-accessible program-status outcome, preserve incomplete Phase 2 WIP at its exact local commit, release the mutating lease, keep the approved 68-task implementation boundary machine-only, add independently shippable EPP-F01B after EPP-F01 and before EPP-F02, mark the prior exact approvals stale, and request a new exact human approval subject without implementing either feature.",
+  "started_at": "2026-08-27T12:00:00Z",
+  "finished_at": "2026-08-27T12:16:02Z",
+  "duration_ms": 962000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "40458d19e53882638e791339f7f3303053412795",
+    "source_tree": "8daaa99c6707188a28309753903baa7bdec6d461",
+    "source_program_tree": "ec4db749ca1755e037b8d4d9c2e360c085195adc",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0015-browser-status-surface.md",
+      "docs/programs/engineering-process-platform/evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0022.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0021.json",
+      "docs/programs/engineering-process-platform/program-plan.md",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/proposed-features.md",
+      "docs/programs/engineering-process-platform/risk-register.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/status-dashboard-contract.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/spec.md",
+      "specs/076-control-plane-validator/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0021.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0021.json",
+      "sha256": "8b123c1b0c79a8e8adce1807322987d27f9e8bf7e0d631403ac6c8ba31606cd1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0020.json",
+      "sha256": "3cad8256c53af8df11fef8883c0ece36d5f79c9a9b15b9fb3288ae3cdaaae0c1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-002.json",
+      "sha256": "0551b79f1a816e4aeb93a89971b53ef5726ad4bf4f2bdd4a77e267205da1edf9",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-002.json",
+      "sha256": "23b9b5a2f020c41c143d2548dddfeb47f6fd1a62a3bfc56175e336ec8f66f613",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-plan.md",
+      "sha256": "4a01c1ebe26133e2480196f0a6fbe3c7de215b3df0d9fa326adace546a085678",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "status-dashboard-contract.md",
+      "sha256": "f9a88de1e6ba3430a2055034d06e0a76c2daab5cb0618b18473a372d32a08856",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "4724ace51f71f5bc613668e9c8139d1ab55eb5a4686c4e107121fba308be5dfd",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "811ed9aceb0d631f5c788f301ddfa43ec9687c38525e370a522d05f85addc90b",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "7834fec02f916f21ac7c3f1c1dec37b1ab626c4e6d56b180b829c7ebf74f5b40",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "9f796ab72db483c449023f57bb3ae9bd2687f3c00aa965e592c68a98247022ac",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "README.md",
+      "sha256": "6e881249316bf77a0f415d3daa201948f752a1d4931ac0b46c24821f9350dbd8",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "approval.md",
+      "sha256": "a29389bfabbcf96d27185270016c28c232ab15abb64641c387d50f91bb7eb479",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "decision-register.json",
+      "sha256": "ce708df718eac4bc477b9c05a537da141ecf703ce00ec1f1746e4004ea6641e9",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "decisions/0015-browser-status-surface.md",
+      "sha256": "2caa27fce386243494c453cd7ce44ea9fc9c4e25e9613df7ed3fa5df298135a5",
+      "schema_version": null,
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+      "sha256": "279564b6487ea0cd0f5ad623f492bed3d4f36e3a9ac1133f78069ef1aaee06d9",
+      "schema_version": null,
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/states/program-state-revision-0022.json",
+      "sha256": "272029897fcfe54e85703a1b4701782480ee7a293e44d8164d27a411f640bba8",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-plan.md",
+      "sha256": "92c25dadbcc0b0a29ae8a03f1f4ddb16168189752ff7a56f40c25e5c5f10a2f7",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "272029897fcfe54e85703a1b4701782480ee7a293e44d8164d27a411f640bba8",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "proposed-features.md",
+      "sha256": "9b171faf3d32fedc3be9c345e2edaffdd07dc42d276f1584b722881ea7db5fe2",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "risk-register.json",
+      "sha256": "d7f4c6ffdcaff64ef484b91a16b7b29aac01ea0e86ac234c28c6dc62f03c3121",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "fede2802fddc4311912695ffef3c58ac6f14a3c3ea44b4ee40494cda0338d92d",
+      "schema_version": "1.0",
+      "role": "feature_contract"
+    },
+    {
+      "path": "schemas/README.md",
+      "sha256": "7eca9414067457414d39e08d42734cb91f19b34d92e2cf10892bb3a6295bae91",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "status-dashboard-contract.md",
+      "sha256": "d77eeecca716061e3cf9e98d9bb93620e607aa56fdbe4a70ea7ca9c9186fbc2f",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/plan.md",
+      "sha256": "674a5187276b669dbde8fa5d1dfd9f2305ff2858a8c5419b3498c4df5fbe4fa2",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/spec.md",
+      "sha256": "eef84c2057c003876def0eeb1b3d873e725fbec5758b4863cb1da3035bd82428",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/076-control-plane-validator/tasks.md",
+      "sha256": "55693eaca8fabe12e94680cc12c21ca8b8ef560364464f7ff1246ccfa9deed0f",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "MATERIAL-GAP-SCOPE",
+      "method": "Compare the parent program's browser-accessible status outcome with the exact EPP-F01 specification, plan and 68 tasks; require no browser route/page task, reject DashboardPage.tsx and JSON/CLI as substitutes, and classify the correction as a material dependency-ordered child-feature split.",
+      "environment": "read-only Spec Kit and program-control review",
+      "duration_ms": 184000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "decisions/0015-browser-status-surface.md",
+        "evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "SPECKIT-BOUNDARY-ANALYSIS",
+      "method": "Run the read-only speckit-analyze workflow after task generation, identify the live-dashboard naming ambiguity, verify 24 functional requirements plus 10 buildable success criteria remain covered by all 68 machine-only tasks, apply the authorized boundary remediation, and rerun with no active material finding.",
+      "environment": "Git Bash prerequisite resolution; local artifact analysis; optional commit hooks skipped",
+      "duration_ms": 312000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+        "../../../specs/076-control-plane-validator/spec.md",
+        "../../../specs/076-control-plane-validator/plan.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "ROADMAP-DEPENDENCY-DAG",
+      "method": "Validate the roadmap schema, 12 unique items and priorities, acyclicity, EPP-F01B depending on EPP-F01, and EPP-F02 depending on EPP-F01B.",
+      "environment": "local Python JSON Schema and deterministic DAG walk",
+      "duration_ms": 2200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "roadmap.json",
+        "proposed-features.md",
+        "program-plan.md"
+      ]
+    },
+    {
+      "check_id": "PLANNING-SCHEMA-CONTRACTS",
+      "method": "Validate roadmap, state, decision and risk instances with Draft 2020-12 plus formats; run planning contract tests with 16 passed and one active-lease-only test deliberately deselected after recording its expected failure in blocked state.",
+      "environment": "local Python; pytest outside sandbox for existing temp-directory access",
+      "duration_ms": 7700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+        "schemas/README.md",
+        "program-state.json"
+      ]
+    },
+    {
+      "check_id": "STATE-TRANSITION",
+      "method": "Validate the legal IMPLEMENTING-to-BLOCKED feature edge, revision 21 to 22, exact prior/new canonical digests, byte-identical current/archive state, null active lease, stale approvals, one human-only next action, exact staged manifest, and append-only prior evidence.",
+      "environment": "local JSON Schema, lifecycle-policy and Git index byte validation",
+      "duration_ms": 5300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0021.json",
+        "evidence/states/program-state-revision-0022.json",
+        "program-state.json",
+        "lifecycle-policy.json"
+      ]
+    },
+    {
+      "check_id": "WIP-PRESERVATION",
+      "method": "Require exact preserved WIP commit/tree/program-tree identities, 49 focused tests passing at that checkpoint, five completed Phase 1 tasks, zero completed Phase 2 tasks, and no implementation mutation after the material stop.",
+      "environment": "local Git object inspection and preserved test evidence",
+      "duration_ms": 4100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/audits/2026-08-27-epp-f01-browser-gap-analysis.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "DASHBOARD-SEED-HONESTY",
+      "method": "Confirm the checked-in dashboard remains an unreconciled legacy v1 seed against the promoted v2 WIP schema, preserve it unchanged, assign reconciliation to existing T040, and forbid treating it or CLI output as the browser status page.",
+      "environment": "read-only dashboard/schema comparison",
+      "duration_ms": 1200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "status-dashboard-contract.md",
+        "dashboard.json",
+        "schemas/dashboard.schema.json",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "APPROVAL-INVALIDATION",
+      "method": "Require the two historical exact-subject approval records to remain immutable while classifying both stale after bound roadmap, program, dashboard-contract and Spec Kit artifacts change; release the implementation lease and require a new same-subject pair before EPP-F01 resumes.",
+      "environment": "exact approval subjects and staged artifact digests",
+      "duration_ms": 2800,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "evidence/approvals/APR-EPP-F01-MC-002.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-002.json",
+        "program-state.json"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm no EPP-F01 or EPP-F01B implementation, dependency, product runtime, benchmark generation/execution, push, PR, merge, dev integration, external mutation, publication or release action is permitted or performed.",
+      "environment": "local diff and authority audit",
+      "duration_ms": 600,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "README.md",
+        "decisions/0015-browser-status-surface.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-002.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "10d13cbeaa2d038744752e93713ab7671f17f7d4",
+      "git_tree": "04f7cfc5cb3226896238ba6d3d060506284aece1",
+      "program_tree": "321daf5e92f0981322ff0f54632bef56299e17b4",
+      "artifact_count": 34,
+      "manifest_transition": "TR-0018"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-BROWSER-STATUS-GAP-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "APR-EPP-F01-MC-002 and APR-EPP-F01-IMPL-002 are stale for the changed exact subject",
+    "EPP-F01 Phase 2 remains incomplete WIP and has no active lease",
+    "EPP-F01B has no Spec Kit subject or implementation approval",
+    "The browser-accessible program-status outcome is not yet implemented"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0021.json",
+  "next_action": "APPROVE_EPP_F01_BROWSER_STATUS_SPLIT"
+}

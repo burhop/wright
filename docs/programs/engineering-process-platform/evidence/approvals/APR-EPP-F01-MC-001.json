@@ -1,0 +1,41 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "1.0",
+  "approval_id": "APR-EPP-F01-MC-001",
+  "program_id": "EPP-2026",
+  "decision": "approved",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "5279c51740a0352961c92a70bce9003923d8ca20",
+    "git_tree": "7e2eb93a9faed14b609075b72373a473a22fdbff",
+    "program_tree": "8b6d5d6b3b0341f952e30c065b8dd289b9735213",
+    "artifact_digests": [
+      { "path": "evidence/states/program-state-revision-0014.json", "sha256": "90ed5ea95b386e07ceb2a90db8f26a31f9b263932ea591b9baa4002775fa20c5" },
+      { "path": "evidence/transitions/TR-0013.json", "sha256": "2e61ee6df7dac637b803780eb66b28c740247538eed1f1800c0473a407d84ffc" },
+      { "path": "../../../specs/076-control-plane-validator/spec.md", "sha256": "953deb0ea15a6f31c691bd2d31d1a655473e0cca9f316d9e63f52e7ac4dc9029" },
+      { "path": "../../../specs/076-control-plane-validator/plan.md", "sha256": "2fc8e32cb028d0affaf64aac250e42c83d4945cf18733c454ac9294ec9981e52" },
+      { "path": "../../../specs/076-control-plane-validator/research.md", "sha256": "247d6dcbfd5c971b5a2fa525d304c7b2e853a45d6ad9c3e1a757d113e72b1167" },
+      { "path": "../../../specs/076-control-plane-validator/data-model.md", "sha256": "8ef728962339eb874d5630f8a8d70d3497488f374bb0d275575c4c76145e5281" },
+      { "path": "../../../specs/076-control-plane-validator/quickstart.md", "sha256": "6491e698ee2d41c4e0d5a25e06721e6f23842c5e7417ca2383c420ed0905a7a9" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/cli.md", "sha256": "d6da2f9681dabd423913ff85acdea9b1f622cf543c38ac3e8c3a3e3609dab955" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/dashboard-generation.md", "sha256": "6700f9004b252e97041b15f86df176000069eacf485cb6184f1091fe00c145f5" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/dashboard.schema.json", "sha256": "36ab378ff4e6a3560c6ca2b7923c30a49f42ddfba0896422369e83d783dd25ad" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/gate-catalog.schema.json", "sha256": "4f1008fa5a3819722a89ec9ce15932574c9acd66bdde710fdc11f38aba4f31b7" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/gate-evidence.schema.json", "sha256": "4c7c78ace1662dd3f871d0e770a05d4cf96c3b585688c60da06fd3609cecaac7" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json", "sha256": "81296e0afed0b9abd3922c3ff85c098d61f7743a5c1259502792a170a4d36e18" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/validation-report.schema.json", "sha256": "dc7c477d50a7da0da430858e76648d4432ed453d4257faa923bd7ce7b6e1b270" },
+      { "path": "../../../specs/076-control-plane-validator/contracts/verification-evidence.schema.json", "sha256": "0f54615973c918c9314bb3092f0f125ef973b3c072251affa601225f4b01a10a" },
+      { "path": "../../../specs/076-control-plane-validator/checklists/requirements.md", "sha256": "bf67ef8046fd044165f8d07930253266a8f282fb89f2b4cbee5d43df6a7763b2" },
+      { "path": "../../../specs/076-control-plane-validator/checklists/program-control.md", "sha256": "2f68c4abd8dadf6c6e7b9bb6d70a4d885b80a1b7ef62d9b30d7cbf8a6284a1a2" },
+      { "path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "5c4d1a4ac8e763f03f360719655ad87b8d5ee09e4b0092b2db0bd37707ce1fb0" },
+      { "path": "../../../specs/076-control-plane-validator/analysis.md", "sha256": "ec075bc78a071473731dda78688a42d02c0d021c9bbf945dd521271a5fdb3a57" },
+      { "path": "../../../.specify/feature.json", "sha256": "54f540d68346fc2014f81a45c97da7e5c3d8a87a9d5501b59db128fdb5ea2174" },
+      { "path": "../../../AGENTS.md", "sha256": "b8e5d032b0a93258df0448e737237fac8a6f52306e1ca9ad6b0494aff8c6c4e6" }
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-27T00:46:01Z",
+  "expires_at": null,
+  "revoked": false,
+  "conditions": []
+}

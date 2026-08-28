@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/lifecycle-policy.schema.json",
+  "title": "Engineering Process Platform Lifecycle Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "program_edges", "feature_edges", "event_rules", "approval_boundaries", "action_rules", "wip_limits", "path_roles", "compatibility_profiles"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "policy_id": { "type": "string", "pattern": "^EPP-LIFECYCLE-[0-9]+$" },
+    "program_edges": { "$ref": "#/$defs/edges" },
+    "feature_edges": { "$ref": "#/$defs/edges" },
+    "event_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_kind", "state_domain", "may_preserve_state", "required_evidence"],
+        "properties": {
+          "event_kind": { "enum": ["lifecycle_transition", "failed_attempt", "repair_checkpoint", "verification", "approval_checkpoint"] },
+          "state_domain": { "enum": ["program", "feature", "attempt", "repair"] },
+          "may_preserve_state": { "type": "boolean" },
+          "required_evidence": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/id" } }
+        }
+      }
+    },
+    "approval_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state_domain", "to_state", "approval_scope"],
+        "properties": {
+          "state_domain": { "enum": ["program", "feature"] },
+          "to_state": { "$ref": "#/$defs/id" },
+          "approval_scope": { "enum": ["program_plan", "feature_implementation", "material_change", "external_write", "dev_integration", "release"] }
+        }
+      }
+    },
+    "action_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["program_state", "feature_state", "action", "requires_human_approval"],
+        "properties": {
+          "program_state": { "$ref": "#/$defs/id" },
+          "feature_state": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/id" }] },
+          "action": { "$ref": "#/$defs/id" },
+          "requires_human_approval": { "type": "boolean" }
+        }
+      }
+    },
+    "wip_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutating_leases", "implementing_or_repairing_features", "read_only_auditors"],
+      "properties": {
+        "mutating_leases": { "const": 1 },
+        "implementing_or_repairing_features": { "const": 1 },
+        "read_only_auditors": { "const": 3 }
+      }
+    },
+    "path_roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern", "role", "mutability", "allowed_actions"],
+        "properties": {
+          "pattern": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "role": { "enum": ["immutable_policy", "operational_state", "append_only_evidence", "generated_projection", "feature_contract"] },
+          "mutability": { "enum": ["immutable", "append_only", "replaceable_projection", "lease_scoped"] },
+          "allowed_actions": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/id" } }
+        }
+      }
+    },
+    "compatibility_profiles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "allOf": [
+            { "$ref": "#/$defs/compatibilityProfile" },
+            { "properties": { "profile_id": { "const": "epp-bootstrap-v1-r1-r9" }, "from_revision": { "const": 1 }, "through_revision": { "const": 9 } } }
+          ]
+        },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/compatibilityProfile" },
+            { "properties": { "profile_id": { "const": "epp-bridge-v1-r10-r19" }, "from_revision": { "const": 10 }, "through_revision": { "const": 19 } } }
+          ]
+        }
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{1,99}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "compatibilityProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "schema_major", "from_revision", "through_revision", "states", "transitions", "terminal_program_state", "terminal_feature_state", "checkpoint_state_digest", "checkpoint_commit", "checkpoint_commit_rule", "accept_new_records", "successor"],
+      "properties": {
+        "profile_id": { "type": "string", "minLength": 1 },
+        "schema_major": { "const": 1 },
+        "from_revision": { "type": "integer", "minimum": 1 },
+        "through_revision": { "type": "integer", "minimum": 1 },
+        "states": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/stateCheckpoint" } },
+        "transitions": { "type": "array", "items": { "$ref": "#/$defs/transitionCheckpoint" } },
+        "terminal_program_state": { "$ref": "#/$defs/id" },
+        "terminal_feature_state": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/id" }] },
+        "checkpoint_state_digest": { "$ref": "#/$defs/digest" },
+        "checkpoint_commit": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/commit" }] },
+        "checkpoint_commit_rule": { "enum": ["fixed_commit", "exact_material_change_approval_subject"] },
+        "accept_new_records": { "const": false },
+        "successor": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/profileSuccessor" }, { "$ref": "#/$defs/migrationSuccessor" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "checkpoint_commit_rule": { "const": "fixed_commit" } }, "required": ["checkpoint_commit_rule"] },
+          "then": { "properties": { "checkpoint_commit": { "$ref": "#/$defs/commit" } } }
+        },
+        {
+          "if": { "properties": { "checkpoint_commit_rule": { "const": "exact_material_change_approval_subject" } }, "required": ["checkpoint_commit_rule"] },
+          "then": { "properties": { "checkpoint_commit": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "profile_id": { "const": "epp-bootstrap-v1-r1-r9" } }, "required": ["profile_id"] },
+          "then": {
+            "properties": {
+              "states": { "minItems": 9, "maxItems": 9 },
+              "transitions": { "minItems": 8, "maxItems": 8 },
+              "successor": { "properties": { "kind": { "const": "closed_profile" }, "target_profile_id": { "const": "epp-bridge-v1-r10-r19" }, "first_transition_id": { "const": "TR-0009" } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "profile_id": { "const": "epp-bridge-v1-r10-r19" } }, "required": ["profile_id"] },
+          "then": {
+            "properties": {
+              "states": { "minItems": 10, "maxItems": 10 },
+              "transitions": { "minItems": 10, "maxItems": 10 },
+              "successor": { "properties": { "kind": { "const": "schema_migration" }, "target_schema_version": { "const": "2.0" } } }
+            }
+          }
+        }
+      ]
+    },
+    "stateCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "path", "raw_sha256", "canonical_digest"],
+      "properties": {
+        "revision": { "type": "integer", "minimum": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "raw_sha256": { "$ref": "#/$defs/digest" },
+        "canonical_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "transitionCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transition_id", "path", "raw_sha256_rule", "raw_sha256", "prior_revision", "new_revision", "prior_state_digest", "new_state_digest"],
+      "properties": {
+        "transition_id": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
+        "path": { "type": "string", "pattern": "^evidence/transitions/TR-[0-9]{4}\\.json$" },
+        "raw_sha256_rule": { "enum": ["exact_blob_sha256", "checkpoint_commit_blob"] },
+        "raw_sha256": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/digest" }] },
+        "prior_revision": { "type": "integer", "minimum": 1 },
+        "new_revision": { "type": "integer", "minimum": 2 },
+        "prior_state_digest": { "$ref": "#/$defs/digest" },
+        "new_state_digest": { "$ref": "#/$defs/digest" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "raw_sha256_rule": { "const": "exact_blob_sha256" } }, "required": ["raw_sha256_rule"] },
+          "then": { "properties": { "raw_sha256": { "$ref": "#/$defs/digest" } } }
+        },
+        {
+          "if": { "properties": { "raw_sha256_rule": { "const": "checkpoint_commit_blob" } }, "required": ["raw_sha256_rule"] },
+          "then": {
+            "properties": {
+              "transition_id": { "const": "TR-0018" },
+              "raw_sha256": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "profileSuccessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target_profile_id", "first_transition_id", "maximum_count"],
+      "properties": {
+        "kind": { "const": "closed_profile" },
+        "target_profile_id": { "type": "string", "minLength": 1 },
+        "first_transition_id": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
+        "maximum_count": { "const": 1 }
+      }
+    },
+    "migrationSuccessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target_schema_version", "event_kind", "maximum_count"],
+      "properties": {
+        "kind": { "const": "schema_migration" },
+        "target_schema_version": { "const": "2.0" },
+        "event_kind": { "const": "lifecycle_transition" },
+        "maximum_count": { "const": 1 }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to"],
+        "properties": { "from": { "$ref": "#/$defs/id" }, "to": { "$ref": "#/$defs/id" } }
+      }
+    }
+  }
+}

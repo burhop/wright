@@ -1,0 +1,157 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-V9-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "independent",
+  "subject": {
+    "git_commit": "64914e8a52cc34685fb249280dd507df5e69e8aa",
+    "git_tree": "4736bae1c2bacf4976709553ba39ab84b07ace35",
+    "artifact_digests": [
+      {"path": "scripts/program_control/validation.py", "sha256": "af5fb46d7d0e1ed7e69be02b75f36c9016aae12999915ade56cffa5335aa2700"},
+      {"path": "tests/program_control_plane/test_preflight_evidence_correction.py", "sha256": "fd011977ac1457c582e3b20163e51d1f3d3c7f621730069434cca5db63815b00"},
+      {"path": "specs/076-control-plane-validator/tasks.md", "sha256": "2f715f69ff3612485e6e4b6991225bee405211927bcca0534fcdb82602366154"},
+      {"path": "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "sha256": "59c9344f14a99780bcd652e256343d105ed63199a8e1dcba1125267928669828"},
+      {"path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-009.json", "sha256": "aef627acfda197661c96a8e15eabb7082a6ee74c2912332cf7ed1e3bb90565ee"},
+      {"path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-009.json", "sha256": "dda0972b8a13fa3fad63655698bfefbab54aa77aca054f7200c13dc730023575"},
+      {"path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0053.json", "sha256": "371fcfb03fc40e580f2dfec774451372fcd913dceb625b94577b9946eb55ed51"}
+    ]
+  },
+  "actor": {
+    "identity": "Codex independent read-only agent /root/v9_terminal_verifier",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-28T12:52:25Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "V9-FOCUSED-MATRIX",
+      "method": "Run python -m pytest tests/program_control_plane/test_preflight_evidence_correction.py -q -p no:cacheprovider with a writable isolated basetemp; require 21 passing exact-profile, near-miss, Git-object, authority and non-interference tests.",
+      "environment": "Windows local isolated worktree; offline; frozen commit 64914e8a",
+      "duration_ms": 92540,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_preflight_evidence_correction.py", "sha256": "fd011977ac1457c582e3b20163e51d1f3d3c7f621730069434cca5db63815b00"},
+        {"path": "scripts/program_control/validation.py", "sha256": "af5fb46d7d0e1ed7e69be02b75f36c9016aae12999915ade56cffa5335aa2700"}
+      ]
+    },
+    {
+      "check_id": "V9-CONTRACT-SCHEMAS",
+      "method": "Run python -m pytest tests/program_control_plane/test_contract_schemas.py -q -p no:cacheprovider with a writable isolated basetemp; require all 29 schema and exact planning-contract tests to pass.",
+      "environment": "Windows local isolated worktree; offline; frozen commit 64914e8a",
+      "duration_ms": 1120,
+      "result": "passed",
+      "evidence": [
+        {"path": "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "sha256": "59c9344f14a99780bcd652e256343d105ed63199a8e1dcba1125267928669828"}
+      ]
+    },
+    {
+      "check_id": "V9-FULL-REGRESSION",
+      "method": "Run python -m pytest tests/program_control_plane -q -p no:cacheprovider; require 239 passed, one Windows symlink skip, and exactly three known excluded V8 failures: two evidence-walkthrough expectations and the TR-0050 event-rule assertion.",
+      "environment": "Windows local isolated worktree; offline; no excluded repair",
+      "duration_ms": 187720,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_preflight_evidence_correction.py", "sha256": "fd011977ac1457c582e3b20163e51d1f3d3c7f621730069434cca5db63815b00"}
+      ]
+    },
+    {
+      "check_id": "V9-RUFF-LINT",
+      "method": "Run Ruff check over scripts/program_control and tests/program_control_plane; all files pass. Run focused Ruff format --check over both V9-modified Python files; both pass.",
+      "environment": "Existing Miniconda Ruff 0.15.14; writable external cache; offline",
+      "duration_ms": 5000,
+      "result": "passed",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "af5fb46d7d0e1ed7e69be02b75f36c9016aae12999915ade56cffa5335aa2700"},
+        {"path": "tests/program_control_plane/test_preflight_evidence_correction.py", "sha256": "fd011977ac1457c582e3b20163e51d1f3d3c7f621730069434cca5db63815b00"}
+      ]
+    },
+    {
+      "check_id": "V9-MYPY-NO-NEW-FINDINGS",
+      "method": "Run repository MyPy 2.3.1 with an external cache over scripts/program_control/validation.py; the sole new V9 typing finding was removed, leaving the existing ten-error baseline across json_contracts.py, git_subject.py, dashboard.py and historical validation.py lines. Do not install missing jsonschema stubs.",
+      "environment": "Existing D:/repos/wright/.venv MyPy; dependency changes prohibited",
+      "duration_ms": 5800,
+      "result": "blocked",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "af5fb46d7d0e1ed7e69be02b75f36c9016aae12999915ade56cffa5335aa2700"}
+      ]
+    },
+    {
+      "check_id": "V9-COMMITTED-SUBJECT-VALIDATION",
+      "method": "Run validate-engineering-process-program.py validate --source HEAD --format text on exact commit 64914e8a. The two V9 findings resolve; exit 3 remains solely for the two excluded TR-0047 digest claims and excluded TR-0050 event-rule claim. Four areas remain independent, benchmark is 0/100 and release_eligible is false.",
+      "environment": "Clean committed Windows worktree; offline; read-only",
+      "duration_ms": 5949,
+      "result": "passed",
+      "evidence": [
+        {"path": "scripts/program_control/validation.py", "sha256": "af5fb46d7d0e1ed7e69be02b75f36c9016aae12999915ade56cffa5335aa2700"}
+      ]
+    },
+    {
+      "check_id": "V9-SOURCE-MUTATION-AUDIT",
+      "method": "Verify historical discovery and TR-0051 blobs match their introducing commit, all non-V9 inputs remain committed, and validation leaves program-state.json and dashboard.json byte-identical at SHA-256 bbc9b73a... and 7cd405d4... respectively.",
+      "environment": "Read-only Git-object inspection and before/after SHA-256; offline",
+      "duration_ms": 810,
+      "result": "passed",
+      "evidence": [
+        {"path": "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "sha256": "59c9344f14a99780bcd652e256343d105ed63199a8e1dcba1125267928669828"}
+      ]
+    },
+    {
+      "check_id": "V9-INDEPENDENT-VERIFICATION",
+      "method": "A different read-only agent reran the focused V9 matrix, schema contracts, Ruff, focused formatting, exact-subject identity, immutable-blob, approval, readiness, 34-gate, benchmark, authority, candidate, delivery, dashboard and release checks on frozen commit 64914e8a and returned PASS.",
+      "environment": "Codex bounded independent verifier; clean shared worktree; no writes",
+      "duration_ms": 300000,
+      "result": "passed",
+      "evidence": [
+        {"path": "tests/program_control_plane/test_preflight_evidence_correction.py", "sha256": "fd011977ac1457c582e3b20163e51d1f3d3c7f621730069434cca5db63815b00"}
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Immutable EPP-F01-V8-discovery.json omitted $schema; V9 binds only that exact blob to the exact const external schema.",
+    "Immutable TR-0051 contained all 35 unique container paths but appended its self path at index 34 rather than canonical sorted index 9.",
+    "T077 red checkpoint 847b2c35 produced 19 expected failures because the V9 recognizer did not exist."
+  ],
+  "findings": [
+    {
+      "code": "V9_SCHEMA_REFERENCE_RESOLVED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json",
+      "disposition": "Resolved only through the exact APR-009 two-claim profile; original bytes and original finding remain inspectable."
+    },
+    {
+      "code": "V9_MANIFEST_ORDER_RESOLVED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json",
+      "disposition": "Resolved only after exact 35-path set equality, uniqueness, digests and self-index recomputation; no generic unordered-manifest rule exists."
+    },
+    {
+      "code": "EXCLUDED_V8_FAILURES_REMAIN",
+      "severity": "medium",
+      "artifact": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json",
+      "disposition": "Two TR-0047 digest claims, the TR-0050 event rule and two direct walkthrough causes remain outside V9; T073-T076 stay unauthorized."
+    },
+    {
+      "code": "PREEXISTING_FORMAT_DRIFT",
+      "severity": "low",
+      "artifact": "tests/program_control_plane/test_contract_schemas.py",
+      "disposition": "Whole-module format check identifies this approved-subject planning-test file; V9-modified Python files pass and V9 does not reformat unrelated evidence."
+    },
+    {
+      "code": "PREEXISTING_MYPY_BASELINE",
+      "severity": "low",
+      "artifact": "scripts/program_control",
+      "disposition": "Existing MyPy reports ten historical errors and missing jsonschema stubs; V9 adds no error and dependencies remain unchanged."
+    },
+    {
+      "code": "EPP_F01B_REMAINS_UNAUTHORIZED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/roadmap.json",
+      "disposition": "No browser status page or historical graphs were implemented; EPP-F01B remains separately gated."
+    }
+  ],
+  "rollback_subject": "git:d96e8b68c9fda08eea84065186452581727ec4fa (exact approved V9 planning subject before APR-009 activation and T077-T080)",
+  "delivery_relation": null
+}

@@ -1,0 +1,272 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-FOUNDATION-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "foundation",
+  "subject": {
+    "git_commit": "daa700f9d0019457c1b142e817d8db76c75e8963",
+    "git_tree": "823f138e8fd6ac16367f0a73f2105a7a27bf312a",
+    "artifact_digests": [
+      {
+        "path": "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+        "sha256": "b018d106d7348979c1de0e8e62ba50ef95262e9b7646c2c51322c34b16361fd9"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-003.json",
+        "sha256": "28d628f16149f4e9e035b84a8d30272a899d3b9e5628b5bff3fa5cb93ef21606"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-003.json",
+        "sha256": "644962b29061d02842af1478077be6cf78bff83ea9ae8160a868fc0011760fb6"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0023.json",
+        "sha256": "f28e01ac226cb8238e4e2257e043d618cf490c17b3487553c4e5030ea3c5b263"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0024.json",
+        "sha256": "e63a9e90f7356b30b5e9af4de3a8ec701a64f24847e6c34d89da060113311c42"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/gate-catalog.json",
+        "sha256": "8f29a311ee5333098aa8fd1207401203fe33cf39b59b570ed7c68e9aeebc60cd"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/gate-evidence.json",
+        "sha256": "cca4b59763cdf1c0c806b8e069c01f48b7814bddc23ec89b4c01b4d6bb460fd9"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/lifecycle-policy.json",
+        "sha256": "4adf637924e2f546ca4bf4fed6eb02178ccbe7a8de33d9a113b5d568c0d6b415"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/program-state.json",
+        "sha256": "da21622a8c3f15ce5dbb4954a6bd9473c3a341bc6d0e6c462499bc9556c03f66"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/roadmap.json",
+        "sha256": "ed7d4a8223e75daacfb3e5bdee80474659e04772b7d29dc03c6bd166ac7d90bc"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/approval.schema.json",
+        "sha256": "d3f691bf399f546c1d537c90ba0e316c4ccaf2c8e48a499bc34535059749bd5a"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/dashboard.schema.json",
+        "sha256": "484b954e66beb668c4eabc5d9ffecbe5e5c67bbb29fd2d8be0d99a04daec2d6d"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/decision-register.schema.json",
+        "sha256": "3ffda6510827c8fa3d9c698394f3fe4d20038aff27945360ce68232060c2b6e1"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/gate-catalog.schema.json",
+        "sha256": "2b88697a1cf0bad4c1abd3af028dff393140ff862921a3e7199cd79069c0c809"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/gate-evidence.schema.json",
+        "sha256": "c1453a4e9bae1ffc4c7386cd792f0fb186a3eea62246d6257342176e0f63ee53"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/legacy-compatibility-profile.schema.json",
+        "sha256": "97c5eeb7d4e2e57b0d6b684b85972990d34e52249cb870713fc9b9b6bb98bac3"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/lifecycle-policy.schema.json",
+        "sha256": "af26354427990e736dc5b559c4aec41b22c0f079574b7f6449f80b220a7754e7"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/program-state.schema.json",
+        "sha256": "aef5534355efcdc1c38f8c182df95fe1998befba757485ab94f2ce041eaa4264"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/risk-register.schema.json",
+        "sha256": "4d3771b8347a17b02b27ba91921f4d85bac38954357ad0d9ed572bd796987fde"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/transition-evidence.schema.json",
+        "sha256": "3194096a8379a83f899f0f1ffb2c2efc99784a1b5c3981655f7f68201c10cf67"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/validation-report.schema.json",
+        "sha256": "8100e6c2e543f33d79921fd6d76523883ec13c6fd87056989c484319b57de1cf"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/schemas/verification-evidence.schema.json",
+        "sha256": "e49c8318e14d8f2b5fa802492260e9551455e297bd7af57eecc13f4bafb5ec9e"
+      },
+      {
+        "path": "scripts/program_control/git_subject.py",
+        "sha256": "9f6bbf894500112c2cadb806c5c5d7cdcdfda11178f257d157450940ff39d7ad"
+      },
+      {
+        "path": "scripts/program_control/json_contracts.py",
+        "sha256": "19bdf25a3156268b07a7a3ebb3a5b884008b9717b1966a599d78f249913c29fa"
+      },
+      {
+        "path": "scripts/program_control/validation.py",
+        "sha256": "6e996bbe62aaa8c98691d081d6aa160ce6fc40df5ca6a239bdb4042f90df0d22"
+      },
+      {
+        "path": "specs/076-control-plane-validator/tasks.md",
+        "sha256": "55693eaca8fabe12e94680cc12c21ca8b8ef560364464f7ff1246ccfa9deed0f"
+      },
+      {
+        "path": "tests/program_control_plane/test_dashboard_projection.py",
+        "sha256": "454301c3baff3c725cdac606338f4ee3487f216e3055969881d443486021a94b"
+      },
+      {
+        "path": "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "sha256": "2129c914605414db4cb28800888f9f908e19918f990350d5e2e3bfa735ca8d09"
+      },
+      {
+        "path": "tests/program_control_plane/test_transition_chain.py",
+        "sha256": "81e61af22c2e236b6222006a7265a2f91c26abc1f6a4cd06fa6c347fa29ae0cc"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-27T13:21:22Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "FOUNDATION-PYTEST",
+      "method": "Run D:\\Users\\markb\\miniconda3\\python.exe -m pytest -p no:cacheprovider tests/program_control_plane -q against clean commit daa700f9.",
+      "environment": "Windows local Python 3; offline; isolated pytest temporary directories",
+      "duration_ms": 31451,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_transition_chain.py",
+          "sha256": "81e61af22c2e236b6222006a7265a2f91c26abc1f6a4cd06fa6c347fa29ae0cc"
+        },
+        {
+          "path": "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+          "sha256": "2129c914605414db4cb28800888f9f908e19918f990350d5e2e3bfa735ca8d09"
+        },
+        {
+          "path": "tests/program_control_plane/test_dashboard_projection.py",
+          "sha256": "454301c3baff3c725cdac606338f4ee3487f216e3055969881d443486021a94b"
+        }
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-RUFF",
+      "method": "Run Ruff check with no cache and Ruff format --check over the entrypoint, scripts/program_control and tests/program_control_plane; require zero lint findings and no files requiring formatting.",
+      "environment": "Ruff 0.15.14 via local Python; no dependency changes",
+      "duration_ms": 306,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/json_contracts.py",
+          "sha256": "19bdf25a3156268b07a7a3ebb3a5b884008b9717b1966a599d78f249913c29fa"
+        },
+        {
+          "path": "scripts/program_control/git_subject.py",
+          "sha256": "9f6bbf894500112c2cadb806c5c5d7cdcdfda11178f257d157450940ff39d7ad"
+        },
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "6e996bbe62aaa8c98691d081d6aa160ce6fc40df5ca6a239bdb4042f90df0d22"
+        }
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-CURRENT-SUBJECT",
+      "method": "Run the committed CLI in validate mode against HEAD and require a passed validator verdict, four independent honest non-passing readiness areas, release_eligible false, and EXECUTE_EPP_F01_TASKS as the sole next action.",
+      "environment": "clean commit daa700f9; local read-only Git-object validation; no network",
+      "duration_ms": 34627,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/program-state.json",
+          "sha256": "da21622a8c3f15ce5dbb4954a6bd9473c3a341bc6d0e6c462499bc9556c03f66"
+        },
+        {
+          "path": "docs/programs/engineering-process-platform/roadmap.json",
+          "sha256": "ed7d4a8223e75daacfb3e5bdee80474659e04772b7d29dc03c6bd166ac7d90bc"
+        }
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-APPROVAL-HISTORY",
+      "method": "Require both v3 approval records to validate as one same-subject bundle despite their explicit restrictive conditions; reject revoked, expired, scope-missing, subject-drifted, or conditionless approved_with_conditions fixtures.",
+      "environment": "63-test local contract matrix and immutable approval Git blobs",
+      "duration_ms": 3100,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-003.json",
+          "sha256": "644962b29061d02842af1478077be6cf78bff83ea9ae8160a868fc0011760fb6"
+        },
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-003.json",
+          "sha256": "28d628f16149f4e9e035b84a8d30272a899d3b9e5628b5bff3fa5cb93ef21606"
+        }
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-CLOSED-HISTORY",
+      "method": "Validate exactly two ordered byte-bound v1 profiles, approval-subject archive resolution, immutable archive paths, raw and canonical state identities, transition-to-profile metadata equality, contiguous cross-profile edges, terminal states, no future v1 records, and one migration successor.",
+      "environment": "63-test local contract matrix and exact Git blobs from the approved subject",
+      "duration_ms": 18400,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/schemas/legacy-compatibility-profile.schema.json",
+          "sha256": "97c5eeb7d4e2e57b0d6b684b85972990d34e52249cb870713fc9b9b6bb98bac3"
+        },
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "6e996bbe62aaa8c98691d081d6aa160ce6fc40df5ca6a239bdb4042f90df0d22"
+        }
+      ]
+    },
+    {
+      "check_id": "FOUNDATION-EXCLUSIONS",
+      "method": "Inspect the source diff and task ledger; require only allowlisted validator, control-plane, test, and local evidence changes with no EPP-F01B implementation, dependency, product-runtime, benchmark execution, external mutation, push, PR, merge, integration, publication, or release action.",
+      "environment": "local Git status, commit diff and exact approved lease",
+      "duration_ms": 500,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "specs/076-control-plane-validator/tasks.md",
+          "sha256": "55693eaca8fabe12e94680cc12c21ca8b8ef560364464f7ff1246ccfa9deed0f"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "TR-0021: preserved 49-pass WIP with every Phase 2 task intentionally unchecked before renewed approval",
+    "2026-08-27 tightening run: 1 failed/45 passed after treating the old checkpoint as archive materialization; corrected to approval-subject archive resolution",
+    "2026-08-27 format gate: 63 tests and lint passed; six inherited WIP files required Ruff formatting before the clean rerun"
+  ],
+  "findings": [
+    {
+      "code": "LEGACY_ARCHIVE_LOOKUP_REPAIRED",
+      "severity": "info",
+      "artifact": "scripts/program_control/validation.py",
+      "disposition": "The failed first tightening run distinguished the historical checkpoint identity from the later approval subject that materializes the immutable archives; the correction is covered by the final 63-pass matrix."
+    },
+    {
+      "code": "VALIDATOR_RUNTIME_STORY_GATE_OPEN",
+      "severity": "medium",
+      "artifact": "scripts/validate-engineering-process-program.py",
+      "disposition": "The clean current-subject validation took 34.627 seconds, above the under-five-second US1 target; it is a named T024/T025 optimization requirement and prevents US1 completion but does not invalidate the Phase 2 machine-contract foundation."
+    },
+    {
+      "code": "BROWSER_SURFACE_EXCLUDED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/decisions/0015-browser-status-surface.md",
+      "disposition": "EPP-F01B remains proposed and unauthorized; this foundation contains only validator, snapshot, provenance and CLI contracts."
+    }
+  ],
+  "rollback_subject": "git:40458d19e53882638e791339f7f3303053412795 (preserved pre-gap foundation WIP checkpoint)",
+  "delivery_relation": null
+}

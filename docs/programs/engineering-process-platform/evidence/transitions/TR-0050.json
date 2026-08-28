@@ -1,0 +1,99 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0050",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "repair_checkpoint",
+  "from_state": "BLOCKED",
+  "to_state": "BLOCKED",
+  "prior_revision": 50,
+  "new_revision": 51,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "a172a6e1d5f913ab4ee6de5160386c1185c0d3009ff83c726fd229c0d8a7a10f",
+  "new_state_digest": "fc46f9dcaa3bc8e7172dfe131410ba14953e964016a82991d6c9a8dcff38530e",
+  "actor": {"role": "coordinator", "identity": "Codex primary sole writer"},
+  "action": "Align the already-blocked T072 state with the existing machine policy: set EPP-F01 roadmap status to blocked, retain a null lease, and use the sole current BLOCKED-state action token while explicitly marking V7 authority stale and non-replayable.",
+  "started_at": "2026-08-28T00:00:00Z",
+  "finished_at": "2026-08-28T00:07:00Z",
+  "duration_ms": 420000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "e39903c2f7400d433a3a51419824a94f0b217a1e",
+    "source_tree": "fd4d98acf2f27769eca4db750e23594332f3efd3",
+    "source_program_tree": "5a8a7af5093357c36531aa5fb3d5363dd3881858",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": false,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0051.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0050.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0050.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0050.json", "sha256": "1857c07673ddf71b613c79aa580afab229320485241cfbe95ccaabc292a20899", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/transitions/TR-0049.json", "sha256": "3140674af36d04913d5aedb2f90ac999ed712cfe182e380ac8a937458aa09fa8", "schema_version": "2.0", "role": "append_only_evidence"}
+  ],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0051.json", "sha256": "b3c44e995c9ba4c260bcadd06f28bda0a63509c5238446a8d6e0a9caa8eeb6e9", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "b3c44e995c9ba4c260bcadd06f28bda0a63509c5238446a8d6e0a9caa8eeb6e9", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "401d84d79ac19448b3585ffe84d2201acc8b1845ba95b0045155ae0128a98bbe", "schema_version": "1.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "BLOCKED-ROADMAP-WIP-ALIGNMENT",
+      "method": "Run validate_roadmap_approval_and_lease against the staged roadmap/state plus committed policy, decisions, risks and gates; require zero findings and the sole BLOCKED action token.",
+      "environment": "Windows local working-tree semantic validation; offline",
+      "duration_ms": 1900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["roadmap.json", "program-state.json", "lifecycle-policy.json"]
+    },
+    {
+      "check_id": "BLOCKED-SCHEMA-ALIGNMENT",
+      "method": "Validate all planning contracts after the state/roadmap update; 21 schema tests pass.",
+      "environment": "Windows local; writable isolated temp; offline",
+      "duration_ms": 1530,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "roadmap.json", "../../../tests/program_control_plane/test_contract_schemas.py"]
+    },
+    {
+      "check_id": "BLOCKED-LEASE-AND-SCOPE",
+      "method": "Require a null mutating lease, stale approval status, no candidate freeze, no T066 retry, and no product, benchmark, external, integration, publication or release action.",
+      "environment": "State and staged-diff audit; offline",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "evidence/verification/EPP-F01-T072-blocked.json"]
+    }
+  ],
+  "authority": {
+    "required_scopes": ["material_change", "feature_implementation"],
+    "approval_records": ["evidence/approvals/APR-EPP-F01-MC-007.json", "evidence/approvals/APR-EPP-F01-IMPL-007.json"],
+    "subject": {
+      "git_commit": "a2b9727a15c445875b2ef857f482bee31ccc594c",
+      "git_tree": "ee16d103c98c3d891d32c45b243a131dd0745527",
+      "program_tree": "677f1ec8e895b6330941f8ab5afe92c5dadf980b",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0046"
+    },
+    "legacy_checkpoint": {"profile": "epp-bridge-v1-r10-r19", "transition": "TR-0018", "resolution_rule": "exact_material_change_approval_subject"},
+    "migration": {"from_schema_version": "1.0", "to_schema_version": "2.0", "sole_successor": true}
+  },
+  "independent_verifier": null,
+  "repair": {"stable_cause_id": "EPP-F01-T072-VERIFICATION-001", "attempt": 0, "maximum": 2, "remaining": 2},
+  "blockers": [
+    "The exact T072 blockers recorded by TR-0049 remain unresolved",
+    "The existing BLOCKED action token names V7 but V7 authority is stale and cannot be replayed",
+    "Human direction is required before planning or implementing any successor correction"
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0050.json",
+  "next_action": "APPROVE_EPP_F01_REPAIR_CORRECTION_V7"
+}

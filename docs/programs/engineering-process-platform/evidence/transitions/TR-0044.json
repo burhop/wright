@@ -1,0 +1,150 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0044",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "REPAIRING",
+  "prior_revision": 44,
+  "new_revision": 45,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "59d00a84174a954fc609af7dc37a2c2e1a61c85e50c8abb2f2d95d9d04c9bcf9",
+  "new_state_digest": "8685b8074ceb3a2047072e28464200daa9913cd633707cfdc8af42e4479ab1ad",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Accept distinct verifier T066 failure on frozen R for one Ruff-format condition, persist the failed independent record, reject R for delivery, reactivate bounded repair lease revision 10, and authorize only format-plus-reverification recovery before a new freeze.",
+  "started_at": "2026-08-27T22:40:50Z",
+  "finished_at": "2026-08-27T22:44:20Z",
+  "duration_ms": 210000,
+  "classification": "failed_test_contract",
+  "git": {
+    "source_commit": "168ac6d226d32fe71d1a7065f77781a2cf7c73eb",
+    "source_tree": "ed8764ae2a1a68b5b96771ade9c84d2d0ae02e68",
+    "source_program_tree": "b95f3c02441d6b5bd9268eb1a585d853b8fd4463",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0045.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0044.json",
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0044.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0044.json",
+      "sha256": "ff9db3aaf6f55ca63d3551f1b3257416e73a52d12f6635501e7c5f8aef11823d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0043.json",
+      "sha256": "24c6f2833bf06f74f25e93f0c7e7158e5d659bfdbd1fb2a6015553bf874fcfe",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0045.json",
+      "sha256": "d91e36e153df66aee730b4cc6a16c36079bec1a9add6c21fc2079cff37f02313",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "d91e36e153df66aee730b4cc6a16c36079bec1a9add6c21fc2079cff37f02313",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-independent.json",
+      "sha256": "f75b48b658c008541e4bdd5c7c10c292142b1035ec234f3eda642148c3ccd098",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "INDEPENDENT-T066-ENVELOPE",
+      "method": "Retain distinct verifier results: exact validation and 16/16 manifest pass; 197 tests pass with one platform skip; gate routing and Ruff lint pass; MyPy/native gate unavailable.",
+      "environment": "Independent read-only verifier; exact R",
+      "duration_ms": 199000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-independent.json"
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-RUFF-FORMAT-FAILURE",
+      "method": "Retain Ruff format --check exit 1 for one multiline condition in validation.py; classify stable cause CANDIDATE_RUFF_FORMAT_DRIFT and reject R for delivery.",
+      "environment": "Independent repository Ruff; offline",
+      "duration_ms": 2100,
+      "result": "failed",
+      "failure_class": "failed_test_contract",
+      "evidence": [
+        "evidence/verification/EPP-F01-independent.json"
+      ]
+    },
+    {
+      "check_id": "BOUNDED-REPAIR-SCOPE",
+      "method": "Reactivate lease revision 10 for only formatting validation.py, local deterministic checks, local commits and exact refreeze/reverification; preserve all exclusions and block T067.",
+      "environment": "Operational state and approved path/action allowlist",
+      "duration_ms": 250,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-006.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-006.json"
+    ],
+    "subject": {
+      "git_commit": "f70aca5bf190bcfbf2525b308eb3ed9ee476c76b",
+      "git_tree": "79c7d0cdff8d3598df03e7c0e2bffbd3600df4dd",
+      "program_tree": "24c61d46565c199c35373a71655da122eb988231",
+      "artifact_count": 11,
+      "manifest_transition": "TR-0037"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "agent:/root/epp_f01_gate_gap",
+  "repair": {
+    "stable_cause_id": "CANDIDATE_RUFF_FORMAT_DRIFT",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Candidate R e5a2ade942c0b4a2d474a185cfff0c46e10c508a is rejected for delivery until a newly formatted candidate passes independent verification."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0044.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}

@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/verification-evidence.schema.json",
+  "title": "Engineering Process Platform Verification Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "program_id", "feature_id", "kind", "subject", "actor", "created_at", "verdict", "checks", "original_failure_refs", "findings", "rollback_subject", "delivery_relation"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "1.0" },
+    "evidence_id": { "type": "string", "pattern": "^VER-EPP-F01-[A-Z0-9-]{2,80}$" },
+    "program_id": { "const": "EPP-2026" },
+    "feature_id": { "const": "EPP-F01" },
+    "kind": { "enum": ["foundation", "story", "author", "rollback", "diff_audit", "candidate", "independent", "delivery"] },
+    "subject": { "$ref": "#/$defs/subject" },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "role", "independent"],
+      "properties": {
+        "identity": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "role": { "enum": ["feature_owner", "coordinator", "independent_verifier"] },
+        "independent": { "type": "boolean" }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "verdict": { "enum": ["passed", "failed", "blocked", "inconclusive"] },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "method", "environment", "duration_ms", "result", "evidence"],
+        "properties": {
+          "check_id": { "$ref": "#/$defs/code" },
+          "method": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "environment": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "duration_ms": { "type": "integer", "minimum": 0 },
+          "result": { "enum": ["passed", "failed", "blocked", "skipped", "not_tested", "inconclusive"] },
+          "evidence": { "type": "array", "items": { "$ref": "#/$defs/artifact" } }
+        }
+      }
+    },
+    "original_failure_refs": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 300 } },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "severity", "artifact", "disposition"],
+        "properties": {
+          "code": { "$ref": "#/$defs/code" },
+          "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+          "artifact": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "disposition": { "type": "string", "minLength": 1, "maxLength": 500 }
+        }
+      }
+    },
+    "rollback_subject": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "delivery_relation": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/deliveryRelation" }] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "delivery" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "role": { "const": "independent_verifier" },
+              "independent": { "const": true }
+            }
+          },
+          "verdict": { "const": "passed" },
+          "delivery_relation": { "$ref": "#/$defs/deliveryRelation" }
+        }
+      },
+      "else": { "properties": { "delivery_relation": { "type": "null" } } }
+    }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,99}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "deliveryRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_commit", "container_commit", "dashboard", "container_first_parent_source", "container_diff_paths", "evidence_parent_is_container", "delivery_diff_paths", "source_inputs_unchanged"],
+      "properties": {
+        "source_commit": { "$ref": "#/$defs/commit" },
+        "container_commit": { "$ref": "#/$defs/commit" },
+        "dashboard": { "$ref": "#/$defs/artifact" },
+        "container_first_parent_source": { "const": true },
+        "container_diff_paths": { "const": ["docs/programs/engineering-process-platform/dashboard.json"] },
+        "evidence_parent_is_container": { "const": true },
+        "delivery_diff_paths": { "const": ["docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json"] },
+        "source_inputs_unchanged": { "const": true }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["git_commit", "git_tree", "artifact_digests"],
+      "properties": {
+        "git_commit": { "$ref": "#/$defs/commit" },
+        "git_tree": { "$ref": "#/$defs/commit" },
+        "artifact_digests": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/artifact" } }
+      }
+    }
+  }
+}

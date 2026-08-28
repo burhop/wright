@@ -1,0 +1,204 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0030",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "REPAIRING",
+  "prior_revision": 30,
+  "new_revision": 31,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "6d86e3b5697ffdb5260e6933a5e2ab4606e61d0fc11d2cb1868831028f9193aa",
+  "new_state_digest": "14b592dce49a867b51f5b45101f8f5d11540ba072af39c3c832b4f8ff945531f",
+  "actor": {
+    "role": "feature_owner",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Enter bounded repair attempt 1 for stable cause EPP-F01-US1-COMMITTED-IDENTITY-001 before any T069 correction mutation; preserve all immutable target bytes, limit work to the exact approved profile and affected tests/validator behavior, and return to IMPLEMENTING only after independent 37/37 recomputation passes.",
+  "started_at": "2026-08-27T16:37:00Z",
+  "finished_at": "2026-08-27T16:39:00Z",
+  "duration_ms": 120000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "41abfde16534027c0690f16151bfcfc1d456b2a7",
+    "source_tree": "6bc7eda71cabf45e3999476f41e555f097a8caff",
+    "source_program_tree": "1b9d462b3df3c88eaf9c61d193a6dfa659733f1d",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0031.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0030.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0030.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0030.json",
+      "sha256": "13ec1a94c4bcfb7b236f2057fffa15f724a348421b7d8196b213486ae66b3dc8",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0029.json",
+      "sha256": "716f3ceac12024721f6e92b26960ad35bc6b38eb2150b3bc7ea96aa76da2b2b4",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/verification/EPP-F01-US1.json",
+      "sha256": "3f0ba75078b8afa4e01b3fd68713dd9e43b4edfd576890a8c3331d6c09a96352",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0026.json",
+      "sha256": "82859c79a8b0384108fc4c2e66f0b24da86990f520ec06dc0682b63797ab77f4",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+      "sha256": "9bd3bab9215eefbfb951a0d8db8c613433002f1afc44b79cce6063de6e0ff27d",
+      "schema_version": "1.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "sha256": "63b2c7b48acdd11c263d67b8079b56e686ae2e43c75f870a54eaca11c676a5ad",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+      "sha256": "2c5562011e62a7f0a6a357e5b654f322c50faeefe31672977ac6c1c939b2cc8e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0031.json",
+      "sha256": "65565da454d8a203efeed8247ee6425981dc18f860900937fe9fe10626cc0907",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "65565da454d8a203efeed8247ee6425981dc18f860900937fe9fe10626cc0907",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "STABLE-CAUSE-BOUNDARY",
+      "method": "Bind repair only to the original committed-identity failure evidence and exact literal six-transition plus 26-state/31-pointer profile; reject any additional record or target class.",
+      "environment": "immutable Git evidence and approved correction profile; offline",
+      "duration_ms": 900,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/verification/EPP-F01-US1.json",
+        "evidence/transitions/TR-0026.json",
+        "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json"
+      ]
+    },
+    {
+      "check_id": "REPAIR-AUTHORITY-V4",
+      "method": "Require both current V4 approvals to bind the correction profile digest, DEC-P0-016, the revised 69-task subject and lease revision 7 while preserving every excluded action.",
+      "environment": "approval records, program state, plan and Git-object verification",
+      "duration_ms": 1100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/approvals/APR-EPP-F01-MC-004.json",
+        "evidence/approvals/APR-EPP-F01-IMPL-004.json",
+        "approval.md"
+      ]
+    },
+    {
+      "check_id": "STATE-31-REPAIRING",
+      "method": "Validate revision 30 to 31, exact canonical digests, legal IMPLEMENTING to REPAIRING feature edge, current/archive byte identity, active stable cause, attempt 1 of 2, one remaining repair and T069-only mutation boundary.",
+      "environment": "local Draft 2020-12, lifecycle policy and canonical state validation",
+      "duration_ms": 1500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0030.json",
+        "evidence/states/program-state-revision-0031.json",
+        "program-state.json",
+        "lifecycle-policy.json"
+      ]
+    },
+    {
+      "check_id": "IMMUTABLE-HISTORY-PRESERVED",
+      "method": "Require TR-0023 through TR-0025, state revisions 1 through 26, both correction schema copies and the frozen correction profile to remain byte-identical to the approved subject before implementation begins.",
+      "environment": "read-only Git object comparison against 88481d57",
+      "duration_ms": 1500,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/corrections/COR-EPP-F01-US1-COMMITTED-IDENTITY-001.json",
+        "../../../specs/076-control-plane-validator/contracts/committed-identity-correction.schema.json",
+        "schemas/committed-identity-correction.schema.json"
+      ]
+    },
+    {
+      "check_id": "EXCLUDED-AUTHORITY-PRESERVED",
+      "method": "Confirm EPP-F01B, dependencies, benchmark generation/execution, product runtime, network or external mutation, push, PR, merge, dev integration, publication and release remain unauthorized.",
+      "environment": "exact human approval, lease and local diff audit",
+      "duration_ms": 300,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "program-state.json",
+        "../../../specs/076-control-plane-validator/plan.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-004.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-004.json"
+    ],
+    "subject": {
+      "git_commit": "88481d57f1258f59f303f507eafc4e352569bc11",
+      "git_tree": "17ebad227dd02f6b94fa99c006ea360c141a8cae",
+      "program_tree": "a4fbe48595a52ffe6af408067bf4b1d63c660921",
+      "artifact_count": 38,
+      "manifest_transition": "TR-0027"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": "EPP-F01-US1-COMMITTED-IDENTITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [],
+  "rollback_subject": "evidence/states/program-state-revision-0030.json",
+  "next_action": "EXECUTE_EPP_F01_TASKS"
+}
