@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** IMPLEMENTATION AUTHORIZED for local T077–T080 only under bounded lease revision 13. The exact V9 approval bundle accepts DEC-P0-020 and covers only the schema-reference failure in immutable `EPP-F01-V8-discovery.json` and the complete-but-self-last TR-0051 changed-path manifest. T073–T076 and every other excluded action remain unauthorized.
+**Status:** BLOCKED at the completed V9 verification checkpoint with no mutating lease. T077–T080 passed bounded independent verification for only the immutable discovery-schema and TR-0051 manifest-order findings. T073–T076 and every other excluded action remain unauthorized; the sole next action is human selection and exact approval of any new bounded lease.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -36,6 +36,7 @@ Start here, then read only the artifacts needed for the next action:
 22. [`evidence/verification/EPP-F01-US3.json`](evidence/verification/EPP-F01-US3.json) — bounded failure, redaction, atomicity, immutability, and delivery-envelope verification through T049.
 23. [`evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json`](evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json), [`schemas/preflight-evidence-correction.schema.json`](schemas/preflight-evidence-correction.schema.json), [`schemas/v8-discovery-evidence.schema.json`](schemas/v8-discovery-evidence.schema.json), [`decisions/0020-closed-v9-preflight-evidence-correction.md`](decisions/0020-closed-v9-preflight-evidence-correction.md), and [`audits/2026-08-28-epp-f01-v9-preflight-audits.md`](audits/2026-08-28-epp-f01-v9-preflight-audits.md) — exact V9 two-claim plan, proof boundary, exclusions, and independent review.
 24. [`evidence/approvals/APR-EPP-F01-MC-009.json`](evidence/approvals/APR-EPP-F01-MC-009.json), [`evidence/approvals/APR-EPP-F01-IMPL-009.json`](evidence/approvals/APR-EPP-F01-IMPL-009.json), and [`evidence/transitions/TR-0054.json`](evidence/transitions/TR-0054.json) — exact V9 approval, DEC-P0-020 acceptance, and bounded lease revision 13.
+25. [`evidence/verification/EPP-F01-V9.json`](evidence/verification/EPP-F01-V9.json) and [`evidence/transitions/TR-0055.json`](evidence/transitions/TR-0055.json) — exact terminal implementation subject, 21-test matrix, non-interference proof, known exclusions, independent verifier, and closed lease checkpoint.
 
 Local recovery note: `stash@{0}` currently resolves to `bf05abcc37236d030fbcd08830a9d065703b9a46`, based on `9f30322859e8039863b47cdcb0e4c8f29354c9dc`, and contains only 286 added lines in `tests/program_control_plane/test_transition_chain.py`. It is incomplete, non-authoritative T073 work, excluded from V9, and not recoverable from a fresh clone. Its absence does not block V9 and never permits recreation or application without later T073 authority.
 
@@ -66,4 +67,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Execute T077 test-first, then T078, T079, and T080 in order under lease revision 13. Stop after the T080 verification checkpoint. Do not resume T073–T076, apply the preserved T073 stash, repair the roadmap-policy defect, execute T066–T068, implement EPP-F01B, add dependencies, generate or execute benchmarks, make external changes, push/open/merge/integrate, publish, or release without later explicit authority.
+Select and approve the next bounded EPP-F01 action, if any. V9 authority is consumed and cannot be replayed. Do not resume T073–T076, apply the preserved T073 stash, repair the roadmap-policy defect, execute T066–T068, implement EPP-F01B, add dependencies, generate or execute benchmarks, make external changes, push/open/merge/integrate, publish, or release without later explicit authority.

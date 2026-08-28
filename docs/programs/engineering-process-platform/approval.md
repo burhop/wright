@@ -2,9 +2,9 @@
 
 ## Current V9 EPP-F01 decision
 
-**Approved with conditions.** [`APR-EPP-F01-MC-009`](evidence/approvals/APR-EPP-F01-MC-009.json) and [`APR-EPP-F01-IMPL-009`](evidence/approvals/APR-EPP-F01-IMPL-009.json) bind commit `d96e8b68c9fda08eea84065186452581727ec4fa`, tree `d16d81afaabac73e4374ecb186089cb0a95dd1bc`, program tree `ee2fbf3b1a15920701289a083431f0afd41ed4ec`, and all 31 TR-0053 artifact digests. They accept DEC-P0-020 and authorize only local T077–T080 under lease revision 13.
+**Completed and consumed.** [`APR-EPP-F01-MC-009`](evidence/approvals/APR-EPP-F01-MC-009.json) and [`APR-EPP-F01-IMPL-009`](evidence/approvals/APR-EPP-F01-IMPL-009.json) bind commit `d96e8b68c9fda08eea84065186452581727ec4fa`, tree `d16d81afaabac73e4374ecb186089cb0a95dd1bc`, program tree `ee2fbf3b1a15920701289a083431f0afd41ed4ec`, and all 31 TR-0053 artifact digests. T077–T080 completed under lease revision 13 and passed the independent evidence recorded in `EPP-F01-V9.json`. The approval cannot be replayed for later work.
 
-The V9 lease is limited to local T077–T080 and exactly two claims in `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001`: the exact external-schema binding for immutable `EPP-F01-V8-discovery.json`, and the exact TR-0051 complete-set/self-path-order disposition. It cannot resume T073–T076, apply stashed T073 work, repair roadmap policy, execute T066–T068, implement EPP-F01B, add dependencies, run benchmarks, make external changes, push/open/merge/integrate, publish, or release.
+The consumed V9 lease was limited to local T077–T080 and exactly two claims in `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001`: the exact external-schema binding for immutable `EPP-F01-V8-discovery.json`, and the exact TR-0051 complete-set/self-path-order disposition. It never authorized T073–T076, stashed T073 work, roadmap-policy repair, T066–T068, EPP-F01B, dependencies, benchmarks, external changes, push/open/merge/integration, publication, or release.
 
 ## Historical V8 EPP-F01 decision — interrupted
 
