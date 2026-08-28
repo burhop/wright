@@ -1,6 +1,6 @@
 # DEC-P0-019 — Closed EPP-F01 T072 checkpoint-evidence correction
 
-**Status:** Proposed; exact V8 human approval required.
+**Status:** Decided; exact V8 subject approved on 2026-08-28.
 
 ## Decision
 

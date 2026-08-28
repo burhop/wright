@@ -1,12 +1,12 @@
 # Human Program-Plan Approval Gate
 
-## Current V8 approval gate
+## Current V8 EPP-F01 decision
 
-No V8 approval exists yet. The exact subject frozen through TR-0051 must receive two separate same-subject records: `APR-EPP-F01-MC-008` with scope `material_change`, and `APR-EPP-F01-IMPL-008` with scope `feature_implementation`. Both must accept DEC-P0-019, bind `COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001`, the final catalog binding, both walkthrough causes, and every TR-0051 output digest.
+**Approved with conditions.** [`APR-EPP-F01-MC-008`](evidence/approvals/APR-EPP-F01-MC-008.json) and [`APR-EPP-F01-IMPL-008`](evidence/approvals/APR-EPP-F01-IMPL-008.json) bind commit `c12eb00308cb72d96977846c4ae876dc0baa7e7e`, tree `7323b292d279fde752004bc744a2db850ab670d0`, program tree `18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b`, and all 34 TR-0051 digests. They accept DEC-P0-019 and authorize the exact V8 six-target boundary.
 
-If approved, the lease is limited to local T073–T076. It does not authorize T066; the separately recorded roadmap-policy inversion test requires separate disposition. It also excludes T067–T068, product/EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release. Older V7 approval remains historical for T070–T071 and cannot be replayed.
+Lease revision 12 is limited to local T073–T076. It does not authorize T066; the separately recorded roadmap-policy inversion test requires separate disposition. It also excludes T067–T068, product/EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release. Older V7 approval remains historical for T070–T071 and cannot be replayed.
 
-The exact approval sentence is generated only after the planning commit/tree/program tree and TR-0051 manifest are final. Approval records are append-only after the human supplies that exact sentence; they are not pre-created in this planning subject.
+The approval records are append-only and reference the previously frozen subject, avoiding self-reference.
 
 ## Current decision
 

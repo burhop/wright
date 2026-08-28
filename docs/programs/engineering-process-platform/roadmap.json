@@ -26,7 +26,7 @@
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
       "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP; dispose only the four independently closed historical correction profiles, including V8's exact three T072 checkpoint claims, without rewriting history or changing readiness/authority; bind gate evidence to the final catalog; and generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
-      "status": "blocked",
+      "status": "active",
       "depends_on": [
         "EPP-P00"
       ],

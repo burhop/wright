@@ -554,14 +554,14 @@
     {
       "id": "DEC-P0-019",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "May EPP-F01 disposition exactly the two TR-0047 output-digest claims and TR-0050 event-domain claim, then repair only the final catalog binding and two walkthrough causes under a closed V8 lease?",
       "why_material": "A generic digest or event exception would weaken immutable evidence; conflating current-source repairs with historical claims could silently widen authority or readiness.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due": {
         "before_event": "EPP-F01 T073 through T076",
         "due_at": null,
-        "last_reviewed_at": "2026-08-28T01:30:00Z"
+        "last_reviewed_at": "2026-08-28T01:44:40Z"
       },
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
       "options": [
