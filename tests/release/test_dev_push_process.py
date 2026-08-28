@@ -88,6 +88,10 @@ def test_program_control_changes_route_through_focused_quality_gates() -> None:
     focused = "python -m pytest -q tests/program_control_plane"
     for gate in (merge, linux, windows):
         assert focused in gate
+    for workflow in (linux, windows):
+        assert "fetch-depth: 0" in workflow
+        assert "--ignore=tests/program_control_plane" in workflow
+        assert "--ignore=tests/native_runtime" in workflow
     for gate in (push, merge, linux):
         assert "scripts/program_control" in gate
         assert "tests/program_control_plane" in gate
