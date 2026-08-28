@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T066 passed independent replacement-candidate verification with 257 tests passing and one declared Windows symlink skip; deterministic dashboard delivery T067 is next.
+**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T066 passed independent raw-identity replacement-candidate verification at `87360afe` with 258 tests passing and one declared Windows symlink skip; deterministic dashboard delivery T067 is next.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
