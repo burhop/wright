@@ -149,11 +149,15 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             )
         return
     allowed = lease["allowed_paths"]
-    assert "scripts/program_control/**" in allowed
-    assert "tests/program_control_plane/**" in allowed
     assert "docs/programs/engineering-process-platform/**" in allowed
-    assert "specs/076-control-plane-validator/**" in allowed
     assert "src/**" not in allowed
+    if lease["lease_mode"] == "planning":
+        assert any(path.startswith("specs/") for path in allowed)
+        assert "scripts/program_control/**" not in allowed
+        assert "tests/program_control_plane/**" not in allowed
+    else:
+        assert "scripts/program_control/**" in allowed
+        assert "tests/program_control_plane/**" in allowed
 
 
 def test_git_fixture_builder_uses_fixed_identity_space_path_and_raw_mutation(

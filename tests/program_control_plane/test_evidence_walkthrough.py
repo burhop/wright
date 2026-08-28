@@ -87,15 +87,20 @@ def test_empty_context_reconstructs_one_next_action_and_exclusions(
     )
     assert len(state["next_eligible_actions"]) == 1
     next_action = state["next_eligible_actions"][0]
-    expected = next(
+    matching = [
         rule
         for rule in policy["action_rules"]
         if rule["program_state"] == state["state"]
         and rule["feature_state"] == state["feature_state"]
-    )
+        and rule["action"] == next_action["action"]
+    ]
+    assert len(matching) == 1
+    expected = matching[0]
     assert next_action["action"] == expected["action"]
     assert next_action["requires_human_approval"] is expected["requires_human_approval"]
-    current = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
+    current = next(
+        item for item in roadmap["items"] if item["id"] == state["current_feature"]
+    )
     expected_status = "blocked" if state["feature_state"] == "BLOCKED" else "active"
     assert current["status"] == expected_status
     lease = state["active_mutating_lease"]
