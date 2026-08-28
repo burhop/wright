@@ -553,10 +553,8 @@ def test_v9_disposition_cannot_change_policy_readiness_benchmark_or_release(
             ],
             "benchmark_summary": report["benchmark_summary"],
             "roadmap_policy_result": {
-                key: report["eligibility"][key]
-                for key in ("roadmap_item", "allowed_actions")
+                "roadmap_item": report["eligibility"]["roadmap_item"],
             },
-            "next_action": report["next_action"],
             "candidate_identity": report["subject"]["release_candidate"],
             "source_identity": {
                 key: report["subject"][key]

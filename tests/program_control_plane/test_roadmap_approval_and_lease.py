@@ -252,9 +252,8 @@ def test_missing_decision_gate_and_risk_references_fail(repository_root: Path) -
 
 def test_next_action_human_flag_must_match_policy(repository_root: Path) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
-    documents[f"{PROGRAM_ROOT}/program-state.json"]["next_eligible_actions"][0][
-        "requires_human_approval"
-    ] = True
+    action = documents[f"{PROGRAM_ROOT}/program-state.json"]["next_eligible_actions"][0]
+    action["requires_human_approval"] = not action["requires_human_approval"]
     findings, _ = validate_roadmap_approval_and_lease(
         documents,
         PROGRAM_ROOT,
