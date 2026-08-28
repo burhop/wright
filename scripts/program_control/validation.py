@@ -2057,7 +2057,12 @@ def validate_preflight_evidence_correction(
         recorded_manifest = transition["git"]["changed_paths_manifest"]
         if not isinstance(recorded_manifest, list):
             raise ContractError("TR-0051 manifest is not a list")
-        container_paths = list(summaries[manifest_introducing]["paths"])
+        container_value = summaries[manifest_introducing].get("paths")
+        if not isinstance(container_value, list) or not all(
+            isinstance(path, str) for path in container_value
+        ):
+            raise ContractError("TR-0051 container path set is invalid")
+        container_paths = [str(path) for path in container_value]
         sorted_manifest = sorted(recorded_manifest)
         discovery_fact = target_facts[(introducing, PREFLIGHT_DISCOVERY_TARGET)]
         transition_fact = target_facts[
