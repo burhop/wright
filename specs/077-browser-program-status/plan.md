@@ -130,9 +130,9 @@ tests/
 ## Delivery and Compatibility Gates
 
 1. Publisher contract fixtures cover valid, empty, stale, corrupt, unsafe-link, raw/canonical identity mismatch, same-time causal ordering, concurrent read/replace, Windows replacement failure, and deterministic regeneration.
-2. Domain/API tests prove last-valid preservation, bounded reads, ETag/304 behavior, auth enforcement, and secret exclusion.
+2. Domain/API tests prove last-valid preservation, bounded reads, ETag/304 behavior, auth enforcement, and secret exclusion. Linux verification separately runs the EPP-F01B route tests and the named pre-existing surface auth baselines so an unrelated hang cannot conceal the new route's result.
 3. Component and UI-integration tests cover all five independently shippable stories, keyboard operation, text/non-color status, 200% zoom, narrow viewport, reduced motion, and chart fallbacks.
-4. Packaged runtime and native lifecycle tests prove `/program-status` works without `.git`, checkout, Git, or network; installed data survives upgrade/rollback/uninstall rules and invalid installed data never silently falls back. Atomic replacement and native lifecycle coverage run explicitly on Windows, Linux, and macOS CI.
+4. Packaged runtime and native lifecycle tests prove `/program-status` works without `.git`, checkout, Git, or network; installed data survives upgrade/rollback/uninstall rules and invalid installed data never silently falls back. Atomic replacement and native lifecycle coverage run explicitly on Windows, Linux, and macOS CI. The repeatable GB10 POSIX owned-listener baseline failure is tracked and classified independently; it may not be silently skipped or misattributed to EPP-F01B.
 5. Existing workspace routes and `DashboardPage` remain behaviorally compatible.
 6. Program-control validator, targeted tests, normal repository checks, `check-dev-push`, PR CI, `check-dev-merge`, and dev deployment verification must pass in sequence after implementation authority exists.
 7. Rollback is one code revert plus restoration of the prior immutable `current.json`; an invalid new bundle must already fail closed to the previous valid view.

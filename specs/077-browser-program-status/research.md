@@ -83,3 +83,16 @@
 - No calendar-duration estimate is a progress metric.
 - GitHub URLs and CI fields appear only when present in validated evidence.
 - EPP-F01B never edits program state or launches benchmarks, tools, builds, pushes, or releases.
+
+## Linux implementation-readiness baseline
+
+A bounded read-only GB10 pass on clean `origin/dev` commit `b776b1182d5b6ee41364eb40b1bc95bf4eff797c` is preparatory evidence, not an EPP-F01B plan or implementation verdict. It confirmed the intended thin-router, composed-service, authenticated top-level route, existing Plotly fallback, package-data, and program-control seams. Baseline results were:
+
+- `tests/program_control_plane`: 261 passed;
+- focused `workspace_service` surface state/security/composition/event slices: 37 passed;
+- focused `tool_registry` gateway/provider slices: 25 passed;
+- six frontend Plotly/safe-renderer/store/browser-adapter files: 39 passed;
+- focused native/package slice: 18 passed, 1 skipped, and 1 repeatable failure in POSIX owned-listener detection; and
+- three existing FastAPI surface test groups exceeded bounded Linux caps at named actor/token/scope cases.
+
+The listener failure and API-test hangs are pre-existing baseline risks, not evidence that EPP-F01B caused a regression. Implementation verification must run the EPP-F01B-specific route/service tests independently of those surface groups, rerun the named Linux baselines, and classify any persistence before claiming cross-platform readiness. No implementation may silently weaken or skip those checks merely to make the feature green.
