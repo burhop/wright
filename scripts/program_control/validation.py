@@ -774,6 +774,10 @@ REV58_TRANSITION_SHA = (
     "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"
 )
 REV58_TRANSITION_BLOB = "1cce6965efe08a44ac9b8a1f4bf24b9b15cab885"
+REV58_DIGEST_TARGET = (
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json",
+    "/outputs/0/sha256",
+)
 
 
 def _prefetch_closed_correction_blobs(
@@ -2757,7 +2761,7 @@ def _validate_transition_history(
         )
         corrected_input_targets = frozenset()
     if not corrected_digest_targets.issubset(
-        {REPAIR_DIGEST_TARGET, *CHECKPOINT_DIGEST_TARGETS}
+        {REPAIR_DIGEST_TARGET, *CHECKPOINT_DIGEST_TARGETS, REV58_DIGEST_TARGET}
     ):
         findings.append(
             _finding(
