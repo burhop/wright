@@ -3002,6 +3002,68 @@ def validate_rev58_raw_identity_repair(
         transition = strict_loads(after_transition)
         before_state = strict_loads(before_archive)
         after_state = strict_loads(after_archive)
+        current_state = strict_loads(after_current)
+        current_revision = int(current_state.get("revision", -1))
+        current_pointer_valid = after_archive == after_current
+        if current_revision > 58:
+            chain_valid = True
+            successor_requests: list[tuple[str, str]] = []
+            for revision in range(59, current_revision + 1):
+                successor_requests.extend(
+                    [
+                        (
+                            current,
+                            f"{program_root}/evidence/states/"
+                            f"program-state-revision-{revision:04d}.json",
+                        ),
+                        (
+                            current,
+                            f"{program_root}/evidence/transitions/"
+                            f"TR-{revision - 1:04d}.json",
+                        ),
+                    ]
+                )
+            successor_blobs = reader.read_blob_requests(successor_requests)
+            successor_states: dict[int, Mapping[str, Any]] = {58: after_state}
+            for revision in range(59, current_revision + 1):
+                state_key = (
+                    current,
+                    f"{program_root}/evidence/states/"
+                    f"program-state-revision-{revision:04d}.json",
+                )
+                transition_key = (
+                    current,
+                    f"{program_root}/evidence/transitions/TR-{revision - 1:04d}.json",
+                )
+                successor_state = strict_loads(successor_blobs[state_key])
+                successor_transition = strict_loads(successor_blobs[transition_key])
+                prior_state = successor_states[revision - 1]
+                chain_valid = chain_valid and all(
+                    (
+                        successor_state.get("schema_version") == "2.0",
+                        successor_state.get("program_id") == "EPP-2026",
+                        successor_state.get("revision") == revision,
+                        successor_transition.get("transition_id")
+                        == f"TR-{revision - 1:04d}",
+                        successor_transition.get("prior_revision") == revision - 1,
+                        successor_transition.get("new_revision") == revision,
+                        successor_transition.get("prior_state_digest")
+                        == canonical_digest(prior_state),
+                        successor_transition.get("new_state_digest")
+                        == canonical_digest(successor_state),
+                    )
+                )
+                if not chain_valid:
+                    break
+                successor_states[revision] = successor_state
+            current_archive_key = (
+                current,
+                f"{program_root}/evidence/states/"
+                f"program-state-revision-{current_revision:04d}.json",
+            )
+            current_pointer_valid = (
+                chain_valid and after_current == successor_blobs[current_archive_key]
+            )
         valid = valid and all(
             (
                 sha256_bytes(before_archive) == REV58_ARCHIVE_SHA_BEFORE,
@@ -3016,7 +3078,7 @@ def validate_rev58_raw_identity_repair(
                 == REV58_ARCHIVE_SHA_BEFORE,
                 sha256_bytes(after_archive) == REV58_ARCHIVE_SHA_AFTER,
                 object_ids[(current, archive_path)] == REV58_ARCHIVE_BLOB_AFTER,
-                after_archive == after_current,
+                current_pointer_valid,
                 before_state == after_state,
                 canonical_digest(before_state) == canonical_digest(after_state),
                 after_state.get("revision") == 58,
