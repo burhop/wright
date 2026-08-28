@@ -10,6 +10,7 @@ from jsonschema.validators import validator_for
 
 
 CONTRACT_NAMES = (
+    "checkpoint-evidence-correction.schema.json",
     "committed-identity-correction.schema.json",
     "transition-input-correction.schema.json",
     "dashboard.schema.json",
@@ -20,6 +21,28 @@ CONTRACT_NAMES = (
     "validation-report.schema.json",
     "verification-evidence.schema.json",
 )
+
+
+def test_v8_checkpoint_correction_is_closed_and_schema_valid(
+    repository_root: Path,
+) -> None:
+    schema = load(
+        repository_root
+        / "docs/programs/engineering-process-platform/schemas"
+        / "checkpoint-evidence-correction.schema.json"
+    )
+    profile = load(
+        repository_root
+        / "docs/programs/engineering-process-platform/evidence/corrections"
+        / "COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json"
+    )
+    validator_for(schema)(schema).validate(profile)
+    assert profile["expected_claim_count"] == 3
+    assert [claim["claim_id"] for claim in profile["claims"]] == [
+        "TR0047-README-OUTPUT-DIGEST-001",
+        "TR0047-APPROVAL-OUTPUT-DIGEST-001",
+        "TR0050-EVENT-RULE-001",
+    ]
 
 
 def load(path: Path) -> object:

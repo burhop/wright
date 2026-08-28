@@ -1,5 +1,9 @@
 # Independent Readiness Gates
 
+## V8 checkpoint-correction gate
+
+PROG-01 and PROG-05 remain non-passing until exact V8 approval and verification prove all three historical claims, final catalog binding, both walkthrough causes, and full non-interference. V8 cannot affect product, benchmark, or commercial readiness. A separately excluded roadmap-policy test question keeps candidate verification blocked after V8.
+
 ## Gate computation
 
 Each gate is `not_started`, `in_progress`, `passed`, `blocked`, `failed`, or `stale`. `skipped`, `partial`, `unsupported`, `unavailable`, and `not_tested` are evidence classifications, never passing statuses. A gate passes only when all required assertions point to current evidence for the exact candidate subject.

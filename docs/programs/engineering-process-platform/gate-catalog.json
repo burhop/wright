@@ -59,6 +59,11 @@
       "class_id": "REPAIR_EVIDENCE_CORRECTION",
       "schema_id": "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
       "source_role": "append_only_evidence"
+    },
+    {
+      "class_id": "CHECKPOINT_EVIDENCE_CORRECTION",
+      "schema_id": "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
+      "source_role": "append_only_evidence"
     }
   ],
   "gates": [
@@ -816,7 +821,8 @@
           "TRANSITION_RECORD",
           "CONTROL_IDENTITY_CORRECTION",
           "TRANSITION_INPUT_CORRECTION",
-          "REPAIR_EVIDENCE_CORRECTION"
+          "REPAIR_EVIDENCE_CORRECTION",
+          "CHECKPOINT_EVIDENCE_CORRECTION"
         ],
         "independent_verifier_required": true
       }
@@ -927,7 +933,8 @@
           "TRANSITION_RECORD",
           "CONTROL_IDENTITY_CORRECTION",
           "TRANSITION_INPUT_CORRECTION",
-          "REPAIR_EVIDENCE_CORRECTION"
+          "REPAIR_EVIDENCE_CORRECTION",
+          "CHECKPOINT_EVIDENCE_CORRECTION"
         ],
         "independent_verifier_required": false
       }

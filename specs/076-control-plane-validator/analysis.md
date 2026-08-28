@@ -1,49 +1,29 @@
-# Specification Analysis Report: EPP-F01 V7 Repair-Evidence Amendment
+# Specification Analysis Report: EPP-F01 V8 Checkpoint Amendment
 
-**Analysis method**: `speckit-analyze` non-destructive consistency, ambiguity, coverage, and constitution review after the closed two-claim repair-evidence amendment
+**Method:** non-destructive Spec Kit consistency, ambiguity, coverage, constitution, and four-lens omission analysis.
 
-**Subject**: planning-only candidate; implementation remains blocked before T070–T072 and any T066 retry
+**Result:** PASS for planning scope after disposition. Implementation remains blocked at the new exact V8 approval gate; T066 remains separately blocked.
 
-**Result**: **PASS after planning repair and independent review** — complete requirement-to-task coverage, no constitution conflict, and all bounded audit findings dispositioned; only exact Git subject freeze and human approval remain
+## Closed scope and coverage
 
-## Inputs and authority
+| Requirement | Tasks | Evidence |
+|---|---|---|
+| FR-028 exact three historical claims | T073–T074 | closed schema/profile; Git-object identities |
+| final catalog/evidence rebind | T073, T075–T076 | exact pointer-only diff and 34-row equality |
+| two walkthrough causes | T073–T076 | three affected walkthrough tests; rooted negative fixtures |
+| SC-014 non-interference | T076 | four areas, honest 0/100, synthetic fixture, candidate/approval/delivery/release/dashboard equality |
 
-- Feature artifacts: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, `tasks.md`, both checklists, and all contracts.
-- Program artifacts: current state/history through revision 47/TR-0046, prior approvals and corrections, the proposed repair-evidence correction/schema, DEC-P0-018, RISK-020, roadmap, lifecycle policy, README, and approval boundary.
-- Constitution: `.specify/memory/constitution.md` version 3.0.0.
-- Authority is planning and re-analysis only. No validator implementation, product code, dependency, benchmark, EPP-F01B implementation, external change, push/PR/merge/integration, publication, or release is permitted.
+All 76 task identifiers are unique and append-only. T070–T071 remain complete, T072 remains incomplete/blocked, and T073–T076 are unchecked and approval-gated.
 
-## Material findings and dispositions
+## Audit dispositions
 
-| ID | Severity | Finding | Planning disposition |
-|---|---|---|---|
-| V7-ARC-01 | High | No exact entity constrained the two defects, so a repair could become a generic historical-evidence waiver. | Add one closed schema/profile with exactly two ordered claims, exact Git identities, explicit forbidden targets, and `accept_new_records=false`. |
-| V7-TEST-01 | High | The existing plan had no complete negative matrix for omissions, additions, substitutions, pointer/origin/digest drift, current targets, or missing authority. | Add FR-027/SC-013 and test-first T070 covering every enumerated fail-closed class. |
-| V7-DEP-01 | High | The roadmap/tasks did not place correction work before a T066 retry. | Add approval-gated T070–T072 and make a T066 retry depend on a passing replacement freeze. |
-| V7-GOV-01 | High | No dedicated P0 decision/risk bounded repair-evidence disposition. | Add DEC-P0-018/ADR 0018 and RISK-020; block EPP-F01 and PROG-01/PROG-05. |
-| V7-STATE-01 | High | Current control-plane prose implied active implementation although exact validation is blocked. | Add revision 47/TR-0046: no lease, `BLOCKED`, and sole next action exact V7 human approval. |
+- Engineering usability: replace stale V7/T057 catch-up prose with current BLOCKED/no-lease/V8 approval truth; document raw Git-blob hashing.
+- Architecture: keep exactly three immutable claims, use `repair` only for TR-0050, add no generic event rule, bind the final catalog digest, and retain rooted negative fixtures.
+- Commercial/release: prove all 34 rows and release fields unchanged; keep dashboard candidate-only and every external/integration/release action excluded.
+- Benchmark quality: prove current honest 0/100 and isolated synthetic projection equality; create or execute no benchmark.
 
-## Coverage
+## Explicit unresolved P0 question
 
-| Requirement group | Coverage | Principal tasks |
-|---|---:|---|
-| FR-001–FR-026 | Preserved | T001–T069 |
-| FR-027: exact two-claim repair-evidence correction | 1/1 | T070–T072 |
-| SC-001–SC-012 | Preserved | Existing story and verification tasks |
-| SC-013: exact claims/occurrences, digest provenance, and projection equality | 1/1 | T070, T072 |
+`tests/program_control_plane/test_roadmap_approval_and_lease.py::test_next_action_human_flag_must_match_policy` is a separate test-only inversion defect. It is outside the authorized historical claims, catalog rebind, and two walkthrough causes. V8 may not change it. T066 cannot resume until the user separately dispositions it and all required regression is green.
 
-The task plan contains 72 unique append-only identifiers. No completed task is redefined. T070 establishes the failing contract matrix, T071 owns the smallest implementation surface, and T072 owns non-interference/regression/re-freeze evidence. All three remain unchecked and unauthorized.
-
-## Consistency conclusions
-
-- The profile names exactly two claims: one covering two exact historical cause-ID pointers and one covering one exact TR-0044 digest pointer.
-- Every immutable target is bound to path, raw SHA-256, Git blob, introducing commit/tree, pointer, recorded value, and authoritative value; state targets also bind canonical state digest.
-- Original bytes and findings remain visible. The profile cannot mutate current state, create a record, reactivate a lease, validate the failed candidate, or affect lifecycle, authority, readiness, benchmark, candidate, delivery, or release results.
-- DEC-P0-018 and exact same-subject V7 `material_change` plus `feature_implementation` approvals are prerequisites to T070–T072 and a later T066 retry.
-- EPP-F01B stays dependency-ordered after EPP-F01 and remains implementation-blocked.
-
-## Constitution and next action
-
-The amendment preserves exact committed evidence, append-only correction semantics, test-first delivery, independent verification, bounded repair, explicit human authority, offline/local operation, compatibility, and rollback. No constitution exception is requested.
-
-Freeze the exact commit/tree/program tree and TR-0046 artifact digests, then stop for separate same-subject V7 `material_change` and `feature_implementation` approval. Do not execute T070–T072 or retry T066.
+No clarification question was required for the six-target V8 boundary. No constitution exception, dependency, product/EPP-F01B implementation, benchmark execution, external mutation, push/PR/merge/integration, publication, or release is authorized.

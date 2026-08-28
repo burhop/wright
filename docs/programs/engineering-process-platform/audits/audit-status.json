@@ -11,7 +11,7 @@
       "status": "passed",
       "finding_ids": ["EU-P0-01", "EU-P0-02", "EU-P0-03", "EU-P0-04", "EU-P0-05", "EU-P0-06", "EU-P0-07", "EU-P0-08", "EU-P0-09", "EU-P0-10", "EU-P0-11", "EU-P0-12", "EPPF01-COR-EU-01", "EPPF01-COR-EU-02", "EPPF01-COR-EU-03", "V5-EU-01", "V5-EU-02", "V5-EU-03"],
       "disposition_evidence": ["README.md", "coordinator-state-machine.md", "prototype-lesson-dispositions.json", "agent-operating-contract.md", "benchmark-strategy.md", "approval.md", "audits/2026-08-27-epp-f01-committed-identity-repair-audits.md", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "specs/076-control-plane-validator/analysis.md", "specs/076-control-plane-validator/tasks.md"],
-      "final_review": "PASS after TR-0034, V5 catch-up guidance and the T024-T041/T041-review boundary made the one-claim correction and sole next action reconstructable from empty context."
+      "final_review": "PASS for V8 planning after catch-up shows BLOCKED/no lease, raw Git-blob hashing is repeatable, all three walkthrough failures are mapped to two causes, and T073-T076 are explicit."
     },
     {
       "id": "AUD-02",
@@ -21,7 +21,7 @@
       "status": "passed",
       "finding_ids": ["ARC-P0-01", "ARC-P0-02", "ARC-P0-03", "ARC-P0-04", "ARC-P0-05", "ARC-P0-06", "ARC-P0-07", "ARC-P0-08", "ARC-P0-09", "ARC-P0-10", "ARC-P0-11", "ARC-P0-12", "EPPF01-COR-ARC-01", "EPPF01-COR-ARC-02", "EPPF01-COR-ARC-03", "V5-ARC-01", "V5-ARC-02", "V5-ARC-03", "V5-ARC-04", "V5-ARC-05"],
       "disposition_evidence": ["coordinator-state-machine.md", "lifecycle-policy.json", "gate-catalog.json", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "schemas/transition-input-correction.schema.json", "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json", "specs/076-control-plane-validator/contracts/transition-input-correction.schema.json", "specs/076-control-plane-validator/tasks.md"],
-      "final_review": "PASS after closing one pointer to exact Git identities, adding append-only TR-0034, removing the competing action, registering a distinct gate class and assigning automated schema closure to pending T024."
+      "final_review": "PASS for V8 planning after closing exactly three claims, binding TR-0050 only to repair domain, forbidding policy widening, registering a distinct gate class, and requiring the final staged catalog digest."
     },
     {
       "id": "AUD-03",
@@ -31,7 +31,7 @@
       "status": "passed",
       "finding_ids": ["CR-P0-01", "CR-P0-02", "CR-P0-03", "CR-P0-04", "CR-P0-05", "CR-P0-06", "CR-P0-07", "EPPF01-COR-CR-01", "EPPF01-COR-CR-02", "EPPF01-COR-CR-03", "V5-CR-01", "V5-CR-02", "V5-CR-03"],
       "disposition_evidence": ["approval.md", "gates.md", "decision-register.json", "integration-release.md", "status-dashboard-contract.md", "risk-register.json", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "decisions/0017-closed-tr0027-input-origin-correction.md", "evidence/transitions/TR-0034.json"],
-      "final_review": "PASS after subject-binding the V5 audit/transition, making V4 stale beyond T069, preserving no-lease blocked state, exact APR-*005 authority, four-area independence and fail-closed rollback."
+      "final_review": "PASS for V8 planning after preserving all 34 gate rows, readiness, candidate, approval, delivery, release and dashboard bytes; T066 and all external/release actions remain excluded."
     },
     {
       "id": "AUD-04",
@@ -41,9 +41,11 @@
       "status": "passed",
       "finding_ids": ["BQ-P0-01", "BQ-P0-02", "BQ-P0-03", "BQ-P0-04", "BQ-P0-05", "BQ-P0-06", "BQ-P0-07", "BQ-P0-08", "BQ-P0-09", "EPPF01-COR-BQ-01", "EPPF01-COR-BQ-02", "EPPF01-COR-BQ-03", "V5-BQ-01"],
       "disposition_evidence": ["benchmark-strategy.md", "benchmark-coverage.json", "status-dashboard-contract.md", "audits/2026-08-27-epp-f01-tr0027-input-origin-audits.md", "evidence/corrections/COR-EPP-F01-US1-TR0027-INPUT-ORIGIN-001.json", "specs/076-control-plane-validator/spec.md", "specs/076-control-plane-validator/plan.md", "specs/076-control-plane-validator/tasks.md"],
-      "final_review": "PASS after requiring complete correction-off/on equality for both honest 0/100 and non-empty synthetic benchmark projections while benchmark execution remains unauthorized."
+      "final_review": "PASS for V8 planning after requiring honest 0/100 and isolated non-empty synthetic equality, final-rebind comparison, and explicit stop on any benchmark case, evidence, counter or execution change."
     }
   ],
   "all_required_audits_passed": true,
-  "material_unresolved_findings": []
+  "material_unresolved_findings": [
+    "V8-P0-EXCLUDED-001: test_next_action_human_flag_must_match_policy is a separate test-only inversion defect outside V8; T066 requires separate human disposition."
+  ]
 }

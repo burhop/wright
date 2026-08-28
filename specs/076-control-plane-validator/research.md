@@ -199,4 +199,16 @@ No audit recommended product implementation, benchmark generation/execution, dep
 
 **Compatibility and recovery**: Unsupported readers fail closed. An omitted, added, substituted, relocated, current-state, wildcard, future, or correction-of-correction target leaves validation blocked. Rollback removes only the new disposition behavior; immutable source evidence remains unchanged.
 
-`DEC-P0-018` is the sole open material question: whether to accept this exact two-claim append-only disposition and its strict non-interference semantics. T070–T072 and any retry of T066 remain **implementation-blocking until the human approves a newly frozen V7 same-subject `material_change` and `feature_implementation` bundle**. Planning, read-only analysis, and bounded audits may continue; no product, EPP-F01B, dependency, benchmark, external, integration, publication, or release work is authorized.
+`DEC-P0-018` was accepted by exact V7 approval. T070–T071 completed and T072 failed closed; V7 is now historical and non-replayable. DEC-P0-019 and the separate roadmap-policy inversion test are the current visible P0 matters.
+
+## R-019 — Closed T072 checkpoint-evidence correction (proposed DEC-P0-019)
+
+**Evidence**: At committed subject `0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2`, validation has four fatal rows: two TR-0047 output-digest mismatches, one TR-0050 event-rule mismatch, and the gate-evidence/catalog binding mismatch. The walkthrough module has three failing tests but only two stable causes: stale fixed catch-up/state expectations, and non-resolving finding artifact labels. These are six authorized targets in total. A separate roadmap-policy inversion test also fails and is outside that boundary.
+
+**Decision requiring exact V8 approval**: Admit only `COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001` and its ordered `3/3` claims. TR-0047 claims bind exact Git blob bytes; the recorded values are Windows checkout/CRLF hashes and are never accepted as committed identity. The TR-0050 claim changes only historical disposition of `/state_domain` from recorded `feature` to authoritative `repair`, with fixed event kind/states/revisions/identities and exact required-evidence mapping. Do not add a generic lifecycle rule.
+
+The final gate catalog adds one closed V8 correction evidence class; `gate-evidence.json#/catalog_digest` is then rebound once to that final committed catalog blob. All 34 assertion rows and every other field remain equal. Walkthrough repairs derive current BLOCKED/human/no-lease truth and use repository-relative finding paths; isolated negative fixtures prevent vacuous link coverage.
+
+**Benchmark and release non-interference**: Correction-off/on and pre/post-rebind comparisons cover all four complete areas; honest `counted=0,target=100,not_tested=100`; the existing isolated non-empty synthetic fixture; all BENCH rows, deficits and freshness; candidate, approval, roadmap, dashboard bytes, delivery and release eligibility. Synthetic fixtures are local test inputs, not governed cases or benchmark execution.
+
+**Remaining P0 question**: `test_next_action_human_flag_must_match_policy` hard-sets the current policy value instead of its opposite. It is not one of the two walkthrough causes and cannot be changed under V8. Record it, keep T066 blocked, and request separate disposition after V8 if it remains failing.

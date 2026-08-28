@@ -121,8 +121,8 @@
 - [x] CHK072 Does each target bind exact path, raw SHA-256, Git blob, introducing commit/tree, pointer, recorded value, authoritative value, and canonical state digest where applicable? [Evidence, Data Model §RepairEvidenceCorrection]
 - [x] CHK073 Are omissions, additions, substitutions, reordered/relocated targets, wrong identities/origins/digests, current/future records, correction-of-correction, and missing V7 authority all required to fail closed? [Coverage, Tasks T070]
 - [x] CHK074 Must the original bytes and findings remain visible while all lifecycle, state, lease, authority, readiness, benchmark, candidate, delivery, and release outputs remain unchanged? [Safety, Spec §FR-027, §SC-013; Tasks T071–T072]
-- [x] CHK075 Are T070–T072 dependency-ordered before any T066 retry and explicitly unexecuted until exact same-subject V7 approvals bind DEC-P0-018 and the frozen profile digest? [Authority, Tasks §Current V7 repair gate]
-- [x] CHK076 Do the plan and gate preserve every exclusion: product and EPP-F01B implementation, dependencies, benchmarks, external changes, push/PR/merge/dev integration, publication, and release? [Scope, Plan §Delivery and Gate Impact; Tasks §Current V7 repair gate]
+- [x] CHK075 Did historical V7 preserve T070→T071→T072 ordering and stop when T072 failed before any T066 retry? [Historical authority, Tasks]
+- [x] CHK076 Does current V8 preserve every exclusion: T066–T068, product and EPP-F01B implementation, dependencies, benchmarks, external changes, push/PR/merge/dev integration, publication, and release? [Scope, Tasks §Current V8 repair gate]
 
 ## Notes
 
@@ -130,3 +130,14 @@
 - All 76 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the bounded two-claim repair-evidence amendment. No override was used.
 - This checklist evaluates written requirements. It does not claim that implementation or verification has occurred.
 - Material items in CHK071–CHK076 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.
+
+## DEC-P0-019 V8 Checkpoint-Correction Quality
+
+- [x] CHK077 Is the V8 historical target set exactly three ordered claims, with both TR-0047 pointers and only TR-0050's event-domain tuple?
+- [x] CHK078 Are raw Git blob bytes authoritative and checkout/CRLF hashes explicitly rejected?
+- [x] CHK079 Is TR-0050 bound to the existing repair event rule with required evidence and no generic policy widening?
+- [x] CHK080 Is catalog rebinding defined against the final catalog blob with every other gate-evidence field unchanged?
+- [x] CHK081 Do two walkthrough causes cover all three affected walkthrough tests and retain isolated rooted-path negatives?
+- [x] CHK082 Does non-interference cover all four areas, 34 rows, honest 0/100, isolated synthetic benchmark data, dashboard bytes, candidate, approval, delivery and release?
+- [x] CHK083 Is the separate roadmap-policy inversion failure visible, excluded from V8, and blocking T066?
+- [x] CHK084 Are T073–T076 approval-gated while product/EPP-F01B work, dependencies, benchmarks, external actions, integration, publication and release remain excluded?

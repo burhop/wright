@@ -1,5 +1,9 @@
 # Branching, Integration, Testing, Compatibility, Release, and Rollback
 
+## V8 non-authority
+
+Planning or implementing the closed V8 repair cannot authorize push, PR, merge, dev integration, publication, or release. It cannot refresh candidate/delivery evidence or make any readiness area green. T066 remains outside V8 and requires a separate disposition of the recorded roadmap-policy regression before an unchanged candidate can be independently verified.
+
 This contract incorporates Wright's current contributor and release runbooks. Those scripts/docs remain the source of truth; this file adds program-specific evidence requirements and never weakens them.
 
 ## Branch and worktree lifecycle

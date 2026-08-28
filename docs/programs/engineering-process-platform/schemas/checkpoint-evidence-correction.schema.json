@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
+  "title": "Closed EPP-F01 T072 Checkpoint Evidence Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "correction_id", "program_id", "feature_id", "stable_cause_id", "source_checkpoint", "accept_new_records", "expected_claim_count", "claims", "forbidden_target_classes", "resolution_semantics", "authority"],
+  "properties": {
+    "$schema": {"const": "../../schemas/checkpoint-evidence-correction.schema.json"},
+    "schema_version": {"const": "1.0"},
+    "correction_id": {"const": "COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001"},
+    "program_id": {"const": "EPP-2026"},
+    "feature_id": {"const": "EPP-F01"},
+    "stable_cause_id": {"const": "EPP-F01-T072-VERIFICATION-001"},
+    "source_checkpoint": {"const": {"git_commit":"0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2","git_tree":"ea473cfbab2802f4894ebf47b7c223cb5638e00b","program_tree":"6f4cafefc6eeea94ad2eadbf41a080b88b24bf4a"}},
+    "accept_new_records": {"const": false},
+    "expected_claim_count": {"const": 3},
+    "claims": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0047-README-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/0/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/README.md"},"artifact_git_blob":{"const":"aec0949d1ad30ffdb31c458a4eda362a60b033b6"},"recorded_value":{"const":"7f83080352b7c8051adee2c8164d38d609a492222ea257c1886d3930a67db37a"},"authoritative_value":{"const":"b7bb80aa3cb9c5c0e35941f01b2432b169f300a2f24e1d1eb78ba6bdd957c66a"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0047-APPROVAL-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/1/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/approval.md"},"artifact_git_blob":{"const":"0e8ea7a1bdf55da1ee6ef909db6f2a3f30384f4b"},"recorded_value":{"const":"1d7b8ebad81473255ae214a84e20bbef36c96f366c70f65441b430d635f352a5"},"authoritative_value":{"const":"dfc9a2700c668def57b337546205355f5c3c2646f58f8d371621e8783cb9d7c1"}}}]},
+        {"$ref": "#/$defs/eventClaim"}
+      ]
+    },
+    "forbidden_target_classes": {"const": ["any other state transition path or pointer","generic event rule or lifecycle policy exception","current operational state roadmap lease or task completion","approval content or authority","gate evidence readiness benchmark candidate delivery or release","correction record wildcard range future or correction-of-correction target"]},
+    "resolution_semantics": {"const": {"effect":"three_historical_checkpoint_findings_only","original_bytes_immutable":true,"original_findings_retained":true,"validator_recomputes_git_blob_bytes":true,"target_containers_are_strict_ancestors":true,"all_claims_required":true,"old_validator_fails_closed":true,"no_policy_broadening":true,"readiness_authority_benchmark_release_non_interference":true}},
+    "authority": {"const": {"required_scopes":["material_change","feature_implementation"],"proposed_approval_records":["docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-008.json","docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-008.json"],"planning_subject_transition":"TR-0051"}}
+  },
+  "$defs": {
+    "digestClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id","classification","transition_path","transition_raw_sha256","transition_git_blob","source_commit","source_tree","source_program_tree","introducing_commit","introducing_tree","introducing_program_tree","json_pointer","artifact_path","artifact_git_blob","recorded_value","authoritative_value"],
+      "properties": {
+        "claim_id": {"type":"string"},
+        "classification": {"const":"checkout_bytes_recorded_as_committed_digest"},
+        "transition_path": {"const":"docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json"},
+        "transition_raw_sha256": {"const":"18370590f454d1ee2144e0c5be1f8d260520884ae0b47acbf868f5b1d129bbde"},
+        "transition_git_blob": {"const":"ef21c141c51bf04e3354dd47023f9e4835c44d30"},
+        "source_commit": {"const":"a2b9727a15c445875b2ef857f482bee31ccc594c"},
+        "source_tree": {"const":"ee16d103c98c3d891d32c45b243a131dd0745527"},
+        "source_program_tree": {"const":"677f1ec8e895b6330941f8ab5afe92c5dadf980b"},
+        "introducing_commit": {"const":"826760ea995cea2f639f6e291e25659a7ccf56c5"},
+        "introducing_tree": {"const":"f660262655508a1893406f855982282327f88686"},
+        "introducing_program_tree": {"const":"47a25c39645f9df72ebb891304753c822aa41568"},
+        "json_pointer": {"type":"string"},
+        "artifact_path": {"type":"string"},
+        "artifact_git_blob": {"pattern":"^[a-f0-9]{40}$"},
+        "recorded_value": {"pattern":"^[a-f0-9]{64}$"},
+        "authoritative_value": {"pattern":"^[a-f0-9]{64}$"}
+      }
+    },
+    "eventClaim": {
+      "const": {
+        "claim_id":"TR0050-EVENT-RULE-001",
+        "classification":"event_domain_mismatch",
+        "transition_path":"docs/programs/engineering-process-platform/evidence/transitions/TR-0050.json",
+        "transition_raw_sha256":"f3a0d050b8b560f2d6caf9cdcb82c33ba8e1ba0ebd82b8a1c89ac865e85591c8",
+        "transition_git_blob":"ed9e798f71a132971a81210f69198977df10ff59",
+        "source_commit":"e39903c2f7400d433a3a51419824a94f0b217a1e",
+        "source_tree":"fd4d98acf2f27769eca4db750e23594332f3efd3",
+        "source_program_tree":"5a8a7af5093357c36531aa5fb3d5363dd3881858",
+        "introducing_commit":"0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2",
+        "introducing_tree":"ea473cfbab2802f4894ebf47b7c223cb5638e00b",
+        "introducing_program_tree":"6f4cafefc6eeea94ad2eadbf41a080b88b24bf4a",
+        "recorded_tuple":{"state_domain":"feature","event_kind":"repair_checkpoint","from_state":"BLOCKED","to_state":"BLOCKED"},
+        "authoritative_tuple":{"state_domain":"repair","event_kind":"repair_checkpoint","from_state":"BLOCKED","to_state":"BLOCKED"},
+        "required_evidence_mapping":{"REPAIR_ATTEMPT":["/repair/stable_cause_id","/repair/attempt","/repair/maximum","/repair/remaining"],"RERUN_RESULT":["/checks/0","/checks/1","/checks/2","/blockers"]}
+      }
+    }
+  }
+}

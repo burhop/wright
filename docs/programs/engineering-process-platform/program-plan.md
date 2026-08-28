@@ -1,5 +1,9 @@
 # Engineering Process Platform Program Plan
 
+## Current V8 amendment
+
+V8 adds one independently closed profile for exactly three later checkpoint claims: the two TR-0047 output digests and TR-0050 event domain. It also plans ordinary current-source repairs for one final catalog binding and two walkthrough causes. These are separate mechanisms and may not be conflated. Exact Git-blob bytes, 3/3 matching, final catalog binding, rooted evidence links, and full readiness/benchmark/release non-interference are mandatory. T073–T076 are the entire possible V8 lease; T066 remains separately blocked.
+
 ## 1. Outcome
 
 Wright will evolve from useful engineering-capability seams and a disposable workflow prototype into a durable engineering-process platform where an engineer can define, inspect, review, run, diagnose, recover, and reproduce multi-step work without confusing fixtures with real analysis or transport success with engineering correctness.

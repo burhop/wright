@@ -423,6 +423,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-27T22:43:44Z"
       }
+    },
+    {
+      "id": "RISK-021",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "V8 checkpoint correction widens into policy or readiness waiver",
+      "cause": "Historical digest/event claims, current catalog binding, and walkthrough contracts could be conflated or expanded to make a failing candidate appear verifiable.",
+      "consequence": "Immutable evidence, lifecycle semantics, benchmark truth, and release authority become untrustworthy.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_independent_verifier",
+      "mitigations": ["DEC-P0-019", "Literal three-claim schema", "Final one-field catalog rebind", "Two-cause walkthrough boundary", "Full correction-off/on and projection non-interference", "Keep the separate roadmap-policy test question visible"],
+      "triggers": ["Sixth target", "Generic lifecycle rule", "Any gate row or 0/100 change", "Dashboard regeneration", "T066 included", "Excluded regression hidden"],
+      "contingency": "Keep EPP-F01 BLOCKED with null lease, preserve all source bytes, and require a new material decision.",
+      "evidence": ["decisions/0019-closed-checkpoint-evidence-correction.md", "evidence/verification/EPP-F01-V8-discovery.json", "evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json"],
+      "review": {
+        "cadence": "Every V8 planning, implementation, verification and approval transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T01:30:00Z"
+      }
     }
   ]
 }

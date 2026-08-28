@@ -235,6 +235,21 @@ This is a third separate closed entity. Version 1 recognizes exactly `COR-EPP-F0
 
 The profile may dispose only the two named findings. It does not make either invalid historical value syntactically valid, change the current state or transition chain, reactivate a lease, bless the failed candidate, or authorize a T066 retry. Any mismatch or non-interference failure leaves validation blocked.
 
+## CheckpointEvidenceCorrection
+
+This fourth correction entity recognizes exactly `COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001` and three ordered claims. It cannot extend or substitute for V4, V5, or V7.
+
+| Field | Rule |
+|---|---|
+| `source_checkpoint` | Exact commit `0d1a664f19327b0db03eb0b4c2fa4deb1ccd8bc2`, tree `ea473cf...`, program tree `6f4caffe...` |
+| `expected_claim_count` | Exactly `3`; no new records |
+| claims 1–2 | Exact TR-0047 output pointers, recorded checkout/CRLF hashes, authoritative SHA-256 of committed README/approval Git blob bytes |
+| claim 3 | Exact TR-0050 `/state_domain`, fixed `repair_checkpoint`, `BLOCKED→BLOCKED`, revisions and identities, plus required repair-attempt/rerun-result mappings |
+| forbidden targets | Any other record/pointer/tuple; lifecycle-policy broadening; current state/roadmap/lease; authority, readiness, benchmark, candidate, delivery, release, wildcard/future/correction targets |
+| authority | Exact V8 same-subject material-change and feature-implementation approvals bound through TR-0051 |
+
+The gate catalog/evidence rebind and walkthrough source/test changes are ordinary current-artifact repairs, not correction claims. Gate rebinding changes only `catalog_digest`. Finding `artifact` becomes a repository-relative path rather than a stable label wherever the report promises a traversable evidence link.
+
 ## ValidationReport
 
 The report contains schema version, validation subject, overall verdict, ordered checks/findings, derived eligibility, four readiness areas with complete gate rows and last-success data, benchmark summary, exact release-approval result, release eligibility, delivery result, and one next action or blocker. Observation time is explicitly nondeterministic; all other semantic fields are deterministic for one subject and validator version.

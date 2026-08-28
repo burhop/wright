@@ -4,11 +4,11 @@
 
 **Prerequisites**: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, and both completed checklists
 
-**Tests**: Required by FR-020 and SC-002–SC-013. Story tests are written first and must fail for the intended missing behavior before implementation.
+**Tests**: Required by FR-020 and SC-002–SC-014. Story tests are written first and must fail for the intended missing behavior before implementation.
 
 **Authority gate**: Do not execute T024 or any later checkbox until an exact V5 approval bundle contains separate approved `material_change` and `feature_implementation` records bound to the same newly frozen subject; binds the unchanged 69-task plan, every planning contract, and both exact closed correction profiles by digest; accepts R-004 through R-008, R-014 through R-017 / `DEC-P0-013` through `DEC-P0-017`; and reactivates a lease authorizing execution only from T024 through T041. V4 remains historical authority for completed T069 but is stale for further implementation. After the T041 demonstration, the sole action is `REVIEW_EPP_F01_T041_VALUE_CHECKPOINT`; T042–T068 require a new explicit human instruction and authority checkpoint. V5 does not authorize EPP-F01B, push, PR, merge, dev integration, external mutation, publication, benchmark execution, or release.
 
-**Current V7 repair gate**: The prior approvals are historical authority for completed work only. Do not execute T070, T071, T072, retry T066, or perform any later mutation until two new approved records—`APR-EPP-F01-MC-007.json` and `APR-EPP-F01-IMPL-007.json`—bind the same frozen commit/tree/program tree and exact artifact-digest manifest, accept DEC-P0-018 and `COR-EPP-F01-REPAIR-EVIDENCE-001`, and reactivate a lease limited to T070–T072 plus the subsequent T066 retry. Planning and read-only analysis do not satisfy this gate. Product work, EPP-F01B implementation, dependencies, benchmarks, external changes, push/PR/merge/dev integration, publication, and release remain excluded.
+**Current V8 repair gate**: V7 is historical authority for completed T070–T071 only; T072 is a blocked failed checkpoint. Do not execute T073–T076 or any other implementation until proposed `APR-EPP-F01-MC-008.json` and `APR-EPP-F01-IMPL-008.json` bind the same newly frozen commit/tree/program tree and TR-0051 manifest, accept DEC-P0-019, and authorize only T073–T076. T066 remains excluded because the separately failing roadmap-policy inversion test is outside V8. Product work, EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release remain excluded.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -173,6 +173,10 @@
 - [x] T070 Add failing exact-profile tests in `tests/program_control_plane/test_transition_chain.py` and `tests/program_control_plane/test_cli.py` for `COR-EPP-F01-REPAIR-EVIDENCE-001`: the positive `2/2` claim and `2/2` occurrence proof plus every omitted, added, substituted, reordered, relocated, wrong-identity, wrong-pointer, wrong-digest, wrong-origin, current-state, wildcard, future, new-record, correction-of-correction, missing-V7-authority, and projection-interference case
 - [x] T071 Implement recognition of only the exact repair-evidence correction in `scripts/program_control/validation.py`, `scripts/program_control/git_subject.py`, and `scripts/program_control/json_contracts.py`; retain immutable source findings, emit bounded diagnostics and recovery, require exact Git-object recomputation and V7 authority, and change no lifecycle, authority, readiness, benchmark, candidate, delivery, or release result
 - [ ] T072 Run correction-off/on non-interference for honest `0/100` and non-empty synthetic benchmark inputs, focused validator tests, Ruff/format, full regression, source-mutation audit, and exact-subject verification; record the bounded result and freeze a replacement T066 candidate only if every check passes, otherwise stop under the existing repair limit
+- [ ] T073 Add failing exact V8 tests for all `3/3` historical claims and every omission, addition, substitution, ordering, path, pointer, blob, container, event/domain/state/evidence-map, current/future, wildcard, correction-of-correction and missing-V8-authority near miss; prove Git committed bytes rather than checkout/CRLF bytes
+- [ ] T074 Implement recognition of only `COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001`, retain the three original findings with bounded recovery, map TR-0050 only to the existing repair event rule, and make finding artifacts repository-relative resolvable paths without broadening lifecycle policy or changing another result
+- [ ] T075 Rebind `gate-evidence.json#/catalog_digest` to the exact committed Git-blob SHA-256 of the final V8 gate catalog and update only the two authorized walkthrough causes so README/current-state assertions derive current BLOCKED authority and all finding links resolve; do not change the separately excluded roadmap-policy inversion test
+- [ ] T076 Run exact correction-off/on and pre/post-rebind deep equality over all 34 gate rows, four areas, honest `0/100`, the isolated non-empty synthetic fixture, freshness, candidate, approval, roadmap, blocked/null-lease state, dashboard bytes, delivery and release eligibility; run focused/full regression and stop without candidate freeze if the excluded roadmap-policy test or any other failure remains
 - [ ] T066 Stop author mutation and have a different independent-verifier identity rerun the critical deterministic, negative, platform, quickstart, evidence-link, rollback, and original-failure/skip review on unchanged candidate `R`; persist its candidate verdict in source commit `S` via `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-independent.json`
 - [ ] T067 Have the coordinator validate source commit `S`, generate exact deterministic `candidate_not_evidence` dashboard bytes without code/source mutation, commit only `docs/programs/engineering-process-platform/dashboard.json` as successor `C`, and prove the first-parent, diff-allowlist, source-bundle, input-manifest, and byte-digest relation
 - [ ] T068 Have the independent verifier inspect exact container `C`, dashboard bytes, schema/semantic and per-assertion/per-gate-freshness recomputation, and `S`/`C` relation; then persist a passing `kind=delivery` record in descendant `D` at `docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json`, prove the `C..D` delivery-only diff, and run `validate --source S --container C --delivery D` to show that only the external validation envelope—not dashboard bytes—reports `committed_valid`
@@ -213,7 +217,7 @@ exact implementation + material-change approval
 - US2 depends on US1's validated source/report model.
 - US3 depends on US2's candidate-generation path.
 - US4 depends on the complete report/projection behavior from US1–US3.
-- Phase 7 depends on all stories. The failed first T066 attempt routes through approval-gated T070–T072; a T066 retry depends on a passing T072 replacement freeze and a distinct verifier. T067 depends on passing T066 and must be a dashboard-only successor; T068 depends on T067 and changes only delivery evidence.
+- Phase 7 depends on all stories. T070–T071 are complete and T072 is blocked. V8 T073→T074→T075→T076 requires exact V8 approval. Even a passing T076 does not authorize T066; the separately excluded roadmap-policy test requires its own disposition first. T067–T068 remain unauthorized.
 
 ### Within-Phase Dependencies
 
@@ -223,7 +227,7 @@ exact implementation + material-change approval
 - T036–T040 depend on T032–T035; T041 depends on all US2 work.
 - T046–T048 depend on T042–T045; T049 depends on all US3 work.
 - T053–T055 depend on T050–T052 and prior stories; T056 depends on all US4 work.
-- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064. T070 depends on the frozen two-claim profile and exact V7 approvals; T071 depends on failing T070 tests; T072 depends on T071. The T066 retry depends on passing T072; T067 depends on passing T066; T068 depends on T067.
+- T060 depends on T057; T062 depends on T057–T061; T063–T064 depend on T062; T065 depends on T062–T064. Historical T070→T071 completed and T072 stopped. T073 depends on exact V8 approval; T074 depends on failing T073 tests; T075 depends on the closed implementation surface; T076 depends on T073–T075. T066 remains separately blocked after T076.
 
 ### Parallel Opportunities
 
@@ -254,19 +258,19 @@ exact implementation + material-change approval
 
 ## Task Summary
 
-- Total tasks: 72
+- Total tasks: 76
 - Setup/foundation: 19
 - US1: 13
 - US2: 10
 - US3: 8
 - US4: 7
-- Cross-cutting/verification: 15
+- Cross-cutting/verification: 19
 - Suggested MVP: Phases 1–3 (US1), followed by a deliberate validation checkpoint
 
 ## Notes
 
-- These 72 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
-- T069–T072 are intentionally numbered append-only while placed at their dependency-ordered execution points. Existing task identities and completed task records are not renumbered or reinterpreted.
+- These 76 tasks produce validator, provenance, machine `dashboard.json`, and CLI behavior only. They contain no browser route, frontend adapter, page, component, refresh, or browser-accessibility work; EPP-F01B owns that separate outcome.
+- T069–T076 are intentionally numbered append-only while placed at their dependency-ordered execution points. Existing task identities and completed task records are not renumbered or reinterpreted.
 - No task adds or upgrades a dependency, changes product runtime, creates/executes benchmark cases, contacts external systems, pushes, opens/merges a PR, integrates to `dev`, publishes, or releases.
 - Task checkboxes are progress markers, not lifecycle or approval evidence.
 - Optional Spec Kit auto-commit hooks remain disabled for this workflow because reviewed allowlist staging is required; no `git add .` may be used.

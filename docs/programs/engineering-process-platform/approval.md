@@ -1,24 +1,32 @@
 # Human Program-Plan Approval Gate
 
+## Current V8 approval gate
+
+No V8 approval exists yet. The exact subject frozen through TR-0051 must receive two separate same-subject records: `APR-EPP-F01-MC-008` with scope `material_change`, and `APR-EPP-F01-IMPL-008` with scope `feature_implementation`. Both must accept DEC-P0-019, bind `COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001`, the final catalog binding, both walkthrough causes, and every TR-0051 output digest.
+
+If approved, the lease is limited to local T073–T076. It does not authorize T066; the separately recorded roadmap-policy inversion test requires separate disposition. It also excludes T067–T068, product/EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release. Older V7 approval remains historical for T070–T071 and cannot be replayed.
+
+The exact approval sentence is generated only after the planning commit/tree/program tree and TR-0051 manifest are final. Approval records are append-only after the human supplies that exact sentence; they are not pre-created in this planning subject.
+
 ## Current decision
 
 **Approved.** [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json) records the human decision made on 2026-08-26 for the exact subject below. The approval has no added conditions and is limited by its `program_plan` scope and the authorization boundaries in this document.
 
-## Current EPP-F01 decision
+## Historical V7 EPP-F01 decision — exhausted
 
-**Approved for the bounded V7 repair and one T066 retry.** `APR-EPP-F01-MC-007` and `APR-EPP-F01-IMPL-007` bind commit `a2b9727a15c445875b2ef857f482bee31ccc594c`, tree `ee16d103c98c3d891d32c45b243a131dd0745527`, program tree `677f1ec8e895b6330941f8ab5afe92c5dadf980b`, and the 31 artifact digests in TR-0046. They accept DEC-P0-018 and the exact closed two-claim correction.
+**Historical only.** `APR-EPP-F01-MC-007` and `APR-EPP-F01-IMPL-007` bound the exact V7 subject and accepted DEC-P0-018. T070–T071 completed under that authority; T072 failed closed.
 
-Lease revision 11 authorizes only local T070 through T072 and, after a passing replacement freeze, one distinct independent T066 retry. T067–T068, product changes, EPP-F01B implementation, dependencies, benchmark execution, external changes, push/PR/merge/dev integration, publication, and release remain blocked.
+Lease revision 11 is closed. Its remaining T072/T066 authority is exhausted and non-replayable. T066–T068 and every product, EPP-F01B, dependency, benchmark, external, integration, publication and release action remain blocked.
 
 ## Historical EPP-F01 decision — stale
 
 **No longer current; it grants no present implementation authority.** [`APR-EPP-F01-MC-001`](evidence/approvals/APR-EPP-F01-MC-001.json) and [`APR-EPP-F01-IMPL-001`](evidence/approvals/APR-EPP-F01-IMPL-001.json) historically recorded separate `material_change` and `feature_implementation` decisions for commit `5279c51740a0352961c92a70bce9003923d8ca20`, repository tree `7e2eb93a9faed14b609075b72373a473a22fdbff`, program tree `8b6d5d6b3b0341f952e30c065b8dd289b9735213`, and the 21 artifact digests in `TR-0014`. DEC-P0-013/014 and the amended planning subject made both approvals stale.
 
-The v1 and v3 bundles are stale. V4 remains valid historical evidence for T069. V5 is complete historical authority for T024–T041. V6 is historical authority for completed T042–T065 and the failed first T066 attempt; it cannot authorize this material correction or another implementation attempt. Exact same-subject V7 `material_change` and `feature_implementation` approvals must accept DEC-P0-018 and the frozen two-claim profile before T070–T072 or T066 retry. EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
+The v1 and v3 bundles are stale. V4 remains historical evidence for T069; V5 for T024–T041; V6 for T042–T065 and the failed first T066 attempt; V7 for completed T070–T071 only. None authorizes V8 implementation or T066. EPP-F01B implementation, dependencies, product runtime changes, benchmark collection or execution, network or external mutation, push, PR, merge, dev integration, publication, and release remain unauthorized.
 
 ## Approval subject
 
-After the planning commit is created and the planning JSON/schema/consistency checks plus bounded independent audit are green, resolve and present the exact subject below. The pre-V7 validator is expected to fail closed on the unsupported two-claim profile; that exact bounded failure must remain visible and must not be described as green before T070–T072 are separately approved and executed.
+After the V8 planning commit is created and planning JSON/schema/consistency checks plus bounded independent audit are green, resolve and present the exact subject below. The pre-V8 validator is expected to fail closed on the unsupported three-claim profile; implementation/regression success must not be claimed before T073–T076 receive approval and execute.
 
 ```powershell
 git rev-parse HEAD
@@ -26,7 +34,7 @@ git rev-parse HEAD^{tree}
 git rev-parse HEAD:docs/programs/engineering-process-platform
 ```
 
-For the V7 feature amendment, use TR-0046's sorted output-digest manifest as the exact non-self-referential artifact bundle; the transition blob itself is bound by the enclosing Git commit/tree. The program-plan bootstrap `evidence/artifact-manifest.json` remains historical and is not regenerated merely to create a circular feature-transition manifest. The approval must bind:
+For V8, use TR-0051's sorted 34-output digest manifest as the exact non-self-referential artifact bundle; the transition blob itself is bound by the enclosing Git commit/tree. The bootstrap manifest remains historical. The approval must bind:
 
 - Git commit;
 - repository tree;
@@ -64,4 +72,4 @@ The twelve visible P0 decisions in `decision-register.json` may remain deliberat
 - Request named revisions (`revision_requested`); state returns to `PLAN_DRAFT` and all downstream candidate digests are invalidated.
 - Reject/stop.
 
-The approval is now recorded. The coordinator may select and specify the dependency-eligible `EPP-F01` child feature. No implementation or external action is implied; the feature must traverse the complete machine-evidenced lifecycle and receive its own exact implementation approval.
+The original program-plan approval remains recorded. Current EPP-F01 action is exclusively the exact V8 approval gate above; no implementation or external action is implied.

@@ -1,5 +1,9 @@
 # Top-Level Coordinator State Machine
 
+## Current V8 bounded loop
+
+T072 failed closed after T070–T071. The coordinator keeps feature and roadmap `BLOCKED`, lease null, approval stale, and exposes exactly `APPROVE_EPP_F01_CHECKPOINT_CORRECTION_V8`. After exact same-subject V8 approval, the only small loop is T073 failing contracts → T074 exact historical recognition/rooted diagnostics → T075 final catalog rebind and two walkthrough causes → T076 full non-interference/regression. The boundary has six targets: three historical claims, one catalog binding, and two walkthrough causes. Any seventh target, policy broadening, benchmark mutation/execution, new dependency, projection change, or excluded action stops. T066 remains ineligible even after T076 until the separately recorded roadmap-policy test question receives human disposition.
+
 ## Transition rule
 
 A transition is valid only if:
@@ -78,7 +82,7 @@ After exact V4 approval, the feature recovery edge is `BLOCKED` → `IMPLEMENTAT
 
 After T069, the isolated TR-0027 input-origin defect creates a new material boundary. Revision 35 is `BLOCKED` with no mutating lease and sole action `APPROVE_EPP_F01_MATERIAL_AND_IMPLEMENTATION_V5`. Only separate same-subject V5 approvals accepting DEC-P0-017, binding the exact one-claim profile and unchanged 69-task plan, may restore `IMPLEMENTATION_AUTHORIZED`. The restored lease may cover only T024–T041; the coordinator must stop after the T041 runnable value demonstration. No V5 rule reopens T069 repair attempts or authorizes EPP-F01B, T042–T068, or external/integration/release actions.
 
-After the first T066 attempt, the two repair-evidence defects create another material boundary. The coordinator must record `IMPLEMENTING` → `BLOCKED`, set the mutating lease to null, and expose only `APPROVE_EPP_F01_REPAIR_CORRECTION_V7`. Planning may add the exact two-claim profile and append-only T070–T072, but it may not execute them. Only separate same-subject V7 approvals accepting DEC-P0-018 and binding the exact profile may restore `IMPLEMENTATION_AUTHORIZED`; the reactivated lease is limited to T070–T072 and a subsequent T066 retry. The coordinator then follows `IMPLEMENTATION_AUTHORIZED` → `IMPLEMENTING` and test-first T070 → implementation T071 → verification/re-freeze T072. No V7 edge authorizes T067–T068 until T066 passes, EPP-F01B implementation, or any external/integration/release action.
+Historical V7 flow: after the first T066 attempt, the two repair-evidence defects created a material boundary. The coordinator recorded `IMPLEMENTING` → `BLOCKED`, cleared the lease, obtained exact V7 approval, and completed T070–T071. T072 then failed closed, so the old `APPROVE_EPP_F01_REPAIR_CORRECTION_V7` action and all V7 authority are stale and non-replayable. No V7 edge authorizes T066–T068, EPP-F01B implementation, or external/integration/release action.
 
 ## Analyze remediation routing
 

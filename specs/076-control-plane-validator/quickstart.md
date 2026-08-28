@@ -141,3 +141,18 @@ python -m ruff format --check scripts/program_control tests/program_control_plan
 ```
 
 Before any push or merge, the repository's documented Wright Git gates remain the source of truth. EPP-F01 implementation approval will not itself authorize push, PR, merge, dev integration, publication, or release.
+
+## V8 planning-only preflight and committed-byte recipe
+
+The current committed subject is intentionally fail-closed. Reproduce it without writing:
+
+```text
+D:\Users\markb\miniconda3\python.exe scripts/validate-engineering-process-program.py validate --source HEAD --format text
+D:\Users\markb\miniconda3\python.exe -m pytest tests/program_control_plane/test_evidence_walkthrough.py -q -p no:cacheprovider --basetemp D:\repos\wright\.tmp-epp-v8
+```
+
+Expected before V8 implementation: four fatal validator rows and three walkthrough test failures representing two walkthrough causes. The separately failing roadmap-policy inversion test is recorded but excluded.
+
+For committed Markdown identity, never use `Get-FileHash`, `Get-Content`, or another checkout/text pipeline. Resolve the blob with `git rev-parse <subject>:<path>` and hash the raw bytes returned by `git cat-file blob <blob-id>`. For a staged file, resolve `git rev-parse :<path>` first. PowerShell text pipelines and checkout bytes can normalize line endings and reproduce the wrong TR-0047 values.
+
+Post-approval acceptance requires exact `3/3` disposition, a one-field gate-evidence rebind, all three walkthrough tests passing from the two authorized causes, deterministic repeated output, and full non-interference at honest `0/100` plus the isolated non-empty synthetic unit fixture. These are six authorized targets. The fixture creates no process, qualification, attempt, dashboard progress, or benchmark evidence. Stop on any authoritative benchmark change, seventh target, generic waiver, dependency, dashboard generation, lease expansion, or excluded action. Stop after V8 verification; T066 remains separately blocked.

@@ -1,5 +1,11 @@
 # Live Status Dashboard Contract
 
+## V8 preservation rule
+
+V8 must not regenerate or edit `dashboard.json`. The existing bytes remain `candidate_not_evidence`; benchmark remains honest `0/100`; product, benchmark, commercial, and program-health projections remain independently derived. Correction recognition and final catalog rebinding may change validator finding disposition only. Any change to an area object, gate row/freshness, benchmark population/deficit, candidate, approval, delivery, release eligibility, or dashboard bytes is a stop.
+
+Finding evidence links presented as traversable artifacts must be repository-relative paths. V8 negative fixtures retain unresolved TR-0050 and gate-catalog examples so this requirement cannot pass vacuously after the known findings are resolved.
+
 ## Purpose
 
 The dashboard is a read-only, locally generated projection of committed machine-readable state and immutable evidence. “Live” means it is regenerated when committed program/feature/qualification/release evidence changes and can show freshness; it does not imply remote telemetry, automatic upload, or a manually editable SaaS scorecard.
