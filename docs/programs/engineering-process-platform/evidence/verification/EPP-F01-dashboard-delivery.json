@@ -1,0 +1,135 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-DASHBOARD-DELIVERY-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "delivery",
+  "subject": {
+    "git_commit": "d4b6a67f9ae83c2addbdb713ba64532c8708dcd3",
+    "git_tree": "32d122c6b6cc4a8f2b0a2469d19524b69de7332d",
+    "artifact_digests": [
+      {
+        "path": "docs/programs/engineering-process-platform/dashboard.json",
+        "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "agent:/root/v9_terminal_verifier",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-28T16:37:31Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "DASHBOARD-CONTAINER-RELATION",
+      "method": "Verified that the dashboard container commit has the frozen source commit as its first parent and changes only dashboard.json.",
+      "environment": "Windows local Git worktree; independent read-only verifier",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/dashboard.json",
+          "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+        }
+      ]
+    },
+    {
+      "check_id": "DASHBOARD-BYTE-IDENTITY",
+      "method": "Verified the committed dashboard bytes against the recorded SHA-256 digest.",
+      "environment": "Windows local Git worktree; independent read-only verifier",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/dashboard.json",
+          "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+        }
+      ]
+    },
+    {
+      "check_id": "DASHBOARD-SCHEMA-SEMANTICS",
+      "method": "Validated schema version 2.0, candidate-not-evidence provenance, four independent readiness areas, gates, and benchmark progress 0/100.",
+      "environment": "Windows local Git worktree; independent read-only verifier",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/dashboard.json",
+          "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+        }
+      ]
+    },
+    {
+      "check_id": "DASHBOARD-PROVENANCE-DETERMINISM",
+      "method": "Verified deterministic source provenance and immutable source/container relationship for the generated snapshot.",
+      "environment": "Windows local Git worktree; independent read-only verifier",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/dashboard.json",
+          "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+        }
+      ]
+    },
+    {
+      "check_id": "DASHBOARD-SECURITY-HYGIENE",
+      "method": "Inspected the snapshot for credentials, private filesystem paths, and fabricated external status.",
+      "environment": "Windows local Git worktree; independent read-only verifier",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/dashboard.json",
+          "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "The first source/container candidate was superseded because walkthrough and authority evidence was stale.",
+    "EPP-F01-REV58-RAW-IDENTITY-001 repaired the revision-58 trailing-blank/raw-identity defect.",
+    "Container d4b6a67f9ae83c2addbdb713ba64532c8708dcd3 passed independent verification."
+  ],
+  "findings": [
+    {
+      "code": "DASHBOARD_CONTAINER_VERIFIED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "The exact dashboard container and bytes passed independent verification."
+    },
+    {
+      "code": "DASHBOARD_REMAINS_CANDIDATE_NOT_EVIDENCE",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "The generated dashboard remains a derived candidate snapshot and is not an authority separate from committed evidence."
+    },
+    {
+      "code": "READINESS_BENCHMARK_RELEASE_UNCHANGED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/dashboard.json",
+      "disposition": "Product, benchmark, commercial, program-health, and release results are unchanged by delivery evidence."
+    }
+  ],
+  "rollback_subject": "d4b6a67f9ae83c2addbdb713ba64532c8708dcd3",
+  "delivery_relation": {
+    "source_commit": "88378a7e0de40d9461a2775dd93c60fbe5f092a2",
+    "container_commit": "d4b6a67f9ae83c2addbdb713ba64532c8708dcd3",
+    "dashboard": {
+      "path": "docs/programs/engineering-process-platform/dashboard.json",
+      "sha256": "85a5a96eb25aa2cb13770499fc7df7c9b57811626b99b2d2def6148a129edfed"
+    },
+    "container_first_parent_source": true,
+    "container_diff_paths": [
+      "docs/programs/engineering-process-platform/dashboard.json"
+    ],
+    "evidence_parent_is_container": true,
+    "delivery_diff_paths": [
+      "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-dashboard-delivery.json"
+    ],
+    "source_inputs_unchanged": true
+  }
+}
