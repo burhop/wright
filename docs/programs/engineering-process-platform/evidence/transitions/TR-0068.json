@@ -1,0 +1,116 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0068",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "program",
+  "event_kind": "lifecycle_transition",
+  "from_state": "SELECTING_FEATURE",
+  "to_state": "PROGRAM_ACTIVE",
+  "prior_revision": 68,
+  "new_revision": 69,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "f18160e918327e4901dc56954277d0680b8121abfb90558e34a109aa2ccaeaa6",
+  "new_state_digest": "d14068da2f14584eb7af7d2d3a726065487f9208a404371022e228586dba1eaf",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Activate the independently verified EPP-F01B planning subject as the sole roadmap feature and stop at its exact implementation approval gate.",
+  "started_at": "2026-08-28T23:01:26Z",
+  "finished_at": "2026-08-28T23:01:26Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "a666d255a28df9f7072bdec47d60f66b0465b145",
+    "source_tree": "2021a7ef8adbbdb8af6074cc9bba597c979c6900",
+    "source_program_tree": "7135c667cbdc99ac65131251c3dd40838b2453bf",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0069.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0068.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0068.json"
+  },
+  "inputs": [
+    {"path": "program-state.json", "sha256": "edf36dffb57049d793c00f4670b073f4a28639902bb78b998862e90ff31ffafb", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "2deb18a697e32445f19c2c15150f1d6982052b129388d870a813baba12e4adbb", "schema_version": "1.0", "role": "operational_state"}
+  ],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0069.json", "sha256": "3fd130bc2f204489a51049b7d602b90609cd49cc2cc6e2ad87bf3be2afe15693", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "3fd130bc2f204489a51049b7d602b90609cd49cc2cc6e2ad87bf3be2afe15693", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "276b5dd45c96078a7d8c428228db3e6ac0db53c39d6ae121ebcd29378093b9de", "schema_version": "1.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "REVIEWED-FEATURE-SELECTION",
+      "method": "Require EPP-F01 complete, EPP-F01B dependency-eligible and active, one current feature pointer, and the exact reviewed 595f0aa8 subject.",
+      "environment": "Committed roadmap and program state",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["roadmap.json", "program-state.json", "TR-0067"]
+    },
+    {
+      "check_id": "APPROVAL-GATE-BOUNDARY",
+      "method": "Require IMPLEMENTATION_APPROVAL_PENDING, a planning-only lease, two missing same-subject implementation approvals, and one human next action.",
+      "environment": "Program state schema and lifecycle action policy",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["APR-EPP-F01B-MC-001", "APR-EPP-F01B-IMPL-001", "APPROVE_CURRENT_FEATURE_IMPLEMENTATION_SUBJECT"]
+    },
+    {
+      "check_id": "READINESS-NON-INTERFERENCE",
+      "method": "Confirm product not_started, benchmark not_started at 0/100, commercial blocked, program health blocked, and release eligibility false remain unchanged.",
+      "environment": "Program state and governed EPP-F01 dashboard contract",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["program-state.json", "docs/programs/engineering-process-platform/dashboard.json"]
+    }
+  ],
+  "authority": {
+    "authority_kind": "feature_planning",
+    "required_scopes": ["material_change"],
+    "approval_records": ["evidence/approvals/APR-EPP-F01B-PLANNING-CLOSURE-001.json"],
+    "subject": {
+      "git_commit": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+      "git_tree": "c4be6a0556032b3631306e8873b8e103dd3d63d0",
+      "program_tree": "2a9437bdf470abc2ef5243358d9ceaf71fa3acc4",
+      "artifact_count": 13,
+      "manifest_transition": "TR-0067"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Engineering-usability PASS, architecture/test PASS, and GB10 Linux 263/263 PASS for exact 595f0aa8 subject.",
+  "repair": {
+    "stable_cause_id": "EPP-FEATURE-NEUTRAL-PLANNING-AUTHORITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "APR-EPP-F01B-MC-001 is not yet granted.",
+    "APR-EPP-F01B-IMPL-001 is not yet granted.",
+    "No EPP-F01B implementation task or external action is authorized."
+  ],
+  "rollback_subject": "a666d255a28df9f7072bdec47d60f66b0465b145",
+  "next_action": "APPROVE_CURRENT_FEATURE_IMPLEMENTATION_SUBJECT"
+}
