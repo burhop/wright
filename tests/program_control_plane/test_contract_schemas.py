@@ -53,9 +53,7 @@ def test_v9_preflight_correction_is_closed_and_externally_validates_discovery(
     schemas = repository_root / "docs/programs/engineering-process-platform/schemas"
     evidence = repository_root / "docs/programs/engineering-process-platform/evidence"
     correction_schema = load(schemas / "preflight-evidence-correction.schema.json")
-    profile = load(
-        evidence / "corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json"
-    )
+    profile = load(evidence / "corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json")
     validator_for(correction_schema)(correction_schema).validate(profile)
     assert profile["expected_claim_count"] == 2
     assert [claim["claim_id"] for claim in profile["claims"]] == [
