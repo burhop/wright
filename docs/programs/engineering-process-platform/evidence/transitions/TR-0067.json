@@ -1,0 +1,142 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0067",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "program",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PROGRAM_ACTIVE",
+  "to_state": "SELECTING_FEATURE",
+  "prior_revision": 67,
+  "new_revision": 68,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "b719b4d874750e52bafe9af0a83b5674bc8b2e3b9741ce3315693af167e1c329",
+  "new_state_digest": "f18160e918327e4901dc56954277d0680b8121abfb90558e34a109aa2ccaeaa6",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Apply the approved feature-neutral planning-state closure and select the independently verified EPP-F01B planning subject without implementation authority.",
+  "started_at": "2026-08-28T23:01:26Z",
+  "finished_at": "2026-08-28T23:01:26Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+    "source_tree": "c4be6a0556032b3631306e8873b8e103dd3d63d0",
+    "source_program_tree": "2a9437bdf470abc2ef5243358d9ceaf71fa3acc4",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01B-PLANNING-CLOSURE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0068.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0067.json",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/transition-evidence.schema.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0067.json"
+  },
+  "inputs": [
+    {"path": "program-state.json", "sha256": "1b05431abcb042fca01cfbf31b7ab01e5540b02eea2a772cc052fc72516fcbcc", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "../../../specs/077-browser-program-status/analysis.md", "sha256": "f278caa0ce60cce6e29afb827c87cbb9477751eda352944c5ecc08a13ef49111", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/checklists/program-status.md", "sha256": "e77ebc7e0b308c66003779c56925ba069546ae804ae93adf69a0777847d23b5a", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/checklists/requirements.md", "sha256": "85c8e3dd8c164cf6a44b66156b8592690d7a1fd349be869d446fddca87c71ab3", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-api.md", "sha256": "ec24f1ccb36466336495d0a73917c3854a0c1f77f909293d9548df708f461698", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-bundle.schema.json", "sha256": "4641e4362f1b356d9ac82f113a2390b205f1c2116008cf5bb7c8a33a8da30a5b", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.json", "sha256": "3e99ef7b4c7890b6e834f5718495d2fe70d011f89224b1ef53d9d337b3a2bfd5", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.schema.json", "sha256": "e2e58c60f540d486b8c6ac952846d334dea5c00977d78a9f6cdf8a9568cd28d7", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/data-model.md", "sha256": "9085628fea3f2688fb4e270cb4d4d6f2c9e6b4a75e3682bdbb495cc759511513", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/plan.md", "sha256": "0ef799b0d7361be7f8cc5e36e680066f6f631de3d8d9dbf6bfe7d25059f41df6", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/quickstart.md", "sha256": "b0df3d3a86090cc908c9b1391ae822e28c3cf2eebafbbe4a687f486bae25876e", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/research.md", "sha256": "9facc97b9451faae02cb65576c44cfeb6b5091c0075e3fee35a98f2c745fd84e", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/spec.md", "sha256": "cddf37c09b18a459d1bc793a50be66c8c943038826c1ea494224648eb45aa247", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/tasks.md", "sha256": "3786d6ad2b962d6ab2e8ae1ed591b1cbdc6caa1a148003561a4253f8da9e48a9", "schema_version": null, "role": "feature_contract"}
+  ],
+  "outputs": [
+    {"path": "evidence/approvals/APR-EPP-F01B-PLANNING-CLOSURE-001.json", "sha256": "e4749e8f4234d2c8675847ec16864cbcd2b710fe10efd99a5a4545e8b8928366", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/states/program-state-revision-0068.json", "sha256": "edf36dffb57049d793c00f4670b073f4a28639902bb78b998862e90ff31ffafb", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "lifecycle-policy.json", "sha256": "71c12d7bd2657e2690e13263b3cadefe58193205a0dfccd2fd315be1425867f2", "schema_version": "1.0", "role": "immutable_policy"},
+    {"path": "program-state.json", "sha256": "edf36dffb57049d793c00f4670b073f4a28639902bb78b998862e90ff31ffafb", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "2deb18a697e32445f19c2c15150f1d6982052b129388d870a813baba12e4adbb", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "schemas/transition-evidence.schema.json", "sha256": "0cbf6922bfffcede0804ece975b4782bd33846c720a535134c60aebffef5758d", "schema_version": null, "role": "immutable_policy"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-EXACT-SUBJECT",
+      "method": "Bind all 13 EPP-F01B planning artifacts at reviewed commit 595f0aa8, tree c4be6a05, and program tree 2a9437bd.",
+      "environment": "Exact committed Git objects",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["specs/077-browser-program-status", "APR-EPP-F01B-PLANNING-CLOSURE-001"]
+    },
+    {
+      "check_id": "EPP-F01B-INDEPENDENT-REVIEWS",
+      "method": "Require the same engineering-usability and architecture/test reviewers to pass the exact subject with no remaining or new P0/P1 finding.",
+      "environment": "Two bounded read-only Codex subagent reviews",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["engineering-usability:PASS:595f0aa8", "architecture-test:PASS:595f0aa8"]
+    },
+    {
+      "check_id": "EPP-F01B-GB10-LINUX",
+      "method": "Verify schemas, 17-source catalog, complete bundle fixture, URL/path negatives, counts, diff, and full program-control suite on GB10.",
+      "environment": "GB10 Linux detached exact subject",
+      "duration_ms": 40240,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["263 passed in 40.24s", "GB10 task 01a04a7a-eb89-7790-9abd-ada93cc7957c"]
+    },
+    {
+      "check_id": "FEATURE-NEUTRAL-PLANNING-AUTHORITY",
+      "method": "Generalize only material-change planning authority records and current-feature action names while preserving the exact EPP-F01 legacy repair branch.",
+      "environment": "Draft 2020-12 schema and lifecycle policy",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["schemas/transition-evidence.schema.json", "lifecycle-policy.json"]
+    }
+  ],
+  "authority": {
+    "authority_kind": "feature_planning",
+    "required_scopes": ["material_change"],
+    "approval_records": ["evidence/approvals/APR-EPP-F01B-PLANNING-CLOSURE-001.json"],
+    "subject": {
+      "git_commit": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+      "git_tree": "c4be6a0556032b3631306e8873b8e103dd3d63d0",
+      "program_tree": "2a9437bdf470abc2ef5243358d9ceaf71fa3acc4",
+      "artifact_count": 13,
+      "manifest_transition": "TR-0067"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Engineering-usability PASS, architecture/test PASS, and GB10 Linux 263/263 PASS for exact 595f0aa8 subject.",
+  "repair": {
+    "stable_cause_id": "EPP-FEATURE-NEUTRAL-PLANNING-AUTHORITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "EPP-F01B material-change and feature-implementation approvals are not yet granted.",
+    "EPP-F01B implementation, dependencies, benchmarks, external changes, publication, and release remain unauthorized."
+  ],
+  "rollback_subject": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+  "next_action": "ACTIVATE_REVIEWED_CHILD_FEATURE"
+}

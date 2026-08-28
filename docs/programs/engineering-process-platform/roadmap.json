@@ -26,7 +26,7 @@
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
       "outcome": "Integrated through PR #114 as dev commit b776b118 with the exact independently verified tree. Maintainers and agents can validate the program control plane and generate its governed four-area dashboard snapshot without hand-setting status.",
-      "status": "active",
+      "status": "complete",
       "depends_on": [
         "EPP-P00"
       ],

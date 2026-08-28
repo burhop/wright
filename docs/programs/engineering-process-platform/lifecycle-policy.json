@@ -424,6 +424,18 @@
       "feature_state": "DEV_DEPLOYMENT_VERIFIED",
       "action": "SELECT_EPP_F01B_PLANNING",
       "requires_human_approval": false
+    },
+    {
+      "program_state": "SELECTING_FEATURE",
+      "feature_state": "DEV_DEPLOYMENT_VERIFIED",
+      "action": "ACTIVATE_REVIEWED_CHILD_FEATURE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_APPROVAL_PENDING",
+      "action": "APPROVE_CURRENT_FEATURE_IMPLEMENTATION_SUBJECT",
+      "requires_human_approval": true
     }
   ],
   "wip_limits": {
