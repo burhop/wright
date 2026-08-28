@@ -8,7 +8,7 @@ import re
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, Never
 
 from .dashboard import DashboardError, atomic_replace_json, make_dashboard
 from .git_subject import (
@@ -38,7 +38,7 @@ _SENSITIVE_VALUE = re.compile(
 class BoundedArgumentParser(argparse.ArgumentParser):
     """Argparse variant that never echoes attacker-controlled argument values."""
 
-    def error(self, message: str) -> None:
+    def error(self, message: str) -> Never:
         self.print_usage(sys.stderr)
         self.exit(EXIT_USAGE, "error: invalid command arguments\n")
 

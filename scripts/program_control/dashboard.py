@@ -54,7 +54,7 @@ def derive_areas(
     evidence_set: Mapping[str, Any],
     observed_at: datetime,
     *,
-    source_manifest: list[Mapping[str, Any]] | None = None,
+    source_manifest: Sequence[Mapping[str, Any]] | None = None,
     candidate: Mapping[str, Any] | None = None,
     catalog_digest: str | None = None,
     source_documents: Mapping[str, Any] | None = None,
@@ -346,7 +346,7 @@ def default_benchmark_summary(
 ) -> dict[str, Any]:
     if source:
         raise DashboardError("BENCHMARK_SUMMARY_HAND_SET")
-    counters = {
+    counters: dict[str, Any] = {
         "counted": 0,
         "target": 100,
         "first_attempt_passed": 0,

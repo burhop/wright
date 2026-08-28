@@ -332,8 +332,8 @@ class GitReader:
         }
 
     @staticmethod
-    def _parse_commit_sections(raw: bytes) -> list[dict[str, object]]:
-        sections: list[dict[str, object]] = []
+    def _parse_commit_sections(raw: bytes) -> list[dict[str, Any]]:
+        sections: list[dict[str, Any]] = []
         for section in raw.split(b"COMMIT\x00")[1:]:
             fields = section.split(b"\x00")
             if len(fields) < 3:
@@ -593,10 +593,10 @@ class GitReader:
                         not HEX40.fullmatch(value) for value in values
                     ):
                         raise GitSubjectError("Git ancestry could not be resolved")
-                    commit, *parents = values
-                    self._parent_cache[commit] = tuple(parents)
+                    commit, *parent_ids = values
+                    self._parent_cache[commit] = tuple(parent_ids)
                     self._commit_cache[commit] = commit
-                    for parent in parents:
+                    for parent in parent_ids:
                         self._commit_cache[parent] = parent
             pending = [right]
             visited: set[str] = set()
@@ -605,10 +605,10 @@ class GitReader:
                 if commit in visited:
                     continue
                 visited.add(commit)
-                parents = self._parent_cache.get(commit)
-                if parents is None:
+                cached_parents = self._parent_cache.get(commit)
+                if cached_parents is None:
                     raise GitSubjectError("Git ancestry could not be resolved")
-                pending.extend(parents)
+                pending.extend(cached_parents)
             reachable = frozenset(visited)
             self._ancestor_cache[right] = reachable
         return left in reachable

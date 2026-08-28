@@ -10,7 +10,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from . import __version__
 from .dashboard import (
@@ -326,9 +326,9 @@ def validate_legacy_profiles(
                     )
                 )
                 continue
-            relative = row.get("path")
+            profile_path_value = row.get("path")
             try:
-                path = normalize_repo_path(str(relative))
+                path = normalize_repo_path(str(profile_path_value))
             except GitSubjectError:
                 findings.append(
                     _finding(
@@ -2848,7 +2848,7 @@ def _validate_transition_history(
         source_summary = summaries[source]
         container_summary = summaries[container]
         manifest = git_record.get("changed_paths_manifest")
-        actual_paths = set(container_summary.get("paths", []))
+        actual_paths = set(cast(list[str], container_summary.get("paths", [])))
         declared_paths = set(manifest) if isinstance(manifest, list) else set()
         # The transition path is already bound by transition_path and its unique
         # introducing commit, so the two historically used complete encodings
