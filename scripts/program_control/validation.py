@@ -89,6 +89,7 @@ def _finding(
         "CHECKPOINT_EVENT_RULE_MISMATCH": "Do not rewrite history; inspect the exact approved V8 checkpoint-evidence disposition.",
         "CHECKPOINT_EVIDENCE_CORRECTION_INVALID": "Restore the exact closed three-claim checkpoint profile or stop for a new material approval.",
         "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
+        "REV58_RAW_IDENTITY_REPAIR_INVALID": "Restore the exact authorized revision-58 raw-identity repair evidence or stop.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -756,6 +757,23 @@ PREFLIGHT_DISCOVERY_TARGET = (
 PREFLIGHT_MANIFEST_TARGET = (
     "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json"
 )
+
+REV58_REPAIR_EVIDENCE_ID = "VER-EPP-F01-REV58-RAW-IDENTITY-001"
+REV58_REPAIR_SOURCE = "cf19f19b47484afb66a28bd3f93c041d86553c89"
+REV58_REPAIR_SOURCE_TREE = "0df363d2dd89113dec0be9ad27ebbf5ce71ffbb4"
+REV58_REPAIR_SOURCE_PROGRAM_TREE = "f07e575c1f00dd52c26d32028d7efa28c3c88f9f"
+REV58_ARCHIVE_SHA_BEFORE = (
+    "b4c54c2b6208f7ce8739cb8ad26eb7b0485a412a31bdaf40bafba5dc0608d9d6"
+)
+REV58_ARCHIVE_SHA_AFTER = (
+    "0ba26ac9d9787ce84e626b6a4ddb937ddbd31e3c51c142bb6b1c89360b9f0a08"
+)
+REV58_ARCHIVE_BLOB_BEFORE = "598f9002a72d939a78f3ab971b8f89c713b53fbc"
+REV58_ARCHIVE_BLOB_AFTER = "6c3c5466e068aa5d259d65181a3b0dd1683a8bfc"
+REV58_TRANSITION_SHA = (
+    "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"
+)
+REV58_TRANSITION_BLOB = "1cce6965efe08a44ac9b8a1f4bf24b9b15cab885"
 
 
 def _prefetch_closed_correction_blobs(
@@ -2914,6 +2932,117 @@ def _validate_transition_history(
                     )
 
 
+def validate_rev58_raw_identity_repair(
+    reader: GitReader,
+    current: str,
+    program_root: str,
+    evidence: Mapping[str, Any],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Recognize only the user-authorized revision-58 one-byte repair."""
+
+    archive_path = f"{program_root}/evidence/states/program-state-revision-0058.json"
+    current_state_path = f"{program_root}/program-state.json"
+    transition_path = f"{program_root}/evidence/transitions/TR-0057.json"
+    evidence_path = (
+        f"{program_root}/evidence/verification/{REV58_REPAIR_EVIDENCE_ID}.json"
+    )
+    target = (transition_path, "/outputs/0/sha256")
+    valid = True
+    try:
+        source_identity = reader.resolve_identity(REV58_REPAIR_SOURCE, program_root)
+        subject = evidence.get("subject", {})
+        actor = evidence.get("actor", {})
+        artifacts = subject.get("artifact_digests", [])
+        expected_artifacts = [
+            {"path": archive_path, "sha256": REV58_ARCHIVE_SHA_BEFORE},
+            {"path": transition_path, "sha256": REV58_TRANSITION_SHA},
+        ]
+        valid = valid and all(
+            (
+                evidence.get("evidence_id") == REV58_REPAIR_EVIDENCE_ID,
+                evidence.get("kind") == "author",
+                evidence.get("verdict") == "passed",
+                actor.get("role") == "coordinator",
+                actor.get("independent") is False,
+                subject.get("git_commit") == REV58_REPAIR_SOURCE,
+                subject.get("git_tree") == REV58_REPAIR_SOURCE_TREE,
+                source_identity.source_tree == REV58_REPAIR_SOURCE_TREE,
+                source_identity.program_tree == REV58_REPAIR_SOURCE_PROGRAM_TREE,
+                artifacts == expected_artifacts,
+                reader.is_ancestor(REV58_REPAIR_SOURCE, current),
+                current != REV58_REPAIR_SOURCE,
+            )
+        )
+        blobs = reader.read_blob_requests(
+            [
+                (REV58_REPAIR_SOURCE, archive_path),
+                (REV58_REPAIR_SOURCE, transition_path),
+                (current, archive_path),
+                (current, current_state_path),
+                (current, transition_path),
+            ]
+        )
+        object_ids = reader.object_ids(
+            [
+                (REV58_REPAIR_SOURCE, archive_path),
+                (REV58_REPAIR_SOURCE, transition_path),
+                (current, archive_path),
+                (current, transition_path),
+            ]
+        )
+        before_archive = blobs[(REV58_REPAIR_SOURCE, archive_path)]
+        before_transition = blobs[(REV58_REPAIR_SOURCE, transition_path)]
+        after_archive = blobs[(current, archive_path)]
+        after_current = blobs[(current, current_state_path)]
+        after_transition = blobs[(current, transition_path)]
+        transition = strict_loads(after_transition)
+        before_state = strict_loads(before_archive)
+        after_state = strict_loads(after_archive)
+        valid = valid and all(
+            (
+                sha256_bytes(before_archive) == REV58_ARCHIVE_SHA_BEFORE,
+                object_ids[(REV58_REPAIR_SOURCE, archive_path)]
+                == REV58_ARCHIVE_BLOB_BEFORE,
+                sha256_bytes(before_transition) == REV58_TRANSITION_SHA,
+                object_ids[(REV58_REPAIR_SOURCE, transition_path)]
+                == REV58_TRANSITION_BLOB,
+                after_transition == before_transition,
+                object_ids[(current, transition_path)] == REV58_TRANSITION_BLOB,
+                _pointer_value(transition, "/outputs/0/sha256")
+                == REV58_ARCHIVE_SHA_BEFORE,
+                sha256_bytes(after_archive) == REV58_ARCHIVE_SHA_AFTER,
+                object_ids[(current, archive_path)] == REV58_ARCHIVE_BLOB_AFTER,
+                after_archive == after_current,
+                before_state == after_state,
+                canonical_digest(before_state) == canonical_digest(after_state),
+                after_state.get("revision") == 58,
+                before_archive.endswith(b"\n\n"),
+                not after_archive.endswith((b"\n\n", b"\r\n\r\n")),
+            )
+        )
+        checks = evidence.get("checks", [])
+        findings = evidence.get("findings", [])
+        valid = valid and (
+            [row.get("check_id") for row in checks]
+            == ["REV58-RAW-IDENTITY", "REV58-REPAIR-BOUNDARY"]
+            and [row.get("result") for row in checks] == ["passed", "passed"]
+            and [row.get("code") for row in findings] == ["REV58_RAW_IDENTITY_REPAIRED"]
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        valid = False
+
+    if valid:
+        return [], frozenset({target})
+    return [
+        _finding(
+            "REV58_RAW_IDENTITY_REPAIR_INVALID",
+            "fatal",
+            evidence_path,
+            "EXACT_SINGLE_CLAIM_REPAIR",
+        )
+    ], frozenset()
+
+
 def _validate_state_chain(
     documents: Mapping[str, Any],
     program_root: str,
@@ -4329,6 +4458,19 @@ def validate_program(
             )
         ]
         findings.extend(preflight_findings)
+    rev58_repair_path = f"{root}/evidence/verification/{REV58_REPAIR_EVIDENCE_ID}.json"
+    rev58_repair = documents.get(rev58_repair_path)
+    if isinstance(rev58_repair, Mapping):
+        rev58_findings, rev58_digest_targets = validate_rev58_raw_identity_repair(
+            reader,
+            identity.source_commit,
+            root,
+            rev58_repair,
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *rev58_digest_targets}
+        )
+        findings.extend(rev58_findings)
     _validate_state_chain(
         documents,
         root,

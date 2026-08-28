@@ -55,7 +55,7 @@
   "outputs": [
     {
       "path": "evidence/states/program-state-revision-0058.json",
-      "sha256": "0ba26ac9d9787ce84e626b6a4ddb937ddbd31e3c51c142bb6b1c89360b9f0a08",
+      "sha256": "b4c54c2b6208f7ce8739cb8ad26eb7b0485a412a31bdaf40bafba5dc0608d9d6",
       "schema_version": "2.0",
       "role": "append_only_evidence"
     },

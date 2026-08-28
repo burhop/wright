@@ -1,0 +1,71 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-REV58-RAW-IDENTITY-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "author",
+  "subject": {
+    "git_commit": "cf19f19b47484afb66a28bd3f93c041d86553c89",
+    "git_tree": "0df363d2dd89113dec0be9ad27ebbf5ce71ffbb4",
+    "artifact_digests": [
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json",
+        "sha256": "b4c54c2b6208f7ce8739cb8ad26eb7b0485a412a31bdaf40bafba5dc0608d9d6"
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json",
+        "sha256": "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer under direct user authorization",
+    "role": "coordinator",
+    "independent": false
+  },
+  "created_at": "2026-08-28T16:08:22Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "REV58-RAW-IDENTITY",
+      "method": "Bind the exact cf19f19b archive and TR-0057 blobs; require revision 58 to differ from current state by one trailing LF only, then require normalized archive bytes to equal current state bytes without semantic change.",
+      "environment": "Local committed Git objects; offline; no product or benchmark execution",
+      "duration_ms": 500,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json",
+          "sha256": "b4c54c2b6208f7ce8739cb8ad26eb7b0485a412a31bdaf40bafba5dc0608d9d6"
+        }
+      ]
+    },
+    {
+      "check_id": "REV58-REPAIR-BOUNDARY",
+      "method": "Require immutable TR-0057 bytes and its recorded digest to remain inspectable; disposition only /outputs/0/sha256 for the exact normalized revision-58 blob and reject every other transition, pointer or semantic change.",
+      "environment": "Exact single-claim append-only repair; direct user authorization; offline",
+      "duration_ms": 500,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json",
+          "sha256": "4c21b4ecfb2a65a61140c0bddd30a58d3dea77f071604bd6ca324f55a35948b7"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "Independent T066 verification blocked cf19f19b because revision 58 had one extra trailing blank line and failed git diff --check.",
+    "The first bounded repair attempt rewrote TR-0057 and was rejected by TRANSITION_BLOB_CHANGED; this record preserves the transition and uses one exact append-only disposition."
+  ],
+  "findings": [
+    {
+      "code": "REV58_RAW_IDENTITY_REPAIRED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0058.json",
+      "disposition": "One trailing LF was removed. Current and archived revision-58 bytes now match; semantic state, readiness, authority, benchmark 0/100, release eligibility and TR-0057 bytes remain unchanged."
+    }
+  ],
+  "rollback_subject": "git:cf19f19b47484afb66a28bd3f93c041d86553c89 (semantically correct candidate with the independently identified trailing-blank defect)",
+  "delivery_relation": null
+}
