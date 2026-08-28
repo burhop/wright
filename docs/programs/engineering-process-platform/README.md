@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T073–T075 are complete and T076 verification is next; no new task IDs or product scope are being added.
+**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T073–T076 are complete with 257 focused tests passing and one Windows symlink skip; T066 independent candidate verification is next.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -67,4 +67,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Continue EPP-F01 at T076, then complete T066–T068 without adding task IDs. The latest authorization permits local closure, required delivery checks, push, and opening the PR; it does not authorize merge/dev integration, EPP-F01B implementation, dependencies, benchmark execution, publication, or release.
+Continue EPP-F01 at T066, then complete T067–T068 without adding task IDs. The latest authorization permits local closure, required delivery checks, push, and opening the PR; it does not authorize merge/dev integration, EPP-F01B implementation, dependencies, benchmark execution, publication, or release.

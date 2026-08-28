@@ -30,7 +30,7 @@ def test_readme_directly_links_current_subject_authority_and_start(
     for target in required:
         assert target in readme
         assert (repository_root / PROGRAM / target).resolve().is_file()
-    assert "Continue EPP-F01 at T076" in readme
+    assert "Continue EPP-F01 at T066" in readme
     assert "only T024–T041 are implementation-authorized" not in readme
 
 
