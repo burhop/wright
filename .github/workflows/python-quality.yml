@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -77,10 +79,12 @@ jobs:
             packages/data_vault/tests \
             packages/model_registry/tests \
             packages/tool_registry/tests \
-            packages/workspace_service/tests \
-            tests; do
+            packages/workspace_service/tests; do
             uv run --extra runtime --extra engineering-models python -m pytest -q "$python_suite"
           done
+          uv run --extra runtime --extra engineering-models python -m pytest -q tests \
+            --ignore=tests/program_control_plane \
+            --ignore=tests/native_runtime
 
       - name: Enforce ratcheted release-code coverage
         run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85

@@ -697,7 +697,10 @@ class GitReader:
     def worktree_observation(self) -> dict[str, object]:
         status = self._run(["status", "--porcelain=v1", "-z"])
         autocrlf_raw = (
-            self._run(["config", "--get", "core.autocrlf"]).decode().strip().lower()
+            self._run(["config", "--get", "--default", "unset", "core.autocrlf"])
+            .decode()
+            .strip()
+            .lower()
         )
         autocrlf = (
             autocrlf_raw if autocrlf_raw in {"true", "false", "input"} else "unset"

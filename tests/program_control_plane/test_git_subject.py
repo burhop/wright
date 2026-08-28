@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -48,6 +49,19 @@ def test_lf_blob_identity_is_independent_of_checkout_representation(
     )
     assert checkout.read_bytes() != reader.blob(commit, path)
     assert git_builder.git_output("status", "--porcelain", "--", path) == ""
+
+
+def test_worktree_observation_maps_unset_autocrlf_without_failing(
+    git_builder, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", os.devnull)
+    reader, _ = _bundle_repo(git_builder)
+
+    observation = reader.worktree_observation()
+
+    assert observation["autocrlf"] == "unset"
+    assert observation["dirty_path_count"] == 0
 
 
 def test_paths_with_spaces_and_batched_blob_reads_are_exact(git_builder) -> None:
