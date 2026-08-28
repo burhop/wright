@@ -10,7 +10,7 @@
 
 ## Decision 2: One digest-bound envelope with atomic replacement
 
-**Decision**: `current.json` contains a schema version, exact source commit/tree/program-tree identities, generated timestamp, identity digest, and one complete projection. `bundle_id` is the SHA-256 of canonical `source` plus canonical `projection`; the non-semantic publisher observation time is excluded. The publisher validates a temporary file before atomic replacement.
+**Decision**: `current.json` contains a schema version, exact source identities, generated timestamp, the exact validated EPP-F01 dashboard object, a supplemental projection, and an identity digest. `bundle_id` hashes canonical `source + dashboard + supplement`; the non-semantic publisher observation time is excluded. Same-directory temp write, flush/fsync, validation, `os.replace`, supported directory sync, and failure-preserves-prior behavior are required.
 
 **Rationale**: A single identity prevents mixed panels and makes conditional GET, rollback, caching, and stale diagnosis precise. The digest is an integrity binding, not a trust grant.
 
@@ -18,7 +18,7 @@
 
 ## Decision 3: Conditional identity polling, not a runtime Git watcher
 
-**Decision**: The browser polls the authenticated endpoint every ten seconds with `If-None-Match`. A repository development helper may republish only when committed HEAD changes. Production observes only atomic bundle replacement.
+**Decision**: The browser polls every five seconds with `If-None-Match`. The standard contributor publisher runs in bounded `--watch-committed` mode and republishes only when committed HEAD changes. Its mutable operational heartbeat is served separately from `/api/program-status/publisher` and is excluded from bundle identity. Package install/upgrade atomically supplies the packaged bundle. Production runtime observes only atomic replacement.
 
 **Rationale**: This meets automatic refresh while keeping Git and filesystem watching outside the API. A 304 is cheap and unchanged evidence is not reinterpreted.
 
@@ -34,7 +34,7 @@
 
 ## Decision 5: Histories use exact committed observations
 
-**Decision**: The publisher walks allowlisted committed state, transition, task, catalog, and delivery evidence. A point is included only when its metric, exact commit, and trustworthy ISO-8601 time are present. Ordering uses timestamp plus commit identity; missing data remains unavailable.
+**Decision**: The publisher walks allowlisted committed transition/task/catalog/delivery evidence. A point is included only when its contracted metric rule, source classification, exact commit, and trustworthy ISO-8601 time exist. Causal ordering comes from the append-only transition/commit-parent chain; timestamp is for display, and lexicographic SHA order is forbidden. Missing data remains explicitly unavailable/omitted.
 
 **Rationale**: This prevents misleading ordinal charts and inferred progress. Metric units are contractual.
 
@@ -63,6 +63,18 @@
 **Decision**: Log event name, trace ID, bundle identity, outcome, duration, and failure class as structured fields. Never log evidence bodies, credentials, raw commands, or private paths.
 
 **Rationale**: This supports glass-box diagnosis while honoring the allowlist boundary.
+
+## Decision 10: Preserve the authoritative snapshot; do not remodel it
+
+**Decision**: The bundle embeds the schema-valid EPP-F01 dashboard object unchanged. EPP-F01B adds only histories, catalog summary, structured actions/work lanes, internal evidence-detail index, and publisher state.
+
+**Rationale**: Status, classification, reason code, freshness, benchmark populations, lease, and correction disclosure already have a governed contract. Duplicating them would create semantic drift or a second authority.
+
+## Decision 11: Evidence navigation is internal-first
+
+**Decision**: Every evidence reference links to an internal detail record containing exact path, digest, bounded summary, freshness, recovery, and availability. An optional exact-commit GitHub URL may be shown when allowlisted. Packaged runtime labels raw content unavailable instead of exposing or inventing it.
+
+**Rationale**: This keeps evidence usable offline and without a checkout while preventing raw-body exposure.
 
 ## Resolved Clarifications
 

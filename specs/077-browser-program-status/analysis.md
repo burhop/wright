@@ -6,12 +6,12 @@
 
 ## Result
 
-**PASS — ready for bounded independent planning review.**
+**PRIMARY PASS after bounded repair `EPP-F01B-REVIEW-CONTRACT-001` — independent re-verification pending.**
 
 - Functional requirements: 39
 - Requirements mapped to implementation/test tasks: 39/39
-- Dependency-ordered tasks: 47, sequential and unique
-- Requirements-quality checks: 32/32 passed
+- Dependency-ordered tasks: 48, sequential and unique
+- Requirements-quality checks: 35/35 passed
 - Unresolved clarification markers: 0
 - Constitution violations: 0
 - Hidden or unresolved P0 questions: 0
@@ -20,21 +20,34 @@
 
 | Requirement group | Requirements | Primary task coverage | Result |
 | --- | --- | --- | --- |
-| Authority, identity, atomicity | FR-001–FR-003, FR-020–FR-024 | T005–T012, T035–T039 | Covered |
+| Authority, identity, atomicity | FR-001–FR-003, FR-020–FR-024 | T005–T012, T035–T044 | Covered |
 | Four readiness areas and release rule | FR-004–FR-008 | T013–T020 | Covered |
 | Product, benchmark, commercial, program health | FR-009–FR-012, FR-034 | T013–T020, T021–T025 | Covered |
-| Work, blockers, evidence, corrections | FR-013–FR-018 | T026–T034 | Covered |
+| Work, blockers, evidence, corrections | FR-013–FR-018 | Exact embedded EPP-F01 dashboard plus T026–T034 | Covered |
 | Sensitive-data and offline boundaries | FR-025–FR-026 | T005, T012–T013, T041 | Covered |
-| Accessibility and dedicated page | FR-027–FR-030 | T014–T020, T027, T040, T042 | Covered |
+| Accessibility and dedicated page | FR-027–FR-030 | T014–T020, T027, T042–T043 | Covered |
 | Exact-time histories and honest task scope | FR-031–FR-035, FR-039 | T021–T025, T040 | Covered |
 | Proposed catalog vs qualified benchmark | FR-036 | T015, T030–T034 | Covered |
 | Integration and development lanes | FR-037–FR-038 | T030–T034 | Covered |
 
-## Findings resolved during analysis
+## Findings resolved during initial analysis
 
 1. **Identity-change blind spot**: the initial data model described `bundle_id` as a projection-only digest, which could miss a changed committed source with identical values. It now binds canonical `source + projection`, excluding only non-semantic publisher observation time.
 2. **Allowlist/schema mismatch**: the initial nested contract admitted open-ended objects despite the sensitive-field allowlist. Gate outcomes, histories, lanes, checkpoints, findings, corrections, freshness, release, work, and benchmark detail are now closed or explicitly bounded; safe paths reject traversal/backslashes.
-3. **Non-executable packaging task**: the fallback packaging task lacked exact paths. T043 now names the packaged resource, wheel-content test, and documentation target.
+3. **Non-executable packaging task**: the fallback packaging task lacked exact paths. T040 now names the packaged resource, wheel-content/native-lifecycle tests, and documentation target.
+
+## Independent-review repair disposition
+
+Both independent audits failed the pre-repair commit `62af844bdabfe01831ea1096b5d2f7691b0512ec`. Their material findings are addressed in one stable-cause repair:
+
+- The exact EPP-F01 dashboard is embedded unchanged instead of remodelled, preserving canonical status/classification/reason/freshness, benchmark, lease, correction, approval, delivery, and release fields.
+- The FastAPI route now delegates through `tool_registry` as constitution §1 literally requires.
+- Histories have fixed machine-readable semantics, causal transition/parent order, source classes, explicit omissions, and deterministic latest-change records.
+- Standard committed-HEAD publisher and package-install triggers are explicit; the five-second ETag loop has a ten-second end-to-end acceptance test. Mutable publisher heartbeat is a separate operational endpoint and cannot change bundle identity.
+- Actions, lanes, catalog maturity, evidence navigation, safe roots, installed/fallback precedence, cross-platform atomic replacement, closed-version compatibility, RBAC, test IDs, and native lifecycle behavior are contractually/testably bounded.
+- Scripted solo-maintainer comprehension replaces unsupported population percentages.
+
+This is repair attempt 1 of 2 for `EPP-F01B-REVIEW-CONTRACT-001`. The same two reviewers must re-verify the repaired commit before the final PASS/freeze claim.
 
 ## Consistency conclusions
 
@@ -47,4 +60,4 @@
 
 ## Remaining review gate
 
-One independent engineering-usability review and one independent architecture/test review must pass. Material findings may receive at most two bounded repairs per stable cause, followed by another analysis and consistency check. The resulting exact commit/tree/program-tree/digest subject must then stop at human approval before T001.
+The engineering-usability and architecture/test reviewers must re-verify repair attempt 1. Any remaining stable cause may receive at most one additional repair. After both pass, rerun consistency checks and freeze the exact commit/tree/program-tree/digest subject; stop at human approval before T001.

@@ -128,15 +128,15 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **FR-011**: The commercial view MUST show offering posture, supported profiles, packaging, supply-chain, privacy, support, repository-control, and release-train status when present.
 - **FR-012**: The program-health view MUST show roadmap blockers, WIP and leases, open or overdue P0 risks and decisions, repair and push bounds, verifier independence, evidence freshness, and flow progress when present.
 - **FR-013**: The roadmap and work view MUST show the current customer milestone, active feature, branch and lease identity, completed and total tasks, lifecycle checkpoint progress, blocker, latest demonstrated capability, and sole next eligible action when supplied by committed evidence.
-- **FR-014**: A next action that requires human approval MUST be labeled as requiring approval and MUST NOT be presented as executable authority.
+- **FR-014**: Every next action MUST carry a stable ID, label, eligibility, authority state, human-approval requirement, blocker, and evidence identity; an action requiring human approval MUST NOT be presented as executable authority.
 - **FR-015**: Gate details MUST expose the evidence subject, age, blocker or recovery guidance, and history needed to understand the displayed state.
-- **FR-016**: Evidence navigation MUST use only approved safe repository-relative references and MUST preserve exact evidence identity.
+- **FR-016**: Evidence navigation MUST always provide a browser-usable internal detail link bound to an allowlisted repository-relative path and digest. An exact-commit GitHub link MAY be offered when approved and available; checkout/package source content that is absent MUST be labeled unavailable while its identity, summary, freshness, and recovery remain usable.
 - **FR-017**: The page MUST render all correction disclosures, original findings, and resolution metadata without allowing edits or using a correction to change unrelated readiness, benchmark, authority, or release values.
 - **FR-018**: The page MUST preserve non-passing classifications including skipped, partial, unsupported, unavailable, not tested, inconclusive, and contaminated.
 - **FR-019**: The page MUST provide distinct and honest empty, loading, current, stale, blocked, failed, unavailable, and unknown presentations.
 - **FR-020**: When newer evidence cannot be validated, the page MUST retain the last known valid snapshot, label it stale or failed, and show bounded recovery guidance rather than rendering a partial replacement.
 - **FR-021**: All displayed views MUST advance atomically to one validated committed identity and MUST NOT combine content from different snapshot or delivery identities.
-- **FR-022**: Automatic refresh MUST occur only in response to a changed committed snapshot or evidence identity; unchanged identity MUST NOT cause reinterpretation.
+- **FR-022**: In checkout-backed contributor operation, a bounded publisher process MUST detect a changed committed snapshot/evidence identity, validate and atomically install one bundle, and expose publisher state; package install or upgrade MUST atomically install its packaged bundle. The browser MUST conditionally refresh from the installed identity, and unchanged identity MUST NOT cause reinterpretation.
 - **FR-023**: Refresh MUST NOT launch product runs, benchmark cases, tools, models, applications, publication, integration, or release actions.
 - **FR-024**: The page MUST NOT read uncommitted author state as authority or infer missing status, approval, freshness, blockers, or actions.
 - **FR-025**: The page MUST expose only allowlisted governance metadata and MUST exclude raw prompts, engineering inputs or outputs, artifact bodies, credentials, tokens, cookies, private endpoints, raw logs, commands, arguments, reusable authority, and unapproved absolute paths.
@@ -175,20 +175,22 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **Checkpoint Observation**: An immutable metric value with a declared unit, exact commit/evidence identity, trustworthy timestamp, source classification, and optional change explanation.
 - **Customer Story Catalog Summary**: Derived counts of proposed stories by definition maturity, kept categorically separate from benchmark qualification.
 - **Delivery Lane Status**: A read-only integration/CI or continued-development projection with exclusive branch ownership, current phase, evidence, blocker, and next action.
+- **Next Action**: A machine-readable action identity with eligibility, authority state, approval requirement, blocker, and evidence; display text alone never grants authority.
+- **Publisher Status**: Evidence-derived state for the bounded committed-identity publisher, including mode, last attempt/success, failure code, and recovery.
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: In usability verification, at least 90% of representative maintainers identify all four readiness states, release eligibility, the primary blocker, and the next action correctly within two minutes of opening the overview.
+- **SC-001**: In a scripted eight-question independent comprehension walkthrough, the reviewer identifies all four readiness states, release eligibility, the primary blocker, and the next action correctly (8/8) within two minutes of opening the overview and without opening control-plane files.
 - **SC-002**: Across the complete acceptance fixture set, 100% of displayed readiness states, gate counts, benchmark populations, candidate identities, blockers, evidence ages, corrections, and next actions match the validated committed source exactly.
 - **SC-003**: Across mixed-state fixtures, 100% of cases with any non-passing required area show release eligibility as false, including cases with `100/100` benchmark progress.
 - **SC-004**: The full primary and blocker-investigation journeys complete with keyboard input alone at 200% zoom on both standard and narrow viewports, with no loss of content, focus, status meaning, or evidence access.
 - **SC-005**: In 100% of invalid, mismatched, unavailable, and interrupted-refresh tests, the page shows no partial or falsely current replacement; it either preserves a clearly labeled last valid view or presents an honest empty state.
-- **SC-006**: A newly available validated committed identity is reflected consistently across all views within 10 seconds, while an unchanged identity produces no authoritative-content change.
+- **SC-006**: With the standard committed-identity publisher running, a newly committed validated identity is atomically installed and reflected consistently across all views within 10 seconds; an unchanged identity produces a 304 and no authoritative-content change.
 - **SC-007**: Security and privacy inspection finds zero raw prompts, engineering payloads, artifact bodies, credentials, private endpoints, raw logs, command arguments, reusable authority, or unapproved absolute paths in the page or its support-safe diagnostics.
 - **SC-008**: Verification confirms that no page interaction or refresh can mutate program evidence, authorize a transition, launch product or benchmark work, publish, integrate, or release.
-- **SC-009**: In usability verification, at least 90% of representative maintainers correctly explain what each displayed graph measures, the latest material change, the current blocker, and one actionable next step within three minutes.
+- **SC-009**: In a scripted graph-comprehension walkthrough, the independent reviewer correctly states each graph's numerator/unit, inclusion rule, latest material change, current limitation, and next action for every displayed series within three minutes, without opening control-plane files.
 - **SC-010**: Across the history fixture set, 100% of plotted points retain their exact committed identity, trustworthy timestamp, metric unit, and source classification; no point is ordered or dated by an invented value.
 - **SC-011**: In 100% of fixtures where a bounded feature is at least 90% task-complete but the product program is not customer-ready, the page clearly reports the feature-local scope and does not present the program as nearly complete.
 - **SC-012**: Across catalog and benchmark fixtures, the page always preserves `100 proposed` and `0/100 qualified` as distinct labeled populations until governed qualification evidence changes the latter.
@@ -199,7 +201,7 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - EPP-F01 is integrated on `dev` at commit `b776b1182d5b6ee41364eb40b1bc95bf4eff797c` with tree `f22f61791a2385723934558d8557881862221eb1`; EPP-F01B planning is based on that immutable integrated result plus the separately verified continuation artifacts.
 - The initial audience is a local Wright maintainer who already has authorized access to the repository and existing Wright browser workspace.
 - The validated source remains the sole authority for vocabulary, ordering, counts, evidence identities, freshness, blockers, corrections, next action, and release eligibility.
-- Safe evidence references resolve within the local, authorized repository context; external browsing and automatic upload are not required.
+- Every safe evidence reference resolves to an internal browser detail bound to path and digest. Raw source content may be unavailable in a packaged runtime; optional exact-commit GitHub navigation never substitutes for the internal identity and requires no automatic upload.
 - Existing Wright navigation and design conventions may provide entry and visual consistency, but the program-status purpose and data authority remain distinct from the general workspace dashboard.
 - Planning, clarification, design, tasks, and analysis remain separate governed phases; no implementation code is permitted from this draft alone.
 - Historical graphs are derived only from committed checkpoint observations with trustworthy times; they are descriptive evidence, never schedules or token-to-time forecasts.

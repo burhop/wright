@@ -14,14 +14,14 @@ This is the planned human-repeatable acceptance path. Commands become executable
 uv run python scripts/publish-engineering-program-status.py --source HEAD --data-root .local-run/program-status-demo
 ```
 
-Expected: validation passes, one `current.json` is atomically installed, and output reports commit, tree, program tree, snapshot digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical projection bytes and bundle ID.
+Expected: validation passes, one `current.json` is atomically installed, and output reports commit, tree, program tree, snapshot digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical `source + dashboard + supplement` identity bytes and bundle ID.
 
 ## 2. Run focused verification
 
 ```powershell
-uv run pytest packages/workspace_service/tests/test_program_status.py apps/api/tests/test_program_status_api.py tests/program_control_plane/test_program_status_publisher.py
+uv run pytest packages/tool_registry/tests/test_program_status.py apps/api/tests/test_program_status_api.py tests/program_control_plane/test_program_status_publisher.py
 npm --prefix apps/web run test -- --run ProgramStatus
-uv run pytest tests/ui-integration -k program_status
+npx playwright test tests/ui-integration/program-status.spec.ts
 ```
 
 Expected: valid, corrupt, stale, empty, identity-mismatch, unsafe-link, auth, refresh, accessibility, and deterministic-regeneration cases pass.
@@ -48,9 +48,13 @@ Expected: the fixture is rejected; the last valid page remains visible and is la
 
 ## 5. Demonstrate committed refresh
 
-Publish a second approved committed fixture with a different exact identity while the page remains open.
+Start the standard contributor publisher in a third terminal, then commit an isolated approved fixture change while the page remains open:
 
-Expected: within 15 seconds every panel swaps together. Unchanged identity returns 304 and adds no history point.
+```powershell
+uv run python scripts/publish-engineering-program-status.py --watch-committed --poll-seconds 2 --data-root .local-run/program-status-demo
+```
+
+Expected: within 10 seconds the publisher observes the new committed identity, atomically installs it, the ETag changes, and every panel swaps together. Unchanged identity returns 304 and adds no history point. Publisher state and any bounded failure are visible.
 
 ## 6. Delivery gates
 

@@ -25,14 +25,14 @@
 
 **Purpose**: Complete the shared validation, atomic publication, and runtime read boundary that blocks every user story.
 
-- [ ] T005 [P] Add failing schema, bound, canonical-digest, safe-path, and deterministic-regeneration tests in `tests/program_control_plane/test_program_status_publisher.py`
-- [ ] T006 [P] Add failing last-valid, missing, corrupt, oversized, and identity-mismatch service tests in `packages/workspace_service/tests/test_program_status.py`
-- [ ] T007 Implement contracted repository input allowlists, exact Git identity checks, EPP-F01 validation invocation, and canonical projection digesting in `scripts/program_status/publisher.py` (depends on T005)
-- [ ] T008 Implement temporary-write, fsync, validate, and atomic `current.json` installation plus unchanged-identity no-op in `scripts/program_status/publisher.py` (depends on T007)
+- [ ] T005 [P] Add failing exact-dashboard preservation, closed-schema, digest, safe-path, causal-order, deterministic-regeneration, concurrent-reader, and Windows replacement-failure tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T006 [P] Add failing last-valid, installed-absent fallback, installed-invalid no-fallback, corrupt, oversized, identity-mismatch, and concurrent-read service tests in `packages/tool_registry/tests/test_program_status.py`
+- [ ] T007 Implement contracted input allowlists, exact Git identity checks, EPP-F01 validation, unchanged dashboard embedding, supplemental derivation, and canonical source+dashboard+supplement digesting in `scripts/program_status/publisher.py` (depends on T005)
+- [ ] T008 Implement same-directory temporary write, flush/fsync, validation, `os.replace`, supported parent-directory sync, failure-preserves-prior behavior, and unchanged-identity no-op in `scripts/program_status/publisher.py` (depends on T007)
 - [ ] T009 Implement the CLI arguments and non-secret exact-identity result in `scripts/publish-engineering-program-status.py` (depends on T008)
-- [ ] T010 Implement bounded bundle read, schema validation, digest binding, installed/fallback selection, and immutable result types in `packages/workspace_service/src/workspace_service/program_status.py` (depends on T006, T008)
-- [ ] T011 Export the program-status service through `packages/workspace_service/src/workspace_service/__init__.py` and wire stable data-root configuration in `apps/api/src/api/composition.py` (depends on T010)
-- [ ] T012 Add structured trace-safe read/publication outcome logging without evidence bodies or private paths in `scripts/program_status/publisher.py` and `packages/workspace_service/src/workspace_service/program_status.py`
+- [ ] T010 Implement bounded bundle read, explicit `$id` registration of both schemas, digest binding, installed-absent-only fallback, installed-invalid typed failure, and immutable result types in `packages/tool_registry/src/tool_registry/program_status.py` (depends on T006, T008)
+- [ ] T011 Export the program-status reader through `packages/tool_registry/src/tool_registry/__init__.py` and wire stable data-root configuration in `apps/api/src/api/composition.py` (depends on T010)
+- [ ] T012 Add structured trace-safe read/publication logging without evidence bodies or private paths in `scripts/program_status/publisher.py` and `packages/tool_registry/src/tool_registry/program_status.py` (depends on T008, T010)
 
 **Checkpoint**: A committed fixture can be deterministically published and read as one identity; invalid newer data cannot replace a valid bundle.
 
@@ -46,14 +46,14 @@
 
 ### Tests first
 
-- [ ] T013 [P] [US1] Add failing 200/304/auth/typed-error and forbidden-field API tests in `apps/api/tests/test_program_status_api.py`
-- [ ] T014 [P] [US1] Add failing decoder and loading/current/unavailable readiness component tests in `apps/web/src/__tests__/ProgramStatusPage.test.tsx`
+- [ ] T013 [P] [US1] Add failing 200/304, engineer/admin read, unauthenticated rejection, typed-error, exact-dashboard, and forbidden-field API tests in `apps/api/tests/test_program_status_api.py`
+- [ ] T014 [P] [US1] Add failing strict decoder, required `data-testid`, and loading/current/unavailable readiness component tests in `apps/web/src/__tests__/ProgramStatusPage.test.tsx`
 - [ ] T015 [P] [US1] Add a failing mocked primary-journey test for four readiness areas, release rule, `0/100`, and `100 proposed` in `tests/ui-integration/program-status.spec.ts`
 
 ### Implementation
 
 - [ ] T016 [US1] Implement typed error mapping, ETag/304, cache headers, and read-only GET in `apps/api/src/api/routers/program_status.py` and register it in `apps/api/src/api/main.py` (depends on T013)
-- [ ] T017 [US1] Implement strict client decoding and authenticated conditional fetch in `apps/web/src/services/program-status.ts` (depends on T014, T016)
+- [ ] T017 [US1] Implement strict closed-version decoding of the exact EPP-F01 dashboard plus EPP-F01B supplement and authenticated conditional fetch in `apps/web/src/services/program-status.ts` (depends on T014, T016)
 - [ ] T018 [P] [US1] Build token-based readiness, gate, release, benchmark, and catalog components in `apps/web/src/components/program-status/` (depends on T014)
 - [ ] T019 [US1] Compose the dedicated `apps/web/src/components/pages/ProgramStatusPage.tsx` with honest loading/current/unavailable states (depends on T017, T018)
 - [ ] T020 [US1] Register `/program-status` in `apps/web/src/App.tsx` and add the dedicated navigation item in `apps/web/src/components/layout/Sidebar.tsx` without changing `DashboardPage.tsx` semantics (depends on T019)
@@ -70,12 +70,12 @@
 
 ### Tests first
 
-- [ ] T021 [P] [US2] Add failing history derivation tests for trustworthy timestamps, omissions, bounds, units, and feature-local task scope in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T021 [P] [US2] Add failing metric-ID/unit/counting-rule/source-class pairing, transition/parent causal order, deterministic latest-change, omission, bound, and feature-local scope tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [ ] T022 [P] [US2] Add failing chart, fallback-table, reduced-motion, and explanatory-copy tests in `apps/web/src/__tests__/ProgramStatusHistory.test.tsx`
 
 ### Implementation
 
-- [ ] T023 [US2] Derive contracted customer, quality, automation, governance, readiness, benchmark, task, and delivery series from exact committed observations in `scripts/program_status/publisher.py` (depends on T021)
+- [ ] T023 [US2] Derive each fixed-semantic customer, quality, automation, governance, readiness, benchmark, task, and delivery series from exact causally ordered committed observations in `scripts/program_status/publisher.py` (depends on T021)
 - [ ] T024 [US2] Implement reusable accessible Plotly history plus semantic table fallback in `apps/web/src/components/program-status/ProgramHistory.tsx` using the existing renderer (depends on T022, T023)
 - [ ] T025 [US2] Add metric meaning, latest change, limitation, blocker, and next-action summaries to `apps/web/src/components/pages/ProgramStatusPage.tsx` (depends on T024)
 
@@ -91,13 +91,13 @@
 
 ### Tests first
 
-- [ ] T026 [P] [US3] Add failing finding/correction preservation and safe-evidence projection tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T026 [P] [US3] Add failing byte-semantic dashboard preservation, internal detail, exact path/digest, traversal/lookalike-root rejection, optional exact-GitHub, and packaged identity-only evidence tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [ ] T027 [P] [US3] Add failing keyboard disclosure, focus, status-text, and unsafe-link tests in `apps/web/src/__tests__/ProgramStatusEvidence.test.tsx`
 
 ### Implementation
 
-- [ ] T028 [US3] Derive bounded gate, finding, correction, freshness, and recovery summaries in `scripts/program_status/publisher.py` (depends on T026)
-- [ ] T029 [US3] Implement accessible evidence and correction disclosures in `apps/web/src/components/program-status/EvidenceDetails.tsx` (depends on T027, T028)
+- [ ] T028 [US3] Build the bounded internal evidence index for the unchanged dashboard's gate/finding/correction references, with safe summary, freshness, recovery, availability, and optional exact-commit GitHub URL in `scripts/program_status/publisher.py` (depends on T026)
+- [ ] T029 [US3] Implement accessible internal evidence links, exact identity/correction disclosure, and honest raw-content availability in `apps/web/src/components/program-status/EvidenceDetails.tsx` (depends on T027, T028)
 
 **Checkpoint**: US3 makes blockers inspectable without exposing raw or unsafe content.
 
@@ -111,12 +111,12 @@
 
 ### Tests first
 
-- [ ] T030 [P] [US4] Add failing two-lane, catalog-maturity, task-scope, and next-action derivation tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T030 [P] [US4] Add failing exact two-lane order/uniqueness, fixed catalog maturity/sum, lease identity, task scope, and structured action authority/approval derivation tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [ ] T031 [P] [US4] Add failing lane, authority, checkpoint timestamp, and product-context component tests in `apps/web/src/__tests__/ProgramStatusWork.test.tsx`
 
 ### Implementation
 
-- [ ] T032 [US4] Derive integration/CI events and continued-development lane summaries from allowlisted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
+- [ ] T032 [US4] Derive exact integration/CI and continued-development lanes, lease, fixed catalog summary, and structured non-granting actions from allowlisted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
 - [ ] T033 [US4] Implement `DeliveryLanes.tsx` and `FeatureProgress.tsx` in `apps/web/src/components/program-status/` with explicit feature/program scope (depends on T031, T032)
 - [ ] T034 [US4] Integrate authority-aware next action, blockers, lane history, and exact checkpoint times into `ProgramStatusPage.tsx` (depends on T033)
 
@@ -137,9 +137,9 @@
 
 ### Implementation
 
-- [ ] T037 [US5] Implement the ten-second conditional poll lifecycle, cancellation, atomic reducer, and last-valid preservation in `apps/web/src/services/program-status.ts` and `ProgramStatusPage.tsx` (depends on T035)
+- [ ] T037 [US5] Implement the five-second conditional poll lifecycle, cancellation, atomic reducer, and last-valid preservation in `apps/web/src/services/program-status.ts` and `ProgramStatusPage.tsx` (depends on T035)
 - [ ] T038 [US5] Implement visible stale/failed age, recovery, screen-reader announcement, and unavailable-state components in `apps/web/src/components/program-status/RefreshState.tsx` (depends on T036, T037)
-- [ ] T039 [US5] Add a committed-HEAD-only local republish helper mode to `scripts/publish-engineering-program-status.py` without dirty-file observation or runtime Git coupling (depends on T008, T037)
+- [ ] T039 [US5] Implement standard bounded `--watch-committed` publisher mode and visible publisher state, wire its contributor command in `docs/getting-started/quickstart-local.md`, and add commit-change-to-atomic-install tests without dirty-file observation or API Git coupling (depends on T008, T037)
 
 **Checkpoint**: US5 refreshes one exact identity and fails closed without losing orientation.
 
@@ -147,14 +147,15 @@
 
 ## Phase 8: Cross-cutting verification and delivery readiness
 
-- [ ] T040 [P] Add 200%-zoom, narrow-viewport, keyboard-only, non-color, reduced-motion, and Plotly-failure acceptance coverage in `tests/ui-integration/program-status.spec.ts`
-- [ ] T041 [P] Add packaged API+SPA smoke without `.git`, Git executable, network, or source checkout in `tests/e2e/test_program_status.py`
-- [ ] T042 [P] Add compatibility regression proving existing workspace routes and `DashboardPage.tsx` behavior remain unchanged in `apps/web/src/__tests__/App.test.tsx`
-- [ ] T043 Add build/install wiring for a validated fallback at `src/wright_engineering/static/program-status/current.json`, assert it in `tests/packaging/test_wheel_contents.py`, and document its generated source and rollback in `docs/getting-started/program-status.md`
-- [ ] T044 Run and record deterministic quickstart acceptance, including isolated evidence corruption and atomic refresh, in `specs/077-browser-program-status/quickstart.md`
-- [ ] T045 Run focused Python, API, web, UI-integration, system, lint, format, type, security/secret, and program-control tests; record exact commands and results in feature evidence
-- [ ] T046 Run one independent engineering-usability review and one independent architecture/test review; resolve each stable cause within two bounded repairs and preserve reviewer identity/results
-- [ ] T047 Freeze the exact implementation candidate and run Wright's dev push gate; stop for any missing authority before push, PR, merge, deployment, publication, or release
+- [ ] T040 Add build/install wiring for the validated fallback and both schemas under `src/wright_engineering/static/program-status/`, assert wheel contents in `tests/packaging/test_wheel_contents.py`, prove data-root preservation across update/rollback/uninstall in `tests/native_runtime/test_program_status_lifecycle.py`, and document source/precedence/rollback in `docs/getting-started/program-status.md`
+- [ ] T041 [P] Add packaged API+SPA smoke without `.git`, Git executable, network, or source checkout in `tests/e2e/test_program_status.py` (depends on T040)
+- [ ] T042 [P] Add 200%-zoom, narrow-viewport, keyboard-only, non-color, reduced-motion, `data-testid`, scripted comprehension, and Plotly-failure acceptance coverage in `tests/ui-integration/program-status.spec.ts`
+- [ ] T043 [P] Add compatibility regression proving existing workspace routes and `DashboardPage.tsx` behavior remain unchanged in `apps/web/src/__tests__/App.test.tsx`
+- [ ] T044 Add end-to-end committed fixture change → publisher install → ETag change → atomic browser refresh coverage in `tests/ui-integration/program-status.spec.ts` (depends on T039)
+- [ ] T045 Run and record deterministic quickstart acceptance, including isolated evidence corruption, publisher state, internal evidence navigation, and automatic committed refresh, in `specs/077-browser-program-status/quickstart.md`
+- [ ] T046 Run focused publisher, registry, API, web, UI-integration, packaged/native lifecycle, lint, format, type, security/secret, and program-control checks; record commands/results by stable cause in feature evidence
+- [ ] T047 Run the scripted engineering-usability comprehension review and independent architecture/test review; resolve each stable cause within two bounded repairs and preserve reviewer identity/results
+- [ ] T048 Freeze the exact implementation candidate and run Wright's dev push gate; stop for any missing authority before push, PR, merge, deployment, publication, or release
 
 **Checkpoint**: The implementation candidate is independently verified and ready for the separately authorized integration lifecycle.
 
@@ -170,12 +171,12 @@ T001–T004
             -> US3 T026–T029
             -> US4 T030–T034
             -> US5 T035–T039
-                -> T040–T047 (cross-cutting and delivery)
+                -> T040–T048 (cross-cutting and delivery)
 ```
 
 - US2, US3, and US4 may begin in parallel after US1 when different files are owned, but one writer must serialize edits to `publisher.py` and `ProgramStatusPage.tsx`.
 - US5 depends on the US1 fetch/page boundary and the foundational atomic bundle identity; it does not depend on US2–US4 content components.
-- T040–T043 may run in parallel after all relevant stories; T044–T047 are sequential evidence and gate steps.
+- T040 precedes packaged smoke T041; T042–T043 may run in parallel after relevant stories; T044–T048 are sequential integration evidence and gates.
 - No implementation task is eligible before the frozen subject and bounded lease are approved.
 
 ## Independent delivery slices

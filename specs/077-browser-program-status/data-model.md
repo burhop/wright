@@ -4,68 +4,85 @@
 
 One immutable, size-bounded projection delivered atomically.
 
-| Field | Type | Rules |
+| Field | Type | Rule |
 | --- | --- | --- |
-| `schema_version` | string | Exact supported version, initially `1.0.0` |
-| `bundle_id` | SHA-256 hex | Digest of canonical `source` plus canonical `projection` bytes |
-| `generated_at` | UTC timestamp | Publisher observation time, never evidence time |
-| `source` | SourceIdentity | Exact committed subject and validator result |
-| `projection` | ProgramProjection | Complete view for one identity |
+| `schema_version` | string | Exact supported contract, initially `1.0.0` |
+| `bundle_id` | SHA-256 | Canonical digest of `source + dashboard + supplement` |
+| `generated_at` | UTC timestamp | Publisher observation only; excluded from identity |
+| `source` | SourceIdentity | Exact committed and validator identities |
+| `dashboard` | EPP-F01 dashboard | Embedded unchanged and valid against the EPP-F01 schema |
+| `supplement` | BrowserSupplement | History, catalog, work, evidence index, publisher state only |
 
-Validation canonicalizes `source` and `projection`, recomputes `bundle_id` over both (excluding only the non-semantic `generated_at` observation), verifies committed identities and passing EPP-F01 evidence, and rejects unknown fields, unsafe paths, excessive counts, or unsupported versions.
+Validation recomputes `bundle_id`, verifies source and dashboard binding, and rejects unknown fields, unsafe paths, excessive counts, unsupported versions, or any attempt to restate/override dashboard truth in the supplement.
 
 ## SourceIdentity
 
-Fields: exact 40-character `commit`, `tree`, and `program_tree`; safe relative `snapshot_path`; exact `snapshot_sha256`; `validation_transition`; and `validation_verdict=passed`.
+Exact 40-character `commit`, `tree`, and `program_tree`; safe relative snapshot path; snapshot SHA-256; passing validation transition; and validation verdict. The snapshot digest must equal the canonical embedded `dashboard` bytes.
 
-## ProgramProjection
+## Authoritative Dashboard
 
-- `readiness`: exactly four `ReadinessArea` objects in product, benchmark, commercial, program-health order.
-- `benchmark`: `BenchmarkProgress` with governed target 100.
-- `customer_catalog`: `CatalogSummary`, independent of benchmark counts.
-- `work`: active feature, bounded task summary, checkpoints, blockers, next action, and two delivery lanes.
-- `history`: bounded `MetricSeries` collection.
-- `findings` and `corrections`: bounded, inspectable summaries.
-- `freshness`: bundle and evidence observations.
-- `release`: exact non-compensating eligibility and approval facts.
+The `dashboard` field conforms to `specs/076-control-plane-validator/contracts/dashboard.schema.json` without translation. It therefore preserves independently:
 
-## ReadinessArea
+- canonical status vocabulary (`not_started`, `in_progress`, `passed`, `blocked`, `failed`, `stale`);
+- gate status, classification, reason code, evidence, and boolean freshness;
+- all four readiness areas and exact gate numerators/denominators;
+- every benchmark population, tier, deficit, attempt, and cutoff;
+- candidate, approval, lifecycle/lease, delivery, and release fields; and
+- correction profile identity/link/digest/class/authority, exact claim/finding counts, and verification subject/time.
 
-Fields: `id`, `label`, `status`, `required_gate_count`, `passed_gate_count`, `gates`, `blockers`, `freshness`, `last_qualified_at`.
+The supplement cannot shadow these fields.
 
-Rules: ID is one of the four canonical areas; counts derive from the included gate set; status is copied from validated evidence; every non-passing classification is preserved.
+## BrowserSupplement
 
-## BenchmarkProgress
+- `history`: bounded `MetricSeries` records.
+- `customer_catalog`: exact proposed-story summary, never benchmark authority.
+- `work`: current milestone, active feature, lease identity, feature-local tasks/checkpoints, blockers, structured next action, and exactly two ordered delivery lanes.
+- `evidence_index`: internal browser detail records for every linked evidence identity.
 
-Fields: `qualified`, `target`, `phase`, `hold_reason`, `blocking_dependencies`, `authorization_state`, `next_action`, tier/outcome/deficit/completeness/contamination summaries, and `evidence_cutoff`.
+## StructuredAction
 
-Rules: target equals 100; `0 <= qualified <= target`; proposed stories cannot contribute to qualified; absent detail is unavailable, not zero or passing.
+Fields: stable `id`, `label`, `eligibility` (`eligible`, `blocked`, `requires_approval`, `unavailable`), `authority_state` (`authorized`, `not_authorized`, `not_required`, `stale`, `unavailable`), `requires_human_approval`, nullable blocker, and evidence references.
 
-## CatalogSummary
-
-Fields: `proposed_total`, `source_path`, `source_digest`, and `maturity_counts` keyed by governed catalog maturity.
-
-Rules: values derive from the catalog at the exact source commit; counts sum to total; labels include `proposed`; no field maps to benchmark qualification.
-
-## DeliveryLane
-
-Common fields: `kind`, `branch`, `milestone`, `latest_capability`, `blocker`, `next_action`, `observed_at`.
-
-Integration adds target branch, frozen/last-pushed identity and time, PR, phase, check counts, CI start/failure, dev-sync, merge-gate, and bounded events. Continued development adds exact base/candidate and planning/implementation authority state.
-
-Rules: zero or one lane per kind; branch ownership is exclusive; absent GitHub data is null; links use allowlisted HTTPS GitHub origins.
+Rules: display text never grants authority; `requires_approval` implies `requires_human_approval=true` and cannot be rendered as executable; unavailable or stale authority stays non-executable.
 
 ## MetricSeries and CheckpointObservation
 
-`MetricSeries`: ID, label, unit, decision use, current limitation, next action, optional feature ID, omission count, observations.
+Every series has a fixed ID-to-semantics mapping:
 
-`CheckpointObservation`: commit, observed-at time, numeric value, label, evidence references, optional change reason.
+| ID | Unit / numerator | Inclusion rule | Source class |
+| --- | --- | --- | --- |
+| `customer_capability` | accepted customer scenarios | Count distinct customer-facing scenarios with exact committed acceptance evidence | `product_acceptance` |
+| `quality` | passing required checks / required checks | Snapshot of required candidate checks; skipped/partial do not pass | `test_evidence` |
+| `process_automation` | demonstrated lifecycle capabilities | Count distinct contracted lifecycle capabilities with committed demonstrations | `automation_capability` |
+| `governance` | passing program-health gates / required gates | Use the authoritative program-health gate population | `program_gate` |
+| four readiness IDs | passing gates / required gates | Use the matching authoritative area population | `readiness_gate` |
+| `benchmark_qualified` | qualified processes / 100 | Use governed qualification evidence only | `benchmark_qualification` |
+| `feature_tasks` | completed tasks / tasks in named feature | Count exact task IDs for one feature; never whole program | `feature_task` |
+| `integration_delivery` | completed integration gates / 8 | Count ordered frozen/push/PR/CI/sync/merge/deploy gates | `integration_gate` |
 
-Rules: series IDs are allowlisted; every point has an exact commit and trustworthy timestamp; missing points are omitted with a count; task series identify their feature; each series is bounded to 250 points.
+`MetricSeries` fields include fixed unit, counting-rule ID, source class, availability, decision use, limitation, structured next action, deterministic latest change, omission count/reason, and observations.
 
-## Findings and Corrections
+Each observation has exact commit, transition/parent identity, time, value and optional denominator, label, matching source class, required change explanation (nullable only for the first point), and evidence references. Append-only transition/commit-parent order is causal; timestamp is display metadata. Missing identities/times are omitted and counted, never inferred.
 
-Findings preserve ID, severity, state, assertion/evidence references, recovery, opened/resolved identities, and times. Corrections preserve profile, authority, expected/verified claim counts, original findings, and result. Disposed records remain visible and cannot mutate unrelated values.
+## CatalogSummary
+
+Fields: `proposed_total`, source path/digest, and exactly these derived maturity counts: `fully_defined`, `ready_to_specify`, `shaped`, `candidate`, `discovery_shaped`, `discovery`, and `discovery_separate_t4_authority_required`.
+
+Rules: counts sum to total; all labels remain proposed; no value contributes to benchmark qualification.
+
+## Work and DeliveryLane
+
+Work includes an optional exact lease (`id`, holder, branch/worktree, scope, expiry, state), one feature-local task population, causal checkpoints, blockers, and a structured action.
+
+Lanes are exactly two records in order: `integration`, then `continued_development`. Common fields include exclusive branch, milestone, capability, blocker, structured action, time, and evidence. Integration adds target, frozen/pushed identity/time, PR, phase, non-empty check counts when known, CI failure, sync, merge gate, and bounded events. Continued development adds exact base and authority state.
+
+## EvidenceDetail
+
+Every evidence reference points to an indexed detail with stable ID, allowlisted repository-relative path, exact digest, bounded support-safe summary, freshness, recovery, and availability. The browser always links internally to this detail. Optional exact-commit GitHub URLs are allowlisted secondary links. In packaged/offline operation, absent raw content is labeled unavailable; identity and summary remain usable.
+
+## PublisherStatus (separate operational projection)
+
+Fields: state (`active`, `inactive`, `failed`, `unavailable`), mode (`committed_watch`, `package_install`, `manual`), observed committed identity, last attempt/success, nullable failure code, and recovery. It is read through `/api/program-status/publisher`, not included in `ProgramStatusBundle` or `bundle_id`; operational heartbeat changes therefore cannot create false committed-evidence identities. Publisher state is context, never readiness or authority.
 
 ## Runtime View State
 
@@ -79,4 +96,4 @@ current + invalid/unavailable response -> stale or failed (retain prior bundle)
 no bundle + invalid/unavailable response -> unavailable
 ```
 
-Client state is never written back to evidence.
+Installed-invalid is an error and never silently falls back to packaged data. Packaged fallback is eligible only when installed data is absent. Client state is never written back to evidence.
