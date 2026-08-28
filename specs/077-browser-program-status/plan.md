@@ -8,7 +8,7 @@
 
 ## Summary
 
-Add a dedicated, authenticated `/program-status` page to Wright that makes the engineering-process program understandable to a product-minded solo developer. The page is a read-only projection of one atomically installed, schema-valid evidence bundle: EPP-F01's validated dashboard snapshot, independently bound raw-file and canonical-object identities, derived checkpoint history, proposed customer-story catalog summary, typed governance disclosures, and two delivery-lane summaries. A deterministic repository-side publisher validates committed inputs and installs the bundle in Wright's stable data root. A thin FastAPI route serves the last valid bundle with an ETag and a separate operational route serves publisher heartbeat; React conditionally refreshes and atomically replaces the view only when the evidence identity changes. Existing Plotly support renders accessible trend views with tabular/text fallbacks. No status, approval, readiness result, or benchmark qualification can be edited or inferred by the page.
+Add a dedicated, authenticated `/program-status` page to Wright that makes the engineering-process program understandable to a product-minded solo developer. The page is a read-only projection of one atomically installed, schema-valid evidence bundle: EPP-F01's validated dashboard snapshot, a publisher-attested raw Git-blob identity, independently runtime-recomputable canonical identities, a digest-bound source catalog, derived checkpoint history, proposed customer-story catalog summary, typed benchmark and governance disclosures, and two delivery-lane summaries. A deterministic repository-side publisher validates committed inputs and installs the bundle in Wright's stable data root. A thin FastAPI route serves the last valid bundle with an ETag and a separate operational route serves publisher heartbeat; React conditionally refreshes and atomically replaces the view only when the evidence identity changes. Existing Plotly support renders accessible trend views with tabular/text fallbacks. No status, approval, readiness result, benchmark qualification, or current action can be edited or inferred by the page.
 
 ## Technical Context
 
@@ -52,11 +52,11 @@ Post-design re-check: the API and bundle contracts preserve all gates above. The
 
 ### Evidence publication boundary
 
-`scripts/publish-engineering-program-status.py` is the only component that reads repository evidence. It accepts an exact committed subject, invokes the EPP-F01 validator, embeds the validated EPP-F01 dashboard unchanged, verifies both the raw committed snapshot digest and Wright-canonical parsed-object digest, derives only contracted supplemental fields (including typed governance disclosures), and validates safe evidence identities. It writes a same-directory temporary bundle, flushes/fsyncs it, validates it, and calls `os.replace`; supported platforms also sync the parent directory, and replacement failure preserves the prior file. Its standard `--watch-committed` contributor mode checks only `git rev-parse HEAD` every two seconds by default and publishes after that identity changes; dirty content is ignored and publisher state is written separately from the bundle. Package build/install atomically supplies a generated last-valid bundle, so runtime never needs Git or a source tree.
+`scripts/publish-engineering-program-status.py` is the only component that reads repository evidence. It accepts an exact committed subject, validates the digest-bound `program-status-source-catalog.json`, rejects every unlisted path/schema/parser/selection route, invokes the EPP-F01 validator, embeds the validated EPP-F01 dashboard unchanged, verifies and attests the raw committed Git-blob digest, recomputes the Wright-canonical parsed-object digest, derives only catalog-contracted supplemental fields, and validates canonical evidence identities. It writes a same-directory temporary bundle, flushes/fsyncs it, validates it, and calls `os.replace`; supported platforms also sync the parent directory, and replacement failure preserves the prior file. Its standard `--watch-committed` contributor mode checks only `git rev-parse HEAD` every two seconds by default and publishes after that identity changes; dirty content is ignored and publisher state is written separately from the bundle. Package build/install atomically supplies a generated last-valid bundle and the source catalog, so runtime never needs Git or a source tree.
 
 ### Runtime read boundary
 
-`tool_registry.program_status` reads bounded bundle and publisher-state files from the stable data root, validates them, verifies raw-file, canonical-object, source+dashboard+supplement, evidence-reference, action-authority, catalog-sum, lane-distinctness, observation-classification, and task-count relationships, and returns immutable domain objects plus ETag where applicable. The FastAPI routes contain no derivation logic. A packaged fallback is used only when no installed bundle exists; an invalid installed bundle returns a typed failure and never silently falls back. Missing, invalid, or unreadable newer data cannot be served as current.
+`tool_registry.program_status` reads bounded bundle, catalog, and publisher-state files from the stable data root. It validates the publisher's raw Git-blob attestation and exact evidence link without falsely claiming to possess repository bytes, independently recomputes canonical dashboard and bundle identities, verifies the source-catalog digest, and enforces evidence-reference, action-purpose/authority, benchmark-context, correction/finding/verification, catalog-sum, lane-distinctness, observation-classification, and task-count relationships. The FastAPI routes contain no derivation logic. A packaged fallback is used only when no installed bundle exists; an invalid installed bundle returns a typed failure and never silently falls back. Missing, invalid, or unreadable newer data cannot be served as current.
 
 ### Browser boundary
 
@@ -66,11 +66,14 @@ The React service makes authenticated conditional bundle GETs and bounded publis
 
 - The four readiness areas remain independent and non-compensating.
 - Governed benchmark progress remains `qualified / 100`; a proposed 100-story catalog is a separate population with definition-maturity counts.
+- The embedded dashboard action is historical to that snapshot; `work.current_next_action`, derived from validated current program state and lifecycle policy, is the sole current program action. Metric, benchmark, and lane actions are labeled guidance and cannot supersede it.
+- At `0/100`, typed benchmark context must state phase, hold reason, dependencies, authority, and the next qualifying action or publication fails.
 - Task completion is always labeled with its feature identifier and is never a whole-program completion percentage.
 - Customer capability, quality, automation, governance, readiness, benchmark, and delivery histories use contract-defined units and exact committed observations.
 - Each chart uses one contract-defined numerator/unit/inclusion rule/source class and includes deterministic latest-change, decision-use, limitation, and structured next-action evidence.
 - Integration/CI and continued-development lanes have exclusive branch identities and independent next actions.
 - Evidence links always open an internal detail bound to exact path/digest/summary. Optional exact-commit GitHub links are secondary; unavailable raw content is stated honestly.
+- Correction claim sets, findings, and verification verdicts are joined by stable IDs and validated as a closed relation; display counts are derived from those sets.
 
 ## Project Structure
 
@@ -85,7 +88,9 @@ specs/077-browser-program-status/
 ├── quickstart.md
 ├── contracts/
 │   ├── program-status-api.md
-│   └── program-status-bundle.schema.json
+│   ├── program-status-bundle.schema.json
+│   ├── program-status-source-catalog.json
+│   └── program-status-source-catalog.schema.json
 ├── checklists/
 │   ├── requirements.md
 │   └── program-status.md
@@ -129,7 +134,7 @@ tests/
 
 ## Delivery and Compatibility Gates
 
-1. Publisher contract fixtures cover valid, empty, stale, corrupt, unsafe-link, raw/canonical identity mismatch, same-time causal ordering, concurrent read/replace, Windows replacement failure, and deterministic regeneration.
+1. Publisher contract fixtures cover valid, empty, stale, corrupt, source-catalog mutation, publisher raw-attestation mismatch, canonical-identity mismatch, current-versus-historical action precedence, benchmark hold context, correction/finding/verification linkage, canonical paths, parsed GitHub URLs, same-time causal ordering, concurrent read/replace, Windows replacement failure, and deterministic regeneration.
 2. Domain/API tests prove last-valid preservation, bounded reads, ETag/304 behavior, auth enforcement, and secret exclusion. Linux verification separately runs the EPP-F01B route tests and the named pre-existing surface auth baselines so an unrelated hang cannot conceal the new route's result.
 3. Component and UI-integration tests cover all five independently shippable stories, keyboard operation, text/non-color status, 200% zoom, narrow viewport, reduced motion, and chart fallbacks.
 4. Packaged runtime and native lifecycle tests prove `/program-status` works without `.git`, checkout, Git, or network; installed data survives upgrade/rollback/uninstall rules and invalid installed data never silently falls back. Atomic replacement and native lifecycle coverage run explicitly on Windows, Linux, and macOS CI. The repeatable GB10 POSIX owned-listener baseline failure is tracked and classified independently; it may not be silently skipped or misattributed to EPP-F01B.

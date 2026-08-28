@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/program-status-source-catalog.schema.json",
+  "title": "Wright Program Status Source Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "catalog_id", "conflict_policy", "sources"],
+  "properties": {
+    "$schema": { "const": "https://wright.local/schemas/program-status-source-catalog.schema.json" },
+    "schema_version": { "const": "1.0.0" },
+    "catalog_id": { "const": "EPP-F01B-SOURCE-CATALOG-001" },
+    "conflict_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dashboard_fields", "current_action", "supplement", "unresolved_conflict", "source_precedence"],
+      "properties": {
+        "dashboard_fields": { "const": "embedded_dashboard_is_authoritative_only_for_its_source_commit_and_contracted_fields" },
+        "current_action": { "const": "current_program_state_supersedes_historical_dashboard_next_action" },
+        "supplement": { "const": "supplement_may_contextualize_but_never_mutate_dashboard_readiness_benchmark_or_release_truth" },
+        "unresolved_conflict": { "const": "reject_publication" },
+        "source_precedence": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "dashboard" },
+            { "const": "program_state" },
+            { "const": "roadmap" },
+            { "const": "lifecycle_policy" },
+            { "const": "gate_catalog" },
+            { "const": "gate_evidence" },
+            { "const": "benchmark_coverage" },
+            { "const": "audit_status" },
+            { "const": "risk_register" },
+            { "const": "decision_register" },
+            { "const": "transition_evidence" },
+            { "const": "legacy_v8_discovery" },
+            { "const": "correction_evidence" },
+            { "const": "verification_evidence" },
+            { "const": "approval_evidence" },
+            { "const": "customer_story_catalog" },
+            { "const": "feature_tasks" }
+          ],
+          "items": false,
+          "minItems": 17,
+          "maxItems": 17
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence",
+        "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery",
+        "correction_evidence", "verification_evidence", "approval_evidence", "customer_story_catalog", "feature_tasks"
+      ],
+      "properties": {
+        "dashboard": { "$ref": "#/$defs/sourceRule" },
+        "program_state": { "$ref": "#/$defs/sourceRule" },
+        "roadmap": { "$ref": "#/$defs/sourceRule" },
+        "lifecycle_policy": { "$ref": "#/$defs/sourceRule" },
+        "gate_catalog": { "$ref": "#/$defs/sourceRule" },
+        "gate_evidence": { "$ref": "#/$defs/sourceRule" },
+        "benchmark_coverage": { "$ref": "#/$defs/sourceRule" },
+        "audit_status": { "$ref": "#/$defs/sourceRule" },
+        "risk_register": { "$ref": "#/$defs/sourceRule" },
+        "decision_register": { "$ref": "#/$defs/sourceRule" },
+        "transition_evidence": { "$ref": "#/$defs/sourceRule" },
+        "legacy_v8_discovery": { "$ref": "#/$defs/sourceRule" },
+        "correction_evidence": { "$ref": "#/$defs/sourceRule" },
+        "verification_evidence": { "$ref": "#/$defs/sourceRule" },
+        "approval_evidence": { "$ref": "#/$defs/sourceRule" },
+        "customer_story_catalog": { "$ref": "#/$defs/sourceRule" },
+        "feature_tasks": { "$ref": "#/$defs/sourceRule" }
+      }
+    }
+  },
+  "$defs": {
+    "sourceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path_kind", "path", "path_pattern", "schema_ids", "parser_contract", "selection_rule", "projects_to"],
+      "properties": {
+        "path_kind": { "enum": ["exact", "append_only_collection"] },
+        "path": { "type": ["string", "null"], "maxLength": 500 },
+        "path_pattern": { "type": ["string", "null"], "maxLength": 500 },
+        "schema_ids": { "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 300 } },
+        "parser_contract": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9._-]{2,99}$" },
+        "selection_rule": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "projects_to": { "type": "array", "minItems": 1, "maxItems": 25, "uniqueItems": true, "items": { "type": "string", "pattern": "^/(?:dashboard|supplement)(?:/[A-Za-z0-9_*-]+)*$" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "path_kind": { "const": "exact" } }, "required": ["path_kind"] },
+          "then": { "properties": { "path": { "type": "string", "minLength": 1 }, "path_pattern": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "path_kind": { "const": "append_only_collection" } }, "required": ["path_kind"] },
+          "then": { "properties": { "path": { "type": "null" }, "path_pattern": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    }
+  }
+}

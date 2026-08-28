@@ -1,0 +1,177 @@
+{
+  "$schema": "https://wright.local/schemas/program-status-source-catalog.schema.json",
+  "schema_version": "1.0.0",
+  "catalog_id": "EPP-F01B-SOURCE-CATALOG-001",
+  "conflict_policy": {
+    "dashboard_fields": "embedded_dashboard_is_authoritative_only_for_its_source_commit_and_contracted_fields",
+    "current_action": "current_program_state_supersedes_historical_dashboard_next_action",
+    "supplement": "supplement_may_contextualize_but_never_mutate_dashboard_readiness_benchmark_or_release_truth",
+    "unresolved_conflict": "reject_publication",
+    "source_precedence": [
+      "dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence",
+      "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery",
+      "correction_evidence", "verification_evidence", "approval_evidence", "customer_story_catalog", "feature_tasks"
+    ]
+  },
+  "sources": {
+    "dashboard": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/dashboard.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/dashboard-v2.schema.json"],
+      "parser_contract": "EPP_DASHBOARD_V2",
+      "selection_rule": "Read the exact committed Git blob at the requested subject, validate it, and embed the parsed object unchanged. Its next_action is historical snapshot context, not the current program action.",
+      "projects_to": ["/dashboard"]
+    },
+    "program_state": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/program-state.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/program-state.schema.json"],
+      "parser_contract": "EPP_PROGRAM_STATE_V1",
+      "selection_rule": "Use the exact committed current pointer only after its referenced archive and transition validate. This is the sole source for the current program action, active feature, lease, and current flow counts.",
+      "projects_to": ["/supplement/work/current_next_action", "/supplement/work/active_feature", "/supplement/work/lease", "/supplement/governance/flow", "/supplement/benchmark_context/authorization_state"]
+    },
+    "roadmap": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/roadmap.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/roadmap.schema.json"],
+      "parser_contract": "EPP_ROADMAP_V1",
+      "selection_rule": "Use only dependency and lifecycle fields that validate against the current program state; reject disagreement rather than choose a second current action.",
+      "projects_to": ["/supplement/work/current_milestone", "/supplement/work/blockers", "/supplement/benchmark_context/dependencies"]
+    },
+    "lifecycle_policy": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/lifecycle-policy.schema.json"],
+      "parser_contract": "EPP_LIFECYCLE_POLICY_V1",
+      "selection_rule": "Use only to validate that the current action is legal for the exact state and authority; never synthesize an action absent from program state.",
+      "projects_to": ["/supplement/work/current_next_action"]
+    },
+    "gate_catalog": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/gate-catalog.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/gate-catalog.schema.json"],
+      "parser_contract": "EPP_GATE_CATALOG_V1",
+      "selection_rule": "Use gate identities and required populations only when they reconcile exactly with the embedded dashboard.",
+      "projects_to": ["/supplement/history"]
+    },
+    "gate_evidence": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/gate-evidence.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/gate-evidence.schema.json"],
+      "parser_contract": "EPP_GATE_EVIDENCE_V1",
+      "selection_rule": "Use only exact gate evidence referenced by the validated dashboard or causal history; never upgrade partial, skipped, stale, or failed evidence.",
+      "projects_to": ["/supplement/history", "/supplement/evidence_index"]
+    },
+    "benchmark_coverage": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/benchmark-coverage.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/benchmark-coverage.schema.json"],
+      "parser_contract": "EPP_BENCHMARK_COVERAGE_V1",
+      "selection_rule": "Use only hold, dependency, coverage, and qualifying-action context that is consistent with the embedded governed benchmark counts; never count proposed stories as qualified.",
+      "projects_to": ["/supplement/benchmark_context", "/supplement/history"]
+    },
+    "audit_status": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/audits/audit-status.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/audit-status.schema.json"],
+      "parser_contract": "EPP_AUDIT_STATUS_V1",
+      "selection_rule": "Use only the latest committed audit status whose exact subject matches the selected feature checkpoint.",
+      "projects_to": ["/supplement/governance/findings", "/supplement/governance/verification"]
+    },
+    "risk_register": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/risk-register.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/risk-register.schema.json"],
+      "parser_contract": "EPP_RISK_REGISTER_V1",
+      "selection_rule": "Project each committed risk once by stable ID; current record status wins only within the risk projection.",
+      "projects_to": ["/supplement/governance/risks"]
+    },
+    "decision_register": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/decision-register.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/decision-register.schema.json"],
+      "parser_contract": "EPP_DECISION_REGISTER_V1",
+      "selection_rule": "Project each committed decision once by stable ID; never infer approval from decision status.",
+      "projects_to": ["/supplement/governance/decisions"]
+    },
+    "transition_evidence": {
+      "path_kind": "append_only_collection",
+      "path": null,
+      "path_pattern": "^docs/programs/engineering-process-platform/evidence/transitions/TR-[0-9]{4}\\.json$",
+      "schema_ids": ["https://wright.local/programs/epp/transition-evidence.schema.json"],
+      "parser_contract": "EPP_TRANSITION_COLLECTION_V2",
+      "selection_rule": "Select only the contiguous validated transition chain through program-state.last_transition; order by revision/parent relation, never filename, timestamp, or SHA lexicography.",
+      "projects_to": ["/supplement/history", "/supplement/work/checkpoints", "/supplement/work/lanes", "/supplement/evidence_index"]
+    },
+    "legacy_v8_discovery": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json",
+      "path_pattern": null,
+      "schema_ids": ["wright-legacy://epp/v8-discovery-identity-only"],
+      "parser_contract": "EPP_V8_DISCOVERY_LEGACY_IDENTITY_V1",
+      "selection_rule": "Treat the immutable schema-less historical record as identity-only evidence. Never parse it as a current verification result; expose it only when a validated V9 correction or transition references its exact raw digest.",
+      "projects_to": ["/supplement/evidence_index"]
+    },
+    "correction_evidence": {
+      "path_kind": "append_only_collection",
+      "path": null,
+      "path_pattern": "^docs/programs/engineering-process-platform/evidence/corrections/COR-[A-Z0-9-]+\\.json$",
+      "schema_ids": [
+        "https://wright.local/programs/epp/committed-identity-correction.schema.json",
+        "https://wright.local/programs/epp/transition-input-correction.schema.json",
+        "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
+        "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
+        "https://wright.local/programs/epp/preflight-evidence-correction.schema.json"
+      ],
+      "parser_contract": "EPP_CORRECTION_COLLECTION_V1",
+      "selection_rule": "Select only schema-valid profiles referenced by the validated transition chain; derive claim IDs from the profile claims and require exact verification and finding links before marking any claim or finding resolved.",
+      "projects_to": ["/supplement/governance/corrections", "/supplement/governance/findings", "/supplement/evidence_index"]
+    },
+    "verification_evidence": {
+      "path_kind": "append_only_collection",
+      "path": null,
+      "path_pattern": "^docs/programs/engineering-process-platform/evidence/verification/(?!EPP-F01-V8-discovery\\.json$)[A-Za-z0-9][A-Za-z0-9._-]*\\.json$",
+      "schema_ids": ["https://wright.local/programs/epp/verification-evidence.schema.json", "https://wright.local/programs/epp/validation-report.schema.json"],
+      "parser_contract": "EPP_VERIFICATION_COLLECTION_V1",
+      "selection_rule": "Select exact-subject reports referenced by validated transitions or correction profiles; preserve verdict and every finding code and never convert a failed, partial, or inconclusive report to passed.",
+      "projects_to": ["/supplement/governance/verification", "/supplement/governance/findings", "/supplement/evidence_index"]
+    },
+    "approval_evidence": {
+      "path_kind": "append_only_collection",
+      "path": null,
+      "path_pattern": "^docs/programs/engineering-process-platform/evidence/approvals/APR-[A-Z0-9-]+\\.json$",
+      "schema_ids": ["https://wright.local/programs/epp/approval.schema.json"],
+      "parser_contract": "EPP_APPROVAL_COLLECTION_V1",
+      "selection_rule": "Select only approval records referenced by the validated state/transition chain; preserve pending, stale, rejected, and approved distinctly and never infer authorization.",
+      "projects_to": ["/supplement/governance/corrections", "/supplement/work/current_next_action", "/supplement/evidence_index"]
+    },
+    "customer_story_catalog": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/customer-process-user-stories.md",
+      "path_pattern": null,
+      "schema_ids": ["wright-parser://epp/customer-story-catalog-v1"],
+      "parser_contract": "EPP_CUSTOMER_STORY_MARKDOWN_V1",
+      "selection_rule": "Parse exactly EPP-US-001 through EPP-US-100 once; derive maturity labels from their declared sections and reject missing, duplicate, or unknown IDs.",
+      "projects_to": ["/supplement/customer_catalog"]
+    },
+    "feature_tasks": {
+      "path_kind": "exact",
+      "path": "specs/077-browser-program-status/tasks.md",
+      "path_pattern": null,
+      "schema_ids": ["wright-parser://speckit/tasks-v1"],
+      "parser_contract": "SPECKIT_TASKS_MARKDOWN_V1",
+      "selection_rule": "Parse exactly the unique EPP-F01B T001-T048 task IDs and their checkbox state; this population is feature-local and never a whole-program completion percentage.",
+      "projects_to": ["/supplement/work/tasks", "/supplement/history"]
+    }
+  }
+}

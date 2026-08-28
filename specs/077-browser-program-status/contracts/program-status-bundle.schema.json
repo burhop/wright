@@ -16,24 +16,29 @@
   "$defs": {
     "gitSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
     "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "stableId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
     "timestamp": { "type": "string", "format": "date-time" },
     "relativePath": {
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "pattern": "^(?!.*\\.\\.)(?:docs/programs/engineering-process-platform/|specs/076-control-plane-validator/|specs/077-browser-program-status/)[A-Za-z0-9._/-]+$"
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/076-control-plane-validator/|specs/077-browser-program-status/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "tree", "program_tree", "snapshot_path", "snapshot_raw_sha256", "dashboard_canonical_sha256", "validation_transition", "validation_verdict"],
+      "required": ["commit", "tree", "program_tree", "snapshot_path", "snapshot_raw_sha256", "raw_identity_verification", "raw_identity_evidence", "dashboard_canonical_sha256", "source_catalog_path", "source_catalog_sha256", "validation_transition", "validation_verdict"],
       "properties": {
         "commit": { "$ref": "#/$defs/gitSha" },
         "tree": { "$ref": "#/$defs/gitSha" },
         "program_tree": { "$ref": "#/$defs/gitSha" },
         "snapshot_path": { "$ref": "#/$defs/relativePath" },
         "snapshot_raw_sha256": { "$ref": "#/$defs/sha256" },
+        "raw_identity_verification": { "const": "publisher_git_blob_attested" },
+        "raw_identity_evidence": { "$ref": "#/$defs/evidenceRef" },
         "dashboard_canonical_sha256": { "$ref": "#/$defs/sha256" },
+        "source_catalog_path": { "const": "specs/077-browser-program-status/contracts/program-status-source-catalog.json" },
+        "source_catalog_sha256": { "$ref": "#/$defs/sha256" },
         "validation_transition": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
         "validation_verdict": { "const": "passed" }
       }
@@ -51,10 +56,11 @@
     "action": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "eligibility", "authority_state", "requires_human_approval", "blocker", "evidence"],
+      "required": ["id", "label", "purpose", "eligibility", "authority_state", "requires_human_approval", "blocker", "evidence"],
       "properties": {
         "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,99}$" },
         "label": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "purpose": { "enum": ["current_program_action", "metric_guidance", "lane_next_action", "benchmark_qualifying_action"] },
         "eligibility": { "enum": ["eligible", "blocked", "requires_approval", "unavailable"] },
         "authority_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] },
         "requires_human_approval": { "type": "boolean" },
@@ -126,7 +132,7 @@
         "feature_id": { "type": ["string", "null"], "maxLength": 64 },
         "decision_use": { "type": "string", "minLength": 1, "maxLength": 500 },
         "current_limitation": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "next_action": { "$ref": "#/$defs/action" },
+        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "metric_guidance" } } }] },
         "latest_change": { "oneOf": [{ "$ref": "#/$defs/latestChange" }, { "type": "null" }] },
         "omitted_observations": { "type": "integer", "minimum": 0 },
         "unavailable_reason": { "type": ["string", "null"], "maxLength": 500 },
@@ -256,7 +262,7 @@
       "required": ["number", "url"],
       "properties": {
         "number": { "type": "integer", "minimum": 1 },
-        "url": { "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[^/]+/[^/]+/pull/[0-9]+$" }
+        "url": { "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/pull/[1-9][0-9]*$" }
       }
     },
     "deliveryEvent": {
@@ -281,7 +287,7 @@
         "milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
         "latest_capability": { "type": "string", "minLength": 1, "maxLength": 500 },
         "blocker": { "type": ["string", "null"], "maxLength": 500 },
-        "next_action": { "$ref": "#/$defs/action" },
+        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "lane_next_action" } } }] },
         "observed_at": { "$ref": "#/$defs/timestamp" },
         "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } },
         "target_branch": { "type": "string", "minLength": 1, "maxLength": 255 },
@@ -309,7 +315,7 @@
         "milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
         "latest_capability": { "type": "string", "minLength": 1, "maxLength": 500 },
         "blocker": { "type": ["string", "null"], "maxLength": 500 },
-        "next_action": { "$ref": "#/$defs/action" },
+        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "lane_next_action" } } }] },
         "observed_at": { "$ref": "#/$defs/timestamp" },
         "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } },
         "base_commit": { "$ref": "#/$defs/gitSha" },
@@ -329,7 +335,7 @@
         "freshness": { "enum": ["current", "stale", "unavailable", "unknown"] },
         "recovery": { "type": ["string", "null"], "maxLength": 1000 },
         "availability": { "enum": ["checkout_available", "exact_github", "identity_only"] },
-        "exact_url": { "oneOf": [{ "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[^/]+/[^/]+/blob/[0-9a-f]{40}/[A-Za-z0-9._/-]+$" }, { "type": "null" }] }
+        "exact_url": { "oneOf": [{ "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$" }, { "type": "null" }] }
       },
       "allOf": [
         { "if": { "properties": { "availability": { "const": "exact_github" } }, "required": ["availability"] }, "then": { "properties": { "exact_url": { "type": "string" } } } }
@@ -338,7 +344,7 @@
     "correctionDisclosure": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["profile_id", "path", "digest", "correction_class", "authority_status", "approval_id", "verified_claims", "expected_claims", "unresolved_findings", "resolved_findings", "verification_subject", "verified_at", "evidence"],
+      "required": ["profile_id", "path", "digest", "correction_class", "authority_status", "approval_id", "expected_claim_ids", "verified_claim_ids", "finding_ids", "resolved_finding_ids", "unresolved_finding_ids", "verification_ids", "verification_subject", "verified_at", "evidence"],
       "properties": {
         "profile_id": { "type": "string", "minLength": 1, "maxLength": 160 },
         "path": { "$ref": "#/$defs/relativePath" },
@@ -346,10 +352,12 @@
         "correction_class": { "type": "string", "minLength": 1, "maxLength": 160 },
         "authority_status": { "enum": ["approved", "pending", "stale", "unavailable"] },
         "approval_id": { "type": ["string", "null"], "maxLength": 160 },
-        "verified_claims": { "type": "integer", "minimum": 0 },
-        "expected_claims": { "type": "integer", "minimum": 0 },
-        "unresolved_findings": { "type": "integer", "minimum": 0 },
-        "resolved_findings": { "type": "integer", "minimum": 0 },
+        "expected_claim_ids": { "type": "array", "minItems": 1, "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "verified_claim_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "resolved_finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "unresolved_finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "verification_ids": { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
         "verification_subject": { "type": "string", "minLength": 1, "maxLength": 300 },
         "verified_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
         "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
@@ -358,16 +366,30 @@
     "finding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "status", "severity", "opened_at", "resolved_at", "recovery", "evidence"],
+      "required": ["id", "status", "severity", "summary", "blocking", "opened_at", "resolved_at", "correction_profile_id", "resolution_verification_id", "recovery", "evidence"],
       "properties": {
-        "id": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "id": { "$ref": "#/$defs/stableId" },
         "status": { "enum": ["open", "resolved", "accepted", "unavailable"] },
         "severity": { "enum": ["P0", "P1", "P2", "P3", "unknown"] },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "blocking": { "type": "boolean" },
         "opened_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
         "resolved_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "correction_profile_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
+        "resolution_verification_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
         "recovery": { "type": ["string", "null"], "maxLength": 1000 },
         "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "resolved" } }, "required": ["status"] },
+          "then": { "properties": { "resolved_at": { "$ref": "#/$defs/timestamp" }, "correction_profile_id": { "$ref": "#/$defs/stableId" }, "resolution_verification_id": { "$ref": "#/$defs/stableId" }, "blocking": { "const": false } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "open" } }, "required": ["status"] },
+          "then": { "properties": { "resolved_at": { "type": "null" }, "correction_profile_id": { "type": "null" }, "resolution_verification_id": { "type": "null" } } }
+        }
+      ]
     },
     "risk": {
       "type": "object",
@@ -401,15 +423,24 @@
     "independentVerification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["author", "verifier", "independent", "subject", "verified_at", "evidence"],
+      "required": ["id", "author", "verifier", "independent", "subject", "verdict", "blocking", "finding_ids", "correction_profile_ids", "verified_at", "evidence"],
       "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
         "author": { "type": "string", "minLength": 1, "maxLength": 160 },
         "verifier": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "independent": { "type": "boolean" },
+        "independent": { "const": true },
         "subject": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "verdict": { "enum": ["passed", "failed", "inconclusive"] },
+        "blocking": { "type": "boolean" },
+        "finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
+        "correction_profile_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
         "verified_at": { "$ref": "#/$defs/timestamp" },
         "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
-      }
+      },
+      "allOf": [
+        { "if": { "properties": { "verdict": { "const": "passed" } }, "required": ["verdict"] }, "then": { "properties": { "blocking": { "const": false } } } },
+        { "if": { "properties": { "verdict": { "enum": ["failed", "inconclusive"] } }, "required": ["verdict"] }, "then": { "properties": { "blocking": { "const": true } } } }
+      ]
     },
     "governance": {
       "type": "object",
@@ -445,6 +476,42 @@
         }
       }
     },
+    "benchmarkDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "status", "blocking", "evidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stableId" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "status": { "enum": ["satisfied", "pending", "blocked", "not_authorized", "unavailable"] },
+        "blocking": { "type": "boolean" },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+      }
+    },
+    "benchmarkContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "hold_state", "hold_reason", "dependencies", "authorization_state", "next_qualifying_action", "evidence"],
+      "properties": {
+        "phase": { "enum": ["not_started", "qualification_planning", "qualification_active", "on_hold", "blocked", "complete", "unavailable"] },
+        "hold_state": { "enum": ["none", "on_hold", "blocked", "unavailable"] },
+        "hold_reason": { "type": ["string", "null"], "maxLength": 1000 },
+        "dependencies": { "type": "array", "maxItems": 50, "uniqueItems": true, "items": { "$ref": "#/$defs/benchmarkDependency" } },
+        "authorization_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] },
+        "next_qualifying_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "benchmark_qualifying_action" } } }] },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "hold_state": { "const": "none" } }, "required": ["hold_state"] },
+          "then": { "properties": { "hold_reason": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "hold_state": { "enum": ["on_hold", "blocked", "unavailable"] } }, "required": ["hold_state"] },
+          "then": { "properties": { "hold_reason": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
     "publisher": {
       "type": "object",
       "additionalProperties": false,
@@ -462,7 +529,7 @@
     "work": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["current_milestone", "active_feature", "lease", "tasks", "checkpoints", "blockers", "next_action", "lanes"],
+      "required": ["current_milestone", "active_feature", "lease", "tasks", "checkpoints", "blockers", "current_next_action", "lanes"],
       "properties": {
         "current_milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
         "active_feature": { "type": ["string", "null"], "maxLength": 64 },
@@ -479,7 +546,7 @@
         },
         "checkpoints": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/checkpoint" } },
         "blockers": { "type": "array", "maxItems": 100, "items": { "type": "string", "maxLength": 500 } },
-        "next_action": { "$ref": "#/$defs/action" },
+        "current_next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "current_program_action" } } }] },
         "lanes": {
           "type": "array",
           "prefixItems": [
@@ -495,7 +562,7 @@
     "supplement": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["history", "customer_catalog", "work", "governance", "evidence_index"],
+      "required": ["history", "customer_catalog", "benchmark_context", "work", "governance", "evidence_index"],
       "properties": {
         "history": {
           "type": "array",
@@ -517,6 +584,7 @@
           "maxItems": 11
         },
         "customer_catalog": { "$ref": "#/$defs/catalog" },
+        "benchmark_context": { "$ref": "#/$defs/benchmarkContext" },
         "work": { "$ref": "#/$defs/work" },
         "governance": { "$ref": "#/$defs/governance" },
         "evidence_index": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/evidenceDetail" } }

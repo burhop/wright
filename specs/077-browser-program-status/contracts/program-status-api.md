@@ -18,8 +18,8 @@ Returns the latest completely validated `ProgramStatusBundle`. The route is read
 ### Typed failures
 
 - `404 PROGRAM_STATUS_UNAVAILABLE`: no valid installed or packaged fallback exists.
-- `409 PROGRAM_STATUS_IDENTITY_MISMATCH`: envelope, body, snapshot, or delivery identity does not bind exactly.
-- `422 PROGRAM_STATUS_INVALID`: installed data violates schema or allowlist.
+- `409 PROGRAM_STATUS_IDENTITY_MISMATCH`: canonical envelope/body identity, publisher raw Git-blob attestation/evidence relation, source-catalog digest, snapshot, or delivery identity does not bind exactly. Source-free runtime does not claim to recompute absent Git-blob bytes.
+- `422 PROGRAM_STATUS_INVALID`: installed data violates schema, the exact source catalog, action precedence, benchmark context, relational governance, canonical-path, or parsed-URL rules.
 - `503 PROGRAM_STATUS_READ_FAILED`: bounded local read failed.
 
 Failures include a recovery class and trace ID, never evidence content or private paths. The browser retains its last valid bundle after any failed refresh and marks it stale/failed; without one it shows unavailable values.
@@ -40,7 +40,10 @@ The route is protected by the same engineer/admin read policy as the bundle rout
 
 - Maximum file size: 4 MiB.
 - Maximum 250 points per metric series, 250 correction/finding disclosures, 100 risk records, 100 decision records, 100 catalog stories summarized, and 50 integration events.
-- Every evidence link targets an internal detail entry bound to an exact allowlisted path/digest. Optional exact-commit HTTPS GitHub evidence/PR/check links are secondary, limited to 1,000 characters, and rejected when malformed even if they share an allowed prefix; unavailable raw content is labeled rather than fetched.
+- Every bundle binds the exact `program-status-source-catalog.json` digest. The publisher rejects unlisted paths, schema IDs, parser contracts, selection rules, or projection routes; runtime rejects a catalog mismatch.
+- Only `work.current_next_action`, reconciled with current program state and lifecycle policy, is the current program action. The embedded dashboard action is labeled historical; metric, benchmark, and lane actions are non-governing context.
+- Every evidence link targets an internal detail entry bound to an exact catalog-allowlisted canonical path/digest. Optional exact-commit HTTPS GitHub evidence/PR/check links are secondary, limited to 1,000 characters, and must pass parsed scheme, host, credential, port, query, fragment, owner/repository, commit, and canonical-path validation in publisher, runtime, and browser; unavailable raw content is labeled rather than fetched.
+- Correction, finding, and verification records are rejected unless their stable-ID sets, resolution links, independent verdicts, blocking outcomes, and derived counts form one closed reciprocal relation.
 - Credentials, cookies, tokens, prompts, raw commands/arguments/logs, engineering bodies, reusable authority, and private absolute paths are forbidden.
 - GET performs no Git operation, subprocess, benchmark, product action, filesystem mutation, external request, or telemetry upload.
 

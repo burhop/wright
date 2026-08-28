@@ -10,7 +10,7 @@
 
 ## Decision 2: One digest-bound envelope with atomic replacement
 
-**Decision**: `current.json` contains a schema version, exact source identities, generated timestamp, the exact validated EPP-F01 dashboard object, a supplemental projection, and an identity digest. Source identity carries two non-interchangeable hashes: SHA-256 of the exact committed Git-blob bytes and SHA-256 of the parsed object serialized as UTF-8 JSON with recursively sorted keys, no insignificant whitespace, separators `,` and `:`, and non-ASCII characters preserved. `bundle_id` hashes canonical `source + dashboard + supplement`; the non-semantic publisher observation time is excluded. Same-directory temp write, flush/fsync, validation, `os.replace`, supported directory sync, and failure-preserves-prior behavior are required.
+**Decision**: `current.json` contains a schema version, exact source identities, generated timestamp, the exact validated EPP-F01 dashboard object, a supplemental projection, and an identity digest. Source identity carries two non-interchangeable hashes: a repository-publisher attestation over the exact committed Git-blob bytes, with an exact evidence reference, and SHA-256 of the parsed object serialized as UTF-8 JSON with recursively sorted keys, no insignificant whitespace, separators `,` and `:`, and non-ASCII characters preserved. The packaged runtime cannot truthfully recompute absent Git-blob bytes; it validates the attestation/evidence relation and independently recomputes only the canonical dashboard and bundle identities. `bundle_id` hashes canonical `source + dashboard + supplement`; the non-semantic publisher observation time is excluded. Same-directory temp write, flush/fsync, validation, `os.replace`, supported directory sync, and failure-preserves-prior behavior are required.
 
 **Rationale**: A single identity prevents mixed panels and makes conditional GET, rollback, caching, and stale diagnosis precise. The digest is an integrity binding, not a trust grant.
 
@@ -34,7 +34,7 @@
 
 ## Decision 5: Histories use exact committed observations
 
-**Decision**: The publisher walks allowlisted committed transition/task/catalog/delivery evidence. A point is included only when its contracted metric rule, source classification, exact commit, and trustworthy ISO-8601 time exist. Causal ordering comes from the append-only transition/commit-parent chain; timestamp is for display, and lexicographic SHA order is forbidden. Missing data remains explicitly unavailable/omitted.
+**Decision**: The publisher walks only committed evidence admitted by the digest-bound source catalog. A point is included only when its contracted metric rule, source classification, exact commit, and trustworthy ISO-8601 time exist. Causal ordering comes from the append-only transition/commit-parent chain; timestamp is for display, and lexicographic SHA order is forbidden. Missing data remains explicitly unavailable/omitted.
 
 **Rationale**: This prevents misleading ordinal charts and inferred progress. Metric units are contractual.
 
@@ -66,15 +66,21 @@
 
 ## Decision 10: Preserve the authoritative snapshot; do not remodel it
 
-**Decision**: The bundle embeds the schema-valid EPP-F01 dashboard object unchanged. It relies on that object only for its actual contracted fields: exact source/container relation, release candidate, four readiness areas and gates, benchmark summary, release approval/eligibility/formula, and next action. EPP-F01B adds typed non-authoritative histories, catalog summary, structured actions/work lanes, governance disclosures, and internal evidence-detail index. Publisher state remains a separate operational response and is not part of the bundle.
+**Decision**: The bundle embeds the schema-valid EPP-F01 dashboard object unchanged. It relies on that object only for its actual contracted fields: exact source/container relation, release candidate, four readiness areas and gates, benchmark summary, release approval/eligibility/formula, and the historical action recorded when that snapshot was generated. EPP-F01B adds typed non-authoritative histories, benchmark context, catalog summary, structured actions/work lanes, governance disclosures, and internal evidence-detail index. The validated current program state's `work.current_next_action` is the sole current program action; metric, benchmark, and lane actions are labeled guidance. Publisher state remains a separate operational response and is not part of the bundle.
 
 **Rationale**: Dashboard status, classification, reason code, freshness, benchmark populations, approvals, and release fields retain their governed contract. Lifecycle, lease, delivery, correction, risk, decision, and finding details come from separate committed evidence and require an explicit closed projection; pretending they exist in the dashboard would hide an authority gap.
 
 ## Decision 11: Evidence navigation is internal-first
 
-**Decision**: Every evidence reference links to exactly one internal detail record containing the same exact path/digest plus bounded summary, freshness, recovery, and availability. An optional exact-commit GitHub URL may be shown only when allowlisted, within the length bound, and fully pattern-valid; prefix-valid malformed URLs are rejected. Packaged runtime labels raw content unavailable instead of exposing or inventing it.
+**Decision**: Every evidence reference links to exactly one internal detail record containing the same exact path/digest plus bounded summary, freshness, recovery, and availability. Paths are normalized repository-relative segments and reject empty, `.`, `..`, or backslash aliases. An optional exact-commit GitHub URL may be shown only when allowlisted, within the length bound, and both schema-valid and parsed as HTTPS `github.com` with no credentials, port, query, or fragment and with exact owner/repository/action/path segments. Packaged runtime labels raw content unavailable instead of exposing or inventing it.
 
 **Rationale**: This keeps evidence usable offline and without a checkout while preventing raw-body exposure.
+
+## Decision 12: Bind repository inputs and precedence through one exact catalog
+
+**Decision**: `program-status-source-catalog.json`, validated by its closed schema and bound by path/digest in every bundle, is the publisher's complete input boundary. It names each exact file or append-only filename grammar, accepted schema IDs, parser contract, selection rule, projection targets, and precedence. Dashboard fields remain authoritative for their source snapshot; validated current program state is authoritative for the sole current action; unresolved conflicts, unlisted paths, unaccepted schemas, or parser drift reject publication.
+
+**Rationale**: Broad directory roots do not tell an implementer which evidence is authoritative or how conflicts are resolved. A digest-bound catalog makes the choice deterministic without requiring source access in the runtime.
 
 ## Resolved Clarifications
 

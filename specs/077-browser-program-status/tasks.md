@@ -25,12 +25,12 @@
 
 **Purpose**: Complete the shared validation, atomic publication, and runtime read boundary that blocks every user story.
 
-- [ ] T005 [P] Add failing exact-dashboard preservation, independent raw-snapshot and canonical-dashboard digest, closed-schema, typed-governance, safe-path, malformed-prefix URL, causal-order, deterministic-regeneration, concurrent-reader, and Windows replacement-failure tests in `tests/program_control_plane/test_program_status_publisher.py`
-- [ ] T006 [P] Add failing last-valid, installed-absent fallback, installed-invalid no-fallback, corrupt, oversized, identity-mismatch, concurrent-read, publisher-heartbeat, and runtime relational-invariant service tests for action/authority coherence, one-to-one evidence resolution, catalog sum, distinct lane branches, series/observation source class, and completed/total tasks in `packages/tool_registry/tests/test_program_status.py`
-- [ ] T007 Implement contracted input allowlists, exact Git identity checks, EPP-F01 validation, independent raw-file and canonical-object digest verification, unchanged dashboard embedding, typed governance and other supplemental derivation, and canonical source+dashboard+supplement digesting in `scripts/program_status/publisher.py` (depends on T005)
+- [ ] T005 [P] Add failing exact-dashboard preservation, digest-bound source-catalog mutation, publisher raw-Git-blob attestation, canonical-dashboard digest, historical/current action precedence, typed benchmark context, correction/finding/verification relations, canonical-path, parsed malformed-GitHub-URL, causal-order, deterministic-regeneration, concurrent-reader, and Windows replacement-failure tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T006 [P] Add failing last-valid, installed-absent fallback, installed-invalid no-fallback, corrupt, oversized, identity/catalog mismatch, concurrent-read, publisher-heartbeat, and runtime relational-invariant service tests for raw-attestation evidence (without false raw recomputation), canonical identities, action purpose/authority/current precedence, benchmark context, one-to-one evidence resolution, correction/finding/verification reciprocity and verdicts, catalog sum, distinct lane branches, series/observation source class, canonical URL/path parsing, and completed/total tasks in `packages/tool_registry/tests/test_program_status.py`
+- [ ] T007 Implement the exact schema-validated, digest-bound source catalog and reject every unlisted path/schema/parser/selection/projection route; perform exact Git identity checks and EPP-F01 validation, attest raw Git-blob identity with evidence, recompute canonical-object identity, embed the dashboard unchanged, derive typed benchmark/governance/work supplements, enforce current-action precedence, and digest canonical source+dashboard+supplement in `scripts/program_status/publisher.py` (depends on T005)
 - [ ] T008 Implement same-directory temporary write, flush/fsync, validation, `os.replace`, supported parent-directory sync, failure-preserves-prior behavior, and unchanged-identity no-op in `scripts/program_status/publisher.py` (depends on T007)
 - [ ] T009 Implement the CLI arguments and non-secret exact-identity result in `scripts/publish-engineering-program-status.py` (depends on T008)
-- [ ] T010 Implement bounded bundle and publisher-state reads, explicit `$id` registration of both schemas, both snapshot digest bindings, all runtime relational invariants from T006, installed-absent-only fallback, installed-invalid typed failure, and immutable result types in `packages/tool_registry/src/tool_registry/program_status.py` (depends on T006, T008)
+- [ ] T010 Implement bounded bundle, source-catalog, and publisher-state reads; explicit `$id` registration of the bundle, catalog, and authoritative dashboard schemas; raw-attestation/evidence validation without source-byte recomputation; independent canonical-dashboard/bundle recomputation; all T006 relational invariants; installed-absent-only fallback; installed-invalid typed failure; and immutable result types in `packages/tool_registry/src/tool_registry/program_status.py` (depends on T006, T008)
 - [ ] T011 Export the program-status reader through `packages/tool_registry/src/tool_registry/__init__.py` and wire stable data-root configuration in `apps/api/src/api/composition.py` (depends on T010)
 - [ ] T012 Add structured trace-safe read/publication logging without evidence bodies or private paths in `scripts/program_status/publisher.py` and `packages/tool_registry/src/tool_registry/program_status.py` (depends on T008, T010)
 
@@ -47,14 +47,14 @@
 ### Tests first
 
 - [ ] T013 [P] [US1] Add failing bundle 200/304 plus publisher-heartbeat 200/404/422/503, engineer/admin read, unauthenticated rejection, typed-error, exact-dashboard, and forbidden-field API tests in `apps/api/tests/test_program_status_api.py`
-- [ ] T014 [P] [US1] Add failing strict decoder, required `data-testid`, and loading/current/unavailable readiness component tests in `apps/web/src/__tests__/ProgramStatusPage.test.tsx`
-- [ ] T015 [P] [US1] Add a failing mocked primary-journey test for four readiness areas, release rule, `0/100`, and `100 proposed` in `tests/ui-integration/program-status.spec.ts`
+- [ ] T014 [P] [US1] Add failing strict decoder, sole-current-action precedence, typed zero-benchmark context, required `data-testid`, and loading/current/unavailable readiness component tests in `apps/web/src/__tests__/ProgramStatusPage.test.tsx`
+- [ ] T015 [P] [US1] Add a failing mocked primary-journey test for four readiness areas, release rule, `0/100` with phase/hold/dependencies/authority/next qualifying action, historical dashboard-action labeling, sole current program action, and `100 proposed` in `tests/ui-integration/program-status.spec.ts`
 
 ### Implementation
 
 - [ ] T016 [US1] Implement typed error mapping, ETag/304 and private cache headers for the bundle, no-store publisher heartbeat, and both read-only GETs in `apps/api/src/api/routers/program_status.py`; register them in `apps/api/src/api/main.py` (depends on T011, T013)
-- [ ] T017 [US1] Implement strict closed-version decoding of the exact EPP-F01 dashboard, EPP-F01B supplement, and separate publisher status; enforce the T006 relational invariants client-side and add negative fixtures before authenticated conditional fetching in `apps/web/src/services/program-status.ts` (depends on T014, T016)
-- [ ] T018 [P] [US1] Build token-based readiness, gate, release, benchmark, and catalog components in `apps/web/src/components/program-status/` (depends on T014)
+- [ ] T017 [US1] Implement strict closed-version decoding of the exact EPP-F01 dashboard, EPP-F01B supplement/source identity, and separate publisher status; enforce every T006 action, benchmark, evidence, governance, URL/path, catalog, lane, observation, and task relation client-side with negative fixtures before authenticated conditional fetching in `apps/web/src/services/program-status.ts` (depends on T014, T016)
+- [ ] T018 [P] [US1] Build token-based readiness, gate, release, benchmark-context, historical-action disclosure, sole-current-action, and proposed-catalog components in `apps/web/src/components/program-status/` (depends on T014)
 - [ ] T019 [US1] Compose the dedicated `apps/web/src/components/pages/ProgramStatusPage.tsx` with honest loading/current/unavailable states (depends on T017, T018)
 - [ ] T020 [US1] Register `/program-status` in `apps/web/src/App.tsx` and add the dedicated navigation item in `apps/web/src/components/layout/Sidebar.tsx` without changing `DashboardPage.tsx` semantics (depends on T019)
 
@@ -91,13 +91,13 @@
 
 ### Tests first
 
-- [ ] T026 [P] [US3] Add failing byte-semantic dashboard preservation, internal detail, exact path/digest, traversal/lookalike-root rejection, optional exact-GitHub, and packaged identity-only evidence tests in `tests/program_control_plane/test_program_status_publisher.py`
-- [ ] T027 [P] [US3] Add failing keyboard disclosure, focus, status-text, and unsafe-link tests in `apps/web/src/__tests__/ProgramStatusEvidence.test.tsx`
+- [ ] T026 [P] [US3] Add failing byte-semantic dashboard preservation, publisher raw-attestation evidence, internal detail, exact canonical path/digest, traversal/lookalike/empty/dot/duplicate-segment rejection, parsed optional exact-GitHub credential/port/query/fragment/slug/path rejection, source-catalog boundary, and packaged identity-only evidence tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [ ] T027 [P] [US3] Add failing keyboard disclosure, focus, status-text, correction/finding/verification relationship and verdict, canonical-path, and unsafe-URL tests in `apps/web/src/__tests__/ProgramStatusEvidence.test.tsx`
 
 ### Implementation
 
-- [ ] T028 [US3] Build the bounded internal evidence index for dashboard gates and supplemental corrections/findings/risks/decisions/verifications, with safe summary, freshness, recovery, availability, optional length-bounded exact-commit GitHub URL, and exactly one matching detail for every reference in `scripts/program_status/publisher.py` (depends on T026)
-- [ ] T029 [US3] Implement accessible internal evidence links, exact identity, correction/finding/risk/decision/verification disclosure, and honest raw-content availability in `apps/web/src/components/program-status/EvidenceDetails.tsx` (depends on T027, T028)
+- [ ] T028 [US3] Build the bounded internal evidence index and closed reciprocal correction/finding/verification graph, deriving all claim/finding counts from exact ID sets; include safe summary, freshness, recovery, availability, parsed optional exact-commit GitHub URL, and exactly one matching detail for every reference in `scripts/program_status/publisher.py` (depends on T026)
+- [ ] T029 [US3] Implement accessible internal evidence links, exact identity, correction claims, finding resolution links, verification verdict/blocking outcome, risk/decision disclosure, and honest raw-content availability in `apps/web/src/components/program-status/EvidenceDetails.tsx` (depends on T027, T028)
 
 **Checkpoint**: US3 makes blockers inspectable without exposing raw or unsafe content.
 
@@ -116,9 +116,9 @@
 
 ### Implementation
 
-- [ ] T032 [US4] Derive exact closed integration/CI and continued-development lanes, the safe exact program-state lease projection, fixed catalog summary, and structured non-granting actions from allowlisted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
+- [ ] T032 [US4] Derive exact closed integration/CI and continued-development lanes, the safe exact program-state lease projection, fixed catalog summary, sole `current_next_action`, historical dashboard-action context, and purpose-labeled non-granting metric/benchmark/lane actions from source-catalog-admitted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
 - [ ] T033 [US4] Implement `DeliveryLanes.tsx` and `FeatureProgress.tsx` in `apps/web/src/components/program-status/` with explicit feature/program scope (depends on T031, T032)
-- [ ] T034 [US4] Integrate authority-aware next action, blockers, lane history, and exact checkpoint times into `ProgramStatusPage.tsx` (depends on T033)
+- [ ] T034 [US4] Integrate the sole authority-aware current program action, clearly historical dashboard action, non-governing lane guidance, blockers, lane history, and exact checkpoint times into `ProgramStatusPage.tsx` (depends on T033)
 
 **Checkpoint**: US4 supports technical prioritization without granting authority or implying the program is nearly complete.
 
@@ -147,7 +147,7 @@
 
 ## Phase 8: Cross-cutting verification and delivery readiness
 
-- [ ] T040 Add build/install wiring for the validated fallback and both schemas under `src/wright_engineering/static/program-status/`, assert wheel contents in `tests/packaging/test_wheel_contents.py`, prove data-root preservation across update/rollback/uninstall in `tests/native_runtime/test_program_status_lifecycle.py`, and document source/precedence/rollback in `docs/getting-started/program-status.md`; require the lifecycle job on Windows, Linux, and macOS
+- [ ] T040 Add build/install wiring for the validated fallback, digest-bound source catalog, and all three schemas under `src/wright_engineering/static/program-status/`, assert wheel contents in `tests/packaging/test_wheel_contents.py`, prove data-root preservation across update/rollback/uninstall in `tests/native_runtime/test_program_status_lifecycle.py`, and document raw-attestation/canonical-identity/source-precedence/rollback in `docs/getting-started/program-status.md`; require the lifecycle job on Windows, Linux, and macOS
 - [ ] T041 [P] Add packaged API+SPA smoke without `.git`, Git executable, network, or source checkout in `tests/e2e/test_program_status.py` (depends on T040)
 - [ ] T042 [P] Add 200%-zoom, narrow-viewport, keyboard-only, non-color, reduced-motion, `data-testid`, scripted comprehension, and Plotly-failure acceptance coverage in `tests/ui-integration/program-status.spec.ts`
 - [ ] T043 [P] Add compatibility regression proving existing workspace routes and `DashboardPage.tsx` behavior remain unchanged in `apps/web/src/__tests__/App.test.tsx`

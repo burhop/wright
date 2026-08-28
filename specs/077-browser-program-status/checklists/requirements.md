@@ -33,4 +33,5 @@
 
 - Validation iteration 1 passed all checklist items.
 - Validation iteration 2 rechecked all 16 items after adding evidence-bound historical graphs, benchmark hold/blocker explanation, feature-local task context, separate catalog/benchmark populations, and the two delivery lanes; all items remain passing.
+- Validation iteration 3 rechecked all 16 items after making current-action precedence, typed zero-benchmark context, raw publisher attestation versus runtime recomputation, exact source boundaries, relational correction evidence, and canonical URL/path rejection explicit; independent exact-subject verification is still required.
 - The feature is ready for governed clarification or planning, but implementation remains blocked pending a frozen exact planning subject and explicit approval.
