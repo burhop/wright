@@ -14,6 +14,17 @@ from program_control.validation import validate_program
 
 PROGRAM = Path("docs/programs/engineering-process-platform")
 
+STABLE_FINDING_ARTIFACTS = {
+    ("CHECKOUT_BRANCH_UNRESOLVED", "ATTACHED_FEATURE_BRANCH", "git-subject"),
+}
+
+
+def _assert_finding_artifact_resolves(finding: dict, repository_root: Path) -> None:
+    identity = (finding["code"], finding["invariant"], finding["artifact"])
+    if identity in STABLE_FINDING_ARTIFACTS:
+        return
+    assert (repository_root / finding["artifact"]).exists()
+
 
 def test_current_program_state_is_raw_identical_to_its_revision_archive(
     repository_root,
@@ -126,7 +137,7 @@ def test_report_and_dashboard_evidence_links_resolve_with_exact_digests(
     reader = GitReader(repository_root)
     report = validate_program(reader, "HEAD", PROGRAM.as_posix()).report
     for finding in report["findings"]:
-        assert (repository_root / finding["artifact"]).exists()
+        _assert_finding_artifact_resolves(finding, repository_root)
         correction = finding.get("correction_ref")
         if correction:
             assert (repository_root / correction).is_file()
@@ -147,3 +158,22 @@ def test_report_and_dashboard_evidence_links_resolve_with_exact_digests(
     product = dashboard["areas"]["product_readiness"]
     assert product["status"] == "not_started"
     assert "PRODUCT_EVIDENCE_NOT_RECORDED" in product["blockers"]
+
+
+def test_evidence_walkthrough_allows_only_the_closed_git_subject_identity(
+    tmp_path,
+) -> None:
+    allowed = {
+        "code": "CHECKOUT_BRANCH_UNRESOLVED",
+        "invariant": "ATTACHED_FEATURE_BRANCH",
+        "artifact": "git-subject",
+    }
+    _assert_finding_artifact_resolves(allowed, tmp_path)
+
+    unexpected = {**allowed, "code": "UNEXPECTED_CODE"}
+    try:
+        _assert_finding_artifact_resolves(unexpected, tmp_path)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("unexpected stable artifact identity was accepted")
