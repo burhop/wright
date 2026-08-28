@@ -14,7 +14,7 @@ This is the planned human-repeatable acceptance path. Commands become executable
 uv run python scripts/publish-engineering-program-status.py --source HEAD --data-root .local-run/program-status-demo
 ```
 
-Expected: validation passes, one `current.json` is atomically installed, and output reports commit, tree, program tree, snapshot digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical `source + dashboard + supplement` identity bytes and bundle ID.
+Expected: validation passes, one `current.json` is atomically installed, and output reports commit, tree, program tree, raw snapshot digest, canonical dashboard-object digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical `source + dashboard + supplement` identity bytes and bundle ID.
 
 ## 2. Run focused verification
 
@@ -51,10 +51,10 @@ Expected: the fixture is rejected; the last valid page remains visible and is la
 Start the standard contributor publisher in a third terminal, then commit an isolated approved fixture change while the page remains open:
 
 ```powershell
-uv run python scripts/publish-engineering-program-status.py --watch-committed --poll-seconds 2 --data-root .local-run/program-status-demo
+uv run python scripts/publish-engineering-program-status.py --watch-committed --data-root .local-run/program-status-demo
 ```
 
-Expected: within 10 seconds the publisher observes the new committed identity, atomically installs it, the ETag changes, and every panel swaps together. Unchanged identity returns 304 and adds no history point. Publisher state and any bounded failure are visible.
+Expected: the watcher uses its declared two-second default; within 10 seconds it observes the new committed identity, atomically installs it, the ETag changes, and every panel swaps together. Unchanged identity returns 304 and adds no history point. The separate publisher endpoint and refresh state show activity or bounded failure without changing bundle identity.
 
 ## 6. Delivery gates
 

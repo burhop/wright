@@ -34,11 +34,13 @@ The full endpoint's ETag/304 behavior is the only committed-evidence identity co
 
 Returns only bounded operational publisher state conforming to `#/$defs/publisher` in the bundle schema: mode, active/inactive/failed/unavailable state, last observed committed identity, last attempt/success times, failure code, and recovery. It uses `Cache-Control: no-store`, never claims readiness or authority, and is excluded from `bundle_id`. Changes to this operational response MUST NOT advance the main bundle ETag or create a history observation.
 
+The route is protected by the same engineer/admin read policy as the bundle route and delegates to the typed `tool_registry` reader. `200` returns the closed publisher object; missing state returns `404 PROGRAM_STATUS_PUBLISHER_UNAVAILABLE`; invalid state returns `422 PROGRAM_STATUS_PUBLISHER_INVALID`; bounded read failure returns `503 PROGRAM_STATUS_PUBLISHER_READ_FAILED`. Publisher failures never cause the bundle route to mutate, regenerate, or discard its last valid view. The contributor watcher polls committed identity every two seconds by default; the browser polls this endpoint at its five-second refresh cadence.
+
 ## Security and bounds
 
 - Maximum file size: 4 MiB.
-- Maximum 250 points per metric series, 250 findings, 100 catalog stories summarized, and 50 delivery events per lane.
-- Every evidence link targets an internal detail entry bound to an exact allowlisted path/digest. Optional exact-commit HTTPS GitHub evidence/PR/check links are secondary; unavailable raw content is labeled rather than fetched.
+- Maximum 250 points per metric series, 250 correction/finding disclosures, 100 risk records, 100 decision records, 100 catalog stories summarized, and 50 integration events.
+- Every evidence link targets an internal detail entry bound to an exact allowlisted path/digest. Optional exact-commit HTTPS GitHub evidence/PR/check links are secondary, limited to 1,000 characters, and rejected when malformed even if they share an allowed prefix; unavailable raw content is labeled rather than fetched.
 - Credentials, cookies, tokens, prompts, raw commands/arguments/logs, engineering bodies, reusable authority, and private absolute paths are forbidden.
 - GET performs no Git operation, subprocess, benchmark, product action, filesystem mutation, external request, or telemetry upload.
 

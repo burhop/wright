@@ -11,13 +11,13 @@ One immutable, size-bounded projection delivered atomically.
 | `generated_at` | UTC timestamp | Publisher observation only; excluded from identity |
 | `source` | SourceIdentity | Exact committed and validator identities |
 | `dashboard` | EPP-F01 dashboard | Embedded unchanged and valid against the EPP-F01 schema |
-| `supplement` | BrowserSupplement | History, catalog, work, evidence index, publisher state only |
+| `supplement` | BrowserSupplement | History, catalog, work, governance disclosures, and evidence index only |
 
 Validation recomputes `bundle_id`, verifies source and dashboard binding, and rejects unknown fields, unsafe paths, excessive counts, unsupported versions, or any attempt to restate/override dashboard truth in the supplement.
 
 ## SourceIdentity
 
-Exact 40-character `commit`, `tree`, and `program_tree`; safe relative snapshot path; snapshot SHA-256; passing validation transition; and validation verdict. The snapshot digest must equal the canonical embedded `dashboard` bytes.
+Exact 40-character `commit`, `tree`, and `program_tree`; safe relative snapshot path; raw snapshot SHA-256; canonical dashboard-object SHA-256; passing validation transition; and validation verdict. `snapshot_raw_sha256` binds the exact committed Git-blob bytes, not working-tree bytes. `dashboard_canonical_sha256` binds the parsed object embedded as `dashboard`, serialized as UTF-8 JSON with recursively sorted keys, no insignificant whitespace, separators `,` and `:`, and non-ASCII characters preserved. The publisher independently recomputes both values; neither may substitute for the other.
 
 ## Authoritative Dashboard
 
@@ -27,23 +27,36 @@ The `dashboard` field conforms to `specs/076-control-plane-validator/contracts/d
 - gate status, classification, reason code, evidence, and boolean freshness;
 - all four readiness areas and exact gate numerators/denominators;
 - every benchmark population, tier, deficit, attempt, and cutoff;
-- candidate, approval, lifecycle/lease, delivery, and release fields; and
-- correction profile identity/link/digest/class/authority, exact claim/finding counts, and verification subject/time.
+- release-candidate, release-approval, release-eligibility, release-formula, and next-action fields.
 
-The supplement cannot shadow these fields.
+The supplement cannot shadow these fields. Lifecycle, lease, delivery, correction, risk, decision, and finding details are not present in the EPP-F01 dashboard contract; they are separately derived from committed evidence into the typed non-authoritative supplement below.
 
 ## BrowserSupplement
 
 - `history`: bounded `MetricSeries` records.
 - `customer_catalog`: exact proposed-story summary, never benchmark authority.
 - `work`: current milestone, active feature, lease identity, feature-local tasks/checkpoints, blockers, structured next action, and exactly two ordered delivery lanes.
+- `governance`: bounded correction, finding, risk, decision, independent-verification, WIP/repair/push-limit, and flow summaries derived from committed evidence.
 - `evidence_index`: internal browser detail records for every linked evidence identity.
+
+## GovernanceSupplement
+
+This is a display projection, never an authority source. It contains bounded arrays of:
+
+- `corrections`: correction profile identity/path/digest/class/authority, approval identity, verified and expected claim counts, unresolved and resolved finding counts, verification subject/time, and evidence references;
+- `findings`: stable ID, status, severity, opened/resolved time, recovery, and evidence;
+- `risks` and `decisions`: stable ID, status, severity where applicable, owner, overdue/blocking flags, bounded summary, and evidence;
+- `verification`: author, verifier, independence result, exact subject, time, and evidence;
+- `limits`: WIP maximum, repair maximum, and nullable push maximum; and
+- `flow`: active-feature/lease, roadmap-blocker, and open-P0 risk/decision counts.
+
+The publisher copies or derives these fields only from the committed correction catalogs, risk register, decision register, transition evidence, program state, and validation reports. Runtime relational validation requires every evidence reference to resolve to exactly one matching `evidence_index` entry.
 
 ## StructuredAction
 
 Fields: stable `id`, `label`, `eligibility` (`eligible`, `blocked`, `requires_approval`, `unavailable`), `authority_state` (`authorized`, `not_authorized`, `not_required`, `stale`, `unavailable`), `requires_human_approval`, nullable blocker, and evidence references.
 
-Rules: display text never grants authority; `requires_approval` implies `requires_human_approval=true` and cannot be rendered as executable; unavailable or stale authority stays non-executable.
+Rules: display text never grants authority. `eligible` requires no human approval, authority `authorized` or `not_required`, and a null blocker. `blocked` requires no human approval and a non-null blocker. `requires_approval` requires human approval, non-current authority (`not_authorized`, `stale`, or `unavailable`), and a non-null blocker. `unavailable` requires unavailable authority, no claimed approval, and a non-null blocker. Only `eligible` may be rendered as executable.
 
 ## MetricSeries and CheckpointObservation
 
@@ -72,9 +85,9 @@ Rules: counts sum to total; all labels remain proposed; no value contributes to 
 
 ## Work and DeliveryLane
 
-Work includes an optional exact lease (`id`, holder, branch/worktree, scope, expiry, state), one feature-local task population, causal checkpoints, blockers, and a structured action.
+Work includes an optional safe projection of the exact program-state lease: `feature_id`, `branch`, `worktree_id`, `dev_baseline`, `worktree_start`, `holder_role`, `lease_mode`, `lease_revision`, acquisition/expiry times, allowed paths, path restrictions, allowed actions, and bounded recovery state. It never exposes an absolute worktree path. Work also contains one feature-local task population, causal checkpoints, blockers, and a structured action.
 
-Lanes are exactly two records in order: `integration`, then `continued_development`. Common fields include exclusive branch, milestone, capability, blocker, structured action, time, and evidence. Integration adds target, frozen/pushed identity/time, PR, phase, non-empty check counts when known, CI failure, sync, merge gate, and bounded events. Continued development adds exact base and authority state.
+Lanes are exactly two closed records in order: `integration`, then `continued_development`. Common fields include exclusive branch, milestone, capability, blocker, structured action, time, and evidence. The integration schema alone admits target, frozen/pushed identity/time, PR, phase, check counts, CI failure, sync, merge gate, and bounded events. The continued-development schema admits only its exact base and authority state; integration-only properties are rejected rather than accepted as null.
 
 ## EvidenceDetail
 
@@ -82,7 +95,19 @@ Every evidence reference points to an indexed detail with stable ID, allowlisted
 
 ## PublisherStatus (separate operational projection)
 
-Fields: state (`active`, `inactive`, `failed`, `unavailable`), mode (`committed_watch`, `package_install`, `manual`), observed committed identity, last attempt/success, nullable failure code, and recovery. It is read through `/api/program-status/publisher`, not included in `ProgramStatusBundle` or `bundle_id`; operational heartbeat changes therefore cannot create false committed-evidence identities. Publisher state is context, never readiness or authority.
+Fields: state (`active`, `inactive`, `failed`, `unavailable`), mode (`committed_watch`, `package_install`, `manual`), observed committed identity, last attempt/success, nullable failure code, and recovery. It is read through `/api/program-status/publisher`, not included in `ProgramStatusBundle` or `bundle_id`; operational heartbeat changes therefore cannot create false committed-evidence identities. The standard committed-watch publisher checks every two seconds by default. Publisher state is context, never readiness or authority.
+
+## Runtime relational validation
+
+JSON Schema closes individual shapes; both the `tool_registry` reader and browser decoder additionally reject any bundle where:
+
+- action eligibility, authority state, approval requirement, and blocker are incoherent;
+- an evidence reference does not resolve to exactly one detail with the same path and digest;
+- catalog maturity counts do not sum to `proposed_total=100`;
+- integration and continued-development branches are equal;
+- an observation source classification differs from its containing series;
+- completed tasks exceed total tasks; or
+- either raw snapshot or canonical dashboard digest fails independent recomputation.
 
 ## Runtime View State
 

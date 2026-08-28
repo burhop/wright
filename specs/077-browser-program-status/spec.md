@@ -165,18 +165,19 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 
 ### Key Entities
 
-- **Program Snapshot**: The validated committed, read-only source containing readiness areas, gates, benchmark counts, roadmap progress, findings, authority, freshness, candidate, and release eligibility.
-- **Delivery Identity**: Independent evidence that binds the rendered snapshot bytes to their exact committed source and delivery subjects.
+- **Program Snapshot**: The exact EPP-F01 dashboard object containing source/container identity, readiness areas and gates, benchmark summary, candidate, release approval/eligibility/formula, and next action.
+- **Delivery Identity**: Independent evidence that separately binds the raw committed snapshot bytes and Wright-canonical parsed dashboard object to their exact committed source and delivery subjects.
 - **Readiness Area**: One of four non-substitutable program dimensions with its own gate population, status, blockers, evidence, and freshness.
 - **Gate Detail**: The displayed gate and assertion outcomes, evidence identities, age, blocker, recovery, and history that explain an area's state.
 - **Work Lane**: A committed record of a branch, current customer milestone, latest demonstrated capability, blocker, lease or authority state, and next action.
 - **Benchmark Progress**: Counted and target qualification populations plus tiers, attempts, deficits, completeness, contamination, and evidence cutoff.
 - **Correction Disclosure**: A correction profile and its exact claim counts, original findings, resolutions, authority, and verification subject.
+- **Governance Supplement**: A closed non-authoritative projection of committed corrections, findings, risks, decisions, independent-verification evidence, operating limits, and flow counts not present in the EPP-F01 dashboard contract.
 - **Checkpoint Observation**: An immutable metric value with a declared unit, exact commit/evidence identity, trustworthy timestamp, source classification, and optional change explanation.
 - **Customer Story Catalog Summary**: Derived counts of proposed stories by definition maturity, kept categorically separate from benchmark qualification.
 - **Delivery Lane Status**: A read-only integration/CI or continued-development projection with exclusive branch ownership, current phase, evidence, blocker, and next action.
 - **Next Action**: A machine-readable action identity with eligibility, authority state, approval requirement, blocker, and evidence; display text alone never grants authority.
-- **Publisher Status**: Evidence-derived state for the bounded committed-identity publisher, including mode, last attempt/success, failure code, and recovery.
+- **Publisher Status**: Separate operational state for the bounded committed-identity publisher, including mode, last attempt/success, failure code, and recovery; it never changes bundle identity or readiness.
 
 ## Success Criteria *(mandatory)*
 

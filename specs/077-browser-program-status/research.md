@@ -10,7 +10,7 @@
 
 ## Decision 2: One digest-bound envelope with atomic replacement
 
-**Decision**: `current.json` contains a schema version, exact source identities, generated timestamp, the exact validated EPP-F01 dashboard object, a supplemental projection, and an identity digest. `bundle_id` hashes canonical `source + dashboard + supplement`; the non-semantic publisher observation time is excluded. Same-directory temp write, flush/fsync, validation, `os.replace`, supported directory sync, and failure-preserves-prior behavior are required.
+**Decision**: `current.json` contains a schema version, exact source identities, generated timestamp, the exact validated EPP-F01 dashboard object, a supplemental projection, and an identity digest. Source identity carries two non-interchangeable hashes: SHA-256 of the exact committed Git-blob bytes and SHA-256 of the parsed object serialized as UTF-8 JSON with recursively sorted keys, no insignificant whitespace, separators `,` and `:`, and non-ASCII characters preserved. `bundle_id` hashes canonical `source + dashboard + supplement`; the non-semantic publisher observation time is excluded. Same-directory temp write, flush/fsync, validation, `os.replace`, supported directory sync, and failure-preserves-prior behavior are required.
 
 **Rationale**: A single identity prevents mixed panels and makes conditional GET, rollback, caching, and stale diagnosis precise. The digest is an integrity binding, not a trust grant.
 
@@ -18,7 +18,7 @@
 
 ## Decision 3: Conditional identity polling, not a runtime Git watcher
 
-**Decision**: The browser polls every five seconds with `If-None-Match`. The standard contributor publisher runs in bounded `--watch-committed` mode and republishes only when committed HEAD changes. Its mutable operational heartbeat is served separately from `/api/program-status/publisher` and is excluded from bundle identity. Package install/upgrade atomically supplies the packaged bundle. Production runtime observes only atomic replacement.
+**Decision**: The browser polls every five seconds with `If-None-Match`. The standard contributor publisher checks committed identity every two seconds by default in bounded `--watch-committed` mode and republishes only when committed HEAD changes. Its mutable operational heartbeat is served separately from `/api/program-status/publisher` and is excluded from bundle identity. Package install/upgrade atomically supplies the packaged bundle. Production runtime observes only atomic replacement.
 
 **Rationale**: This meets automatic refresh while keeping Git and filesystem watching outside the API. A 304 is cheap and unchanged evidence is not reinterpreted.
 
@@ -66,13 +66,13 @@
 
 ## Decision 10: Preserve the authoritative snapshot; do not remodel it
 
-**Decision**: The bundle embeds the schema-valid EPP-F01 dashboard object unchanged. EPP-F01B adds only histories, catalog summary, structured actions/work lanes, internal evidence-detail index, and publisher state.
+**Decision**: The bundle embeds the schema-valid EPP-F01 dashboard object unchanged. It relies on that object only for its actual contracted fields: exact source/container relation, release candidate, four readiness areas and gates, benchmark summary, release approval/eligibility/formula, and next action. EPP-F01B adds typed non-authoritative histories, catalog summary, structured actions/work lanes, governance disclosures, and internal evidence-detail index. Publisher state remains a separate operational response and is not part of the bundle.
 
-**Rationale**: Status, classification, reason code, freshness, benchmark populations, lease, and correction disclosure already have a governed contract. Duplicating them would create semantic drift or a second authority.
+**Rationale**: Dashboard status, classification, reason code, freshness, benchmark populations, approvals, and release fields retain their governed contract. Lifecycle, lease, delivery, correction, risk, decision, and finding details come from separate committed evidence and require an explicit closed projection; pretending they exist in the dashboard would hide an authority gap.
 
 ## Decision 11: Evidence navigation is internal-first
 
-**Decision**: Every evidence reference links to an internal detail record containing exact path, digest, bounded summary, freshness, recovery, and availability. An optional exact-commit GitHub URL may be shown when allowlisted. Packaged runtime labels raw content unavailable instead of exposing or inventing it.
+**Decision**: Every evidence reference links to exactly one internal detail record containing the same exact path/digest plus bounded summary, freshness, recovery, and availability. An optional exact-commit GitHub URL may be shown only when allowlisted, within the length bound, and fully pattern-valid; prefix-valid malformed URLs are rejected. Packaged runtime labels raw content unavailable instead of exposing or inventing it.
 
 **Rationale**: This keeps evidence usable offline and without a checkout while preventing raw-body exposure.
 
