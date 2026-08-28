@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import copy
 import json
+from dataclasses import replace
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
 
 from program_control import validation as validation_module
 from program_control.git_subject import GitReader
+from program_control.validation import validate_program
 
 
 PROGRAM_ROOT = "docs/programs/engineering-process-platform"
@@ -431,3 +434,155 @@ def test_v9_profile_requires_strict_ancestry_and_supported_reader(
     assert "PREFLIGHT_EVIDENCE_CORRECTION_INVALID" in codes(findings)
     assert schema_targets == frozenset()
     assert manifest_targets == frozenset()
+
+
+@pytest.mark.parametrize(
+    "benchmark_summary",
+    [
+        {
+            "counted": 0,
+            "target": 100,
+            "first_attempt_passed": 0,
+            "eventual_passed": 0,
+            "failed": 0,
+            "blocked": 0,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 100,
+            "t0": 0,
+            "t1": 0,
+            "t2": 0,
+            "t3": 0,
+            "coverage_deficits": ["BENCHMARK_COVERAGE_EMPTY"],
+            "oracle_deficits": ["BENCHMARK_ORACLES_ABSENT"],
+            "artifact_deficits": ["BENCHMARK_ARTIFACTS_ABSENT"],
+            "partition_deficits": ["BENCHMARK_PARTITIONS_ABSENT"],
+            "freshness_deficits": ["BENCHMARK_EVIDENCE_ABSENT"],
+        },
+        {
+            "counted": 4,
+            "target": 100,
+            "first_attempt_passed": 1,
+            "eventual_passed": 2,
+            "failed": 1,
+            "blocked": 1,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 96,
+            "t0": 2,
+            "t1": 1,
+            "t2": 1,
+            "t3": 0,
+            "coverage_deficits": ["COVERAGE_REMAINS"],
+            "oracle_deficits": [],
+            "artifact_deficits": [],
+            "partition_deficits": ["HOLDOUT_REMAINS"],
+            "freshness_deficits": [],
+        },
+    ],
+)
+def test_v9_disposition_cannot_change_policy_readiness_benchmark_or_release(
+    repository_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    benchmark_summary: dict,
+) -> None:
+    profile, _ = correction_inputs(repository_root)
+    assert (
+        profile["resolution_semantics"][
+            "readiness_authority_benchmark_release_non_interference"
+        ]
+        is True
+    )
+    original = validation_module.validate_preflight_evidence_correction
+    monkeypatch.setattr(
+        validation_module,
+        "derive_benchmark_summary",
+        lambda *_args, **_kwargs: copy.deepcopy(benchmark_summary),
+    )
+
+    def run(*, correction_on: bool) -> dict:
+        def disposition(*args, **kwargs):
+            findings, schema_targets, manifest_targets = original(*args, **kwargs)
+            if correction_on:
+                return findings, schema_targets, manifest_targets
+            unresolved = [
+                replace(
+                    finding,
+                    severity="fatal",
+                    resolution_status="unresolved",
+                    correction_ref=None,
+                )
+                if finding.code
+                in {"SCHEMA_REFERENCE_MISSING", "TRANSITION_MANIFEST_MISMATCH"}
+                else finding
+                for finding in findings
+            ]
+            return unresolved, frozenset(), frozenset()
+
+        monkeypatch.setattr(
+            validation_module,
+            "validate_preflight_evidence_correction",
+            disposition,
+        )
+        return validate_program(
+            GitReader(repository_root),
+            "HEAD",
+            PROGRAM_ROOT,
+            observed_at=datetime(2026, 8, 28, 12, 30, tzinfo=timezone.utc),
+        ).report
+
+    reader = GitReader(repository_root)
+    source = reader.resolve_commit("HEAD")
+    frozen_inputs = {
+        "lifecycle_policy": reader.blob(
+            source, f"{PROGRAM_ROOT}/lifecycle-policy.json"
+        ),
+        "dashboard": reader.blob(source, f"{PROGRAM_ROOT}/dashboard.json"),
+        "coverage_matrix": reader.blob(
+            source, f"{PROGRAM_ROOT}/benchmark-coverage.json"
+        ),
+    }
+    correction_on = run(correction_on=True)
+    correction_off = run(correction_on=False)
+
+    def protected(report: dict) -> dict:
+        return {
+            "areas": report["areas"],
+            "gate_rows": [
+                gate for area in report["areas"].values() for gate in area["gates"]
+            ],
+            "benchmark_summary": report["benchmark_summary"],
+            "roadmap_policy_result": {
+                key: report["eligibility"][key]
+                for key in ("roadmap_item", "allowed_actions")
+            },
+            "next_action": report["next_action"],
+            "candidate_identity": report["subject"]["release_candidate"],
+            "source_identity": {
+                key: report["subject"][key]
+                for key in ("source_commit", "source_tree", "program_tree")
+            },
+            "authoritative_input_manifest": report["subject"]["input_manifest"],
+            "authoritative_input_manifest_digest": report["subject"][
+                "input_manifest_digest"
+            ],
+            "approval_authority": report["release_approval"],
+            "delivery": report["delivery"],
+            "release_eligibility": report["release_eligible"],
+        }
+
+    assert protected(correction_on) == protected(correction_off)
+    assert sum(len(area["gates"]) for area in correction_on["areas"].values()) == 34
+    assert correction_on["benchmark_summary"] == benchmark_summary
+    assert (
+        reader.blob(source, f"{PROGRAM_ROOT}/lifecycle-policy.json")
+        == frozen_inputs["lifecycle_policy"]
+    )
+    assert (
+        reader.blob(source, f"{PROGRAM_ROOT}/dashboard.json")
+        == frozen_inputs["dashboard"]
+    )
+    assert (
+        reader.blob(source, f"{PROGRAM_ROOT}/benchmark-coverage.json")
+        == frozen_inputs["coverage_matrix"]
+    )
