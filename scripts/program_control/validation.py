@@ -85,6 +85,10 @@ def _finding(
         "REPAIR_EVIDENCE_DIGEST_MISMATCH": "Do not rewrite history; inspect the exact approved repair-evidence disposition.",
         "REPAIR_EVIDENCE_CORRECTION_INVALID": "Restore the exact closed two-claim repair profile or stop for a new material approval.",
         "REPAIR_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V7 authority bundle.",
+        "CHECKPOINT_OUTPUT_DIGEST_MISMATCH": "Do not rewrite history; inspect the exact approved V8 checkpoint-evidence disposition.",
+        "CHECKPOINT_EVENT_RULE_MISMATCH": "Do not rewrite history; inspect the exact approved V8 checkpoint-evidence disposition.",
+        "CHECKPOINT_EVIDENCE_CORRECTION_INVALID": "Restore the exact closed three-claim checkpoint profile or stop for a new material approval.",
+        "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -667,6 +671,55 @@ REPAIR_DIGEST_TARGET = (
     "/inputs/1/sha256",
 )
 
+CHECKPOINT_CORRECTION_ID = "COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001"
+CHECKPOINT_CORRECTION_SUBJECT = "c12eb00308cb72d96977846c4ae876dc0baa7e7e"
+CHECKPOINT_CORRECTION_SUBJECT_TREE = "7323b292d279fde752004bc744a2db850ab670d0"
+CHECKPOINT_CORRECTION_SUBJECT_PROGRAM_TREE = "18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b"
+CHECKPOINT_CORRECTION_PROFILE_SHA256 = (
+    "755aa27fb27b4d5eac1e04d07fa938b16f4c38e9be8d9d7de0bc8aed7b19d1d6"
+)
+CHECKPOINT_CORRECTION_SCHEMA_SHA256 = (
+    "1728309b49889e6c2f8101f3a887575f7e9e8a833b5c28e3472cd242b03b1224"
+)
+CHECKPOINT_CORRECTION_PROFILE_BLOB = "cbd47bcf6a76dd2acacb3e8f6642e621e026c79f"
+CHECKPOINT_CORRECTION_SCHEMA_BLOB = "01ae03ab695cf9cf01c16e5096c48183c4e73aa1"
+CHECKPOINT_APPROVAL_CONTAINER = "9f30322859e8039863b47cdcb0e4c8f29354c9dc"
+CHECKPOINT_APPROVAL_PATHS = (
+    "evidence/approvals/APR-EPP-F01-MC-008.json",
+    "evidence/approvals/APR-EPP-F01-IMPL-008.json",
+)
+CHECKPOINT_APPROVAL_SHA256 = (
+    "eda16e8761139d1dd2235ef76a97aec852e200dc89de2acc07d6967d36294b6a",
+    "9f0c787e5af074be036e9b10e8d726f017c609d7b9469f20a0c3e8bccf5eb9ce",
+)
+CHECKPOINT_APPROVAL_BLOBS = (
+    "89dd452b6178fd23974321579b446d5403791e0b",
+    "0853bd47ef86ecaa8cd872985054f7c95e7b1e2b",
+)
+CHECKPOINT_DIGEST_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json",
+            "/outputs/0/sha256",
+        ),
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/TR-0047.json",
+            "/outputs/1/sha256",
+        ),
+    }
+)
+CHECKPOINT_EVENT_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/TR-0050.json",
+            "repair",
+            "repair_checkpoint",
+            "BLOCKED",
+            "BLOCKED",
+        )
+    }
+)
+
 PREFLIGHT_CORRECTION_ID = "COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001"
 PREFLIGHT_CORRECTION_SUBJECT = "d96e8b68c9fda08eea84065186452581727ec4fa"
 PREFLIGHT_CORRECTION_SUBJECT_TREE = "d16d81afaabac73e4374ecb186089cb0a95dd1bc"
@@ -734,6 +787,12 @@ def _prefetch_closed_correction_blobs(
             "specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json",
         ),
         (
+            CHECKPOINT_CORRECTION_SUBJECT,
+            f"{root}/evidence/corrections/{CHECKPOINT_CORRECTION_ID}.json",
+            f"{root}/schemas/checkpoint-evidence-correction.schema.json",
+            "specs/076-control-plane-validator/contracts/checkpoint-evidence-correction.schema.json",
+        ),
+        (
             PREFLIGHT_CORRECTION_SUBJECT,
             f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json",
             f"{root}/schemas/preflight-evidence-correction.schema.json",
@@ -755,6 +814,7 @@ def _prefetch_closed_correction_blobs(
         *CORRECTION_APPROVAL_PATHS,
         *INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS,
         *REPAIR_CORRECTION_APPROVAL_PATHS,
+        *CHECKPOINT_APPROVAL_PATHS,
         *PREFLIGHT_APPROVAL_PATHS,
     )
     try:
@@ -1884,6 +1944,322 @@ def validate_repair_evidence_correction(
     )
 
 
+def validate_checkpoint_evidence_correction(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+    approvals: Mapping[str, Mapping[str, Any]],
+) -> tuple[
+    list[Finding],
+    frozenset[tuple[str, str]],
+    frozenset[tuple[str, str, str, str, str]],
+]:
+    """Recompute only the approved three-claim V8 checkpoint disposition."""
+
+    root = normalize_repo_path(program_root)
+    correction_path = f"{root}/evidence/corrections/{CHECKPOINT_CORRECTION_ID}.json"
+    promoted_schema_path = f"{root}/schemas/checkpoint-evidence-correction.schema.json"
+    planning_schema_path = (
+        "specs/076-control-plane-validator/contracts/"
+        "checkpoint-evidence-correction.schema.json"
+    )
+    profile_valid = True
+    authority_valid = True
+    golden: Mapping[str, Any] = {}
+    current = ""
+
+    try:
+        current = reader.resolve_commit(source_commit)
+        closed_paths = (correction_path, promoted_schema_path, planning_schema_path)
+        requests = [
+            (commit, path)
+            for commit in (CHECKPOINT_CORRECTION_SUBJECT, current)
+            for path in closed_paths
+        ]
+        blobs = reader.read_blob_requests(requests)
+        facts = reader.blob_facts(requests)
+        golden_raw = blobs[(CHECKPOINT_CORRECTION_SUBJECT, correction_path)]
+        promoted_raw = blobs[(CHECKPOINT_CORRECTION_SUBJECT, promoted_schema_path)]
+        planning_raw = blobs[(CHECKPOINT_CORRECTION_SUBJECT, planning_schema_path)]
+        golden_value = strict_loads(golden_raw)
+        promoted_schema = strict_loads(promoted_raw)
+        if not isinstance(golden_value, Mapping) or not isinstance(
+            promoted_schema, Mapping
+        ):
+            raise ContractError("V8 closed artifacts are not objects")
+        golden = golden_value
+        check_schema(promoted_schema)
+        correction_identity = reader.resolve_identity(
+            CHECKPOINT_CORRECTION_SUBJECT, root
+        )
+        checkpoint = golden.get("source_checkpoint", {})
+        checkpoint_identity = reader.resolve_identity(
+            str(checkpoint.get("git_commit")), root
+        )
+        profile_valid = all(
+            (
+                exact_schema_instance(promoted_schema, profile, golden),
+                sha256_bytes(golden_raw) == CHECKPOINT_CORRECTION_PROFILE_SHA256,
+                sha256_bytes(promoted_raw) == CHECKPOINT_CORRECTION_SCHEMA_SHA256,
+                promoted_raw == planning_raw,
+                facts[(CHECKPOINT_CORRECTION_SUBJECT, correction_path)].git_blob
+                == CHECKPOINT_CORRECTION_PROFILE_BLOB,
+                facts[(CHECKPOINT_CORRECTION_SUBJECT, promoted_schema_path)].git_blob
+                == CHECKPOINT_CORRECTION_SCHEMA_BLOB,
+                facts[(CHECKPOINT_CORRECTION_SUBJECT, planning_schema_path)].git_blob
+                == CHECKPOINT_CORRECTION_SCHEMA_BLOB,
+                all(
+                    blobs[(current, path)]
+                    == blobs[(CHECKPOINT_CORRECTION_SUBJECT, path)]
+                    for path in closed_paths
+                ),
+                correction_identity.source_tree == CHECKPOINT_CORRECTION_SUBJECT_TREE,
+                correction_identity.program_tree
+                == CHECKPOINT_CORRECTION_SUBJECT_PROGRAM_TREE,
+                reader.containing_commit(current, correction_path)
+                == CHECKPOINT_CORRECTION_SUBJECT,
+                current != CHECKPOINT_CORRECTION_SUBJECT,
+                reader.is_ancestor(CHECKPOINT_CORRECTION_SUBJECT, current),
+                checkpoint_identity.source_tree == checkpoint.get("git_tree"),
+                checkpoint_identity.program_tree == checkpoint.get("program_tree"),
+                checkpoint_identity.source_commit != CHECKPOINT_CORRECTION_SUBJECT,
+                reader.is_ancestor(
+                    checkpoint_identity.source_commit, CHECKPOINT_CORRECTION_SUBJECT
+                ),
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    claims = list(golden.get("claims", []))
+    digest_claims = claims[:2]
+    event_claim = claims[2] if len(claims) > 2 else {}
+    try:
+        if not profile_valid or len(claims) != 3:
+            raise ValueError("presented checkpoint correction changed")
+        digest_targets = frozenset(
+            (str(claim["transition_path"]), str(claim["json_pointer"]))
+            for claim in digest_claims
+        )
+        authoritative = event_claim["authoritative_tuple"]
+        event_targets = frozenset(
+            {
+                (
+                    str(event_claim["transition_path"]),
+                    str(authoritative["state_domain"]),
+                    str(authoritative["event_kind"]),
+                    str(authoritative["from_state"]),
+                    str(authoritative["to_state"]),
+                )
+            }
+        )
+        if digest_targets != CHECKPOINT_DIGEST_TARGETS:
+            raise ValueError("V8 digest target set changed")
+        if event_targets != CHECKPOINT_EVENT_TARGETS:
+            raise ValueError("V8 event target set changed")
+
+        target_requests: list[tuple[str, str]] = []
+        introducing_commits: set[str] = set()
+        for claim in digest_claims:
+            introducing = str(claim["introducing_commit"])
+            transition_path = str(claim["transition_path"])
+            artifact_path = str(claim["artifact_path"])
+            introducing_commits.add(introducing)
+            target_requests.extend(
+                [
+                    (introducing, transition_path),
+                    (current, transition_path),
+                    (introducing, artifact_path),
+                ]
+            )
+        event_introducing = str(event_claim["introducing_commit"])
+        event_path = str(event_claim["transition_path"])
+        introducing_commits.add(event_introducing)
+        target_requests.extend([(event_introducing, event_path), (current, event_path)])
+        target_blobs = reader.read_blob_requests(target_requests)
+        target_facts = reader.blob_facts(target_requests)
+        summaries = reader.commit_summaries(introducing_commits)
+
+        for claim in digest_claims:
+            introducing = str(claim["introducing_commit"])
+            transition_path = str(claim["transition_path"])
+            artifact_path = str(claim["artifact_path"])
+            transition_raw = target_blobs[(introducing, transition_path)]
+            transition = strict_loads(transition_raw)
+            transition_fact = target_facts[(introducing, transition_path)]
+            artifact_fact = target_facts[(introducing, artifact_path)]
+            source_identity = reader.resolve_identity(str(claim["source_commit"]), root)
+            introducing_identity = reader.resolve_identity(introducing, root)
+            profile_valid = profile_valid and all(
+                (
+                    source_identity.source_tree == claim["source_tree"],
+                    source_identity.program_tree == claim["source_program_tree"],
+                    introducing_identity.source_tree == claim["introducing_tree"],
+                    introducing_identity.program_tree
+                    == claim["introducing_program_tree"],
+                    summaries[introducing].get("parents")
+                    == [str(claim["source_commit"])],
+                    reader.containing_commit(current, transition_path) == introducing,
+                    transition_fact.git_blob == claim["transition_git_blob"],
+                    transition_fact.sha256 == claim["transition_raw_sha256"],
+                    target_blobs[(current, transition_path)] == transition_raw,
+                    _pointer_value(transition, str(claim["json_pointer"]))
+                    == claim["recorded_value"],
+                    artifact_fact.git_blob == claim["artifact_git_blob"],
+                    artifact_fact.sha256 == claim["authoritative_value"],
+                    claim["recorded_value"] != claim["authoritative_value"],
+                    introducing != CHECKPOINT_CORRECTION_SUBJECT,
+                    reader.is_ancestor(introducing, CHECKPOINT_CORRECTION_SUBJECT),
+                )
+            )
+
+        event_raw = target_blobs[(event_introducing, event_path)]
+        event_transition = strict_loads(event_raw)
+        event_fact = target_facts[(event_introducing, event_path)]
+        recorded = event_claim["recorded_tuple"]
+        source_identity = reader.resolve_identity(
+            str(event_claim["source_commit"]), root
+        )
+        introducing_identity = reader.resolve_identity(event_introducing, root)
+        policy = strict_loads(reader.blob(current, f"{root}/lifecycle-policy.json"))
+        repair_rules = [
+            row
+            for row in policy.get("event_rules", [])
+            if row.get("state_domain") == authoritative["state_domain"]
+            and row.get("event_kind") == authoritative["event_kind"]
+        ]
+        profile_valid = profile_valid and all(
+            (
+                source_identity.source_tree == event_claim["source_tree"],
+                source_identity.program_tree == event_claim["source_program_tree"],
+                introducing_identity.source_tree == event_claim["introducing_tree"],
+                introducing_identity.program_tree
+                == event_claim["introducing_program_tree"],
+                summaries[event_introducing].get("parents")
+                == [str(event_claim["source_commit"])],
+                reader.containing_commit(current, event_path) == event_introducing,
+                event_fact.git_blob == event_claim["transition_git_blob"],
+                event_fact.sha256 == event_claim["transition_raw_sha256"],
+                target_blobs[(current, event_path)] == event_raw,
+                all(
+                    event_transition.get(key) == value
+                    for key, value in recorded.items()
+                ),
+                recorded != authoritative,
+                len(repair_rules) == 1,
+                repair_rules[0].get("may_preserve_state") is True,
+                repair_rules[0].get("required_evidence")
+                == list(event_claim["required_evidence_mapping"]),
+                event_introducing != CHECKPOINT_CORRECTION_SUBJECT,
+                reader.is_ancestor(event_introducing, CHECKPOINT_CORRECTION_SUBJECT),
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    expected_paths = tuple(f"{root}/{path}" for path in CHECKPOINT_APPROVAL_PATHS)
+    try:
+        if set(approvals) != set(expected_paths):
+            raise ValueError("V8 approval path set changed")
+        approval_requests = [
+            (commit, path)
+            for commit in (CHECKPOINT_APPROVAL_CONTAINER, current)
+            for path in expected_paths
+        ]
+        approval_blobs = reader.read_blob_requests(approval_requests)
+        approval_facts = reader.blob_facts(approval_requests)
+        summary = reader.commit_summaries([CHECKPOINT_APPROVAL_CONTAINER])[
+            CHECKPOINT_APPROVAL_CONTAINER
+        ]
+        for path, expected_sha, expected_blob in zip(
+            expected_paths,
+            CHECKPOINT_APPROVAL_SHA256,
+            CHECKPOINT_APPROVAL_BLOBS,
+            strict=True,
+        ):
+            approval = approvals[path]
+            fixed_raw = approval_blobs[(CHECKPOINT_APPROVAL_CONTAINER, path)]
+            if not all(
+                (
+                    strict_loads(fixed_raw) == approval,
+                    approval_blobs[(current, path)] == fixed_raw,
+                    approval_facts[(CHECKPOINT_APPROVAL_CONTAINER, path)].sha256
+                    == expected_sha,
+                    approval_facts[(CHECKPOINT_APPROVAL_CONTAINER, path)].git_blob
+                    == expected_blob,
+                    reader.containing_commit(current, path)
+                    == CHECKPOINT_APPROVAL_CONTAINER,
+                    _verify_approval_artifacts(reader, current, approval, root),
+                )
+            ):
+                raise ValueError("approval record is not the exact V8 bundle")
+        selected = [approvals[path] for path in expected_paths]
+        if not all(
+            (
+                selected[0].get("scope") == "material_change",
+                selected[1].get("scope") == "feature_implementation",
+                selected[0].get("subject") == selected[1].get("subject"),
+                selected[0].get("subject", {}).get("git_commit")
+                == CHECKPOINT_CORRECTION_SUBJECT,
+                summary.get("parents") == [CHECKPOINT_CORRECTION_SUBJECT],
+                CHECKPOINT_APPROVAL_CONTAINER != current,
+                reader.is_ancestor(CHECKPOINT_APPROVAL_CONTAINER, current),
+            )
+        ):
+            raise ValueError("V8 approval history is not append-only")
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        authority_valid = False
+
+    resolved = profile_valid and authority_valid
+    findings = [
+        *[
+            _finding(
+                "CHECKPOINT_OUTPUT_DIGEST_MISMATCH",
+                "info" if resolved else "fatal",
+                str(claim.get("transition_path", correction_path)),
+                "EXACT_APPROVED_V8_CHECKPOINT_DISPOSITION",
+                json_pointer=str(claim.get("json_pointer", "")),
+                resolution_status="resolved" if resolved else "unresolved",
+                correction_ref=correction_path if resolved else None,
+            )
+            for claim in digest_claims
+        ],
+        _finding(
+            "CHECKPOINT_EVENT_RULE_MISMATCH",
+            "info" if resolved else "fatal",
+            str(event_claim.get("transition_path", correction_path)),
+            "EXACT_APPROVED_V8_CHECKPOINT_DISPOSITION",
+            json_pointer="/state_domain",
+            resolution_status="resolved" if resolved else "unresolved",
+            correction_ref=correction_path if resolved else None,
+        ),
+    ]
+    if not profile_valid:
+        findings.append(
+            _finding(
+                "CHECKPOINT_EVIDENCE_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "CLOSED_THREE_CLAIM_GIT_RECOMPUTATION",
+            )
+        )
+    if not authority_valid:
+        findings.append(
+            _finding(
+                "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED",
+                "fatal",
+                f"{root}/evidence/approvals",
+                "EXACT_V8_TWO_SCOPE_AUTHORITY",
+            )
+        )
+    return (
+        sorted(findings, key=Finding.sort_key),
+        CHECKPOINT_DIGEST_TARGETS if resolved else frozenset(),
+        CHECKPOINT_EVENT_TARGETS if resolved else frozenset(),
+    )
+
+
 def _preflight_original_finding(
     code: str,
     artifact: str,
@@ -2362,7 +2738,9 @@ def _validate_transition_history(
             )
         )
         corrected_input_targets = frozenset()
-    if not corrected_digest_targets.issubset({REPAIR_DIGEST_TARGET}):
+    if not corrected_digest_targets.issubset(
+        {REPAIR_DIGEST_TARGET, *CHECKPOINT_DIGEST_TARGETS}
+    ):
         findings.append(
             _finding(
                 "REPAIR_EVIDENCE_CORRECTION_INVALID",
@@ -2546,6 +2924,7 @@ def _validate_state_chain(
     corrected_input_targets: frozenset[tuple[str, str]] = frozenset(),
     corrected_digest_targets: frozenset[tuple[str, str]] = frozenset(),
     corrected_manifest_targets: frozenset[str] = frozenset(),
+    corrected_event_targets: frozenset[tuple[str, str, str, str, str]] = frozenset(),
 ) -> None:
     state_path = f"{program_root}/program-state.json"
     current = documents.get(state_path)
@@ -2613,6 +2992,16 @@ def _validate_state_chain(
         for row in policy.get("event_rules", [])
         if isinstance(row, Mapping)
     }
+    if not corrected_event_targets.issubset(CHECKPOINT_EVENT_TARGETS):
+        findings.append(
+            _finding(
+                "CHECKPOINT_EVIDENCE_CORRECTION_INVALID",
+                "fatal",
+                f"{program_root}/evidence/corrections",
+                "NO_GENERIC_EVENT_RULE_BYPASS",
+            )
+        )
+        corrected_event_targets = frozenset()
     seen_ids: set[str] = set()
     migration_count = 0
     for transition in transitions:
@@ -2665,6 +3054,15 @@ def _validate_state_chain(
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
+            event_target = (
+                f"{program_root}/evidence/transitions/{transition_id}.json",
+                "repair",
+                str(event),
+                pair[0],
+                pair[1],
+            )
+            if event_target in corrected_event_targets:
+                domain = "repair"
             event_rule = event_rules.get((str(event), str(domain)))
             if event_rule is None or (
                 event_rule.get("may_preserve_state") is False and pair[0] == pair[1]
@@ -3257,6 +3655,12 @@ def validate_roadmap_approval_and_lease(
                     "POLICY_DERIVED_ACTION",
                 )
             )
+    findings = [
+        replace(finding, artifact=f"{program_root}/{finding.artifact}")
+        if finding.artifact in {"program-state.json", "roadmap.json"}
+        else finding
+        for finding in findings
+    ]
     return sorted(findings, key=Finding.sort_key), action
 
 
@@ -3842,6 +4246,7 @@ def validate_program(
     repair_correction = documents.get(repair_correction_path)
     corrected_schema_targets: frozenset[str] = frozenset()
     corrected_digest_targets: frozenset[tuple[str, str]] = frozenset()
+    corrected_event_targets: frozenset[tuple[str, str, str, str, str]] = frozenset()
     if isinstance(repair_correction, Mapping):
         repair_approval_documents = {
             f"{root}/{relative}": value
@@ -3868,6 +4273,31 @@ def validate_program(
             )
         ]
         findings.extend(repair_findings)
+    checkpoint_correction_path = (
+        f"{root}/evidence/corrections/{CHECKPOINT_CORRECTION_ID}.json"
+    )
+    checkpoint_correction = documents.get(checkpoint_correction_path)
+    if isinstance(checkpoint_correction, Mapping):
+        checkpoint_approval_documents = {
+            f"{root}/{relative}": value
+            for relative in CHECKPOINT_APPROVAL_PATHS
+            if isinstance((value := documents.get(f"{root}/{relative}")), Mapping)
+        }
+        (
+            checkpoint_findings,
+            checkpoint_digest_targets,
+            corrected_event_targets,
+        ) = validate_checkpoint_evidence_correction(
+            reader,
+            identity.source_commit,
+            root,
+            checkpoint_correction,
+            checkpoint_approval_documents,
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *checkpoint_digest_targets}
+        )
+        findings.extend(checkpoint_findings)
     preflight_correction_path = (
         f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json"
     )
@@ -3908,6 +4338,7 @@ def validate_program(
         corrected_input_targets=corrected_input_targets,
         corrected_digest_targets=corrected_digest_targets,
         corrected_manifest_targets=corrected_manifest_targets,
+        corrected_event_targets=corrected_event_targets,
     )
     correction_path = f"{root}/evidence/corrections/{CORRECTION_ID}.json"
     correction = documents.get(correction_path)

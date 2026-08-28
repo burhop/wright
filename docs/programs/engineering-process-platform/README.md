@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** BLOCKED at the completed V9 verification checkpoint with no mutating lease. T077–T080 passed bounded independent verification for only the immutable discovery-schema and TR-0051 manifest-order findings. T073–T076 and every other excluded action remain unauthorized; the sole next action is human selection and exact approval of any new bounded lease.
+**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T073–T075 are complete and T076 verification is next; no new task IDs or product scope are being added.
 
 **Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
 
@@ -38,7 +38,7 @@ Start here, then read only the artifacts needed for the next action:
 24. [`evidence/approvals/APR-EPP-F01-MC-009.json`](evidence/approvals/APR-EPP-F01-MC-009.json), [`evidence/approvals/APR-EPP-F01-IMPL-009.json`](evidence/approvals/APR-EPP-F01-IMPL-009.json), and [`evidence/transitions/TR-0054.json`](evidence/transitions/TR-0054.json) — exact V9 approval, DEC-P0-020 acceptance, and bounded lease revision 13.
 25. [`evidence/verification/EPP-F01-V9.json`](evidence/verification/EPP-F01-V9.json) and [`evidence/transitions/TR-0055.json`](evidence/transitions/TR-0055.json) — exact terminal implementation subject, 21-test matrix, non-interference proof, known exclusions, independent verifier, and closed lease checkpoint.
 
-Local recovery note: `stash@{0}` currently resolves to `bf05abcc37236d030fbcd08830a9d065703b9a46`, based on `9f30322859e8039863b47cdcb0e4c8f29354c9dc`, and contains only 286 added lines in `tests/program_control_plane/test_transition_chain.py`. It is incomplete, non-authoritative T073 work, excluded from V9, and not recoverable from a fresh clone. Its absence does not block V9 and never permits recreation or application without later T073 authority.
+Local recovery note: the preserved T073 test-only stash was applied after the user's closure authorization. The stash remains only as a local backup; the worktree and subsequent commits are authoritative.
 
 Historical `docs/engineering-capability-program-*.md` files describe the completed/earlier capability program. They remain evidence, but they do not govern this successor program. The feature pointer in `.specify/feature.json` and the managed Spec Kit block in `AGENTS.md` are worktree-local coordination aids, never program authority.
 
@@ -67,4 +67,4 @@ If any check fails, transition to or remain `BLOCKED`, record the reason, and re
 
 ## Next action
 
-Select and approve the next bounded EPP-F01 action, if any. V9 authority is consumed and cannot be replayed. Do not resume T073–T076, apply the preserved T073 stash, repair the roadmap-policy defect, execute T066–T068, implement EPP-F01B, add dependencies, generate or execute benchmarks, make external changes, push/open/merge/integrate, publish, or release without later explicit authority.
+Continue EPP-F01 at T076, then complete T066–T068 without adding task IDs. The latest authorization permits local closure, required delivery checks, push, and opening the PR; it does not authorize merge/dev integration, EPP-F01B implementation, dependencies, benchmark execution, publication, or release.

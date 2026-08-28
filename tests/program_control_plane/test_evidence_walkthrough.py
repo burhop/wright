@@ -30,7 +30,7 @@ def test_readme_directly_links_current_subject_authority_and_start(
     for target in required:
         assert target in readme
         assert (repository_root / PROGRAM / target).resolve().is_file()
-    assert "Continue EPP-F01 at T057" in readme
+    assert "Continue EPP-F01 at T076" in readme
     assert "only T024–T041 are implementation-authorized" not in readme
 
 
@@ -60,15 +60,16 @@ def test_empty_context_reconstructs_one_next_action_and_exclusions(
     assert len(state["next_eligible_actions"]) == 1
     next_action = state["next_eligible_actions"][0]
     expected = next(
-        rule["action"]
+        rule
         for rule in policy["action_rules"]
         if rule["program_state"] == state["state"]
         and rule["feature_state"] == state["feature_state"]
     )
-    assert next_action["action"] == expected
-    assert next_action["requires_human_approval"] is False
-    active = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
-    assert active["status"] == "active"
+    assert next_action["action"] == expected["action"]
+    assert next_action["requires_human_approval"] is expected["requires_human_approval"]
+    current = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
+    expected_status = "blocked" if state["feature_state"] == "BLOCKED" else "active"
+    assert current["status"] == expected_status
     lease = state["active_mutating_lease"]
     allowed = set(lease["allowed_actions"]) if lease is not None else set()
     assert {

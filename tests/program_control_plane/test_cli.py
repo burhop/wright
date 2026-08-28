@@ -44,6 +44,9 @@ INPUT_ORIGIN_TARGET = (
 REPAIR_CORRECTION = (
     f"{PROGRAM_ROOT}/evidence/corrections/COR-EPP-F01-REPAIR-EVIDENCE-001.json"
 )
+CHECKPOINT_CORRECTION = (
+    f"{PROGRAM_ROOT}/evidence/corrections/COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001.json"
+)
 
 
 def _load(path: Path) -> dict:
@@ -72,6 +75,19 @@ def _repair_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
     approvals = {
         f"{PROGRAM_ROOT}/evidence/approvals/{name}": _load(approval_root / name)
         for name in ("APR-EPP-F01-MC-007.json", "APR-EPP-F01-IMPL-007.json")
+    }
+    return profile, approvals
+
+
+def _checkpoint_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
+    profile = _load(repository_root / CHECKPOINT_CORRECTION)
+    approval_root = (
+        repository_root
+        / "docs/programs/engineering-process-platform/evidence/approvals"
+    )
+    approvals = {
+        f"{PROGRAM_ROOT}/evidence/approvals/{name}": _load(approval_root / name)
+        for name in ("APR-EPP-F01-MC-008.json", "APR-EPP-F01-IMPL-008.json")
     }
     return profile, approvals
 
@@ -167,6 +183,117 @@ def test_repair_evidence_disposition_cannot_change_protected_projection(
             "HEAD",
             PROGRAM_ROOT,
             observed_at=datetime(2026, 8, 27, 23, 50, tzinfo=timezone.utc),
+        ).report
+
+    def protected(report: dict) -> dict:
+        return {
+            "areas": report["areas"],
+            "benchmark_summary": report["benchmark_summary"],
+            "candidate_identity": report["subject"]["release_candidate"],
+            "source_identity": {
+                key: report["subject"][key]
+                for key in ("source_commit", "source_tree", "program_tree")
+            },
+            "approval_authority": report["release_approval"],
+            "delivery": report["delivery"],
+            "release_eligibility": report["release_eligible"],
+            "roadmap_item": report["eligibility"]["roadmap_item"],
+        }
+
+    assert protected(run(correction_on=True)) == protected(run(correction_on=False))
+
+
+@pytest.mark.parametrize(
+    "benchmark_summary",
+    [
+        {
+            "counted": 0,
+            "target": 100,
+            "first_attempt_passed": 0,
+            "eventual_passed": 0,
+            "failed": 0,
+            "blocked": 0,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 100,
+            "t0": 0,
+            "t1": 0,
+            "t2": 0,
+            "t3": 0,
+            "coverage_deficits": ["BENCHMARK_COVERAGE_EMPTY"],
+            "oracle_deficits": ["BENCHMARK_ORACLES_ABSENT"],
+            "artifact_deficits": ["BENCHMARK_ARTIFACTS_ABSENT"],
+            "partition_deficits": ["BENCHMARK_PARTITIONS_ABSENT"],
+            "freshness_deficits": ["BENCHMARK_EVIDENCE_ABSENT"],
+        },
+        {
+            "counted": 4,
+            "target": 100,
+            "first_attempt_passed": 1,
+            "eventual_passed": 2,
+            "failed": 1,
+            "blocked": 1,
+            "stale": 0,
+            "contaminated": 0,
+            "not_tested": 96,
+            "t0": 2,
+            "t1": 1,
+            "t2": 1,
+            "t3": 0,
+            "coverage_deficits": ["COVERAGE_REMAINS"],
+            "oracle_deficits": [],
+            "artifact_deficits": [],
+            "partition_deficits": ["HOLDOUT_REMAINS"],
+            "freshness_deficits": [],
+        },
+    ],
+)
+def test_checkpoint_disposition_cannot_change_cli_projection(
+    repository_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    benchmark_summary: dict,
+) -> None:
+    profile, _ = _checkpoint_inputs(repository_root)
+    assert profile["expected_claim_count"] == 3
+    original = validation_module.validate_checkpoint_evidence_correction
+    monkeypatch.setattr(
+        validation_module,
+        "derive_benchmark_summary",
+        lambda *_args, **_kwargs: copy.deepcopy(benchmark_summary),
+    )
+
+    def run(*, correction_on: bool) -> dict:
+        def disposition(*args, **kwargs):
+            findings, digest_targets, event_targets = original(*args, **kwargs)
+            if correction_on:
+                return findings, digest_targets, event_targets
+            unresolved = [
+                replace(
+                    finding,
+                    severity="fatal",
+                    resolution_status="unresolved",
+                    correction_ref=None,
+                )
+                if finding.code
+                in {
+                    "CHECKPOINT_OUTPUT_DIGEST_MISMATCH",
+                    "CHECKPOINT_EVENT_RULE_MISMATCH",
+                }
+                else finding
+                for finding in findings
+            ]
+            return unresolved, frozenset(), frozenset()
+
+        monkeypatch.setattr(
+            validation_module,
+            "validate_checkpoint_evidence_correction",
+            disposition,
+        )
+        return validate_program(
+            GitReader(repository_root),
+            "HEAD",
+            PROGRAM_ROOT,
+            observed_at=datetime(2026, 8, 28, 13, 0, tzinfo=timezone.utc),
         ).report
 
     def protected(report: dict) -> dict:

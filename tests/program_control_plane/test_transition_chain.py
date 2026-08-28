@@ -39,6 +39,37 @@ REPAIR_APPROVAL_PATHS = (
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-007.json",
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-007.json",
 )
+CHECKPOINT_CORRECTION_ID = "COR-EPP-F01-T072-CHECKPOINT-EVIDENCE-001"
+CHECKPOINT_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{CHECKPOINT_CORRECTION_ID}.json"
+)
+CHECKPOINT_APPROVAL_PATHS = (
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-008.json",
+    f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-008.json",
+)
+CHECKPOINT_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0047.json",
+            "/outputs/0/sha256",
+        ),
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0047.json",
+            "/outputs/1/sha256",
+        ),
+    }
+)
+CHECKPOINT_EVENT_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0050.json",
+            "repair",
+            "repair_checkpoint",
+            "BLOCKED",
+            "BLOCKED",
+        )
+    }
+)
 
 
 def load(path: Path) -> object:
@@ -77,6 +108,16 @@ def repair_correction_inputs(
 ) -> tuple[dict, dict[str, dict]]:
     profile = load(repository_root / REPAIR_CORRECTION_PATH)
     approvals = {path: load(repository_root / path) for path in REPAIR_APPROVAL_PATHS}
+    return profile, approvals
+
+
+def checkpoint_correction_inputs(
+    repository_root: Path,
+) -> tuple[dict, dict[str, dict]]:
+    profile = load(repository_root / CHECKPOINT_CORRECTION_PATH)
+    approvals = {
+        path: load(repository_root / path) for path in CHECKPOINT_APPROVAL_PATHS
+    }
     return profile, approvals
 
 
@@ -422,6 +463,244 @@ def test_repair_evidence_correction_rejects_v7_authority_variants(
     assert "REPAIR_EVIDENCE_CORRECTION_INVALID" not in codes(findings)
     assert schema_targets == frozenset()
     assert digest_targets == frozenset()
+
+
+def test_exact_checkpoint_evidence_correction_recomputes_three_of_three(
+    repository_root: Path,
+) -> None:
+    profile, approvals = checkpoint_correction_inputs(repository_root)
+    original_profile = copy.deepcopy(profile)
+    original_approvals = copy.deepcopy(approvals)
+
+    findings, digest_targets, event_targets = (
+        validation_module.validate_checkpoint_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+        )
+    )
+
+    digest_findings = [
+        finding
+        for finding in findings
+        if finding.code == "CHECKPOINT_OUTPUT_DIGEST_MISMATCH"
+    ]
+    event_findings = [
+        finding
+        for finding in findings
+        if finding.code == "CHECKPOINT_EVENT_RULE_MISMATCH"
+    ]
+    assert len(digest_findings) == 2
+    assert len(event_findings) == 1
+    assert all(finding.resolution_status == "resolved" for finding in findings)
+    assert all(
+        finding.correction_ref == CHECKPOINT_CORRECTION_PATH for finding in findings
+    )
+    assert digest_targets == CHECKPOINT_DIGEST_TARGETS
+    assert event_targets == CHECKPOINT_EVENT_TARGETS
+    assert profile == original_profile
+    assert approvals == original_approvals
+
+
+def test_checkpoint_evidence_correction_rejects_every_near_miss(
+    repository_root: Path,
+) -> None:
+    profile, approvals = checkpoint_correction_inputs(repository_root)
+    head = GitReader(repository_root).resolve_commit("HEAD")
+    mutations = (
+        ("omission", lambda value: value["claims"].pop()),
+        (
+            "addition",
+            lambda value: value["claims"].append(copy.deepcopy(value["claims"][0])),
+        ),
+        (
+            "substitution",
+            lambda value: value["claims"][0].__setitem__("claim_id", "OTHER"),
+        ),
+        (
+            "ordering",
+            lambda value: value["claims"].__setitem__(
+                slice(0, 2), value["claims"][:2][::-1]
+            ),
+        ),
+        (
+            "path",
+            lambda value: value["claims"][0].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/gates.md"
+            ),
+        ),
+        (
+            "pointer",
+            lambda value: value["claims"][0].__setitem__(
+                "json_pointer", "/outputs/2/sha256"
+            ),
+        ),
+        (
+            "blob",
+            lambda value: value["claims"][1].__setitem__("artifact_git_blob", "0" * 40),
+        ),
+        (
+            "transition-blob",
+            lambda value: value["claims"][2].__setitem__(
+                "transition_git_blob", "0" * 40
+            ),
+        ),
+        (
+            "container",
+            lambda value: value["claims"][0].__setitem__("introducing_commit", head),
+        ),
+        (
+            "event",
+            lambda value: value["claims"][2]["authoritative_tuple"].__setitem__(
+                "event_kind", "verification"
+            ),
+        ),
+        (
+            "domain",
+            lambda value: value["claims"][2]["authoritative_tuple"].__setitem__(
+                "state_domain", "feature"
+            ),
+        ),
+        (
+            "from-state",
+            lambda value: value["claims"][2]["authoritative_tuple"].__setitem__(
+                "from_state", "IMPLEMENTING"
+            ),
+        ),
+        (
+            "to-state",
+            lambda value: value["claims"][2]["authoritative_tuple"].__setitem__(
+                "to_state", "IMPLEMENTING"
+            ),
+        ),
+        (
+            "evidence-map",
+            lambda value: value["claims"][2]["required_evidence_mapping"][
+                "REPAIR_ATTEMPT"
+            ].pop(),
+        ),
+        (
+            "current",
+            lambda value: value["claims"][0].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/program-state.json"
+            ),
+        ),
+        (
+            "future",
+            lambda value: value["claims"][2].__setitem__("introducing_commit", head),
+        ),
+        (
+            "wildcard",
+            lambda value: value["claims"][0].__setitem__(
+                "json_pointer", "/outputs/*/sha256"
+            ),
+        ),
+        (
+            "correction-of-correction",
+            lambda value: value["claims"][0].__setitem__(
+                "transition_path", CHECKPOINT_CORRECTION_PATH
+            ),
+        ),
+        (
+            "new-record",
+            lambda value: value.__setitem__("accept_new_records", True),
+        ),
+        (
+            "projection-interference",
+            lambda value: value["resolution_semantics"].__setitem__(
+                "readiness_authority_benchmark_release_non_interference", False
+            ),
+        ),
+    )
+    reader = GitReader(repository_root)
+    for label, mutate in mutations:
+        candidate = copy.deepcopy(profile)
+        mutate(candidate)
+        findings, digest_targets, event_targets = (
+            validation_module.validate_checkpoint_evidence_correction(
+                reader, "HEAD", PROGRAM_ROOT, candidate, approvals
+            )
+        )
+        mismatch_findings = [
+            finding
+            for finding in findings
+            if finding.code
+            in {
+                "CHECKPOINT_OUTPUT_DIGEST_MISMATCH",
+                "CHECKPOINT_EVENT_RULE_MISMATCH",
+            }
+        ]
+        assert len(mismatch_findings) == 3, label
+        assert all(
+            finding.resolution_status == "unresolved" for finding in mismatch_findings
+        ), label
+        assert "CHECKPOINT_EVIDENCE_CORRECTION_INVALID" in codes(findings), label
+        assert digest_targets == frozenset(), label
+        assert event_targets == frozenset(), label
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        f"{PROGRAM_ROOT}/evidence/transitions/TR-0047.json",
+        f"{PROGRAM_ROOT}/README.md",
+        f"{PROGRAM_ROOT}/approval.md",
+        f"{PROGRAM_ROOT}/evidence/transitions/TR-0050.json",
+    ],
+)
+def test_checkpoint_evidence_correction_recomputes_committed_git_blobs(
+    repository_root: Path,
+    target: str,
+) -> None:
+    profile, approvals = checkpoint_correction_inputs(repository_root)
+    findings, digest_targets, event_targets = (
+        validation_module.validate_checkpoint_evidence_correction(
+            RepairBlobMutatingReader(GitReader(repository_root), target),
+            "HEAD",
+            PROGRAM_ROOT,
+            profile,
+            approvals,
+        )
+    )
+    assert "CHECKPOINT_EVIDENCE_CORRECTION_INVALID" in codes(findings)
+    assert digest_targets == frozenset()
+    assert event_targets == frozenset()
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda approvals: approvals.pop(CHECKPOINT_APPROVAL_PATHS[0]),
+        lambda approvals: approvals.pop(CHECKPOINT_APPROVAL_PATHS[1]),
+        lambda approvals: approvals[CHECKPOINT_APPROVAL_PATHS[0]][
+            "subject"
+        ].__setitem__("git_commit", "0" * 40),
+        lambda approvals: approvals[CHECKPOINT_APPROVAL_PATHS[0]]["subject"][
+            "artifact_digests"
+        ][0].__setitem__("sha256", "0" * 64),
+        lambda approvals: approvals[CHECKPOINT_APPROVAL_PATHS[0]].__setitem__(
+            "decision", "rejected"
+        ),
+        lambda approvals: approvals[CHECKPOINT_APPROVAL_PATHS[0]][
+            "revocation_events"
+        ].append({"revoked_at": "2026-08-28T10:00:00Z"}),
+        lambda approvals: approvals[CHECKPOINT_APPROVAL_PATHS[0]]["conditions"].append(
+            "extra authority"
+        ),
+    ],
+)
+def test_checkpoint_evidence_correction_requires_exact_v8_authority(
+    repository_root: Path,
+    mutation,
+) -> None:
+    profile, approvals = checkpoint_correction_inputs(repository_root)
+    mutation(approvals)
+    findings, digest_targets, event_targets = (
+        validation_module.validate_checkpoint_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile, approvals
+        )
+    )
+    assert "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED" in codes(findings)
+    assert digest_targets == frozenset()
+    assert event_targets == frozenset()
 
 
 def test_exact_committed_identity_correction_recomputes_37_of_37(
@@ -887,7 +1166,12 @@ def test_current_v2_chain_has_exact_legal_edges(repository_root: Path) -> None:
         root / "lifecycle-policy.json"
     )
     findings = []
-    _validate_state_chain(documents, PROGRAM_ROOT, findings)
+    _validate_state_chain(
+        documents,
+        PROGRAM_ROOT,
+        findings,
+        corrected_event_targets=CHECKPOINT_EVENT_TARGETS,
+    )
     assert findings == []
 
 
