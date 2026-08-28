@@ -15,6 +15,23 @@ from program_control.validation import validate_program
 PROGRAM = Path("docs/programs/engineering-process-platform")
 
 
+def test_current_program_state_is_raw_identical_to_its_revision_archive(
+    repository_root,
+) -> None:
+    reader = GitReader(repository_root)
+    head = reader.resolve_commit("HEAD")
+    current_path = (PROGRAM / "program-state.json").as_posix()
+    current_raw = reader.blob(head, current_path)
+    revision = json.loads(current_raw)["revision"]
+    archive_path = (
+        PROGRAM / f"evidence/states/program-state-revision-{revision:04d}.json"
+    ).as_posix()
+    archive_raw = reader.blob(head, archive_path)
+
+    assert archive_raw == current_raw
+    assert not archive_raw.endswith((b"\n\n", b"\r\n\r\n"))
+
+
 def test_readme_directly_links_current_subject_authority_and_start(
     repository_root,
 ) -> None:
