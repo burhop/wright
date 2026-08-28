@@ -1,0 +1,247 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0053",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "BLOCKED",
+  "prior_revision": 53,
+  "new_revision": 54,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "06749743ed6977ac1ce6ee586e36371fb3c3fce910f67e116db2299a9d93d13f",
+  "new_state_digest": "f643f792aac8d82ff00d2355f3f7fdc70f9160f36e63de60c91cdabee41d18cb",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Interrupt the V8 lease before T073 completion, preserve its incomplete local work outside the subject, plan and independently audit only the exact two-claim V9 preflight correction, clear mutating authority, and freeze a fresh human material-change and feature-implementation approval gate.",
+  "started_at": "2026-08-28T11:20:00Z",
+  "finished_at": "2026-08-28T11:46:25Z",
+  "duration_ms": 1585000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "9f30322859e8039863b47cdcb0e4c8f29354c9dc",
+    "source_tree": "ec7b6aec43461cd3fbdbfc6c6c8ce366fdca2b03",
+    "source_program_tree": "e244e592d57badfcddef08d0cfaa2265f18c069c",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/README.md",
+      "docs/programs/engineering-process-platform/approval.md",
+      "docs/programs/engineering-process-platform/audits/2026-08-28-epp-f01-v9-preflight-audits.md",
+      "docs/programs/engineering-process-platform/audits/audit-status.json",
+      "docs/programs/engineering-process-platform/coordinator-state-machine.md",
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0020-closed-v9-preflight-evidence-correction.md",
+      "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0054.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0053.json",
+      "docs/programs/engineering-process-platform/gates.md",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-plan.md",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/risk-register.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/README.md",
+      "docs/programs/engineering-process-platform/schemas/preflight-evidence-correction.schema.json",
+      "docs/programs/engineering-process-platform/schemas/v8-discovery-evidence.schema.json",
+      "docs/programs/engineering-process-platform/status-dashboard-contract.md",
+      "specs/076-control-plane-validator/analysis.md",
+      "specs/076-control-plane-validator/checklists/program-control.md",
+      "specs/076-control-plane-validator/checklists/requirements.md",
+      "specs/076-control-plane-validator/contracts/preflight-evidence-correction.schema.json",
+      "specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json",
+      "specs/076-control-plane-validator/data-model.md",
+      "specs/076-control-plane-validator/plan.md",
+      "specs/076-control-plane-validator/quickstart.md",
+      "specs/076-control-plane-validator/research.md",
+      "specs/076-control-plane-validator/spec.md",
+      "specs/076-control-plane-validator/tasks.md",
+      "tests/program_control_plane/test_contract_schemas.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0053.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0053.json",
+      "sha256": "db085f6c5f7ea35f332904bf27aa17648c69973a71df4d434cca84e227ba0224",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0052.json",
+      "sha256": "c4e9f5a5c84f9d754e05d0fe4d4d17c16657f9da700367977a90f344cc57934b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {"path": "README.md", "sha256": "8a796897daaecc3804ca7d6ab1bb4834187c019f9084b045f676d21c0c966d19", "schema_version": null, "role": "feature_contract"},
+    {"path": "approval.md", "sha256": "359930972cbb77a105f11c74e1bce9ed740f1ce607bacdda7889d2db8fb53885", "schema_version": null, "role": "feature_contract"},
+    {"path": "audits/2026-08-28-epp-f01-v9-preflight-audits.md", "sha256": "141c6f38d42c1cb0a65d2fde9cc47a713516d5a7691724625a3559d028e5daa7", "schema_version": null, "role": "append_only_evidence"},
+    {"path": "audits/audit-status.json", "sha256": "dbf12c7f20bd52a7b587241949fe7d45ad1a016a80add67a7451d7d9fbf095b8", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "coordinator-state-machine.md", "sha256": "f512fb855bad5ee9df9cacc6c02380004587d3ff263c38aca43a00fcf01c3b2f", "schema_version": null, "role": "feature_contract"},
+    {"path": "decision-register.json", "sha256": "9d7ab0c5c2e5c370258784b39c0bbf122c1114e4bc55ddaae369501122739ef4", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "decisions/0020-closed-v9-preflight-evidence-correction.md", "sha256": "a86e6a506cbb0c2bf9ae27b39ae8f200a97828cbb724d35d23c74a06ebe089a5", "schema_version": null, "role": "append_only_evidence"},
+    {"path": "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "sha256": "59c9344f14a99780bcd652e256343d105ed63199a8e1dcba1125267928669828", "schema_version": "1.0", "role": "append_only_evidence"},
+    {"path": "evidence/states/program-state-revision-0054.json", "sha256": "7d1dcb73c8f1f8795a1467df6eb77e07307129de7fdda90b87dc26b3e27fec24", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "gates.md", "sha256": "6d9aef0110a50635c79314fe7ff32eb9318ea71e9d2aa859fb20b060a4d00d93", "schema_version": null, "role": "feature_contract"},
+    {"path": "lifecycle-policy.json", "sha256": "d29687a0627d373c97bdb093eb6cb4724b3f4584c2d4ebc97d903b53396a3818", "schema_version": "1.0", "role": "immutable_policy"},
+    {"path": "program-plan.md", "sha256": "f34ed972c8b737c7e5028f65224ec7cf41669a4b9f48d850a48f606ebbcd8537", "schema_version": null, "role": "feature_contract"},
+    {"path": "program-state.json", "sha256": "7d1dcb73c8f1f8795a1467df6eb77e07307129de7fdda90b87dc26b3e27fec24", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "risk-register.json", "sha256": "9f2f5169abe9e28a9401d0f26fc7a7107f89ef526d21d20a401cd286816f7859", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "roadmap.json", "sha256": "be6b7c32ed5d824e334f618c98207192471c49d3623923246f404a6e932ed635", "schema_version": "1.0", "role": "operational_state"},
+    {"path": "schemas/README.md", "sha256": "0e427dcac1aed1798b4d4468c0d4e21f82bea10ff636d03ebbc95faacff7dffb", "schema_version": null, "role": "feature_contract"},
+    {"path": "schemas/preflight-evidence-correction.schema.json", "sha256": "3199eaaaecdab8870233192b6aee86c6e95308e14a553649edb1069d1f9a90a1", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "schemas/v8-discovery-evidence.schema.json", "sha256": "33699e5ef2748b422d013679405f45d6df50ca98d418d9be4cf06b2f44301205", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "status-dashboard-contract.md", "sha256": "1cce6136eed41a38a5fd9dcdd726deba9fcb00025126a184fe5e131d1df9d112", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/analysis.md", "sha256": "6e1e069543ce904464891119afbf9026f657a6c07f96e69a99bc3388c194d12b", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/checklists/program-control.md", "sha256": "d6df110a4240fcf142f3305f09080b4617023ea61fb50159b5e3817855e9c2fe", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/checklists/requirements.md", "sha256": "ee69bb28f561d42de301beb18df1da786ea41db7e5d8a0b9fa9acebe1ff2980b", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/contracts/preflight-evidence-correction.schema.json", "sha256": "3199eaaaecdab8870233192b6aee86c6e95308e14a553649edb1069d1f9a90a1", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json", "sha256": "33699e5ef2748b422d013679405f45d6df50ca98d418d9be4cf06b2f44301205", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/data-model.md", "sha256": "67f372ff3a292208cb62ecea20b7cb4102ee27fc833aee7f09fbbdc7556991e9", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/plan.md", "sha256": "c894e8eaaf335dfe0e989c5ddd7fe96fadba1a9bd9c6bd258c4a1212b1869d8c", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/quickstart.md", "sha256": "5b625b57864318a6384b11bcfd32502d934b46dd988c2b79e460aee2208afc43", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/research.md", "sha256": "868a73aeb1ff39956da08f59af6a4dd744f69b7e622bb4187e8b67ad3924834f", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/spec.md", "sha256": "d822203e61d80466488dd82d7e42f8ea13d0b0259fa9bd07d1e63072f34e9c6c", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/tasks.md", "sha256": "4546898569a0378c4fe1614e43a821014a8a9c382302b27074543dfe28e321cb", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../tests/program_control_plane/test_contract_schemas.py", "sha256": "65ba8753e72820a7e5fbae7ad8833d32a4401dc48a96db09bb09a2b392d3cbeb", "schema_version": null, "role": "feature_contract"}
+  ],
+  "checks": [
+    {
+      "check_id": "V9-EXACT-TWO-CLAIM-CONTRACT",
+      "method": "Validate byte-identical promoted/planning schemas and literal 2/2 profile; independently recompute source/introducing Git objects, raw hashes, strict ancestry, exact external-schema const, 35-path set equality, order digests and self indices.",
+      "environment": "Windows local isolated worktree; offline Git-object inspection",
+      "duration_ms": 120000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "schemas/preflight-evidence-correction.schema.json",
+        "schemas/v8-discovery-evidence.schema.json",
+        "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json"
+      ]
+    },
+    {
+      "check_id": "V9-PLANNING-CONTRACT-TESTS",
+      "method": "Run the focused planning contract suite with isolated temp output; require 29 passing tests including exact profile validation, external discovery validation and promoted/planning byte equality.",
+      "environment": "python -m pytest tests/program_control_plane/test_contract_schemas.py -q -p no:cacheprovider; offline",
+      "duration_ms": 1220,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_contract_schemas.py"
+      ]
+    },
+    {
+      "check_id": "V9-FOUR-INDEPENDENT-AUDITS",
+      "method": "Bounded read-only engineering-usability, architecture, commercial/release and benchmark-quality audits; one primary writer resolves all in-scope P0/P1 findings and records remaining excluded questions.",
+      "environment": "Four independent read-only audit assignments; local planning delta",
+      "duration_ms": 600000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "audits/2026-08-28-epp-f01-v9-preflight-audits.md",
+        "audits/audit-status.json"
+      ]
+    },
+    {
+      "check_id": "V9-SPECKIT-ANALYSIS",
+      "method": "Non-destructively analyze 29 requirements, 15 success criteria, 80 unique append-only tasks, contracts, quickstart, checklists, state, risks, decision and exclusions; require no open V9 P0/P1 finding or constitution exception.",
+      "environment": "Spec Kit prerequisites plus cross-artifact inspection; offline",
+      "duration_ms": 180000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../specs/076-control-plane-validator/analysis.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    },
+    {
+      "check_id": "V9-STATE-SCHEMA-AND-ARCHIVE",
+      "method": "Validate eight affected JSON artifacts against their promoted schemas, require byte-identical current/revision-54 state, exact canonical state edge, BLOCKED feature/roadmap, null lease and sole human V9 approval action.",
+      "environment": "jsonschema and canonical digest checks; offline",
+      "duration_ms": 2700,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "program-state.json",
+        "evidence/states/program-state-revision-0054.json",
+        "lifecycle-policy.json",
+        "roadmap.json"
+      ]
+    },
+    {
+      "check_id": "V9-EXCLUDED-ROADMAP-POLICY-DEFECT",
+      "method": "Reproduce the known test-only inversion as exactly one excluded failure and confirm no V9 artifact repairs or suppresses it; it continues to block T066 and V8 resumption.",
+      "environment": "test_roadmap_approval_and_lease.py focused run; 10 passed, 1 known excluded failure",
+      "duration_ms": 290,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "../../../tests/program_control_plane/test_roadmap_approval_and_lease.py",
+        "../../../specs/076-control-plane-validator/analysis.md"
+      ]
+    },
+    {
+      "check_id": "V9-IMPLEMENTATION-NOT-AUTHORIZED",
+      "method": "Do not run or modify validator implementation, apply the T073 stash, execute T073-T076, repair roadmap policy, generate a dashboard, run benchmarks, or perform any external/integration/release action during planning.",
+      "environment": "Reviewed staged path manifest and local stash metadata",
+      "duration_ms": 3000,
+      "result": "not_tested",
+      "failure_class": null,
+      "evidence": [
+        "approval.md",
+        "../../../specs/076-control-plane-validator/tasks.md"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "subject": {
+      "git_commit": "9f30322859e8039863b47cdcb0e4c8f29354c9dc",
+      "git_tree": "ec7b6aec43461cd3fbdbfc6c6c8ce366fdca2b03",
+      "program_tree": "e244e592d57badfcddef08d0cfaa2265f18c069c",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0053"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Four bounded read-only V9 audit assignments; exact identities recorded in audits/2026-08-28-epp-f01-v9-preflight-audits.md",
+  "repair": {
+    "stable_cause_id": "EPP-F01-V9-PREFLIGHT-001",
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Fresh exact same-subject material-change and feature-implementation approvals do not yet exist.",
+    "T073-T076 and the local T073 stash remain unauthorized and outside V9.",
+    "The separate roadmap-policy inversion defect remains excluded and blocks T066 and later V8 resumption.",
+    "EPP-F01B, dependencies, benchmarks, external changes, integration, publication and release remain unauthorized."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0053.json",
+  "next_action": "APPROVE_EPP_F01_PREFLIGHT_CORRECTION_V9"
+}

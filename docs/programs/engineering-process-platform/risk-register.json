@@ -444,6 +444,27 @@
         "due_at": null,
         "last_reviewed_at": "2026-08-28T01:30:00Z"
       }
+    },
+    {
+      "id": "RISK-022",
+      "priority": "P0",
+      "status": "mitigating",
+      "title": "V9 preflight correction becomes a reusable schema or manifest waiver",
+      "cause": "A narrow historical schema-reference and path-order disposition could be generalized to infer schemas, sort manifests before validation, or conceal changed path sets.",
+      "consequence": "Malformed, incomplete, duplicated, future, or untyped evidence could pass while immutable provenance and release authority appear trustworthy.",
+      "likelihood": 3,
+      "impact": 5,
+      "score": 15,
+      "owner_role": "human_program_approver_and_independent_verifier",
+      "mitigations": ["DEC-P0-020", "Literal two-claim schema", "Exact-value discovery contract", "Exact 35-path set and two order digests", "Strict Git-object ancestry and recomputation", "Full projection and roadmap-policy non-interference"],
+      "triggers": ["A third target", "Schema inference", "Another schema-less artifact", "Generic manifest sorting", "Changed count/set/duplicate tolerated", "T073 or roadmap-policy change included", "Any readiness, benchmark, authority, candidate, delivery, dashboard, or release change"],
+      "contingency": "Keep EPP-F01 BLOCKED with no lease, preserve both original blobs and findings, and require a new material decision rather than widening V9.",
+      "evidence": ["decisions/0020-closed-v9-preflight-evidence-correction.md", "evidence/corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json", "schemas/preflight-evidence-correction.schema.json", "schemas/v8-discovery-evidence.schema.json"],
+      "review": {
+        "cadence": "Every V9 planning, implementation, verification and approval transition",
+        "due_at": null,
+        "last_reviewed_at": "2026-08-28T12:30:00Z"
+      }
     }
   ]
 }

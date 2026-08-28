@@ -248,6 +248,23 @@ This fourth correction entity recognizes exactly `COR-EPP-F01-T072-CHECKPOINT-EV
 | forbidden targets | Any other record/pointer/tuple; lifecycle-policy broadening; current state/roadmap/lease; authority, readiness, benchmark, candidate, delivery, release, wildcard/future/correction targets |
 | authority | Exact V8 same-subject material-change and feature-implementation approvals bound through TR-0051 |
 
+### PreflightEvidenceCorrection
+
+Closed V9 append-only evidence that dispositions exactly two immutable preflight findings without changing their source records.
+
+| Field | Meaning |
+|---|---|
+| correction_id / stable_cause_id | Fixed `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001` / `EPP-F01-V9-PREFLIGHT-001` identity |
+| source_checkpoint | Exact commit, tree, and program tree at which both findings were reproduced |
+| claims | Ordered exact two-claim tuple: V8 discovery external-schema binding, then TR-0051 manifest-order disposition |
+| discovery identity | Exact path, raw SHA-256, Git blob, introducing subject, missing `/$schema`, and exact external/planning schema identity |
+| manifest identity | Exact TR-0051 path/blob/hash/container, 35/35 counts, recorded/canonical/container digests, self-path indices, and empty missing/extra sets |
+| forbidden_target_classes | Any other schema-less artifact, schema inference, manifest defect, operational state, policy, authority, readiness, benchmark, future, wildcard, or correction target |
+| resolution_semantics | Preserve original bytes/findings, recompute Git objects, require strict ancestry and both claims, fail closed for old readers, and prove projection non-interference |
+| authority | Fresh exact V9 same-subject material-change and feature-implementation approvals bound through TR-0053 |
+
+The external discovery schema is an exact `const` contract for one historic blob. It cannot classify another artifact. The manifest claim requires both recorded-order identity and equality to the canonical containing-commit path set; changing any path, count, duplicate state, digest, container, or self-path position invalidates the profile.
+
 The gate catalog/evidence rebind and walkthrough source/test changes are ordinary current-artifact repairs, not correction claims. Gate rebinding changes only `catalog_digest`. Finding `artifact` becomes a repository-relative path rather than a stable label wherever the report promises a traversable evidence link.
 
 ## ValidationReport

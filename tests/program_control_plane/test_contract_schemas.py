@@ -12,7 +12,9 @@ from jsonschema.validators import validator_for
 CONTRACT_NAMES = (
     "checkpoint-evidence-correction.schema.json",
     "committed-identity-correction.schema.json",
+    "preflight-evidence-correction.schema.json",
     "transition-input-correction.schema.json",
+    "v8-discovery-evidence.schema.json",
     "dashboard.schema.json",
     "gate-catalog.schema.json",
     "gate-evidence.schema.json",
@@ -43,6 +45,28 @@ def test_v8_checkpoint_correction_is_closed_and_schema_valid(
         "TR0047-APPROVAL-OUTPUT-DIGEST-001",
         "TR0050-EVENT-RULE-001",
     ]
+
+
+def test_v9_preflight_correction_is_closed_and_externally_validates_discovery(
+    repository_root: Path,
+) -> None:
+    schemas = repository_root / "docs/programs/engineering-process-platform/schemas"
+    evidence = repository_root / "docs/programs/engineering-process-platform/evidence"
+    correction_schema = load(schemas / "preflight-evidence-correction.schema.json")
+    profile = load(
+        evidence / "corrections/COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001.json"
+    )
+    validator_for(correction_schema)(correction_schema).validate(profile)
+    assert profile["expected_claim_count"] == 2
+    assert [claim["claim_id"] for claim in profile["claims"]] == [
+        "V8-DISCOVERY-SCHEMA-REFERENCE-001",
+        "TR0051-MANIFEST-ORDER-001",
+    ]
+
+    discovery_schema = load(schemas / "v8-discovery-evidence.schema.json")
+    discovery = load(evidence / "verification/EPP-F01-V8-discovery.json")
+    validator_for(discovery_schema)(discovery_schema).validate(discovery)
+    assert "$schema" not in discovery
 
 
 def load(path: Path) -> object:

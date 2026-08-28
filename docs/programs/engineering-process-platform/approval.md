@@ -1,10 +1,16 @@
 # Human Program-Plan Approval Gate
 
-## Current V8 EPP-F01 decision
+## Current V9 EPP-F01 decision
+
+**Pending exact same-subject approval.** V9 is planning and re-analysis only until the new subject frozen by TR-0053 receives both `material_change` and `feature_implementation` approval. The proposed approval records are `APR-EPP-F01-MC-009.json` and `APR-EPP-F01-IMPL-009.json`; they do not exist until the human approves the exact subject.
+
+The possible V9 lease is limited to local T077–T080 and exactly two claims in `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001`: the exact external-schema binding for immutable `EPP-F01-V8-discovery.json`, and the exact TR-0051 complete-set/self-path-order disposition. It cannot resume T073–T076, apply stashed T073 work, repair roadmap policy, execute T066–T068, implement EPP-F01B, add dependencies, run benchmarks, make external changes, push/open/merge/integrate, publish, or release.
+
+## Historical V8 EPP-F01 decision — interrupted
 
 **Approved with conditions.** [`APR-EPP-F01-MC-008`](evidence/approvals/APR-EPP-F01-MC-008.json) and [`APR-EPP-F01-IMPL-008`](evidence/approvals/APR-EPP-F01-IMPL-008.json) bind commit `c12eb00308cb72d96977846c4ae876dc0baa7e7e`, tree `7323b292d279fde752004bc744a2db850ab670d0`, program tree `18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b`, and all 34 TR-0051 digests. They accept DEC-P0-019 and authorize the exact V8 six-target boundary.
 
-Lease revision 12 is limited to local T073–T076. It does not authorize T066; the separately recorded roadmap-policy inversion test requires separate disposition. It also excludes T067–T068, product/EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release. Older V7 approval remains historical for T070–T071 and cannot be replayed.
+Lease revision 12 was limited to local T073–T076, but it is closed and non-replayable after the two new clean-subject preflight failures. No T073 implementation is part of the V9 subject. The separately recorded roadmap-policy inversion test, T066–T068, product/EPP-F01B implementation, dependencies, benchmark generation/execution, external changes, push/PR/merge/dev integration, publication, and release remain excluded.
 
 The approval records are append-only and reference the previously frozen subject, avoiding self-reference.
 
@@ -26,7 +32,7 @@ The v1 and v3 bundles are stale. V4 remains historical evidence for T069; V5 for
 
 ## Approval subject
 
-After the V8 planning commit is created and planning JSON/schema/consistency checks plus bounded independent audit are green, resolve and present the exact subject below. The pre-V8 validator is expected to fail closed on the unsupported three-claim profile; implementation/regression success must not be claimed before T073–T076 receive approval and execute.
+After the V9 planning commit is created and planning JSON/schema/consistency checks plus bounded independent audit are green, resolve and present the exact subject below. The current validator is expected to fail closed on the unsupported two-claim profile; implementation/regression success must not be claimed before separately approved T077–T080 execute.
 
 ```powershell
 git rev-parse HEAD
@@ -34,7 +40,7 @@ git rev-parse HEAD^{tree}
 git rev-parse HEAD:docs/programs/engineering-process-platform
 ```
 
-For V8, use TR-0051's sorted 34-output digest manifest as the exact non-self-referential artifact bundle; the transition blob itself is bound by the enclosing Git commit/tree. The bootstrap manifest remains historical. The approval must bind:
+For V9, use TR-0053's sorted output digest manifest as the exact non-self-referential artifact bundle; the transition blob itself is bound by the enclosing Git commit/tree. The bootstrap and V8 manifests remain historical. The approval must bind:
 
 - Git commit;
 - repository tree;
@@ -72,4 +78,4 @@ The twelve visible P0 decisions in `decision-register.json` may remain deliberat
 - Request named revisions (`revision_requested`); state returns to `PLAN_DRAFT` and all downstream candidate digests are invalidated.
 - Reject/stop.
 
-The original program-plan approval remains recorded. Current EPP-F01 action is exclusively the exact V8 approval gate above; no implementation or external action is implied.
+The original program-plan approval remains recorded. Current EPP-F01 action is exclusively the exact V9 approval gate above; no implementation or external action is implied.

@@ -1,6 +1,10 @@
 # Engineering Process Platform Program Plan
 
-## Current V8 amendment
+## Current V9 amendment
+
+V9 is a closed append-only correction for exactly two immutable preflight findings discovered before T073 completed: the schema-less exact V8 discovery blob and TR-0051's complete changed-path set with its self path appended rather than sorted. It adds no general schema inference or unordered-manifest policy. T077–T080 are the entire possible V9 lease, and only fresh same-subject approval may activate them. V8 execution, the roadmap-policy repair, T066–T068, EPP-F01B implementation, and all external/integration/release actions remain blocked.
+
+## Historical V8 amendment
 
 V8 adds one independently closed profile for exactly three later checkpoint claims: the two TR-0047 output digests and TR-0050 event domain. It also plans ordinary current-source repairs for one final catalog binding and two walkthrough causes. These are separate mechanisms and may not be conflated. Exact Git-blob bytes, 3/3 matching, final catalog binding, rooted evidence links, and full readiness/benchmark/release non-interference are mandatory. T073–T076 are the entire possible V8 lease; T066 remains separately blocked.
 

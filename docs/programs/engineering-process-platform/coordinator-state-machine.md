@@ -1,8 +1,14 @@
 # Top-Level Coordinator State Machine
 
-## Current V8 bounded loop
+## Current V9 bounded loop
 
-T072 failed closed after T070–T071. The coordinator keeps feature and roadmap `BLOCKED`, lease null, approval stale, and exposes exactly `APPROVE_EPP_F01_CHECKPOINT_CORRECTION_V8`. After exact same-subject V8 approval, the only small loop is T073 failing contracts → T074 exact historical recognition/rooted diagnostics → T075 final catalog rebind and two walkthrough causes → T076 full non-interference/regression. The boundary has six targets: three historical claims, one catalog binding, and two walkthrough causes. Any seventh target, policy broadening, benchmark mutation/execution, new dependency, projection change, or excluded action stops. T066 remains ineligible even after T076 until the separately recorded roadmap-policy test question receives human disposition.
+Clean-subject preflight interrupted the approved V8 lease before T073 completed. Revision 54 is `BLOCKED`, the mutating lease is null, V8 approvals are historical/non-replayable, and the sole action is `APPROVE_EPP_F01_PREFLIGHT_CORRECTION_V9`. The exact V9 loop is T077 failing contracts → T078 exact two-claim recognition → T079 projection/source non-interference → T080 regression and independent verification. Any third claim, inferred schema, generic unordered-manifest tolerance, roadmap-policy change, T073–T076 execution, stash application, or excluded action stops.
+
+After a green T080 checkpoint, remain blocked. V9 success alone does not reactivate V8, T066–T068, or EPP-F01B. A later exact transition and approval must explicitly authorize any of those scopes.
+
+## Historical V8 bounded loop
+
+T072 failed closed after T070–T071. Exact same-subject V8 approval authorized T073–T076, but clean-subject preflight found the two V9 defects before T073 completed. Lease revision 12 is closed and non-replayable. The intended V8 order remains T073 → T074 → T075 → T076, but no V9 action executes it. T066 remains separately ineligible.
 
 ## Transition rule
 

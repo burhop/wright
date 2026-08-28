@@ -1,6 +1,10 @@
 # Live Status Dashboard Contract
 
-## V8 preservation rule
+## V9 preservation rule
+
+V9 must not regenerate or edit `dashboard.json`. Its two historical preflight dispositions may affect only the original findings' resolution metadata. The four readiness areas, all gate rows and freshness, benchmark `0/100` populations and deficits, roadmap-policy result, candidate, approvals, delivery, release eligibility, and dashboard bytes must remain identical correction-off/on. V9 does not authorize the browser page or historical graphs; those remain EPP-F01B.
+
+## Historical V8 preservation rule
 
 V8 must not regenerate or edit `dashboard.json`. The existing bytes remain `candidate_not_evidence`; benchmark remains honest `0/100`; product, benchmark, commercial, and program-health projections remain independently derived. Correction recognition and final catalog rebinding may change validator finding disposition only. Any change to an area object, gate row/freshness, benchmark population/deficit, candidate, approval, delivery, release eligibility, or dashboard bytes is a stop.
 

@@ -374,7 +374,7 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
-      "action": "APPROVE_EPP_F01_CHECKPOINT_CORRECTION_V8",
+      "action": "APPROVE_EPP_F01_PREFLIGHT_CORRECTION_V9",
       "requires_human_approval": true
     },
     {

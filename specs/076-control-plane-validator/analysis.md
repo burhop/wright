@@ -1,29 +1,32 @@
-# Specification Analysis Report: EPP-F01 V8 Checkpoint Amendment
+# Specification Analysis Report: EPP-F01 V9 Preflight Amendment
 
-**Method:** non-destructive Spec Kit consistency, ambiguity, coverage, constitution, and four-lens omission analysis.
+**Method:** non-destructive Spec Kit consistency, ambiguity, requirement/task coverage, constitution, exact-Git-object, and four independent read-only omission analyses.
 
-**Result:** PASS for planning scope after disposition. Implementation remains blocked at the new exact V8 approval gate; T066 remains separately blocked.
+**Result:** PASS for V9 planning after bounded dispositions. Implementation remains blocked at a fresh exact same-subject `material_change` and `feature_implementation` gate.
 
 ## Closed scope and coverage
 
 | Requirement | Tasks | Evidence |
 |---|---|---|
-| FR-028 exact three historical claims | T073–T074 | closed schema/profile; Git-object identities |
-| final catalog/evidence rebind | T073, T075–T076 | exact pointer-only diff and 34-row equality |
-| two walkthrough causes | T073–T076 | three affected walkthrough tests; rooted negative fixtures |
-| SC-014 non-interference | T076 | four areas, honest 0/100, synthetic fixture, candidate/approval/delivery/release/dashboard equality |
+| FR-029 exact discovery-schema claim | T077–T078 | exact-value external schema, immutable blob/hash/container and strict-ancestry identity |
+| FR-029 exact TR-0051 manifest-order claim | T077–T078 | 35 unique paths, complete container-set equality, two exact order digests and self indices |
+| SC-015 negative matrix and unsupported-reader behavior | T077–T078 | every identity/schema/manifest/approval/finding near miss named and fail-closed |
+| SC-015 policy/source/projection non-interference | T079 | frozen V9 policy bytes, roadmap policy, four areas, 34 gates, complete benchmark projections, source manifest and release envelope |
+| reproducible independent checkpoint | T080 | schema-valid `EPP-F01-V9.json`, unchanged subject, exact commands/results/manifest/reviewer/rollback |
 
-All 76 task identifiers are unique and append-only. T070–T071 remain complete, T072 remains incomplete/blocked, and T073–T076 are unchecked and approval-gated.
+All 29 functional requirements, 15 success criteria, and 80 task identifiers are unique. T070–T071 remain complete; T072 and T073–T076 remain incomplete and blocked. Only T077→T078→T079→T080 may become eligible after exact V9 approval. The local T073 stash is incomplete, non-authoritative, outside the subject, and never required for V9.
 
-## Audit dispositions
+## Independent audit dispositions
 
-- Engineering usability: replace stale V7/T057 catch-up prose with current BLOCKED/no-lease/V8 approval truth; document raw Git-blob hashing.
-- Architecture: keep exactly three immutable claims, use `repair` only for TR-0050, add no generic event rule, bind the final catalog digest, and retain rooted negative fixtures.
-- Commercial/release: prove all 34 rows and release fields unchanged; keep dashboard candidate-only and every external/integration/release action excluded.
-- Benchmark quality: prove current honest 0/100 and isolated synthetic projection equality; create or execute no benchmark.
+- Engineering usability: replaced V8-only catch-up/analysis truth; expanded the exact negative matrix; bound T079 to APR-009/TR-0053; gave T080 a durable evidence path and independent identity; recorded the local stash's exact identity/inventory and fresh-clone semantics.
+- Architecture: independently recomputed both target blobs, raw hashes, ancestor subjects, external-schema identity, 35-path set equality and self indices; required the audit and TR-0053 artifacts before freeze.
+- Commercial/release: retained null lease, stale V8 authority, four independent readiness areas, unchanged dashboard/release outputs, and all product/EPP-F01B/external/integration/release exclusions; clarified planning-time V9 action selection versus frozen-policy non-interference.
+- Benchmark quality: extended the test mandate through SC-015 and enumerated counts, populations, coverage, qualification, attempts, holdout, tiers, oracle/artifact, freshness, trend inputs and synthetic non-authority in T079.
+
+No P0 or P1 audit finding remains open within V9. Contract/schema tests pass. The known policy-test inversion below remains visible and excluded rather than hidden by the V9 pass.
 
 ## Explicit unresolved P0 question
 
-`tests/program_control_plane/test_roadmap_approval_and_lease.py::test_next_action_human_flag_must_match_policy` is a separate test-only inversion defect. It is outside the authorized historical claims, catalog rebind, and two walkthrough causes. V8 may not change it. T066 cannot resume until the user separately dispositions it and all required regression is green.
+`tests/program_control_plane/test_roadmap_approval_and_lease.py::test_next_action_human_flag_must_match_policy` hard-sets the current policy value rather than injecting its opposite. It is not either V9 claim and may not change under V9. T066 and the historical V8 sequence cannot resume until separately authorized and the required regression is green.
 
-No clarification question was required for the six-target V8 boundary. No constitution exception, dependency, product/EPP-F01B implementation, benchmark execution, external mutation, push/PR/merge/integration, publication, or release is authorized.
+No clarification question was required for the literal two-claim boundary. No constitution exception, implementation, T073–T076 execution, roadmap-policy repair, dependency, product/EPP-F01B work, benchmark generation/execution, external mutation, push/PR/merge/integration, publication, or release is authorized.

@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/preflight-evidence-correction.schema.json",
+  "schema_version": "1.0",
+  "correction_id": "COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "stable_cause_id": "EPP-F01-V9-PREFLIGHT-001",
+  "source_checkpoint": {
+    "git_commit": "9f30322859e8039863b47cdcb0e4c8f29354c9dc",
+    "git_tree": "ec7b6aec43461cd3fbdbfc6c6c8ce366fdca2b03",
+    "program_tree": "e244e592d57badfcddef08d0cfaa2265f18c069c"
+  },
+  "accept_new_records": false,
+  "expected_claim_count": 2,
+  "claims": [
+    {
+      "claim_id": "V8-DISCOVERY-SCHEMA-REFERENCE-001",
+      "classification": "externally_bound_schema_for_immutable_schema_less_artifact",
+      "finding_code": "SCHEMA_REFERENCE_MISSING",
+      "artifact_path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json",
+      "artifact_raw_sha256": "b6def7c089398b083bf9be118b9d428ac0179c001f2b048df0808c335bb9e6f5",
+      "artifact_git_blob": "83beafb5fce4decb927f1ff549634ba664dd3a60",
+      "introducing_commit": "c12eb00308cb72d96977846c4ae876dc0baa7e7e",
+      "introducing_tree": "7323b292d279fde752004bc744a2db850ab670d0",
+      "introducing_program_tree": "18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b",
+      "json_pointer": "/$schema",
+      "recorded_presence": false,
+      "external_schema_path": "docs/programs/engineering-process-platform/schemas/v8-discovery-evidence.schema.json",
+      "planning_schema_path": "specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json",
+      "external_schema_id": "https://wright.local/programs/epp/v8-discovery-evidence.schema.json",
+      "external_schema_raw_sha256": "33699e5ef2748b422d013679405f45d6df50ca98d418d9be4cf06b2f44301205",
+      "external_schema_git_blob": "c6662ccec460b8a89b9d52f810b90fdc3aa55b23"
+    },
+    {
+      "claim_id": "TR0051-MANIFEST-ORDER-001",
+      "classification": "complete_self_path_appended_manifest",
+      "finding_code": "TRANSITION_MANIFEST_MISMATCH",
+      "transition_path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json",
+      "transition_raw_sha256": "27276a83671ca3a82e4981b1da5d0f176a1465ebf397d8d2fc45447fc2438c2a",
+      "transition_git_blob": "cd9d7787325e251b8a365280e208eab567a0b662",
+      "introducing_commit": "c12eb00308cb72d96977846c4ae876dc0baa7e7e",
+      "introducing_tree": "7323b292d279fde752004bc744a2db850ab670d0",
+      "introducing_program_tree": "18e3d4ad3f33e244b1f9145b55b27f4e02d4b54b",
+      "json_pointer": "/git/changed_paths_manifest",
+      "recorded_manifest_count": 35,
+      "recorded_unique_count": 35,
+      "recorded_manifest_digest": "cd195838d9dbac9c2e8a1751ae1ea25cf2f39d26c8f89c7c88b50fa7908f155e",
+      "authoritative_sorted_manifest_digest": "607dec372cecc55b0ebfe044195efc0c4027ad0e2dad7057c6bcb3bcd65ac9d4",
+      "container_changed_paths_digest": "607dec372cecc55b0ebfe044195efc0c4027ad0e2dad7057c6bcb3bcd65ac9d4",
+      "transition_self_path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json",
+      "recorded_self_path_index": 34,
+      "sorted_self_path_index": 9,
+      "complete_set_equal": true,
+      "duplicates_present": false,
+      "missing_paths": [],
+      "extra_paths": []
+    }
+  ],
+  "forbidden_target_classes": [
+    "any other schema-less artifact schema family or inferred schema",
+    "any other transition manifest path order set duplicate omission or addition",
+    "current operational state roadmap lease task approval or authority",
+    "lifecycle event edge gate readiness benchmark candidate delivery or release",
+    "wildcard range future record generic waiver or correction-of-correction target"
+  ],
+  "resolution_semantics": {
+    "effect": "two_historical_preflight_findings_only",
+    "original_bytes_immutable": true,
+    "original_findings_retained": true,
+    "validator_recomputes_git_blob_bytes": true,
+    "discovery_schema_is_exact_external_binding": true,
+    "manifest_requires_exact_complete_container_set": true,
+    "target_containers_are_strict_ancestors": true,
+    "all_claims_required": true,
+    "old_validator_fails_closed": true,
+    "no_generic_schema_or_manifest_exception": true,
+    "readiness_authority_benchmark_release_non_interference": true
+  },
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "proposed_approval_records": [
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-MC-009.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "planning_subject_transition": "TR-0053"
+  }
+}

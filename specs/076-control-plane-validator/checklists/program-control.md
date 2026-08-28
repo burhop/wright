@@ -127,7 +127,7 @@
 ## Notes
 
 - Formal depth; intended for the feature author and independent reviewer before task decomposition and again before implementation approval.
-- All 76 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks after the bounded two-claim repair-evidence amendment. No override was used.
+- All 92 requirements-quality checks passed against the amended spec, plan, research, data model, quickstart, contracts, ADRs, state, and tasks through the bounded V9 preflight amendment. No override was used.
 - This checklist evaluates written requirements. It does not claim that implementation or verification has occurred.
 - Material items in CHK071–CHK076 remain intentionally approval-blocking for implementation, while their explicit treatment makes the planning artifacts complete enough for read-only analysis and exact-subject freeze.
 
@@ -141,3 +141,14 @@
 - [x] CHK082 Does non-interference cover all four areas, 34 rows, honest 0/100, isolated synthetic benchmark data, dashboard bytes, candidate, approval, delivery and release?
 - [x] CHK083 Is the separate roadmap-policy inversion failure visible, excluded from V8, and blocking T066?
 - [x] CHK084 Are T073–T076 approval-gated while product/EPP-F01B work, dependencies, benchmarks, external actions, integration, publication and release remain excluded?
+
+## DEC-P0-020 V9 Preflight-Evidence Quality
+
+- [x] CHK085 Is the V9 target set exactly two ordered claims bound to exact committed Git objects and the preflight source checkpoint?
+- [x] CHK086 Does the discovery claim use one exact-value external schema while retaining the missing `/$schema` finding and immutable original bytes?
+- [x] CHK087 Are schema inference, filename/content matching, another schema-less artifact, and a future record explicitly rejected?
+- [x] CHK088 Does the TR-0051 claim prove 35 unique paths, exact container-set equality, empty missing/extra sets, and only the self-path index 34 versus 9 difference?
+- [x] CHK089 Are any other ordering defect, set/count/duplicate/path/container change, wildcard, generic waiver, and correction-of-correction rejected?
+- [x] CHK090 Do T077–T080 enforce test-first recognition, exact recomputation, original-finding retention, source immutability, and full projection non-interference?
+- [x] CHK091 Are the roadmap-policy defect, T073–T076, T066–T068, EPP-F01B, dependencies, benchmarks, external actions, integration, publication, and release excluded?
+- [x] CHK092 Does the frozen state have no mutating lease, one human approval action, stale V8 authority, and a non-replayable T073 stash outside the subject?

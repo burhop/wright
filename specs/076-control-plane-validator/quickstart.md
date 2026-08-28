@@ -156,3 +156,17 @@ Expected before V8 implementation: four fatal validator rows and three walkthrou
 For committed Markdown identity, never use `Get-FileHash`, `Get-Content`, or another checkout/text pipeline. Resolve the blob with `git rev-parse <subject>:<path>` and hash the raw bytes returned by `git cat-file blob <blob-id>`. For a staged file, resolve `git rev-parse :<path>` first. PowerShell text pipelines and checkout bytes can normalize line endings and reproduce the wrong TR-0047 values.
 
 Post-approval acceptance requires exact `3/3` disposition, a one-field gate-evidence rebind, all three walkthrough tests passing from the two authorized causes, deterministic repeated output, and full non-interference at honest `0/100` plus the isolated non-empty synthetic unit fixture. These are six authorized targets. The fixture creates no process, qualification, attempt, dashboard progress, or benchmark evidence. Stop on any authoritative benchmark change, seventh target, generic waiver, dependency, dashboard generation, lease expansion, or excluded action. Stop after V8 verification; T066 remains separately blocked.
+
+## V9 planning-only preflight
+
+V8 implementation is interrupted. Preserve the unfinished T073 working copy in its reversible stash and do not apply it. Inspect the two immutable targets from Git objects, never checkout-normalized bytes:
+
+```text
+git rev-parse c12eb00308cb72d96977846c4ae876dc0baa7e7e:docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V8-discovery.json
+git rev-parse c12eb00308cb72d96977846c4ae876dc0baa7e7e:docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json
+git diff-tree --no-commit-id --name-only -r c12eb00308cb72d96977846c4ae876dc0baa7e7e
+```
+
+The first target may be validated only by the exact-value external `v8-discovery-evidence.schema.json`; the immutable blob still has no `$schema`, and that original finding remains visible. The second must prove all 35 recorded paths are unique and exactly equal the containing commit's changed set, with only the transition self path at recorded index 34 instead of sorted index 9. Do not generalize either rule.
+
+Pre-implementation planning acceptance is schema validity, exact `2/2` profile identity, planning/promoted byte equality, state/archive equality, independent omission review, and read-only Spec Kit analysis. Runtime validator success is not expected or claimed. T077–T080 require fresh V9 approval. T073–T076, the roadmap-policy repair, T066–T068, EPP-F01B, dependencies, benchmarks, external changes, integration, publication, and release remain blocked.
