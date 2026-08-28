@@ -19,9 +19,7 @@ APPROVAL_PATHS = (
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-MC-009.json",
     f"{PROGRAM_ROOT}/evidence/approvals/APR-EPP-F01-IMPL-009.json",
 )
-DISCOVERY_PATH = (
-    f"{PROGRAM_ROOT}/evidence/verification/EPP-F01-V8-discovery.json"
-)
+DISCOVERY_PATH = f"{PROGRAM_ROOT}/evidence/verification/EPP-F01-V8-discovery.json"
 TR0051_PATH = f"{PROGRAM_ROOT}/evidence/transitions/TR-0051.json"
 
 
@@ -35,7 +33,9 @@ def correction_inputs(repository_root: Path) -> tuple[dict, dict[str, dict]]:
     return profile, approvals
 
 
-def validate(repository_root: Path, profile: dict, approvals: dict[str, dict], *, reader=None):
+def validate(
+    repository_root: Path, profile: dict, approvals: dict[str, dict], *, reader=None
+):
     function = getattr(validation_module, "validate_preflight_evidence_correction")
     return function(
         reader or GitReader(repository_root),
@@ -71,7 +71,9 @@ def test_exact_v9_profile_resolves_only_two_original_findings(
     ]
     assert all(item.resolution_status == "resolved" for item in findings)
     assert all(item.correction_ref == CORRECTION_PATH for item in findings)
-    assert all("inspect the exact approved V9 preflight" in item.recovery for item in findings)
+    assert all(
+        "inspect the exact approved V9 preflight" in item.recovery for item in findings
+    )
     assert schema_targets == frozenset({DISCOVERY_PATH})
     assert manifest_targets == frozenset({TR0051_PATH})
     assert profile == original_profile
@@ -80,45 +82,197 @@ def test_exact_v9_profile_resolves_only_two_original_findings(
 
 def _profile_mutations(head: str):
     return (
-        ("wrong-source-commit", lambda value: value["source_checkpoint"].__setitem__("git_commit", "0" * 40)),
-        ("wrong-source-tree", lambda value: value["source_checkpoint"].__setitem__("git_tree", "0" * 40)),
-        ("wrong-source-program-tree", lambda value: value["source_checkpoint"].__setitem__("program_tree", "0" * 40)),
+        (
+            "wrong-source-commit",
+            lambda value: value["source_checkpoint"].__setitem__(
+                "git_commit", "0" * 40
+            ),
+        ),
+        (
+            "wrong-source-tree",
+            lambda value: value["source_checkpoint"].__setitem__("git_tree", "0" * 40),
+        ),
+        (
+            "wrong-source-program-tree",
+            lambda value: value["source_checkpoint"].__setitem__(
+                "program_tree", "0" * 40
+            ),
+        ),
         ("missing-claim", lambda value: value["claims"].pop()),
-        ("extra-claim", lambda value: value["claims"].append(copy.deepcopy(value["claims"][0]))),
+        (
+            "extra-claim",
+            lambda value: value["claims"].append(copy.deepcopy(value["claims"][0])),
+        ),
         ("reordered-claims", lambda value: value["claims"].reverse()),
-        ("wrong-artifact-path", lambda value: value["claims"][0].__setitem__("artifact_path", f"{PROGRAM_ROOT}/program-state.json")),
-        ("wrong-transition-path", lambda value: value["claims"][1].__setitem__("transition_path", f"{PROGRAM_ROOT}/evidence/transitions/TR-0050.json")),
-        ("wrong-schema-pointer", lambda value: value["claims"][0].__setitem__("json_pointer", "/schema")),
-        ("wrong-manifest-pointer", lambda value: value["claims"][1].__setitem__("json_pointer", "/git/changed_paths")),
-        ("wildcard-pointer", lambda value: value["claims"][1].__setitem__("json_pointer", "/git/*")),
-        ("wrong-artifact-raw-sha", lambda value: value["claims"][0].__setitem__("artifact_raw_sha256", "0" * 64)),
-        ("wrong-artifact-blob", lambda value: value["claims"][0].__setitem__("artifact_git_blob", "0" * 40)),
-        ("wrong-transition-raw-sha", lambda value: value["claims"][1].__setitem__("transition_raw_sha256", "0" * 64)),
-        ("wrong-transition-blob", lambda value: value["claims"][1].__setitem__("transition_git_blob", "0" * 40)),
-        ("wrong-introducing-commit", lambda value: value["claims"][0].__setitem__("introducing_commit", head)),
-        ("wrong-introducing-tree", lambda value: value["claims"][1].__setitem__("introducing_tree", "0" * 40)),
-        ("wrong-introducing-program-tree", lambda value: value["claims"][1].__setitem__("introducing_program_tree", "0" * 40)),
-        ("wrong-recorded-count", lambda value: value["claims"][1].__setitem__("recorded_manifest_count", 34)),
-        ("wrong-unique-count", lambda value: value["claims"][1].__setitem__("recorded_unique_count", 34)),
-        ("wrong-recorded-digest", lambda value: value["claims"][1].__setitem__("recorded_manifest_digest", "0" * 64)),
-        ("wrong-sorted-digest", lambda value: value["claims"][1].__setitem__("authoritative_sorted_manifest_digest", "0" * 64)),
-        ("wrong-container-digest", lambda value: value["claims"][1].__setitem__("container_changed_paths_digest", "0" * 64)),
-        ("wrong-self-path", lambda value: value["claims"][1].__setitem__("transition_self_path", TR0051_PATH + ".other")),
-        ("wrong-recorded-self-index", lambda value: value["claims"][1].__setitem__("recorded_self_path_index", 9)),
-        ("wrong-sorted-self-index", lambda value: value["claims"][1].__setitem__("sorted_self_path_index", 34)),
-        ("set-not-equal", lambda value: value["claims"][1].__setitem__("complete_set_equal", False)),
-        ("duplicate-present", lambda value: value["claims"][1].__setitem__("duplicates_present", True)),
-        ("missing-path", lambda value: value["claims"][1]["missing_paths"].append(TR0051_PATH)),
-        ("extra-path", lambda value: value["claims"][1]["extra_paths"].append("extra.json")),
-        ("wrong-external-schema-path", lambda value: value["claims"][0].__setitem__("external_schema_path", f"{PROGRAM_ROOT}/schemas/program-state.schema.json")),
-        ("wrong-planning-schema-path", lambda value: value["claims"][0].__setitem__("planning_schema_path", "specs/076-control-plane-validator/contracts/program-state.schema.json")),
-        ("wrong-external-schema-id", lambda value: value["claims"][0].__setitem__("external_schema_id", "https://wright.local/other.json")),
-        ("wrong-external-schema-sha", lambda value: value["claims"][0].__setitem__("external_schema_raw_sha256", "0" * 64)),
-        ("wrong-external-schema-blob", lambda value: value["claims"][0].__setitem__("external_schema_git_blob", "0" * 40)),
-        ("schema-inference", lambda value: value["resolution_semantics"].__setitem__("no_generic_schema_or_manifest_exception", False)),
-        ("projection-interference", lambda value: value["resolution_semantics"].__setitem__("readiness_authority_benchmark_release_non_interference", False)),
+        (
+            "wrong-artifact-path",
+            lambda value: value["claims"][0].__setitem__(
+                "artifact_path", f"{PROGRAM_ROOT}/program-state.json"
+            ),
+        ),
+        (
+            "wrong-transition-path",
+            lambda value: value["claims"][1].__setitem__(
+                "transition_path", f"{PROGRAM_ROOT}/evidence/transitions/TR-0050.json"
+            ),
+        ),
+        (
+            "wrong-schema-pointer",
+            lambda value: value["claims"][0].__setitem__("json_pointer", "/schema"),
+        ),
+        (
+            "wrong-manifest-pointer",
+            lambda value: value["claims"][1].__setitem__(
+                "json_pointer", "/git/changed_paths"
+            ),
+        ),
+        (
+            "wildcard-pointer",
+            lambda value: value["claims"][1].__setitem__("json_pointer", "/git/*"),
+        ),
+        (
+            "wrong-artifact-raw-sha",
+            lambda value: value["claims"][0].__setitem__(
+                "artifact_raw_sha256", "0" * 64
+            ),
+        ),
+        (
+            "wrong-artifact-blob",
+            lambda value: value["claims"][0].__setitem__("artifact_git_blob", "0" * 40),
+        ),
+        (
+            "wrong-transition-raw-sha",
+            lambda value: value["claims"][1].__setitem__(
+                "transition_raw_sha256", "0" * 64
+            ),
+        ),
+        (
+            "wrong-transition-blob",
+            lambda value: value["claims"][1].__setitem__(
+                "transition_git_blob", "0" * 40
+            ),
+        ),
+        (
+            "wrong-introducing-commit",
+            lambda value: value["claims"][0].__setitem__("introducing_commit", head),
+        ),
+        (
+            "wrong-introducing-tree",
+            lambda value: value["claims"][1].__setitem__("introducing_tree", "0" * 40),
+        ),
+        (
+            "wrong-introducing-program-tree",
+            lambda value: value["claims"][1].__setitem__(
+                "introducing_program_tree", "0" * 40
+            ),
+        ),
+        (
+            "wrong-recorded-count",
+            lambda value: value["claims"][1].__setitem__("recorded_manifest_count", 34),
+        ),
+        (
+            "wrong-unique-count",
+            lambda value: value["claims"][1].__setitem__("recorded_unique_count", 34),
+        ),
+        (
+            "wrong-recorded-digest",
+            lambda value: value["claims"][1].__setitem__(
+                "recorded_manifest_digest", "0" * 64
+            ),
+        ),
+        (
+            "wrong-sorted-digest",
+            lambda value: value["claims"][1].__setitem__(
+                "authoritative_sorted_manifest_digest", "0" * 64
+            ),
+        ),
+        (
+            "wrong-container-digest",
+            lambda value: value["claims"][1].__setitem__(
+                "container_changed_paths_digest", "0" * 64
+            ),
+        ),
+        (
+            "wrong-self-path",
+            lambda value: value["claims"][1].__setitem__(
+                "transition_self_path", TR0051_PATH + ".other"
+            ),
+        ),
+        (
+            "wrong-recorded-self-index",
+            lambda value: value["claims"][1].__setitem__("recorded_self_path_index", 9),
+        ),
+        (
+            "wrong-sorted-self-index",
+            lambda value: value["claims"][1].__setitem__("sorted_self_path_index", 34),
+        ),
+        (
+            "set-not-equal",
+            lambda value: value["claims"][1].__setitem__("complete_set_equal", False),
+        ),
+        (
+            "duplicate-present",
+            lambda value: value["claims"][1].__setitem__("duplicates_present", True),
+        ),
+        (
+            "missing-path",
+            lambda value: value["claims"][1]["missing_paths"].append(TR0051_PATH),
+        ),
+        (
+            "extra-path",
+            lambda value: value["claims"][1]["extra_paths"].append("extra.json"),
+        ),
+        (
+            "wrong-external-schema-path",
+            lambda value: value["claims"][0].__setitem__(
+                "external_schema_path",
+                f"{PROGRAM_ROOT}/schemas/program-state.schema.json",
+            ),
+        ),
+        (
+            "wrong-planning-schema-path",
+            lambda value: value["claims"][0].__setitem__(
+                "planning_schema_path",
+                "specs/076-control-plane-validator/contracts/program-state.schema.json",
+            ),
+        ),
+        (
+            "wrong-external-schema-id",
+            lambda value: value["claims"][0].__setitem__(
+                "external_schema_id", "https://wright.local/other.json"
+            ),
+        ),
+        (
+            "wrong-external-schema-sha",
+            lambda value: value["claims"][0].__setitem__(
+                "external_schema_raw_sha256", "0" * 64
+            ),
+        ),
+        (
+            "wrong-external-schema-blob",
+            lambda value: value["claims"][0].__setitem__(
+                "external_schema_git_blob", "0" * 40
+            ),
+        ),
+        (
+            "schema-inference",
+            lambda value: value["resolution_semantics"].__setitem__(
+                "no_generic_schema_or_manifest_exception", False
+            ),
+        ),
+        (
+            "projection-interference",
+            lambda value: value["resolution_semantics"].__setitem__(
+                "readiness_authority_benchmark_release_non_interference", False
+            ),
+        ),
         ("future-record", lambda value: value.__setitem__("accept_new_records", True)),
-        ("correction-of-correction", lambda value: value["claims"][0].__setitem__("artifact_path", CORRECTION_PATH)),
+        (
+            "correction-of-correction",
+            lambda value: value["claims"][0].__setitem__(
+                "artifact_path", CORRECTION_PATH
+            ),
+        ),
     )
 
 
@@ -136,10 +290,13 @@ def test_v9_profile_rejects_every_claim_identity_and_semantic_near_miss(
         original = [
             finding
             for finding in findings
-            if finding.code in {"SCHEMA_REFERENCE_MISSING", "TRANSITION_MANIFEST_MISMATCH"}
+            if finding.code
+            in {"SCHEMA_REFERENCE_MISSING", "TRANSITION_MANIFEST_MISMATCH"}
         ]
         assert len(original) == 2, label
-        assert all(finding.resolution_status == "unresolved" for finding in original), label
+        assert all(finding.resolution_status == "unresolved" for finding in original), (
+            label
+        )
         assert "PREFLIGHT_EVIDENCE_CORRECTION_INVALID" in codes(findings), label
         assert schema_targets == frozenset(), label
         assert manifest_targets == frozenset(), label
@@ -150,13 +307,27 @@ def test_v9_profile_rejects_every_claim_identity_and_semantic_near_miss(
     [
         lambda approvals: approvals.pop(APPROVAL_PATHS[0]),
         lambda approvals: approvals.pop(APPROVAL_PATHS[1]),
-        lambda approvals: approvals[APPROVAL_PATHS[0]]["subject"].__setitem__("git_commit", "0" * 40),
-        lambda approvals: approvals[APPROVAL_PATHS[1]]["subject"]["artifact_digests"][0].__setitem__("sha256", "0" * 64),
-        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__("scope", "feature_implementation"),
-        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__("decision", "rejected"),
-        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__("expires_at", "2026-08-28T00:00:00Z"),
-        lambda approvals: approvals[APPROVAL_PATHS[0]]["revocation_events"].append({"revoked_at": "2026-08-28T00:00:00Z"}),
-        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__("bundle_id", "APB-EPP-F01-OTHER"),
+        lambda approvals: approvals[APPROVAL_PATHS[0]]["subject"].__setitem__(
+            "git_commit", "0" * 40
+        ),
+        lambda approvals: approvals[APPROVAL_PATHS[1]]["subject"]["artifact_digests"][
+            0
+        ].__setitem__("sha256", "0" * 64),
+        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__(
+            "scope", "feature_implementation"
+        ),
+        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__(
+            "decision", "rejected"
+        ),
+        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__(
+            "expires_at", "2026-08-28T00:00:00Z"
+        ),
+        lambda approvals: approvals[APPROVAL_PATHS[0]]["revocation_events"].append(
+            {"revoked_at": "2026-08-28T00:00:00Z"}
+        ),
+        lambda approvals: approvals[APPROVAL_PATHS[0]].__setitem__(
+            "bundle_id", "APB-EPP-F01-OTHER"
+        ),
     ],
 )
 def test_v9_profile_requires_exact_current_two_scope_authority(
@@ -178,7 +349,9 @@ def test_v9_profile_requires_exact_current_two_scope_authority(
 
 
 class BlobMutatingReader:
-    def __init__(self, delegate: GitReader, target: str, replacement: bytes | None = None):
+    def __init__(
+        self, delegate: GitReader, target: str, replacement: bytes | None = None
+    ):
         self.delegate = delegate
         self.target = target
         self.replacement = replacement
@@ -209,9 +382,15 @@ class BlobMutatingReader:
         (DISCOVERY_PATH, None),
         (TR0051_PATH, None),
         (f"{PROGRAM_ROOT}/schemas/v8-discovery-evidence.schema.json", None),
-        ("specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json", None),
+        (
+            "specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json",
+            None,
+        ),
         (f"{PROGRAM_ROOT}/schemas/preflight-evidence-correction.schema.json", None),
-        ("specs/076-control-plane-validator/contracts/preflight-evidence-correction.schema.json", None),
+        (
+            "specs/076-control-plane-validator/contracts/preflight-evidence-correction.schema.json",
+            None,
+        ),
         (CORRECTION_PATH, None),
     ],
 )
@@ -252,4 +431,3 @@ def test_v9_profile_requires_strict_ancestry_and_supported_reader(
     assert "PREFLIGHT_EVIDENCE_CORRECTION_INVALID" in codes(findings)
     assert schema_targets == frozenset()
     assert manifest_targets == frozenset()
-

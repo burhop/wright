@@ -7,6 +7,7 @@ import re
 import sys
 from collections import defaultdict, deque
 from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -666,6 +667,43 @@ REPAIR_DIGEST_TARGET = (
     "/inputs/1/sha256",
 )
 
+PREFLIGHT_CORRECTION_ID = "COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001"
+PREFLIGHT_CORRECTION_SUBJECT = "d96e8b68c9fda08eea84065186452581727ec4fa"
+PREFLIGHT_CORRECTION_SUBJECT_TREE = "d16d81afaabac73e4374ecb186089cb0a95dd1bc"
+PREFLIGHT_CORRECTION_SUBJECT_PROGRAM_TREE = "ee2fbf3b1a15920701289a083431f0afd41ed4ec"
+PREFLIGHT_CORRECTION_PROFILE_SHA256 = (
+    "59c9344f14a99780bcd652e256343d105ed63199a8e1dcba1125267928669828"
+)
+PREFLIGHT_CORRECTION_SCHEMA_SHA256 = (
+    "3199eaaaecdab8870233192b6aee86c6e95308e14a553649edb1069d1f9a90a1"
+)
+PREFLIGHT_CORRECTION_PROFILE_BLOB = "2c29673bf6fc13fd3c5b00cdb119be6d03b81149"
+PREFLIGHT_CORRECTION_SCHEMA_BLOB = "71360494ad22a8278ac731127369b89f423eb20c"
+PREFLIGHT_DISCOVERY_SCHEMA_SHA256 = (
+    "33699e5ef2748b422d013679405f45d6df50ca98d418d9be4cf06b2f44301205"
+)
+PREFLIGHT_DISCOVERY_SCHEMA_BLOB = "c6662ccec460b8a89b9d52f810b90fdc3aa55b23"
+PREFLIGHT_APPROVAL_CONTAINER = "1884de8ba69ca61c75cff305e06b994207ad0720"
+PREFLIGHT_APPROVAL_PATHS = (
+    "evidence/approvals/APR-EPP-F01-MC-009.json",
+    "evidence/approvals/APR-EPP-F01-IMPL-009.json",
+)
+PREFLIGHT_APPROVAL_SHA256 = (
+    "aef627acfda197661c96a8e15eabb7082a6ee74c2912332cf7ed1e3bb90565ee",
+    "dda0972b8a13fa3fad63655698bfefbab54aa77aca054f7200c13dc730023575",
+)
+PREFLIGHT_APPROVAL_BLOBS = (
+    "1c62eadc9a58026cbbf4fbe3ae02e108255d94e0",
+    "8c58100084e018524288b76267cfb92e554abe3c",
+)
+PREFLIGHT_DISCOVERY_TARGET = (
+    "docs/programs/engineering-process-platform/evidence/verification/"
+    "EPP-F01-V8-discovery.json"
+)
+PREFLIGHT_MANIFEST_TARGET = (
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0051.json"
+)
+
 
 def _prefetch_closed_correction_blobs(
     reader: GitReader,
@@ -695,6 +733,12 @@ def _prefetch_closed_correction_blobs(
             f"{root}/schemas/repair-evidence-correction.schema.json",
             "specs/076-control-plane-validator/contracts/repair-evidence-correction.schema.json",
         ),
+        (
+            PREFLIGHT_CORRECTION_SUBJECT,
+            f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json",
+            f"{root}/schemas/preflight-evidence-correction.schema.json",
+            "specs/076-control-plane-validator/contracts/preflight-evidence-correction.schema.json",
+        ),
     )
     for subject, profile_path, promoted_schema, planning_schema in closed:
         requests.extend(
@@ -711,6 +755,7 @@ def _prefetch_closed_correction_blobs(
         *CORRECTION_APPROVAL_PATHS,
         *INPUT_ORIGIN_CORRECTION_APPROVAL_PATHS,
         *REPAIR_CORRECTION_APPROVAL_PATHS,
+        *PREFLIGHT_APPROVAL_PATHS,
     )
     try:
         for relative in approval_relatives:
@@ -1839,6 +1884,368 @@ def validate_repair_evidence_correction(
     )
 
 
+def _preflight_original_finding(
+    code: str,
+    artifact: str,
+    pointer: str,
+    correction_path: str,
+    resolved: bool,
+) -> Finding:
+    finding = _finding(
+        code,
+        "info" if resolved else "fatal",
+        artifact,
+        "EXACT_APPROVED_V9_PREFLIGHT_DISPOSITION",
+        json_pointer=pointer,
+        resolution_status="resolved" if resolved else "unresolved",
+        correction_ref=correction_path if resolved else None,
+    )
+    return replace(
+        finding,
+        recovery=(
+            "Do not rewrite history; inspect the exact approved V9 preflight "
+            "correction and its bounded recomputation."
+        ),
+    )
+
+
+def validate_preflight_evidence_correction(
+    reader: GitReader,
+    source_commit: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+    approvals: Mapping[str, Mapping[str, Any]],
+) -> tuple[list[Finding], frozenset[str], frozenset[str]]:
+    """Recompute only the approved two-claim V9 preflight disposition."""
+
+    root = normalize_repo_path(program_root)
+    correction_path = f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json"
+    promoted_schema_path = f"{root}/schemas/preflight-evidence-correction.schema.json"
+    planning_schema_path = (
+        "specs/076-control-plane-validator/contracts/"
+        "preflight-evidence-correction.schema.json"
+    )
+    discovery_schema_path = f"{root}/schemas/v8-discovery-evidence.schema.json"
+    discovery_planning_schema_path = (
+        "specs/076-control-plane-validator/contracts/v8-discovery-evidence.schema.json"
+    )
+    profile_valid = True
+    authority_valid = True
+    golden: Mapping[str, Any] = {}
+    current = ""
+
+    try:
+        current = reader.resolve_commit(source_commit)
+        closed_paths = (
+            correction_path,
+            promoted_schema_path,
+            planning_schema_path,
+            discovery_schema_path,
+            discovery_planning_schema_path,
+        )
+        requests = [
+            (commit, path)
+            for commit in (PREFLIGHT_CORRECTION_SUBJECT, current)
+            for path in closed_paths
+        ]
+        blobs = reader.read_blob_requests(requests)
+        facts = reader.blob_facts(requests)
+        golden_raw = blobs[(PREFLIGHT_CORRECTION_SUBJECT, correction_path)]
+        promoted_raw = blobs[(PREFLIGHT_CORRECTION_SUBJECT, promoted_schema_path)]
+        planning_raw = blobs[(PREFLIGHT_CORRECTION_SUBJECT, planning_schema_path)]
+        discovery_schema_raw = blobs[
+            (PREFLIGHT_CORRECTION_SUBJECT, discovery_schema_path)
+        ]
+        discovery_planning_raw = blobs[
+            (PREFLIGHT_CORRECTION_SUBJECT, discovery_planning_schema_path)
+        ]
+        golden_value = strict_loads(golden_raw)
+        promoted_schema = strict_loads(promoted_raw)
+        discovery_schema = strict_loads(discovery_schema_raw)
+        if not all(
+            isinstance(value, Mapping)
+            for value in (golden_value, promoted_schema, discovery_schema)
+        ):
+            raise ContractError("V9 closed artifacts are not objects")
+        golden = golden_value
+        check_schema(promoted_schema)
+        check_schema(discovery_schema)
+        correction_identity = reader.resolve_identity(
+            PREFLIGHT_CORRECTION_SUBJECT, root
+        )
+        profile_valid = profile_valid and all(
+            (
+                exact_schema_instance(promoted_schema, profile, golden),
+                sha256_bytes(golden_raw) == PREFLIGHT_CORRECTION_PROFILE_SHA256,
+                sha256_bytes(promoted_raw) == PREFLIGHT_CORRECTION_SCHEMA_SHA256,
+                promoted_raw == planning_raw,
+                sha256_bytes(discovery_schema_raw) == PREFLIGHT_DISCOVERY_SCHEMA_SHA256,
+                discovery_schema_raw == discovery_planning_raw,
+                facts[(PREFLIGHT_CORRECTION_SUBJECT, correction_path)].git_blob
+                == PREFLIGHT_CORRECTION_PROFILE_BLOB,
+                facts[(PREFLIGHT_CORRECTION_SUBJECT, promoted_schema_path)].git_blob
+                == PREFLIGHT_CORRECTION_SCHEMA_BLOB,
+                facts[(PREFLIGHT_CORRECTION_SUBJECT, planning_schema_path)].git_blob
+                == PREFLIGHT_CORRECTION_SCHEMA_BLOB,
+                facts[(PREFLIGHT_CORRECTION_SUBJECT, discovery_schema_path)].git_blob
+                == PREFLIGHT_DISCOVERY_SCHEMA_BLOB,
+                facts[
+                    (PREFLIGHT_CORRECTION_SUBJECT, discovery_planning_schema_path)
+                ].git_blob
+                == PREFLIGHT_DISCOVERY_SCHEMA_BLOB,
+                all(
+                    blobs[(current, path)]
+                    == blobs[(PREFLIGHT_CORRECTION_SUBJECT, path)]
+                    for path in closed_paths
+                ),
+                correction_identity.source_tree == PREFLIGHT_CORRECTION_SUBJECT_TREE,
+                correction_identity.program_tree
+                == PREFLIGHT_CORRECTION_SUBJECT_PROGRAM_TREE,
+                reader.containing_commit(current, correction_path)
+                == PREFLIGHT_CORRECTION_SUBJECT,
+                current != PREFLIGHT_CORRECTION_SUBJECT,
+                reader.is_ancestor(PREFLIGHT_CORRECTION_SUBJECT, current),
+            )
+        )
+        checkpoint = golden.get("source_checkpoint", {})
+        checkpoint_identity = reader.resolve_identity(
+            str(checkpoint.get("git_commit")), root
+        )
+        profile_valid = profile_valid and all(
+            (
+                checkpoint_identity.source_tree == checkpoint.get("git_tree"),
+                checkpoint_identity.program_tree == checkpoint.get("program_tree"),
+                checkpoint_identity.source_commit != PREFLIGHT_CORRECTION_SUBJECT,
+                reader.is_ancestor(
+                    checkpoint_identity.source_commit, PREFLIGHT_CORRECTION_SUBJECT
+                ),
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    claims = list(golden.get("claims", []))
+    discovery_claim = claims[0] if len(claims) > 0 else {}
+    manifest_claim = claims[1] if len(claims) > 1 else {}
+    if len(claims) != 2 or golden.get("expected_claim_count") != 2:
+        profile_valid = False
+
+    try:
+        introducing = str(discovery_claim["introducing_commit"])
+        manifest_introducing = str(manifest_claim["introducing_commit"])
+        if introducing != manifest_introducing:
+            raise ValueError("V9 target introductions differ")
+        summaries = reader.commit_summaries([introducing])
+        introducing_identity = reader.resolve_identity(introducing, root)
+        additions = reader.added_path_commits(current, f"{root}/evidence")
+        target_requests = [
+            (introducing, PREFLIGHT_DISCOVERY_TARGET),
+            (current, PREFLIGHT_DISCOVERY_TARGET),
+            (manifest_introducing, PREFLIGHT_MANIFEST_TARGET),
+            (current, PREFLIGHT_MANIFEST_TARGET),
+            (PREFLIGHT_CORRECTION_SUBJECT, discovery_schema_path),
+        ]
+        target_blobs = reader.read_blob_requests(target_requests)
+        target_facts = reader.blob_facts(target_requests)
+        discovery_raw = target_blobs[(introducing, PREFLIGHT_DISCOVERY_TARGET)]
+        transition_raw = target_blobs[(manifest_introducing, PREFLIGHT_MANIFEST_TARGET)]
+        discovery_value = strict_loads(discovery_raw)
+        transition = strict_loads(transition_raw)
+        external_schema = strict_loads(
+            target_blobs[(PREFLIGHT_CORRECTION_SUBJECT, discovery_schema_path)]
+        )
+        recorded_manifest = transition["git"]["changed_paths_manifest"]
+        if not isinstance(recorded_manifest, list):
+            raise ContractError("TR-0051 manifest is not a list")
+        container_paths = list(summaries[manifest_introducing]["paths"])
+        sorted_manifest = sorted(recorded_manifest)
+        discovery_fact = target_facts[(introducing, PREFLIGHT_DISCOVERY_TARGET)]
+        transition_fact = target_facts[
+            (manifest_introducing, PREFLIGHT_MANIFEST_TARGET)
+        ]
+        profile_valid = profile_valid and all(
+            (
+                introducing_identity.source_tree == discovery_claim["introducing_tree"],
+                introducing_identity.program_tree
+                == discovery_claim["introducing_program_tree"],
+                introducing_identity.source_tree == manifest_claim["introducing_tree"],
+                introducing_identity.program_tree
+                == manifest_claim["introducing_program_tree"],
+                additions.get(PREFLIGHT_DISCOVERY_TARGET) == introducing,
+                additions.get(PREFLIGHT_MANIFEST_TARGET) == manifest_introducing,
+                reader.containing_commit(current, PREFLIGHT_DISCOVERY_TARGET)
+                == introducing,
+                reader.containing_commit(current, PREFLIGHT_MANIFEST_TARGET)
+                == manifest_introducing,
+                sha256_bytes(discovery_raw) == discovery_claim["artifact_raw_sha256"],
+                discovery_fact.git_blob == discovery_claim["artifact_git_blob"],
+                sha256_bytes(transition_raw) == manifest_claim["transition_raw_sha256"],
+                transition_fact.git_blob == manifest_claim["transition_git_blob"],
+                target_blobs[(current, PREFLIGHT_DISCOVERY_TARGET)] == discovery_raw,
+                target_blobs[(current, PREFLIGHT_MANIFEST_TARGET)] == transition_raw,
+                discovery_claim["artifact_path"] == PREFLIGHT_DISCOVERY_TARGET,
+                manifest_claim["transition_path"] == PREFLIGHT_MANIFEST_TARGET,
+                discovery_claim["json_pointer"] == "/$schema",
+                discovery_claim["recorded_presence"] is False,
+                "$schema" not in discovery_value,
+                not validate_schema(external_schema, discovery_value),
+                discovery_claim["external_schema_path"] == discovery_schema_path,
+                discovery_claim["planning_schema_path"]
+                == discovery_planning_schema_path,
+                discovery_claim["external_schema_id"] == external_schema.get("$id"),
+                discovery_claim["external_schema_raw_sha256"]
+                == PREFLIGHT_DISCOVERY_SCHEMA_SHA256,
+                discovery_claim["external_schema_git_blob"]
+                == PREFLIGHT_DISCOVERY_SCHEMA_BLOB,
+                manifest_claim["json_pointer"] == "/git/changed_paths_manifest",
+                manifest_claim["recorded_manifest_count"] == len(recorded_manifest),
+                manifest_claim["recorded_unique_count"] == len(set(recorded_manifest)),
+                manifest_claim["recorded_manifest_digest"]
+                == canonical_digest(recorded_manifest),
+                manifest_claim["authoritative_sorted_manifest_digest"]
+                == canonical_digest(sorted_manifest),
+                manifest_claim["container_changed_paths_digest"]
+                == canonical_digest(container_paths),
+                recorded_manifest != sorted_manifest,
+                sorted_manifest == container_paths,
+                len(recorded_manifest) == len(set(recorded_manifest)) == 35,
+                set(recorded_manifest) == set(container_paths),
+                manifest_claim["transition_self_path"] == PREFLIGHT_MANIFEST_TARGET,
+                manifest_claim["recorded_self_path_index"]
+                == recorded_manifest.index(PREFLIGHT_MANIFEST_TARGET),
+                manifest_claim["sorted_self_path_index"]
+                == sorted_manifest.index(PREFLIGHT_MANIFEST_TARGET),
+                manifest_claim["complete_set_equal"] is True,
+                manifest_claim["duplicates_present"] is False,
+                manifest_claim["missing_paths"] == [],
+                manifest_claim["extra_paths"] == [],
+                introducing != PREFLIGHT_CORRECTION_SUBJECT,
+                reader.is_ancestor(introducing, PREFLIGHT_CORRECTION_SUBJECT),
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        profile_valid = False
+
+    expected_paths = tuple(f"{root}/{path}" for path in PREFLIGHT_APPROVAL_PATHS)
+    try:
+        if set(approvals) != set(expected_paths):
+            raise ValueError("V9 approval path set changed")
+        selected = [approvals[path] for path in expected_paths]
+        if selected[0].get("subject") != selected[1].get("subject"):
+            raise ValueError("V9 approval subjects differ")
+        expected_records = (
+            ("APR-EPP-F01-MC-009", "material_change", "APR-EPP-F01-MC-008"),
+            (
+                "APR-EPP-F01-IMPL-009",
+                "feature_implementation",
+                "APR-EPP-F01-IMPL-008",
+            ),
+        )
+        approval_summary = reader.commit_summaries([PREFLIGHT_APPROVAL_CONTAINER])[
+            PREFLIGHT_APPROVAL_CONTAINER
+        ]
+        approval_requests = [
+            (commit, path)
+            for commit in (PREFLIGHT_APPROVAL_CONTAINER, current)
+            for path in expected_paths
+        ]
+        approval_blobs = reader.read_blob_requests(approval_requests)
+        approval_facts = reader.blob_facts(approval_requests)
+        for path, approval, expected, expected_sha, expected_blob in zip(
+            expected_paths,
+            selected,
+            expected_records,
+            PREFLIGHT_APPROVAL_SHA256,
+            PREFLIGHT_APPROVAL_BLOBS,
+            strict=True,
+        ):
+            approval_id, scope, superseded = expected
+            subject = approval.get("subject", {})
+            artifacts = subject.get("artifact_digests", [])
+            if not all(
+                (
+                    approval.get("approval_id") == approval_id,
+                    approval.get("scope") == scope,
+                    approval.get("program_id") == "EPP-2026",
+                    approval.get("feature_id") == "EPP-F01",
+                    approval.get("bundle_id") == "APB-EPP-F01-009",
+                    approval.get("decision") == "approved_with_conditions",
+                    approval.get("approved_at") == "2026-08-28T12:15:45Z",
+                    approval.get("expires_at") is None,
+                    approval.get("revocation_events") == [],
+                    approval.get("supersedes") == [superseded],
+                    subject.get("git_commit") == PREFLIGHT_CORRECTION_SUBJECT,
+                    subject.get("git_tree") == PREFLIGHT_CORRECTION_SUBJECT_TREE,
+                    subject.get("program_tree")
+                    == PREFLIGHT_CORRECTION_SUBJECT_PROGRAM_TREE,
+                    len(artifacts) == 31,
+                    len({row.get("path") for row in artifacts}) == 31,
+                    strict_loads(approval_blobs[(current, path)]) == approval,
+                    approval_blobs[(current, path)]
+                    == approval_blobs[(PREFLIGHT_APPROVAL_CONTAINER, path)],
+                    approval_facts[(PREFLIGHT_APPROVAL_CONTAINER, path)].sha256
+                    == expected_sha,
+                    approval_facts[(PREFLIGHT_APPROVAL_CONTAINER, path)].git_blob
+                    == expected_blob,
+                    _verify_approval_artifacts(reader, current, approval, root),
+                    reader.containing_commit(current, path)
+                    == PREFLIGHT_APPROVAL_CONTAINER,
+                )
+            ):
+                raise ValueError("approval record is not the exact V9 bundle")
+        if not (
+            approval_summary.get("parents") == [PREFLIGHT_CORRECTION_SUBJECT]
+            and PREFLIGHT_APPROVAL_CONTAINER != current
+            and reader.is_ancestor(PREFLIGHT_APPROVAL_CONTAINER, current)
+        ):
+            raise ValueError("V9 approval history is not append-only")
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        authority_valid = False
+
+    resolved = profile_valid and authority_valid
+    findings = [
+        _preflight_original_finding(
+            "SCHEMA_REFERENCE_MISSING",
+            PREFLIGHT_DISCOVERY_TARGET,
+            "/$schema",
+            correction_path,
+            resolved,
+        ),
+        _preflight_original_finding(
+            "TRANSITION_MANIFEST_MISMATCH",
+            PREFLIGHT_MANIFEST_TARGET,
+            "/git/changed_paths_manifest",
+            correction_path,
+            resolved,
+        ),
+    ]
+    if not profile_valid:
+        findings.append(
+            _finding(
+                "PREFLIGHT_EVIDENCE_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "CLOSED_TWO_CLAIM_GIT_RECOMPUTATION",
+            )
+        )
+    if not authority_valid:
+        findings.append(
+            _finding(
+                "PREFLIGHT_EVIDENCE_CORRECTION_UNAUTHORIZED",
+                "fatal",
+                f"{root}/evidence/approvals",
+                "EXACT_V9_TWO_SCOPE_AUTHORITY",
+            )
+        )
+    schema_targets = (
+        frozenset({PREFLIGHT_DISCOVERY_TARGET}) if resolved else frozenset()
+    )
+    manifest_targets = (
+        frozenset({PREFLIGHT_MANIFEST_TARGET}) if resolved else frozenset()
+    )
+    return sorted(findings, key=Finding.sort_key), schema_targets, manifest_targets
+
+
 def _validate_documents(
     reader: GitReader,
     commit: str,
@@ -1935,6 +2342,7 @@ def _validate_transition_history(
     findings: list[Finding],
     corrected_input_targets: frozenset[tuple[str, str]] = frozenset(),
     corrected_digest_targets: frozenset[tuple[str, str]] = frozenset(),
+    corrected_manifest_targets: frozenset[str] = frozenset(),
 ) -> None:
     """Bind every v2 transition to immutable raw bytes and its complete Git edge."""
 
@@ -1959,6 +2367,16 @@ def _validate_transition_history(
             )
         )
         corrected_digest_targets = frozenset()
+    if not corrected_manifest_targets.issubset({PREFLIGHT_MANIFEST_TARGET}):
+        findings.append(
+            _finding(
+                "PREFLIGHT_EVIDENCE_CORRECTION_INVALID",
+                "fatal",
+                f"{program_root}/evidence/corrections",
+                "NO_GENERIC_TRANSITION_MANIFEST_BYPASS",
+            )
+        )
+        corrected_manifest_targets = frozenset()
     v2 = [row for row in transitions if row.get("schema_version") == "2.0"]
     if not v2:
         return
@@ -2039,7 +2457,10 @@ def _validate_transition_history(
             or git_record.get("containing_commit") is not None
             or git_record.get("containing_commit_rule") != "transition_blob_container"
             or not isinstance(manifest, list)
-            or manifest != sorted(declared_paths)
+            or (
+                manifest != sorted(declared_paths)
+                and artifact not in corrected_manifest_targets
+            )
             or declared_complete != actual_paths
             or git_record.get("transition_path")
             != f"evidence/transitions/{transition_id}.json"
@@ -2119,6 +2540,7 @@ def _validate_state_chain(
     source_commit: str | None = None,
     corrected_input_targets: frozenset[tuple[str, str]] = frozenset(),
     corrected_digest_targets: frozenset[tuple[str, str]] = frozenset(),
+    corrected_manifest_targets: frozenset[str] = frozenset(),
 ) -> None:
     state_path = f"{program_root}/program-state.json"
     current = documents.get(state_path)
@@ -2167,6 +2589,7 @@ def _validate_state_chain(
             findings,
             corrected_input_targets,
             corrected_digest_targets,
+            corrected_manifest_targets,
         )
     policy_value = documents.get(f"{program_root}/lifecycle-policy.json")
     policy = policy_value if isinstance(policy_value, Mapping) else {}
@@ -3440,6 +3863,37 @@ def validate_program(
             )
         ]
         findings.extend(repair_findings)
+    preflight_correction_path = (
+        f"{root}/evidence/corrections/{PREFLIGHT_CORRECTION_ID}.json"
+    )
+    preflight_correction = documents.get(preflight_correction_path)
+    corrected_manifest_targets: frozenset[str] = frozenset()
+    if isinstance(preflight_correction, Mapping):
+        preflight_approval_documents = {
+            f"{root}/{relative}": value
+            for relative in PREFLIGHT_APPROVAL_PATHS
+            if isinstance((value := documents.get(f"{root}/{relative}")), Mapping)
+        }
+        (
+            preflight_findings,
+            preflight_schema_targets,
+            corrected_manifest_targets,
+        ) = validate_preflight_evidence_correction(
+            reader,
+            identity.source_commit,
+            root,
+            preflight_correction,
+            preflight_approval_documents,
+        )
+        findings = [
+            finding
+            for finding in findings
+            if not (
+                finding.code == "SCHEMA_REFERENCE_MISSING"
+                and finding.artifact in preflight_schema_targets
+            )
+        ]
+        findings.extend(preflight_findings)
     _validate_state_chain(
         documents,
         root,
@@ -3448,6 +3902,7 @@ def validate_program(
         source_commit=identity.source_commit,
         corrected_input_targets=corrected_input_targets,
         corrected_digest_targets=corrected_digest_targets,
+        corrected_manifest_targets=corrected_manifest_targets,
     )
     correction_path = f"{root}/evidence/corrections/{CORRECTION_ID}.json"
     correction = documents.get(correction_path)
