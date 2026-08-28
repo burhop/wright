@@ -1,6 +1,6 @@
 # DEC-P0-020 — Closed EPP-F01 V9 preflight-evidence correction
 
-**Status:** Proposed; pending exact V9 approval.
+**Status:** Decided; exact V9 approval recorded by the APR-009 bundle and TR-0054.
 
 ## Decision
 

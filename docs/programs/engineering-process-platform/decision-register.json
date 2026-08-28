@@ -581,14 +581,14 @@
     {
       "id": "DEC-P0-020",
       "priority": "P0",
-      "status": "proposed",
+      "status": "decided",
       "question": "May EPP-F01 disposition exactly the immutable V8 discovery schema-reference finding and the immutable TR-0051 complete-set/self-path-order finding under a closed V9 profile?",
       "why_material": "Inferring schemas or accepting arbitrary unordered manifests would weaken fail-closed evidence validation; rewriting either historical record would destroy append-only provenance.",
       "owner_role": "human_program_approver_and_architecture_approver",
       "due": {
         "before_event": "EPP-F01 T077 through T080",
         "due_at": null,
-        "last_reviewed_at": "2026-08-28T12:30:00Z"
+        "last_reviewed_at": "2026-08-28T12:21:24Z"
       },
       "blocks": ["EPP-F01", "PROG-01", "PROG-05"],
       "options": [

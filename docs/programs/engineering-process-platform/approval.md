@@ -2,9 +2,9 @@
 
 ## Current V9 EPP-F01 decision
 
-**Pending exact same-subject approval.** V9 is planning and re-analysis only until the new subject frozen by TR-0053 receives both `material_change` and `feature_implementation` approval. The proposed approval records are `APR-EPP-F01-MC-009.json` and `APR-EPP-F01-IMPL-009.json`; they do not exist until the human approves the exact subject.
+**Approved with conditions.** [`APR-EPP-F01-MC-009`](evidence/approvals/APR-EPP-F01-MC-009.json) and [`APR-EPP-F01-IMPL-009`](evidence/approvals/APR-EPP-F01-IMPL-009.json) bind commit `d96e8b68c9fda08eea84065186452581727ec4fa`, tree `d16d81afaabac73e4374ecb186089cb0a95dd1bc`, program tree `ee2fbf3b1a15920701289a083431f0afd41ed4ec`, and all 31 TR-0053 artifact digests. They accept DEC-P0-020 and authorize only local T077–T080 under lease revision 13.
 
-The possible V9 lease is limited to local T077–T080 and exactly two claims in `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001`: the exact external-schema binding for immutable `EPP-F01-V8-discovery.json`, and the exact TR-0051 complete-set/self-path-order disposition. It cannot resume T073–T076, apply stashed T073 work, repair roadmap policy, execute T066–T068, implement EPP-F01B, add dependencies, run benchmarks, make external changes, push/open/merge/integrate, publish, or release.
+The V9 lease is limited to local T077–T080 and exactly two claims in `COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001`: the exact external-schema binding for immutable `EPP-F01-V8-discovery.json`, and the exact TR-0051 complete-set/self-path-order disposition. It cannot resume T073–T076, apply stashed T073 work, repair roadmap policy, execute T066–T068, implement EPP-F01B, add dependencies, run benchmarks, make external changes, push/open/merge/integrate, publish, or release.
 
 ## Historical V8 EPP-F01 decision — interrupted
 
@@ -78,4 +78,4 @@ The twelve visible P0 decisions in `decision-register.json` may remain deliberat
 - Request named revisions (`revision_requested`); state returns to `PLAN_DRAFT` and all downstream candidate digests are invalidated.
 - Reject/stop.
 
-The original program-plan approval remains recorded. Current EPP-F01 action is exclusively the exact V9 approval gate above; no implementation or external action is implied.
+The original program-plan approval remains recorded. Current EPP-F01 authority is exclusively the bounded V9 T077–T080 lease above; no other implementation or external action is implied.
