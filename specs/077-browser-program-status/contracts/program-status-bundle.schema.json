@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/program-status-bundle.schema.json",
+  "title": "Wright Program Status Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bundle_id", "generated_at", "source", "projection"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "bundle_id": { "$ref": "#/$defs/sha256" },
+    "generated_at": { "$ref": "#/$defs/timestamp" },
+    "source": { "$ref": "#/$defs/source" },
+    "projection": { "$ref": "#/$defs/projection" }
+  },
+  "$defs": {
+    "gitSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(docs/programs/engineering-process-platform|specs/07[67]-)[A-Za-z0-9._/\\-]*$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "tree", "program_tree", "snapshot_path", "snapshot_sha256", "validation_transition", "validation_verdict"],
+      "properties": {
+        "commit": { "$ref": "#/$defs/gitSha" },
+        "tree": { "$ref": "#/$defs/gitSha" },
+        "program_tree": { "$ref": "#/$defs/gitSha" },
+        "snapshot_path": { "$ref": "#/$defs/relativePath" },
+        "snapshot_sha256": { "$ref": "#/$defs/sha256" },
+        "validation_transition": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
+        "validation_verdict": { "const": "passed" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["not_started", "in_progress", "ready", "blocked", "failed", "stale", "unavailable", "unknown"]
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "path", "sha256"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "status", "blockers", "evidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "status": { "$ref": "#/$defs/status" },
+        "blockers": { "type": "array", "maxItems": 25, "items": { "type": "string", "maxLength": 500 } },
+        "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } },
+        "recovery": { "type": ["string", "null"], "maxLength": 1000 },
+        "freshness": { "type": ["string", "null"], "maxLength": 160 }
+      }
+    },
+    "readinessArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "status", "required_gate_count", "passed_gate_count", "gates", "blockers", "freshness"],
+      "properties": {
+        "id": { "enum": ["product_readiness", "benchmark_readiness", "commercial_readiness", "program_health"] },
+        "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "status": { "$ref": "#/$defs/status" },
+        "required_gate_count": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "passed_gate_count": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "gates": { "type": "array", "maxItems": 1000, "items": { "$ref": "#/$defs/gate" } },
+        "blockers": { "type": "array", "maxItems": 100, "items": { "type": "string", "maxLength": 500 } },
+        "freshness": { "type": "string", "maxLength": 160 },
+        "last_qualified_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "observed_at", "value", "label", "evidence_refs"],
+      "properties": {
+        "commit": { "$ref": "#/$defs/gitSha" },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "value": { "type": "number" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "change_reason": { "type": ["string", "null"], "maxLength": 500 },
+        "evidence_refs": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+      }
+    },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit", "decision_use", "current_limitation", "next_action", "omitted_observations", "observations"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "feature_id": { "type": ["string", "null"], "maxLength": 64 },
+        "decision_use": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "current_limitation": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "next_action": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "omitted_observations": { "type": "integer", "minimum": 0 },
+        "observations": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/observation" } }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["qualified", "target", "phase", "hold_reason", "blocking_dependencies", "authorization_state", "next_action", "evidence_cutoff"],
+      "properties": {
+        "qualified": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "target": { "const": 100 },
+        "phase": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "hold_reason": { "type": ["string", "null"], "maxLength": 500 },
+        "blocking_dependencies": { "type": "array", "maxItems": 25, "items": { "type": "string", "maxLength": 300 } },
+        "authorization_state": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "next_action": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "evidence_cutoff": { "$ref": "#/$defs/timestamp" },
+        "details": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposed_total", "source_path", "source_digest", "maturity_counts"],
+      "properties": {
+        "proposed_total": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "source_path": { "$ref": "#/$defs/relativePath" },
+        "source_digest": { "$ref": "#/$defs/sha256" },
+        "maturity_counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 10000 } }
+      }
+    },
+    "lane": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["kind", "branch", "milestone", "latest_capability", "blocker", "next_action", "observed_at"],
+      "properties": {
+        "kind": { "enum": ["integration", "continued_development"] },
+        "branch": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "latest_capability": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "blocker": { "type": ["string", "null"], "maxLength": 500 },
+        "next_action": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "observed_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["readiness", "benchmark", "customer_catalog", "work", "history", "findings", "corrections", "freshness", "release"],
+      "properties": {
+        "readiness": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/readinessArea" } },
+        "benchmark": { "$ref": "#/$defs/benchmark" },
+        "customer_catalog": { "$ref": "#/$defs/catalog" },
+        "work": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["current_milestone", "active_feature", "tasks", "checkpoints", "blockers", "next_action", "lanes"],
+          "properties": {
+            "current_milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
+            "active_feature": { "type": ["string", "null"], "maxLength": 64 },
+            "tasks": { "type": "object", "additionalProperties": true },
+            "checkpoints": { "type": "array", "maxItems": 250 },
+            "blockers": { "type": "array", "maxItems": 100, "items": { "type": "string", "maxLength": 500 } },
+            "next_action": { "type": "string", "minLength": 1, "maxLength": 500 },
+            "lanes": { "type": "array", "maxItems": 2, "items": { "$ref": "#/$defs/lane" } }
+          }
+        },
+        "history": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/series" } },
+        "findings": { "type": "array", "maxItems": 250, "items": { "type": "object", "additionalProperties": true } },
+        "corrections": { "type": "array", "maxItems": 250, "items": { "type": "object", "additionalProperties": true } },
+        "freshness": { "type": "object", "additionalProperties": true },
+        "release": { "type": "object", "additionalProperties": true, "required": ["eligible"] }
+      }
+    }
+  }
+}
