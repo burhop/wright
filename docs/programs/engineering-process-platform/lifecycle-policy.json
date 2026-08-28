@@ -418,6 +418,12 @@
       "feature_state": null,
       "action": "APPROVE_EXACT_RELEASE_SUBJECT",
       "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "DEV_DEPLOYMENT_VERIFIED",
+      "action": "SELECT_EPP_F01B_PLANNING",
+      "requires_human_approval": false
     }
   ],
   "wip_limits": {
