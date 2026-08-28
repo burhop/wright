@@ -7,12 +7,12 @@ One immutable, size-bounded projection delivered atomically.
 | Field | Type | Rules |
 | --- | --- | --- |
 | `schema_version` | string | Exact supported version, initially `1.0.0` |
-| `bundle_id` | SHA-256 hex | Digest of canonical `projection` bytes |
+| `bundle_id` | SHA-256 hex | Digest of canonical `source` plus canonical `projection` bytes |
 | `generated_at` | UTC timestamp | Publisher observation time, never evidence time |
 | `source` | SourceIdentity | Exact committed subject and validator result |
 | `projection` | ProgramProjection | Complete view for one identity |
 
-Validation canonicalizes `projection`, recomputes `bundle_id`, verifies committed identities and passing EPP-F01 evidence, and rejects unknown top-level fields, unsafe paths, excessive counts, or unsupported versions.
+Validation canonicalizes `source` and `projection`, recomputes `bundle_id` over both (excluding only the non-semantic `generated_at` observation), verifies committed identities and passing EPP-F01 evidence, and rejects unknown fields, unsafe paths, excessive counts, or unsupported versions.
 
 ## SourceIdentity
 

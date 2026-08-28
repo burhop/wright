@@ -10,7 +10,7 @@
 
 ## Decision 2: One digest-bound envelope with atomic replacement
 
-**Decision**: `current.json` contains a schema version, exact source commit/tree/program-tree identities, generated timestamp, body digest, and one complete projection. The publisher validates a temporary file before atomic replacement.
+**Decision**: `current.json` contains a schema version, exact source commit/tree/program-tree identities, generated timestamp, identity digest, and one complete projection. `bundle_id` is the SHA-256 of canonical `source` plus canonical `projection`; the non-semantic publisher observation time is excluded. The publisher validates a temporary file before atomic replacement.
 
 **Rationale**: A single identity prevents mixed panels and makes conditional GET, rollback, caching, and stale diagnosis precise. The digest is an integrity binding, not a trust grant.
 
