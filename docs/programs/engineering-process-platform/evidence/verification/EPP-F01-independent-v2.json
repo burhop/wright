@@ -1,0 +1,143 @@
+{
+  "$schema": "../../schemas/verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F01-INDEPENDENT-002",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "kind": "independent",
+  "subject": {
+    "git_commit": "f0d9c1bbb9a8ad398dda14671823eeb1b0ef6300",
+    "git_tree": "14cddf7e86ddb514faea642af62c2d33d9c00400",
+    "artifact_digests": [
+      {
+        "path": "scripts/program_control/validation.py",
+        "sha256": "c12f9d21dce52d907d5021da96302589c72ada21d8bc7b382b52cbbc91b045f2"
+      },
+      {
+        "path": "scripts/program_control/dashboard.py",
+        "sha256": "cf68651c7aee2c4603614ee1b10cdbf1018dca7fb7032e211f8de676cedd6fa5"
+      },
+      {
+        "path": "tests/program_control_plane/test_contract_schemas.py",
+        "sha256": "c212757f35fc2f8946e9b91253fcd518527b3bd4381d03d90f54325778cce4ab"
+      },
+      {
+        "path": "tests/program_control_plane/test_dashboard_projection.py",
+        "sha256": "71b43c595e6cd47d51bae0217de67e2d719601d0d72f5048565a29288b1dce0e"
+      },
+      {
+        "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+        "sha256": "1e3223fe8e5c80ed0dbd870f52b0de38f8656c3a551474240588e4aa73975863"
+      },
+      {
+        "path": "specs/076-control-plane-validator/quickstart.md",
+        "sha256": "5b625b57864318a6384b11bcfd32502d934b46dd988c2b79e460aee2208afc43"
+      }
+    ]
+  },
+  "actor": {
+    "identity": "agent:/root/v9_terminal_verifier",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-28T15:00:08Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "INDEPENDENT_REPLACEMENT_DELTA",
+      "method": "Inspect 13064da3..f0d9c1bb and require the replacement to change only Ruff formatting in one contract-schema test, with no semantic or program-tree delta.",
+      "environment": "Distinct read-only verifier; local Git objects; offline",
+      "duration_ms": 420,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_contract_schemas.py",
+          "sha256": "c212757f35fc2f8946e9b91253fcd518527b3bd4381d03d90f54325778cce4ab"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT_EXACT_VALIDATOR",
+      "method": "Run the committed validator against exact f0d9c1bb; require exit 0, verdict passed, zero fatal blockers, four independently derived areas, honest benchmark 0/100, and release_eligible false.",
+      "environment": "Windows local Python 3; read-only exact Git subject; offline",
+      "duration_ms": 9153,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "scripts/program_control/validation.py",
+          "sha256": "c12f9d21dce52d907d5021da96302589c72ada21d8bc7b382b52cbbc91b045f2"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT_FULL_REGRESSION",
+      "method": "Run the whole program-control test module with no pytest cache; 257 passed and one declared Windows unprivileged-symlink test skipped in 306.22 seconds.",
+      "environment": "Windows local Python 3; offline; isolated pytest temporary directories",
+      "duration_ms": 306220,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_dashboard_projection.py",
+          "sha256": "71b43c595e6cd47d51bae0217de67e2d719601d0d72f5048565a29288b1dce0e"
+        },
+        {
+          "path": "tests/program_control_plane/test_evidence_walkthrough.py",
+          "sha256": "1e3223fe8e5c80ed0dbd870f52b0de38f8656c3a551474240588e4aa73975863"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT_STYLE_AND_CONTRACTS",
+      "method": "Run Ruff lint and full-scope Ruff format checks, then the contract-schema subset; lint and format passed and 29 schema tests passed.",
+      "environment": "Ruff 0.15.14 and Windows local Python 3; offline",
+      "duration_ms": 7800,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "tests/program_control_plane/test_contract_schemas.py",
+          "sha256": "c212757f35fc2f8946e9b91253fcd518527b3bd4381d03d90f54325778cce4ab"
+        }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT_SCOPE_AND_LIMITS",
+      "method": "Inspect the branch delta and working tree; require no product runtime, dependency or lockfile, benchmark runtime, or external-action changes and a clean unchanged candidate.",
+      "environment": "Distinct read-only verifier; local Git diff/status",
+      "duration_ms": 510,
+      "result": "passed",
+      "evidence": [
+        {
+          "path": "specs/076-control-plane-validator/quickstart.md",
+          "sha256": "5b625b57864318a6384b11bcfd32502d934b46dd988c2b79e460aee2208afc43"
+        }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "The first T066 candidate was blocked only because full-scope Ruff format found tests/program_control_plane/test_contract_schemas.py unformatted.",
+    "Bounded repair attempt 1 formatted only that file; f0d9c1bb is the independently verified replacement candidate.",
+    "The full regression retains one declared Windows skip because this host cannot create unprivileged symlinks."
+  ],
+  "findings": [
+    {
+      "code": "WINDOWS_SYMLINK_LIMITATION",
+      "severity": "low",
+      "artifact": "tests/program_control_plane",
+      "disposition": "One platform test remains skipped on this host because unprivileged symlink creation is unavailable; the skip is explicit and all 257 executable tests pass."
+    },
+    {
+      "code": "MYPY_BASELINE_UNCHANGED",
+      "severity": "low",
+      "artifact": "scripts/program_control",
+      "disposition": "The known ten-error MyPy baseline across four files, including absent jsonschema stubs, remains unchanged; this feature adds no dependency to alter it."
+    },
+    {
+      "code": "REMOTE_GATES_NOT_YET_RUN",
+      "severity": "info",
+      "artifact": "docs/contributing/dev-push-runbook.md",
+      "disposition": "The read-only T066 review did not run the later dev-push gate or remote CI; those belong to the separately authorized delivery step."
+    }
+  ],
+  "rollback_subject": "git:13064da3 (pre-format T066 candidate; independently blocked only by the full-scope Ruff format gate)",
+  "delivery_relation": null
+}

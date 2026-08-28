@@ -4,8 +4,8 @@
   "program_id": "EPP-2026",
   "subject": {
     "kind": "feature_candidate",
-    "git_commit": "04cbbf1573e2fb8d4947c048c37f3666c72e430d",
-    "git_tree": "d7619879e80b74ccfb15db5e665ba01addf6f3a9",
+    "git_commit": "f0d9c1bbb9a8ad398dda14671823eeb1b0ef6300",
+    "git_tree": "14cddf7e86ddb514faea642af62c2d33d9c00400",
     "artifact_digests": []
   },
   "catalog_digest": "3b9ca76219ce84ab610b1b77193dfdbf81459d567acae9c0bade1be7478cc9d1",
