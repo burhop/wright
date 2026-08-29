@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/f01b-activation-correction.schema.json",
+  "title": "Closed EPP-F01B Activation Raw Identity Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "correction_id", "program_id", "feature_id", "stable_cause_id", "source_checkpoint", "accept_new_records", "expected_claim_count", "claims", "forbidden_target_classes", "resolution_semantics", "authority"],
+  "properties": {
+    "$schema": {"const": "../../schemas/f01b-activation-correction.schema.json"},
+    "schema_version": {"const": "1.0"},
+    "correction_id": {"const": "COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001"},
+    "program_id": {"const": "EPP-2026"},
+    "feature_id": {"const": "EPP-F01B"},
+    "stable_cause_id": {"const": "EPP-F01B-FEATURE-NEUTRAL-ACTIVATION-001"},
+    "source_checkpoint": {"const": {"git_commit":"5c946828458b3ed5df6ec2c2e7b3601444264fee","git_tree":"b4fffe31c7d3e9bfd293c4adedb5794ae9a8a97a","program_tree":"a3f8dcc9b4772e49374bba49cb2c219c4186874d"}},
+    "accept_new_records": {"const": false},
+    "expected_claim_count": {"const": 3},
+    "claims": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0070-LIFECYCLE-POLICY-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/3/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/lifecycle-policy.json"},"artifact_git_blob":{"const":"5d0d4f352883f040ab50bc3a986c9da09ec342a5"},"recorded_value":{"const":"7ec9663758b9096111032e0edb35938a7b35123ca3dbc2eaf0a822171a763d2c"},"authoritative_value":{"const":"ee668c2e2495d399621515d3d649d094bd79a5e7f33709c0a1be3db0c7b08253"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0070-PROGRAM-STATE-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/4/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/program-state.json"},"artifact_git_blob":{"const":"85cfa21e7058af01287fb13f98ea954440d7cc95"},"recorded_value":{"const":"22ce91626be2ff0d15a2aeb064208cdbe4041bb6faf17c98e07c317d380725d7"},"authoritative_value":{"const":"ee8f9f5e69899e861a51894fc34356f33281454976b45d996564540c2072b967"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0070-LEASE-TEST-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/5/sha256"},"artifact_path":{"const":"tests/program_control_plane/test_contract_schemas.py"},"artifact_git_blob":{"const":"8826ffd4db8f2de050ca02771af8dafa23031599"},"recorded_value":{"const":"2412b3c4d62baf60f7ab1178589d5aa0392e699693040d1bac8b06c48814f8c6"},"authoritative_value":{"const":"2aba5e62e807dad3d8646da841500204d89075d3d7c253a75330629670d3f3d1"}}}]}
+      ],
+      "items": false
+    },
+    "forbidden_target_classes": {"const": ["any TR-0070 path or pointer other than outputs 3 4 and 5 sha256","any transition other than TR-0070","approval authority or frozen EPP-F01B product contract","readiness benchmark dependency candidate delivery publication or release","generic waiver wildcard future record or correction-of-correction target"]},
+    "resolution_semantics": {"const": {"effect":"three_historical_TR0070_output_digest_findings_only","original_transition_immutable":true,"validator_recomputes_git_normalized_blob_bytes":true,"all_claims_required":true,"no_product_or_policy_broadening":true,"readiness_authority_benchmark_release_non_interference":true}},
+    "authority": {"const": {"authorization_kind":"direct_user_instruction","authorized_at":"2026-08-28","transition":"TR-0071","revision":72}}
+  },
+  "$defs": {
+    "digestClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "classification", "transition_path", "transition_raw_sha256", "transition_git_blob", "introducing_commit", "introducing_tree", "introducing_program_tree", "json_pointer", "artifact_path", "artifact_git_blob", "recorded_value", "authoritative_value"],
+      "properties": {
+        "claim_id": {"type":"string"},
+        "classification": {"const":"checkout_bytes_recorded_as_committed_digest"},
+        "transition_path": {"const":"docs/programs/engineering-process-platform/evidence/transitions/TR-0070.json"},
+        "transition_raw_sha256": {"const":"21417d4b0c1b0f0408518bef0f710b66053342f8ea66b9c19ee526b34379efa8"},
+        "transition_git_blob": {"const":"c84b3ef4d066f2198a7b753358600f8c4c6a499e"},
+        "introducing_commit": {"const":"5c946828458b3ed5df6ec2c2e7b3601444264fee"},
+        "introducing_tree": {"const":"b4fffe31c7d3e9bfd293c4adedb5794ae9a8a97a"},
+        "introducing_program_tree": {"const":"a3f8dcc9b4772e49374bba49cb2c219c4186874d"},
+        "json_pointer": {"type":"string"},
+        "artifact_path": {"type":"string"},
+        "artifact_git_blob": {"pattern":"^[a-f0-9]{40}$"},
+        "recorded_value": {"pattern":"^[a-f0-9]{64}$"},
+        "authoritative_value": {"pattern":"^[a-f0-9]{64}$"}
+      }
+    }
+  }
+}

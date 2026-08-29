@@ -1,0 +1,138 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0071",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 71,
+  "new_revision": 72,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "fa2397f41f98d565b47d1c3fd057fd2bc4e84cc91cddcd68a9f91fb7e5545744",
+  "new_state_digest": "fda78e981f5f0e7c68cc18026a8e389567c0c57f68bc4fd6dbbb7519f41296a8",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer recording direct user authorization"
+  },
+  "action": "Record the final append-only EPP-F01B activation correction for exactly TR-0070 output digest pointers 3, 4, and 5, prove their Git-normalized committed identities, and reactivate the already approved local T001 through T048 implementation path without changing frozen contracts or excluded actions.",
+  "started_at": "2026-08-29T00:39:46Z",
+  "finished_at": "2026-08-29T00:39:46Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "5c946828458b3ed5df6ec2c2e7b3601444264fee",
+    "source_tree": "b4fffe31c7d3e9bfd293c4adedb5794ae9a8a97a",
+    "source_program_tree": "a3f8dcc9b4772e49374bba49cb2c219c4186874d",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/corrections/COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0072.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0071.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/schemas/f01b-activation-correction.schema.json",
+      "scripts/program_control/validation.py",
+      "tests/program_control_plane/test_contract_schemas.py",
+      "tests/program_control_plane/test_transition_chain.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0071.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0071.json", "sha256": "ee8f9f5e69899e861a51894fc34356f33281454976b45d996564540c2072b967", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/transitions/TR-0070.json", "sha256": "21417d4b0c1b0f0408518bef0f710b66053342f8ea66b9c19ee526b34379efa8", "schema_version": "2.0", "role": "append_only_evidence"}
+  ],
+  "outputs": [
+    {"path": "evidence/corrections/COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001.json", "sha256": "d5f86d3d3b74fee31856e4d1d5b0f2dbccf5f987cc21ba78a806f9b4f99de3be", "schema_version": "1.0", "role": "append_only_evidence"},
+    {"path": "evidence/states/program-state-revision-0072.json", "sha256": "c4e1843f2fcd79015e748ceb49536293709bbebfd8a73efed8e54a6b538f2b4c", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "c4e1843f2fcd79015e748ceb49536293709bbebfd8a73efed8e54a6b538f2b4c", "schema_version": "2.0", "role": "operational_state"},
+    {"path": "schemas/f01b-activation-correction.schema.json", "sha256": "688427647124b0734c19584eb7967e642a3b8cc78e857a1adac68040d2c65e73", "schema_version": null, "role": "immutable_policy"},
+    {"path": "../../../scripts/program_control/validation.py", "sha256": "0888af30a3b642e49aaf67dea6347e80331e558a41561a70447a342d5822dd82", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../tests/program_control_plane/test_contract_schemas.py", "sha256": "391d801d68cec2d9f296760228e4204dd63202c66bb9add1616b0af09e20e2ba", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../tests/program_control_plane/test_transition_chain.py", "sha256": "1fbf9aa1b4b0c5096d0e3676bf807ec8e38b1423b55afca4edbce6647fcf7d21", "schema_version": null, "role": "feature_contract"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-TR0070-EXACT-TARGETS",
+      "method": "Validate the closed schema and reject any target outside TR-0070 /outputs/3/sha256, /outputs/4/sha256, and /outputs/5/sha256.",
+      "environment": "Local Draft 2020-12 and focused negative regression",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/corrections/COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001.json",
+        "schemas/f01b-activation-correction.schema.json",
+        "../../../tests/program_control_plane/test_transition_chain.py"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-TR0070-GIT-IDENTITY",
+      "method": "Recompute the TR-0070 transition blob and each referenced output from commit 5c946828, including raw SHA-256 and Git blob identity.",
+      "environment": "Local immutable Git object database",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/transitions/TR-0070.json",
+        "../../../scripts/program_control/validation.py"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-ACTIVATION-NON-INTERFERENCE",
+      "method": "Confirm TR-0070, frozen EPP-F01B contracts, approvals, readiness, benchmark state, dependency policy, and external-action exclusions remain unchanged.",
+      "environment": "Exact revision 71-to-72 state and changed-path comparison",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0071.json",
+        "evidence/states/program-state-revision-0072.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-001.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-001.json"
+    ],
+    "subject": {
+      "git_commit": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+      "git_tree": "c4be6a0556032b3631306e8873b8e103dd3d63d0",
+      "program_tree": "2a9437bdf470abc2ef5243358d9ceaf71fa3acc4",
+      "artifact_count": 13,
+      "manifest_transition": "TR-0067"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Focused exact-target and negative expansion tests passed locally; independent committed-subject verification follows this append-only checkpoint.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-FEATURE-NEUTRAL-ACTIVATION-001",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized.",
+    "Any target beyond the three exact TR-0070 digest pointers or any frozen-contract change requires new material authority."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0071.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

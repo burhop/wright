@@ -70,6 +70,19 @@ CHECKPOINT_EVENT_TARGETS = frozenset(
         )
     }
 )
+ACTIVATION_CORRECTION_ID = "COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001"
+ACTIVATION_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{ACTIVATION_CORRECTION_ID}.json"
+)
+ACTIVATION_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0070.json",
+            f"/outputs/{index}/sha256",
+        )
+        for index in (3, 4, 5)
+    }
+)
 
 
 def load(path: Path) -> object:
@@ -119,6 +132,44 @@ def checkpoint_correction_inputs(
         path: load(repository_root / path) for path in CHECKPOINT_APPROVAL_PATHS
     }
     return profile, approvals
+
+
+def activation_correction_input(repository_root: Path) -> dict:
+    return load(repository_root / ACTIVATION_CORRECTION_PATH)
+
+
+def test_exact_f01b_activation_correction_recomputes_three_git_normalized_claims(
+    repository_root: Path,
+) -> None:
+    profile = activation_correction_input(repository_root)
+    original_profile = copy.deepcopy(profile)
+
+    findings, digest_targets = (
+        validation_module.validate_f01b_activation_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile
+        )
+    )
+
+    assert findings == []
+    assert digest_targets == ACTIVATION_DIGEST_TARGETS
+    assert profile == original_profile
+
+
+def test_f01b_activation_correction_rejects_any_target_expansion(
+    repository_root: Path,
+) -> None:
+    profile = activation_correction_input(repository_root)
+    mutated = copy.deepcopy(profile)
+    mutated["claims"][0]["json_pointer"] = "/outputs/2/sha256"
+
+    findings, digest_targets = (
+        validation_module.validate_f01b_activation_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, mutated
+        )
+    )
+
+    assert codes(findings) == {"F01B_ACTIVATION_CORRECTION_INVALID"}
+    assert digest_targets == frozenset()
 
 
 def test_exact_repair_evidence_correction_recomputes_two_claims_and_occurrences(

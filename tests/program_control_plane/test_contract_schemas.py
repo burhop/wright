@@ -27,6 +27,25 @@ CONTRACT_NAMES = (
 )
 
 
+def test_f01b_activation_correction_is_closed_to_three_tr0070_digests(
+    repository_root: Path,
+) -> None:
+    root = repository_root / "docs/programs/engineering-process-platform"
+    schema = load(root / "schemas/f01b-activation-correction.schema.json")
+    profile = load(
+        root / "evidence/corrections/COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001.json"
+    )
+
+    validator_for(schema).check_schema(schema)
+    validator_for(schema)(schema).validate(profile)
+    assert profile["expected_claim_count"] == 3
+    assert [claim["json_pointer"] for claim in profile["claims"]] == [
+        "/outputs/3/sha256",
+        "/outputs/4/sha256",
+        "/outputs/5/sha256",
+    ]
+
+
 def test_v8_checkpoint_correction_is_closed_and_schema_valid(
     repository_root: Path,
 ) -> None:
@@ -164,8 +183,7 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             path
             for path in (repository_root / "specs").glob("*/tasks.md")
             if any(
-                line.startswith("**Authority**:")
-                and lease["feature_id"] in line
+                line.startswith("**Authority**:") and lease["feature_id"] in line
                 for line in path.read_text("utf-8").splitlines()
             )
         ]
@@ -175,7 +193,16 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             token.rstrip("/")
             for token in re.findall(r"`([^`]+)`", task_text)
             if token.startswith(
-                ("apps/", "docs/", "packages/", "scripts/", "specs/", "src/", "tests/", "pyproject.toml")
+                (
+                    "apps/",
+                    "docs/",
+                    "packages/",
+                    "scripts/",
+                    "specs/",
+                    "src/",
+                    "tests/",
+                    "pyproject.toml",
+                )
             )
             and " " not in token
             and not token.startswith("http")

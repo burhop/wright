@@ -90,6 +90,7 @@ def _finding(
         "CHECKPOINT_EVIDENCE_CORRECTION_INVALID": "Restore the exact closed three-claim checkpoint profile or stop for a new material approval.",
         "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
         "REV58_RAW_IDENTITY_REPAIR_INVALID": "Restore the exact authorized revision-58 raw-identity repair evidence or stop.",
+        "F01B_ACTIVATION_CORRECTION_INVALID": "Restore the exact authorized three-claim TR-0070 correction or stop.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -777,6 +778,51 @@ REV58_TRANSITION_BLOB = "1cce6965efe08a44ac9b8a1f4bf24b9b15cab885"
 REV58_DIGEST_TARGET = (
     "docs/programs/engineering-process-platform/evidence/transitions/TR-0057.json",
     "/outputs/0/sha256",
+)
+
+F01B_ACTIVATION_CORRECTION_ID = "COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001"
+F01B_ACTIVATION_SOURCE = "5c946828458b3ed5df6ec2c2e7b3601444264fee"
+F01B_ACTIVATION_SOURCE_TREE = "b4fffe31c7d3e9bfd293c4adedb5794ae9a8a97a"
+F01B_ACTIVATION_SOURCE_PROGRAM_TREE = "a3f8dcc9b4772e49374bba49cb2c219c4186874d"
+F01B_ACTIVATION_TRANSITION_SHA = (
+    "21417d4b0c1b0f0408518bef0f710b66053342f8ea66b9c19ee526b34379efa8"
+)
+F01B_ACTIVATION_TRANSITION_BLOB = "c84b3ef4d066f2198a7b753358600f8c4c6a499e"
+F01B_ACTIVATION_DIGEST_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/"
+            "TR-0070.json",
+            f"/outputs/{index}/sha256",
+        )
+        for index in (3, 4, 5)
+    }
+)
+F01B_ACTIVATION_CLAIMS = (
+    (
+        "TR0070-LIFECYCLE-POLICY-OUTPUT-DIGEST-001",
+        "/outputs/3/sha256",
+        "docs/programs/engineering-process-platform/lifecycle-policy.json",
+        "5d0d4f352883f040ab50bc3a986c9da09ec342a5",
+        "7ec9663758b9096111032e0edb35938a7b35123ca3dbc2eaf0a822171a763d2c",
+        "ee668c2e2495d399621515d3d649d094bd79a5e7f33709c0a1be3db0c7b08253",
+    ),
+    (
+        "TR0070-PROGRAM-STATE-OUTPUT-DIGEST-001",
+        "/outputs/4/sha256",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "85cfa21e7058af01287fb13f98ea954440d7cc95",
+        "22ce91626be2ff0d15a2aeb064208cdbe4041bb6faf17c98e07c317d380725d7",
+        "ee8f9f5e69899e861a51894fc34356f33281454976b45d996564540c2072b967",
+    ),
+    (
+        "TR0070-LEASE-TEST-OUTPUT-DIGEST-001",
+        "/outputs/5/sha256",
+        "tests/program_control_plane/test_contract_schemas.py",
+        "8826ffd4db8f2de050ca02771af8dafa23031599",
+        "2412b3c4d62baf60f7ab1178589d5aa0392e699693040d1bac8b06c48814f8c6",
+        "2aba5e62e807dad3d8646da841500204d89075d3d7c253a75330629670d3f3d1",
+    ),
 )
 
 
@@ -2761,7 +2807,12 @@ def _validate_transition_history(
         )
         corrected_input_targets = frozenset()
     if not corrected_digest_targets.issubset(
-        {REPAIR_DIGEST_TARGET, *CHECKPOINT_DIGEST_TARGETS, REV58_DIGEST_TARGET}
+        {
+            REPAIR_DIGEST_TARGET,
+            *CHECKPOINT_DIGEST_TARGETS,
+            REV58_DIGEST_TARGET,
+            *F01B_ACTIVATION_DIGEST_TARGETS,
+        }
     ):
         findings.append(
             _finding(
@@ -3105,6 +3156,136 @@ def validate_rev58_raw_identity_repair(
             "fatal",
             evidence_path,
             "EXACT_SINGLE_CLAIM_REPAIR",
+        )
+    ], frozenset()
+
+
+def validate_f01b_activation_evidence_correction(
+    reader: GitReader,
+    current: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Recognize only the three authorized TR-0070 Git-normalized digests."""
+
+    correction_path = (
+        f"{program_root}/evidence/corrections/{F01B_ACTIVATION_CORRECTION_ID}.json"
+    )
+    transition_path = f"{program_root}/evidence/transitions/TR-0070.json"
+    valid = True
+    try:
+        current_commit = reader.resolve_commit(current)
+        source_identity = reader.resolve_identity(F01B_ACTIVATION_SOURCE, program_root)
+        claims = list(profile.get("claims", []))
+        valid = valid and all(
+            (
+                profile.get("$schema")
+                == "../../schemas/f01b-activation-correction.schema.json",
+                profile.get("schema_version") == "1.0",
+                profile.get("correction_id") == F01B_ACTIVATION_CORRECTION_ID,
+                profile.get("program_id") == "EPP-2026",
+                profile.get("feature_id") == "EPP-F01B",
+                profile.get("stable_cause_id")
+                == "EPP-F01B-FEATURE-NEUTRAL-ACTIVATION-001",
+                profile.get("source_checkpoint")
+                == {
+                    "git_commit": F01B_ACTIVATION_SOURCE,
+                    "git_tree": F01B_ACTIVATION_SOURCE_TREE,
+                    "program_tree": F01B_ACTIVATION_SOURCE_PROGRAM_TREE,
+                },
+                profile.get("accept_new_records") is False,
+                profile.get("expected_claim_count") == 3,
+                len(claims) == 3,
+                source_identity.source_tree == F01B_ACTIVATION_SOURCE_TREE,
+                source_identity.program_tree == F01B_ACTIVATION_SOURCE_PROGRAM_TREE,
+                reader.is_ancestor(F01B_ACTIVATION_SOURCE, current_commit),
+            )
+        )
+
+        transition_raw = reader.blob(F01B_ACTIVATION_SOURCE, transition_path)
+        transition = strict_loads(transition_raw)
+        transition_blob = reader.object_ids(
+            [(F01B_ACTIVATION_SOURCE, transition_path)]
+        )[(F01B_ACTIVATION_SOURCE, transition_path)]
+        valid = valid and all(
+            (
+                sha256_bytes(transition_raw) == F01B_ACTIVATION_TRANSITION_SHA,
+                transition_blob == F01B_ACTIVATION_TRANSITION_BLOB,
+                reader.blob(current_commit, transition_path) == transition_raw,
+                reader.containing_commit(current_commit, transition_path)
+                == F01B_ACTIVATION_SOURCE,
+            )
+        )
+
+        observed_pointers: set[str] = set()
+        for claim, expected in zip(claims, F01B_ACTIVATION_CLAIMS, strict=True):
+            claim_id, pointer, artifact_path, git_blob, recorded, authoritative = (
+                expected
+            )
+            observed_pointers.add(str(claim.get("json_pointer", "")))
+            artifact_raw = reader.blob(F01B_ACTIVATION_SOURCE, artifact_path)
+            artifact_object = reader.object_ids(
+                [(F01B_ACTIVATION_SOURCE, artifact_path)]
+            )[(F01B_ACTIVATION_SOURCE, artifact_path)]
+            valid = valid and all(
+                (
+                    claim.get("claim_id") == claim_id,
+                    claim.get("classification")
+                    == "checkout_bytes_recorded_as_committed_digest",
+                    claim.get("transition_path") == transition_path,
+                    claim.get("transition_raw_sha256")
+                    == F01B_ACTIVATION_TRANSITION_SHA,
+                    claim.get("transition_git_blob") == F01B_ACTIVATION_TRANSITION_BLOB,
+                    claim.get("introducing_commit") == F01B_ACTIVATION_SOURCE,
+                    claim.get("introducing_tree") == F01B_ACTIVATION_SOURCE_TREE,
+                    claim.get("introducing_program_tree")
+                    == F01B_ACTIVATION_SOURCE_PROGRAM_TREE,
+                    claim.get("json_pointer") == pointer,
+                    claim.get("artifact_path") == artifact_path,
+                    claim.get("artifact_git_blob") == git_blob,
+                    claim.get("recorded_value") == recorded,
+                    claim.get("authoritative_value") == authoritative,
+                    _pointer_value(transition, pointer) == recorded,
+                    recorded != authoritative,
+                    artifact_object == git_blob,
+                    sha256_bytes(artifact_raw) == authoritative,
+                )
+            )
+        valid = valid and observed_pointers == {
+            row[1] for row in F01B_ACTIVATION_CLAIMS
+        }
+        valid = valid and profile.get("forbidden_target_classes") == [
+            "any TR-0070 path or pointer other than outputs 3 4 and 5 sha256",
+            "any transition other than TR-0070",
+            "approval authority or frozen EPP-F01B product contract",
+            "readiness benchmark dependency candidate delivery publication or release",
+            "generic waiver wildcard future record or correction-of-correction target",
+        ]
+        valid = valid and profile.get("resolution_semantics") == {
+            "effect": "three_historical_TR0070_output_digest_findings_only",
+            "original_transition_immutable": True,
+            "validator_recomputes_git_normalized_blob_bytes": True,
+            "all_claims_required": True,
+            "no_product_or_policy_broadening": True,
+            "readiness_authority_benchmark_release_non_interference": True,
+        }
+        valid = valid and profile.get("authority") == {
+            "authorization_kind": "direct_user_instruction",
+            "authorized_at": "2026-08-28",
+            "transition": "TR-0071",
+            "revision": 72,
+        }
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        valid = False
+
+    if valid:
+        return [], F01B_ACTIVATION_DIGEST_TARGETS
+    return [
+        _finding(
+            "F01B_ACTIVATION_CORRECTION_INVALID",
+            "fatal",
+            correction_path,
+            "EXACT_THREE_CLAIM_GIT_NORMALIZED_RECOMPUTATION",
         )
     ], frozenset()
 
@@ -4537,6 +4718,23 @@ def validate_program(
             {*corrected_digest_targets, *rev58_digest_targets}
         )
         findings.extend(rev58_findings)
+    f01b_activation_correction_path = (
+        f"{root}/evidence/corrections/{F01B_ACTIVATION_CORRECTION_ID}.json"
+    )
+    f01b_activation_correction = documents.get(f01b_activation_correction_path)
+    if isinstance(f01b_activation_correction, Mapping):
+        activation_findings, activation_digest_targets = (
+            validate_f01b_activation_evidence_correction(
+                reader,
+                identity.source_commit,
+                root,
+                f01b_activation_correction,
+            )
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *activation_digest_targets}
+        )
+        findings.extend(activation_findings)
     _validate_state_chain(
         documents,
         root,
