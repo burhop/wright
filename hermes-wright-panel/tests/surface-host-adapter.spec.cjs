@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const { EventEmitter } = require('node:events');
 const test = require('node:test');
 const Module = require('node:module');
+const http = require('node:http');
 
 function loadPanel() {
   const handlers = new Map();
@@ -31,6 +32,40 @@ function loadPanel() {
   Module._load = original;
   return { ...loaded, handlers, shellCalls };
 }
+
+test('API proxy preserves safe response metadata and bodyless 304', async (t) => {
+  const server = http.createServer((_request, response) => {
+    response.writeHead(304, {
+      ETag: '"bundle-1"',
+      'Cache-Control': 'private, no-cache',
+      'X-Program-Status-Observed-At': '2026-08-29T03:19:23Z',
+      'X-Private-Debug': 'must-not-cross-the-bridge',
+    });
+    response.end();
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.equal(typeof address, 'object');
+  const { proxyRequest } = loadPanel();
+
+  const result = await proxyRequest(address.port, {
+    path: '/api/program-status',
+    headers: { 'If-None-Match': '"bundle-1"' },
+    includeResponseMetadata: true,
+  });
+
+  assert.deepEqual(result, {
+    status: 304,
+    statusText: 'Not Modified',
+    headers: {
+      'cache-control': 'private, no-cache',
+      etag: '"bundle-1"',
+      'x-program-status-observed-at': '2026-08-29T03:19:23Z',
+    },
+    body: null,
+  });
+});
 
 test('external-open IPC accepts only issued preview or allowlisted direct URLs', async () => {
   const { WrightPanel, handlers, shellCalls } = loadPanel();

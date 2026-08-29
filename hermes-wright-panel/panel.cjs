@@ -29,7 +29,7 @@ function validatePath(targetPath, workspacePath) {
 
 function proxyRequest(port, options) {
   return new Promise((resolve, reject) => {
-    const { path: apiPath, method = 'GET', body, headers = {}, timeoutMs = 30000 } = options;
+    const { path: apiPath, method = 'GET', body, headers = {}, timeoutMs = 30000, includeResponseMetadata = false } = options;
     
     const proxyHeaders = { ...headers };
     delete proxyHeaders['host'];
@@ -51,8 +51,8 @@ function proxyRequest(port, options) {
       });
       res.on('end', () => {
         const isJson = res.headers['content-type'] && res.headers['content-type'].includes('application/json');
-        let parsed = data;
-        if (isJson) {
+        let parsed = data || null;
+        if (isJson && data) {
           try {
             parsed = JSON.parse(data);
           } catch (e) {
@@ -60,7 +60,19 @@ function proxyRequest(port, options) {
           }
         }
         
-        if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (includeResponseMetadata) {
+          const safeHeaders = {};
+          for (const name of ['cache-control', 'content-type', 'etag', 'x-program-status-observed-at']) {
+            const value = res.headers[name];
+            if (typeof value === 'string') safeHeaders[name] = value;
+          }
+          resolve({
+            status: res.statusCode,
+            statusText: res.statusMessage || '',
+            headers: safeHeaders,
+            body: res.statusCode === 204 || res.statusCode === 304 ? null : parsed,
+          });
+        } else if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(parsed);
         } else {
           reject({
@@ -509,6 +521,7 @@ class WrightPanel {
 
 module.exports = {
   WrightPanel,
+  proxyRequest,
   validatePath,
   validateExternalUrl,
   installNavigationPolicy,
