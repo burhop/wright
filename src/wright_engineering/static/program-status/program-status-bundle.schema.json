@@ -24,6 +24,12 @@
       "maxLength": 500,
       "pattern": "^(?:docs/programs/engineering-process-platform/|specs/076-control-plane-validator/|specs/077-browser-program-status/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
+    "testResultPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^test-results/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
@@ -179,6 +185,16 @@
         }
       }
     },
+    "testResultEvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
+        "path": { "$ref": "#/$defs/testResultPath" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
     "graphChange": {
       "type": "object",
       "additionalProperties": false,
@@ -307,7 +323,7 @@
         },
         "test_case_set_sha256": { "$ref": "#/$defs/sha256" },
         "counts": { "$ref": "#/$defs/testCounts" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "oneOf": [{ "$ref": "#/$defs/evidenceRef" }, { "$ref": "#/$defs/testResultEvidenceRef" }] } }
       }
     },
     "testCheckpoint": {
@@ -522,6 +538,25 @@
         "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
         "label": { "type": "string", "minLength": 1, "maxLength": 160 },
         "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "freshness": { "enum": ["current", "stale", "unavailable", "unknown"] },
+        "recovery": { "type": ["string", "null"], "maxLength": 1000 },
+        "availability": { "enum": ["checkout_available", "exact_github", "identity_only"] },
+        "exact_url": { "oneOf": [{ "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$" }, { "type": "null" }] }
+      },
+      "allOf": [
+        { "if": { "properties": { "availability": { "const": "exact_github" } }, "required": ["availability"] }, "then": { "properties": { "exact_url": { "type": "string" } } } }
+      ]
+    },
+    "testResultEvidenceDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "path", "sha256", "summary", "freshness", "recovery", "availability", "exact_url"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "path": { "$ref": "#/$defs/testResultPath" },
         "sha256": { "$ref": "#/$defs/sha256" },
         "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
         "freshness": { "enum": ["current", "stale", "unavailable", "unknown"] },
@@ -817,7 +852,7 @@
         "benchmark_context": { "$ref": "#/$defs/benchmarkContext" },
         "work": { "$ref": "#/$defs/work" },
         "governance": { "$ref": "#/$defs/governance" },
-        "evidence_index": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/evidenceDetail" } }
+        "evidence_index": { "type": "array", "maxItems": 500, "items": { "oneOf": [{ "$ref": "#/$defs/evidenceDetail" }, { "$ref": "#/$defs/testResultEvidenceDetail" }] } }
       }
     }
   }

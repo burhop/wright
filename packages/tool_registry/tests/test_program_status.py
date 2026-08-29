@@ -272,7 +272,7 @@ def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> N
     counts = {"total": 2, "passed": 2, "failed": 0, "skipped": 0, "not_run": 0}
     reference = {
         "id": "test:unit-attempt-1:1",
-        "path": "docs/programs/engineering-process-platform/evidence/verification/test-unit.json",
+        "path": "test-results/program-status/unit.json",
         "sha256": "9" * 64,
     }
     source = {
@@ -334,4 +334,59 @@ def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> N
         ProgramStatusReader(
             installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
         ).read_bundle()
+    assert raised.value.code is ProgramStatusErrorCode.INVALID
+
+
+def test_full_contract_rejects_test_result_detail_outside_test_suite_source(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    value["supplement"]["evidence_index"].append(
+        {
+            "id": "orphan-test-result",
+            "path": "test-results/program-status/orphan.json",
+            "sha256": "8" * 64,
+            "label": "Orphan test result",
+            "summary": "Must be bound to one selected suite source.",
+            "freshness": "current",
+            "recovery": None,
+            "availability": "identity_only",
+            "exact_url": None,
+        }
+    )
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+
+    assert raised.value.code is ProgramStatusErrorCode.INVALID
+
+
+def test_full_contract_rejects_test_result_path_on_non_test_reference(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    reference = value["supplement"]["work"]["current_next_action"]["evidence"][0]
+    detail = next(
+        item
+        for item in value["supplement"]["evidence_index"]
+        if item["id"] == reference["id"]
+    )
+    reference["path"] = "test-results/program-status/not-an-action-source.json"
+    detail["path"] = reference["path"]
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+
     assert raised.value.code is ProgramStatusErrorCode.INVALID

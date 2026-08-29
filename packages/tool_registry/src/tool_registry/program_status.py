@@ -466,7 +466,30 @@ class ProgramStatusReader:
             raise ValueError("evidence index contains duplicate exact identities")
         index_set = set(indexed)
 
-        def walk(node: Any, *, in_index: bool = False) -> None:
+        test_result_prefix = "test-results/"
+        test_source_set = {
+            (reference["id"], reference["path"], reference["sha256"])
+            for checkpoint in checkpoints
+            for source in checkpoint["suite_sources"]
+            for reference in source["evidence"]
+            if reference["path"].startswith(test_result_prefix)
+        }
+        indexed_test_results = {
+            (item["id"], item["path"], item["sha256"])
+            for item in evidence_index
+            if item["path"].startswith(test_result_prefix)
+        }
+        if indexed_test_results != test_source_set:
+            raise ValueError(
+                "test-result evidence details must exactly match selected test sources"
+            )
+
+        def walk(
+            node: Any,
+            *,
+            path: tuple[str | int, ...] = (),
+            in_index: bool = False,
+        ) -> None:
             if isinstance(node, Mapping):
                 if (
                     not in_index
@@ -474,11 +497,32 @@ class ProgramStatusReader:
                     and (node["id"], node["path"], node["sha256"]) not in index_set
                 ):
                     raise ValueError("evidence reference has no exact indexed detail")
+                if (
+                    not in_index
+                    and {"id", "path", "sha256"} <= node.keys()
+                    and str(node["path"]).startswith(test_result_prefix)
+                    and not (
+                        len(path) == 8
+                        and path[0:3] == ("supplement", "test_history", "checkpoints")
+                        and isinstance(path[3], int)
+                        and path[4] == "suite_sources"
+                        and isinstance(path[5], int)
+                        and path[6] == "evidence"
+                        and isinstance(path[7], int)
+                    )
+                ):
+                    raise ValueError(
+                        "test-result evidence is outside a selected test suite source"
+                    )
                 for key, child in node.items():
-                    walk(child, in_index=in_index or key == "evidence_index")
+                    walk(
+                        child,
+                        path=(*path, str(key)),
+                        in_index=in_index or key == "evidence_index",
+                    )
             elif isinstance(node, list):
-                for child in node:
-                    walk(child, in_index=in_index)
+                for index, child in enumerate(node):
+                    walk(child, path=(*path, index), in_index=in_index)
 
         walk(value)
 

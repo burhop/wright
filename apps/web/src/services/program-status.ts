@@ -810,12 +810,21 @@ function sameEvidence(left: EvidenceRef, right: EvidenceDetail): boolean {
   );
 }
 
-function evidenceReferences(value: unknown): EvidenceRef[] {
-  const references: EvidenceRef[] = [];
-  const visit = (item: unknown, key = "") => {
+type LocatedEvidence = {
+  reference: EvidenceRef;
+  path: Array<string | number>;
+};
+
+function evidenceReferences(
+  value: unknown,
+  rootPath: Array<string | number> = [],
+): LocatedEvidence[] {
+  const references: LocatedEvidence[] = [];
+  const visit = (item: unknown, path: Array<string | number>) => {
+    const key = path.at(-1);
     if (key === "evidence_index") return;
     if (Array.isArray(item)) {
-      item.forEach((candidate) => visit(candidate));
+      item.forEach((candidate, index) => visit(candidate, [...path, index]));
       return;
     }
     if (typeof item !== "object" || item === null) return;
@@ -827,14 +836,17 @@ function evidenceReferences(value: unknown): EvidenceRef[] {
       keys[1] === "path" &&
       keys[2] === "sha256"
     ) {
-      references.push(evidence(row, `/${key || "evidence"}`));
+      references.push({
+        reference: evidence(row, `/${path.join("/") || "evidence"}`),
+        path,
+      });
       return;
     }
     for (const [childKey, child] of Object.entries(item)) {
-      visit(child, childKey);
+      visit(child, [...path, childKey]);
     }
   };
-  visit(value);
+  visit(value, rootPath);
   return references;
 }
 
@@ -854,11 +866,63 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       "/supplement/evidence_index",
     );
   }
-  const references = [
-    evidence(source.raw_identity_evidence, "/source/raw_identity_evidence"),
-    ...evidenceReferences(supplement),
+  const references: LocatedEvidence[] = [
+    {
+      reference: evidence(
+        source.raw_identity_evidence,
+        "/source/raw_identity_evidence",
+      ),
+      path: ["source", "raw_identity_evidence"],
+    },
+    ...evidenceReferences(supplement, ["supplement"]),
   ];
-  for (const reference of references) {
+  const isSelectedTestEvidence = (path: Array<string | number>) =>
+    path.length === 8 &&
+    path[0] === "supplement" &&
+    path[1] === "test_history" &&
+    path[2] === "checkpoints" &&
+    typeof path[3] === "number" &&
+    path[4] === "suite_sources" &&
+    typeof path[5] === "number" &&
+    path[6] === "evidence" &&
+    typeof path[7] === "number";
+  const evidenceKey = (item: EvidenceRef) =>
+    `${item.id}\u0000${item.path}\u0000${item.sha256}`;
+  const selectedTestResultKeys = new Set(
+    references
+      .filter(
+        ({ reference, path }) =>
+          reference.path.startsWith("test-results/") &&
+          isSelectedTestEvidence(path),
+      )
+      .map(({ reference }) => evidenceKey(reference)),
+  );
+  const indexedTestResultKeys = new Set(
+    details
+      .filter((detail) => detail.path.startsWith("test-results/"))
+      .map((detail) => evidenceKey(detail)),
+  );
+  for (const { reference, path } of references) {
+    if (
+      reference.path.startsWith("test-results/") &&
+      !isSelectedTestEvidence(path)
+    ) {
+      throw new ProgramStatusDecodeError(
+        "TEST_RESULT_EVIDENCE_CONTEXT_INVALID",
+        `/${path.join("/")}`,
+      );
+    }
+  }
+  if (
+    indexedTestResultKeys.size !== selectedTestResultKeys.size ||
+    [...indexedTestResultKeys].some((key) => !selectedTestResultKeys.has(key))
+  ) {
+    throw new ProgramStatusDecodeError(
+      "TEST_RESULT_EVIDENCE_UNBOUND",
+      "/supplement/evidence_index",
+    );
+  }
+  for (const { reference } of references) {
     const matches = details.filter((detail) => sameEvidence(reference, detail));
     if (matches.length !== 1) {
       throw new ProgramStatusDecodeError(

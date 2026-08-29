@@ -135,6 +135,60 @@ describe("program status conditional refresh transport", () => {
     );
   });
 
+  it("admits test-results evidence only for selected test suite sources", () => {
+    const raw = makeProgramStatusBundle() as any;
+    const reference = {
+      id: "test:unit-attempt-1:1",
+      path: "test-results/program-status/unit.json",
+      sha256: "8".repeat(64),
+    };
+    raw.supplement.test_history.checkpoints = [
+      { suite_sources: [{ evidence: [reference] }] },
+    ];
+    raw.supplement.evidence_index.push({
+      ...reference,
+      label: "Unit test run",
+      summary: "Exact selected test result.",
+      freshness: "current",
+      recovery: null,
+      availability: "identity_only",
+      exact_url: null,
+    });
+    expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
+
+    const orphan = makeProgramStatusBundle() as any;
+    orphan.supplement.evidence_index.push({
+      ...reference,
+      label: "Orphan test run",
+      summary: "Not selected by test history.",
+      freshness: "current",
+      recovery: null,
+      availability: "identity_only",
+      exact_url: null,
+    });
+    expect(() => validateProgramStatusEvidenceRelations(orphan)).toThrow(
+      "TEST_RESULT_EVIDENCE_UNBOUND",
+    );
+
+    const wrongContext = makeProgramStatusBundle() as any;
+    wrongContext.supplement.work.current_next_action = {
+      ...wrongContext.supplement.work.current_next_action,
+      evidence: [reference],
+    };
+    wrongContext.supplement.evidence_index.push({
+      ...reference,
+      label: "Wrong-context test result",
+      summary: "A test-result path cannot support a non-test action.",
+      freshness: "current",
+      recovery: null,
+      availability: "identity_only",
+      exact_url: null,
+    });
+    expect(() => validateProgramStatusEvidenceRelations(wrongContext)).toThrow(
+      "TEST_RESULT_EVIDENCE_CONTEXT_INVALID",
+    );
+  });
+
   it("resolves evidence nested inside a non-empty governed use-case stage", () => {
     const raw = makeProgramStatusBundle() as any;
     const reference = raw.supplement.work.current_next_action.evidence[0];

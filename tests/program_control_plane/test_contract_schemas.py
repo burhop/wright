@@ -316,6 +316,29 @@ def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
         "test_case_set_sha256",
         "counts",
     } <= set(suite_required)
+    generic_path = bundle["$defs"]["relativePath"]["pattern"]
+    test_result_path = bundle["$defs"]["testResultPath"]["pattern"]
+    assert re.fullmatch(generic_path, "test-results/program-status/unit.json") is None
+    assert re.fullmatch(test_result_path, "test-results/program-status/unit.json")
+    assert (
+        re.fullmatch(
+            test_result_path,
+            "docs/programs/engineering-process-platform/test-run-ledger.json",
+        )
+        is None
+    )
+    assert bundle["$defs"]["testSuiteSource"]["properties"]["evidence"]["items"] == {
+        "oneOf": [
+            {"$ref": "#/$defs/evidenceRef"},
+            {"$ref": "#/$defs/testResultEvidenceRef"},
+        ]
+    }
+    assert bundle["$defs"]["supplement"]["properties"]["evidence_index"]["items"] == {
+        "oneOf": [
+            {"$ref": "#/$defs/evidenceDetail"},
+            {"$ref": "#/$defs/testResultEvidenceDetail"},
+        ]
+    }
     assert "items" in bundle["$defs"]["useCases"]["required"]
     assert {"identity_digest_rule", "run_key_rule", "runs_digest_rule"} <= set(
         bundle["$defs"]["testHistory"]["required"]
