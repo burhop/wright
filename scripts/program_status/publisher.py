@@ -10,7 +10,9 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Mapping
 
@@ -57,6 +59,7 @@ class ProgramStatusPublishRequest:
     repository: Path
     source_commit: str
     data_root: Path
+    mode: str = "manual"
 
 
 @dataclass(frozen=True, slots=True)
@@ -355,6 +358,37 @@ def _atomic_write(path: Path, raw: bytes) -> None:
     except BaseException:
         temporary.unlink(missing_ok=True)
         raise
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _write_publisher_state(
+    data_root: Path,
+    *,
+    state: str,
+    mode: str,
+    observed_commit: str | None,
+    last_attempt_at: str | None,
+    last_success_at: str | None,
+    failure_code: str | None,
+    recovery: str | None,
+) -> None:
+    _atomic_write(
+        data_root / PUBLISHER_FILENAME,
+        _canonical_bytes(
+            {
+                "state": state,
+                "mode": mode,
+                "observed_commit": observed_commit,
+                "last_attempt_at": last_attempt_at,
+                "last_success_at": last_success_at,
+                "failure_code": failure_code,
+                "recovery": recovery,
+            }
+        ),
+    )
 
 
 def _load_subject(repository: Path, commit: str) -> dict[str, Any]:
@@ -904,6 +938,12 @@ def publish_program_status(
 
     repository = request.repository.resolve()
     data_root = request.data_root.resolve()
+    if request.mode not in {"manual", "committed_watch", "package_install"}:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_MODE_INVALID",
+            "Publisher mode is not part of the closed contract.",
+            "use_supported_publisher_mode",
+        )
     LOGGER.info("program-status publication started source=%s", request.source_commit)
     try:
         subject = _load_subject(repository, request.source_commit)
@@ -983,16 +1023,17 @@ def publish_program_status(
             changed = True
         if changed:
             _atomic_write(installed, raw)
-        publisher_state = {
-            "state": "active",
-            "mode": "manual",
-            "observed_commit": subject["commit"],
-            "last_attempt_at": subject["generated_at"],
-            "last_success_at": subject["generated_at"],
-            "failure_code": None,
-            "recovery": None,
-        }
-        _atomic_write(data_root / PUBLISHER_FILENAME, _canonical_bytes(publisher_state))
+        observed_at = _now()
+        _write_publisher_state(
+            data_root,
+            state="active",
+            mode=request.mode,
+            observed_commit=str(subject["commit"]),
+            last_attempt_at=observed_at,
+            last_success_at=observed_at,
+            failure_code=None,
+            recovery=None,
+        )
     except ProgramStatusPublishError:
         LOGGER.warning("program-status publication rejected")
         raise
@@ -1016,3 +1057,61 @@ def publish_program_status(
         installed_artifact=CURRENT_FILENAME,
         changed=changed,
     )
+
+
+def watch_program_status(
+    request: ProgramStatusPublishRequest,
+    *,
+    poll_seconds: float = 2.0,
+    max_polls: int | None = None,
+) -> ProgramStatusPublishResult | None:
+    """Publish when committed HEAD changes and maintain a separate heartbeat."""
+
+    if poll_seconds <= 0:
+        raise ValueError("poll_seconds must be positive")
+    watch_request = ProgramStatusPublishRequest(
+        repository=request.repository,
+        source_commit="HEAD",
+        data_root=request.data_root,
+        mode="committed_watch",
+    )
+    last_observed: str | None = None
+    last_success_at: str | None = None
+    last_result: ProgramStatusPublishResult | None = None
+    polls = 0
+    while max_polls is None or polls < max_polls:
+        polls += 1
+        attempted_at = _now()
+        try:
+            observed = str(
+                _git(request.repository.resolve(), "rev-parse", "HEAD^{commit}")
+            ).strip()
+            if observed != last_observed:
+                last_result = publish_program_status(watch_request)
+                last_observed = observed
+                last_success_at = attempted_at
+            else:
+                _write_publisher_state(
+                    request.data_root.resolve(),
+                    state="active",
+                    mode="committed_watch",
+                    observed_commit=observed,
+                    last_attempt_at=attempted_at,
+                    last_success_at=last_success_at,
+                    failure_code=None,
+                    recovery=None,
+                )
+        except ProgramStatusPublishError as exc:
+            _write_publisher_state(
+                request.data_root.resolve(),
+                state="failed",
+                mode="committed_watch",
+                observed_commit=last_observed,
+                last_attempt_at=attempted_at,
+                last_success_at=last_success_at,
+                failure_code=exc.code,
+                recovery=exc.recovery_class,
+            )
+        if max_polls is None or polls < max_polls:
+            time.sleep(poll_seconds)
+    return last_result

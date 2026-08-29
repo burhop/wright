@@ -144,5 +144,12 @@ program subject, publish into the API database parent's stable data root:
 python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .wright-data/program-status
 ```
 
+For automatic refresh after each committed `HEAD` change, keep this local
+watcher running (the default poll interval is two seconds):
+
+```powershell
+python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .wright-data/program-status --watch-committed
+```
+
 See [Program status](program-status.md) for identity, fallback, refresh, and
 rollback semantics. The publisher observes committed Git evidence only.

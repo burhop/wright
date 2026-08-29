@@ -13,6 +13,7 @@ from program_status.publisher import (
     ProgramStatusPublishError,
     ProgramStatusPublishRequest,
     publish_program_status,
+    watch_program_status,
 )
 
 
@@ -24,6 +25,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repository", required=True)
     parser.add_argument("--source", required=True)
     parser.add_argument("--data-root", required=True)
+    parser.add_argument(
+        "--watch-committed",
+        action="store_true",
+        help="Watch committed HEAD and publish after each exact commit change.",
+    )
+    parser.add_argument(
+        "--poll-seconds",
+        type=float,
+        default=2.0,
+        help="Committed-watch poll interval (default: 2 seconds).",
+    )
     return parser
 
 
@@ -31,13 +43,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     try:
-        result = publish_program_status(
-            ProgramStatusPublishRequest(
-                repository=Path(args.repository),
-                source_commit=args.source,
-                data_root=Path(args.data_root),
-            )
+        request = ProgramStatusPublishRequest(
+            repository=Path(args.repository),
+            source_commit=args.source,
+            data_root=Path(args.data_root),
         )
+        if args.watch_committed:
+            result = watch_program_status(request, poll_seconds=args.poll_seconds)
+            if result is None:  # pragma: no cover - unbounded CLI exits by interrupt
+                return 0
+        else:
+            result = publish_program_status(request)
+    except KeyboardInterrupt:
+        print(json.dumps({"status": "stopped", "mode": "committed_watch"}))
+        return 0
     except ProgramStatusPublishError as exc:
         print(
             json.dumps(

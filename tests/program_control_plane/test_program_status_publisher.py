@@ -11,6 +11,7 @@ from scripts.program_status.publisher import (
     ProgramStatusPublishError,
     ProgramStatusPublishRequest,
     publish_program_status,
+    watch_program_status,
 )
 
 
@@ -56,8 +57,17 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
     assert bundle["supplement"]["use_cases"]["process_100"]["benchmark_qualified"] == 0
     histories = {series["id"]: series for series in bundle["supplement"]["history"]}
     assert histories["feature_tasks"]["availability"] == "available"
-    assert histories["feature_tasks"]["observations"][-1]["value"] == 4
-    assert histories["feature_tasks"]["observations"][-1]["denominator"] == 48
+    expected_completed, expected_total = publisher._task_counts(
+        publisher._git_blob(
+            REPOSITORY,
+            first.source_commit,
+            "specs/077-browser-program-status/tasks.md",
+        )
+    )
+    assert histories["feature_tasks"]["observations"][-1]["value"] == expected_completed
+    assert (
+        histories["feature_tasks"]["observations"][-1]["denominator"] == expected_total
+    )
     assert histories["benchmark_qualified"]["observations"][-1]["value"] == 0
     assert histories["benchmark_qualified"]["observations"][-1]["denominator"] == 100
     for observation in histories["feature_tasks"]["observations"]:
@@ -116,3 +126,34 @@ def test_bundle_identity_recomputes_from_canonical_payload(tmp_path: Path) -> No
 
     assert hashlib.sha256(canonical(payload)).hexdigest() == result.bundle_id
     assert bundle["bundle_id"] == result.bundle_id
+
+
+def test_committed_watch_publishes_once_and_refreshes_heartbeat(tmp_path: Path) -> None:
+    result = watch_program_status(request(tmp_path), poll_seconds=0.001, max_polls=2)
+
+    assert result is not None
+    assert result.changed is True
+    heartbeat = json.loads((tmp_path / "publisher.json").read_bytes())
+    assert heartbeat["state"] == "active"
+    assert heartbeat["mode"] == "committed_watch"
+    assert heartbeat["observed_commit"] == result.source_commit
+    assert heartbeat["last_success_at"]
+
+
+def test_committed_watch_records_bounded_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def reject(
+        _request: ProgramStatusPublishRequest,
+    ) -> publisher.ProgramStatusPublishResult:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_FAILURE", "test failure", "repair_test_subject"
+        )
+
+    monkeypatch.setattr(publisher, "publish_program_status", reject)
+    assert watch_program_status(request(tmp_path), max_polls=1) is None
+
+    heartbeat = json.loads((tmp_path / "publisher.json").read_bytes())
+    assert heartbeat["state"] == "failed"
+    assert heartbeat["failure_code"] == "PROGRAM_STATUS_TEST_FAILURE"
+    assert heartbeat["recovery"] == "repair_test_subject"

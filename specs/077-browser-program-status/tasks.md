@@ -139,7 +139,7 @@
 
 - [x] T037 [US5] Implement the five-second conditional poll lifecycle, cancellation, atomic reducer, and last-valid preservation in `apps/web/src/services/program-status.ts` and `ProgramStatusPage.tsx` (depends on T035)
 - [x] T038 [US5] Implement visible stale/failed age, recovery, screen-reader announcement, unavailable-state, and separate publisher-heartbeat state in `apps/web/src/components/program-status/RefreshState.tsx` (depends on T036, T037)
-- [ ] T039 [US5] Implement standard bounded `--watch-committed` publisher mode with a declared two-second default, atomically written separate heartbeat state, its contributor command in `docs/getting-started/quickstart-local.md`, and commit-change-to-install plus heartbeat-failure tests without dirty-file observation or API Git coupling (depends on T008, T037)
+- [x] T039 [US5] Implement standard bounded `--watch-committed` publisher mode with a declared two-second default, atomically written separate heartbeat state, its contributor command in `docs/getting-started/quickstart-local.md`, and commit-change-to-install plus heartbeat-failure tests without dirty-file observation or API Git coupling (depends on T008, T037)
 
 **Checkpoint**: US5 refreshes one exact identity and fails closed without losing orientation.
 
