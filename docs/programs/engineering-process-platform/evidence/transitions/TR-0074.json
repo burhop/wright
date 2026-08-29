@@ -1,0 +1,171 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0074",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 74,
+  "new_revision": 75,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "2b94c568d56bb21743d42fc331f5dc7e0625af1aff4bd6a336e80bc30d7f69b3",
+  "new_state_digest": "05e387957ec95a343505c4b7b318d26569b46567c51a15a58163b13d858ef0cf",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer recording direct user authority"
+  },
+  "action": "Activate implementation lease revision 5 for one deterministic EPP-F01B packaged-browser rebuild at only src/wright_engineering/static/web/** and src/wright_engineering/runtime-extra-lock.json; record already-changed candidate paths as historical T001-T048 evidence without granting future edit rights; then require exact Linux verification and both independent reviews.",
+  "started_at": "2026-08-29T22:47:00Z",
+  "finished_at": "2026-08-29T22:59:37Z",
+  "duration_ms": 757000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "6aec0963a30a1fc726c9ca5ba7c65b754656cc49",
+    "source_tree": "7329fcf698f3083e9196ffa0f4debd1ea813c6f6",
+    "source_program_tree": "b2a79b55b8b80afda21576707a02b66510504097",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0075.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0074.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0074.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0074.json",
+      "sha256": "c43823a624e365148e7e2df1b6c2ad28396d023116e937ff537fad6039d4a0a1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "sha256": "ae44cbdde4757c9f50006bff053a45522a6a5840dbf55145f715c4ee2e3a4a16",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/approvals/APR-EPP-F01B-IMPL-002.json",
+      "sha256": "228fdafeba156d964298a8d2015c8173c3b94d09b66a5c6397bd79f9a4fc1d4d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "../../../specs/077-browser-program-status/tasks.md",
+      "sha256": "47467024581fcc42c7ab96a3008cd0939fd516036a7a788df91f8502fc27603b",
+      "schema_version": null,
+      "role": "feature_contract"
+    },
+    {
+      "path": "../../../specs/077-browser-program-status/quickstart.md",
+      "sha256": "97cb663b2c6eda98886a9ae57e62743b2c073812f22936208b041d52466528f8",
+      "schema_version": null,
+      "role": "feature_contract"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0075.json",
+      "sha256": "8e39d8a9a7df71b4665bf96107838ce715ec86d948a0c9d432dccd233b3b7d53",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "8e39d8a9a7df71b4665bf96107838ce715ec86d948a0c9d432dccd233b3b7d53",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-LEASE-REVISION-5-EXACT-PATHS",
+      "method": "Compare lease revisions 4 and 5 and require that the only newly admitted paths are the packaged web root and runtime extra lock used by one deterministic rebuild.",
+      "environment": "Committed program-state comparison",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "added=src/wright_engineering/static/web/**",
+        "added=src/wright_engineering/runtime-extra-lock.json",
+        "dependencies, benchmarks, readiness changes, and external actions remain excluded"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-HISTORICAL-CANDIDATE-PATHS",
+      "method": "Record already-changed T001-T048 candidate paths that were outside lease revision 4 as historical evidence only; this transition itself grants no future edit authority for any listed path.",
+      "environment": "Git changed-path review against the approved EPP-F01B subject",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "historical=apps/web/src/services/host-adapter/desktop-adapter.ts; apps/web/src/services/host-adapter/wright-desktop.d.ts; apps/web/tests/host-adapter/desktop-adapter.spec.ts",
+        "historical=hermes-wright-panel/panel.cjs; hermes-wright-panel/tests/surface-host-adapter.spec.cjs; scripts/test-native-hermes-install.py",
+        "historical=src/wright_engineering/static/web/**; src/wright_engineering/runtime-extra-lock.json",
+        "historical=test-results/program-status/epp-f01b-candidate-verification.json; test-results/program-status/epp-f01b-final-verification.json",
+        "future_edit_authority=false for this historical record; only the separate exact lease additions control the one rebuild"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-CLOSURE-PREFLIGHT",
+      "method": "Require the clean 6aec0963 source checkpoint, identical current/revision-75 state bytes, exact T046 local command evidence, and an open T046-T048 task tail before rebuilding.",
+      "environment": "Local Windows preflight",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "source=6aec0963a30a1fc726c9ca5ba7c65b754656cc49",
+        "program state raw identity=8e39d8a9a7df71b4665bf96107838ce715ec86d948a0c9d432dccd233b3b7d53",
+        "T046, T047, and T048 remain unchecked"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "6aec0963a30a1fc726c9ca5ba7c65b754656cc49",
+      "git_tree": "7329fcf698f3083e9196ffa0f4debd1ea813c6f6",
+      "program_tree": "b2a79b55b8b80afda21576707a02b66510504097",
+      "artifact_count": 5,
+      "manifest_transition": "TR-0074"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Pending exact Linux verification and the two independently bounded EPP-F01B reviews after the single packaged-browser rebuild.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-PACKAGED-BROWSER-REBUILD-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "T046 and T047 cannot close until the single packaged-browser rebuild, exact Linux verification, and both independent reviews pass.",
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized.",
+    "Any frozen contract, readiness, benchmark, dependency, or feature-scope change remains outside this transition."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0074.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}
