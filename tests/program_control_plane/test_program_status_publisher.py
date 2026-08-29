@@ -74,6 +74,8 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         assert len(observation["commit"]) == 40
         assert observation["observed_at"]
         assert observation["evidence"]
+        assert isinstance(observation["value"], int)
+        assert isinstance(observation["denominator"], int)
     evidence_index = bundle["supplement"]["evidence_index"]
     for series in histories.values():
         for observation in series["observations"]:

@@ -292,15 +292,12 @@ def _observations_for_path(
     source_classification: str,
 ) -> list[dict[str, Any]]:
     observations: list[dict[str, Any]] = []
-    previous_value: tuple[float, float | None] | None = None
+    previous_value: tuple[int | float, int | float | None] | None = None
     previous_commit: str | None = None
     for row_commit, observed_at, subject in _path_commits(repository, commit, path):
         raw = _git_blob(repository, row_commit, path)
         value, denominator = value_reader(raw)
-        current_value = (
-            float(value),
-            None if denominator is None else float(denominator),
-        )
+        current_value = (value, denominator)
         if current_value == previous_value:
             previous_commit = row_commit
             continue
