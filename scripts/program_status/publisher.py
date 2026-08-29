@@ -89,9 +89,21 @@ class ProgramStatusPublishResult:
     changed: bool
 
 
+def _normalize_canonical_numbers(value: object) -> object:
+    """Make JSON numbers portable across Python and browser runtimes."""
+
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, list):
+        return [_normalize_canonical_numbers(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _normalize_canonical_numbers(item) for key, item in value.items()}
+    return value
+
+
 def _canonical_bytes(value: object) -> bytes:
     return json.dumps(
-        value,
+        _normalize_canonical_numbers(value),
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
@@ -1888,11 +1900,15 @@ def _project_correction_graph(
 
 
 def _project_delivery_lanes(
-    subject: Mapping[str, Any], state_ref: dict[str, str]
+    subject: Mapping[str, Any],
+    state_ref: dict[str, str],
+    feature_done: int,
+    feature_total: int,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     state = subject["state"]
     lease = state.get("active_mutating_lease")
-    _roadmap_path, _roadmap_raw, roadmap = _exact_catalog_json(subject, "roadmap")
+    roadmap_path, roadmap_raw, roadmap = _exact_catalog_json(subject, "roadmap")
+    roadmap_ref = _evidence("roadmap", roadmap_path, roadmap_raw)
     roadmap_by_id = {
         str(item["id"]): item
         for item in roadmap.get("items", [])
@@ -1990,7 +2006,9 @@ def _project_delivery_lanes(
         "kind": "integration",
         "branch": "unavailable",
         "milestone": str(integration_item["title"]),
-        "latest_capability": str(integration_item["outcome"])[:500],
+        "latest_capability": (
+            "Verified integration evidence: " + str(last_event["result"])
+        )[:500],
         "blocker": None,
         "next_action": _action(
             "INTEGRATION_COMPLETE",
@@ -2000,7 +2018,7 @@ def _project_delivery_lanes(
             authority_override="not_required",
         ),
         "observed_at": str(last_transition["finished_at"]),
-        "evidence": last_event["evidence"],
+        "evidence": [roadmap_ref, *last_event["evidence"]],
         "target_branch": str(state["baseline"]["ref"]),
         "frozen_candidate": None,
         "last_pushed_commit": None,
@@ -2032,7 +2050,10 @@ def _project_delivery_lanes(
         "kind": "continued_development",
         "branch": str(lease["branch"]),
         "milestone": str(current_item["title"]),
-        "latest_capability": str(current_item["outcome"])[:500],
+        "latest_capability": (
+            f"EPP-F01B local implementation has completed {feature_done} of "
+            f"{feature_total} registered tasks."
+        ),
         "blocker": None,
         "next_action": _action(
             str((state.get("next_eligible_actions") or [{}])[0].get("action")),
@@ -2041,7 +2062,7 @@ def _project_delivery_lanes(
             [state_ref],
         ),
         "observed_at": str(subject["generated_at"]),
-        "evidence": [state_ref],
+        "evidence": [state_ref, roadmap_ref],
         "base_commit": str(lease["dev_baseline"]["commit"]),
         "authority_state": "authorized",
     }
@@ -2096,7 +2117,9 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         blocker=action_label if requires_human_approval else None,
         requires_human_approval=requires_human_approval,
     )
-    integration_lane, development_lane = _project_delivery_lanes(subject, state_ref)
+    integration_lane, development_lane = _project_delivery_lanes(
+        subject, state_ref, feature_done, feature_total
+    )
     history_definitions = (
         (
             "customer_capability",
@@ -2338,7 +2361,59 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                     )
                 historical_evidence[reference["id"]] = detail
     graph_context = _graph_context([state_ref])
-    benchmark_blocker = "Benchmark execution is not authorized and remains at 0/100."
+    roadmap_path, roadmap_raw, roadmap = _exact_catalog_json(subject, "roadmap")
+    roadmap_ref = _evidence("roadmap", roadmap_path, roadmap_raw)
+    benchmark_path, benchmark_raw, _benchmark = _exact_catalog_json(
+        subject, "benchmark_coverage"
+    )
+    benchmark_ref = _evidence("benchmark-coverage", benchmark_path, benchmark_raw)
+    roadmap_by_id = {
+        str(item["id"]): item
+        for item in roadmap.get("items", [])
+        if isinstance(item, Mapping)
+    }
+    benchmark_dependency_ids = sorted(
+        {
+            str(dependency)
+            for item in roadmap_by_id.values()
+            if item.get("kind") == "benchmark"
+            for dependency in item.get("depends_on", [])
+        }
+    )
+    status_projection = {
+        "complete": "satisfied",
+        "active": "pending",
+        "proposed": "pending",
+        "blocked": "blocked",
+    }
+    benchmark_dependencies = []
+    for dependency_id in benchmark_dependency_ids:
+        item = roadmap_by_id.get(dependency_id)
+        status = (
+            status_projection.get(str(item.get("status")), "unavailable")
+            if item is not None
+            else "unavailable"
+        )
+        benchmark_dependencies.append(
+            {
+                "id": dependency_id,
+                "label": (
+                    str(item.get("title"))
+                    if item is not None
+                    else f"Unavailable roadmap dependency {dependency_id}"
+                ),
+                "status": status,
+                "blocking": status != "satisfied",
+                "evidence": [roadmap_ref],
+            }
+        )
+    pending_dependency_ids = [
+        item["id"] for item in benchmark_dependencies if item["blocking"]
+    ]
+    benchmark_blocker = (
+        "Benchmark execution is not authorized and remains at 0/100; roadmap "
+        "dependencies still pending: " + ", ".join(pending_dependency_ids) + "."
+    )
     lease = state.get("active_mutating_lease")
     policy_limits = lifecycle.get("wip_limits", {})
     risk_path, risk_raw = subject["catalog_sources"]["risk_register"][0]
@@ -2347,6 +2422,8 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         ("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH]),
         ("program-state", STATE_PATH, blobs[STATE_PATH]),
         ("source-catalog", SOURCE_CATALOG_PATH, blobs[SOURCE_CATALOG_PATH]),
+        ("roadmap", roadmap_path, roadmap_raw),
+        ("benchmark-coverage", benchmark_path, benchmark_raw),
         ("work-registry", WORK_REGISTRY_PATH, blobs[WORK_REGISTRY_PATH]),
         ("use-case-registry", USE_CASE_REGISTRY_PATH, blobs[USE_CASE_REGISTRY_PATH]),
         ("test-run-ledger", TEST_LEDGER_PATH, blobs[TEST_LEDGER_PATH]),
@@ -2409,17 +2486,17 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "phase": "on_hold",
             "hold_state": "on_hold",
             "hold_reason": benchmark_blocker,
-            "dependencies": [],
+            "dependencies": benchmark_dependencies,
             "authorization_state": "not_authorized",
             "next_qualifying_action": _action(
                 "AUTHORIZE_BENCHMARK_EXECUTION",
                 "Authorize benchmark execution only after roadmap dependencies pass",
                 "benchmark_qualifying_action",
-                [dashboard_ref],
+                [dashboard_ref, roadmap_ref, benchmark_ref],
                 eligible=False,
                 blocker=benchmark_blocker,
             ),
-            "evidence": [dashboard_ref],
+            "evidence": [dashboard_ref, roadmap_ref, benchmark_ref],
         },
         "work": {
             "current_milestone": development_lane["milestone"],

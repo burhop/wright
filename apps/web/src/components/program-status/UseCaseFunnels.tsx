@@ -66,6 +66,15 @@ export function UseCaseFunnels({
         {supplement.benchmark_context.hold_reason ??
           supplement.benchmark_context.phase}
       </p>
+      <ul aria-label="Benchmark roadmap dependencies">
+        {supplement.benchmark_context.dependencies.map((dependency) => (
+          <li key={dependency.id}>
+            <strong>{dependency.id}</strong>: {dependency.label} —{" "}
+            {dependency.status}
+            {dependency.blocking ? " (blocking)" : ""}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

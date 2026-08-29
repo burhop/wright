@@ -141,6 +141,7 @@ To refresh the read-only `/program-status` page from the current committed
 program subject, publish into the API database parent's stable data root:
 
 ```powershell
+$env:WRIGHT_DATA_ROOT = ".wright-data"
 python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .wright-data/program-status
 ```
 

@@ -11,7 +11,7 @@ This is the planned human-repeatable acceptance path. Commands become executable
 ## 1. Publish one committed status bundle
 
 ```powershell
-uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .local-run/program-status-demo
+uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .local-run/program-status-demo/program-status
 ```
 
 Expected: the exact source catalog validates and its digest is reported; repository validation passes; one `current.json` is atomically installed; and output reports commit, tree, program tree, publisher-attested raw Git-blob digest/evidence, independently recomputed canonical dashboard digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical `source + dashboard + supplement` identity bytes and bundle ID.
@@ -35,7 +35,7 @@ Expected: valid, corrupt, stale, empty, source-catalog mutation, raw-attestation
 
 ## 3. Open the page
 
-Configure `WRIGHT_DATA_ROOT` to the demo root using Wright's normal local runtime command, then open `http://127.0.0.1:<wright-port>/program-status`.
+Set `$env:WRIGHT_DATA_ROOT = ".local-run/program-status-demo"`, start Wright using the normal local runtime command, then open `http://127.0.0.1:<wright-port>/program-status`. The publisher writes the required `program-status/current.json` child beneath that data root.
 
 Confirm:
 
@@ -61,7 +61,7 @@ Expected: the fixture is rejected; the last valid page remains visible and is la
 Start the standard contributor publisher in a third terminal, then commit an isolated approved fixture change while the page remains open:
 
 ```powershell
-uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --watch-committed --data-root .local-run/program-status-demo
+uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --watch-committed --data-root .local-run/program-status-demo/program-status
 ```
 
 Expected: the watcher uses its declared two-second default; within 10 seconds it observes the new committed identity, atomically installs it, the ETag changes, and every panel swaps together. Unchanged identity returns 304 and adds no history point. The separate publisher endpoint and refresh state show activity or bounded failure without changing bundle identity.

@@ -2,7 +2,8 @@ import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../services/program-status", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../services/program-status")>();
+  const actual =
+    await importOriginal<typeof import("../services/program-status")>();
   return {
     ...actual,
     fetchProgramStatus: vi.fn(),
@@ -82,16 +83,19 @@ describe("ProgramStatusPage refresh state", () => {
     await settleInitialPoll();
 
     expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
-    expect(screen.getByTestId("program-status-refresh-state")).toHaveTextContent(
-      "Committed evidence current",
-    );
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Committed evidence current");
     await act(async () => vi.advanceTimersByTimeAsync(5000));
 
-    expect(fetchBundle).toHaveBeenLastCalledWith('"bundle-1"', expect.anything());
-    expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
-    expect(screen.getByTestId("program-status-refresh-state")).toHaveTextContent(
-      "Committed evidence current",
+    expect(fetchBundle).toHaveBeenLastCalledWith(
+      '"bundle-1"',
+      expect.anything(),
     );
+    expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Committed evidence current");
   });
 
   it("keeps the last valid bundle visible when a later refresh fails", async () => {
@@ -104,12 +108,12 @@ describe("ProgramStatusPage refresh state", () => {
     await act(async () => vi.advanceTimersByTimeAsync(5000));
 
     expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
-    expect(screen.getByTestId("program-status-refresh-state")).toHaveTextContent(
-      "Showing last valid evidence",
-    );
-    expect(screen.getByTestId("program-status-refresh-state")).toHaveTextContent(
-      "Refresh failed; inspect the local Wright API.",
-    );
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Showing last valid evidence");
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Refresh failed; inspect the local Wright API.");
   });
 
   it("shows an honest unavailable state when no prior bundle exists", async () => {
@@ -123,9 +127,9 @@ describe("ProgramStatusPage refresh state", () => {
         name: "No validated program-status bundle is available yet",
       }),
     ).toBeVisible();
-    expect(screen.getByTestId("program-status-refresh-state")).toHaveTextContent(
-      "Program status unavailable",
-    );
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Program status unavailable");
   });
 
   it("does not retain a false active publisher when heartbeat polling fails", async () => {
@@ -142,5 +146,27 @@ describe("ProgramStatusPage refresh state", () => {
     expect(status).toHaveTextContent("Showing last valid evidence");
     expect(status).toHaveTextContent("Publisher heartbeat unavailable");
     expect(status).not.toHaveTextContent("Publisher: active");
+  });
+
+  it("retains the last bundle but marks a failed publisher heartbeat stale", async () => {
+    fetchBundle.mockResolvedValueOnce({
+      status: 200,
+      etag: '"bundle-1"',
+      bundle,
+    });
+    fetchPublisher.mockResolvedValueOnce({
+      ...publisher,
+      state: "failed",
+      failure_code: "PROGRAM_STATUS_SOURCE_INVALID",
+      recovery: "repair the exact committed source",
+    });
+    render(<ProgramStatusPage />);
+    await settleInitialPoll();
+
+    const status = screen.getByTestId("program-status-refresh-state");
+    expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
+    expect(status).toHaveTextContent("Showing last valid evidence");
+    expect(status).toHaveTextContent("PROGRAM_STATUS_SOURCE_INVALID");
+    expect(status).toHaveTextContent("repair the exact committed source");
   });
 });

@@ -127,8 +127,21 @@ export interface ProgramStatusBundle {
       phase: string;
       hold_state: string;
       hold_reason: string | null;
+      dependencies: Array<{
+        id: string;
+        label: string;
+        status:
+          | "satisfied"
+          | "pending"
+          | "blocked"
+          | "not_authorized"
+          | "unavailable";
+        blocking: boolean;
+        evidence: EvidenceRef[];
+      }>;
       authorization_state: string;
       next_qualifying_action: StatusAction;
+      evidence: EvidenceRef[];
     };
     work: {
       current_milestone: string;
@@ -228,6 +241,13 @@ function integer(value: unknown, path: string): number {
     throw new ProgramStatusDecodeError("EXPECTED_NONNEGATIVE_INTEGER", path);
   }
   return value as number;
+}
+
+function booleanValue(value: unknown, path: string): boolean {
+  if (typeof value !== "boolean") {
+    throw new ProgramStatusDecodeError("BOOLEAN_REQUIRED", path);
+  }
+  return value;
 }
 
 function hex(value: unknown, length: 40 | 64, path: string): string {
@@ -869,6 +889,49 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
           benchmark.hold_reason,
           "/supplement/benchmark_context/hold_reason",
         ),
+        dependencies: array(
+          benchmark.dependencies,
+          "/supplement/benchmark_context/dependencies",
+        ).map((item, index) => {
+          const dependency = record(
+            item,
+            `/supplement/benchmark_context/dependencies/${index}`,
+          );
+          return {
+            id: stringValue(
+              dependency.id,
+              `/supplement/benchmark_context/dependencies/${index}/id`,
+            ),
+            label: stringValue(
+              dependency.label,
+              `/supplement/benchmark_context/dependencies/${index}/label`,
+            ),
+            status: enumValue(
+              dependency.status,
+              [
+                "satisfied",
+                "pending",
+                "blocked",
+                "not_authorized",
+                "unavailable",
+              ] as const,
+              `/supplement/benchmark_context/dependencies/${index}/status`,
+            ),
+            blocking: booleanValue(
+              dependency.blocking,
+              `/supplement/benchmark_context/dependencies/${index}/blocking`,
+            ),
+            evidence: array(
+              dependency.evidence,
+              `/supplement/benchmark_context/dependencies/${index}/evidence`,
+            ).map((reference, evidenceIndex) =>
+              evidence(
+                reference,
+                `/supplement/benchmark_context/dependencies/${index}/evidence/${evidenceIndex}`,
+              ),
+            ),
+          };
+        }),
         authorization_state: stringValue(
           benchmark.authorization_state,
           "/supplement/benchmark_context/authorization_state",
@@ -876,6 +939,15 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
         next_qualifying_action: action(
           benchmark.next_qualifying_action,
           "/supplement/benchmark_context/next_qualifying_action",
+        ),
+        evidence: array(
+          benchmark.evidence,
+          "/supplement/benchmark_context/evidence",
+        ).map((reference, index) =>
+          evidence(
+            reference,
+            `/supplement/benchmark_context/evidence/${index}`,
+          ),
         ),
       },
       work: {
@@ -991,15 +1063,13 @@ function canonicalNumber(value: number): string {
     }
     return String(value);
   }
-  const token = String(value);
-  if (/[eE]/.test(token) || !/^-?(?:0|[1-9][0-9]*)\.[0-9]{1,6}$/.test(token)) {
+  const magnitude = Math.abs(value);
+  if (magnitude >= 1e-4 && magnitude < 1e16) return String(value);
+  const scientific = value.toExponential();
+  const match = /^(.*)e([+-])(\d+)$/.exec(scientific);
+  if (!match)
     throw new ProgramStatusDecodeError("CANONICAL_NUMBER_INVALID", "");
-  }
-  const scaled = Number(token.replace(".", ""));
-  if (!Number.isSafeInteger(scaled)) {
-    throw new ProgramStatusDecodeError("CANONICAL_NUMBER_UNSAFE", "");
-  }
-  return token;
+  return `${match[1]}e${match[2]}${match[3].padStart(2, "0")}`;
 }
 
 export function canonicalProgramStatusJson(value: unknown): string {
@@ -1031,6 +1101,118 @@ export async function canonicalProgramStatusDigest(
   return Array.from(new Uint8Array(digest), (byte) =>
     byte.toString(16).padStart(2, "0"),
   ).join("");
+}
+
+async function framedProgramStatusDigest(
+  prefix: string,
+  values: string[],
+): Promise<string> {
+  const encoder = new TextEncoder();
+  const chunks: Uint8Array[] = [encoder.encode(`${prefix}\n`)];
+  for (const value of values) {
+    if (value.includes("\0") || value.normalize("NFC") !== value) {
+      throw new ProgramStatusDecodeError("TEST_IDENTITY_INPUT_INVALID", "");
+    }
+    const encoded = encoder.encode(value);
+    chunks.push(
+      encoder.encode(`${encoded.length}:`),
+      encoded,
+      encoder.encode("\n"),
+    );
+  }
+  const length = chunks.reduce((total, chunk) => total + chunk.length, 0);
+  const framed = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) {
+    framed.set(chunk, offset);
+    offset += chunk.length;
+  }
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", framed);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+}
+
+function utf8Compare(left: string, right: string): number {
+  const encoder = new TextEncoder();
+  const leftBytes = encoder.encode(left);
+  const rightBytes = encoder.encode(right);
+  for (
+    let index = 0;
+    index < Math.min(leftBytes.length, rightBytes.length);
+    index += 1
+  ) {
+    if (leftBytes[index] !== rightBytes[index])
+      return leftBytes[index] - rightBytes[index];
+  }
+  return leftBytes.length - rightBytes.length;
+}
+
+async function verifyTestHistoryDigests(
+  supplement: Record<string, unknown>,
+): Promise<void> {
+  const testHistory = record(
+    supplement.test_history,
+    "/supplement/test_history",
+  );
+  for (const [checkpointIndex, checkpointValue] of array(
+    testHistory.checkpoints,
+    "/supplement/test_history/checkpoints",
+  ).entries()) {
+    const checkpointPath = `/supplement/test_history/checkpoints/${checkpointIndex}`;
+    const checkpoint = record(checkpointValue, checkpointPath);
+    for (const [sourceIndex, sourceValue] of array(
+      checkpoint.suite_sources,
+      `${checkpointPath}/suite_sources`,
+    ).entries()) {
+      const sourcePath = `${checkpointPath}/suite_sources/${sourceIndex}`;
+      const suite = record(sourceValue, sourcePath);
+      const cases = array(
+        suite.test_case_ids,
+        `${sourcePath}/test_case_ids`,
+      ).map((item, index) =>
+        stringValue(item, `${sourcePath}/test_case_ids/${index}`),
+      );
+      if (new Set(cases).size !== cases.length) {
+        throw new ProgramStatusDecodeError(
+          "TEST_CASE_ID_DUPLICATE",
+          `${sourcePath}/test_case_ids`,
+        );
+      }
+      const caseDigest = await framedProgramStatusDigest(
+        "wright-test-id-set-v1",
+        [...cases].sort(utf8Compare),
+      );
+      if (
+        caseDigest !==
+        hex(
+          suite.test_case_set_sha256,
+          64,
+          `${sourcePath}/test_case_set_sha256`,
+        )
+      ) {
+        throw new ProgramStatusDecodeError(
+          "TEST_CASE_SET_IDENTITY_MISMATCH",
+          `${sourcePath}/test_case_set_sha256`,
+        );
+      }
+      const runDigest = await framedProgramStatusDigest(
+        "wright-test-run-key-v1",
+        [
+          hex(checkpoint.commit, 40, `${checkpointPath}/commit`),
+          stringValue(suite.suite_id, `${sourcePath}/suite_id`),
+          stringValue(suite.population_id, `${sourcePath}/population_id`),
+          String(integer(suite.attempt, `${sourcePath}/attempt`)),
+        ],
+      );
+      if (runDigest !== hex(suite.run_key, 64, `${sourcePath}/run_key`)) {
+        throw new ProgramStatusDecodeError(
+          "TEST_RUN_KEY_MISMATCH",
+          `${sourcePath}/run_key`,
+        );
+      }
+    }
+  }
 }
 
 function sameEvidence(left: EvidenceRef, right: EvidenceDetail): boolean {
@@ -1092,6 +1274,41 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
     evidenceDetail(item, `/supplement/evidence_index/${index}`),
   );
   const sourceCommit = hex(source.commit, 40, "/source/commit");
+  const rawIdentity = evidence(
+    source.raw_identity_evidence,
+    "/source/raw_identity_evidence",
+  );
+  if (
+    rawIdentity.path !==
+      stringValue(source.snapshot_path, "/source/snapshot_path") ||
+    rawIdentity.sha256 !==
+      hex(source.snapshot_raw_sha256, 64, "/source/snapshot_raw_sha256")
+  ) {
+    throw new ProgramStatusDecodeError(
+      "RAW_IDENTITY_EVIDENCE_MISMATCH",
+      "/source/raw_identity_evidence",
+    );
+  }
+  const catalogPath = stringValue(
+    source.source_catalog_path,
+    "/source/source_catalog_path",
+  );
+  const catalogDigest = hex(
+    source.source_catalog_sha256,
+    64,
+    "/source/source_catalog_sha256",
+  );
+  if (
+    !details.some(
+      (detail) =>
+        detail.path === catalogPath && detail.sha256 === catalogDigest,
+    )
+  ) {
+    throw new ProgramStatusDecodeError(
+      "SOURCE_CATALOG_EVIDENCE_MISMATCH",
+      "/source/source_catalog_sha256",
+    );
+  }
   for (const detail of details) {
     if (
       detail.exact_url !== null &&
@@ -1109,6 +1326,389 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       "EVIDENCE_INDEX_DUPLICATE",
       "/supplement/evidence_index",
     );
+  }
+
+  const historyIds = new Set<string>();
+  for (const [seriesIndex, item] of array(
+    supplement.history,
+    "/supplement/history",
+  ).entries()) {
+    const path = `/supplement/history/${seriesIndex}`;
+    const series = record(item, path);
+    const id = stringValue(series.id, `${path}/id`);
+    if (historyIds.has(id)) {
+      throw new ProgramStatusDecodeError("HISTORY_ID_DUPLICATE", `${path}/id`);
+    }
+    historyIds.add(id);
+    const availability = enumValue(
+      series.availability,
+      ["available", "unavailable"] as const,
+      `${path}/availability`,
+    );
+    const observations = array(series.observations, `${path}/observations`);
+    if (
+      (availability === "available" && observations.length === 0) ||
+      (availability === "unavailable" && observations.length !== 0)
+    ) {
+      throw new ProgramStatusDecodeError(
+        "HISTORY_AVAILABILITY_MISMATCH",
+        `${path}/observations`,
+      );
+    }
+    const commits = new Set<string>();
+    let priorTime = "";
+    let priorValue: number | null = null;
+    let latest: Record<string, unknown> | null = null;
+    for (const [observationIndex, observationValue] of observations.entries()) {
+      const observationPath = `${path}/observations/${observationIndex}`;
+      const observation = record(observationValue, observationPath);
+      const commit = hex(observation.commit, 40, `${observationPath}/commit`);
+      const observedAt = stringValue(
+        observation.observed_at,
+        `${observationPath}/observed_at`,
+      );
+      const valueNumber = integer(
+        observation.value,
+        `${observationPath}/value`,
+      );
+      if (commits.has(commit) || observedAt < priorTime) {
+        throw new ProgramStatusDecodeError(
+          "HISTORY_ORDER_INVALID",
+          observationPath,
+        );
+      }
+      commits.add(commit);
+      priorTime = observedAt;
+      priorValue =
+        latest === null ? null : integer(latest.value, `${path}/latest/value`);
+      latest = { ...observation, value: valueNumber };
+    }
+    if (availability === "available") {
+      const change = record(series.latest_change, `${path}/latest_change`);
+      if (
+        latest === null ||
+        change.commit !== latest.commit ||
+        change.observed_at !== latest.observed_at ||
+        integer(change.to_value, `${path}/latest_change/to_value`) !==
+          latest.value ||
+        change.from_value !== priorValue
+      ) {
+        throw new ProgramStatusDecodeError(
+          "HISTORY_LATEST_CHANGE_MISMATCH",
+          `${path}/latest_change`,
+        );
+      }
+    } else if (series.latest_change !== null) {
+      throw new ProgramStatusDecodeError(
+        "HISTORY_LATEST_CHANGE_MISMATCH",
+        `${path}/latest_change`,
+      );
+    }
+  }
+
+  const testHistory = record(
+    supplement.test_history,
+    "/supplement/test_history",
+  );
+  const selection = record(
+    testHistory.selection_attestation,
+    "/supplement/test_history/selection_attestation",
+  );
+  const selectedRunIds = array(
+    selection.selected_run_ids,
+    "/supplement/test_history/selection_attestation/selected_run_ids",
+  ).map((item, index) =>
+    stringValue(
+      item,
+      `/supplement/test_history/selection_attestation/selected_run_ids/${index}`,
+    ),
+  );
+  const projectedRunIds: string[] = [];
+  const runKeys = new Set<string>();
+  const checkpointCommits = new Set<string>();
+  let checkpointTime = "";
+  for (const [checkpointIndex, checkpointValue] of array(
+    testHistory.checkpoints,
+    "/supplement/test_history/checkpoints",
+  ).entries()) {
+    const checkpointPath = `/supplement/test_history/checkpoints/${checkpointIndex}`;
+    const checkpoint = record(checkpointValue, checkpointPath);
+    const checkpointCommit = hex(
+      checkpoint.commit,
+      40,
+      `${checkpointPath}/commit`,
+    );
+    if (checkpointCommits.has(checkpointCommit)) {
+      throw new ProgramStatusDecodeError(
+        "TEST_CHECKPOINT_COMMIT_DUPLICATE",
+        `${checkpointPath}/commit`,
+      );
+    }
+    checkpointCommits.add(checkpointCommit);
+    const observedAt = stringValue(
+      checkpoint.observed_at,
+      `${checkpointPath}/observed_at`,
+    );
+    if (observedAt < checkpointTime) {
+      throw new ProgramStatusDecodeError(
+        "TEST_HISTORY_ORDER_INVALID",
+        checkpointPath,
+      );
+    }
+    checkpointTime = observedAt;
+    const aggregate = {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      skipped: 0,
+      not_run: 0,
+    };
+    const categoryAggregates = new Map<
+      string,
+      {
+        total: number;
+        passed: number;
+        failed: number;
+        skipped: number;
+        not_run: number;
+      }
+    >();
+    const seenCases = new Set<string>();
+    for (const [sourceIndex, sourceValue] of array(
+      checkpoint.suite_sources,
+      `${checkpointPath}/suite_sources`,
+    ).entries()) {
+      const sourcePath = `${checkpointPath}/suite_sources/${sourceIndex}`;
+      const suite = record(sourceValue, sourcePath);
+      if (suite.terminal !== true) {
+        throw new ProgramStatusDecodeError(
+          "TEST_RUN_NOT_TERMINAL",
+          `${sourcePath}/terminal`,
+        );
+      }
+      const runId = stringValue(suite.run_id, `${sourcePath}/run_id`);
+      const runKey = hex(suite.run_key, 64, `${sourcePath}/run_key`);
+      if (runKeys.has(runKey)) {
+        throw new ProgramStatusDecodeError(
+          "TEST_RUN_KEY_DUPLICATE",
+          `${sourcePath}/run_key`,
+        );
+      }
+      runKeys.add(runKey);
+      projectedRunIds.push(runId);
+      const cases = array(
+        suite.test_case_ids,
+        `${sourcePath}/test_case_ids`,
+      ).map((item, index) =>
+        stringValue(item, `${sourcePath}/test_case_ids/${index}`),
+      );
+      const countRow = record(suite.counts, `${sourcePath}/counts`);
+      const sourceCounts = {
+        total: integer(countRow.total, `${sourcePath}/counts/total`),
+        passed: integer(countRow.passed, `${sourcePath}/counts/passed`),
+        failed: integer(countRow.failed, `${sourcePath}/counts/failed`),
+      };
+      const skipped = integer(countRow.skipped, `${sourcePath}/counts/skipped`);
+      const notRun = integer(countRow.not_run, `${sourcePath}/counts/not_run`);
+      if (
+        sourceCounts.total !== cases.length ||
+        sourceCounts.total !==
+          sourceCounts.passed + sourceCounts.failed + skipped + notRun
+      ) {
+        throw new ProgramStatusDecodeError(
+          "TEST_RUN_COUNTS_INVALID",
+          `${sourcePath}/counts`,
+        );
+      }
+      if (suite.aggregate_role === "component") {
+        const category = enumValue(
+          suite.category,
+          ["unit", "integration", "e2e", "benchmark"] as const,
+          `${sourcePath}/category`,
+        );
+        for (const testCase of cases) {
+          if (seenCases.has(testCase)) {
+            throw new ProgramStatusDecodeError(
+              "TEST_COMPONENT_OVERLAP",
+              `${sourcePath}/test_case_ids`,
+            );
+          }
+          seenCases.add(testCase);
+        }
+        aggregate.total += sourceCounts.total;
+        aggregate.passed += integer(
+          countRow.passed,
+          `${sourcePath}/counts/passed`,
+        );
+        aggregate.failed += integer(
+          countRow.failed,
+          `${sourcePath}/counts/failed`,
+        );
+        aggregate.skipped += skipped;
+        aggregate.not_run += notRun;
+        const categoryCounts = categoryAggregates.get(category) ?? {
+          total: 0,
+          passed: 0,
+          failed: 0,
+          skipped: 0,
+          not_run: 0,
+        };
+        categoryCounts.total += sourceCounts.total;
+        categoryCounts.passed += sourceCounts.passed;
+        categoryCounts.failed += sourceCounts.failed;
+        categoryCounts.skipped += skipped;
+        categoryCounts.not_run += notRun;
+        categoryAggregates.set(category, categoryCounts);
+      } else if (suite.aggregate_role !== "summary_only") {
+        throw new ProgramStatusDecodeError(
+          "TEST_AGGREGATE_ROLE_INVALID",
+          `${sourcePath}/aggregate_role`,
+        );
+      }
+    }
+    const checkpointCounts = record(
+      checkpoint.counts,
+      `${checkpointPath}/counts`,
+    );
+    for (const name of [
+      "total",
+      "passed",
+      "failed",
+      "skipped",
+      "not_run",
+    ] as const) {
+      if (
+        integer(checkpointCounts[name], `${checkpointPath}/counts/${name}`) !==
+        aggregate[name]
+      ) {
+        throw new ProgramStatusDecodeError(
+          "TEST_CHECKPOINT_COUNTS_INVALID",
+          `${checkpointPath}/counts/${name}`,
+        );
+      }
+    }
+    const denominator = aggregate.passed + aggregate.failed;
+    const expectedPassRate = denominator
+      ? aggregate.passed / denominator
+      : null;
+    if (checkpoint.pass_rate !== expectedPassRate) {
+      throw new ProgramStatusDecodeError(
+        "TEST_PASS_RATE_INVALID",
+        `${checkpointPath}/pass_rate`,
+      );
+    }
+    const categories = record(
+      checkpoint.categories,
+      `${checkpointPath}/categories`,
+    );
+    for (const name of ["unit", "integration", "e2e", "benchmark"] as const) {
+      const expected = categoryAggregates.get(name);
+      if (!expected && categories[name] !== null) {
+        throw new ProgramStatusDecodeError(
+          "TEST_CATEGORY_COUNTS_INVALID",
+          `${checkpointPath}/categories/${name}`,
+        );
+      }
+      if (expected) {
+        const actual = record(
+          categories[name],
+          `${checkpointPath}/categories/${name}`,
+        );
+        for (const countName of [
+          "total",
+          "passed",
+          "failed",
+          "skipped",
+          "not_run",
+        ] as const) {
+          if (
+            integer(
+              actual[countName],
+              `${checkpointPath}/categories/${name}/${countName}`,
+            ) !== expected[countName]
+          ) {
+            throw new ProgramStatusDecodeError(
+              "TEST_CATEGORY_COUNTS_INVALID",
+              `${checkpointPath}/categories/${name}/${countName}`,
+            );
+          }
+        }
+      }
+    }
+  }
+  if (
+    selectedRunIds.length !== projectedRunIds.length ||
+    [...selectedRunIds]
+      .sort()
+      .some((id, index) => id !== [...projectedRunIds].sort()[index])
+  ) {
+    throw new ProgramStatusDecodeError(
+      "TEST_SELECTION_ATTESTATION_MISMATCH",
+      "/supplement/test_history/selection_attestation/selected_run_ids",
+    );
+  }
+
+  const work = record(supplement.work, "/supplement/work");
+  const benchmark = record(
+    supplement.benchmark_context,
+    "/supplement/benchmark_context",
+  );
+  const dependencyIds = new Set<string>();
+  for (const [index, dependencyValue] of array(
+    benchmark.dependencies,
+    "/supplement/benchmark_context/dependencies",
+  ).entries()) {
+    const dependencyPath = `/supplement/benchmark_context/dependencies/${index}`;
+    const dependency = record(dependencyValue, dependencyPath);
+    const id = stringValue(dependency.id, `${dependencyPath}/id`);
+    const status = stringValue(dependency.status, `${dependencyPath}/status`);
+    if (
+      dependencyIds.has(id) ||
+      dependency.blocking !== (status !== "satisfied")
+    ) {
+      throw new ProgramStatusDecodeError(
+        "BENCHMARK_DEPENDENCY_RELATION_INVALID",
+        dependencyPath,
+      );
+    }
+    dependencyIds.add(id);
+  }
+  const lease = record(work.lease, "/supplement/work/lease");
+  const lanes = array(work.lanes, "/supplement/work/lanes").map((item, index) =>
+    record(item, `/supplement/work/lanes/${index}`),
+  );
+  const integration = lanes.find((lane) => lane.kind === "integration");
+  const development = lanes.find(
+    (lane) => lane.kind === "continued_development",
+  );
+  if (
+    lanes.length !== 2 ||
+    !integration ||
+    !development ||
+    development.branch !== lease.branch ||
+    development.base_commit !==
+      record(lease.dev_baseline, "/supplement/work/lease/dev_baseline").commit
+  ) {
+    throw new ProgramStatusDecodeError(
+      "DELIVERY_LANE_RELATION_INVALID",
+      "/supplement/work/lanes",
+    );
+  }
+  const events = array(
+    integration.events,
+    "/supplement/work/lanes/integration/events",
+  );
+  if (events.length) {
+    const lastEvent = record(
+      events.at(-1),
+      "/supplement/work/lanes/integration/events/last",
+    );
+    if (lastEvent.observed_at !== integration.observed_at) {
+      throw new ProgramStatusDecodeError(
+        "DELIVERY_LANE_RELATION_INVALID",
+        "/supplement/work/lanes/integration/observed_at",
+      );
+    }
   }
   const references: LocatedEvidence[] = [
     {
@@ -1185,6 +1785,7 @@ export async function verifyProgramStatusIdentity(
   const dashboard = record(root.dashboard, "/dashboard");
   const supplement = record(root.supplement, "/supplement");
   validateProgramStatusEvidenceRelations(root);
+  await verifyTestHistoryDigests(supplement);
   if (
     (await canonicalProgramStatusDigest(dashboard)) !==
     hex(

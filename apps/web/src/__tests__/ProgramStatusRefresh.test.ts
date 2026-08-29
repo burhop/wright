@@ -34,6 +34,61 @@ async function identityBoundBundle(): Promise<any> {
   return bundle;
 }
 
+function addCanonicalTestRun(raw: any) {
+  const reference = {
+    id: "test:run-1:1",
+    path: "test-results/program-status/run-1.json",
+    sha256: "8".repeat(64),
+  };
+  raw.supplement.test_history.availability = "available";
+  raw.supplement.test_history.unavailable_reason = null;
+  raw.supplement.test_history.selection_attestation.selected_run_ids = [
+    "run-1",
+  ];
+  raw.supplement.test_history.checkpoints = [
+    {
+      commit: "c".repeat(40),
+      observed_at: "2026-08-29T03:00:00Z",
+      counts: { total: 1, passed: 1, failed: 0, skipped: 0, not_run: 0 },
+      pass_rate: 1,
+      categories: {
+        unit: { total: 1, passed: 1, failed: 0, skipped: 0, not_run: 0 },
+        integration: null,
+        e2e: null,
+        benchmark: null,
+      },
+      suite_sources: [
+        {
+          suite_id: "suite-1",
+          population_id: "population-1",
+          run_id: "run-1",
+          run_key:
+            "7d0f2aaed54fd394524bacf7946adf2805b7adbf6f2ed291749d572b921c1266",
+          attempt: 1,
+          observed_at: "2026-08-29T03:00:00Z",
+          terminal: true,
+          aggregate_role: "component",
+          category: "unit",
+          test_case_ids: ["case-1"],
+          test_case_set_sha256:
+            "1e9c43b954b73005c6db72f0b0f674763dcb9d47f11696a8a70a31b2a78665f2",
+          counts: { total: 1, passed: 1, failed: 0, skipped: 0, not_run: 0 },
+          evidence: [reference],
+        },
+      ],
+    },
+  ];
+  raw.supplement.evidence_index.push({
+    ...reference,
+    label: "Canonical unit run",
+    summary: "Exact selected test result.",
+    freshness: "current",
+    recovery: null,
+    availability: "identity_only",
+    exact_url: null,
+  });
+}
+
 describe("program status conditional refresh transport", () => {
   beforeEach(() => mockedFetch.mockReset());
 
@@ -89,15 +144,13 @@ describe("program status conditional refresh transport", () => {
     raw.supplement.use_cases.graph_context = { meaning: "raw-only" };
     raw.supplement.test_history.counting_rule =
       "latest_terminal_attempt_per_commit_suite_id_population_id";
-    raw.supplement.test_history.selection_attestation = {
-      source_path:
-        "docs/programs/engineering-process-platform/test-run-ledger.json",
-    };
+    raw.supplement.test_history.selection_attestation.source_path =
+      "docs/programs/engineering-process-platform/test-run-ledger.json";
     raw.supplement.benchmark_context.dependencies = [];
     raw.supplement.benchmark_context.evidence = [
       raw.supplement.work.current_next_action.evidence[0],
     ];
-    raw.supplement.work.lease = { feature_id: "EPP-F01B" };
+    raw.supplement.work.lease.feature_id = "EPP-F01B";
     raw.supplement.work.checkpoints = [];
     raw.source.dashboard_canonical_sha256 = await canonicalProgramStatusDigest(
       raw.dashboard,
@@ -136,25 +189,47 @@ describe("program status conditional refresh transport", () => {
     );
   });
 
+  it("binds raw snapshot, source catalog, history, and delivery-lane identities", () => {
+    const rawIdentity = makeProgramStatusBundle() as any;
+    rawIdentity.source.raw_identity_evidence.sha256 = "9".repeat(64);
+    expect(() => validateProgramStatusEvidenceRelations(rawIdentity)).toThrow(
+      "RAW_IDENTITY_EVIDENCE_MISMATCH",
+    );
+
+    const catalog = makeProgramStatusBundle() as any;
+    catalog.source.source_catalog_sha256 = "9".repeat(64);
+    expect(() => validateProgramStatusEvidenceRelations(catalog)).toThrow(
+      "SOURCE_CATALOG_EVIDENCE_MISMATCH",
+    );
+
+    const lane = makeProgramStatusBundle() as any;
+    lane.supplement.work.lanes[1].branch = "wrong-branch";
+    expect(() => validateProgramStatusEvidenceRelations(lane)).toThrow(
+      "DELIVERY_LANE_RELATION_INVALID",
+    );
+
+    const history = makeProgramStatusBundle() as any;
+    history.supplement.history = [
+      {
+        id: "feature_tasks",
+        availability: "unavailable",
+        latest_change: null,
+        observations: [{ commit: "c".repeat(40) }],
+      },
+    ];
+    expect(() => validateProgramStatusEvidenceRelations(history)).toThrow(
+      "HISTORY_AVAILABILITY_MISMATCH",
+    );
+  });
+
   it("admits test-results evidence only for selected test suite sources", () => {
     const raw = makeProgramStatusBundle() as any;
+    addCanonicalTestRun(raw);
     const reference = {
       id: "test:unit-attempt-1:1",
       path: "test-results/program-status/unit.json",
       sha256: "8".repeat(64),
     };
-    raw.supplement.test_history.checkpoints = [
-      { suite_sources: [{ evidence: [reference] }] },
-    ];
-    raw.supplement.evidence_index.push({
-      ...reference,
-      label: "Unit test run",
-      summary: "Exact selected test result.",
-      freshness: "current",
-      recovery: null,
-      availability: "identity_only",
-      exact_url: null,
-    });
     expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
 
     const orphan = makeProgramStatusBundle() as any;
@@ -303,20 +378,43 @@ describe("program status conditional refresh transport", () => {
     );
   });
 
-  it("uses the declared bounded fixed-point canonical number subset", () => {
+  it("uses Python-compatible shortest canonical numbers", () => {
     expect(
       canonicalProgramStatusJson([
-        0, 1, 9007199254740991, 0.5, 0.125, 0.333333,
+        0,
+        1,
+        9007199254740991,
+        0.5,
+        2 / 3,
+        0.00001,
+        0.0000001,
       ]),
-    ).toBe("[0,1,9007199254740991,0.5,0.125,0.333333]");
+    ).toBe("[0,1,9007199254740991,0.5,0.6666666666666666,1e-05,1e-07]");
     expect(() => canonicalProgramStatusJson(-0)).toThrow(
-      "CANONICAL_NUMBER_INVALID",
-    );
-    expect(() => canonicalProgramStatusJson(0.0000001)).toThrow(
       "CANONICAL_NUMBER_INVALID",
     );
     expect(() => canonicalProgramStatusJson(9007199254740992)).toThrow(
       "CANONICAL_NUMBER_UNSAFE",
+    );
+  });
+
+  it("recomputes canonical test-case and run-key digests in the browser", async () => {
+    const raw = makeProgramStatusBundle() as any;
+    addCanonicalTestRun(raw);
+    raw.source.dashboard_canonical_sha256 = await canonicalProgramStatusDigest(
+      raw.dashboard,
+    );
+    raw.bundle_id = await canonicalProgramStatusDigest({
+      source: raw.source,
+      dashboard: raw.dashboard,
+      supplement: raw.supplement,
+    });
+    await expect(verifyProgramStatusIdentity(raw)).resolves.toBeUndefined();
+
+    raw.supplement.test_history.checkpoints[0].suite_sources[0].test_case_set_sha256 =
+      "9".repeat(64);
+    await expect(verifyProgramStatusIdentity(raw)).rejects.toThrow(
+      "TEST_CASE_SET_IDENTITY_MISMATCH",
     );
   });
 

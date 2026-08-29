@@ -31,6 +31,17 @@ export function makeProgramStatusBundle(
       exact_url: `https://github.com/burhop/wright/blob/${"c".repeat(40)}/docs/programs/engineering-process-platform/dashboard.json`,
     },
     {
+      id: "source-catalog",
+      label: "Source catalog",
+      path: "specs/077-browser-program-status/contracts/program-status-source-catalog.json",
+      sha256: "2".repeat(64),
+      summary: "Exact frozen source catalog.",
+      freshness: "current",
+      recovery: null,
+      availability: "identity_only",
+      exact_url: null,
+    },
+    {
       id: "TR-0072",
       label: "Implementation activation transition",
       path: "docs/programs/engineering-process-platform/evidence/transitions/TR-0072.json",
@@ -122,6 +133,31 @@ export function makeProgramStatusBundle(
       },
       test_history: {
         availability: "unavailable",
+        counting_rule:
+          "latest_terminal_attempt_per_commit_suite_id_population_id",
+        pass_rate_rule: "passed_divided_by_passed_plus_failed_else_unavailable",
+        identity_digest_rule:
+          "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256",
+        run_key_rule:
+          "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256",
+        runs_digest_rule:
+          "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order",
+        selection_attestation: {
+          source_path:
+            "docs/programs/engineering-process-platform/test-run-ledger.json",
+          source_digest: "5".repeat(64),
+          ledger_revision: 1,
+          prior_ledger_runs_sha256: null,
+          runs_sha256: "6".repeat(64),
+          publisher_verified_append_only: true,
+          selected_run_ids: [],
+        },
+        graph_context: {
+          meaning: "Canonical test evidence.",
+          latest_change: null,
+          current_limitation: "No canonical committed test run exists yet.",
+          next_action: { ...action, purpose: "metric_guidance" },
+        },
         unavailable_reason: "No canonical committed test run exists yet.",
         checkpoints: [],
       },
@@ -129,6 +165,7 @@ export function makeProgramStatusBundle(
         phase: "on_hold",
         hold_state: "on_hold",
         hold_reason: "Benchmark execution is not authorized.",
+        dependencies: [],
         authorization_state: "not_authorized",
         next_qualifying_action: {
           ...action,
@@ -137,6 +174,13 @@ export function makeProgramStatusBundle(
           authority_state: "not_authorized",
           blocker: "Benchmark execution is not authorized.",
         },
+        evidence: [
+          {
+            id: "dashboard",
+            path: "docs/programs/engineering-process-platform/dashboard.json",
+            sha256: "f".repeat(64),
+          },
+        ],
       },
       work: {
         current_milestone: "Browser program status",
@@ -156,8 +200,23 @@ export function makeProgramStatusBundle(
         },
         active_assignments: [],
         blockers: [],
+        lease: {
+          branch: "codex/epp-continued-development-reconciled",
+          dev_baseline: { commit: "9".repeat(40) },
+        },
         current_next_action: action,
-        lanes: [{ kind: "integration" }, { kind: "continued_development" }],
+        lanes: [
+          {
+            kind: "integration",
+            observed_at: "2026-08-28T02:02:46Z",
+            events: [],
+          },
+          {
+            kind: "continued_development",
+            branch: "codex/epp-continued-development-reconciled",
+            base_commit: "9".repeat(40),
+          },
+        ],
       },
       governance: {},
       evidence_index: evidence,

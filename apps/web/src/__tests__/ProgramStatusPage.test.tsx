@@ -100,6 +100,7 @@ function bundle(): unknown {
         phase: "on_hold",
         hold_state: "on_hold",
         hold_reason: "Benchmark execution is not authorized.",
+        dependencies: [],
         authorization_state: "not_authorized",
         next_qualifying_action: {
           ...action,
@@ -108,6 +109,7 @@ function bundle(): unknown {
           authority_state: "not_authorized",
           blocker: "Benchmark execution is not authorized.",
         },
+        evidence: [],
       },
       work: {
         current_milestone: "Browser program status",

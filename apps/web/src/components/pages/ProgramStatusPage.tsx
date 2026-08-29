@@ -40,6 +40,9 @@ export function ProgramStatusPage() {
         ]);
         if (!active) return;
         const publisherUnavailable = publisherResult.status === "rejected";
+        const publisherFailed =
+          publisherResult.status === "fulfilled" &&
+          publisherResult.value.state === "failed";
         if (publisherResult.status === "fulfilled") {
           setPublisher(publisherResult.value);
         } else {
@@ -51,11 +54,15 @@ export function ProgramStatusPage() {
           hasBundle.current = true;
           etag.current = result.value.etag ?? undefined;
         }
-        setViewState(publisherUnavailable ? "stale" : "current");
+        setViewState(
+          publisherUnavailable || publisherFailed ? "stale" : "current",
+        );
         setMessage(
           publisherUnavailable
             ? "Publisher heartbeat unavailable; showing last valid committed evidence."
-            : null,
+            : publisherFailed
+              ? `${publisherResult.value.failure_code ?? "PUBLISHER_FAILED"}: ${publisherResult.value.recovery ?? "inspect the publisher heartbeat"}; showing last valid committed evidence.`
+              : null,
         );
       } catch (error) {
         if (!active) return;

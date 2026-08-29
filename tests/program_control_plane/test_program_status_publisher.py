@@ -34,6 +34,14 @@ def canonical(value: object) -> bytes:
     ).encode("utf-8")
 
 
+def test_canonical_numbers_match_browser_shortest_representation() -> None:
+    assert publisher._canonical_bytes({"integral": 1.0}) == b'{"integral":1}'
+    assert publisher._canonical_bytes({"ratio": 2 / 3}) == (
+        b'{"ratio":0.6666666666666666}'
+    )
+    assert publisher._canonical_bytes({"small": 0.00001}) == b'{"small":1e-05}'
+
+
 def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) -> None:
     first = publish_program_status(request(tmp_path))
     installed = (tmp_path / "current.json").read_bytes()
@@ -57,6 +65,17 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         "push_max": 2,
     }
     assert bundle["supplement"]["use_cases"]["process_100"]["benchmark_qualified"] == 0
+    dependencies = bundle["supplement"]["benchmark_context"]["dependencies"]
+    assert {item["id"] for item in dependencies if item["blocking"]} == {
+        "EPP-B01",
+        "EPP-F03",
+        "EPP-F05",
+        "EPP-F06",
+    }
+    assert (
+        next(item for item in dependencies if item["id"] == "EPP-F01")["status"]
+        == "satisfied"
+    )
     histories = {series["id"]: series for series in bundle["supplement"]["history"]}
     assert histories["feature_tasks"]["availability"] == "available"
     expected_completed, expected_total = publisher._task_counts(
@@ -783,7 +802,9 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
         "program-state", publisher.STATE_PATH, subject["blobs"][publisher.STATE_PATH]
     )
 
-    integration, development = publisher._project_delivery_lanes(subject, state_ref)
+    integration, development = publisher._project_delivery_lanes(
+        subject, state_ref, 45, 48
+    )
 
     assert integration["kind"] == "integration"
     assert integration["branch"] == "unavailable"
@@ -795,7 +816,8 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     }
     assert integration["blocker"] is None
     assert integration["events"][-1]["kind"] == "DEV_DEPLOYMENT_VERIFIED"
-    assert integration["events"][-1]["evidence"] == integration["evidence"]
+    assert integration["events"][-1]["evidence"][0] in integration["evidence"]
+    assert integration["latest_capability"].startswith("Verified integration evidence:")
     assert integration["next_action"]["authority_state"] == "not_required"
 
     lease = subject["state"]["active_mutating_lease"]
@@ -804,4 +826,7 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     assert development["base_commit"] == lease["dev_baseline"]["commit"]
     assert development["milestone"] == "Browser program-status dashboard"
     assert development["authority_state"] == "authorized"
-    assert development["evidence"] == [state_ref]
+    assert state_ref in development["evidence"]
+    assert development["latest_capability"] == (
+        "EPP-F01B local implementation has completed 45 of 48 registered tasks."
+    )

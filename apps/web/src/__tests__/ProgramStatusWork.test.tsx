@@ -69,7 +69,17 @@ const supplement: any = {
       benchmark_qualified: 0,
     },
   },
-  benchmark_context: { hold_reason: "Qualification is not authorized." },
+  benchmark_context: {
+    hold_reason: "Qualification is not authorized.",
+    dependencies: [
+      {
+        id: "EPP-F03",
+        label: "Durable run evidence",
+        status: "pending",
+        blocking: true,
+      },
+    ],
+  },
 };
 
 describe("program status work and capability detail", () => {
@@ -98,6 +108,7 @@ describe("program status work and capability detail", () => {
     expect(table).toHaveTextContent("100 proposed");
     expect(table).toHaveTextContent("0/100");
     expect(screen.getByText(/not authorized/i)).toBeInTheDocument();
+    expect(screen.getByText(/EPP-F03/)).toBeInTheDocument();
   });
 
   it("shows integration and development as separate evidence-backed lanes", () => {
