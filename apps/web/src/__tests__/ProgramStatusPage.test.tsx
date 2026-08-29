@@ -57,6 +57,9 @@ function bundle(): unknown {
           required_gates: 11,
         },
       },
+      release_eligible: false,
+      release_approval: "not_requested",
+      next_action: { action: "HISTORICAL_ONLY" },
     },
     supplement: {
       history: [],
@@ -184,5 +187,10 @@ describe("program status contract and first viewport", () => {
     expect(
       screen.getByText("Continue EPP-F01B implementation"),
     ).toBeInTheDocument();
+    expect(screen.getByText("Not release eligible")).toBeInTheDocument();
+    expect(
+      screen.getByText(/feature task progress cannot compensate/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Historical dashboard action")).toBeInTheDocument();
   });
 });

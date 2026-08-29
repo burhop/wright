@@ -59,6 +59,9 @@ export function makeProgramStatusBundle(
           required_gates: 11,
         },
       },
+      release_eligible: false,
+      release_approval: "not_requested",
+      next_action: { action: "HISTORICAL_ONLY" },
     },
     supplement: {
       history: [],

@@ -39,6 +39,22 @@ export function AtAGlanceSummary({ bundle }: { bundle: ProgramStatusBundle }) {
     latestTests.counts !== null
       ? (latestTests.counts as Record<string, unknown>)
       : null;
+  const dashboard = bundle.dashboard as Record<string, unknown>;
+  const releaseEligible = dashboard.release_eligible === true;
+  const releaseApproval =
+    typeof dashboard.release_approval === "string"
+      ? dashboard.release_approval
+      : "unavailable";
+  const historicalAction =
+    typeof dashboard.next_action === "object" && dashboard.next_action !== null
+      ? (dashboard.next_action as Record<string, unknown>)
+      : null;
+  const historicalActionLabel =
+    historicalAction && typeof historicalAction.action === "string"
+      ? historicalAction.action
+      : historicalAction && typeof historicalAction.label === "string"
+        ? historicalAction.label
+        : null;
 
   return (
     <section
@@ -190,6 +206,28 @@ export function AtAGlanceSummary({ bundle }: { bundle: ProgramStatusBundle }) {
             {work.current_next_action.requires_human_approval
               ? "required"
               : "not required"}
+          </small>
+          {historicalActionLabel ? (
+            <details>
+              <summary>Historical dashboard action</summary>
+              <p>{historicalActionLabel}</p>
+              <small>
+                Snapshot context only. The current program-state action above
+                takes precedence.
+              </small>
+            </details>
+          ) : null}
+        </article>
+
+        <article style={cardStyle} data-testid="release-posture-summary">
+          <h3 style={{ marginTop: 0 }}>Customer release posture</h3>
+          <strong>
+            {releaseEligible ? "Release eligible" : "Not release eligible"}
+          </strong>
+          <p>Approval: {releaseApproval}</p>
+          <small>
+            Release requires every independent readiness gate; feature task
+            progress cannot compensate for a blocked area.
           </small>
         </article>
       </div>
