@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 from copy import deepcopy
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -212,6 +213,31 @@ def test_publisher_state_is_validated_separately(tmp_path: Path) -> None:
     ).read_publisher()
 
     assert result.as_dict() == state
+
+    state["state"] = "invented"
+    (installed / "publisher.json").write_bytes(canonical(state))
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(installed, packaged, schema_root=schemas).read_publisher()
+    assert raised.value.code is ProgramStatusErrorCode.PUBLISHER_INVALID
+
+
+def test_concurrent_source_free_reads_return_one_immutable_identity(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    (installed / "current.json").write_bytes(
+        (FULL_CONTRACT_ROOT / "current.json").read_bytes()
+    )
+    reader = ProgramStatusReader(
+        installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+    )
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        documents = list(executor.map(lambda _index: reader.read_bundle(), range(32)))
+
+    assert len({document.bundle_id for document in documents}) == 1
+    assert len({document.canonical_bytes for document in documents}) == 1
 
 
 def test_full_contract_rejects_false_source_catalog_identity(tmp_path: Path) -> None:
