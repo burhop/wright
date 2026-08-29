@@ -315,6 +315,28 @@ describe("program status conditional refresh transport", () => {
     };
     expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
 
+    const wrongCommitSeries = raw.supplement.history.find(
+      (series: any) => series.id === "quality",
+    );
+    wrongCommitSeries.observations[0].commit = "d".repeat(40);
+    wrongCommitSeries.latest_change.commit = "d".repeat(40);
+    expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
+      "TEST_HISTORY_CHECKPOINT_RELATION_INVALID",
+    );
+
+    const wrongTime = makeProgramStatusBundle() as any;
+    addCanonicalTestRun(wrongTime);
+    const wrongTimeSeries = wrongTime.supplement.history.find(
+      (series: any) => series.id === "quality",
+    );
+    wrongTimeSeries.observations[0].observed_at = "2026-08-29T03:00:01Z";
+    wrongTimeSeries.latest_change.observed_at = "2026-08-29T03:00:01Z";
+    expect(() => validateProgramStatusEvidenceRelations(wrongTime)).toThrow(
+      "TEST_HISTORY_CHECKPOINT_RELATION_INVALID",
+    );
+
+    wrongCommitSeries.observations[0].commit = "c".repeat(40);
+    wrongCommitSeries.latest_change.commit = "c".repeat(40);
     raw.supplement.history.find(
       (series: any) => series.id === "quality",
     ).observations[0].evidence[0] = {
@@ -322,7 +344,7 @@ describe("program status conditional refresh transport", () => {
       path: "test-results/program-status/unselected-history.json",
     };
     expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
-      "TEST_RESULT_EVIDENCE_CONTEXT_INVALID",
+      "TEST_HISTORY_CHECKPOINT_RELATION_INVALID",
     );
 
     const orphan = makeProgramStatusBundle() as any;

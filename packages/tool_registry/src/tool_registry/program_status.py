@@ -710,6 +710,34 @@ class ProgramStatusReader:
             if reference["path"].startswith(test_result_prefix)
         }
         history = value["supplement"]["history"]
+        checkpoint_evidence_by_observation: dict[
+            tuple[str, str], set[tuple[str, str, str]]
+        ] = {}
+        for checkpoint in checkpoints:
+            observation_key = (checkpoint["commit"], checkpoint["observed_at"])
+            if observation_key in checkpoint_evidence_by_observation:
+                raise ValueError("test checkpoint commit/time identity is not unique")
+            checkpoint_evidence_by_observation[observation_key] = {
+                (reference["id"], reference["path"], reference["sha256"])
+                for source in checkpoint["suite_sources"]
+                for reference in source["evidence"]
+            }
+
+        for series in history:
+            if series["source_classification"] != "test_evidence":
+                continue
+            for observation in series["observations"]:
+                expected_evidence = checkpoint_evidence_by_observation.get(
+                    (observation["commit"], observation["observed_at"])
+                )
+                actual_evidence = {
+                    (reference["id"], reference["path"], reference["sha256"])
+                    for reference in observation["evidence"]
+                }
+                if expected_evidence is None or actual_evidence != expected_evidence:
+                    raise ValueError(
+                        "test history observation does not match one exact checkpoint"
+                    )
 
         def is_selected_test_source(path: tuple[str | int, ...]) -> bool:
             return (
@@ -734,6 +762,11 @@ class ProgramStatusReader:
                 and path[5] == "evidence"
                 and isinstance(path[6], int)
                 and history[path[2]]["source_classification"] == "test_evidence"
+                and (
+                    history[path[2]]["observations"][path[4]]["commit"],
+                    history[path[2]]["observations"][path[4]]["observed_at"],
+                )
+                in checkpoint_evidence_by_observation
                 and (reference["id"], reference["path"], reference["sha256"])
                 in test_source_set
             )

@@ -362,6 +362,11 @@ def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> N
         "to_value": 2,
         "reason": "Canonical committed test checkpoint",
     }
+    value["supplement"]["evidence_index"] = [
+        item
+        for item in value["supplement"]["evidence_index"]
+        if not item["path"].startswith("test-results/")
+    ]
     value["supplement"]["evidence_index"].append(
         {
             **reference,
@@ -379,6 +384,22 @@ def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> N
     ProgramStatusReader(
         installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
     ).read_bundle()
+
+    for field, invalid_value in (
+        ("commit", "d" * 40),
+        ("observed_at", "2026-08-29T14:00:01Z"),
+    ):
+        observation = quality["observations"][0]
+        valid_value = observation[field]
+        observation[field] = invalid_value
+        rehash(value)
+        (installed / "current.json").write_bytes(canonical(value))
+        with pytest.raises(ProgramStatusReadError) as raised:
+            ProgramStatusReader(
+                installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+            ).read_bundle()
+        assert raised.value.code is ProgramStatusErrorCode.INVALID
+        observation[field] = valid_value
 
     source["test_case_set_sha256"] = "0" * 64
     rehash(value)

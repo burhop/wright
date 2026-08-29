@@ -1763,6 +1763,80 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       .map(({ reference }) => evidenceKey(reference)),
   );
   const history = array(supplement.history, "/supplement/history");
+  const checkpointEvidenceByObservation = new Map<string, Set<string>>();
+  for (const [checkpointIndex, checkpointValue] of array(
+    testHistory.checkpoints,
+    "/supplement/test_history/checkpoints",
+  ).entries()) {
+    const checkpointPath = `/supplement/test_history/checkpoints/${checkpointIndex}`;
+    const checkpoint = record(checkpointValue, checkpointPath);
+    const observationKey = `${stringValue(checkpoint.commit, `${checkpointPath}/commit`)}\u0000${stringValue(checkpoint.observed_at, `${checkpointPath}/observed_at`)}`;
+    if (checkpointEvidenceByObservation.has(observationKey)) {
+      throw new ProgramStatusDecodeError(
+        "TEST_HISTORY_CHECKPOINT_RELATION_INVALID",
+        checkpointPath,
+      );
+    }
+    const checkpointEvidence = new Set<string>();
+    for (const [sourceIndex, sourceValue] of array(
+      checkpoint.suite_sources,
+      `${checkpointPath}/suite_sources`,
+    ).entries()) {
+      const source = record(
+        sourceValue,
+        `${checkpointPath}/suite_sources/${sourceIndex}`,
+      );
+      for (const referenceValue of array(
+        source.evidence,
+        `${checkpointPath}/suite_sources/${sourceIndex}/evidence`,
+      )) {
+        checkpointEvidence.add(
+          evidenceKey(
+            evidence(
+              referenceValue,
+              `${checkpointPath}/suite_sources/${sourceIndex}/evidence`,
+            ),
+          ),
+        );
+      }
+    }
+    checkpointEvidenceByObservation.set(observationKey, checkpointEvidence);
+  }
+  for (const [seriesIndex, seriesValue] of history.entries()) {
+    const series = record(seriesValue, `/supplement/history/${seriesIndex}`);
+    if (series.source_classification !== "test_evidence") continue;
+    for (const [observationIndex, observationValue] of array(
+      series.observations,
+      `/supplement/history/${seriesIndex}/observations`,
+    ).entries()) {
+      const observationPath = `/supplement/history/${seriesIndex}/observations/${observationIndex}`;
+      const observation = record(observationValue, observationPath);
+      const observationKey = `${stringValue(observation.commit, `${observationPath}/commit`)}\u0000${stringValue(observation.observed_at, `${observationPath}/observed_at`)}`;
+      const expectedEvidence =
+        checkpointEvidenceByObservation.get(observationKey);
+      const actualEvidence = new Set(
+        array(observation.evidence, `${observationPath}/evidence`).map(
+          (referenceValue, referenceIndex) =>
+            evidenceKey(
+              evidence(
+                referenceValue,
+                `${observationPath}/evidence/${referenceIndex}`,
+              ),
+            ),
+        ),
+      );
+      if (
+        !expectedEvidence ||
+        actualEvidence.size !== expectedEvidence.size ||
+        [...actualEvidence].some((key) => !expectedEvidence.has(key))
+      ) {
+        throw new ProgramStatusDecodeError(
+          "TEST_HISTORY_CHECKPOINT_RELATION_INVALID",
+          observationPath,
+        );
+      }
+    }
+  }
   const isMatchingTestHistoryEvidence = (
     reference: EvidenceRef,
     path: Array<string | number>,
