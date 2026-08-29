@@ -178,6 +178,7 @@ def _action(
     eligible: bool = True,
     blocker: str | None = None,
     requires_human_approval: bool = False,
+    authority_override: str | None = None,
 ) -> dict[str, Any]:
     if requires_human_approval:
         eligibility = "requires_approval"
@@ -191,12 +192,13 @@ def _action(
         eligibility = "blocked"
         authority_state = "not_authorized"
         action_blocker = blocker
+    resolved_authority_state = authority_override or authority_state
     return {
         "id": identifier,
         "label": label[:500],
         "purpose": purpose,
         "eligibility": eligibility,
-        "authority_state": authority_state,
+        "authority_state": resolved_authority_state,
         "requires_human_approval": requires_human_approval,
         "blocker": action_blocker,
         "evidence": evidence,
@@ -1885,6 +1887,167 @@ def _project_correction_graph(
     )
 
 
+def _project_delivery_lanes(
+    subject: Mapping[str, Any], state_ref: dict[str, str]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    state = subject["state"]
+    lease = state.get("active_mutating_lease")
+    _roadmap_path, _roadmap_raw, roadmap = _exact_catalog_json(subject, "roadmap")
+    roadmap_by_id = {
+        str(item["id"]): item
+        for item in roadmap.get("items", [])
+        if isinstance(item, Mapping)
+    }
+    current_feature = str(state.get("current_feature") or "")
+    current_item = roadmap_by_id.get(current_feature)
+    if current_item is None:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+            "The current feature has no exact roadmap item.",
+            "repair_delivery_lane_sources",
+        )
+
+    delivery_states = {
+        "AUTHOR_VERIFIED": "local gate",
+        "CANDIDATE_FROZEN": "local gate",
+        "INDEPENDENTLY_VERIFIED": "local gate",
+        "PUSH_AUTHORIZATION_PENDING": "local gate",
+        "PR_READY": "PR open",
+        "DEV_MERGE_READY": "merge ready",
+        "DEV_INTEGRATED": "merged",
+        "DEV_DEPLOYMENT_VERIFIED": "dev deployment verified",
+    }
+    transition_records: list[tuple[int, str, bytes, Mapping[str, Any]]] = []
+    for path, raw in subject["catalog_sources"].get("transition_evidence", []):
+        transition = _strict_json(raw, path)
+        if (
+            transition.get("feature_id") == "EPP-F01"
+            and transition.get("to_state") in delivery_states
+        ):
+            transition_records.append(
+                (int(transition["new_revision"]), path, raw, transition)
+            )
+    transition_records.sort(key=lambda item: item[0])
+    if not transition_records:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+            "No catalog-admitted EPP-F01 delivery transition exists.",
+            "repair_delivery_lane_sources",
+        )
+    last_revision = 0
+    events: list[dict[str, Any]] = []
+    pull_requests: set[tuple[int, str]] = set()
+    merged_dev: str | None = None
+    for revision, path, raw, transition in transition_records:
+        if revision <= last_revision:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+                "Delivery transitions are not in strict revision order.",
+                "repair_delivery_lane_sources",
+            )
+        last_revision = revision
+        reference = _evidence(f"lane-{transition['transition_id']}", path, raw)
+        events.append(
+            {
+                "kind": str(transition["to_state"]),
+                "commit": str(transition["git"]["source_commit"]),
+                "observed_at": str(transition["finished_at"]),
+                "result": str(transition["action"])[:300],
+                "evidence": [reference],
+            }
+        )
+        for check in transition.get("checks", []):
+            if not isinstance(check, Mapping):
+                continue
+            for value in check.get("evidence", []):
+                if not isinstance(value, str):
+                    continue
+                pull_match = re.fullmatch(
+                    r"https://github\.com/burhop/wright/pull/([1-9][0-9]*)", value
+                )
+                if pull_match:
+                    pull_requests.add((int(pull_match.group(1)), value))
+                merged_match = re.fullmatch(r"merged_dev:([0-9a-f]{40})", value)
+                if merged_match:
+                    merged_dev = merged_match.group(1)
+    if len(pull_requests) > 1:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+            "Delivery transitions disagree on pull-request identity.",
+            "repair_delivery_lane_sources",
+        )
+    last_transition = transition_records[-1][3]
+    last_event = events[-1]
+    pr_number, pr_url = next(iter(pull_requests)) if pull_requests else (None, None)
+    integration_item = roadmap_by_id.get("EPP-F01")
+    if integration_item is None:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+            "The integrated feature has no roadmap item.",
+            "repair_delivery_lane_sources",
+        )
+    integration = {
+        "kind": "integration",
+        "branch": "unavailable",
+        "milestone": str(integration_item["title"]),
+        "latest_capability": str(integration_item["outcome"])[:500],
+        "blocker": None,
+        "next_action": _action(
+            "INTEGRATION_COMPLETE",
+            "No integration action is required; EPP-F01 is deployed to dev.",
+            "lane_next_action",
+            last_event["evidence"],
+            authority_override="not_required",
+        ),
+        "observed_at": str(last_transition["finished_at"]),
+        "evidence": last_event["evidence"],
+        "target_branch": str(state["baseline"]["ref"]),
+        "frozen_candidate": None,
+        "last_pushed_commit": None,
+        "last_pushed_at": None,
+        "pull_request": (
+            {"number": pr_number, "url": pr_url} if pr_number and pr_url else None
+        ),
+        "phase": delivery_states[str(last_transition["to_state"])],
+        "checks": None,
+        "ci_started_at": None,
+        "first_actionable_failure": None,
+        "dev_sync": f"merged to {merged_dev}" if merged_dev else None,
+        "merge_gate": (
+            "passed historically"
+            if last_transition.get("classification") == "passed"
+            else None
+        ),
+        "authority_state": "not_required",
+        "events": events,
+    }
+
+    if not isinstance(lease, Mapping):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
+            "The continued-development lane needs the exact active lease.",
+            "repair_delivery_lane_sources",
+        )
+    development = {
+        "kind": "continued_development",
+        "branch": str(lease["branch"]),
+        "milestone": str(current_item["title"]),
+        "latest_capability": str(current_item["outcome"])[:500],
+        "blocker": None,
+        "next_action": _action(
+            str((state.get("next_eligible_actions") or [{}])[0].get("action")),
+            str((state.get("next_eligible_actions") or [{}])[0].get("reason")),
+            "lane_next_action",
+            [state_ref],
+        ),
+        "observed_at": str(subject["generated_at"]),
+        "evidence": [state_ref],
+        "base_commit": str(lease["dev_baseline"]["commit"]),
+        "authority_state": "authorized",
+    }
+    return integration, development
+
+
 def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str, Any]:
     blobs = subject["blobs"]
     state = subject["state"]
@@ -1933,6 +2096,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         blocker=action_label if requires_human_approval else None,
         requires_human_approval=requires_human_approval,
     )
+    integration_lane, development_lane = _project_delivery_lanes(subject, state_ref)
     history_definitions = (
         (
             "customer_capability",
@@ -2084,6 +2248,45 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         "feature_tasks",
         "feature_task",
     )
+    program_task_evidence = [
+        _evidence(
+            f"program-task-source:{index}",
+            path,
+            _git_blob(repository, str(subject["commit"]), path),
+        )
+        for index, path in enumerate(registered, start=1)
+    ]
+    history_by_id["program_tasks"] = [
+        {
+            "commit": str(subject["commit"]),
+            "transition_id": None,
+            "parent_commit": None,
+            "observed_at": str(subject["generated_at"]),
+            "value": program_done,
+            "denominator": program_total,
+            "label": "program_tasks",
+            "source_classification": "program_task",
+            "change_reason": "Current closed registered task-source checkpoint",
+            "evidence": program_task_evidence,
+        }
+    ]
+    history_by_id["integration_delivery"] = [
+        {
+            "commit": event["commit"],
+            "transition_id": event["evidence"][0]["id"].removeprefix("lane-"),
+            "parent_commit": (
+                integration_lane["events"][index - 1]["commit"] if index else None
+            ),
+            "observed_at": event["observed_at"],
+            "value": index + 1,
+            "denominator": len(integration_lane["events"]),
+            "label": "integration_delivery",
+            "source_classification": "integration_gate",
+            "change_reason": event["result"],
+            "evidence": event["evidence"],
+        }
+        for index, event in enumerate(integration_lane["events"])
+    ]
     if test_checkpoints:
         history_by_id["quality"] = [
             {
@@ -2136,10 +2339,8 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 historical_evidence[reference["id"]] = detail
     graph_context = _graph_context([state_ref])
     benchmark_blocker = "Benchmark execution is not authorized and remains at 0/100."
-    lane_blocker = "Push, PR, merge, and dev integration are not authorized."
     lease = state.get("active_mutating_lease")
     policy_limits = lifecycle.get("wip_limits", {})
-    observed_at = str(subject["generated_at"])
     risk_path, risk_raw = subject["catalog_sources"]["risk_register"][0]
     decision_path, decision_raw = subject["catalog_sources"]["decision_register"][0]
     evidence_pairs = (
@@ -2221,7 +2422,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "evidence": [dashboard_ref],
         },
         "work": {
-            "current_milestone": "Deliver the browser-accessible program status page",
+            "current_milestone": development_lane["milestone"],
             "active_feature": feature_id,
             "lease": dict(lease) if isinstance(lease, Mapping) else None,
             "program_tasks": {
@@ -2241,57 +2442,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "checkpoints": [],
             "blockers": [],
             "current_next_action": current_action,
-            "lanes": [
-                {
-                    "kind": "integration",
-                    "branch": "077-control-plane-validator",
-                    "milestone": "EPP-F01 integrated to dev",
-                    "latest_capability": "Committed control-plane validation is available on dev.",
-                    "blocker": lane_blocker,
-                    "next_action": _action(
-                        "REQUEST_INTEGRATION_AUTHORITY",
-                        "Request authority before external integration",
-                        "lane_next_action",
-                        [state_ref],
-                        eligible=False,
-                        blocker=lane_blocker,
-                    ),
-                    "observed_at": observed_at,
-                    "evidence": [state_ref],
-                    "target_branch": "dev",
-                    "frozen_candidate": None,
-                    "last_pushed_commit": None,
-                    "last_pushed_at": None,
-                    "pull_request": None,
-                    "phase": "merged",
-                    "checks": None,
-                    "ci_started_at": None,
-                    "first_actionable_failure": None,
-                    "dev_sync": "integrated",
-                    "merge_gate": "passed historically",
-                    "authority_state": "not_authorized",
-                    "events": [],
-                },
-                {
-                    "kind": "continued_development",
-                    "branch": str(lease.get("branch", "unavailable"))
-                    if isinstance(lease, Mapping)
-                    else "unavailable",
-                    "milestone": "Browser program status",
-                    "latest_capability": "Read-only API and browser surface implemented; committed publisher is in progress.",
-                    "blocker": None,
-                    "next_action": _action(
-                        "CONTINUE_CURRENT_FEATURE_IMPLEMENTATION",
-                        "Continue local EPP-F01B implementation",
-                        "lane_next_action",
-                        [state_ref],
-                    ),
-                    "observed_at": observed_at,
-                    "evidence": [state_ref],
-                    "base_commit": str(state["baseline"]["commit"]),
-                    "authority_state": "authorized",
-                },
-            ],
+            "lanes": [integration_lane, development_lane],
         },
         "governance": {
             "corrections": corrections,

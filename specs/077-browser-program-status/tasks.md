@@ -70,7 +70,7 @@
 
 ### Tests first
 
-- [ ] T021 [P] [US2] Add failing metric-ID/unit/counting-rule/source-class pairing, transition/parent causal order, deterministic latest-change, omission/bounds, program and feature task burn-up, canonical test checkpoint selection/categories/pass rate, and customer/roadmap scope tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [x] T021 [P] [US2] Add failing metric-ID/unit/counting-rule/source-class pairing, transition/parent causal order, deterministic latest-change, omission/bounds, program and feature task burn-up, canonical test checkpoint selection/categories/pass rate, and customer/roadmap scope tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [x] T022 [P] [US2] Add failing task burn-up, test-outcome, customer-capability, readiness/benchmark chart, tooltip, semantic-table, reduced-motion, and graph-context tests in `apps/web/src/__tests__/ProgramStatusHistory.test.tsx`
 
 ### Implementation
@@ -111,12 +111,12 @@
 
 ### Tests first
 
-- [ ] T030 [P] [US4] Add failing two-lane order/uniqueness, continued-lane field rejection, catalog sum, lease projection, program/feature task totals and remaining arithmetic, undecomposed roadmap disclosure, exact active-assignment identity/task/title/state/branch/worktree-or-lane/purpose evidence, all-use-case and 100-process funnel stage separation, and action authority tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [x] T030 [P] [US4] Add failing two-lane order/uniqueness, continued-lane field rejection, catalog sum, lease projection, program/feature task totals and remaining arithmetic, undecomposed roadmap disclosure, exact active-assignment identity/task/title/state/branch/worktree-or-lane/purpose evidence, all-use-case and 100-process funnel stage separation, and action authority tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [x] T031 [P] [US4] Add failing work summary, active-assignment unavailable/exact states, use-case funnel, proposed-population separation, lane, authority, checkpoint timestamp, and product-context tests in `apps/web/src/__tests__/ProgramStatusWork.test.tsx`
 
 ### Implementation
 
-- [ ] T032 [US4] Derive closed lanes, safe lease, registered program/feature tasks, exact active assignments, all-use-case and 100-process funnels, separate catalog summary, sole current action, historical dashboard action, and non-granting metric/benchmark/lane actions from catalog-admitted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
+- [x] T032 [US4] Derive closed lanes, safe lease, registered program/feature tasks, exact active assignments, all-use-case and 100-process funnels, separate catalog summary, sole current action, historical dashboard action, and non-granting metric/benchmark/lane actions from catalog-admitted committed evidence in `scripts/program_status/publisher.py` (depends on T030)
 - [x] T033 [US4] Implement `DeliveryLanes.tsx`, `WorkProgress.tsx`, `ActiveAssignments.tsx`, and `UseCaseFunnels.tsx` with explicit evidence/population semantics and semantic tables in `apps/web/src/components/program-status/` (depends on T031, T032)
 - [x] T034 [US4] Put the six-answer work/use-case/test/action summary above deep governance evidence and integrate the sole authority-aware action, historical dashboard action, non-governing guidance, blockers, lane history, and exact checkpoint times into `ProgramStatusPage.tsx` (depends on T033)
 

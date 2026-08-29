@@ -716,3 +716,88 @@ def test_canonical_test_projection_rejects_overlapping_component_populations() -
         )
 
     assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"
+
+
+def test_history_series_have_fixed_semantics_and_causal_committed_order(
+    tmp_path: Path,
+) -> None:
+    publish_program_status(request(tmp_path))
+    bundle = json.loads((tmp_path / "current.json").read_bytes())
+    series = bundle["supplement"]["history"]
+
+    assert [item["id"] for item in series] == [
+        "customer_capability",
+        "quality",
+        "process_automation",
+        "governance",
+        "product_readiness",
+        "benchmark_readiness",
+        "commercial_readiness",
+        "program_health",
+        "benchmark_qualified",
+        "program_tasks",
+        "feature_tasks",
+        "integration_delivery",
+    ]
+    semantic_keys = {
+        (
+            item["id"],
+            item["unit"],
+            item["counting_rule"],
+            item["source_classification"],
+        )
+        for item in series
+    }
+    assert len(semantic_keys) == len(series)
+    for item in series:
+        observations = item["observations"]
+        assert item["omitted_observations"] >= 0
+        assert len(observations) <= 250
+        assert [row["observed_at"] for row in observations] == sorted(
+            row["observed_at"] for row in observations
+        )
+        if observations:
+            assert item["latest_change"]["commit"] == observations[-1]["commit"]
+            assert item["latest_change"]["to_value"] == observations[-1]["value"]
+
+    work = bundle["supplement"]["work"]
+    assert work["program_tasks"]["remaining"] == (
+        work["program_tasks"]["total"] - work["program_tasks"]["completed"]
+    )
+    assert work["tasks"]["remaining"] == (
+        work["tasks"]["total"] - work["tasks"]["completed"]
+    )
+    assert work["program_tasks"]["undecomposed_roadmap_items"]
+
+
+def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["catalog_sources"] = publisher._load_closed_catalog_sources(
+        REPOSITORY, subject
+    )
+    state_ref = publisher._evidence(
+        "program-state", publisher.STATE_PATH, subject["blobs"][publisher.STATE_PATH]
+    )
+
+    integration, development = publisher._project_delivery_lanes(subject, state_ref)
+
+    assert integration["kind"] == "integration"
+    assert integration["branch"] == "unavailable"
+    assert integration["target_branch"] == "dev"
+    assert integration["phase"] == "dev deployment verified"
+    assert integration["pull_request"] == {
+        "number": 114,
+        "url": "https://github.com/burhop/wright/pull/114",
+    }
+    assert integration["blocker"] is None
+    assert integration["events"][-1]["kind"] == "DEV_DEPLOYMENT_VERIFIED"
+    assert integration["events"][-1]["evidence"] == integration["evidence"]
+    assert integration["next_action"]["authority_state"] == "not_required"
+
+    lease = subject["state"]["active_mutating_lease"]
+    assert development["kind"] == "continued_development"
+    assert development["branch"] == lease["branch"]
+    assert development["base_commit"] == lease["dev_baseline"]["commit"]
+    assert development["milestone"] == "Browser program-status dashboard"
+    assert development["authority_state"] == "authorized"
+    assert development["evidence"] == [state_ref]
