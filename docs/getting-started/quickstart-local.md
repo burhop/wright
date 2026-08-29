@@ -135,3 +135,14 @@ non-standard deployments.
 For the plugin-first path, use [Existing Hermes Plugin](hermes-plugin.md). For
 Windows Desktop-specific load paths and gateway setup, use
 [Wright with Hermes Desktop](../hermes-desktop-wright.md).
+## Local Program Status
+
+To refresh the read-only `/program-status` page from the current committed
+program subject, publish into the API database parent's stable data root:
+
+```powershell
+python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .wright-data/program-status
+```
+
+See [Program status](program-status.md) for identity, fallback, refresh, and
+rollback semantics. The publisher observes committed Git evidence only.
