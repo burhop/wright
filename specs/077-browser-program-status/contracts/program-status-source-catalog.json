@@ -87,7 +87,7 @@
       "schema_ids": ["https://wright.local/programs/epp/lifecycle-policy.schema.json"],
       "parser_contract": "EPP_LIFECYCLE_POLICY_V1",
       "selection_rule": "Use only to validate that the current action is legal for the exact state and authority; never synthesize an action absent from program state.",
-      "projects_to": ["/supplement/work/current_next_action"]
+      "projects_to": ["/supplement/work/current_next_action", "/supplement/governance/limits"]
     },
     "gate_catalog": {
       "path_kind": "exact",

@@ -471,7 +471,10 @@
   "wip_limits": {
     "mutating_leases": 1,
     "implementing_or_repairing_features": 1,
-    "read_only_auditors": 3
+    "read_only_auditors": 3,
+    "wip_max": 1,
+    "repair_max": 2,
+    "push_max": 2
   },
   "path_roles": [
     {

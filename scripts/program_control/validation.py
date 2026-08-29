@@ -47,6 +47,11 @@ REQUIRED_JSON = (
     "decision-register.json",
     "risk-register.json",
 )
+EPP_F01B_SCHEMA_ROUTED_DOCUMENTS = {
+    "work-registry.json": "schemas/work-registry.schema.json",
+    "use-case-registry.json": "schemas/use-case-registry.schema.json",
+    "test-run-ledger.json": "schemas/test-run-ledger.schema.json",
+}
 
 
 def _finding(
@@ -2737,6 +2742,30 @@ def _validate_documents(
             findings.append(
                 _finding("JSON_TOP_LEVEL_INVALID", "fatal", path, "OBJECT_REQUIRED")
             )
+            continue
+        relative_path = path.removeprefix(f"{program_root}/")
+        routed_schema_path = EPP_F01B_SCHEMA_ROUTED_DOCUMENTS.get(relative_path)
+        if routed_schema_path is not None:
+            schema_path = f"{program_root}/{routed_schema_path}"
+            schema = documents.get(schema_path)
+            if not isinstance(schema, dict):
+                findings.append(
+                    _finding(
+                        "SCHEMA_REFERENCE_MISSING",
+                        "fatal",
+                        path,
+                        "FROZEN_EPP_F01B_SCHEMA_ROUTE",
+                    )
+                )
+            elif validate_schema(schema, value):
+                findings.append(
+                    _finding(
+                        "SCHEMA_VALIDATION_FAILED",
+                        "fatal",
+                        path,
+                        "FROZEN_EPP_F01B_SCHEMA_INSTANCE",
+                    )
+                )
             continue
         version = value.get("schema_version")
         if version is not None:

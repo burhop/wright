@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 from jsonschema.validators import validator_for
 
+from program_control.validation import _validate_documents
+
 
 CONTRACT_NAMES = (
     "checkpoint-evidence-correction.schema.json",
@@ -104,9 +106,7 @@ def load(path: Path) -> object:
 def test_epp_f01b_planning_contract_is_valid_draft_2020_12(
     repository_root: Path, name: str
 ) -> None:
-    schema = load(
-        repository_root / "specs/077-browser-program-status/contracts" / name
-    )
+    schema = load(repository_root / "specs/077-browser-program-status/contracts" / name)
     validator_for(schema).check_schema(schema)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
 
@@ -160,6 +160,100 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
     ]
 
 
+def test_epp_f01b_registry_documents_use_only_their_frozen_schemas(
+    repository_root: Path,
+) -> None:
+    program_root = "docs/programs/engineering-process-platform"
+    registry_names = (
+        "work-registry.json",
+        "use-case-registry.json",
+        "test-run-ledger.json",
+    )
+    paths = [
+        f"{program_root}/schemas/{name.removesuffix('.json')}.schema.json"
+        for name in registry_names
+    ] + [f"{program_root}/{name}" for name in registry_names]
+    blobs = {path: (repository_root / path).read_bytes() for path in paths}
+
+    class BlobReader:
+        def blob(self, _commit: str, path: str) -> bytes:
+            return blobs[path]
+
+    findings = []
+    documents = _validate_documents(
+        BlobReader(),  # type: ignore[arg-type]
+        "f" * 40,
+        program_root,
+        [{"path": path} for path in paths],
+        findings,
+    )
+
+    assert all(f"{program_root}/{name}" in documents for name in registry_names)
+    assert not [
+        finding
+        for finding in findings
+        if finding.artifact in {f"{program_root}/{name}" for name in registry_names}
+        and finding.code
+        in {
+            "SCHEMA_VERSION_INVALID",
+            "SCHEMA_REFERENCE_MISSING",
+            "SCHEMA_VALIDATION_FAILED",
+        }
+    ]
+
+
+def test_epp_f01b_registry_routing_does_not_relax_generic_document_validation(
+    repository_root: Path,
+) -> None:
+    program_root = "docs/programs/engineering-process-platform"
+    target = f"{program_root}/future-registry.json"
+    blobs = {target: b'{"schema_version":"1.0.0"}\n'}
+
+    class BlobReader:
+        def blob(self, _commit: str, path: str) -> bytes:
+            return blobs[path]
+
+    findings = []
+    _validate_documents(
+        BlobReader(),  # type: ignore[arg-type]
+        "f" * 40,
+        program_root,
+        [{"path": target}],
+        findings,
+    )
+
+    assert any(
+        finding.code == "SCHEMA_VERSION_INVALID" and finding.artifact == target
+        for finding in findings
+    )
+
+
+def test_lifecycle_policy_projects_exact_operating_limits(
+    repository_root: Path,
+) -> None:
+    root = repository_root / "docs/programs/engineering-process-platform"
+    schema = load(root / "schemas/lifecycle-policy.schema.json")
+    policy = load(root / "lifecycle-policy.json")
+    catalog = load(
+        repository_root
+        / "specs/077-browser-program-status/contracts/program-status-source-catalog.json"
+    )
+
+    validator_for(schema)(schema).validate(policy)
+    assert policy["wip_limits"] == {
+        "mutating_leases": 1,
+        "implementing_or_repairing_features": 1,
+        "read_only_auditors": 3,
+        "wip_max": 1,
+        "repair_max": 2,
+        "push_max": 2,
+    }
+    assert (
+        "/supplement/governance/limits"
+        in catalog["sources"]["lifecycle_policy"]["projects_to"]
+    )
+
+
 def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
     repository_root: Path,
 ) -> None:
@@ -184,9 +278,12 @@ def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
     assert use_cases["$defs"]["definitionEvidence"]["allOf"][1]["properties"][
         "source_name"
     ]["enum"] == ["roadmap", "customer_story_catalog"]
-    assert use_cases["$defs"]["verificationEvidence"]["allOf"][1]["properties"][
-        "source_name"
-    ]["const"] == "verification_evidence"
+    assert (
+        use_cases["$defs"]["verificationEvidence"]["allOf"][1]["properties"][
+            "source_name"
+        ]["const"]
+        == "verification_evidence"
+    )
 
     ledger_required = test_ledger["required"]
     assert {"ledger_revision", "prior_ledger", "runs_sha256", "run_key_rule"} <= set(
@@ -219,7 +316,10 @@ def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
     assert {"identity_digest_rule", "run_key_rule", "runs_digest_rule"} <= set(
         bundle["$defs"]["testHistory"]["required"]
     )
-    assert "docs/programs/engineering-process-platform/schemas/dashboard.schema.json" in tasks
+    assert (
+        "docs/programs/engineering-process-platform/schemas/dashboard.schema.json"
+        in tasks
+    )
 
 
 @pytest.mark.parametrize("name", CONTRACT_NAMES)
