@@ -374,6 +374,63 @@ def test_governance_register_projection_uses_exact_catalog_sources() -> None:
     assert raised.value.code == "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID"
 
 
+def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["catalog_sources"] = publisher._load_closed_catalog_sources(
+        REPOSITORY, subject
+    )
+    task_path = "specs/077-browser-program-status/tasks.md"
+    task_raw = publisher._git_blob(REPOSITORY, subject["commit"], task_path)
+    task = publisher._task_records(task_raw)["T005"]
+    subject["work_registry"] = {
+        **subject["work_registry"],
+        "active_assignments": [
+            {
+                "agent_id": "primary-agent",
+                "feature_id": "EPP-F01B",
+                "task_id": "T005",
+                "task_title": task["title"],
+                "task_state": "in_progress",
+                "branch": subject["state"]["active_mutating_lease"]["branch"],
+                "worktree_id": subject["state"]["active_mutating_lease"]["worktree_id"],
+                "lane": "continued_development",
+                "why_this_matters": "Closes false status claims before customer review.",
+                "observed_at": subject["generated_at"],
+                "evidence": [
+                    {
+                        "path": task_path,
+                        "sha256": hashlib.sha256(task_raw).hexdigest(),
+                    }
+                ],
+            }
+        ],
+    }
+
+    result = publisher._registered_task_counts(REPOSITORY, subject, "EPP-F01B")
+
+    registered, program_done, program_total, feature_done, feature_total = result[:5]
+    assignments, undecomposed = result[5:]
+    assert registered == [
+        "specs/076-control-plane-validator/tasks.md",
+        task_path,
+    ]
+    assert 0 <= program_done <= program_total
+    assert 0 <= feature_done < feature_total
+    assert assignments[0]["task_id"] == "T005"
+    assert assignments[0]["evidence"][0]["path"] == task_path
+    assert "EPP-F02" in undecomposed
+    assert "EPP-F01B" not in undecomposed
+
+    invalid = {**subject, "work_registry": {**subject["work_registry"]}}
+    invalid["work_registry"]["task_sources"] = [
+        *subject["work_registry"]["task_sources"],
+        subject["work_registry"]["task_sources"][1],
+    ]
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._registered_task_counts(REPOSITORY, invalid, "EPP-F01B")
+    assert raised.value.code == "PROGRAM_STATUS_WORK_REGISTRY_INVALID"
+
+
 def test_canonical_test_identity_and_latest_terminal_selection() -> None:
     test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
     assert (

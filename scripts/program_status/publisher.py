@@ -46,6 +46,10 @@ BUNDLE_SCHEMA_PATH: Final = (
 )
 DASHBOARD_SCHEMA_PATH: Final = f"{PROGRAM_ROOT}/schemas/dashboard.schema.json"
 TASK_RE = re.compile(r"^- \[(?P<done>[ xX])\] (?P<id>T[0-9]{3})\b", re.MULTILINE)
+TASK_DETAIL_RE = re.compile(
+    r"^- \[(?P<done>[ xX])\] (?P<id>T[0-9]{3})(?: \[[^\]]+\])* (?P<title>.+)$",
+    re.MULTILINE,
+)
 STORY_HEADING_RE = re.compile(r"^### EPP-US-(?P<number>[0-9]{3})\b", re.MULTILINE)
 STORY_TABLE_RE = re.compile(
     r"^\| EPP-US-(?P<number>[0-9]{3}) \|.*\| (?P<maturity>[^|]+?) \|$",
@@ -908,10 +912,56 @@ def _registered_task_counts(
     repository: Path,
     subject: Mapping[str, Any],
     feature_id: str,
-) -> tuple[list[str], int, int, int, int]:
+) -> tuple[list[str], int, int, int, int, list[dict[str, Any]], list[str]]:
     registered: list[str] = []
+    task_sources = subject["work_registry"].get("task_sources", [])
+    if not isinstance(task_sources, list):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "The work registry task_sources value must be an array.",
+            "repair_work_registry",
+        )
+    source_feature_ids = [
+        source.get("feature_id")
+        for source in task_sources
+        if isinstance(source, Mapping)
+    ]
+    source_paths = [
+        source.get("tasks_path")
+        for source in task_sources
+        if isinstance(source, Mapping)
+    ]
+    roadmap_ids = [
+        source.get("roadmap_item_id")
+        for source in task_sources
+        if isinstance(source, Mapping)
+    ]
+    if (
+        len(source_feature_ids) != len(task_sources)
+        or len(source_feature_ids) != len(set(source_feature_ids))
+        or len(source_paths) != len(set(source_paths))
+        or len(roadmap_ids) != len(set(roadmap_ids))
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "Task source feature, path, and roadmap identities must be present and unique.",
+            "repair_work_registry",
+        )
+    active_sources = [
+        source
+        for source in task_sources
+        if isinstance(source, Mapping) and source.get("active_feature") is True
+    ]
+    if len(active_sources) != 1 or active_sources[0].get("feature_id") != feature_id:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "Exactly one task source must match the current active feature.",
+            "repair_work_registry",
+        )
     program_completed = program_total = feature_completed = feature_total = 0
-    for source in subject["work_registry"].get("task_sources", []):
+    task_records_by_feature: dict[str, dict[str, dict[str, Any]]] = {}
+    task_raw_by_feature: dict[str, bytes] = {}
+    for source in task_sources:
         if not isinstance(source, Mapping) or not isinstance(
             source.get("tasks_path"), str
         ):
@@ -921,21 +971,175 @@ def _registered_task_counts(
                 "repair_work_registry",
             )
         task_path = str(source["tasks_path"])
-        completed, total = _task_counts(
-            _git_blob(repository, str(subject["commit"]), task_path)
-        )
+        task_raw = _git_blob(repository, str(subject["commit"]), task_path)
+        records = _task_records(task_raw)
+        completed = sum(1 for record in records.values() if record["completed"])
+        total = len(records)
+        source_feature = str(source["feature_id"])
+        task_records_by_feature[source_feature] = records
+        task_raw_by_feature[source_feature] = task_raw
         registered.append(task_path)
         program_completed += completed
         program_total += total
         if source.get("feature_id") == feature_id:
             feature_completed, feature_total = completed, total
+    roadmap_path, _roadmap_raw, roadmap = _exact_catalog_json(subject, "roadmap")
+    roadmap_items = roadmap.get("items")
+    if not isinstance(roadmap_items, list):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "The roadmap must expose its contracted items array.",
+            "repair_work_registry",
+        )
+    roadmap_by_id = {
+        str(item["id"]): item for item in roadmap_items if isinstance(item, Mapping)
+    }
+    if len(roadmap_by_id) != len(roadmap_items) or not set(roadmap_ids) <= set(
+        roadmap_by_id
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "Every registered task source must bind one unique existing roadmap item.",
+            "repair_work_registry",
+        )
+    undecomposed = [
+        roadmap_id
+        for roadmap_id, item in roadmap_by_id.items()
+        if item.get("spec_kit_feature") is True and roadmap_id not in set(roadmap_ids)
+    ]
+    assignments_raw = subject["work_registry"].get("active_assignments")
+    if not isinstance(assignments_raw, list):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "The work registry active_assignments value must be an array.",
+            "repair_work_registry",
+        )
+    assignment_agents = [
+        item.get("agent_id") for item in assignments_raw if isinstance(item, Mapping)
+    ]
+    assignment_tasks = [
+        (item.get("feature_id"), item.get("task_id"))
+        for item in assignments_raw
+        if isinstance(item, Mapping)
+    ]
+    if (
+        len(assignment_agents) != len(assignments_raw)
+        or len(assignment_agents) != len(set(assignment_agents))
+        or len(assignment_tasks) != len(set(assignment_tasks))
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "Active assignment agent and feature-task identities must be unique.",
+            "repair_work_registry",
+        )
+    lease = subject["state"].get("active_mutating_lease")
+    projected_assignments: list[dict[str, Any]] = []
+    for item in assignments_raw:
+        assert isinstance(item, Mapping)
+        assigned_feature = str(item["feature_id"])
+        task_id = str(item["task_id"])
+        record = task_records_by_feature.get(assigned_feature, {}).get(task_id)
+        task_raw = task_raw_by_feature.get(assigned_feature)
+        task_path = next(
+            (
+                str(source["tasks_path"])
+                for source in task_sources
+                if source.get("feature_id") == assigned_feature
+            ),
+            None,
+        )
+        if (
+            record is None
+            or task_raw is None
+            or task_path is None
+            or record["completed"]
+            or item.get("task_title") != record["title"]
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_ASSIGNMENT_INVALID",
+                "An active assignment must bind one exact incomplete registered task and title.",
+                "repair_work_registry",
+            )
+        if assigned_feature == feature_id and (
+            not isinstance(lease, Mapping)
+            or item.get("branch") != lease.get("branch")
+            or item.get("worktree_id") != lease.get("worktree_id")
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_ASSIGNMENT_INVALID",
+                "The current-feature assignment must match the active lease branch and worktree.",
+                "repair_work_registry",
+            )
+        matching_evidence = [
+            evidence
+            for evidence in item.get("evidence", [])
+            if isinstance(evidence, Mapping)
+            and evidence.get("path") == task_path
+            and evidence.get("sha256") == _raw_digest(task_raw)
+        ]
+        if len(matching_evidence) != 1:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_ASSIGNMENT_INVALID",
+                "An active assignment needs exactly one matching committed task-source identity.",
+                "repair_work_registry",
+            )
+        projected_assignments.append(
+            {
+                key: item.get(key)
+                for key in (
+                    "agent_id",
+                    "feature_id",
+                    "task_id",
+                    "task_title",
+                    "task_state",
+                    "branch",
+                    "worktree_id",
+                    "lane",
+                    "why_this_matters",
+                    "observed_at",
+                )
+            }
+            | {
+                "evidence": [
+                    _evidence(
+                        f"assignment-{item['agent_id']}-{task_id}", task_path, task_raw
+                    )
+                ]
+            }
+        )
     return (
         registered,
         program_completed,
         program_total,
         feature_completed,
         feature_total,
+        projected_assignments,
+        undecomposed,
     )
+
+
+def _task_records(raw: bytes) -> dict[str, dict[str, Any]]:
+    text = raw.decode("utf-8")
+    records: dict[str, dict[str, Any]] = {}
+    for match in TASK_DETAIL_RE.finditer(text):
+        task_id = match.group("id")
+        if task_id in records:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+                f"Task identity {task_id} is duplicated.",
+                "repair_registered_task_source",
+            )
+        records[task_id] = {
+            "completed": match.group("done").lower() == "x",
+            "title": match.group("title").strip(),
+        }
+    if not records:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_WORK_REGISTRY_INVALID",
+            "A registered task source contains no task identities.",
+            "repair_registered_task_source",
+        )
+    return records
 
 
 def _walk_subject_records(value: Any) -> list[Mapping[str, Any]]:
@@ -1370,9 +1574,15 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     feature_id = str(state.get("current_feature") or "EPP-F01B")
     state_ref = _evidence("program-state", STATE_PATH, blobs[STATE_PATH])
     dashboard_ref = _evidence("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH])
-    registered, program_done, program_total, feature_done, feature_total = (
-        _registered_task_counts(repository, subject, feature_id)
-    )
+    (
+        registered,
+        program_done,
+        program_total,
+        feature_done,
+        feature_total,
+        active_assignments,
+        undecomposed_roadmap_items,
+    ) = _registered_task_counts(repository, subject, feature_id)
     use_case_items, _process_ids, use_case_funnels = _derive_use_cases(subject)
     risks, decisions = _project_governance_registers(subject)
     story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
@@ -1698,7 +1908,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "total": program_total,
                 "remaining": program_total - program_done,
                 "registered_sources": registered,
-                "undecomposed_roadmap_items": [],
+                "undecomposed_roadmap_items": undecomposed_roadmap_items,
             },
             "tasks": {
                 "feature_id": feature_id,
@@ -1706,9 +1916,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "total": feature_total,
                 "remaining": feature_total - feature_done,
             },
-            "active_assignments": list(
-                subject["work_registry"].get("active_assignments", [])
-            ),
+            "active_assignments": active_assignments,
             "checkpoints": [],
             "blockers": [],
             "current_next_action": current_action,
