@@ -74,7 +74,8 @@ export function ProgramStatusPage() {
   }, []);
 
   return (
-    <main
+    <section
+      aria-labelledby="program-status-title"
       data-testid="page-program-status"
       className="animate-fade-in-up"
       style={{
@@ -106,7 +107,9 @@ export function ProgramStatusPage() {
           >
             Engineering Process Platform
           </p>
-          <h1 style={{ margin: "4px 0" }}>Program status</h1>
+          <h1 id="program-status-title" style={{ margin: "4px 0" }}>
+            Program status
+          </h1>
           <p style={{ margin: 0, color: "var(--color-secondary)" }}>
             A read-only view of committed, validated evidence.
           </p>
@@ -207,7 +210,7 @@ export function ProgramStatusPage() {
           </p>
         </section>
       )}
-    </main>
+    </section>
   );
 }
 
