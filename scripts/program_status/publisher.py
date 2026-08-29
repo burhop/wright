@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Mapping
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker  # type: ignore[import-untyped]
 from referencing import Registry, Resource
@@ -1581,6 +1582,49 @@ def _checkout_evidence_detail(
     }
 
 
+def _validate_evidence_details(bundle: Mapping[str, Any]) -> None:
+    source_commit = str(bundle["source"]["commit"])
+    details = bundle["supplement"]["evidence_index"]
+    for detail in details:
+        path = str(detail["path"])
+        if not re.fullmatch(
+            r"[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*",
+            path,
+        ) or any(segment in {"", ".", ".."} for segment in path.split("/")):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_EVIDENCE_PATH_INVALID",
+                "An evidence detail path is not canonical.",
+                "repair_evidence_index",
+            )
+        exact_url = detail.get("exact_url")
+        if exact_url is None:
+            if detail.get("availability") == "exact_github":
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_EVIDENCE_URL_INVALID",
+                    "Exact-GitHub evidence has no exact URL.",
+                    "repair_evidence_index",
+                )
+            continue
+        parsed = urlsplit(str(exact_url))
+        expected_path = f"/burhop/wright/blob/{source_commit}/{path}"
+        if (
+            parsed.scheme != "https"
+            or parsed.netloc != "github.com"
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.port is not None
+            or parsed.query
+            or parsed.fragment
+            or parsed.path != expected_path
+            or detail.get("availability") != "exact_github"
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_EVIDENCE_URL_INVALID",
+                "An evidence URL is not the exact Wright commit/path URL.",
+                "repair_evidence_index",
+            )
+
+
 def _project_correction_graph(
     subject: Mapping[str, Any],
 ) -> tuple[
@@ -2354,6 +2398,7 @@ def publish_program_status(
             "dashboard": subject["dashboard"],
             "supplement": supplement,
         }
+        _validate_evidence_details(bundle)
         dashboard_schema = subject["dashboard_schema"]
         dashboard_id = dashboard_schema.get("$id")
         if not isinstance(dashboard_id, str):

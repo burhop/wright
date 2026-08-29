@@ -619,6 +619,18 @@ def test_runtime_requires_reciprocal_correction_finding_verification_graph() -> 
             ),
             "history latest change",
         ),
+        (
+            lambda value: value["supplement"]["evidence_index"][0].update(
+                {
+                    "availability": "exact_github",
+                    "exact_url": "https://github.com/burhop/wrong/blob/"
+                    + value["source"]["commit"]
+                    + "/"
+                    + value["supplement"]["evidence_index"][0]["path"],
+                }
+            ),
+            "evidence URL",
+        ),
     ],
 )
 def test_runtime_rejects_action_lane_and_history_relation_drift(

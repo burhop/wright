@@ -5,6 +5,7 @@ import { EvidenceDetails } from "../components/program-status/EvidenceDetails";
 import {
   decodeProgramStatusBundle,
   ProgramStatusDecodeError,
+  validateProgramStatusEvidenceRelations,
 } from "../services/program-status";
 import { makeProgramStatusBundle } from "./program-status-fixture";
 
@@ -40,6 +41,18 @@ describe("program status evidence", () => {
       "https://evil.example/dashboard.json";
     expect(() => decodeProgramStatusBundle(unsafe)).toThrow(
       "UNSAFE_EVIDENCE_URL",
+    );
+
+    const wrongRepository = makeProgramStatusBundle({ evidence: true }) as any;
+    wrongRepository.supplement.evidence_index[0].exact_url = `https://github.com/burhop/wrong/blob/${wrongRepository.source.commit}/docs/programs/engineering-process-platform/dashboard.json`;
+    expect(() => decodeProgramStatusBundle(wrongRepository)).toThrow(
+      "UNSAFE_EVIDENCE_URL",
+    );
+
+    const wrongCommit = makeProgramStatusBundle({ evidence: true }) as any;
+    wrongCommit.supplement.evidence_index[0].exact_url = `https://github.com/burhop/wright/blob/${"d".repeat(40)}/docs/programs/engineering-process-platform/dashboard.json`;
+    expect(() => validateProgramStatusEvidenceRelations(wrongCommit)).toThrow(
+      "EVIDENCE_URL_IDENTITY_MISMATCH",
     );
   });
 });

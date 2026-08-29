@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, Final, Mapping
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker  # type: ignore[import-untyped]
 from referencing import Registry, Resource
@@ -672,6 +673,27 @@ class ProgramStatusReader:
                 raise ValueError("test checkpoint pass rate does not reconcile")
 
         evidence_index = supplement["evidence_index"]
+        source_commit = str(value["source"]["commit"])
+        for detail in evidence_index:
+            exact_url = detail.get("exact_url")
+            if exact_url is None:
+                if detail["availability"] == "exact_github":
+                    raise ValueError("exact GitHub evidence has no URL")
+                continue
+            parsed = urlsplit(str(exact_url))
+            expected_path = f"/burhop/wright/blob/{source_commit}/{detail['path']}"
+            if (
+                parsed.scheme != "https"
+                or parsed.netloc != "github.com"
+                or parsed.username is not None
+                or parsed.password is not None
+                or parsed.port is not None
+                or parsed.query
+                or parsed.fragment
+                or parsed.path != expected_path
+                or detail["availability"] != "exact_github"
+            ):
+                raise ValueError("evidence URL is not the exact Wright commit/path URL")
         indexed = [
             (item["id"], item["path"], item["sha256"]) for item in evidence_index
         ]

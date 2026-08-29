@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -77,6 +78,18 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         assert observation["evidence"]
         assert isinstance(observation["value"], int)
         assert isinstance(observation["denominator"], int)
+    observed_times = [
+        observation["observed_at"]
+        for observation in histories["feature_tasks"]["observations"]
+    ]
+    assert observed_times == sorted(observed_times)
+    assert histories["feature_tasks"]["latest_change"] == {
+        "commit": histories["feature_tasks"]["observations"][-1]["commit"],
+        "observed_at": histories["feature_tasks"]["observations"][-1]["observed_at"],
+        "from_value": histories["feature_tasks"]["observations"][-2]["value"],
+        "to_value": histories["feature_tasks"]["observations"][-1]["value"],
+        "reason": histories["feature_tasks"]["observations"][-1]["change_reason"],
+    }
     evidence_index = bundle["supplement"]["evidence_index"]
     for series in histories.values():
         for observation in series["observations"]:
@@ -201,6 +214,12 @@ def test_initial_test_ledger_append_only_attestation_is_proven() -> None:
     with pytest.raises(ProgramStatusPublishError) as raised:
         publisher._verify_test_ledger_append_only(REPOSITORY, subject)
 
+    assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"
+
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["ledger"] = {**subject["ledger"], "runs_sha256": "0" * 64}
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._verify_test_ledger_append_only(REPOSITORY, subject)
     assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"
 
 
@@ -351,6 +370,24 @@ def test_use_case_projection_rejects_wrong_path_digest_and_missing_subject() -> 
         assert raised.value.code == "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID"
 
 
+def test_use_case_projection_rejects_duplicate_and_out_of_range_process_ids() -> None:
+    duplicate = _use_case_subject()
+    first = duplicate["use_case_registry"]["use_cases"][0]
+    duplicate["use_case_registry"]["use_cases"] = [
+        first,
+        {**first, "id": "EPP-UC-002"},
+    ]
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._derive_use_cases(duplicate)
+    assert raised.value.code == "PROGRAM_STATUS_PROCESS_ID_INVALID"
+
+    outside = _use_case_subject()
+    outside["use_case_registry"]["use_cases"][0]["process_100_id"] = "EPP-PROC-101"
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._derive_use_cases(outside)
+    assert raised.value.code == "PROGRAM_STATUS_PROCESS_ID_INVALID"
+
+
 def test_governance_register_projection_uses_exact_catalog_sources() -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
@@ -454,6 +491,90 @@ def test_correction_graph_projects_only_closed_reciprocal_evidence() -> None:
     assert len({item["id"] for item in details}) == len(details)
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("path", ""),
+        ("path", "docs//programs/status.json"),
+        ("path", "docs/./programs/status.json"),
+        ("path", "docs/programs/../status.json"),
+        (
+            "exact_url",
+            "https://user@github.com/burhop/wright/blob/"
+            + "a" * 40
+            + "/docs/status.json",
+        ),
+        (
+            "exact_url",
+            "https://github.com:443/burhop/wright/blob/"
+            + "a" * 40
+            + "/docs/status.json",
+        ),
+        (
+            "exact_url",
+            "https://github.com/burhop/wright/blob/"
+            + "a" * 40
+            + "/docs/status.json?raw=1",
+        ),
+        (
+            "exact_url",
+            "https://github.com/burhop/wright/blob/"
+            + "a" * 40
+            + "/docs/status.json#frag",
+        ),
+        (
+            "exact_url",
+            "https://github.com/burhop/wrong/blob/" + "a" * 40 + "/docs/status.json",
+        ),
+    ],
+)
+def test_frozen_bundle_rejects_noncanonical_paths_and_github_urls(
+    field: str, value: str
+) -> None:
+    packaged = REPOSITORY / "src" / "wright_engineering" / "static" / "program-status"
+    bundle = json.loads((packaged / "current.json").read_bytes())
+    candidate = deepcopy(bundle)
+    detail = candidate["supplement"]["evidence_index"][0]
+    detail[field] = value
+    if field == "exact_url":
+        detail["availability"] = "exact_github"
+    bundle_schema = json.loads(
+        (
+            REPOSITORY
+            / "specs"
+            / "077-browser-program-status"
+            / "contracts"
+            / "program-status-bundle.schema.json"
+        ).read_bytes()
+    )
+    dashboard_schema = json.loads(
+        (
+            REPOSITORY
+            / "docs"
+            / "programs"
+            / "engineering-process-platform"
+            / "schemas"
+            / "dashboard.schema.json"
+        ).read_bytes()
+    )
+    registry = publisher.Registry().with_resource(
+        dashboard_schema["$id"], publisher.Resource.from_contents(dashboard_schema)
+    )
+
+    errors = list(
+        publisher.Draft202012Validator(
+            bundle_schema,
+            registry=registry,
+            format_checker=publisher.FormatChecker(),
+        ).iter_errors(candidate)
+    )
+
+    if errors:
+        return
+    with pytest.raises(ProgramStatusPublishError):
+        publisher._validate_evidence_details(candidate)
+
+
 def test_canonical_test_identity_and_latest_terminal_selection() -> None:
     test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
     assert (
@@ -496,16 +617,60 @@ def test_canonical_test_identity_and_latest_terminal_selection() -> None:
         "counts": {"total": 2, "passed": 2, "failed": 0, "skipped": 0, "not_run": 0},
     }
     second["run_key"] = publisher._test_run_key(second)
+    summary = {
+        **base,
+        "run_id": "summary-attempt-1",
+        "suite_id": "summary-suite",
+        "population_id": "summary",
+        "attempt": 1,
+        "aggregate_role": "summary_only",
+        "counts": {"total": 2, "passed": 1, "failed": 1, "skipped": 0, "not_run": 0},
+    }
+    summary["run_key"] = publisher._test_run_key(summary)
 
     checkpoints, selected, _evidence = publisher._project_test_history(
-        {"runs": [first, second]}, "a" * 40
+        {"runs": [first, second, summary]}, "a" * 40
     )
 
-    assert selected == ["unit-attempt-2"]
+    assert selected == ["summary-attempt-1", "unit-attempt-2"]
     assert checkpoints[0]["counts"] == second["counts"]
     assert checkpoints[0]["pass_rate"] == 1
     assert checkpoints[0]["categories"]["unit"] == second["counts"]
     assert checkpoints[0]["categories"]["benchmark"] is None
+
+
+def test_canonical_test_projection_rejects_run_key_and_count_drift() -> None:
+    base = {
+        "run_id": "unit-attempt-1",
+        "commit": "a" * 40,
+        "suite_id": "unit-suite",
+        "population_id": "pkg",
+        "attempt": 1,
+        "observed_at": "2026-08-29T14:00:00Z",
+        "category": "unit",
+        "terminal": True,
+        "aggregate_role": "component",
+        "test_case_ids": ["tests/a.py::test_x"],
+        "counts": {"total": 1, "passed": 1, "failed": 0, "skipped": 0, "not_run": 0},
+        "evidence": [
+            {
+                "path": "test-results/program-status/unit.json",
+                "sha256": "b" * 64,
+            }
+        ],
+    }
+    base["test_case_set_sha256"] = publisher._test_case_set_digest(
+        base["test_case_ids"]
+    )
+    base["run_key"] = publisher._test_run_key(base)
+    for field, value in (
+        ("run_key", "0" * 64),
+        ("counts", {"total": 2, "passed": 1, "failed": 0, "skipped": 0, "not_run": 0}),
+    ):
+        invalid = {**base, field: value}
+        with pytest.raises(ProgramStatusPublishError) as raised:
+            publisher._project_test_history({"runs": [invalid]}, "a" * 40)
+        assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"
 
 
 def test_canonical_test_projection_rejects_overlapping_component_populations() -> None:

@@ -257,7 +257,7 @@ function evidence(value: unknown, path: string): EvidenceRef {
 const relativePathPattern =
   /^(?!.*(?:^|\/)\.{1,2}(?:\/|$))(?!.*\/\/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/;
 const exactGitHubPattern =
-  /^https:\/\/github\.com\/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?\/blob\/[0-9a-f]{40}\/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/;
+  /^https:\/\/github\.com\/burhop\/wright\/blob\/[0-9a-f]{40}\/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/;
 
 function enumValue<T extends string>(
   value: unknown,
@@ -1091,6 +1091,19 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
   ).map((item, index) =>
     evidenceDetail(item, `/supplement/evidence_index/${index}`),
   );
+  const sourceCommit = hex(source.commit, 40, "/source/commit");
+  for (const detail of details) {
+    if (
+      detail.exact_url !== null &&
+      detail.exact_url !==
+        `https://github.com/burhop/wright/blob/${sourceCommit}/${detail.path}`
+    ) {
+      throw new ProgramStatusDecodeError(
+        "EVIDENCE_URL_IDENTITY_MISMATCH",
+        `/supplement/evidence_index/${detail.id}/exact_url`,
+      );
+    }
+  }
   if (new Set(details.map((detail) => detail.id)).size !== details.length) {
     throw new ProgramStatusDecodeError(
       "EVIDENCE_INDEX_DUPLICATE",
