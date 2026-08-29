@@ -39,16 +39,24 @@ export function ProgramStatusPage() {
           fetchProgramStatusPublisher(controller.signal),
         ]);
         if (!active) return;
-        if (publisherResult.status === "fulfilled")
+        const publisherUnavailable = publisherResult.status === "rejected";
+        if (publisherResult.status === "fulfilled") {
           setPublisher(publisherResult.value);
+        } else {
+          setPublisher(null);
+        }
         if (result.status === "rejected") throw result.reason;
         if (result.value.status === 200 && result.value.bundle) {
           setBundle(result.value.bundle);
           hasBundle.current = true;
           etag.current = result.value.etag ?? undefined;
         }
-        setViewState("current");
-        setMessage(null);
+        setViewState(publisherUnavailable ? "stale" : "current");
+        setMessage(
+          publisherUnavailable
+            ? "Publisher heartbeat unavailable; showing last valid committed evidence."
+            : null,
+        );
       } catch (error) {
         if (!active) return;
         setViewState((current) =>

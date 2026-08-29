@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Route } from "@playwright/test";
 
 const bundle = readFileSync(
   resolve("src/wright_engineering/static/program-status/current.json"),
@@ -134,6 +134,31 @@ test.describe("Program status comprehension and accessibility", () => {
     await expect(
       page.getByText("0/100 qualified", { exact: true }),
     ).toBeVisible();
+    await expect(page.getByTestId("program-work-summary")).toContainText(
+      "EPP-F01B tasks complete",
+    );
+    await expect(page.getByTestId("active-work-summary")).toContainText(
+      "Committed assignment unavailable",
+    );
+    await expect(page.getByTestId("customer-capability-summary")).toContainText(
+      "100 proposed customer stories",
+    );
+    await expect(page.getByTestId("test-health-summary")).toContainText(
+      "History unavailable",
+    );
+    await expect(page.getByTestId("next-action-summary")).toContainText(
+      "Authority: authorized; human approval: not required",
+    );
+    await expect(page.getByTestId("release-posture-summary")).toContainText(
+      "Not release eligible",
+    );
+    await expect(page.getByTestId("release-posture-summary")).toContainText(
+      "feature task progress cannot compensate",
+    );
+    await page.getByText("Historical dashboard action", { exact: true }).click();
+    await expect(page.getByTestId("next-action-summary")).toContainText(
+      "current program-state action above takes precedence",
+    );
     await expect(
       page.getByRole("heading", { name: "Independent readiness areas" }),
     ).toBeVisible();
@@ -299,5 +324,76 @@ test.describe("Program status comprehension and accessibility", () => {
     } finally {
       rmSync(dataRoot, { recursive: true, force: true });
     }
+  });
+
+  test("keeps last-valid evidence on refresh failure and stays honest with no prior bundle", async ({
+    page,
+  }) => {
+    let bundleCalls = 0;
+    let failRefresh = false;
+    await page.route("**/api/auth/session/status", (route) =>
+      route.fulfill({ json: { auth_required: false, authenticated: true } }),
+    );
+    await page.route("**/api/setup/status", (route) =>
+      route.fulfill({ json: { is_configured: true, theme: "dark" } }),
+    );
+    await page.route("**/api/program-status/publisher", (route) =>
+      route.fulfill({
+        json: {
+          state: "active",
+          mode: "committed_watch",
+          observed_commit: parsedBundle.bundle_id.slice(0, 40),
+          last_attempt_at: "2026-08-29T14:00:00Z",
+          last_success_at: "2026-08-29T14:00:00Z",
+          failure_code: null,
+          recovery: null,
+        },
+      }),
+    );
+    const fail = (route: Route) =>
+      route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        json: {
+          error_code: "PROGRAM_STATUS_READ_FAILED",
+          message: "Program status could not be read.",
+          recovery_class: "inspect_local_runtime",
+          trace_id: "test-refresh-failure",
+        },
+      });
+    await page.route("**/api/program-status", (route) => {
+      bundleCalls += 1;
+      if (failRefresh) return fail(route);
+      return route.fulfill({
+        body: bundle,
+        contentType: "application/json",
+        headers: { ETag: `"${parsedBundle.bundle_id}"` },
+      });
+    });
+
+    await page.goto("/program-status");
+    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
+      "Committed evidence current",
+    );
+    failRefresh = true;
+    await expect
+      .poll(() => bundleCalls, { timeout: 12_000 })
+      .toBeGreaterThan(1);
+    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
+      "Showing last valid evidence",
+    );
+    await expect(page.getByTestId("program-work-summary")).toBeVisible();
+
+    await page.unroute("**/api/program-status");
+    await page.route("**/api/program-status", fail);
+    await page.reload();
+    await expect(
+      page.getByRole("heading", {
+        name: "No validated program-status bundle is available yet",
+      }),
+    ).toBeVisible();
+    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
+      "Program status unavailable",
+    );
   });
 });

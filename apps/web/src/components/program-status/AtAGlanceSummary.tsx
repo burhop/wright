@@ -50,7 +50,9 @@ export function AtAGlanceSummary({ bundle }: { bundle: ProgramStatusBundle }) {
       ? (dashboard.next_action as Record<string, unknown>)
       : null;
   const historicalActionLabel =
-    historicalAction && typeof historicalAction.action === "string"
+    typeof dashboard.next_action === "string"
+      ? dashboard.next_action
+      : historicalAction && typeof historicalAction.action === "string"
       ? historicalAction.action
       : historicalAction && typeof historicalAction.label === "string"
         ? historicalAction.label

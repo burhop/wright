@@ -48,7 +48,7 @@
 
 - [x] T013 [P] [US1] Add failing bundle 200/304 plus publisher-heartbeat 200/404/422/503, engineer/admin read, unauthenticated rejection, typed-error, exact-dashboard, complete at-a-glance supplement, and forbidden-field API tests in `apps/api/tests/test_program_status_api.py`
 - [x] T014 [P] [US1] Add failing strict decoder, sole-current-action precedence, typed zero-benchmark context, work/use-case/test unavailable states, required `data-testid`, and loading/current/unavailable overview tests in `apps/web/src/__tests__/ProgramStatusPage.test.tsx`
-- [ ] T015 [P] [US1] Add a failing mocked primary journey that answers the six at-a-glance questions, preserves four readiness areas and release rule, explains `0/100`, separates the proposed catalog, labels historical/current actions correctly, and keeps unavailable committed evidence honest in `tests/ui-integration/program-status.spec.ts`
+- [x] T015 [P] [US1] Add a failing mocked primary journey that answers the six at-a-glance questions, preserves four readiness areas and release rule, explains `0/100`, separates the proposed catalog, labels historical/current actions correctly, and keeps unavailable committed evidence honest in `tests/ui-integration/program-status.spec.ts`
 
 ### Implementation
 
@@ -133,7 +133,7 @@
 ### Tests first
 
 - [x] T035 [P] [US5] Add failing conditional-poll, atomic-swap, race, cleanup, and last-valid reducer tests in `apps/web/src/__tests__/ProgramStatusRefresh.test.tsx`
-- [ ] T036 [P] [US5] Extend mocked UI integration coverage for unchanged 304, changed bundle, failed refresh, and no-prior-bundle states in `tests/ui-integration/program-status.spec.ts`
+- [x] T036 [P] [US5] Extend mocked UI integration coverage for unchanged 304, changed bundle, failed refresh, and no-prior-bundle states in `tests/ui-integration/program-status.spec.ts`
 
 ### Implementation
 
