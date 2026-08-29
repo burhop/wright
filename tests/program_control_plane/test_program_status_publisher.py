@@ -110,6 +110,16 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         "reason": histories["feature_tasks"]["observations"][-1]["change_reason"],
     }
     evidence_index = bundle["supplement"]["evidence_index"]
+    development_lane = bundle["supplement"]["work"]["lanes"][1]
+    task_reference = next(
+        item
+        for item in development_lane["evidence"]
+        if item["id"] == "active-feature-tasks"
+    )
+    assert task_reference in [
+        {key: item[key] for key in ("id", "path", "sha256")}
+        for item in evidence_index
+    ]
     for series in histories.values():
         for observation in series["observations"]:
             for reference in observation["evidence"]:
