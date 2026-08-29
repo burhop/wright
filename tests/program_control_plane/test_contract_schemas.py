@@ -127,6 +127,52 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
         "customer_story_catalog",
         "feature_tasks",
     ]
+    assert (
+        "https://wright.local/programs/epp/f01b-activation-correction.schema.json"
+        in catalog["sources"]["correction_evidence"]["schema_ids"]
+    )
+
+
+def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
+    repository_root: Path,
+) -> None:
+    contracts = repository_root / "specs/077-browser-program-status/contracts"
+    use_cases = load(contracts / "use-case-registry.schema.json")
+    test_ledger = load(contracts / "test-run-ledger.schema.json")
+    bundle = load(contracts / "program-status-bundle.schema.json")
+    tasks = (repository_root / "specs/077-browser-program-status/tasks.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "tests/" not in use_cases["$defs"]["relativePath"]["pattern"]
+    assert (
+        use_cases["$defs"]["useCase"]["properties"]["process_100_id"]["pattern"]
+        == r"^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$"
+    )
+    assert "source_name" in use_cases["$defs"]["stageEvidence"]["required"]
+    assert "acceptance_subject_id" in use_cases["$defs"]["stageEvidence"]["required"]
+    assert "independent_verifier" in use_cases["$defs"]["stageEvidence"]["required"]
+
+    ledger_required = test_ledger["required"]
+    assert {"ledger_revision", "prior_ledger", "runs_sha256", "run_key_rule"} <= set(
+        ledger_required
+    )
+    run_required = test_ledger["$defs"]["run"]["required"]
+    assert {"run_key", "test_case_ids", "test_case_set_sha256", "counts"} <= set(
+        run_required
+    )
+    suite_required = bundle["$defs"]["testSuiteSource"]["required"]
+    assert {
+        "run_key",
+        "observed_at",
+        "terminal",
+        "aggregate_role",
+        "test_case_ids",
+        "test_case_set_sha256",
+        "counts",
+    } <= set(suite_required)
+    assert "items" in bundle["$defs"]["useCases"]["required"]
+    assert "docs/programs/engineering-process-platform/schemas/dashboard.schema.json" in tasks
 
 
 @pytest.mark.parametrize("name", CONTRACT_NAMES)

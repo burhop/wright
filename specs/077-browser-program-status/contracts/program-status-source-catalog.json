@@ -132,7 +132,8 @@
         "https://wright.local/programs/epp/transition-input-correction.schema.json",
         "https://wright.local/programs/epp/repair-evidence-correction.schema.json",
         "https://wright.local/programs/epp/checkpoint-evidence-correction.schema.json",
-        "https://wright.local/programs/epp/preflight-evidence-correction.schema.json"
+        "https://wright.local/programs/epp/preflight-evidence-correction.schema.json",
+        "https://wright.local/programs/epp/f01b-activation-correction.schema.json"
       ],
       "parser_contract": "EPP_CORRECTION_COLLECTION_V1",
       "selection_rule": "Select only schema-valid profiles referenced by the validated transition chain; derive claim IDs from the profile claims and require exact verification and finding links before marking any claim or finding resolved.",
@@ -171,7 +172,7 @@
       "path_pattern": null,
       "schema_ids": ["https://wright.local/programs/epp/use-case-registry.schema.json"],
       "parser_contract": "EPP_USE_CASE_REGISTRY_V1",
-      "selection_rule": "Derive orthogonal all-use-case and 100-process-subset counts from exact evidence references. Implementation requires user-visible acceptance evidence; independent verification, test evidence, and governed benchmark qualification remain separate. Proposed-story entries do not enter either governed population without an explicit registry identity.",
+      "selection_rule": "Require unique use-case IDs and unique non-null process IDs limited to EPP-PROC-001 through EPP-PROC-100, then derive orthogonal all-use-case and 100-process-subset counts from exact evidence references. Remaining means total minus implemented. Implementation requires user-visible acceptance evidence; independent verification, test evidence, and governed benchmark qualification remain separate. Proposed-story entries do not enter either governed population without an explicit registry identity.",
       "projects_to": ["/supplement/use_cases", "/supplement/history", "/supplement/evidence_index"]
     },
     "test_run_ledger": {
@@ -180,7 +181,7 @@
       "path_pattern": null,
       "schema_ids": ["https://wright.local/programs/epp/test-run-ledger.schema.json"],
       "parser_contract": "EPP_TEST_RUN_LEDGER_V1",
-      "selection_rule": "Retain every committed attempt but aggregate only the latest terminal run per commit, suite_id, and population_id. Count each collected test identity, including each parametrized identity, once; reject overlapping aggregate/component populations; derive total and pass rate; and render unsupported or missing history unavailable.",
+      "selection_rule": "Validate the current ledger's revision, prior committed ledger identity, unchanged prior run prefix, runs digest, unique run IDs and canonical run-key digests, and absence of deletion/rewrite. Retain every attempt but select only the unique maximum terminal attempt per commit, suite_id, and population_id; reject a tied/conflicting maximum. Recompute each sorted exact test-case-identity-set digest; aggregate only component populations whose identity sets are pairwise disjoint; exclude summary-only populations; derive per-source/category/overall counts and pass rate; and render unsupported or missing history unavailable.",
       "projects_to": ["/supplement/test_history", "/supplement/history", "/supplement/evidence_index"]
     },
     "customer_story_catalog": {

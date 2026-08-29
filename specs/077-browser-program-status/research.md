@@ -113,7 +113,7 @@ The listener failure and API-test hangs are pre-existing baseline risks, not evi
 
 ## Decision 14: Model customer delivery as orthogonal evidence stages
 
-**Decision**: Add a governed use-case registry. All-use-case totals and the 100-process subset are derived from exact definition, progress, user-visible acceptance, test, independent-verification, and benchmark-qualification evidence. Acceptance evidence is the minimum for `implemented`; independent verification and benchmark qualification require their own evidence. The proposed 100-story catalog remains separate unless a registry entry explicitly relates it.
+**Decision**: Add a governed use-case registry with unique use-case IDs and unique non-null process IDs limited to `EPP-PROC-001..100`. All-use-case totals and the 100-process subset are derived from exact definition, progress, user-visible acceptance, test, independent-verification, and benchmark-qualification evidence. Acceptance is the minimum for `implemented`; `remaining = total - implemented`; independent verification and qualification require their own evidence. The proposed catalog remains separate unless a registry entry explicitly relates it.
 
 **Rationale**: Code completion, customer-visible capability, testing, independent verification, and benchmark qualification answer different questions. Keeping them orthogonal prevents control-plane or planning progress from masquerading as product delivery.
 
@@ -121,7 +121,7 @@ The listener failure and API-test hangs are pre-existing baseline risks, not evi
 
 ## Decision 15: Use an append-only canonical test ledger
 
-**Decision**: Record exact committed test attempts with commit, time, suite, population, category, framework-collected identity-set digest, result counts, and evidence. Retain reruns, but graph only the latest terminal attempt for each `(commit, suite_id, population_id)`. Parametrized cases count by collected identity; aggregate-only populations are not summed with components; overlapping component populations reject publication. Pass rate is `passed / (passed + failed)` and is unavailable when that denominator is zero.
+**Decision**: Record exact committed test attempts with commit, time, suite, population, category, exact unique framework-collected identities and sorted-set digest, result counts, and evidence. Retain reruns, but graph only the latest terminal attempt for each `(commit, suite_id, population_id)`. The derived bundle carries selected-source time, terminal/aggregate role, identities, digest, and counts. Parametrized cases count by collected identity; summary-only populations are not summed; overlapping component identity sets reject publication. Pass rate is `passed / (passed + failed)` and is unavailable when that denominator is zero.
 
 **Rationale**: This provides honest trends and provenance while preventing reruns, parametrization, and aggregate suites from inflating test totals.
 

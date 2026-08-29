@@ -6,16 +6,16 @@
 
 ## Result
 
-**LOCAL PASS for the material work/use-case/test-visibility amendment — exact-commit independent reviews pending.**
+**LOCAL PASS after bounded repair 1 for the material work/use-case/test-visibility amendment — exact-commit re-reviews pending.**
 
 - Functional requirements: 48
 - Requirements mapped to implementation/test tasks: 48/48
 - Dependency-ordered tasks: 48, sequential and unique
-- Requirements-quality checks: 45/45 passed
+- Requirements-quality checks: 49/49 passed
 - Draft 2020-12 schema meta-validation: 5/5 passed
 - Closed source catalog: 20/20 sources validated in exact precedence order
-- Focused contract tests: 36 passed
-- Full program-control regression: 271 passed, 1 skipped (238/1 non-CLI plus 33/0 CLI)
+- Focused contract tests: 37 passed
+- Full program-control regression: 272 passed, 1 skipped (239/1 non-CLI plus 33/0 CLI)
 - Unresolved clarification markers: 0
 - Constitution violations: 0
 - Hidden or unresolved new P0 questions: 0
@@ -43,10 +43,19 @@
 The user clarified that feature-local task progress and governance history do not provide a credible feel for overall development progress. This amendment closes that gap without implementing the page or promoting any readiness result:
 
 1. **Program work**: a closed work registry names the only task sources included in program totals, reports active-feature totals separately, and exposes roadmap items that have no task graph. Active-agent rows require exact committed assignment and lease evidence; local process activity is excluded.
-2. **Customer delivery**: a governed use-case registry derives all-use-case and 100-process-subset funnels from orthogonal definition, progress, user-visible acceptance, test, independent-verification, and qualification evidence. Code-only work is not implemented, and the proposed 100-story catalog remains separate.
-3. **Test trend**: an append-only test ledger retains attempts but selects only the latest terminal run per `(commit, suite_id, population_id)` for aggregation. Parametrized identities count once, aggregate/component overlap rejects publication, missing categories remain unavailable, and pass rate excludes skipped/not-run results.
+2. **Customer delivery**: a governed use-case registry with unique use-case and `EPP-PROC-001..100` identities derives all-use-case and 100-process funnels from orthogonal evidence. `remaining = total - implemented`; code-only work is not implemented; the proposed catalog remains separate.
+3. **Test trend**: an append-only ledger retains attempts but selects only the latest terminal run per canonical key. Exact selected identities, source time, terminal/role, digest, and counts are carried into the bundle so runtime/browser can verify disjoint components, arithmetic, and pass rate. Missing categories remain unavailable.
 4. **Operator-first presentation**: the first viewport must answer six practical questions before detailed governance. The required charts are task burn-up, both use-case funnels, test outcomes, roadmap/customer capability, four independent readiness areas, and benchmark qualification, all without a composite score and all with accessible semantic tables.
 5. **Authority preservation**: the page remains a read-only atomic projection. The new registries index evidence but cannot hand-set implementation, verification, assignment, test, readiness, or benchmark truth.
+
+## Bounded repair 1 disposition
+
+The first exact-subject audits rejected `d327b71fb912fea546aeeb789fb9ef92a7b2e39a` on one P0 and five overlapping P1 findings. Repair 1 is closed to those causes:
+
+- the correction source rule now admits the exact F01B activation-correction schema referenced by TR-0071;
+- use-case and process identities are unique/ranged, `remaining` is exact, stage evidence is typed and source-bound, acceptance/verification bindings are explicit, and bounded per-item projections let runtime/browser recompute the funnels;
+- the test ledger now has revision/prior identity, runs digest, unique canonical run keys, exact collected identities, and deterministic selection rules; the bundle carries selected-source provenance/counts and an explicit publisher continuity/selection attestation while runtime/browser recompute everything possible from projected data; and
+- packaged-runtime work now includes the promoted authoritative dashboard schema needed to resolve the bundle's external `$ref` without a checkout.
 
 ## Consistency conclusions
 
@@ -56,8 +65,9 @@ The user clarified that feature-local task progress and governance history do no
 - Proposed stories, governed use cases, the 100-process subset, and benchmark qualification are four explicitly separated concepts.
 - Customer-visible acceptance is required for implementation; independent verification and benchmark qualification remain separate gates.
 - Historical test points require exact commit, trustworthy time, suite/population identity, terminal selection, disjoint populations, arithmetic validity, and evidence.
+- The current TR-0071 activation correction schema is explicitly admitted by the closed correction source rule.
 - Runtime retains no source-checkout, Git, network, benchmark, product-execution, or mutation dependency.
-- The five schemas are Draft 2020-12 meta-valid; the exact 20-source catalog validates; requirement/task/check numbering is contiguous at 48/48/45; the focused planning-contract suite passes 36 tests; and the split full program-control regression passes 271 with one declared skip.
+- The five schemas are Draft 2020-12 meta-valid; the exact 20-source catalog validates; requirement/task/check numbering is contiguous at 48/48/49; the focused planning-contract suite passes 37 tests; and the repaired split full program-control regression passes 272 with one declared skip.
 - Implementation, dependency, benchmark, push/PR/merge, publication, and release authority remain absent for the amended subject.
 
 ## Remaining review gate

@@ -89,6 +89,9 @@
     "sourceClass": {
       "enum": ["product_acceptance", "test_evidence", "automation_capability", "program_gate", "readiness_gate", "benchmark_qualification", "program_task", "feature_task", "integration_gate"]
     },
+    "sourceName": {
+      "enum": ["dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence", "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery", "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger", "customer_story_catalog", "feature_tasks"]
+    },
     "observation": {
       "type": "object",
       "additionalProperties": false,
@@ -228,13 +231,45 @@
     "useCases": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_path", "source_digest", "all", "process_100", "graph_context"],
+      "required": ["source_path", "source_digest", "all", "process_100", "items", "graph_context"],
       "properties": {
         "source_path": { "$ref": "#/$defs/relativePath" },
         "source_digest": { "$ref": "#/$defs/sha256" },
         "all": { "$ref": "#/$defs/allUseCaseFunnel" },
         "process_100": { "$ref": "#/$defs/processUseCaseFunnel" },
+        "items": { "type": "array", "maxItems": 500, "uniqueItems": true, "items": { "$ref": "#/$defs/useCaseDetail" } },
         "graph_context": { "$ref": "#/$defs/graphContext" }
+      }
+    },
+    "useCaseStageEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_class", "source_name", "subject_id", "verdict", "acceptance_subject_id", "independent_verifier", "evidence"],
+      "properties": {
+        "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
+        "source_name": { "$ref": "#/$defs/sourceName" },
+        "subject_id": { "$ref": "#/$defs/stableId" },
+        "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
+        "acceptance_subject_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
+        "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
+        "evidence": { "$ref": "#/$defs/evidenceRef" }
+      }
+    },
+    "useCaseDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "customer_outcome", "process_100_id", "definition_evidence", "progress_evidence", "acceptance_evidence", "test_evidence", "independent_verification_evidence", "benchmark_qualification_evidence"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^EPP-UC-[0-9]{3}$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$" },
+        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "definition" }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
+        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "progress" }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
+        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "customer_acceptance" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
+        "test_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "test" }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "independent_verifier": { "type": "null" } } }] } },
+        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "independent_verification" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "independent_verifier": { "type": "string" } } }] } },
+        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "transition_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "independent_verifier": { "type": "string" } } }] } }
       }
     },
     "testCounts": {
@@ -252,14 +287,25 @@
     "testSuiteSource": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["suite_id", "population_id", "run_id", "attempt", "category", "test_case_set_sha256", "evidence"],
+      "required": ["suite_id", "population_id", "run_id", "run_key", "attempt", "observed_at", "terminal", "aggregate_role", "category", "test_case_ids", "test_case_set_sha256", "counts", "evidence"],
       "properties": {
         "suite_id": { "$ref": "#/$defs/stableId" },
         "population_id": { "$ref": "#/$defs/stableId" },
         "run_id": { "$ref": "#/$defs/stableId" },
+        "run_key": { "$ref": "#/$defs/sha256" },
         "attempt": { "type": "integer", "minimum": 1 },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "terminal": { "const": true },
+        "aggregate_role": { "enum": ["component", "summary_only"] },
         "category": { "enum": ["unit", "integration", "e2e", "benchmark"] },
+        "test_case_ids": {
+          "type": "array",
+          "maxItems": 5000,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+        },
         "test_case_set_sha256": { "$ref": "#/$defs/sha256" },
+        "counts": { "$ref": "#/$defs/testCounts" },
         "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
       }
     },
@@ -283,17 +329,31 @@
             "benchmark": { "oneOf": [{ "$ref": "#/$defs/testCounts" }, { "type": "null" }] }
           }
         },
-        "suite_sources": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/testSuiteSource" } }
+        "suite_sources": { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/testSuiteSource" } }
       }
     },
     "testHistory": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["availability", "counting_rule", "pass_rate_rule", "graph_context", "unavailable_reason", "checkpoints"],
+      "required": ["availability", "counting_rule", "pass_rate_rule", "selection_attestation", "graph_context", "unavailable_reason", "checkpoints"],
       "properties": {
         "availability": { "enum": ["available", "unavailable"] },
         "counting_rule": { "const": "latest_terminal_attempt_per_commit_suite_id_population_id" },
         "pass_rate_rule": { "const": "passed_divided_by_passed_plus_failed_else_unavailable" },
+        "selection_attestation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_path", "source_digest", "ledger_revision", "prior_ledger_runs_sha256", "runs_sha256", "publisher_verified_append_only", "selected_run_ids"],
+          "properties": {
+            "source_path": { "$ref": "#/$defs/relativePath" },
+            "source_digest": { "$ref": "#/$defs/sha256" },
+            "ledger_revision": { "type": "integer", "minimum": 1 },
+            "prior_ledger_runs_sha256": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+            "runs_sha256": { "$ref": "#/$defs/sha256" },
+            "publisher_verified_append_only": { "const": true },
+            "selected_run_ids": { "type": "array", "maxItems": 1000, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } }
+          }
+        },
         "graph_context": { "$ref": "#/$defs/graphContext" },
         "unavailable_reason": { "type": ["string", "null"], "maxLength": 500 },
         "checkpoints": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/testCheckpoint" } }

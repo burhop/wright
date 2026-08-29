@@ -11,6 +11,7 @@
     "use_cases": {
       "type": "array",
       "maxItems": 500,
+      "uniqueItems": true,
       "items": { "$ref": "#/$defs/useCase" }
     }
   },
@@ -20,22 +21,61 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/|tests/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/(?:076-control-plane-validator|077-browser-program-status)/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
-    "evidence": {
+    "sourceName": {
+      "enum": ["dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence", "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery", "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger", "customer_story_catalog", "feature_tasks"]
+    },
+    "stageEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "sha256", "subject_id"],
+      "required": ["evidence_class", "source_name", "path", "sha256", "subject_id", "verdict", "acceptance_subject_id", "independent_verifier"],
       "properties": {
+        "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
+        "source_name": { "$ref": "#/$defs/sourceName" },
         "path": { "$ref": "#/$defs/relativePath" },
         "sha256": { "$ref": "#/$defs/sha256" },
-        "subject_id": { "type": "string", "minLength": 1, "maxLength": 160 }
+        "subject_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
+        "acceptance_subject_id": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
+        "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 }
       }
     },
-    "evidenceList": {
-      "type": "array",
-      "maxItems": 25,
-      "items": { "$ref": "#/$defs/evidence" }
+    "definitionEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "definition" }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "progressEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "progress" }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "acceptanceEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "customer_acceptance" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "testEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "test" }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "verificationEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "independent_verification" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+      ]
+    },
+    "qualificationEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "transition_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+      ]
     },
     "useCase": {
       "type": "object",
@@ -45,13 +85,13 @@
         "id": { "type": "string", "pattern": "^EPP-UC-[0-9]{3}$" },
         "title": { "type": "string", "minLength": 1, "maxLength": 300 },
         "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-[0-9]{3}$" },
-        "definition_evidence": { "$ref": "#/$defs/evidenceList" },
-        "progress_evidence": { "$ref": "#/$defs/evidenceList" },
-        "acceptance_evidence": { "$ref": "#/$defs/evidenceList" },
-        "test_evidence": { "$ref": "#/$defs/evidenceList" },
-        "independent_verification_evidence": { "$ref": "#/$defs/evidenceList" },
-        "benchmark_qualification_evidence": { "$ref": "#/$defs/evidenceList" }
+        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$" },
+        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/definitionEvidence" } },
+        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/progressEvidence" } },
+        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/acceptanceEvidence" } },
+        "test_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/testEvidence" } },
+        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/verificationEvidence" } },
+        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/qualificationEvidence" } }
       }
     }
   }

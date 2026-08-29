@@ -34,9 +34,9 @@ Confirm:
 
 1. The first viewport answers how much registered work exists, what exact work is active, why it matters, how much customer capability is implemented, how tests are trending, and what changes next.
 2. Program-wide registered task totals are separate from active-feature totals; undecomposed roadmap work is disclosed; active-agent rows either cite exact assignment/lease evidence or say unavailable.
-3. The all-use-case funnel distinguishes in-progress, user-accepted implementation, and independent verification. The 100-process subset separately distinguishes defined, implemented, tested, independently verified, and benchmark-qualified.
+3. The all-use-case funnel is recomputable from typed per-use-case evidence and distinguishes in-progress, user-accepted implementation, and acceptance-bound independent verification. The 100-process subset uses unique `EPP-PROC-001..100` IDs and separately distinguishes defined, implemented, tested, independently verified, and benchmark-qualified; remaining means total minus implemented.
 4. `100 proposed customer stories` remains separate from both governed use-case funnels and qualified benchmark results.
-5. Test history uses exact times, commits, suites, source identities, and canonical counts; reruns and parametrized identities do not inflate totals; unsupported categories say unavailable.
+5. Test history uses exact times, commits, suites, selected run IDs/keys, terminal/aggregate roles, collected case identities/digests, and canonical counts; append-only continuity and latest selection are publisher-attested, while projected disjointness/arithmetic/pass rate are independently recomputable; unsupported categories say unavailable.
 6. Four independent readiness areas and non-compensating release state are clear. Benchmark is honestly `0/100` with typed phase, hold reason, dependencies, authority, and non-governing next qualifying action.
 7. Task burn-up, use-case funnels, test outcomes, roadmap/customer capability, readiness, and benchmark charts explain meaning, latest change, limitation, and next evidence-backed action and all have semantic tables.
 8. The dashboard's old action is visibly historical, exactly one current program action comes from current program state, and metric/lane guidance cannot supersede it.
@@ -47,7 +47,7 @@ Confirm:
 
 Alter an isolated copy of the demo projection without changing its envelope digest. Do not edit committed evidence.
 
-Expected: the fixture is rejected; the last valid page remains visible and is labeled failed/stale with recovery. Starting without a valid bundle shows unavailable values only.
+Expected: the fixture is rejected; the last valid page remains visible and is labeled failed/stale with recovery. Repeat with a duplicated/out-of-range process ID, acceptance-unbound independent verification, duplicate/conflicting test run key, rewritten prior ledger prefix, overlapping component test identity, and missing packaged dashboard schema. Starting without a valid bundle shows unavailable values only.
 
 ## 5. Demonstrate committed refresh
 
