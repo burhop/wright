@@ -2345,9 +2345,22 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             for checkpoint in test_checkpoints
         ]
     historical_evidence: dict[str, dict[str, Any]] = {}
+    selected_test_evidence = {item["id"]: item for item in test_evidence_details}
     for observations in history_by_id.values():
         for observation in observations:
             for reference in observation["evidence"]:
+                selected_test_detail = selected_test_evidence.get(reference["id"])
+                if selected_test_detail is not None:
+                    if any(
+                        selected_test_detail[key] != reference[key]
+                        for key in ("id", "path", "sha256")
+                    ):
+                        raise ProgramStatusPublishError(
+                            "PROGRAM_STATUS_EVIDENCE_ID_COLLISION",
+                            f"Test history evidence ID {reference['id']} does not match its selected suite source.",
+                            "repair_history_evidence_identity",
+                        )
+                    continue
                 detail = {
                     **reference,
                     "label": str(observation["label"]).replace("_", " ").title(),
