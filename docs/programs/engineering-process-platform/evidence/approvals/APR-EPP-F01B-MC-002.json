@@ -1,0 +1,45 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F01B-MC-002",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "bundle_id": "APB-EPP-F01B-002",
+  "decision": "approved_with_conditions",
+  "scope": "material_change",
+  "subject": {
+    "git_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+    "git_tree": "3a584940dfca227088c02b01aa74981baa847c06",
+    "program_tree": "8841bc1e0116fc2dd8950dd3e974f904d09d8edc",
+    "artifact_digests": [
+      {"path": "../../../specs/077-browser-program-status/analysis.md", "sha256": "dcbe8d9280a68315daae02886429191e6468b5b28967613f8f6ee3708d2970ec"},
+      {"path": "../../../specs/077-browser-program-status/checklists/program-status.md", "sha256": "5dc6bac8e23a30198a697501b3245ec0cc3ce5c88e5c17b4ccdd92bdefdd5144"},
+      {"path": "../../../specs/077-browser-program-status/checklists/requirements.md", "sha256": "a458b59806fa532151034ed3af70433efdc630b62d3727b66718eb58994ffa9f"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-api.md", "sha256": "629e9f11ce136e9a590376dae5efdac8e151798a0841cead1c530f7a78e47f20"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-bundle.schema.json", "sha256": "7aee61e1f571a98053e6ed3a9a52f5715a940fa6a5bfa31d72c4dd5067454c56"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.json", "sha256": "b28cbe9c59f8812ed7cc362180b06d625c61f1cca5b67f84143df2eef1b8f56e"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.schema.json", "sha256": "b73cb7b213a55d8d93145d34822fbd1a6cdb5bc97e6cd07101cad4c6c5e42498"},
+      {"path": "../../../specs/077-browser-program-status/contracts/test-run-ledger.schema.json", "sha256": "df655912161e191ea369a49881d73f897dc0bf003130eac289e9bf1695f5c6cf"},
+      {"path": "../../../specs/077-browser-program-status/contracts/use-case-registry.schema.json", "sha256": "6b66128f35313f9b5051f2666c75b2d5e738ddd07298be6cc2967fe2034c591c"},
+      {"path": "../../../specs/077-browser-program-status/contracts/work-registry.schema.json", "sha256": "f1baee77261b0409a9d4f5193b2bf11b74af2df427d6abdc9af747af3b62e821"},
+      {"path": "../../../specs/077-browser-program-status/data-model.md", "sha256": "6467ca0f95f822903038ef397692f57eb55ac882b38efb880d11420a7849a12b"},
+      {"path": "../../../specs/077-browser-program-status/plan.md", "sha256": "2f2af709003fbc75d69c26598b05e62b73c24824e78f185e31cffeae806c740a"},
+      {"path": "../../../specs/077-browser-program-status/quickstart.md", "sha256": "7f88afc457549a99431ba3c8d2fae16e4b919691ab85ebff1b807341aa793acc"},
+      {"path": "../../../specs/077-browser-program-status/research.md", "sha256": "e35b80d5d70878c5df2e79790dc6ec5d9a08c49a9f15e35cb9edf4dbec22bda0"},
+      {"path": "../../../specs/077-browser-program-status/spec.md", "sha256": "0d3c117b01c8d614ff1efbeb5e3d64afdf3753c3ad2dddd5f25357c6307919d8"},
+      {"path": "../../../specs/077-browser-program-status/tasks.md", "sha256": "824aab93919b203dd59a3fb83b25aa90005b3b5c2529e11c8c6aa6fd04d40392"},
+      {"path": "../../../tests/program_control_plane/test_contract_schemas.py", "sha256": "3d6afe7a66703a6681a0b35f0e58cbba67fe056d75b3421d98c5ab578b550754"}
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-29T02:02:46Z",
+  "expires_at": null,
+  "review": {"due_at": null, "last_reviewed_at": "2026-08-29T02:02:46Z"},
+  "supersedes": ["APR-EPP-F01B-MC-001"],
+  "revocation_events": [],
+  "conditions": [
+    "The operator-first work, use-case, test-history, and progress-graph clarification is the exact frozen product contract.",
+    "Continue autonomously through dependency-ordered local T001 through T048 under one bounded implementation lease.",
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized."
+  ]
+}
