@@ -78,6 +78,45 @@ function addCanonicalTestRun(raw: any) {
       ],
     },
   ];
+  const quality = {
+    id: "quality",
+    label: "Quality",
+    unit: "passing_required_checks_ratio",
+    counting_rule: "required_candidate_checks",
+    source_classification: "test_evidence",
+    availability: "available",
+    feature_id: null,
+    decision_use: "Show exact committed test outcomes.",
+    current_limitation: "Only canonical committed test runs are counted.",
+    next_action: {
+      ...raw.supplement.work.current_next_action,
+      purpose: "metric_guidance",
+    },
+    omitted_observations: 0,
+    unavailable_reason: null,
+    observations: [
+      {
+        commit: "c".repeat(40),
+        transition_id: null,
+        parent_commit: null,
+        observed_at: "2026-08-29T03:00:00Z",
+        value: 1,
+        denominator: 1,
+        label: "quality",
+        source_classification: "test_evidence",
+        change_reason: "Canonical committed test checkpoint",
+        evidence: [reference],
+      },
+    ],
+    latest_change: {
+      commit: "c".repeat(40),
+      observed_at: "2026-08-29T03:00:00Z",
+      from_value: null,
+      to_value: 1,
+      reason: "Canonical committed test checkpoint",
+    },
+  };
+  raw.supplement.history.push(quality);
   raw.supplement.evidence_index.push({
     ...reference,
     label: "Canonical unit run",
@@ -275,6 +314,16 @@ describe("program status conditional refresh transport", () => {
       sha256: "8".repeat(64),
     };
     expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
+
+    raw.supplement.history.find(
+      (series: any) => series.id === "quality",
+    ).observations[0].evidence[0] = {
+      ...reference,
+      path: "test-results/program-status/unselected-history.json",
+    };
+    expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
+      "TEST_RESULT_EVIDENCE_CONTEXT_INVALID",
+    );
 
     const orphan = makeProgramStatusBundle() as any;
     orphan.supplement.evidence_index.push({

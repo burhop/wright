@@ -112,8 +112,14 @@
         "label": { "type": "string", "minLength": 1, "maxLength": 160 },
         "source_classification": { "$ref": "#/$defs/sourceClass" },
         "change_reason": { "type": ["string", "null"], "maxLength": 500 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
-      }
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/historyEvidenceRef" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "source_classification": { "const": "test_evidence" } }, "required": ["source_classification"] },
+          "else": { "properties": { "evidence": { "items": { "$ref": "#/$defs/evidenceRef" } } } }
+        }
+      ]
     },
     "latestChange": {
       "type": "object",
@@ -194,6 +200,12 @@
         "path": { "$ref": "#/$defs/testResultPath" },
         "sha256": { "$ref": "#/$defs/sha256" }
       }
+    },
+    "historyEvidenceRef": {
+      "oneOf": [
+        { "$ref": "#/$defs/evidenceRef" },
+        { "$ref": "#/$defs/testResultEvidenceRef" }
+      ]
     },
     "graphChange": {
       "type": "object",

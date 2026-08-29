@@ -336,6 +336,32 @@ def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> N
             "suite_sources": [source],
         }
     ]
+    quality = next(
+        series for series in value["supplement"]["history"] if series["id"] == "quality"
+    )
+    quality["availability"] = "available"
+    quality["unavailable_reason"] = None
+    quality["observations"] = [
+        {
+            "commit": "a" * 40,
+            "transition_id": None,
+            "parent_commit": None,
+            "observed_at": "2026-08-29T14:00:00Z",
+            "value": 2,
+            "denominator": 2,
+            "label": "quality",
+            "source_classification": "test_evidence",
+            "change_reason": "Canonical committed test checkpoint",
+            "evidence": [reference],
+        }
+    ]
+    quality["latest_change"] = {
+        "commit": "a" * 40,
+        "observed_at": "2026-08-29T14:00:00Z",
+        "from_value": None,
+        "to_value": 2,
+        "reason": "Canonical committed test checkpoint",
+    }
     value["supplement"]["evidence_index"].append(
         {
             **reference,

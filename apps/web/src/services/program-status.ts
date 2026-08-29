@@ -1741,7 +1741,7 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
     },
     ...evidenceReferences(supplement, ["supplement"]),
   ];
-  const isSelectedTestEvidence = (path: Array<string | number>) =>
+  const isSelectedTestSourceEvidence = (path: Array<string | number>) =>
     path.length === 8 &&
     path[0] === "supplement" &&
     path[1] === "test_history" &&
@@ -1758,10 +1758,32 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       .filter(
         ({ reference, path }) =>
           reference.path.startsWith("test-results/") &&
-          isSelectedTestEvidence(path),
+          isSelectedTestSourceEvidence(path),
       )
       .map(({ reference }) => evidenceKey(reference)),
   );
+  const history = array(supplement.history, "/supplement/history");
+  const isMatchingTestHistoryEvidence = (
+    reference: EvidenceRef,
+    path: Array<string | number>,
+  ) => {
+    if (
+      path.length !== 7 ||
+      path[0] !== "supplement" ||
+      path[1] !== "history" ||
+      typeof path[2] !== "number" ||
+      path[3] !== "observations" ||
+      typeof path[4] !== "number" ||
+      path[5] !== "evidence" ||
+      typeof path[6] !== "number"
+    )
+      return false;
+    const series = record(history[path[2]], `/supplement/history/${path[2]}`);
+    return (
+      series.source_classification === "test_evidence" &&
+      selectedTestResultKeys.has(evidenceKey(reference))
+    );
+  };
   const indexedTestResultKeys = new Set(
     details
       .filter((detail) => detail.path.startsWith("test-results/"))
@@ -1770,7 +1792,8 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
   for (const { reference, path } of references) {
     if (
       reference.path.startsWith("test-results/") &&
-      !isSelectedTestEvidence(path)
+      !isSelectedTestSourceEvidence(path) &&
+      !isMatchingTestHistoryEvidence(reference, path)
     ) {
       throw new ProgramStatusDecodeError(
         "TEST_RESULT_EVIDENCE_CONTEXT_INVALID",

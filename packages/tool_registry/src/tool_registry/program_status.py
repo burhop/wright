@@ -709,6 +709,35 @@ class ProgramStatusReader:
             for reference in source["evidence"]
             if reference["path"].startswith(test_result_prefix)
         }
+        history = value["supplement"]["history"]
+
+        def is_selected_test_source(path: tuple[str | int, ...]) -> bool:
+            return (
+                len(path) == 8
+                and path[0:3] == ("supplement", "test_history", "checkpoints")
+                and isinstance(path[3], int)
+                and path[4] == "suite_sources"
+                and isinstance(path[5], int)
+                and path[6] == "evidence"
+                and isinstance(path[7], int)
+            )
+
+        def is_matching_test_history(
+            path: tuple[str | int, ...], reference: Mapping[str, Any]
+        ) -> bool:
+            return (
+                len(path) == 7
+                and path[0:2] == ("supplement", "history")
+                and isinstance(path[2], int)
+                and path[3] == "observations"
+                and isinstance(path[4], int)
+                and path[5] == "evidence"
+                and isinstance(path[6], int)
+                and history[path[2]]["source_classification"] == "test_evidence"
+                and (reference["id"], reference["path"], reference["sha256"])
+                in test_source_set
+            )
+
         indexed_test_results = {
             (item["id"], item["path"], item["sha256"])
             for item in evidence_index
@@ -736,18 +765,12 @@ class ProgramStatusReader:
                     not in_index
                     and {"id", "path", "sha256"} <= node.keys()
                     and str(node["path"]).startswith(test_result_prefix)
-                    and not (
-                        len(path) == 8
-                        and path[0:3] == ("supplement", "test_history", "checkpoints")
-                        and isinstance(path[3], int)
-                        and path[4] == "suite_sources"
-                        and isinstance(path[5], int)
-                        and path[6] == "evidence"
-                        and isinstance(path[7], int)
-                    )
+                    and not is_selected_test_source(path)
+                    and not is_matching_test_history(path, node)
                 ):
                     raise ValueError(
-                        "test-result evidence is outside a selected test suite source"
+                        "test-result evidence is outside a selected test suite source "
+                        "or its matching test-history observation"
                     )
                 for key, child in node.items():
                     walk(

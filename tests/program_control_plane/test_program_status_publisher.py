@@ -233,12 +233,18 @@ def test_action_preserves_human_approval_boundary() -> None:
     assert action["blocker"] == "Human approval is required."
 
 
-def test_initial_test_ledger_append_only_attestation_is_proven() -> None:
+def test_committed_test_ledger_append_only_attestation_is_proven() -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")
 
-    assert publisher._verify_test_ledger_append_only(REPOSITORY, subject) is None
+    assert (
+        publisher._verify_test_ledger_append_only(REPOSITORY, subject)
+        == (subject["ledger"]["prior_ledger"]["runs_sha256"])
+    )
 
-    subject["ledger"] = {**subject["ledger"], "ledger_revision": 2}
+    subject["ledger"] = {
+        **subject["ledger"],
+        "ledger_revision": subject["ledger"]["ledger_revision"] + 1,
+    }
     with pytest.raises(ProgramStatusPublishError) as raised:
         publisher._verify_test_ledger_append_only(REPOSITORY, subject)
 
