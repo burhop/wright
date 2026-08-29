@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -569,3 +570,38 @@ def test_runtime_requires_reciprocal_correction_finding_verification_graph() -> 
     governance["corrections"][0]["verification_ids"] = []
     with pytest.raises(ValueError, match="correction claim relations"):
         ProgramStatusReader._validate_relations(value)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (
+            lambda value: value["supplement"]["work"]["current_next_action"].update(
+                {"requires_human_approval": True}
+            ),
+            "human approval action",
+        ),
+        (
+            lambda value: value["supplement"]["work"]["lanes"][1].update(
+                {"branch": "wrong-branch"}
+            ),
+            "continued-development lane",
+        ),
+        (
+            lambda value: value["supplement"]["history"][10]["latest_change"].update(
+                {"to_value": 999}
+            ),
+            "history latest change",
+        ),
+    ],
+)
+def test_runtime_rejects_action_lane_and_history_relation_drift(
+    mutation: object, message: str
+) -> None:
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    candidate = deepcopy(value)
+    assert callable(mutation)
+    mutation(candidate)
+
+    with pytest.raises(ValueError, match=message):
+        ProgramStatusReader._validate_relations(candidate)

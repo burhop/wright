@@ -319,10 +319,70 @@ class ProgramStatusReader:
 
         assignments = work["active_assignments"]
         assignment_ids = [item["agent_id"] for item in assignments]
-        if len(assignment_ids) != len(set(assignment_ids)):
+        assignment_tasks = [
+            (item["feature_id"], item["task_id"]) for item in assignments
+        ]
+        if len(assignment_ids) != len(set(assignment_ids)) or len(
+            assignment_tasks
+        ) != len(set(assignment_tasks)):
             raise ValueError("active assignment identities must be unique")
         if len(assignments) > value["supplement"]["governance"]["limits"]["wip_max"]:
             raise ValueError("active assignments exceed the governed WIP limit")
+        lease = work["lease"]
+        for assignment in assignments:
+            if assignment["feature_id"] == work["active_feature"] and (
+                lease is None
+                or assignment["branch"] != lease["branch"]
+                or assignment["worktree_id"] != lease["worktree_id"]
+            ):
+                raise ValueError("current assignment does not match the active lease")
+
+        def validate_action(action: Mapping[str, Any], purpose: str) -> None:
+            if action["purpose"] != purpose:
+                raise ValueError("action purpose is outside its contracted context")
+            if action["requires_human_approval"] and (
+                action["eligibility"] != "requires_approval"
+                or action["authority_state"] != "not_authorized"
+            ):
+                raise ValueError("human approval action grants authority")
+            if action["eligibility"] == "eligible" and (
+                action["blocker"] is not None
+                or action["authority_state"] not in {"authorized", "not_required"}
+            ):
+                raise ValueError("eligible action has no usable authority")
+            if (
+                action["eligibility"] in {"blocked", "requires_approval"}
+                and not action["blocker"]
+            ):
+                raise ValueError("ineligible action has no blocker explanation")
+
+        validate_action(work["current_next_action"], "current_program_action")
+        benchmark_context = supplement["benchmark_context"]
+        validate_action(
+            benchmark_context["next_qualifying_action"],
+            "benchmark_qualifying_action",
+        )
+        if value["dashboard"]["benchmark_summary"]["counted"] == 0 and (
+            benchmark_context["phase"] not in {"on_hold", "blocked", "unavailable"}
+            or not benchmark_context["hold_reason"]
+        ):
+            raise ValueError("zero benchmark status lacks its hold context")
+
+        lanes = work["lanes"]
+        if [lane["kind"] for lane in lanes] != [
+            "integration",
+            "continued_development",
+        ]:
+            raise ValueError("delivery lanes are not in their closed order")
+        if len({lane["branch"] for lane in lanes}) != len(lanes):
+            raise ValueError("delivery lane branch ownership is not exclusive")
+        if lease is not None and (
+            lanes[1]["branch"] != lease["branch"]
+            or lanes[1]["base_commit"] != lease["dev_baseline"]["commit"]
+        ):
+            raise ValueError("continued-development lane does not match its lease")
+        for lane in lanes:
+            validate_action(lane["next_action"], "lane_next_action")
 
         use_cases = supplement["use_cases"]
         all_counts = use_cases["all"]
@@ -522,6 +582,18 @@ class ProgramStatusReader:
             commits = [observation["commit"] for observation in observations]
             if len(commits) != len(set(commits)):
                 raise ValueError("history contains duplicate committed checkpoints")
+            observed_at = [observation["observed_at"] for observation in observations]
+            if observed_at != sorted(observed_at):
+                raise ValueError("history checkpoints are not causally ordered")
+            if observations:
+                latest = series["latest_change"]
+                if (
+                    latest is None
+                    or latest["commit"] != observations[-1]["commit"]
+                    or latest["observed_at"] != observations[-1]["observed_at"]
+                    or latest["to_value"] != observations[-1]["value"]
+                ):
+                    raise ValueError("history latest change is not deterministic")
             for observation in observations:
                 if not 0 <= observation["value"] <= observation["denominator"]:
                     raise ValueError("history observation is outside its denominator")
