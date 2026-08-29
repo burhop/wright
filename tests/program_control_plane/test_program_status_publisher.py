@@ -236,6 +236,121 @@ def test_customer_story_maturity_is_derived_without_duplicate_definitions() -> N
     assert raised.value.code == "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID"
 
 
+def _use_case_subject() -> dict[str, object]:
+    acceptance = {
+        "id": "ACC-001",
+        "verdict": "passed",
+        "evidence_author": "customer-reviewer",
+    }
+    verification = {
+        "id": "VER-001",
+        "verdict": "passed",
+        "acceptance_subject_id": "ACC-001",
+        "evidence_author": "implementation-agent",
+        "independent_verifier": "independent-reviewer",
+    }
+    gate_raw = canonical({"records": [acceptance]})
+    verification_raw = canonical({"records": [verification]})
+    item = {
+        "id": "EPP-UC-001",
+        "title": "Inspect program status",
+        "customer_outcome": "A customer can inspect an evidence-backed status page.",
+        "process_100_id": "EPP-PROC-001",
+        "definition_evidence": [],
+        "progress_evidence": [],
+        "acceptance_evidence": [
+            {
+                "evidence_class": "customer_acceptance",
+                "source_name": "gate_evidence",
+                "path": "docs/programs/engineering-process-platform/gate-evidence.json",
+                "sha256": hashlib.sha256(gate_raw).hexdigest(),
+                "subject_id": "ACC-001",
+                "verdict": "passed",
+                "acceptance_subject_id": None,
+                "evidence_author": "customer-reviewer",
+                "independent_verifier": None,
+            }
+        ],
+        "test_evidence": [],
+        "independent_verification_evidence": [
+            {
+                "evidence_class": "independent_verification",
+                "source_name": "verification_evidence",
+                "path": "docs/programs/engineering-process-platform/evidence/verification/VER-001.json",
+                "sha256": hashlib.sha256(verification_raw).hexdigest(),
+                "subject_id": "VER-001",
+                "verdict": "passed",
+                "acceptance_subject_id": "ACC-001",
+                "evidence_author": "implementation-agent",
+                "independent_verifier": "independent-reviewer",
+            }
+        ],
+        "benchmark_qualification_evidence": [],
+    }
+    return {
+        "use_case_registry": {"use_cases": [item]},
+        "catalog_sources": {
+            "gate_evidence": [
+                (
+                    "docs/programs/engineering-process-platform/gate-evidence.json",
+                    gate_raw,
+                )
+            ],
+            "verification_evidence": [
+                (
+                    "docs/programs/engineering-process-platform/evidence/verification/VER-001.json",
+                    verification_raw,
+                )
+            ],
+        },
+        "dashboard": {"benchmark_summary": {"counted": 0}},
+    }
+
+
+def test_use_case_projection_requires_resolved_evidence_and_independence() -> None:
+    subject = _use_case_subject()
+
+    items, process_ids, funnels = publisher._derive_use_cases(subject)
+
+    assert process_ids == ["EPP-PROC-001"]
+    assert funnels["all"] == {
+        "total": 1,
+        "not_started": 0,
+        "in_progress": 0,
+        "implemented": 1,
+        "independently_verified": 1,
+        "remaining": 0,
+    }
+    assert funnels["process_100"]["implemented"] == 1
+    assert funnels["process_100"]["benchmark_qualified"] == 0
+    assert items[0]["acceptance_evidence"][0]["evidence"]["id"]
+
+    invalid = _use_case_subject()
+    invalid_item = invalid["use_case_registry"]["use_cases"][0]
+    invalid_item["independent_verification_evidence"][0]["independent_verifier"] = (
+        "implementation-agent"
+    )
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._derive_use_cases(invalid)
+    assert raised.value.code == "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID"
+
+
+def test_use_case_projection_rejects_wrong_path_digest_and_missing_subject() -> None:
+    for field, value in (
+        ("path", "docs/programs/engineering-process-platform/gate-catalog.json"),
+        ("sha256", "f" * 64),
+        ("subject_id", "ACC-MISSING"),
+    ):
+        subject = _use_case_subject()
+        evidence = subject["use_case_registry"]["use_cases"][0]["acceptance_evidence"][
+            0
+        ]
+        evidence[field] = value
+        with pytest.raises(ProgramStatusPublishError) as raised:
+            publisher._derive_use_cases(subject)
+        assert raised.value.code == "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID"
+
+
 def test_canonical_test_identity_and_latest_terminal_selection() -> None:
     test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
     assert (

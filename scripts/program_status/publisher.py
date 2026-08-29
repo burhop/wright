@@ -938,7 +938,176 @@ def _registered_task_counts(
     )
 
 
-def _use_case_counts(subject: Mapping[str, Any]) -> tuple[list[Any], list[str]]:
+def _walk_subject_records(value: Any) -> list[Mapping[str, Any]]:
+    records: list[Mapping[str, Any]] = []
+    if isinstance(value, Mapping):
+        records.append(value)
+        for child in value.values():
+            records.extend(_walk_subject_records(child))
+    elif isinstance(value, list):
+        for child in value:
+            records.extend(_walk_subject_records(child))
+    return records
+
+
+def _record_subject_ids(record: Mapping[str, Any]) -> set[str]:
+    identifiers: set[str] = set()
+    for key, value in record.items():
+        if isinstance(value, str) and (
+            key == "id" or key.endswith("_id") or key in {"action", "task"}
+        ):
+            identifiers.add(value)
+    return identifiers
+
+
+def _resolved_verdict(record: Mapping[str, Any]) -> str | None:
+    aliases = {
+        "pass": "passed",
+        "passed": "passed",
+        "fail": "failed",
+        "failed": "failed",
+        "in_progress": "in_progress",
+        "active": "in_progress",
+        "skipped": "skipped",
+        "not_run": "not_run",
+        "inconclusive": "inconclusive",
+    }
+    for key in ("verdict", "result", "status", "state"):
+        value = record.get(key)
+        if isinstance(value, str) and value.lower() in aliases:
+            return aliases[value.lower()]
+    return None
+
+
+def _resolve_use_case_subject(
+    source_name: str, raw: bytes, subject_id: str
+) -> Mapping[str, Any] | None:
+    if source_name in {"customer_story_catalog", "feature_tasks"}:
+        text = raw.decode("utf-8")
+        if not re.search(
+            rf"(?<![A-Za-z0-9_-]){re.escape(subject_id)}(?![A-Za-z0-9_-])", text
+        ):
+            return None
+        if source_name == "feature_tasks":
+            task = re.search(
+                rf"^- \[(?P<done>[ xX])\] {re.escape(subject_id)}\b",
+                text,
+                re.MULTILINE,
+            )
+            return {
+                "id": subject_id,
+                "verdict": (
+                    "passed"
+                    if task is not None and task.group("done").lower() == "x"
+                    else "in_progress"
+                ),
+            }
+        return {"id": subject_id}
+    try:
+        value = _strict_json(raw, f"catalog source {source_name}")
+    except ProgramStatusPublishError:
+        return None
+    matches = [
+        record
+        for record in _walk_subject_records(value)
+        if subject_id in _record_subject_ids(record)
+    ]
+    if len(matches) != 1:
+        return None
+    return matches[0]
+
+
+def _project_use_case_evidence(
+    subject: Mapping[str, Any], use_case_id: str, stage_name: str, records: Any
+) -> list[dict[str, Any]]:
+    if not isinstance(records, list):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_USE_CASE_REGISTRY_INVALID",
+            f"{use_case_id} {stage_name} evidence must be an array.",
+            "repair_use_case_registry",
+        )
+    projected: list[dict[str, Any]] = []
+    for index, evidence in enumerate(records):
+        if not isinstance(evidence, Mapping):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID",
+                f"{use_case_id} has a non-object {stage_name} evidence record.",
+                "repair_use_case_registry",
+            )
+        source_name = evidence.get("source_name")
+        path = evidence.get("path")
+        expected_digest = evidence.get("sha256")
+        candidates = subject.get("catalog_sources", {}).get(source_name, [])
+        matching = [
+            raw
+            for candidate_path, raw in candidates
+            if candidate_path == path and _raw_digest(raw) == expected_digest
+        ]
+        if len(matching) != 1:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID",
+                f"{use_case_id} {stage_name} evidence is outside its exact catalog path or digest.",
+                "repair_use_case_registry",
+            )
+        resolved = _resolve_use_case_subject(
+            str(source_name), matching[0], str(evidence.get("subject_id", ""))
+        )
+        if resolved is None:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID",
+                f"{use_case_id} {stage_name} subject does not resolve exactly once.",
+                "repair_use_case_registry",
+            )
+        declared_verdict = str(evidence.get("verdict"))
+        resolved_verdict = _resolved_verdict(resolved)
+        if (
+            declared_verdict not in {"not_applicable"}
+            and resolved_verdict != declared_verdict
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID",
+                f"{use_case_id} {stage_name} verdict disagrees with its resolved subject.",
+                "repair_use_case_registry",
+            )
+        for field in (
+            "acceptance_subject_id",
+            "evidence_author",
+            "independent_verifier",
+        ):
+            resolved_value = resolved.get(field)
+            if resolved_value is not None and resolved_value != evidence.get(field):
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID",
+                    f"{use_case_id} {stage_name} {field} disagrees with its resolved subject.",
+                    "repair_use_case_registry",
+                )
+        projected.append(
+            {
+                key: evidence.get(key)
+                for key in (
+                    "evidence_class",
+                    "source_name",
+                    "subject_id",
+                    "verdict",
+                    "acceptance_subject_id",
+                    "evidence_author",
+                    "independent_verifier",
+                )
+            }
+            | {
+                "evidence": _evidence(
+                    f"use-case-{use_case_id}-{stage_name}-{index + 1}",
+                    str(path),
+                    matching[0],
+                )
+            }
+        )
+    return projected
+
+
+def _derive_use_cases(
+    subject: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], list[str], dict[str, dict[str, int]]]:
     use_cases = subject["use_case_registry"].get("use_cases")
     if not isinstance(use_cases, list):
         raise ProgramStatusPublishError(
@@ -968,21 +1137,133 @@ def _use_case_counts(subject: Mapping[str, Any]) -> tuple[list[Any], list[str]]:
             "Process IDs must be unique and range from EPP-PROC-001 through 100.",
             "repair_use_case_registry",
         )
-    return use_cases, process_ids
+    projected_items: list[dict[str, Any]] = []
+    all_implemented = all_verified = all_in_progress = all_not_started = 0
+    process_defined = process_progress = process_implemented = 0
+    process_tested = process_verified = process_qualified = 0
+    for item in use_cases:
+        assert isinstance(item, Mapping)
+        use_case_id = str(item["id"])
+        projected: dict[str, Any] = {
+            key: item[key]
+            for key in ("id", "title", "customer_outcome", "process_100_id")
+        }
+        evidence_identity_stages: dict[tuple[str, str, str], str] = {}
+        for stage_name in (
+            "definition_evidence",
+            "progress_evidence",
+            "acceptance_evidence",
+            "test_evidence",
+            "independent_verification_evidence",
+            "benchmark_qualification_evidence",
+        ):
+            projected[stage_name] = _project_use_case_evidence(
+                subject, use_case_id, stage_name, item.get(stage_name)
+            )
+            for evidence in projected[stage_name]:
+                identity = (
+                    str(evidence["source_name"]),
+                    str(evidence["subject_id"]),
+                    str(evidence["evidence"]["sha256"]),
+                )
+                previous = evidence_identity_stages.get(identity)
+                if previous is not None and previous != stage_name:
+                    raise ProgramStatusPublishError(
+                        "PROGRAM_STATUS_USE_CASE_RELATION_INVALID",
+                        f"{use_case_id} reuses one evidence identity across incompatible stages.",
+                        "repair_use_case_registry",
+                    )
+                evidence_identity_stages[identity] = stage_name
+
+        acceptance_ids = {
+            str(record["subject_id"]) for record in projected["acceptance_evidence"]
+        }
+        for record in projected["independent_verification_evidence"]:
+            if (
+                record["acceptance_subject_id"] not in acceptance_ids
+                or record["evidence_author"] == record["independent_verifier"]
+            ):
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_USE_CASE_RELATION_INVALID",
+                    f"{use_case_id} independent verification is not bound and independent.",
+                    "repair_use_case_registry",
+                )
+        for record in projected["benchmark_qualification_evidence"]:
+            if (
+                item.get("process_100_id") is None
+                or record["subject_id"] != item.get("process_100_id")
+                or record["acceptance_subject_id"] not in acceptance_ids
+                or record["evidence_author"] == record["independent_verifier"]
+            ):
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_USE_CASE_RELATION_INVALID",
+                    f"{use_case_id} benchmark qualification lacks its exact process and acceptance binding.",
+                    "repair_use_case_registry",
+                )
+
+        implemented = bool(projected["acceptance_evidence"])
+        verified = bool(projected["independent_verification_evidence"])
+        in_progress = not implemented and bool(projected["progress_evidence"])
+        all_implemented += int(implemented)
+        all_verified += int(verified)
+        all_in_progress += int(in_progress)
+        all_not_started += int(not implemented and not in_progress)
+        if item.get("process_100_id") is not None:
+            process_defined += int(bool(projected["definition_evidence"]))
+            process_progress += int(in_progress)
+            process_implemented += int(implemented)
+            process_tested += int(
+                any(
+                    record["verdict"] == "passed"
+                    for record in projected["test_evidence"]
+                )
+            )
+            process_verified += int(verified)
+            process_qualified += int(
+                bool(projected["benchmark_qualification_evidence"])
+            )
+        projected_items.append(projected)
+
+    dashboard_qualified = int(subject["dashboard"]["benchmark_summary"]["counted"])
+    if process_qualified != dashboard_qualified:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_USE_CASE_RELATION_INVALID",
+            "Per-process qualification evidence disagrees with the authoritative dashboard.",
+            "repair_use_case_registry",
+        )
+    funnels = {
+        "all": {
+            "total": len(use_cases),
+            "not_started": all_not_started,
+            "in_progress": all_in_progress,
+            "implemented": all_implemented,
+            "independently_verified": all_verified,
+            "remaining": len(use_cases) - all_implemented,
+        },
+        "process_100": {
+            "population_target": 100,
+            "defined": process_defined,
+            "in_progress": process_progress,
+            "implemented": process_implemented,
+            "tested": process_tested,
+            "independently_verified": process_verified,
+            "benchmark_qualified": process_qualified,
+        },
+    }
+    return projected_items, process_ids, funnels
 
 
 def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str, Any]:
     blobs = subject["blobs"]
     state = subject["state"]
     lifecycle = subject["lifecycle"]
-    dashboard = subject["dashboard"]
     feature_id = str(state.get("current_feature") or "EPP-F01B")
     state_ref = _evidence("program-state", STATE_PATH, blobs[STATE_PATH])
     dashboard_ref = _evidence("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH])
     registered, program_done, program_total, feature_done, feature_total = (
         _registered_task_counts(repository, subject, feature_id)
     )
-    use_cases, process_ids = _use_case_counts(subject)
+    use_case_items, _process_ids, use_case_funnels = _derive_use_cases(subject)
     story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
     ledger = subject["ledger"]
     prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
@@ -1248,24 +1529,9 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         "use_cases": {
             "source_path": USE_CASE_REGISTRY_PATH,
             "source_digest": _raw_digest(blobs[USE_CASE_REGISTRY_PATH]),
-            "all": {
-                "total": len(use_cases),
-                "not_started": len(use_cases),
-                "in_progress": 0,
-                "implemented": 0,
-                "independently_verified": 0,
-                "remaining": len(use_cases),
-            },
-            "process_100": {
-                "population_target": 100,
-                "defined": len(process_ids),
-                "in_progress": 0,
-                "implemented": 0,
-                "tested": 0,
-                "independently_verified": 0,
-                "benchmark_qualified": int(dashboard["benchmark_summary"]["counted"]),
-            },
-            "items": [],
+            "all": use_case_funnels["all"],
+            "process_100": use_case_funnels["process_100"],
+            "items": use_case_items,
             "graph_context": graph_context,
         },
         "test_history": {
