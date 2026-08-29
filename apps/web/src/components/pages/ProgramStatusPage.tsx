@@ -8,6 +8,11 @@ import {
 } from "../../services/program-status";
 import { AtAGlanceSummary } from "../program-status/AtAGlanceSummary";
 import { RefreshState } from "../program-status/RefreshState";
+import { ProgramHistory } from "../program-status/ProgramHistory";
+import { WorkProgress } from "../program-status/WorkProgress";
+import { ActiveAssignments } from "../program-status/ActiveAssignments";
+import { UseCaseFunnels } from "../program-status/UseCaseFunnels";
+import { DeliveryLanes } from "../program-status/DeliveryLanes";
 
 export function ProgramStatusPage() {
   const [bundle, setBundle] = useState<ProgramStatusBundle | null>(null);
@@ -116,6 +121,12 @@ export function ProgramStatusPage() {
       {bundle ? (
         <>
           <AtAGlanceSummary bundle={bundle} />
+          <WorkProgress work={bundle.supplement.work} />
+          <ActiveAssignments
+            assignments={bundle.supplement.work.active_assignments}
+          />
+          <UseCaseFunnels supplement={bundle.supplement} />
+          <DeliveryLanes lanes={bundle.supplement.work.lanes} />
           <section aria-labelledby="readiness-heading">
             <h2 id="readiness-heading">Independent readiness areas</h2>
             <div
@@ -149,6 +160,7 @@ export function ProgramStatusPage() {
               ))}
             </div>
           </section>
+          <ProgramHistory history={bundle.supplement.history} />
           <details>
             <summary>Evidence identity and limitations</summary>
             <dl>

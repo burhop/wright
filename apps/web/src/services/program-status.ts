@@ -26,6 +26,42 @@ export interface TaskCounts {
   remaining: number;
 }
 
+export interface ProgramStatusObservation {
+  commit: string;
+  transition_id: string | null;
+  parent_commit: string | null;
+  observed_at: string;
+  value: number;
+  denominator: number | null;
+  label: string;
+  source_classification: string;
+  change_reason: string | null;
+  evidence: EvidenceRef[];
+}
+
+export interface ProgramStatusSeries {
+  id: string;
+  label: string;
+  unit: string;
+  counting_rule: string;
+  source_classification: string;
+  availability: "available" | "unavailable";
+  feature_id: string | null;
+  decision_use: string;
+  current_limitation: string;
+  next_action: StatusAction;
+  latest_change: {
+    commit: string;
+    observed_at: string;
+    from_value: number | null;
+    to_value: number;
+    reason: string;
+  } | null;
+  omitted_observations: number;
+  unavailable_reason: string | null;
+  observations: ProgramStatusObservation[];
+}
+
 export interface ProgramStatusBundle {
   schema_version: typeof PROGRAM_STATUS_SCHEMA_VERSION;
   bundle_id: string;
@@ -46,7 +82,7 @@ export interface ProgramStatusBundle {
   };
   dashboard: Readonly<Record<string, unknown>>;
   supplement: {
-    history: Array<Record<string, unknown>>;
+    history: ProgramStatusSeries[];
     customer_catalog: {
       proposed_total: number;
       source_path: string;
@@ -423,9 +459,10 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
     },
     dashboard: record(root.dashboard, "/dashboard"),
     supplement: {
-      history: array(supplement.history, "/supplement/history") as Array<
-        Record<string, unknown>
-      >,
+      history: array(
+        supplement.history,
+        "/supplement/history",
+      ) as ProgramStatusSeries[],
       customer_catalog: {
         proposed_total: proposedTotal,
         source_path: stringValue(
