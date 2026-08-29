@@ -1,5 +1,14 @@
-import { readFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { createHash } from "node:crypto";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
+import { spawnSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -36,6 +45,71 @@ async function mockProgramStatus(page: Page) {
       headers: { ETag: `"${parsedBundle.bundle_id}"` },
     }),
   );
+}
+
+function command(executable: string, args: string[]): string {
+  const result = spawnSync(executable, args, {
+    cwd: resolve("."),
+    encoding: "utf8",
+    env: Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => key !== "PYTHONPATH"),
+    ),
+    timeout: 120_000,
+  });
+  expect(
+    result.status,
+    `${executable}: ${result.stderr}\n${result.stdout}`,
+  ).toBe(0);
+  return result.stdout.trim();
+}
+
+function installCommittedFixture(
+  dataRoot: string,
+  raw: string,
+  observedCommit: string,
+  observedAt: string,
+): void {
+  const currentTemp = resolve(dataRoot, ".current.json.tmp");
+  writeFileSync(currentTemp, raw, "utf8");
+  renameSync(currentTemp, resolve(dataRoot, "current.json"));
+  const publisherTemp = resolve(dataRoot, ".publisher.json.tmp");
+  writeFileSync(
+    publisherTemp,
+    JSON.stringify({
+      state: "active",
+      mode: "committed_watch",
+      observed_commit: observedCommit,
+      last_attempt_at: observedAt,
+      last_success_at: observedAt,
+      failure_code: null,
+      recovery: null,
+    }),
+    "utf8",
+  );
+  renameSync(publisherTemp, resolve(dataRoot, "publisher.json"));
+}
+
+function canonicalFixture(value: unknown): string {
+  if (value === null || typeof value === "boolean" || typeof value === "string")
+    return JSON.stringify(value);
+  if (typeof value === "number") {
+    if (!Number.isFinite(value) || !Number.isSafeInteger(value))
+      throw new Error("refresh fixture uses the integer canonical subset");
+    return String(value);
+  }
+  if (Array.isArray(value)) return `[${value.map(canonicalFixture).join(",")}]`;
+  if (typeof value === "object") {
+    const row = value as Record<string, unknown>;
+    return `{${Object.keys(row)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalFixture(row[key])}`)
+      .join(",")}}`;
+  }
+  throw new Error("refresh fixture contains an unsupported value");
+}
+
+function fixtureDigest(value: unknown): string {
+  return createHash("sha256").update(canonicalFixture(value)).digest("hex");
 }
 
 test.describe("Program status comprehension and accessibility", () => {
@@ -121,5 +195,109 @@ test.describe("Program status comprehension and accessibility", () => {
     await expect(page.getByTestId("program-history")).toContainText(
       "Exact committed checkpoints only",
     );
+  });
+
+  test("refreshes atomically after an exact committed publication and observes its separate heartbeat", async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
+    const dataRoot = mkdtempSync(resolve(tmpdir(), "wright-program-status-"));
+    const artifactPath =
+      "src/wright_engineering/static/program-status/current.json";
+    const fixtureCommit = command("git", [
+      "log",
+      "--format=%H",
+      "--max-count=1",
+      "HEAD",
+      "--",
+      artifactPath,
+    ]);
+    expect(fixtureCommit).toMatch(/^[0-9a-f]{40}$/);
+    const firstRaw = command("git", [
+      "show",
+      `${fixtureCommit}:${artifactPath}`,
+    ]);
+    const servedEtags: string[] = [];
+    const observedPublisherCommits: Array<string | null> = [];
+    const observedPublisherTimes: Array<string | null> = [];
+
+    try {
+      const first = JSON.parse(firstRaw);
+      const second = structuredClone(first);
+      second.generated_at = "2026-08-29T14:00:00Z";
+      second.supplement.work.tasks.completed += 1;
+      second.supplement.work.tasks.remaining -= 1;
+      second.supplement.work.current_milestone =
+        "Committed refresh acceptance fixture";
+      second.bundle_id = fixtureDigest({
+        source: second.source,
+        dashboard: second.dashboard,
+        supplement: second.supplement,
+      });
+      const secondRaw = JSON.stringify(second);
+      installCommittedFixture(
+        dataRoot,
+        firstRaw,
+        first.source.commit,
+        "2026-08-29T13:52:16Z",
+      );
+      await page.route("**/api/program-status/publisher", (route) => {
+        const publisher = JSON.parse(
+          readFileSync(resolve(dataRoot, "publisher.json"), "utf8"),
+        );
+        observedPublisherCommits.push(publisher.observed_commit);
+        observedPublisherTimes.push(publisher.last_success_at);
+        return route.fulfill({ json: publisher });
+      });
+      await page.route("**/api/program-status", (route) => {
+        const body = readFileSync(resolve(dataRoot, "current.json"), "utf8");
+        const current = JSON.parse(body);
+        const etag = `"${current.bundle_id}"`;
+        servedEtags.push(etag);
+        if (route.request().headers()["if-none-match"] === etag) {
+          return route.fulfill({ status: 304, headers: { ETag: etag } });
+        }
+        return route.fulfill({
+          body,
+          contentType: "application/json",
+          headers: { ETag: etag },
+        });
+      });
+
+      await page.goto("/program-status");
+      await expect(page.getByTestId("program-work-summary")).toContainText(
+        `${first.supplement.work.tasks.completed}/${first.supplement.work.tasks.total}`,
+      );
+      await expect(
+        page.getByTestId("program-status-refresh-state"),
+      ).toContainText("Publisher: active");
+
+      installCommittedFixture(
+        dataRoot,
+        secondRaw,
+        second.source.commit,
+        "2026-08-29T14:00:00Z",
+      );
+      const installedSecond = JSON.parse(
+        readFileSync(resolve(dataRoot, "current.json"), "utf8"),
+      );
+      expect(installedSecond.bundle_id).not.toBe(first.bundle_id);
+      await expect(page.getByTestId("program-work-summary")).toContainText(
+        `${installedSecond.supplement.work.tasks.completed}/${installedSecond.supplement.work.tasks.total}`,
+        { timeout: 20_000 },
+      );
+      expect(new Set(servedEtags)).toEqual(
+        new Set([`"${first.bundle_id}"`, `"${installedSecond.bundle_id}"`]),
+      );
+      expect(observedPublisherCommits).toContain(first.source.commit);
+      expect(new Set(observedPublisherTimes)).toEqual(
+        new Set(["2026-08-29T13:52:16Z", "2026-08-29T14:00:00Z"]),
+      );
+      await expect(
+        page.getByText("Program status unavailable", { exact: true }),
+      ).toHaveCount(0);
+    } finally {
+      rmSync(dataRoot, { recursive: true, force: true });
+    }
   });
 });
