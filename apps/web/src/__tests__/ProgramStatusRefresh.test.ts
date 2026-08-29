@@ -11,6 +11,7 @@ import { hostAdapter } from "../services/host-adapter";
 import {
   canonicalProgramStatusDigest,
   canonicalProgramStatusJson,
+  decodeProgramStatusBundle,
   fetchProgramStatus,
   fetchProgramStatusPublisher,
   verifyProgramStatusIdentity,
@@ -194,15 +195,27 @@ describe("program status conditional refresh transport", () => {
     const reference = raw.supplement.work.current_next_action.evidence[0];
     raw.supplement.use_cases.items = [
       {
-        use_case_id: "EPP-UC-001",
+        id: "EPP-UC-001",
+        title: "Inspect status",
+        customer_outcome: "A customer can inspect evidence-backed status.",
+        process_100_id: null,
         definition_evidence: [
           {
-            stage: "definition",
-            source_class: "roadmap",
-            subject: "EPP-UC-001",
+            evidence_class: "definition",
+            source_name: "roadmap",
+            subject_id: "EPP-F01B",
+            verdict: "not_applicable",
+            acceptance_subject_id: null,
+            evidence_author: null,
+            independent_verifier: null,
             evidence: reference,
           },
         ],
+        progress_evidence: [],
+        acceptance_evidence: [],
+        test_evidence: [],
+        independent_verification_evidence: [],
+        benchmark_qualification_evidence: [],
       },
     ];
     expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
@@ -213,6 +226,80 @@ describe("program status conditional refresh transport", () => {
     };
     expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
       "EVIDENCE_REFERENCE_UNRESOLVED",
+    );
+  });
+
+  it("recomputes a non-empty use-case funnel and rejects non-independent evidence", () => {
+    const raw = makeProgramStatusBundle() as any;
+    const acceptanceRef = {
+      id: "use-case-acceptance",
+      path: "docs/programs/engineering-process-platform/gate-evidence.json",
+      sha256: "6".repeat(64),
+    };
+    const verificationRef = {
+      id: "use-case-verification",
+      path: "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V9.json",
+      sha256: "7".repeat(64),
+    };
+    raw.supplement.use_cases.items = [
+      {
+        id: "EPP-UC-001",
+        title: "Inspect status",
+        customer_outcome: "A customer can inspect evidence-backed status.",
+        process_100_id: "EPP-PROC-001",
+        definition_evidence: [],
+        progress_evidence: [],
+        acceptance_evidence: [
+          {
+            evidence_class: "customer_acceptance",
+            source_name: "gate_evidence",
+            subject_id: "ACC-001",
+            verdict: "passed",
+            acceptance_subject_id: null,
+            evidence_author: "customer-reviewer",
+            independent_verifier: null,
+            evidence: acceptanceRef,
+          },
+        ],
+        test_evidence: [],
+        independent_verification_evidence: [
+          {
+            evidence_class: "independent_verification",
+            source_name: "verification_evidence",
+            subject_id: "VER-001",
+            verdict: "passed",
+            acceptance_subject_id: "ACC-001",
+            evidence_author: "implementation-agent",
+            independent_verifier: "independent-reviewer",
+            evidence: verificationRef,
+          },
+        ],
+        benchmark_qualification_evidence: [],
+      },
+    ];
+    raw.supplement.use_cases.all = {
+      total: 1,
+      not_started: 0,
+      in_progress: 0,
+      implemented: 1,
+      independently_verified: 1,
+      remaining: 0,
+    };
+    raw.supplement.use_cases.process_100 = {
+      population_target: 100,
+      defined: 0,
+      in_progress: 0,
+      implemented: 1,
+      tested: 0,
+      independently_verified: 1,
+      benchmark_qualified: 0,
+    };
+    expect(() => decodeProgramStatusBundle(raw)).not.toThrow();
+
+    raw.supplement.use_cases.items[0].independent_verification_evidence[0].independent_verifier =
+      "implementation-agent";
+    expect(() => decodeProgramStatusBundle(raw)).toThrow(
+      "USE_CASE_VERIFICATION_INVALID",
     );
   });
 

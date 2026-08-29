@@ -337,18 +337,97 @@ class ProgramStatusReader:
         ):
             raise ValueError("all-use-case funnel does not reconcile")
         items = use_cases["items"]
-        item_ids = [item["use_case_id"] for item in items]
+        item_ids = [item["id"] for item in items]
         if len(item_ids) != len(set(item_ids)) or len(items) != all_counts["total"]:
             raise ValueError("use-case inventory does not reconcile")
-        process_items = [
-            item for item in items if str(item["use_case_id"]).startswith("EPP-PROC-")
-        ]
+        process_items = [item for item in items if item["process_100_id"] is not None]
         expected_process_ids = {f"EPP-PROC-{number:03d}" for number in range(1, 101)}
-        if (
-            not set(item["use_case_id"] for item in process_items)
-            <= expected_process_ids
+        process_ids = [item["process_100_id"] for item in process_items]
+        if len(process_ids) != len(set(process_ids)) or not set(process_ids) <= (
+            expected_process_ids
         ):
             raise ValueError("process use-case identity is outside EPP-PROC-001..100")
+        derived_all = {
+            "total": len(items),
+            "not_started": 0,
+            "in_progress": 0,
+            "implemented": 0,
+            "independently_verified": 0,
+            "remaining": 0,
+        }
+        derived_process = {
+            "population_target": 100,
+            "defined": 0,
+            "in_progress": 0,
+            "implemented": 0,
+            "tested": 0,
+            "independently_verified": 0,
+            "benchmark_qualified": 0,
+        }
+        stage_names = (
+            "definition_evidence",
+            "progress_evidence",
+            "acceptance_evidence",
+            "test_evidence",
+            "independent_verification_evidence",
+            "benchmark_qualification_evidence",
+        )
+        for item in items:
+            stage_identities: set[tuple[str, str, str]] = set()
+            for stage_name in stage_names:
+                for stage in item[stage_name]:
+                    identity = (
+                        stage["source_name"],
+                        stage["subject_id"],
+                        stage["evidence"]["sha256"],
+                    )
+                    if identity in stage_identities:
+                        raise ValueError(
+                            "use-case evidence is reused across incompatible stages"
+                        )
+                    stage_identities.add(identity)
+            acceptance_ids = {
+                stage["subject_id"] for stage in item["acceptance_evidence"]
+            }
+            for stage in item["independent_verification_evidence"]:
+                if (
+                    stage["acceptance_subject_id"] not in acceptance_ids
+                    or stage["evidence_author"] == stage["independent_verifier"]
+                ):
+                    raise ValueError(
+                        "use-case verification is not acceptance-bound and independent"
+                    )
+            for stage in item["benchmark_qualification_evidence"]:
+                if (
+                    stage["subject_id"] != item["process_100_id"]
+                    or stage["acceptance_subject_id"] not in acceptance_ids
+                    or stage["evidence_author"] == stage["independent_verifier"]
+                    or not item["independent_verification_evidence"]
+                ):
+                    raise ValueError(
+                        "benchmark qualification is not process/acceptance/verification bound"
+                    )
+            implemented = bool(item["acceptance_evidence"])
+            verified = bool(item["independent_verification_evidence"])
+            in_progress = not implemented and bool(item["progress_evidence"])
+            derived_all["implemented"] += int(implemented)
+            derived_all["independently_verified"] += int(verified)
+            derived_all["in_progress"] += int(in_progress)
+            derived_all["not_started"] += int(not implemented and not in_progress)
+            if item["process_100_id"] is not None:
+                derived_process["defined"] += int(bool(item["definition_evidence"]))
+                derived_process["in_progress"] += int(in_progress)
+                derived_process["implemented"] += int(implemented)
+                derived_process["tested"] += int(
+                    any(stage["verdict"] == "passed" for stage in item["test_evidence"])
+                )
+                derived_process["independently_verified"] += int(verified)
+                derived_process["benchmark_qualified"] += int(
+                    bool(item["benchmark_qualification_evidence"])
+                )
+        derived_all["remaining"] = derived_all["total"] - derived_all["implemented"]
+        if derived_all != all_counts:
+            raise ValueError("all-use-case funnel is not derived from its inventory")
         process = use_cases["process_100"]
         process_stages = (
             "defined",
@@ -362,14 +441,15 @@ class ProgramStatusReader:
             process[name] > process["population_target"] for name in process_stages
         ):
             raise ValueError("100-process funnel exceeds its governed population")
-        if not (
-            process["benchmark_qualified"]
-            <= process["independently_verified"]
-            <= process["tested"]
-            <= process["implemented"]
-            <= process["defined"]
+        if process != derived_process:
+            raise ValueError("100-process funnel is not derived from its inventory")
+        if (
+            process["benchmark_qualified"] > process["independently_verified"]
+            or process["independently_verified"] > process["implemented"]
+            or process["benchmark_qualified"]
+            != value["dashboard"]["benchmark_summary"]["counted"]
         ):
-            raise ValueError("100-process maturity stages are conflated")
+            raise ValueError("100-process governed relations do not reconcile")
 
         history_ids = [series["id"] for series in supplement["history"]]
         if len(history_ids) != len(set(history_ids)):

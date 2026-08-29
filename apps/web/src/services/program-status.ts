@@ -116,6 +116,7 @@ export interface ProgramStatusBundle {
         independently_verified: number;
         benchmark_qualified: number;
       };
+      items: Array<Record<string, unknown>>;
     };
     test_history: {
       availability: "available" | "unavailable";
@@ -388,6 +389,228 @@ function counts(value: unknown, path: string): TaskCounts {
   return result;
 }
 
+function validateUseCaseInventory(
+  useCases: Record<string, unknown>,
+  all: ProgramStatusBundle["supplement"]["use_cases"]["all"],
+  process: ProgramStatusBundle["supplement"]["use_cases"]["process_100"],
+  dashboard: Record<string, unknown>,
+): Array<Record<string, unknown>> {
+  const rawItems = array(useCases.items, "/supplement/use_cases/items");
+  const items = rawItems.map((value, itemIndex) => {
+    const path = `/supplement/use_cases/items/${itemIndex}`;
+    const item = record(value, path);
+    exact(
+      item,
+      [
+        "id",
+        "title",
+        "customer_outcome",
+        "process_100_id",
+        "definition_evidence",
+        "progress_evidence",
+        "acceptance_evidence",
+        "test_evidence",
+        "independent_verification_evidence",
+        "benchmark_qualification_evidence",
+      ],
+      path,
+    );
+    stringValue(item.id, `${path}/id`);
+    stringValue(item.title, `${path}/title`);
+    stringValue(item.customer_outcome, `${path}/customer_outcome`);
+    nullableString(item.process_100_id, `${path}/process_100_id`);
+    for (const stageName of [
+      "definition_evidence",
+      "progress_evidence",
+      "acceptance_evidence",
+      "test_evidence",
+      "independent_verification_evidence",
+      "benchmark_qualification_evidence",
+    ] as const) {
+      array(item[stageName], `${path}/${stageName}`).forEach(
+        (stageValue, stageIndex) => {
+          const stagePath = `${path}/${stageName}/${stageIndex}`;
+          const stage = record(stageValue, stagePath);
+          exact(
+            stage,
+            [
+              "evidence_class",
+              "source_name",
+              "subject_id",
+              "verdict",
+              "acceptance_subject_id",
+              "evidence_author",
+              "independent_verifier",
+              "evidence",
+            ],
+            stagePath,
+          );
+          stringValue(stage.evidence_class, `${stagePath}/evidence_class`);
+          stringValue(stage.source_name, `${stagePath}/source_name`);
+          stringValue(stage.subject_id, `${stagePath}/subject_id`);
+          stringValue(stage.verdict, `${stagePath}/verdict`);
+          nullableString(
+            stage.acceptance_subject_id,
+            `${stagePath}/acceptance_subject_id`,
+          );
+          nullableString(stage.evidence_author, `${stagePath}/evidence_author`);
+          nullableString(
+            stage.independent_verifier,
+            `${stagePath}/independent_verifier`,
+          );
+          evidence(stage.evidence, `${stagePath}/evidence`);
+        },
+      );
+    }
+    return item;
+  });
+  const ids = items.map((item) => item.id as string);
+  if (new Set(ids).size !== ids.length || items.length !== all.total) {
+    throw new ProgramStatusDecodeError(
+      "USE_CASE_INVENTORY_INVALID",
+      "/supplement/use_cases/items",
+    );
+  }
+  const processIds = items
+    .map((item) => item.process_100_id as string | null)
+    .filter((value): value is string => value !== null);
+  if (
+    new Set(processIds).size !== processIds.length ||
+    processIds.some(
+      (value) => !/^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$/.test(value),
+    )
+  ) {
+    throw new ProgramStatusDecodeError(
+      "PROCESS_IDENTITY_INVALID",
+      "/supplement/use_cases/items",
+    );
+  }
+  const derivedAll = {
+    total: items.length,
+    not_started: 0,
+    in_progress: 0,
+    implemented: 0,
+    independently_verified: 0,
+    remaining: 0,
+  };
+  const derivedProcess = {
+    population_target: 100 as const,
+    defined: 0,
+    in_progress: 0,
+    implemented: 0,
+    tested: 0,
+    independently_verified: 0,
+    benchmark_qualified: 0,
+  };
+  for (const item of items) {
+    const acceptance = item.acceptance_evidence as Array<
+      Record<string, unknown>
+    >;
+    const progress = item.progress_evidence as Array<Record<string, unknown>>;
+    const verification = item.independent_verification_evidence as Array<
+      Record<string, unknown>
+    >;
+    const qualification = item.benchmark_qualification_evidence as Array<
+      Record<string, unknown>
+    >;
+    const testEvidence = item.test_evidence as Array<Record<string, unknown>>;
+    const acceptanceIds = new Set(
+      acceptance.map((stage) => stage.subject_id as string),
+    );
+    const identities = new Set<string>();
+    for (const stageName of [
+      "definition_evidence",
+      "progress_evidence",
+      "acceptance_evidence",
+      "test_evidence",
+      "independent_verification_evidence",
+      "benchmark_qualification_evidence",
+    ] as const) {
+      for (const stage of item[stageName] as Array<Record<string, unknown>>) {
+        const ref = stage.evidence as EvidenceRef;
+        const identity = `${stage.source_name}\u0000${stage.subject_id}\u0000${ref.sha256}`;
+        if (identities.has(identity)) {
+          throw new ProgramStatusDecodeError(
+            "USE_CASE_STAGE_REUSE_INVALID",
+            "/supplement/use_cases/items",
+          );
+        }
+        identities.add(identity);
+      }
+    }
+    for (const stage of verification) {
+      if (
+        !acceptanceIds.has(stage.acceptance_subject_id as string) ||
+        stage.evidence_author === stage.independent_verifier
+      ) {
+        throw new ProgramStatusDecodeError(
+          "USE_CASE_VERIFICATION_INVALID",
+          "/supplement/use_cases/items",
+        );
+      }
+    }
+    for (const stage of qualification) {
+      if (
+        stage.subject_id !== item.process_100_id ||
+        !acceptanceIds.has(stage.acceptance_subject_id as string) ||
+        stage.evidence_author === stage.independent_verifier ||
+        verification.length === 0
+      ) {
+        throw new ProgramStatusDecodeError(
+          "USE_CASE_QUALIFICATION_INVALID",
+          "/supplement/use_cases/items",
+        );
+      }
+    }
+    const implemented = acceptance.length > 0;
+    const verified = verification.length > 0;
+    const inProgress = !implemented && progress.length > 0;
+    derivedAll.implemented += Number(implemented);
+    derivedAll.independently_verified += Number(verified);
+    derivedAll.in_progress += Number(inProgress);
+    derivedAll.not_started += Number(!implemented && !inProgress);
+    if (item.process_100_id !== null) {
+      derivedProcess.defined += Number(
+        (item.definition_evidence as unknown[]).length > 0,
+      );
+      derivedProcess.in_progress += Number(inProgress);
+      derivedProcess.implemented += Number(implemented);
+      derivedProcess.tested += Number(
+        testEvidence.some((stage) => stage.verdict === "passed"),
+      );
+      derivedProcess.independently_verified += Number(verified);
+      derivedProcess.benchmark_qualified += Number(qualification.length > 0);
+    }
+  }
+  derivedAll.remaining = derivedAll.total - derivedAll.implemented;
+  if (JSON.stringify(derivedAll) !== JSON.stringify(all)) {
+    throw new ProgramStatusDecodeError(
+      "USE_CASE_ARITHMETIC_INVALID",
+      "/supplement/use_cases/all",
+    );
+  }
+  if (JSON.stringify(derivedProcess) !== JSON.stringify(process)) {
+    throw new ProgramStatusDecodeError(
+      "PROCESS_FUNNEL_INVALID",
+      "/supplement/use_cases/process_100",
+    );
+  }
+  const benchmarkSummary = record(
+    dashboard.benchmark_summary,
+    "/dashboard/benchmark_summary",
+  );
+  if (
+    derivedProcess.benchmark_qualified !==
+    integer(benchmarkSummary.counted, "/dashboard/benchmark_summary/counted")
+  ) {
+    throw new ProgramStatusDecodeError(
+      "BENCHMARK_QUALIFICATION_INVALID",
+      "/supplement/use_cases/process_100/benchmark_qualified",
+    );
+  }
+  return items;
+}
+
 export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
   const root = record(value, "");
   exact(
@@ -509,6 +732,42 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
       "/supplement/use_cases/all",
     );
   }
+  const process100 = {
+    population_target: integer(
+      processCases.population_target,
+      "/supplement/use_cases/process_100/population_target",
+    ) as 100,
+    defined: integer(
+      processCases.defined,
+      "/supplement/use_cases/process_100/defined",
+    ),
+    in_progress: integer(
+      processCases.in_progress,
+      "/supplement/use_cases/process_100/in_progress",
+    ),
+    implemented: integer(
+      processCases.implemented,
+      "/supplement/use_cases/process_100/implemented",
+    ),
+    tested: integer(
+      processCases.tested,
+      "/supplement/use_cases/process_100/tested",
+    ),
+    independently_verified: integer(
+      processCases.independently_verified,
+      "/supplement/use_cases/process_100/independently_verified",
+    ),
+    benchmark_qualified: integer(
+      processCases.benchmark_qualified,
+      "/supplement/use_cases/process_100/benchmark_qualified",
+    ),
+  };
+  const useCaseItems = validateUseCaseInventory(
+    useCases,
+    all,
+    process100,
+    record(root.dashboard, "/dashboard"),
+  );
   const proposedTotal = integer(
     catalog.proposed_total,
     "/supplement/customer_catalog/proposed_total",
@@ -580,36 +839,8 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
       },
       use_cases: {
         all,
-        process_100: {
-          population_target: integer(
-            processCases.population_target,
-            "/supplement/use_cases/process_100/population_target",
-          ) as 100,
-          defined: integer(
-            processCases.defined,
-            "/supplement/use_cases/process_100/defined",
-          ),
-          in_progress: integer(
-            processCases.in_progress,
-            "/supplement/use_cases/process_100/in_progress",
-          ),
-          implemented: integer(
-            processCases.implemented,
-            "/supplement/use_cases/process_100/implemented",
-          ),
-          tested: integer(
-            processCases.tested,
-            "/supplement/use_cases/process_100/tested",
-          ),
-          independently_verified: integer(
-            processCases.independently_verified,
-            "/supplement/use_cases/process_100/independently_verified",
-          ),
-          benchmark_qualified: integer(
-            processCases.benchmark_qualified,
-            "/supplement/use_cases/process_100/benchmark_qualified",
-          ),
-        },
+        process_100: process100,
+        items: useCaseItems,
       },
       test_history: {
         availability: stringValue(

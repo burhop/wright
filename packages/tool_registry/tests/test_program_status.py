@@ -390,3 +390,106 @@ def test_full_contract_rejects_test_result_path_on_non_test_reference(
         ).read_bundle()
 
     assert raised.value.code is ProgramStatusErrorCode.INVALID
+
+
+def test_full_contract_recomputes_nonempty_orthogonal_use_case_funnels(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    acceptance_ref = {
+        "id": "use-case-acceptance",
+        "path": "docs/programs/engineering-process-platform/gate-evidence.json",
+        "sha256": "6" * 64,
+    }
+    verification_ref = {
+        "id": "use-case-verification",
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-V9.json",
+        "sha256": "7" * 64,
+    }
+    item = {
+        "id": "EPP-UC-001",
+        "title": "Inspect status",
+        "customer_outcome": "A customer can inspect evidence-backed status.",
+        "process_100_id": "EPP-PROC-001",
+        "definition_evidence": [],
+        "progress_evidence": [],
+        "acceptance_evidence": [
+            {
+                "evidence_class": "customer_acceptance",
+                "source_name": "gate_evidence",
+                "subject_id": "ACC-001",
+                "verdict": "passed",
+                "acceptance_subject_id": None,
+                "evidence_author": "customer-reviewer",
+                "independent_verifier": None,
+                "evidence": acceptance_ref,
+            }
+        ],
+        "test_evidence": [],
+        "independent_verification_evidence": [
+            {
+                "evidence_class": "independent_verification",
+                "source_name": "verification_evidence",
+                "subject_id": "VER-001",
+                "verdict": "passed",
+                "acceptance_subject_id": "ACC-001",
+                "evidence_author": "implementation-agent",
+                "independent_verifier": "independent-reviewer",
+                "evidence": verification_ref,
+            }
+        ],
+        "benchmark_qualification_evidence": [],
+    }
+    use_cases = value["supplement"]["use_cases"]
+    use_cases["items"] = [item]
+    use_cases["all"] = {
+        "total": 1,
+        "not_started": 0,
+        "in_progress": 0,
+        "implemented": 1,
+        "independently_verified": 1,
+        "remaining": 0,
+    }
+    use_cases["process_100"] = {
+        "population_target": 100,
+        "defined": 0,
+        "in_progress": 0,
+        "implemented": 1,
+        "tested": 0,
+        "independently_verified": 1,
+        "benchmark_qualified": 0,
+    }
+    for reference, label in (
+        (acceptance_ref, "Acceptance"),
+        (verification_ref, "Independent verification"),
+    ):
+        value["supplement"]["evidence_index"].append(
+            {
+                **reference,
+                "label": label,
+                "summary": f"Exact {label.lower()} evidence.",
+                "freshness": "current",
+                "recovery": None,
+                "availability": "identity_only",
+                "exact_url": None,
+            }
+        )
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    ProgramStatusReader(
+        installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+    ).read_bundle()
+
+    item["independent_verification_evidence"][0]["independent_verifier"] = (
+        "implementation-agent"
+    )
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+    assert raised.value.code is ProgramStatusErrorCode.INVALID

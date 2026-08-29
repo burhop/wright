@@ -80,6 +80,7 @@ export function makeProgramStatusBundle(
       release_eligible: false,
       release_approval: "not_requested",
       next_action: { action: "HISTORICAL_ONLY" },
+      benchmark_summary: { counted: 0, target: 100 },
     },
     supplement: {
       history: [],
@@ -91,6 +92,9 @@ export function makeProgramStatusBundle(
         maturity_counts: { fully_defined: 5, ready_to_specify: 5 },
       },
       use_cases: {
+        source_path:
+          "docs/programs/engineering-process-platform/use-case-registry.json",
+        source_digest: "4".repeat(64),
         all: {
           total: 0,
           not_started: 0,
@@ -107,6 +111,13 @@ export function makeProgramStatusBundle(
           tested: 0,
           independently_verified: 0,
           benchmark_qualified: 0,
+        },
+        items: [],
+        graph_context: {
+          meaning: "Governed use-case progress.",
+          latest_change: null,
+          current_limitation: "No governed use cases are registered yet.",
+          next_action: { ...action, purpose: "metric_guidance" },
         },
       },
       test_history: {
