@@ -28,6 +28,7 @@ from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.routers.engineering_models import router as engineering_models_router
+from api.routers.program_status import router as program_status_router
 from api.routers.support_diagnostics import router as support_diagnostics_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
@@ -288,6 +289,9 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.include_router(
+    program_status_router, prefix="/api/program-status", tags=["Program Status"]
+)
 app.include_router(
     engineering_models_router,
     prefix="/api/v1/engineering-models",

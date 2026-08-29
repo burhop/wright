@@ -32,6 +32,13 @@ from .gateway_models import (
     RequestState,
     SessionState,
 )
+from .program_status import (
+    ProgramStatusDocument,
+    ProgramStatusErrorCode,
+    ProgramStatusPublisherState,
+    ProgramStatusReadError,
+    ProgramStatusReader,
+)
 
 
 def __getattr__(name: str):
@@ -77,4 +84,9 @@ __all__ = [
     "GatewayToolResult",
     "RequestState",
     "SessionState",
+    "ProgramStatusDocument",
+    "ProgramStatusErrorCode",
+    "ProgramStatusPublisherState",
+    "ProgramStatusReadError",
+    "ProgramStatusReader",
 ]

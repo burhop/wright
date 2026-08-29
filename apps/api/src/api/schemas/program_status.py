@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import StrEnum
 from typing import Any, Literal
 
@@ -57,7 +58,7 @@ class ProgramStatusBundleResponse(ClosedProgramStatusModel):
 
     schema_version: Literal["1.0.0"]
     bundle_id: str = Field(pattern=r"^[0-9a-f]{64}$")
-    generated_at: str = Field(min_length=1, max_length=100)
+    generated_at: datetime
     source: ProgramStatusSourceResponse
     dashboard: dict[str, Any]
     supplement: dict[str, Any]
@@ -67,9 +68,9 @@ class ProgramStatusPublisherResponse(ClosedProgramStatusModel):
     """Bounded operational publisher state; never readiness or authority."""
 
     state: Literal["active", "inactive", "failed", "unavailable"]
-    mode: str = Field(min_length=1, max_length=100)
+    mode: Literal["committed_watch", "package_install", "manual"]
     observed_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
-    last_attempt_at: str | None = Field(default=None, max_length=100)
-    last_success_at: str | None = Field(default=None, max_length=100)
-    failure_code: str | None = Field(default=None, max_length=100)
-    recovery: str | None = Field(default=None, max_length=500)
+    last_attempt_at: datetime | None = None
+    last_success_at: datetime | None = None
+    failure_code: str | None = Field(default=None, max_length=96)
+    recovery: str | None = Field(default=None, max_length=1000)
