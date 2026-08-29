@@ -1,9 +1,8 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardPage from "../components/pages/DashboardPage";
+import appSource from "../App.tsx?raw";
 
 const { logger, workspaceService } = vi.hoisted(() => ({
   logger: { info: vi.fn(), error: vi.fn() },
@@ -56,7 +55,6 @@ describe("App route compatibility", () => {
   });
 
   it("retains every existing top-level route and adds program status separately", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/App.tsx"), "utf8");
     for (const route of [
       'path="/"',
       'path="/workspace/:workspaceId"',
@@ -68,11 +66,13 @@ describe("App route compatibility", () => {
       'path="/settings"',
       'path="/agent-chat"',
     ]) {
-      expect(source).toContain(route);
+      expect(appSource).toContain(route);
     }
-    expect(source).toContain(
+    expect(appSource).toContain(
       '<Route path="/program-status" element={<ProgramStatusPage />} />',
     );
-    expect(source).toContain('<Route path="/" element={<DashboardPage />} />');
+    expect(appSource).toContain(
+      '<Route path="/" element={<DashboardPage />} />',
+    );
   });
 });

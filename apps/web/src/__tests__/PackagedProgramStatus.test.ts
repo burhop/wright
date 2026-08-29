@@ -1,6 +1,5 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import packagedProgramStatus from "../../../../src/wright_engineering/static/program-status/current.json?raw";
 import {
   canonicalProgramStatusDigest,
   decodeProgramStatusBundle,
@@ -9,15 +8,7 @@ import {
 
 describe("packaged program status fallback", () => {
   it("is accepted by the same decoder and identity verifier as the browser", async () => {
-    const raw = JSON.parse(
-      readFileSync(
-        resolve(
-          process.cwd(),
-          "../../src/wright_engineering/static/program-status/current.json",
-        ),
-        "utf8",
-      ),
-    );
+    const raw = JSON.parse(packagedProgramStatus);
 
     expect(raw.bundle_id).toBe(
       await canonicalProgramStatusDigest({
