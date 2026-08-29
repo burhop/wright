@@ -216,6 +216,110 @@ def _unavailable_series(
     }
 
 
+def _available_series(
+    identifier: str,
+    label: str,
+    unit: str,
+    counting_rule: str,
+    source_classification: str,
+    feature_id: str | None,
+    observations: list[dict[str, Any]],
+    evidence: list[dict[str, str]],
+    limitation: str,
+) -> dict[str, Any]:
+    latest = observations[-1]
+    previous = observations[-2]["value"] if len(observations) > 1 else None
+    return {
+        "id": identifier,
+        "label": label,
+        "unit": unit,
+        "counting_rule": counting_rule,
+        "source_classification": source_classification,
+        "availability": "available",
+        "feature_id": feature_id,
+        "decision_use": "Use exact committed changes to choose the next bounded action.",
+        "current_limitation": limitation,
+        "next_action": _action(
+            "CONTINUE_EVIDENCE_BACKED_DELIVERY",
+            "Continue the next evidence-backed delivery task",
+            "metric_guidance",
+            evidence,
+        ),
+        "latest_change": {
+            "commit": latest["commit"],
+            "observed_at": latest["observed_at"],
+            "from_value": previous,
+            "to_value": latest["value"],
+            "reason": latest["change_reason"] or latest["label"],
+        },
+        "omitted_observations": 0,
+        "unavailable_reason": None,
+        "observations": observations,
+    }
+
+
+def _path_commits(
+    repository: Path, commit: str, path: str
+) -> list[tuple[str, str, str]]:
+    output = str(
+        _git(
+            repository,
+            "log",
+            "--format=%H%x09%cI%x09%s",
+            "--max-count=250",
+            commit,
+            "--",
+            path,
+        )
+    )
+    rows: list[tuple[str, str, str]] = []
+    for line in reversed(output.splitlines()):
+        parts = line.split("\t", 2)
+        if len(parts) == 3:
+            rows.append((parts[0], parts[1], parts[2]))
+    return rows
+
+
+def _observations_for_path(
+    repository: Path,
+    commit: str,
+    path: str,
+    value_reader: Any,
+    label: str,
+    source_classification: str,
+) -> list[dict[str, Any]]:
+    observations: list[dict[str, Any]] = []
+    previous_value: tuple[float, float | None] | None = None
+    previous_commit: str | None = None
+    for row_commit, observed_at, subject in _path_commits(repository, commit, path):
+        raw = _git_blob(repository, row_commit, path)
+        value, denominator = value_reader(raw)
+        current_value = (
+            float(value),
+            None if denominator is None else float(denominator),
+        )
+        if current_value == previous_value:
+            previous_commit = row_commit
+            continue
+        observations.append(
+            {
+                "commit": row_commit,
+                "transition_id": None,
+                "parent_commit": previous_commit,
+                "observed_at": observed_at,
+                "value": current_value[0],
+                "denominator": current_value[1],
+                "label": label,
+                "source_classification": source_classification,
+                "change_reason": subject[:500],
+                "evidence": [_evidence(f"{label}:{row_commit[:12]}", path, raw)],
+            }
+        )
+        previous_value = current_value
+        previous_commit = row_commit
+    return observations
+
+
 def _graph_context(evidence: list[dict[str, str]]) -> dict[str, Any]:
     return {
         "meaning": "Shows evidence-backed movement without estimating calendar duration.",
@@ -528,6 +632,59 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             None,
         ),
     )
+    history_by_id: dict[str, list[dict[str, Any]]] = {}
+
+    def dashboard_area(area: str) -> Any:
+        def read(raw: bytes) -> tuple[int, int]:
+            value = _strict_json(raw, DASHBOARD_PATH)["areas"][area]
+            return int(value["passed_gates"]), int(value["required_gates"])
+
+        return read
+
+    for history_id, area in (
+        ("product_readiness", "product_readiness"),
+        ("benchmark_readiness", "benchmark_readiness"),
+        ("commercial_readiness", "commercial_readiness"),
+        ("program_health", "program_health"),
+        ("governance", "program_health"),
+    ):
+        history_by_id[history_id] = _observations_for_path(
+            repository,
+            str(subject["commit"]),
+            DASHBOARD_PATH,
+            dashboard_area(area),
+            history_id,
+            "program_gate" if history_id == "governance" else "readiness_gate",
+        )
+
+    def benchmark_count(raw: bytes) -> tuple[int, int]:
+        value = _strict_json(raw, DASHBOARD_PATH)["benchmark_summary"]
+        return int(value["counted"]), int(value["target"])
+
+    history_by_id["benchmark_qualified"] = _observations_for_path(
+        repository,
+        str(subject["commit"]),
+        DASHBOARD_PATH,
+        benchmark_count,
+        "benchmark_qualified",
+        "benchmark_qualification",
+    )
+    feature_task_path = next(
+        (
+            str(item["tasks_path"])
+            for item in subject["work_registry"].get("task_sources", [])
+            if isinstance(item, Mapping) and item.get("feature_id") == feature_id
+        ),
+        "specs/077-browser-program-status/tasks.md",
+    )
+    history_by_id["feature_tasks"] = _observations_for_path(
+        repository,
+        str(subject["commit"]),
+        feature_task_path,
+        _task_counts,
+        "feature_tasks",
+        "feature_task",
+    )
     graph_context = _graph_context([state_ref])
     benchmark_blocker = "Benchmark execution is not authorized and remains at 0/100."
     lane_blocker = "Push, PR, merge, and dev integration are not authorized."
@@ -544,7 +701,16 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     )
     return {
         "history": [
-            _unavailable_series(*definition, [state_ref])
+            (
+                _available_series(
+                    *definition,
+                    history_by_id[definition[0]],
+                    [state_ref],
+                    "History contains exact commits only; unsupported categories remain unavailable.",
+                )
+                if history_by_id.get(definition[0])
+                else _unavailable_series(*definition, [state_ref])
+            )
             for definition in history_definitions
         ],
         "customer_catalog": {

@@ -54,6 +54,16 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         "push_max": 2,
     }
     assert bundle["supplement"]["use_cases"]["process_100"]["benchmark_qualified"] == 0
+    histories = {series["id"]: series for series in bundle["supplement"]["history"]}
+    assert histories["feature_tasks"]["availability"] == "available"
+    assert histories["feature_tasks"]["observations"][-1]["value"] == 4
+    assert histories["feature_tasks"]["observations"][-1]["denominator"] == 48
+    assert histories["benchmark_qualified"]["observations"][-1]["value"] == 0
+    assert histories["benchmark_qualified"]["observations"][-1]["denominator"] == 100
+    for observation in histories["feature_tasks"]["observations"]:
+        assert len(observation["commit"]) == 40
+        assert observation["observed_at"]
+        assert observation["evidence"]
     assert first.changed is True
 
     second = publish_program_status(request(tmp_path))
