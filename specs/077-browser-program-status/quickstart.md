@@ -69,3 +69,14 @@ Expected: the watcher uses its declared two-second default; within 10 seconds it
 ## 6. Delivery gates
 
 After implementation authority exists, run normal repository checks, packaged-runtime smoke without `.git` or network, and then the dev push/merge runbooks. Direct push to `dev` is never permitted.
+
+## Executed acceptance checkpoint — 2026-08-29
+
+The human-repeatable path above was executed locally against exact commit `25dad93f01cb942f271f815bf7b85ad3f9aaae2a` (tree `6dd5795228146cead31a6c86a419c4deb1f50313`, program tree `b13ebef292935ac0676022c5dc15ca664c82eab2`). No benchmark, dependency, network, push, PR, merge, publication, release, or customer/product operation ran.
+
+- Corrected the publish example after the first literal run failed closed because `--repository` was absent. The corrected command installed bundle `b0fc25a943e35bea8681649f2cb1479d4aa35924373b679bf07fbf0919f41b07`; its second run reported `changed=false`, and `current.json` remained byte-identical with SHA-256 `8393b826d597a6d64ff05f932961fe648cd6d4475b2e39c7b9d3aa95b686516b`.
+- The installed bundle passed source-free `ProgramStatusReader` validation. The focused reader suite passed 18/18 and the authenticated API suite passed 5/5.
+- The full publisher suite passed 30/30 in 388.79 seconds, including closed-source mutation, action and benchmark authority, work/use-case/test arithmetic, wrong/missing evidence, reciprocal correction relationships, deterministic history, exact paths/URLs, replacement containment, and deterministic regeneration.
+- The focused browser suite passed 28/28 after synchronizing one legacy empty-use-case fixture with the required `items: []` and `benchmark_summary` fields.
+- The isolated-port Chromium walkthrough passed 4/4: six-question comprehension, accessible graph/table fallbacks, exact committed atomic refresh plus heartbeat, and last-valid/unavailable failure containment. The initial default-port run was invalid because Playwright reused an unrelated stale Wright server; the documented isolated-port command prevents recurrence.
+- Current truthful limitations: the governed use-case registry and canonical test-run ledger contain no delivery observations; active assignment evidence is absent; benchmark execution is unauthorized and remains `0/100`; readiness and release eligibility are unchanged.
