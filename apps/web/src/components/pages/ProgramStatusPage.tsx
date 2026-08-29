@@ -13,6 +13,7 @@ import { WorkProgress } from "../program-status/WorkProgress";
 import { ActiveAssignments } from "../program-status/ActiveAssignments";
 import { UseCaseFunnels } from "../program-status/UseCaseFunnels";
 import { DeliveryLanes } from "../program-status/DeliveryLanes";
+import { EvidenceDetails } from "../program-status/EvidenceDetails";
 
 export function ProgramStatusPage() {
   const [bundle, setBundle] = useState<ProgramStatusBundle | null>(null);
@@ -161,6 +162,7 @@ export function ProgramStatusPage() {
             </div>
           </section>
           <ProgramHistory history={bundle.supplement.history} />
+          <EvidenceDetails bundle={bundle} />
           <details>
             <summary>Evidence identity and limitations</summary>
             <dl>

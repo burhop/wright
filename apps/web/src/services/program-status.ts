@@ -8,6 +8,15 @@ export interface EvidenceRef {
   sha256: string;
 }
 
+export interface EvidenceDetail extends EvidenceRef {
+  label: string;
+  summary: string;
+  freshness: "current" | "stale" | "unavailable" | "unknown";
+  recovery: string | null;
+  availability: "checkout_available" | "exact_github" | "identity_only";
+  exact_url: string | null;
+}
+
 export interface StatusAction {
   id: string;
   label: string;
@@ -134,7 +143,7 @@ export interface ProgramStatusBundle {
       lanes: Array<Record<string, unknown>>;
     };
     governance: Record<string, unknown>;
-    evidence_index: Array<Record<string, unknown>>;
+    evidence_index: EvidenceDetail[];
   };
 }
 
@@ -233,6 +242,78 @@ function evidence(value: unknown, path: string): EvidenceRef {
     id: stringValue(row.id, `${path}/id`),
     path: stringValue(row.path, `${path}/path`),
     sha256: stringValue(row.sha256, `${path}/sha256`),
+  };
+}
+
+const relativePathPattern =
+  /^(?!.*(?:^|\/)\.{1,2}(?:\/|$))(?!.*\/\/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/;
+const exactGitHubPattern =
+  /^https:\/\/github\.com\/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?\/blob\/[0-9a-f]{40}\/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/;
+
+function enumValue<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+  path: string,
+): T {
+  const parsed = stringValue(value, path);
+  if (!allowed.includes(parsed as T))
+    throw new ProgramStatusDecodeError("ENUM_INVALID", path);
+  return parsed as T;
+}
+
+function evidenceDetail(value: unknown, path: string): EvidenceDetail {
+  const row = record(value, path);
+  exact(
+    row,
+    [
+      "id",
+      "label",
+      "path",
+      "sha256",
+      "summary",
+      "freshness",
+      "recovery",
+      "availability",
+      "exact_url",
+    ],
+    path,
+  );
+  const parsedPath = stringValue(row.path, `${path}/path`);
+  if (!relativePathPattern.test(parsedPath))
+    throw new ProgramStatusDecodeError("UNSAFE_EVIDENCE_PATH", `${path}/path`);
+  const sha256 = stringValue(row.sha256, `${path}/sha256`);
+  if (!/^[0-9a-f]{64}$/.test(sha256))
+    throw new ProgramStatusDecodeError("DIGEST_INVALID", `${path}/sha256`);
+  const availability = enumValue(
+    row.availability,
+    ["checkout_available", "exact_github", "identity_only"] as const,
+    `${path}/availability`,
+  );
+  const exactUrl = nullableString(row.exact_url, `${path}/exact_url`);
+  if (exactUrl !== null && !exactGitHubPattern.test(exactUrl))
+    throw new ProgramStatusDecodeError(
+      "UNSAFE_EVIDENCE_URL",
+      `${path}/exact_url`,
+    );
+  if (availability === "exact_github" && exactUrl === null)
+    throw new ProgramStatusDecodeError(
+      "MISSING_EXACT_URL",
+      `${path}/exact_url`,
+    );
+  return {
+    id: stringValue(row.id, `${path}/id`),
+    label: stringValue(row.label, `${path}/label`),
+    path: parsedPath,
+    sha256,
+    summary: stringValue(row.summary, `${path}/summary`),
+    freshness: enumValue(
+      row.freshness,
+      ["current", "stale", "unavailable", "unknown"] as const,
+      `${path}/freshness`,
+    ),
+    recovery: nullableString(row.recovery, `${path}/recovery`),
+    availability,
+    exact_url: exactUrl,
   };
 }
 
@@ -607,7 +688,9 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
       evidence_index: array(
         supplement.evidence_index,
         "/supplement/evidence_index",
-      ) as Array<Record<string, unknown>>,
+      ).map((item, index) =>
+        evidenceDetail(item, `/supplement/evidence_index/${index}`),
+      ),
     },
   };
 }
