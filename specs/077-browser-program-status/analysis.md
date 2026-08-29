@@ -6,7 +6,7 @@
 
 ## Result
 
-**LOCAL PASS after bounded repair 1 for the material work/use-case/test-visibility amendment — exact-commit re-reviews pending.**
+**LOCAL PASS after bounded repair 2 for the material work/use-case/test-visibility amendment — exact-commit re-reviews pending.**
 
 - Functional requirements: 48
 - Requirements mapped to implementation/test tasks: 48/48
@@ -56,6 +56,15 @@ The first exact-subject audits rejected `d327b71fb912fea546aeeb789fb9ef92a7b2e39
 - use-case and process identities are unique/ranged, `remaining` is exact, stage evidence is typed and source-bound, acceptance/verification bindings are explicit, and bounded per-item projections let runtime/browser recompute the funnels;
 - the test ledger now has revision/prior identity, runs digest, unique canonical run keys, exact collected identities, and deterministic selection rules; the bundle carries selected-source provenance/counts and an explicit publisher continuity/selection attestation while runtime/browser recompute everything possible from projected data; and
 - packaged-runtime work now includes the promoted authoritative dashboard schema needed to resolve the bundle's external `$ref` without a checkout.
+
+## Bounded repair 2 disposition
+
+The two repair-1 re-reviews converged on two P1 gaps. The final bounded repair closes only those causes:
+
+- use-case stage evidence now has a closed stage-to-source map, exact named-parser subject resolution, resolved-verdict checks, acceptance binding, and explicit evidence-author/verifier independence with negative cases for wrong source, missing subject, verdict mismatch, and equal identities; and
+- test identities, run keys, and complete-run-array digests now have exact cross-language NFC/UTF-8 byte algorithms, each source requires `total = len(test_case_ids)`, and Python/TypeScript golden fixtures are mandatory.
+
+Focused validation on the repair working tree: 37 contract/schema tests passed; all five EPP-F01B schemas meta-validated; the 20-source catalog validated; 48 requirements, 48 tasks, and 51 checklist items remain contiguous; and `git diff --check` passed.
 
 ## Consistency conclusions
 

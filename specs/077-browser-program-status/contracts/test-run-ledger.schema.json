@@ -4,7 +4,7 @@
   "title": "Wright Engineering Process Platform Test Run Ledger",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "program_id", "ledger_revision", "prior_ledger", "runs_sha256", "run_key_rule", "case_identity_rule", "canonical_selection_rule", "pass_rate_rule", "runs"],
+  "required": ["schema_version", "program_id", "ledger_revision", "prior_ledger", "runs_sha256", "runs_digest_rule", "run_key_rule", "case_identity_rule", "identity_digest_rule", "canonical_selection_rule", "pass_rate_rule", "runs"],
   "properties": {
     "schema_version": { "const": "1.0.0" },
     "program_id": { "const": "engineering-process-platform" },
@@ -25,8 +25,10 @@
       ]
     },
     "runs_sha256": { "$ref": "#/$defs/sha256" },
-    "run_key_rule": { "const": "sha256_of_canonical_commit_suite_id_population_id_attempt" },
+    "runs_digest_rule": { "const": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order" },
+    "run_key_rule": { "const": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256" },
     "case_identity_rule": { "const": "framework_collected_identity_including_each_parameterized_identity_once" },
+    "identity_digest_rule": { "const": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256" },
     "canonical_selection_rule": { "const": "latest_terminal_attempt_per_commit_suite_id_population_id" },
     "pass_rate_rule": { "const": "passed_divided_by_passed_plus_failed_else_unavailable" },
     "runs": {

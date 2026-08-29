@@ -7,6 +7,44 @@
     "current_action": "current_program_state_supersedes_historical_dashboard_next_action",
     "supplement": "supplement_may_contextualize_but_never_mutate_dashboard_readiness_benchmark_or_release_truth",
     "unresolved_conflict": "reject_publication",
+    "use_case_stage_policy": {
+      "definition": {
+        "allowed_sources": ["roadmap", "customer_story_catalog"],
+        "subject_resolution": "resolve_exact_subject_id_through_named_catalog_parser",
+        "verdict_rule": "presence_proves_definition_only_and_grants_no_delivery_credit",
+        "independence_rule": "not_applicable"
+      },
+      "progress": {
+        "allowed_sources": ["transition_evidence", "work_registry", "feature_tasks"],
+        "subject_resolution": "resolve_exact_subject_id_through_named_catalog_parser",
+        "verdict_rule": "resolved_task_or_transition_must_show_in_progress_without_acceptance_credit",
+        "independence_rule": "not_applicable"
+      },
+      "customer_acceptance": {
+        "allowed_sources": ["gate_evidence", "verification_evidence"],
+        "subject_resolution": "resolve_exact_subject_id_through_named_catalog_parser",
+        "verdict_rule": "resolved_record_must_be_typed_user_visible_acceptance_with_passed_verdict",
+        "independence_rule": "not_required_for_implementation_count"
+      },
+      "test": {
+        "allowed_sources": ["test_run_ledger", "verification_evidence"],
+        "subject_resolution": "resolve_exact_subject_id_through_named_catalog_parser",
+        "verdict_rule": "resolved_terminal_test_subject_verdict_is_preserved_and_only_passed_counts_as_tested",
+        "independence_rule": "not_required_for_tested_count"
+      },
+      "independent_verification": {
+        "allowed_sources": ["verification_evidence"],
+        "subject_resolution": "resolve_exact_subject_id_through_named_catalog_parser",
+        "verdict_rule": "resolved_record_must_be_passed_and_bind_exact_passing_acceptance_subject",
+        "independence_rule": "resolved_verifier_must_be_present_and_differ_from_record_author"
+      },
+      "benchmark_qualification": {
+        "allowed_sources": ["dashboard", "benchmark_coverage", "gate_evidence", "verification_evidence"],
+        "subject_resolution": "resolve_exact_process_subject_through_named_catalog_parser_and_dashboard",
+        "verdict_rule": "resolved_process_must_be_qualified_in_authoritative_dashboard_and_bind_passing_acceptance",
+        "independence_rule": "resolved_passing_independent_verifier_must_differ_from_record_author"
+      }
+    },
     "source_precedence": [
       "dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence",
       "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery",
@@ -22,7 +60,7 @@
       "schema_ids": ["https://wright.local/programs/epp/dashboard-v2.schema.json"],
       "parser_contract": "EPP_DASHBOARD_V2",
       "selection_rule": "Read the exact committed Git blob at the requested subject, validate it, and embed the parsed object unchanged. Its next_action is historical snapshot context, not the current program action.",
-      "projects_to": ["/dashboard"]
+      "projects_to": ["/dashboard", "/supplement/use_cases/items/*/benchmark_qualification_evidence"]
     },
     "program_state": {
       "path_kind": "exact",
@@ -40,7 +78,7 @@
       "schema_ids": ["https://wright.local/programs/epp/roadmap.schema.json"],
       "parser_contract": "EPP_ROADMAP_V1",
       "selection_rule": "Use only dependency and lifecycle fields that validate against the current program state; reject disagreement rather than choose a second current action.",
-      "projects_to": ["/supplement/work/current_milestone", "/supplement/work/blockers", "/supplement/benchmark_context/dependencies"]
+      "projects_to": ["/supplement/work/current_milestone", "/supplement/work/blockers", "/supplement/benchmark_context/dependencies", "/supplement/use_cases/items/*/definition_evidence"]
     },
     "lifecycle_policy": {
       "path_kind": "exact",
@@ -67,7 +105,7 @@
       "schema_ids": ["https://wright.local/programs/epp/gate-evidence.schema.json"],
       "parser_contract": "EPP_GATE_EVIDENCE_V1",
       "selection_rule": "Use only exact gate evidence referenced by the validated dashboard or causal history; never upgrade partial, skipped, stale, or failed evidence.",
-      "projects_to": ["/supplement/history", "/supplement/evidence_index"]
+      "projects_to": ["/supplement/history", "/supplement/use_cases/items/*/acceptance_evidence", "/supplement/use_cases/items/*/benchmark_qualification_evidence", "/supplement/evidence_index"]
     },
     "benchmark_coverage": {
       "path_kind": "exact",
@@ -76,7 +114,7 @@
       "schema_ids": ["https://wright.local/programs/epp/benchmark-coverage.schema.json"],
       "parser_contract": "EPP_BENCHMARK_COVERAGE_V1",
       "selection_rule": "Use only hold, dependency, coverage, and qualifying-action context that is consistent with the embedded governed benchmark counts; never count proposed stories as qualified.",
-      "projects_to": ["/supplement/benchmark_context", "/supplement/history"]
+      "projects_to": ["/supplement/benchmark_context", "/supplement/history", "/supplement/use_cases/items/*/benchmark_qualification_evidence"]
     },
     "audit_status": {
       "path_kind": "exact",
@@ -112,7 +150,7 @@
       "schema_ids": ["https://wright.local/programs/epp/transition-evidence.schema.json"],
       "parser_contract": "EPP_TRANSITION_COLLECTION_V2",
       "selection_rule": "Select only the contiguous validated transition chain through program-state.last_transition; order by revision/parent relation, never filename, timestamp, or SHA lexicography.",
-      "projects_to": ["/supplement/history", "/supplement/work/checkpoints", "/supplement/work/lanes", "/supplement/evidence_index"]
+      "projects_to": ["/supplement/history", "/supplement/work/checkpoints", "/supplement/work/lanes", "/supplement/use_cases/items/*/progress_evidence", "/supplement/evidence_index"]
     },
     "legacy_v8_discovery": {
       "path_kind": "exact",
@@ -146,7 +184,7 @@
       "schema_ids": ["https://wright.local/programs/epp/verification-evidence.schema.json", "https://wright.local/programs/epp/validation-report.schema.json"],
       "parser_contract": "EPP_VERIFICATION_COLLECTION_V1",
       "selection_rule": "Select exact-subject reports referenced by validated transitions or correction profiles; preserve verdict and every finding code and never convert a failed, partial, or inconclusive report to passed.",
-      "projects_to": ["/supplement/governance/verification", "/supplement/governance/findings", "/supplement/evidence_index"]
+      "projects_to": ["/supplement/governance/verification", "/supplement/governance/findings", "/supplement/use_cases/items/*/acceptance_evidence", "/supplement/use_cases/items/*/test_evidence", "/supplement/use_cases/items/*/independent_verification_evidence", "/supplement/use_cases/items/*/benchmark_qualification_evidence", "/supplement/evidence_index"]
     },
     "approval_evidence": {
       "path_kind": "append_only_collection",
@@ -164,7 +202,7 @@
       "schema_ids": ["https://wright.local/programs/epp/work-registry.schema.json"],
       "parser_contract": "EPP_WORK_REGISTRY_V1",
       "selection_rule": "Use the closed task-source list to parse program-wide and active-feature task counts. Project only exact active assignments whose task, branch, safe worktree identifier or lane, state, why-this-matters statement, timestamp, and evidence validate. Never discover task sources repository-wide or infer assignments from process activity.",
-      "projects_to": ["/supplement/work/program_tasks", "/supplement/work/tasks", "/supplement/work/active_assignments", "/supplement/history", "/supplement/evidence_index"]
+      "projects_to": ["/supplement/work/program_tasks", "/supplement/work/tasks", "/supplement/work/active_assignments", "/supplement/history", "/supplement/use_cases/items/*/progress_evidence", "/supplement/evidence_index"]
     },
     "use_case_registry": {
       "path_kind": "exact",
@@ -182,7 +220,7 @@
       "schema_ids": ["https://wright.local/programs/epp/test-run-ledger.schema.json"],
       "parser_contract": "EPP_TEST_RUN_LEDGER_V1",
       "selection_rule": "Validate the current ledger's revision, prior committed ledger identity, unchanged prior run prefix, runs digest, unique run IDs and canonical run-key digests, and absence of deletion/rewrite. Retain every attempt but select only the unique maximum terminal attempt per commit, suite_id, and population_id; reject a tied/conflicting maximum. Recompute each sorted exact test-case-identity-set digest; aggregate only component populations whose identity sets are pairwise disjoint; exclude summary-only populations; derive per-source/category/overall counts and pass rate; and render unsupported or missing history unavailable.",
-      "projects_to": ["/supplement/test_history", "/supplement/history", "/supplement/evidence_index"]
+      "projects_to": ["/supplement/test_history", "/supplement/history", "/supplement/use_cases/items/*/test_evidence", "/supplement/evidence_index"]
     },
     "customer_story_catalog": {
       "path_kind": "exact",
@@ -191,7 +229,7 @@
       "schema_ids": ["wright-parser://epp/customer-story-catalog-v1"],
       "parser_contract": "EPP_CUSTOMER_STORY_MARKDOWN_V1",
       "selection_rule": "Parse exactly EPP-US-001 through EPP-US-100 once; derive maturity labels from their declared sections and reject missing, duplicate, or unknown IDs.",
-      "projects_to": ["/supplement/customer_catalog"]
+      "projects_to": ["/supplement/customer_catalog", "/supplement/use_cases/items/*/definition_evidence"]
     },
     "feature_tasks": {
       "path_kind": "exact",
@@ -200,7 +238,7 @@
       "schema_ids": ["wright-parser://speckit/tasks-v1"],
       "parser_contract": "SPECKIT_TASKS_MARKDOWN_V1",
       "selection_rule": "Parse exactly the unique task IDs in the current approved EPP-F01B task graph and their checkbox state; this population is the active-feature component of the closed work registry and never a whole-program completion percentage.",
-      "projects_to": ["/supplement/work/tasks", "/supplement/history"]
+      "projects_to": ["/supplement/work/tasks", "/supplement/history", "/supplement/use_cases/items/*/progress_evidence"]
     }
   }
 }

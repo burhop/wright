@@ -29,7 +29,7 @@
     "stageEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evidence_class", "source_name", "path", "sha256", "subject_id", "verdict", "acceptance_subject_id", "independent_verifier"],
+      "required": ["evidence_class", "source_name", "path", "sha256", "subject_id", "verdict", "acceptance_subject_id", "evidence_author", "independent_verifier"],
       "properties": {
         "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
         "source_name": { "$ref": "#/$defs/sourceName" },
@@ -38,43 +38,44 @@
         "subject_id": { "type": "string", "minLength": 1, "maxLength": 160 },
         "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
         "acceptance_subject_id": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
+        "evidence_author": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
         "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 }
       }
     },
     "definitionEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "definition" }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+        { "properties": { "evidence_class": { "const": "definition" }, "source_name": { "enum": ["roadmap", "customer_story_catalog"] }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }
       ]
     },
     "progressEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "progress" }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+        { "properties": { "evidence_class": { "const": "progress" }, "source_name": { "enum": ["transition_evidence", "work_registry", "feature_tasks"] }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }
       ]
     },
     "acceptanceEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "customer_acceptance" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+        { "properties": { "evidence_class": { "const": "customer_acceptance" }, "source_name": { "enum": ["gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }
       ]
     },
     "testEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "test" }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "independent_verifier": { "type": "null" } } }
+        { "properties": { "evidence_class": { "const": "test" }, "source_name": { "enum": ["test_run_ledger", "verification_evidence"] }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }
       ]
     },
     "verificationEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "independent_verification" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+        { "properties": { "evidence_class": { "const": "independent_verification" }, "source_name": { "const": "verification_evidence" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }
       ]
     },
     "qualificationEvidence": {
       "allOf": [
         { "$ref": "#/$defs/stageEvidence" },
-        { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "transition_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+        { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }
       ]
     },
     "useCase": {

@@ -131,6 +131,33 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
         "https://wright.local/programs/epp/f01b-activation-correction.schema.json"
         in catalog["sources"]["correction_evidence"]["schema_ids"]
     )
+    stage_policy = catalog["conflict_policy"]["use_case_stage_policy"]
+    assert stage_policy["definition"]["allowed_sources"] == [
+        "roadmap",
+        "customer_story_catalog",
+    ]
+    assert stage_policy["progress"]["allowed_sources"] == [
+        "transition_evidence",
+        "work_registry",
+        "feature_tasks",
+    ]
+    assert stage_policy["customer_acceptance"]["allowed_sources"] == [
+        "gate_evidence",
+        "verification_evidence",
+    ]
+    assert stage_policy["test"]["allowed_sources"] == [
+        "test_run_ledger",
+        "verification_evidence",
+    ]
+    assert stage_policy["independent_verification"]["allowed_sources"] == [
+        "verification_evidence"
+    ]
+    assert stage_policy["benchmark_qualification"]["allowed_sources"] == [
+        "dashboard",
+        "benchmark_coverage",
+        "gate_evidence",
+        "verification_evidence",
+    ]
 
 
 def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
@@ -151,11 +178,28 @@ def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
     )
     assert "source_name" in use_cases["$defs"]["stageEvidence"]["required"]
     assert "acceptance_subject_id" in use_cases["$defs"]["stageEvidence"]["required"]
+    assert "evidence_author" in use_cases["$defs"]["stageEvidence"]["required"]
     assert "independent_verifier" in use_cases["$defs"]["stageEvidence"]["required"]
+
+    assert use_cases["$defs"]["definitionEvidence"]["allOf"][1]["properties"][
+        "source_name"
+    ]["enum"] == ["roadmap", "customer_story_catalog"]
+    assert use_cases["$defs"]["verificationEvidence"]["allOf"][1]["properties"][
+        "source_name"
+    ]["const"] == "verification_evidence"
 
     ledger_required = test_ledger["required"]
     assert {"ledger_revision", "prior_ledger", "runs_sha256", "run_key_rule"} <= set(
         ledger_required
+    )
+    assert test_ledger["properties"]["identity_digest_rule"]["const"].startswith(
+        "wright_test_id_set_v1_lf"
+    )
+    assert test_ledger["properties"]["run_key_rule"]["const"].startswith(
+        "wright_test_run_key_v1_lf"
+    )
+    assert test_ledger["properties"]["runs_digest_rule"]["const"].startswith(
+        "wright_json_c14n_v1_nfc_sha256"
     )
     run_required = test_ledger["$defs"]["run"]["required"]
     assert {"run_key", "test_case_ids", "test_case_set_sha256", "counts"} <= set(
@@ -172,6 +216,9 @@ def test_epp_f01b_progress_contract_carries_independently_checkable_inputs(
         "counts",
     } <= set(suite_required)
     assert "items" in bundle["$defs"]["useCases"]["required"]
+    assert {"identity_digest_rule", "run_key_rule", "runs_digest_rule"} <= set(
+        bundle["$defs"]["testHistory"]["required"]
+    )
     assert "docs/programs/engineering-process-platform/schemas/dashboard.schema.json" in tasks
 
 

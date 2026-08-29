@@ -244,13 +244,14 @@
     "useCaseStageEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evidence_class", "source_name", "subject_id", "verdict", "acceptance_subject_id", "independent_verifier", "evidence"],
+      "required": ["evidence_class", "source_name", "subject_id", "verdict", "acceptance_subject_id", "evidence_author", "independent_verifier", "evidence"],
       "properties": {
         "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
         "source_name": { "$ref": "#/$defs/sourceName" },
         "subject_id": { "$ref": "#/$defs/stableId" },
         "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
         "acceptance_subject_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
+        "evidence_author": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
         "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
         "evidence": { "$ref": "#/$defs/evidenceRef" }
       }
@@ -264,12 +265,12 @@
         "title": { "type": "string", "minLength": 1, "maxLength": 300 },
         "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
         "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$" },
-        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "definition" }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
-        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "progress" }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
-        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "customer_acceptance" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
-        "test_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "test" }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "independent_verifier": { "type": "null" } } }] } },
-        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "independent_verification" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "independent_verifier": { "type": "string" } } }] } },
-        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "transition_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "independent_verifier": { "type": "string" } } }] } }
+        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "definition" }, "source_name": { "enum": ["roadmap", "customer_story_catalog"] }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
+        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "progress" }, "source_name": { "enum": ["transition_evidence", "work_registry", "feature_tasks"] }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
+        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "customer_acceptance" }, "source_name": { "enum": ["gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }] } },
+        "test_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "test" }, "source_name": { "enum": ["test_run_ledger", "verification_evidence"] }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }] } },
+        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "independent_verification" }, "source_name": { "const": "verification_evidence" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }] } },
+        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }] } }
       }
     },
     "testCounts": {
@@ -335,11 +336,14 @@
     "testHistory": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["availability", "counting_rule", "pass_rate_rule", "selection_attestation", "graph_context", "unavailable_reason", "checkpoints"],
+      "required": ["availability", "counting_rule", "pass_rate_rule", "identity_digest_rule", "run_key_rule", "runs_digest_rule", "selection_attestation", "graph_context", "unavailable_reason", "checkpoints"],
       "properties": {
         "availability": { "enum": ["available", "unavailable"] },
         "counting_rule": { "const": "latest_terminal_attempt_per_commit_suite_id_population_id" },
         "pass_rate_rule": { "const": "passed_divided_by_passed_plus_failed_else_unavailable" },
+        "identity_digest_rule": { "const": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256" },
+        "run_key_rule": { "const": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256" },
+        "runs_digest_rule": { "const": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order" },
         "selection_attestation": {
           "type": "object",
           "additionalProperties": false,

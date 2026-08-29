@@ -19,7 +19,7 @@ Returns the latest completely validated `ProgramStatusBundle`. The route is read
 
 - `404 PROGRAM_STATUS_UNAVAILABLE`: no valid installed or packaged fallback exists.
 - `409 PROGRAM_STATUS_IDENTITY_MISMATCH`: canonical envelope/body identity, publisher raw Git-blob attestation/evidence relation, source-catalog digest, snapshot, or delivery identity does not bind exactly. Source-free runtime does not claim to recompute absent Git-blob bytes.
-- `422 PROGRAM_STATUS_INVALID`: installed data violates schema, the exact source catalog, action precedence, benchmark context, relational governance, canonical-path, or parsed-URL rules.
+- `422 PROGRAM_STATUS_INVALID`: installed data violates schema, the exact source catalog, use-case stage source/subject/verdict/independence rules, canonical test digest/count rules, action precedence, benchmark context, relational governance, canonical-path, or parsed-URL rules.
 - `503 PROGRAM_STATUS_READ_FAILED`: bounded local read failed.
 
 Failures include a recovery class and trace ID, never evidence content or private paths. The browser retains its last valid bundle after any failed refresh and marks it stale/failed; without one it shows unavailable values.
