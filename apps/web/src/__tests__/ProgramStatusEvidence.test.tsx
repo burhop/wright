@@ -21,7 +21,7 @@ describe("program status evidence", () => {
     await user.click(disclosure);
     expect(screen.getByText(/dashboard\.json/)).toBeVisible();
     expect(
-      screen.getByRole("link", { name: /exact committed evidence/i }),
+      screen.getAllByRole("link", { name: /exact committed evidence/i })[0],
     ).toHaveAttribute(
       "href",
       expect.stringMatching(/^https:\/\/github\.com\//),

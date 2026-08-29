@@ -6,27 +6,45 @@ const action = {
   authority_state: "authorized",
   requires_human_approval: false,
   blocker: null,
-  evidence: [],
+  evidence: [
+    {
+      id: "TR-0072",
+      path: "docs/programs/engineering-process-platform/evidence/transitions/TR-0072.json",
+      sha256: "a".repeat(64),
+    },
+  ],
 };
 
 export function makeProgramStatusBundle(
   options: { evidence?: boolean } = {},
 ): unknown {
-  const evidence = options.evidence
-    ? [
-        {
-          id: "dashboard",
-          label: "Dashboard snapshot",
-          path: "docs/programs/engineering-process-platform/dashboard.json",
-          sha256: "f".repeat(64),
-          summary: "Exact committed dashboard snapshot used by this bundle.",
-          freshness: "current",
-          recovery: null,
-          availability: "exact_github",
-          exact_url: `https://github.com/burhop/wright/blob/${"c".repeat(40)}/docs/programs/engineering-process-platform/dashboard.json`,
-        },
-      ]
-    : [];
+  const evidence = [
+    {
+      id: "dashboard",
+      label: "Dashboard snapshot",
+      path: "docs/programs/engineering-process-platform/dashboard.json",
+      sha256: "f".repeat(64),
+      summary: "Exact committed dashboard snapshot used by this bundle.",
+      freshness: "current",
+      recovery: null,
+      availability: "exact_github",
+      exact_url: `https://github.com/burhop/wright/blob/${"c".repeat(40)}/docs/programs/engineering-process-platform/dashboard.json`,
+    },
+    {
+      id: "TR-0072",
+      label: "Implementation activation transition",
+      path: "docs/programs/engineering-process-platform/evidence/transitions/TR-0072.json",
+      sha256: "a".repeat(64),
+      summary:
+        "Exact transition authorizing the current local implementation lease.",
+      freshness: "current",
+      recovery: null,
+      availability: options.evidence ? "exact_github" : "identity_only",
+      exact_url: options.evidence
+        ? `https://github.com/burhop/wright/blob/${"c".repeat(40)}/docs/programs/engineering-process-platform/evidence/transitions/TR-0072.json`
+        : null,
+    },
+  ];
   return {
     schema_version: "1.0.0",
     bundle_id: "b".repeat(64),

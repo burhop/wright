@@ -14,6 +14,7 @@ import {
   fetchProgramStatus,
   fetchProgramStatusPublisher,
   verifyProgramStatusIdentity,
+  validateProgramStatusEvidenceRelations,
 } from "../services/program-status";
 import { makeProgramStatusBundle } from "./program-status-fixture";
 
@@ -75,6 +76,62 @@ describe("program status conditional refresh transport", () => {
     supplementDrift.supplement.customer_catalog.proposed_total = 99;
     await expect(verifyProgramStatusIdentity(supplementDrift)).rejects.toThrow(
       "BUNDLE_IDENTITY_MISMATCH",
+    );
+  });
+
+  it("verifies the complete raw supplement before projecting UI fields", async () => {
+    const raw = makeProgramStatusBundle() as any;
+    raw.supplement.use_cases.source_path =
+      "docs/programs/engineering-process-platform/use-case-registry.json";
+    raw.supplement.use_cases.source_digest = "4".repeat(64);
+    raw.supplement.use_cases.items = [];
+    raw.supplement.use_cases.graph_context = { meaning: "raw-only" };
+    raw.supplement.test_history.counting_rule =
+      "latest_terminal_attempt_per_commit_suite_id_population_id";
+    raw.supplement.test_history.selection_attestation = {
+      source_path:
+        "docs/programs/engineering-process-platform/test-run-ledger.json",
+    };
+    raw.supplement.benchmark_context.dependencies = [];
+    raw.supplement.benchmark_context.evidence = [
+      raw.supplement.work.current_next_action.evidence[0],
+    ];
+    raw.supplement.work.lease = { feature_id: "EPP-F01B" };
+    raw.supplement.work.checkpoints = [];
+    raw.source.dashboard_canonical_sha256 = await canonicalProgramStatusDigest(
+      raw.dashboard,
+    );
+    raw.bundle_id = await canonicalProgramStatusDigest({
+      source: raw.source,
+      dashboard: raw.dashboard,
+      supplement: raw.supplement,
+    });
+    mockedFetch.mockResolvedValue(
+      new Response(JSON.stringify(raw), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    await expect(fetchProgramStatus()).resolves.toMatchObject({ status: 200 });
+  });
+
+  it("requires each emitted evidence reference to resolve exactly once", () => {
+    const missing = makeProgramStatusBundle() as any;
+    missing.supplement.evidence_index =
+      missing.supplement.evidence_index.filter(
+        (detail: any) => detail.id !== "TR-0072",
+      );
+    expect(() => validateProgramStatusEvidenceRelations(missing)).toThrow(
+      "EVIDENCE_REFERENCE_UNRESOLVED",
+    );
+
+    const duplicate = makeProgramStatusBundle() as any;
+    duplicate.supplement.evidence_index.push({
+      ...duplicate.supplement.evidence_index[0],
+    });
+    expect(() => validateProgramStatusEvidenceRelations(duplicate)).toThrow(
+      "EVIDENCE_INDEX_DUPLICATE",
     );
   });
 

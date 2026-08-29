@@ -105,6 +105,28 @@ describe("DesktopHostAdapter", () => {
     expect(await res.text()).toBe("");
   });
 
+  it("keeps JSON scalar strings distinct from plain text", async () => {
+    mockBridge.api
+      .mockResolvedValueOnce({
+        status: 200,
+        statusText: "OK",
+        headers: { "content-type": "application/json" },
+        body: "ready",
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        statusText: "OK",
+        headers: { "content-type": "text/plain" },
+        body: "ready",
+      });
+
+    const json = await adapter.fetch("/api/json-string");
+    const text = await adapter.fetch("/api/plain-text");
+
+    expect(await json.json()).toBe("ready");
+    expect(await text.text()).toBe("ready");
+  });
+
   it("should return ok=false response when bridge API rejects", async () => {
     const errorObj = {
       status: 400,

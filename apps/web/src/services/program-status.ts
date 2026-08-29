@@ -802,12 +802,82 @@ export async function canonicalProgramStatusDigest(
   ).join("");
 }
 
+function sameEvidence(left: EvidenceRef, right: EvidenceDetail): boolean {
+  return (
+    left.id === right.id &&
+    left.path === right.path &&
+    left.sha256 === right.sha256
+  );
+}
+
+function evidenceReferences(value: unknown): EvidenceRef[] {
+  const references: EvidenceRef[] = [];
+  const visit = (item: unknown, key = "") => {
+    if (Array.isArray(item)) {
+      if (key === "evidence" || key.endsWith("_evidence")) {
+        item.forEach((candidate, index) =>
+          references.push(evidence(candidate, `/${key}/${index}`)),
+        );
+      } else {
+        item.forEach((candidate) => visit(candidate));
+      }
+      return;
+    }
+    if (typeof item !== "object" || item === null) return;
+    for (const [childKey, child] of Object.entries(item)) {
+      visit(child, childKey);
+    }
+  };
+  visit(value);
+  return references;
+}
+
+export function validateProgramStatusEvidenceRelations(value: unknown): void {
+  const root = record(value, "");
+  const source = record(root.source, "/source");
+  const supplement = record(root.supplement, "/supplement");
+  const details = array(
+    supplement.evidence_index,
+    "/supplement/evidence_index",
+  ).map((item, index) =>
+    evidenceDetail(item, `/supplement/evidence_index/${index}`),
+  );
+  if (new Set(details.map((detail) => detail.id)).size !== details.length) {
+    throw new ProgramStatusDecodeError(
+      "EVIDENCE_INDEX_DUPLICATE",
+      "/supplement/evidence_index",
+    );
+  }
+  const references = [
+    evidence(source.raw_identity_evidence, "/source/raw_identity_evidence"),
+    ...evidenceReferences(supplement),
+  ];
+  for (const reference of references) {
+    const matches = details.filter((detail) => sameEvidence(reference, detail));
+    if (matches.length !== 1) {
+      throw new ProgramStatusDecodeError(
+        "EVIDENCE_REFERENCE_UNRESOLVED",
+        `/supplement/evidence_index/${reference.id}`,
+      );
+    }
+  }
+}
+
 export async function verifyProgramStatusIdentity(
-  bundle: ProgramStatusBundle,
+  value: unknown,
 ): Promise<void> {
+  const root = record(value, "");
+  const source = record(root.source, "/source");
+  const dashboard = record(root.dashboard, "/dashboard");
+  const supplement = record(root.supplement, "/supplement");
+  validateProgramStatusEvidenceRelations(root);
   if (
-    (await canonicalProgramStatusDigest(bundle.dashboard)) !==
-    bundle.source.dashboard_canonical_sha256
+    (await canonicalProgramStatusDigest(dashboard)) !==
+    hex(
+      source.dashboard_canonical_sha256,
+      64,
+      "/source/dashboard_canonical_sha256",
+    )
   ) {
     throw new ProgramStatusDecodeError(
       "DASHBOARD_IDENTITY_MISMATCH",
@@ -815,11 +885,11 @@ export async function verifyProgramStatusIdentity(
     );
   }
   const expected = await canonicalProgramStatusDigest({
-    source: bundle.source,
-    dashboard: bundle.dashboard,
-    supplement: bundle.supplement,
+    source,
+    dashboard,
+    supplement,
   });
-  if (expected !== bundle.bundle_id) {
+  if (expected !== hex(root.bundle_id, 64, "/bundle_id")) {
     throw new ProgramStatusDecodeError(
       "BUNDLE_IDENTITY_MISMATCH",
       "/bundle_id",
@@ -860,8 +930,9 @@ export async function fetchProgramStatus(
     return { status: 304, etag: response.headers.get("etag"), bundle: null };
   if (!response.ok)
     throw new ProgramStatusServiceError(await typedError(response));
-  const bundle = decodeProgramStatusBundle(await response.json());
-  await verifyProgramStatusIdentity(bundle);
+  const raw = await response.json();
+  await verifyProgramStatusIdentity(raw);
+  const bundle = decodeProgramStatusBundle(raw);
   return {
     status: 200,
     etag: response.headers.get("etag"),

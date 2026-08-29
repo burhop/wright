@@ -32,6 +32,8 @@ function isMetadataResponse(value: unknown): value is WrightApiResponse {
 
 function responseBody(value: unknown, headers: Headers): BodyInit | null {
   if (value === null || value === undefined) return null;
+  const mediaType = headers.get("content-type")?.toLowerCase() ?? "";
+  if (mediaType.includes("application/json")) return JSON.stringify(value);
   if (typeof value === "string") return value;
   if (!headers.has("content-type"))
     headers.set("content-type", "application/json");
