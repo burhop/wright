@@ -11,7 +11,7 @@ This is the planned human-repeatable acceptance path. Commands become executable
 ## 1. Publish one committed status bundle
 
 ```powershell
-uv run python scripts/publish-engineering-program-status.py --source HEAD --data-root .local-run/program-status-demo
+uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --data-root .local-run/program-status-demo
 ```
 
 Expected: the exact source catalog validates and its digest is reported; repository validation passes; one `current.json` is atomically installed; and output reports commit, tree, program tree, publisher-attested raw Git-blob digest/evidence, independently recomputed canonical dashboard digest, bundle ID, and path. Re-running unchanged `HEAD` produces identical canonical `source + dashboard + supplement` identity bytes and bundle ID.
@@ -19,9 +19,16 @@ Expected: the exact source catalog validates and its digest is reported; reposit
 ## 2. Run focused verification
 
 ```powershell
-uv run pytest packages/tool_registry/tests/test_program_status.py apps/api/tests/test_program_status_api.py tests/program_control_plane/test_program_status_publisher.py
+$env:PYTHONPATH = "packages/tool_registry/src"
+uv run pytest packages/tool_registry/tests/test_program_status.py
+$env:PYTHONPATH = "apps/api/src;packages/tool_registry/src"
+uv run pytest apps/api/tests/test_program_status_api.py
+Remove-Item Env:PYTHONPATH
+uv run pytest tests/program_control_plane/test_program_status_publisher.py
 npm --prefix apps/web run test -- --run ProgramStatus
-npx playwright test tests/ui-integration/program-status.spec.ts
+$env:WRIGHT_PLAYWRIGHT_PORT = "5187"
+$env:CI = "1"
+npx playwright test tests/ui-integration/program-status.spec.ts --project=chromium
 ```
 
 Expected: valid, corrupt, stale, empty, source-catalog mutation, raw-attestation evidence mismatch, canonical-identity mismatch, current/historical-action conflict, zero-benchmark missing context, correction/finding/verification mislink, non-canonical path, malformed parsed GitHub URL, auth, refresh, accessibility, and deterministic-regeneration cases pass.
@@ -54,7 +61,7 @@ Expected: the fixture is rejected; the last valid page remains visible and is la
 Start the standard contributor publisher in a third terminal, then commit an isolated approved fixture change while the page remains open:
 
 ```powershell
-uv run python scripts/publish-engineering-program-status.py --watch-committed --data-root .local-run/program-status-demo
+uv run python scripts/publish-engineering-program-status.py --repository . --source HEAD --watch-committed --data-root .local-run/program-status-demo
 ```
 
 Expected: the watcher uses its declared two-second default; within 10 seconds it observes the new committed identity, atomically installs it, the ETag changes, and every panel swaps together. Unchanged identity returns 304 and adds no history point. The separate publisher endpoint and refresh state show activity or bounded failure without changing bundle identity.

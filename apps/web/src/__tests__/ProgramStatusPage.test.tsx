@@ -59,6 +59,7 @@ function bundle(): unknown {
       },
       release_eligible: false,
       release_approval: "not_requested",
+      benchmark_summary: { counted: 0, target: 100 },
       next_action: { action: "HISTORICAL_ONLY" },
     },
     supplement: {
@@ -71,6 +72,7 @@ function bundle(): unknown {
         maturity_counts: { fully_defined: 5, ready_to_specify: 5 },
       },
       use_cases: {
+        items: [],
         all: {
           total: 0,
           not_started: 0,
