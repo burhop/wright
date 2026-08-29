@@ -813,17 +813,23 @@ function sameEvidence(left: EvidenceRef, right: EvidenceDetail): boolean {
 function evidenceReferences(value: unknown): EvidenceRef[] {
   const references: EvidenceRef[] = [];
   const visit = (item: unknown, key = "") => {
+    if (key === "evidence_index") return;
     if (Array.isArray(item)) {
-      if (key === "evidence" || key.endsWith("_evidence")) {
-        item.forEach((candidate, index) =>
-          references.push(evidence(candidate, `/${key}/${index}`)),
-        );
-      } else {
-        item.forEach((candidate) => visit(candidate));
-      }
+      item.forEach((candidate) => visit(candidate));
       return;
     }
     if (typeof item !== "object" || item === null) return;
+    const row = item as Record<string, unknown>;
+    const keys = Object.keys(row).sort();
+    if (
+      keys.length === 3 &&
+      keys[0] === "id" &&
+      keys[1] === "path" &&
+      keys[2] === "sha256"
+    ) {
+      references.push(evidence(row, `/${key || "evidence"}`));
+      return;
+    }
     for (const [childKey, child] of Object.entries(item)) {
       visit(child, childKey);
     }

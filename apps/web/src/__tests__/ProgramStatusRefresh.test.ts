@@ -135,6 +135,33 @@ describe("program status conditional refresh transport", () => {
     );
   });
 
+  it("resolves evidence nested inside a non-empty governed use-case stage", () => {
+    const raw = makeProgramStatusBundle() as any;
+    const reference = raw.supplement.work.current_next_action.evidence[0];
+    raw.supplement.use_cases.items = [
+      {
+        use_case_id: "EPP-UC-001",
+        definition_evidence: [
+          {
+            stage: "definition",
+            source_class: "roadmap",
+            subject: "EPP-UC-001",
+            evidence: reference,
+          },
+        ],
+      },
+    ];
+    expect(() => validateProgramStatusEvidenceRelations(raw)).not.toThrow();
+
+    raw.supplement.use_cases.items[0].definition_evidence[0].evidence = {
+      ...reference,
+      sha256: "9".repeat(64),
+    };
+    expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
+      "EVIDENCE_REFERENCE_UNRESOLVED",
+    );
+  });
+
   it("uses the declared bounded fixed-point canonical number subset", () => {
     expect(
       canonicalProgramStatusJson([
