@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -202,10 +203,29 @@ def _verify_test_ledger_append_only(
 ) -> str | None:
     ledger = subject["ledger"]
     runs = ledger.get("runs")
+
+    def strings_are_canonical(node: Any) -> bool:
+        if isinstance(node, str):
+            return "\x00" not in node and unicodedata.normalize("NFC", node) == node
+        if isinstance(node, Mapping):
+            return all(
+                strings_are_canonical(key) and strings_are_canonical(value)
+                for key, value in node.items()
+            )
+        if isinstance(node, list):
+            return all(strings_are_canonical(value) for value in node)
+        return True
+
     if not isinstance(runs, list) or _digest(runs) != ledger.get("runs_sha256"):
         raise ProgramStatusPublishError(
             "PROGRAM_STATUS_TEST_LEDGER_INVALID",
             "The test ledger runs digest does not reconcile.",
+            "repair_test_run_ledger",
+        )
+    if not strings_are_canonical(runs):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "Test ledger strings must already be NFC and contain no NUL.",
             "repair_test_run_ledger",
         )
     revision = ledger.get("ledger_revision")
@@ -250,6 +270,185 @@ def _verify_test_ledger_append_only(
             "repair_test_run_ledger",
         )
     return str(prior["runs_sha256"])
+
+
+def _framed_digest(prefix: str, values: list[str]) -> str:
+    framed = bytearray(f"{prefix}\n".encode())
+    for value in values:
+        if "\x00" in value or unicodedata.normalize("NFC", value) != value:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+                "Digest input strings must already be NFC and contain no NUL.",
+                "repair_test_run_ledger",
+            )
+        encoded = value.encode("utf-8")
+        framed.extend(str(len(encoded)).encode())
+        framed.extend(b":")
+        framed.extend(encoded)
+        framed.extend(b"\n")
+    return hashlib.sha256(framed).hexdigest()
+
+
+def _test_case_set_digest(test_case_ids: list[str]) -> str:
+    if any(
+        "\x00" in item or unicodedata.normalize("NFC", item) != item
+        for item in test_case_ids
+    ) or len(test_case_ids) != len(set(test_case_ids)):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "A test population contains duplicate NFC-normalized identities.",
+            "repair_test_run_ledger",
+        )
+    return _framed_digest(
+        "wright-test-id-set-v1",
+        sorted(test_case_ids, key=lambda item: item.encode("utf-8")),
+    )
+
+
+def _test_run_key(run: Mapping[str, Any]) -> str:
+    return _framed_digest(
+        "wright-test-run-key-v1",
+        [
+            str(run["commit"]),
+            str(run["suite_id"]),
+            str(run["population_id"]),
+            str(run["attempt"]),
+        ],
+    )
+
+
+def _project_test_history(
+    ledger: Mapping[str, Any], current_commit: str
+) -> tuple[list[dict[str, Any]], list[str], list[dict[str, Any]]]:
+    runs = ledger["runs"]
+    run_ids = [str(run["run_id"]) for run in runs]
+    run_keys = [str(run["run_key"]) for run in runs]
+    if len(run_ids) != len(set(run_ids)) or len(run_keys) != len(set(run_keys)):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "Test run IDs and canonical run keys must be unique.",
+            "repair_test_run_ledger",
+        )
+    latest: dict[tuple[str, str, str], Mapping[str, Any]] = {}
+    for run in runs:
+        test_ids = list(run["test_case_ids"])
+        counts = run["counts"]
+        if (
+            str(run["run_key"]) != _test_run_key(run)
+            or str(run["test_case_set_sha256"]) != _test_case_set_digest(test_ids)
+            or counts["total"] != len(test_ids)
+            or sum(counts[name] for name in ("passed", "failed", "skipped", "not_run"))
+            != counts["total"]
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+                f"Test run {run['run_id']} does not reconcile.",
+                "repair_test_run_ledger",
+            )
+        if not run["terminal"]:
+            continue
+        key = (str(run["commit"]), str(run["suite_id"]), str(run["population_id"]))
+        previous = latest.get(key)
+        if previous is None or run["attempt"] > previous["attempt"]:
+            latest[key] = run
+        elif run["attempt"] == previous["attempt"] and run != previous:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+                "A test population has conflicting latest terminal attempts.",
+                "repair_test_run_ledger",
+            )
+
+    by_commit: dict[str, list[Mapping[str, Any]]] = {}
+    for run in latest.values():
+        by_commit.setdefault(str(run["commit"]), []).append(run)
+    checkpoints: list[dict[str, Any]] = []
+    selected_ids: list[str] = []
+    evidence_details: list[dict[str, Any]] = []
+    for commit, selected_runs in by_commit.items():
+        components = [
+            run for run in selected_runs if run["aggregate_role"] == "component"
+        ]
+        seen_cases: set[str] = set()
+        for run in components:
+            cases = {
+                unicodedata.normalize("NFC", item) for item in run["test_case_ids"]
+            }
+            if seen_cases & cases:
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+                    "Selected component test populations overlap.",
+                    "repair_test_run_ledger",
+                )
+            seen_cases.update(cases)
+        counts = {
+            name: 0 for name in ("total", "passed", "failed", "skipped", "not_run")
+        }
+        categories: dict[str, dict[str, int] | None] = {
+            name: None for name in ("unit", "integration", "e2e", "benchmark")
+        }
+        suite_sources: list[dict[str, Any]] = []
+        for run in sorted(selected_runs, key=lambda item: str(item["run_key"])):
+            selected_ids.append(str(run["run_id"]))
+            references = []
+            for index, evidence in enumerate(run["evidence"]):
+                reference = {
+                    "id": f"test:{run['run_id']}:{index + 1}",
+                    "path": evidence["path"],
+                    "sha256": evidence["sha256"],
+                }
+                references.append(reference)
+                evidence_details.append(
+                    {
+                        **reference,
+                        "label": f"Test run {run['run_id']}",
+                        "summary": "Exact committed evidence for a canonical test run.",
+                        "freshness": "current" if commit == current_commit else "stale",
+                        "recovery": None,
+                        "availability": "identity_only",
+                        "exact_url": None,
+                    }
+                )
+            projected = {
+                key: run[key]
+                for key in (
+                    "suite_id",
+                    "population_id",
+                    "run_id",
+                    "run_key",
+                    "attempt",
+                    "observed_at",
+                    "terminal",
+                    "aggregate_role",
+                    "category",
+                    "test_case_ids",
+                    "test_case_set_sha256",
+                    "counts",
+                )
+            }
+            projected["evidence"] = references
+            suite_sources.append(projected)
+            if run["aggregate_role"] == "component":
+                for name in counts:
+                    counts[name] += run["counts"][name]
+                category = str(run["category"])
+                if categories[category] is None:
+                    categories[category] = {name: 0 for name in counts}
+                assert categories[category] is not None
+                for name in counts:
+                    categories[category][name] += run["counts"][name]
+        denominator = counts["passed"] + counts["failed"]
+        checkpoints.append(
+            {
+                "commit": commit,
+                "observed_at": max(str(run["observed_at"]) for run in selected_runs),
+                "counts": counts,
+                "pass_rate": counts["passed"] / denominator if denominator else None,
+                "categories": categories,
+                "suite_sources": suite_sources,
+            }
+        )
+    checkpoints.sort(key=lambda item: (item["observed_at"], item["commit"]))
+    return checkpoints, sorted(selected_ids), evidence_details
 
 
 def _task_counts(raw: bytes) -> tuple[int, int]:
@@ -787,6 +986,9 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
     ledger = subject["ledger"]
     prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
+    test_checkpoints, selected_run_ids, test_evidence_details = _project_test_history(
+        ledger, str(subject["commit"])
+    )
     next_action_record = (state.get("next_eligible_actions") or [{}])[0]
     action_id = str(
         next_action_record.get("action", "CONTINUE_CURRENT_FEATURE_IMPLEMENTATION")
@@ -959,6 +1161,28 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         "feature_tasks",
         "feature_task",
     )
+    if test_checkpoints:
+        history_by_id["quality"] = [
+            {
+                "commit": checkpoint["commit"],
+                "transition_id": None,
+                "parent_commit": None,
+                "observed_at": checkpoint["observed_at"],
+                "label": "quality",
+                "value": checkpoint["counts"]["passed"],
+                "denominator": (
+                    checkpoint["counts"]["passed"] + checkpoint["counts"]["failed"]
+                ),
+                "source_classification": "test_evidence",
+                "change_reason": "Canonical committed test checkpoint",
+                "evidence": [
+                    reference
+                    for source in checkpoint["suite_sources"]
+                    for reference in source["evidence"]
+                ],
+            }
+            for checkpoint in test_checkpoints
+        ]
     historical_evidence: dict[str, dict[str, Any]] = {}
     for observations in history_by_id.values():
         for observation in observations:
@@ -1045,7 +1269,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "graph_context": graph_context,
         },
         "test_history": {
-            "availability": "unavailable",
+            "availability": "available" if test_checkpoints else "unavailable",
             "counting_rule": "latest_terminal_attempt_per_commit_suite_id_population_id",
             "pass_rate_rule": "passed_divided_by_passed_plus_failed_else_unavailable",
             "identity_digest_rule": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256",
@@ -1058,11 +1282,15 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "prior_ledger_runs_sha256": prior_ledger_runs_sha256,
                 "runs_sha256": str(ledger["runs_sha256"]),
                 "publisher_verified_append_only": True,
-                "selected_run_ids": [],
+                "selected_run_ids": selected_run_ids,
             },
             "graph_context": graph_context,
-            "unavailable_reason": "No canonical committed test run exists yet.",
-            "checkpoints": [],
+            "unavailable_reason": (
+                None
+                if test_checkpoints
+                else "No canonical committed test run exists yet."
+            ),
+            "checkpoints": test_checkpoints,
         },
         "benchmark_context": {
             "phase": "on_hold",
@@ -1188,7 +1416,8 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             }
             for identifier, path in evidence_pairs
         ]
-        + [historical_evidence[key] for key in sorted(historical_evidence)],
+        + [historical_evidence[key] for key in sorted(historical_evidence)]
+        + test_evidence_details,
     }
 
 

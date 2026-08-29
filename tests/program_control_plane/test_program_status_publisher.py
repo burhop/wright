@@ -234,3 +234,102 @@ def test_customer_story_maturity_is_derived_without_duplicate_definitions() -> N
     with pytest.raises(ProgramStatusPublishError) as raised:
         publisher._customer_story_maturity(raw + b"\n### EPP-US-001 duplicate\n")
     assert raised.value.code == "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID"
+
+
+def test_canonical_test_identity_and_latest_terminal_selection() -> None:
+    test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
+    assert (
+        publisher._test_case_set_digest(test_ids)
+        == "c4e6eafe639dc63fa01d5d2b41d04e105847a75f97c669fc3c0087c94376a1b7"
+    )
+    base = {
+        "commit": "a" * 40,
+        "suite_id": "unit-suite",
+        "population_id": "pkg",
+        "observed_at": "2026-08-29T14:00:00Z",
+        "category": "unit",
+        "terminal": True,
+        "aggregate_role": "component",
+        "test_case_ids": test_ids,
+        "test_case_set_sha256": publisher._test_case_set_digest(test_ids),
+        "evidence": [
+            {
+                "path": "test-results/program-status/unit.json",
+                "sha256": "b" * 64,
+            }
+        ],
+    }
+    first = {
+        **base,
+        "run_id": "unit-attempt-1",
+        "attempt": 1,
+        "counts": {"total": 2, "passed": 1, "failed": 1, "skipped": 0, "not_run": 0},
+    }
+    first["run_key"] = publisher._test_run_key(first)
+    assert (
+        first["run_key"]
+        == "dddb7540d46b1f8e83791141ac94b5f0bc38effee28f32baa36c6fc5be96ad5f"
+    )
+    second = {
+        **base,
+        "run_id": "unit-attempt-2",
+        "attempt": 2,
+        "observed_at": "2026-08-29T14:01:00Z",
+        "counts": {"total": 2, "passed": 2, "failed": 0, "skipped": 0, "not_run": 0},
+    }
+    second["run_key"] = publisher._test_run_key(second)
+
+    checkpoints, selected, _evidence = publisher._project_test_history(
+        {"runs": [first, second]}, "a" * 40
+    )
+
+    assert selected == ["unit-attempt-2"]
+    assert checkpoints[0]["counts"] == second["counts"]
+    assert checkpoints[0]["pass_rate"] == 1
+    assert checkpoints[0]["categories"]["unit"] == second["counts"]
+    assert checkpoints[0]["categories"]["benchmark"] is None
+
+
+def test_canonical_test_projection_rejects_overlapping_component_populations() -> None:
+    def run(population: str, test_ids: list[str]) -> dict[str, object]:
+        value: dict[str, object] = {
+            "run_id": f"run-{population}",
+            "commit": "a" * 40,
+            "suite_id": "unit-suite",
+            "population_id": population,
+            "attempt": 1,
+            "observed_at": "2026-08-29T14:00:00Z",
+            "category": "unit",
+            "terminal": True,
+            "aggregate_role": "component",
+            "test_case_ids": test_ids,
+            "test_case_set_sha256": publisher._test_case_set_digest(test_ids),
+            "counts": {
+                "total": len(test_ids),
+                "passed": len(test_ids),
+                "failed": 0,
+                "skipped": 0,
+                "not_run": 0,
+            },
+            "evidence": [
+                {
+                    "path": f"test-results/program-status/{population}.json",
+                    "sha256": "c" * 64,
+                }
+            ],
+        }
+        value["run_key"] = publisher._test_run_key(value)
+        return value
+
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._project_test_history(
+            {
+                "runs": [
+                    run("one", ["tests/a.py::shared"]),
+                    run("two", ["tests/a.py::shared"]),
+                ]
+            },
+            "a" * 40,
+        )
+
+    assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"

@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import unicodedata
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
@@ -102,6 +103,40 @@ def _git_normalized_digest(raw: bytes) -> str:
     if b"\r" in normalized:
         raise ValueError("catalog contains a non-Git line ending")
     return hashlib.sha256(normalized).hexdigest()
+
+
+def _framed_digest(prefix: str, values: list[str]) -> str:
+    framed = bytearray(f"{prefix}\n".encode())
+    for value in values:
+        if "\x00" in value or unicodedata.normalize("NFC", value) != value:
+            raise ValueError("digest inputs must be NFC without NUL")
+        encoded = value.encode("utf-8")
+        framed.extend(str(len(encoded)).encode())
+        framed.extend(b":")
+        framed.extend(encoded)
+        framed.extend(b"\n")
+    return hashlib.sha256(framed).hexdigest()
+
+
+def _test_case_set_digest(test_case_ids: list[str]) -> str:
+    if len(test_case_ids) != len(set(test_case_ids)):
+        raise ValueError("duplicate test case identity")
+    return _framed_digest(
+        "wright-test-id-set-v1",
+        sorted(test_case_ids, key=lambda item: item.encode("utf-8")),
+    )
+
+
+def _test_run_key(run: Mapping[str, Any]) -> str:
+    return _framed_digest(
+        "wright-test-run-key-v1",
+        [
+            str(run["commit"]),
+            str(run["suite_id"]),
+            str(run["population_id"]),
+            str(run["attempt"]),
+        ],
+    )
 
 
 def _strict_json(raw: bytes) -> Any:
@@ -366,11 +401,53 @@ class ProgramStatusReader:
             raise ValueError("selected test runs do not match test checkpoints")
         for checkpoint in checkpoints:
             counts = checkpoint["counts"]
+            component_counts = {
+                name: 0 for name in ("total", "passed", "failed", "skipped", "not_run")
+            }
+            category_counts: dict[str, dict[str, int] | None] = {
+                name: None for name in ("unit", "integration", "e2e", "benchmark")
+            }
+            seen_cases: set[str] = set()
+            source_times: list[str] = []
+            for source in checkpoint["suite_sources"]:
+                source_times.append(source["observed_at"])
+                source_counts = source["counts"]
+                test_ids = source["test_case_ids"]
+                if (
+                    source["terminal"] is not True
+                    or source["run_key"]
+                    != _test_run_key({**source, "commit": checkpoint["commit"]})
+                    or source["test_case_set_sha256"] != _test_case_set_digest(test_ids)
+                    or source_counts["total"] != len(test_ids)
+                    or sum(
+                        source_counts[name]
+                        for name in ("passed", "failed", "skipped", "not_run")
+                    )
+                    != source_counts["total"]
+                ):
+                    raise ValueError("selected test source does not reconcile")
+                if source["aggregate_role"] == "summary_only":
+                    continue
+                if seen_cases & set(test_ids):
+                    raise ValueError("selected component test identities overlap")
+                seen_cases.update(test_ids)
+                for name in component_counts:
+                    component_counts[name] += source_counts[name]
+                category = source["category"]
+                if category_counts[category] is None:
+                    category_counts[category] = {name: 0 for name in component_counts}
+                assert category_counts[category] is not None
+                for name in component_counts:
+                    category_counts[category][name] += source_counts[name]
             if (
-                sum(counts[name] for name in ("passed", "failed", "skipped", "not_run"))
-                != counts["total"]
+                counts != component_counts
+                or checkpoint["categories"] != category_counts
             ):
-                raise ValueError("test checkpoint counts do not reconcile")
+                raise ValueError("test checkpoint aggregation does not reconcile")
+            if source_times and checkpoint["observed_at"] != max(source_times):
+                raise ValueError(
+                    "test checkpoint time is not the latest selected source"
+                )
             denominator = counts["passed"] + counts["failed"]
             expected_rate = None if denominator == 0 else counts["passed"] / denominator
             actual_rate = checkpoint["pass_rate"]

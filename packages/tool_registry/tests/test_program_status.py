@@ -262,3 +262,76 @@ def test_full_contract_rejects_tampered_packaged_catalog(tmp_path: Path) -> None
         ProgramStatusReader(installed, contracts, schema_root=contracts).read_bundle()
 
     assert raised.value.code is ProgramStatusErrorCode.IDENTITY_MISMATCH
+
+
+def test_full_contract_recomputes_canonical_test_checkpoint(tmp_path: Path) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
+    counts = {"total": 2, "passed": 2, "failed": 0, "skipped": 0, "not_run": 0}
+    reference = {
+        "id": "test:unit-attempt-1:1",
+        "path": "docs/programs/engineering-process-platform/evidence/verification/test-unit.json",
+        "sha256": "9" * 64,
+    }
+    source = {
+        "suite_id": "unit-suite",
+        "population_id": "pkg",
+        "run_id": "unit-attempt-1",
+        "run_key": "dddb7540d46b1f8e83791141ac94b5f0bc38effee28f32baa36c6fc5be96ad5f",
+        "attempt": 1,
+        "observed_at": "2026-08-29T14:00:00Z",
+        "terminal": True,
+        "aggregate_role": "component",
+        "category": "unit",
+        "test_case_ids": test_ids,
+        "test_case_set_sha256": "c4e6eafe639dc63fa01d5d2b41d04e105847a75f97c669fc3c0087c94376a1b7",
+        "counts": counts,
+        "evidence": [reference],
+    }
+    history = value["supplement"]["test_history"]
+    history["availability"] = "available"
+    history["unavailable_reason"] = None
+    history["selection_attestation"]["selected_run_ids"] = ["unit-attempt-1"]
+    history["checkpoints"] = [
+        {
+            "commit": "a" * 40,
+            "observed_at": "2026-08-29T14:00:00Z",
+            "counts": counts,
+            "pass_rate": 1,
+            "categories": {
+                "unit": counts,
+                "integration": None,
+                "e2e": None,
+                "benchmark": None,
+            },
+            "suite_sources": [source],
+        }
+    ]
+    value["supplement"]["evidence_index"].append(
+        {
+            **reference,
+            "label": "Unit run",
+            "summary": "Canonical test fixture.",
+            "freshness": "current",
+            "recovery": None,
+            "availability": "identity_only",
+            "exact_url": None,
+        }
+    )
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    ProgramStatusReader(
+        installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+    ).read_bundle()
+
+    source["test_case_set_sha256"] = "0" * 64
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+    assert raised.value.code is ProgramStatusErrorCode.INVALID
