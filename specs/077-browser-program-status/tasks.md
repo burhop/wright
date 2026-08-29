@@ -91,12 +91,12 @@
 
 ### Tests first
 
-- [ ] T026 [P] [US3] Add failing byte-semantic dashboard preservation, publisher raw-attestation evidence, internal detail, exact canonical path/digest, traversal/lookalike/empty/dot/duplicate-segment rejection, parsed optional exact-GitHub credential/port/query/fragment/slug/path rejection, source-catalog boundary, and packaged identity-only evidence tests in `tests/program_control_plane/test_program_status_publisher.py`
+- [x] T026 [P] [US3] Add failing byte-semantic dashboard preservation, publisher raw-attestation evidence, internal detail, exact canonical path/digest, traversal/lookalike/empty/dot/duplicate-segment rejection, parsed optional exact-GitHub credential/port/query/fragment/slug/path rejection, source-catalog boundary, and packaged identity-only evidence tests in `tests/program_control_plane/test_program_status_publisher.py`
 - [x] T027 [P] [US3] Add failing keyboard disclosure, focus, status-text, correction/finding/verification relationship and verdict, canonical-path, and unsafe-URL tests in `apps/web/src/__tests__/ProgramStatusEvidence.test.tsx`
 
 ### Implementation
 
-- [ ] T028 [US3] Build the bounded internal evidence index and closed reciprocal correction/finding/verification graph, deriving all claim/finding counts from exact ID sets; include safe summary, freshness, recovery, availability, parsed optional exact-commit GitHub URL, and exactly one matching detail for every reference in `scripts/program_status/publisher.py` (depends on T026)
+- [x] T028 [US3] Build the bounded internal evidence index and closed reciprocal correction/finding/verification graph, deriving all claim/finding counts from exact ID sets; include safe summary, freshness, recovery, availability, parsed optional exact-commit GitHub URL, and exactly one matching detail for every reference in `scripts/program_status/publisher.py` (depends on T026)
 - [x] T029 [US3] Implement accessible internal evidence links, exact identity, correction claims, finding resolution links, verification verdict/blocking outcome, risk/decision disclosure, and honest raw-content availability in `apps/web/src/components/program-status/EvidenceDetails.tsx` (depends on T027, T028)
 
 **Checkpoint**: US3 makes blockers inspectable without exposing raw or unsafe content.
