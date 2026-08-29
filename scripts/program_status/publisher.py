@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import os
+import posixpath
 import re
 import subprocess
 import sys
@@ -35,12 +36,20 @@ CUSTOMER_CATALOG_PATH: Final = f"{PROGRAM_ROOT}/customer-process-user-stories.md
 SOURCE_CATALOG_PATH: Final = (
     "specs/077-browser-program-status/contracts/program-status-source-catalog.json"
 )
+SOURCE_CATALOG_SCHEMA_PATH: Final = (
+    "specs/077-browser-program-status/contracts/"
+    "program-status-source-catalog.schema.json"
+)
 BUNDLE_SCHEMA_PATH: Final = (
     "specs/077-browser-program-status/contracts/program-status-bundle.schema.json"
 )
 DASHBOARD_SCHEMA_PATH: Final = f"{PROGRAM_ROOT}/schemas/dashboard.schema.json"
 TASK_RE = re.compile(r"^- \[(?P<done>[ xX])\] (?P<id>T[0-9]{3})\b", re.MULTILINE)
-STORY_RE = re.compile(r"\bEPP-US-(?P<number>[0-9]{3})\b")
+STORY_HEADING_RE = re.compile(r"^### EPP-US-(?P<number>[0-9]{3})\b", re.MULTILINE)
+STORY_TABLE_RE = re.compile(
+    r"^\| EPP-US-(?P<number>[0-9]{3}) \|.*\| (?P<maturity>[^|]+?) \|$",
+    re.MULTILINE,
+)
 
 
 class ProgramStatusPublishError(RuntimeError):
@@ -253,6 +262,51 @@ def _task_counts(raw: bytes) -> tuple[int, int]:
             "repair_registered_task_graph",
         )
     return sum(match.group("done").lower() == "x" for match in matches), len(matches)
+
+
+def _customer_story_maturity(raw: bytes) -> dict[str, int]:
+    text = raw.decode("utf-8", errors="strict")
+    definitions: dict[int, str] = {}
+    for match in STORY_HEADING_RE.finditer(text):
+        number = int(match.group("number"))
+        if number in definitions:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID",
+                f"EPP-US-{number:03d} is defined more than once.",
+                "repair_customer_story_catalog",
+            )
+        definitions[number] = "fully_defined"
+    maturity_names = {
+        "Ready to specify": "ready_to_specify",
+        "Shaped": "shaped",
+        "Candidate": "candidate",
+        "Discovery shaped": "discovery_shaped",
+        "Discovery": "discovery",
+        "Discovery; separate T4 authority required": (
+            "discovery_separate_t4_authority_required"
+        ),
+    }
+    for match in STORY_TABLE_RE.finditer(text):
+        number = int(match.group("number"))
+        maturity = maturity_names.get(match.group("maturity"))
+        if maturity is None or number in definitions:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID",
+                f"EPP-US-{number:03d} has a duplicate or unknown maturity.",
+                "repair_customer_story_catalog",
+            )
+        definitions[number] = maturity
+    if set(definitions) != set(range(1, 101)):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID",
+            "The customer catalog must define exactly EPP-US-001 through 100.",
+            "repair_customer_story_catalog",
+        )
+    result = {name: 0 for name in maturity_names.values()}
+    result["fully_defined"] = 0
+    for maturity in definitions.values():
+        result[maturity] += 1
+    return result
 
 
 def _unavailable_series(
@@ -494,6 +548,7 @@ def _load_subject(repository: Path, commit: str) -> dict[str, Any]:
         TEST_LEDGER_PATH,
         CUSTOMER_CATALOG_PATH,
         SOURCE_CATALOG_PATH,
+        SOURCE_CATALOG_SCHEMA_PATH,
         BUNDLE_SCHEMA_PATH,
         DASHBOARD_SCHEMA_PATH,
     )
@@ -517,11 +572,137 @@ def _load_subject(repository: Path, commit: str) -> dict[str, Any]:
         ),
         "ledger": _strict_json(blobs[TEST_LEDGER_PATH], TEST_LEDGER_PATH),
         "source_catalog": _strict_json(blobs[SOURCE_CATALOG_PATH], SOURCE_CATALOG_PATH),
+        "source_catalog_schema": _strict_json(
+            blobs[SOURCE_CATALOG_SCHEMA_PATH], SOURCE_CATALOG_SCHEMA_PATH
+        ),
         "bundle_schema": _strict_json(blobs[BUNDLE_SCHEMA_PATH], BUNDLE_SCHEMA_PATH),
         "dashboard_schema": _strict_json(
             blobs[DASHBOARD_SCHEMA_PATH], DASHBOARD_SCHEMA_PATH
         ),
     }
+
+
+def _load_closed_catalog_sources(
+    repository: Path, subject: Mapping[str, Any]
+) -> dict[str, list[tuple[str, bytes]]]:
+    """Resolve and validate only the inputs admitted by the frozen catalog."""
+
+    catalog = subject["source_catalog"]
+    catalog_schema = subject["source_catalog_schema"]
+    catalog_errors = list(
+        Draft202012Validator(
+            catalog_schema, format_checker=FormatChecker()
+        ).iter_errors(catalog)
+    )
+    if catalog_errors:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_SOURCE_CATALOG_INVALID",
+            "The frozen source catalog does not validate against its exact schema.",
+            "repair_frozen_source_catalog",
+        )
+    sources = catalog.get("sources")
+    if not isinstance(sources, Mapping) or len(sources) != 20:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_SOURCE_CATALOG_INVALID",
+            "The frozen source catalog must contain exactly 20 named sources.",
+            "repair_frozen_source_catalog",
+        )
+    commit = str(subject["commit"])
+    listed_raw = _git(
+        repository,
+        "ls-tree",
+        "-r",
+        "--name-only",
+        commit,
+        "--",
+        PROGRAM_ROOT,
+        "specs/076-control-plane-validator/contracts",
+        "specs/077-browser-program-status/contracts",
+    )
+    assert isinstance(listed_raw, str)
+    repository_paths = tuple(path for path in listed_raw.splitlines() if path)
+    schema_paths = tuple(
+        path for path in repository_paths if path.endswith(".schema.json")
+    )
+    schemas_by_id: dict[str, Mapping[str, Any]] = {}
+    schema_ids_by_path: dict[str, str] = {}
+    registry = Registry()
+    for schema_path in schema_paths:
+        schema = _strict_json(_git_blob(repository, commit, schema_path), schema_path)
+        schema_id = schema.get("$id")
+        if not isinstance(schema_id, str):
+            continue
+        if schema_id in schemas_by_id and schemas_by_id[schema_id] != schema:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_SCHEMA_INVALID",
+                f"Schema identity {schema_id} is not unique.",
+                "repair_frozen_schema",
+            )
+        Draft202012Validator.check_schema(schema)
+        schemas_by_id[schema_id] = schema
+        schema_ids_by_path[schema_path] = schema_id
+        registry = registry.with_resource(schema_id, Resource.from_contents(schema))
+
+    selected: dict[str, list[tuple[str, bytes]]] = {}
+    for source_name, rule in sources.items():
+        if not isinstance(rule, Mapping):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_SOURCE_CATALOG_INVALID",
+                f"Source rule {source_name} is not an object.",
+                "repair_frozen_source_catalog",
+            )
+        if rule["path_kind"] == "exact":
+            candidates = [str(rule["path"])]
+        else:
+            try:
+                pattern = re.compile(str(rule["path_pattern"]))
+            except re.error as exc:
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_SOURCE_CATALOG_INVALID",
+                    f"Source rule {source_name} has an invalid path pattern.",
+                    "repair_frozen_source_catalog",
+                ) from exc
+            candidates = [path for path in repository_paths if pattern.fullmatch(path)]
+        records: list[tuple[str, bytes]] = []
+        allowed_schema_ids = set(rule["schema_ids"])
+        for path in candidates:
+            raw = _git_blob(repository, commit, path)
+            if path.endswith(".json") and not str(rule["parser_contract"]).endswith(
+                "LEGACY_IDENTITY_V1"
+            ):
+                value = _strict_json(raw, path)
+                schema_id = value.get("$schema")
+                if isinstance(schema_id, str) and schema_id.startswith(("./", "../")):
+                    resolved_schema_path = posixpath.normpath(
+                        posixpath.join(posixpath.dirname(path), schema_id)
+                    )
+                    schema_id = schema_ids_by_path.get(resolved_schema_path)
+                if schema_id is None and len(allowed_schema_ids) == 1:
+                    schema_id = next(iter(allowed_schema_ids))
+                if (
+                    schema_id not in allowed_schema_ids
+                    or schema_id not in schemas_by_id
+                ):
+                    raise ProgramStatusPublishError(
+                        "PROGRAM_STATUS_SOURCE_CATALOG_BOUNDARY",
+                        f"{path} is not bound to an admitted source schema.",
+                        "repair_catalog_source_binding",
+                    )
+                if rule["path_kind"] == "exact" and list(
+                    Draft202012Validator(
+                        schemas_by_id[str(schema_id)],
+                        registry=registry,
+                        format_checker=FormatChecker(),
+                    ).iter_errors(value)
+                ):
+                    raise ProgramStatusPublishError(
+                        "PROGRAM_STATUS_SOURCE_INVALID",
+                        f"{path} fails its catalog-admitted schema.",
+                        "repair_committed_source",
+                    )
+            records.append((path, raw))
+        selected[str(source_name)] = records
+    return selected
 
 
 def _registered_task_counts(
@@ -603,16 +784,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         _registered_task_counts(repository, subject, feature_id)
     )
     use_cases, process_ids = _use_case_counts(subject)
-    story_numbers = {
-        int(match.group("number"))
-        for match in STORY_RE.finditer(blobs[CUSTOMER_CATALOG_PATH].decode("utf-8"))
-    }
-    if story_numbers != set(range(1, 101)):
-        raise ProgramStatusPublishError(
-            "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID",
-            "The customer catalog must contain exactly EPP-US-001 through 100.",
-            "repair_customer_story_catalog",
-        )
+    story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
     ledger = subject["ledger"]
     prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
     next_action_record = (state.get("next_eligible_actions") or [{}])[0]
@@ -847,15 +1019,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "proposed_total": 100,
             "source_path": CUSTOMER_CATALOG_PATH,
             "source_digest": _raw_digest(blobs[CUSTOMER_CATALOG_PATH]),
-            "maturity_counts": {
-                "fully_defined": 5,
-                "ready_to_specify": 5,
-                "shaped": 15,
-                "candidate": 45,
-                "discovery_shaped": 15,
-                "discovery": 14,
-                "discovery_separate_t4_authority_required": 1,
-            },
+            "maturity_counts": story_maturity,
         },
         "use_cases": {
             "source_path": USE_CASE_REGISTRY_PATH,
@@ -1054,6 +1218,7 @@ def publish_program_status(
                 "The frozen source catalog must contain exactly 20 named sources.",
                 "repair_frozen_source_catalog",
             )
+        subject["catalog_sources"] = _load_closed_catalog_sources(repository, subject)
         supplement = _build_supplement(repository, subject)
         blobs = subject["blobs"]
         dashboard_ref = _evidence("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH])

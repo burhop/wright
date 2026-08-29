@@ -297,7 +297,7 @@ class ProgramStatusReader:
             + all_counts["implemented"]
             != all_counts["total"]
             or all_counts["remaining"]
-            != all_counts["total"] - all_counts["independently_verified"]
+            != all_counts["total"] - all_counts["implemented"]
             or all_counts["independently_verified"] > all_counts["implemented"]
         ):
             raise ValueError("all-use-case funnel does not reconcile")

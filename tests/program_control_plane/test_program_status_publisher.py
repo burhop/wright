@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -201,3 +202,35 @@ def test_initial_test_ledger_append_only_attestation_is_proven() -> None:
         publisher._verify_test_ledger_append_only(REPOSITORY, subject)
 
     assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"
+
+
+def test_frozen_source_catalog_selects_only_its_20_committed_inputs() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    selected = publisher._load_closed_catalog_sources(REPOSITORY, subject)
+
+    assert set(selected) == set(subject["source_catalog"]["sources"])
+    for name, rule in subject["source_catalog"]["sources"].items():
+        paths = [path for path, _raw in selected[name]]
+        if rule["path_kind"] == "exact":
+            assert paths == [rule["path"]]
+        else:
+            pattern = re.compile(rule["path_pattern"])
+            assert all(pattern.fullmatch(path) for path in paths)
+
+
+def test_customer_story_maturity_is_derived_without_duplicate_definitions() -> None:
+    raw = publisher._git_blob(REPOSITORY, "HEAD", publisher.CUSTOMER_CATALOG_PATH)
+
+    assert publisher._customer_story_maturity(raw) == {
+        "ready_to_specify": 5,
+        "shaped": 15,
+        "candidate": 45,
+        "discovery_shaped": 15,
+        "discovery": 14,
+        "discovery_separate_t4_authority_required": 1,
+        "fully_defined": 5,
+    }
+
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._customer_story_maturity(raw + b"\n### EPP-US-001 duplicate\n")
+    assert raised.value.code == "PROGRAM_STATUS_CUSTOMER_CATALOG_INVALID"
