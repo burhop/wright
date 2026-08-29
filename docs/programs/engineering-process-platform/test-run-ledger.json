@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "program_id": "engineering-process-platform",
+  "ledger_revision": 1,
+  "prior_ledger": null,
+  "runs_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "runs_digest_rule": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order",
+  "run_key_rule": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256",
+  "case_identity_rule": "framework_collected_identity_including_each_parameterized_identity_once",
+  "identity_digest_rule": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256",
+  "canonical_selection_rule": "latest_terminal_attempt_per_commit_suite_id_population_id",
+  "pass_rate_rule": "passed_divided_by_passed_plus_failed_else_unavailable",
+  "runs": []
+}

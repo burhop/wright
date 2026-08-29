@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "program_id": "engineering-process-platform",
+  "task_sources": [
+    {
+      "feature_id": "EPP-F01",
+      "tasks_path": "specs/076-control-plane-validator/tasks.md",
+      "roadmap_item_id": "EPP-F01",
+      "active_feature": false
+    },
+    {
+      "feature_id": "EPP-F01B",
+      "tasks_path": "specs/077-browser-program-status/tasks.md",
+      "roadmap_item_id": "EPP-F01B",
+      "active_feature": true
+    }
+  ],
+  "active_assignments": []
+}
