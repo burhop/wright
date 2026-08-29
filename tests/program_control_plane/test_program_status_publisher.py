@@ -431,6 +431,29 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> Non
     assert raised.value.code == "PROGRAM_STATUS_WORK_REGISTRY_INVALID"
 
 
+def test_correction_graph_projects_only_closed_reciprocal_evidence() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["catalog_sources"] = publisher._load_closed_catalog_sources(
+        REPOSITORY, subject
+    )
+
+    corrections, findings, verifications, details = publisher._project_correction_graph(
+        subject
+    )
+
+    assert [item["profile_id"] for item in corrections] == [
+        "COR-EPP-F01-V9-PREFLIGHT-EVIDENCE-001"
+    ]
+    assert {item["id"] for item in findings} == {
+        "V8-DISCOVERY-SCHEMA-REFERENCE-001",
+        "TR0051-MANIFEST-ORDER-001",
+    }
+    assert [item["id"] for item in verifications] == ["VER-EPP-F01-V9-001"]
+    assert corrections[0]["verification_ids"] == [verifications[0]["id"]]
+    assert verifications[0]["finding_ids"] == corrections[0]["finding_ids"]
+    assert len({item["id"] for item in details}) == len(details)
+
+
 def test_canonical_test_identity_and_latest_terminal_selection() -> None:
     test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
     assert (

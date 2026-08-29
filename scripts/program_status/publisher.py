@@ -1567,6 +1567,280 @@ def _project_governance_registers(
     return risks, decisions
 
 
+def _checkout_evidence_detail(
+    reference: Mapping[str, Any], label: str, summary: str
+) -> dict[str, Any]:
+    return {
+        **reference,
+        "label": label,
+        "summary": summary,
+        "freshness": "current",
+        "recovery": None,
+        "availability": "checkout_available",
+        "exact_url": None,
+    }
+
+
+def _project_correction_graph(
+    subject: Mapping[str, Any],
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    corrections_raw = subject.get("catalog_sources", {}).get("correction_evidence", [])
+    verifications_raw = subject.get("catalog_sources", {}).get(
+        "verification_evidence", []
+    )
+    approvals_raw = subject.get("catalog_sources", {}).get("approval_evidence", [])
+    if not all(
+        isinstance(records, list)
+        for records in (corrections_raw, verifications_raw, approvals_raw)
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+            "Correction, verification, and approval sources must be closed collections.",
+            "repair_governance_evidence",
+        )
+    verifications_by_path: list[tuple[str, bytes, Mapping[str, Any]]] = [
+        (path, raw, _strict_json(raw, path)) for path, raw in verifications_raw
+    ]
+    approvals_by_path: dict[str, tuple[bytes, Mapping[str, Any]]] = {
+        path: (raw, _strict_json(raw, path)) for path, raw in approvals_raw
+    }
+    corrections: list[dict[str, Any]] = []
+    findings: list[dict[str, Any]] = []
+    verifications: list[dict[str, Any]] = []
+    details: dict[str, dict[str, Any]] = {}
+    for correction_path, correction_raw in corrections_raw:
+        correction = _strict_json(correction_raw, correction_path)
+        correction_id = correction.get("correction_id")
+        if not isinstance(correction_id, str):
+            continue
+        matches: list[tuple[str, bytes, Mapping[str, Any]]] = []
+        for verification_path, verification_raw, verification in verifications_by_path:
+            artifact_digests = (verification.get("subject") or {}).get(
+                "artifact_digests", []
+            )
+            if (
+                verification.get("kind") == "independent"
+                and (verification.get("actor") or {}).get("independent") is True
+                and any(
+                    isinstance(artifact, Mapping)
+                    and artifact.get("path") == correction_path
+                    for artifact in artifact_digests
+                )
+            ):
+                matches.append((verification_path, verification_raw, verification))
+        if not matches:
+            continue
+        if len(matches) != 1:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} has an ambiguous independent verification relation.",
+                "repair_governance_evidence",
+            )
+        verification_path, verification_raw, verification = matches[0]
+        verification_id = verification.get("evidence_id")
+        actor = verification.get("actor")
+        if not isinstance(verification_id, str) or not isinstance(actor, Mapping):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} verification lacks its exact identity or actor.",
+                "repair_governance_evidence",
+            )
+        authority = correction.get("authority")
+        approval_paths = (
+            authority.get("proposed_approval_records", [])
+            if isinstance(authority, Mapping)
+            else []
+        )
+        selected_approvals: list[tuple[str, bytes, Mapping[str, Any]]] = []
+        for approval_path in approval_paths:
+            selected = approvals_by_path.get(str(approval_path))
+            if selected is not None:
+                selected_approvals.append((str(approval_path), *selected))
+        if not selected_approvals or any(
+            not str(approval.get("decision", "")).startswith("approved")
+            for _path, _raw, approval in selected_approvals
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} lacks its exact approved authority record.",
+                "repair_governance_evidence",
+            )
+        approval_path, approval_raw, approval = selected_approvals[0]
+        approval_id = approval.get("approval_id")
+        approver = approval.get("approver")
+        verifier = actor.get("identity")
+        if (
+            not isinstance(approval_id, str)
+            or not isinstance(approver, str)
+            or not isinstance(verifier, str)
+            or approver == verifier
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} authority and verifier identities are not independent.",
+                "repair_governance_evidence",
+            )
+        claims = correction.get("claims")
+        if not isinstance(claims, list) or not claims:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} has no bounded claim population.",
+                "repair_governance_evidence",
+            )
+        claim_ids = [
+            claim.get("claim_id") for claim in claims if isinstance(claim, Mapping)
+        ]
+        if (
+            len(claim_ids) != len(claims)
+            or len(claim_ids) != len(set(claim_ids))
+            or not all(isinstance(claim_id, str) for claim_id in claim_ids)
+        ):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{correction_id} claim identities must be present and unique.",
+                "repair_governance_evidence",
+            )
+        correction_ref = _evidence(
+            f"correction-{correction_id}", correction_path, correction_raw
+        )
+        verification_ref = _evidence(
+            f"verification-{verification_id}", verification_path, verification_raw
+        )
+        approval_ref = _evidence(f"approval-{approval_id}", approval_path, approval_raw)
+        for reference, label, summary in (
+            (
+                correction_ref,
+                correction_id,
+                "Exact committed bounded correction profile.",
+            ),
+            (
+                verification_ref,
+                verification_id,
+                "Exact committed independent verification record.",
+            ),
+            (approval_ref, approval_id, "Exact committed human approval record."),
+        ):
+            detail = _checkout_evidence_detail(reference, label, summary)
+            previous = details.get(str(reference["id"]))
+            if previous is not None and previous != detail:
+                raise ProgramStatusPublishError(
+                    "PROGRAM_STATUS_EVIDENCE_ID_COLLISION",
+                    f"Governance evidence ID {reference['id']} is not unique.",
+                    "repair_governance_evidence",
+                )
+            details[str(reference["id"])] = detail
+        verified_at = verification.get("created_at")
+        verdict = str(verification.get("verdict"))
+        if not isinstance(verified_at, str) or verdict not in {
+            "passed",
+            "failed",
+            "inconclusive",
+        }:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+                f"{verification_id} lacks a supported verdict or timestamp.",
+                "repair_governance_evidence",
+            )
+        subject_commit = (verification.get("subject") or {}).get("git_commit")
+        verification_subject = (
+            f"git:{subject_commit}"
+            if isinstance(subject_commit, str)
+            else str(correction.get("stable_cause_id", correction_id))
+        )
+        claim_id_strings = [str(claim_id) for claim_id in claim_ids]
+        corrections.append(
+            {
+                "profile_id": correction_id,
+                "path": correction_path,
+                "digest": _raw_digest(correction_raw),
+                "correction_class": str(
+                    correction.get("stable_cause_id", "bounded_correction")
+                ),
+                "authority_status": "approved",
+                "approval_id": approval_id,
+                "expected_claim_ids": claim_id_strings,
+                "verified_claim_ids": claim_id_strings if verdict == "passed" else [],
+                "finding_ids": claim_id_strings,
+                "resolved_finding_ids": (
+                    claim_id_strings if verdict == "passed" else []
+                ),
+                "unresolved_finding_ids": (
+                    [] if verdict == "passed" else claim_id_strings
+                ),
+                "verification_ids": [verification_id],
+                "verification_subject": verification_subject,
+                "verified_at": verified_at,
+                "evidence": [correction_ref, verification_ref, approval_ref],
+            }
+        )
+        for claim in claims:
+            assert isinstance(claim, Mapping)
+            claim_id = str(claim["claim_id"])
+            findings.append(
+                {
+                    "id": claim_id,
+                    "status": "resolved" if verdict == "passed" else "open",
+                    "severity": "P0",
+                    "summary": str(
+                        claim.get("classification", "Bounded correction claim")
+                    ).replace("_", " "),
+                    "blocking": verdict != "passed",
+                    "opened_at": None,
+                    "resolved_at": verified_at if verdict == "passed" else None,
+                    "correction_profile_id": (
+                        correction_id if verdict == "passed" else None
+                    ),
+                    "resolution_verification_id": (
+                        verification_id if verdict == "passed" else None
+                    ),
+                    "recovery": (
+                        None
+                        if verdict == "passed"
+                        else "Repair the exact bounded claim and re-verify independently."
+                    ),
+                    "evidence": [correction_ref, verification_ref],
+                }
+            )
+        verifications.append(
+            {
+                "id": verification_id,
+                "author": approver,
+                "verifier": verifier,
+                "independent": True,
+                "subject": verification_subject,
+                "verdict": verdict,
+                "blocking": verdict != "passed",
+                "finding_ids": claim_id_strings,
+                "correction_profile_ids": [correction_id],
+                "verified_at": verified_at,
+                "evidence": [verification_ref, correction_ref, approval_ref],
+            }
+        )
+    correction_ids = [item["profile_id"] for item in corrections]
+    finding_ids = [item["id"] for item in findings]
+    verification_ids = [item["id"] for item in verifications]
+    if any(
+        len(values) != len(set(values))
+        for values in (correction_ids, finding_ids, verification_ids)
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_RELATION_INVALID",
+            "Projected correction, finding, and verification identities must be unique.",
+            "repair_governance_evidence",
+        )
+    return (
+        corrections,
+        findings,
+        verifications,
+        [details[key] for key in sorted(details)],
+    )
+
+
 def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str, Any]:
     blobs = subject["blobs"]
     state = subject["state"]
@@ -1585,6 +1859,9 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     ) = _registered_task_counts(repository, subject, feature_id)
     use_case_items, _process_ids, use_case_funnels = _derive_use_cases(subject)
     risks, decisions = _project_governance_registers(subject)
+    corrections, findings, verifications, governance_evidence_details = (
+        _project_correction_graph(subject)
+    )
     story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
     ledger = subject["ledger"]
     prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
@@ -1973,11 +2250,11 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             ],
         },
         "governance": {
-            "corrections": [],
-            "findings": [],
+            "corrections": corrections,
+            "findings": findings,
             "risks": risks,
             "decisions": decisions,
-            "verification": [],
+            "verification": verifications,
             "limits": {
                 "wip_max": int(policy_limits["wip_max"]),
                 "repair_max": int(policy_limits["repair_max"]),
@@ -2014,6 +2291,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             for identifier, path, raw in evidence_pairs
         ]
         + [historical_evidence[key] for key in sorted(historical_evidence)]
+        + governance_evidence_details
         + test_evidence_details,
     }
 
