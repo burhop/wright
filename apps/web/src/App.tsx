@@ -16,6 +16,7 @@ import LogsPage from "./components/pages/LogsPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import ModelSetupPage from "./components/pages/ModelSetupPage";
 import EngineeringModelLibraryPage from "./components/pages/EngineeringModelLibraryPage";
+import ProgramStatusPage from "./components/pages/ProgramStatusPage";
 import { AuthGate } from "./components/common/AuthGate";
 
 import { ToolsProvider } from "./store/tools";
@@ -64,6 +65,7 @@ function App() {
                 path="/engineering-models"
                 element={<EngineeringModelLibraryPage />}
               />
+              <Route path="/program-status" element={<ProgramStatusPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
               <Route path="/agent-chat" element={<Navigate to="/" replace />} />
