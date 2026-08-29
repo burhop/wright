@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import fnmatch
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -156,8 +158,39 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
         assert "scripts/program_control/**" not in allowed
         assert "tests/program_control_plane/**" not in allowed
     else:
-        assert "scripts/program_control/**" in allowed
-        assert "tests/program_control_plane/**" in allowed
+        assert lease["feature_id"] == current["current_feature"]
+        assert "edit_allowlisted_paths" in lease["allowed_actions"]
+        task_contracts = [
+            path
+            for path in (repository_root / "specs").glob("*/tasks.md")
+            if any(
+                line.startswith("**Authority**:")
+                and lease["feature_id"] in line
+                for line in path.read_text("utf-8").splitlines()
+            )
+        ]
+        assert len(task_contracts) == 1
+        task_text = task_contracts[0].read_text("utf-8")
+        task_paths = {
+            token.rstrip("/")
+            for token in re.findall(r"`([^`]+)`", task_text)
+            if token.startswith(
+                ("apps/", "docs/", "packages/", "scripts/", "specs/", "src/", "tests/", "pyproject.toml")
+            )
+            and " " not in token
+            and not token.startswith("http")
+        }
+        assert task_paths
+        uncovered = {
+            path
+            for path in task_paths
+            if not any(
+                fnmatch.fnmatchcase(path, pattern)
+                or (pattern.endswith("/**") and path == pattern[:-3])
+                for pattern in allowed
+            )
+        }
+        assert uncovered == set()
 
 
 def test_git_fixture_builder_uses_fixed_identity_space_path_and_raw_mutation(
