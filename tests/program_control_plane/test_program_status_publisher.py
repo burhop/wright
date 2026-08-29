@@ -351,6 +351,29 @@ def test_use_case_projection_rejects_wrong_path_digest_and_missing_subject() -> 
         assert raised.value.code == "PROGRAM_STATUS_USE_CASE_EVIDENCE_INVALID"
 
 
+def test_governance_register_projection_uses_exact_catalog_sources() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["catalog_sources"] = publisher._load_closed_catalog_sources(
+        REPOSITORY, subject
+    )
+
+    risks, decisions = publisher._project_governance_registers(subject)
+
+    assert len(risks) == 22
+    assert len(decisions) == 20
+    assert sum(item["blocks"] for item in risks) == 3
+    assert sum(item["blocks"] for item in decisions) == 11
+    assert all(item["evidence"] for item in risks + decisions)
+
+    subject["catalog_sources"] = {
+        **subject["catalog_sources"],
+        "risk_register": [],
+    }
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._project_governance_registers(subject)
+    assert raised.value.code == "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID"
+
+
 def test_canonical_test_identity_and_latest_terminal_selection() -> None:
     test_ids = ["tests/a.py::test_x", "tests/a.py::test_y[param]"]
     assert (

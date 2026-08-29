@@ -1253,6 +1253,116 @@ def _derive_use_cases(
     return projected_items, process_ids, funnels
 
 
+def _exact_catalog_json(
+    subject: Mapping[str, Any], source_name: str
+) -> tuple[str, bytes, Mapping[str, Any]]:
+    records = subject.get("catalog_sources", {}).get(source_name, [])
+    if not isinstance(records, list) or len(records) != 1:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+            f"Governance source {source_name} must resolve to one exact record.",
+            "repair_frozen_source_catalog",
+        )
+    path, raw = records[0]
+    value = _strict_json(raw, path)
+    return path, raw, value
+
+
+def _overdue(due_at: Any, status: str, observed_at: str) -> bool:
+    if not isinstance(due_at, str) or status in {"decided", "closed", "resolved"}:
+        return False
+    try:
+        due = datetime.fromisoformat(due_at.replace("Z", "+00:00"))
+        observed = datetime.fromisoformat(observed_at.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+            "A governance due date is not an ISO-8601 timestamp.",
+            "repair_governance_register",
+        ) from exc
+    return due < observed
+
+
+def _project_governance_registers(
+    subject: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    risk_path, risk_raw, risk_register = _exact_catalog_json(subject, "risk_register")
+    decision_path, decision_raw, decision_register = _exact_catalog_json(
+        subject, "decision_register"
+    )
+    risks_raw = risk_register.get("risks")
+    decisions_raw = decision_register.get("records")
+    if not isinstance(risks_raw, list) or not isinstance(decisions_raw, list):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+            "Risk and decision registers must expose their contracted arrays.",
+            "repair_governance_register",
+        )
+    observed_at = str(subject["generated_at"])
+    risk_ref = _evidence("risk-register", risk_path, risk_raw)
+    decision_ref = _evidence("decision-register", decision_path, decision_raw)
+    risks: list[dict[str, Any]] = []
+    for item in risks_raw:
+        if not isinstance(item, Mapping):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+                "Every risk must be an object.",
+                "repair_governance_register",
+            )
+        status = str(item["status"])
+        priority = str(item["priority"])
+        risks.append(
+            {
+                "id": str(item["id"]),
+                "severity": priority
+                if priority in {"P0", "P1", "P2", "P3"}
+                else "unknown",
+                "status": status,
+                "owner": item.get("owner_role"),
+                "overdue": _overdue(
+                    (item.get("review") or {}).get("due_at"), status, observed_at
+                ),
+                "blocks": priority == "P0" and status == "open",
+                "summary": str(item["title"]),
+                "evidence": [risk_ref],
+            }
+        )
+    decisions: list[dict[str, Any]] = []
+    for item in decisions_raw:
+        if not isinstance(item, Mapping):
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+                "Every decision must be an object.",
+                "repair_governance_register",
+            )
+        status = str(item["status"])
+        blocks = item.get("blocks")
+        decisions.append(
+            {
+                "id": str(item["id"]),
+                "status": status,
+                "owner": item.get("owner_role"),
+                "overdue": _overdue(
+                    (item.get("due") or {}).get("due_at"), status, observed_at
+                ),
+                "blocks": status == "open"
+                and isinstance(blocks, list)
+                and bool(blocks),
+                "summary": str(item["question"]),
+                "evidence": [decision_ref],
+            }
+        )
+    if len({item["id"] for item in risks}) != len(risks) or len(
+        {item["id"] for item in decisions}
+    ) != len(decisions):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID",
+            "Risk and decision identities must be unique within each register.",
+            "repair_governance_register",
+        )
+    return risks, decisions
+
+
 def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str, Any]:
     blobs = subject["blobs"]
     state = subject["state"]
@@ -1264,6 +1374,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         _registered_task_counts(repository, subject, feature_id)
     )
     use_case_items, _process_ids, use_case_funnels = _derive_use_cases(subject)
+    risks, decisions = _project_governance_registers(subject)
     story_maturity = _customer_story_maturity(blobs[CUSTOMER_CATALOG_PATH])
     ledger = subject["ledger"]
     prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
@@ -1498,13 +1609,17 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     lease = state.get("active_mutating_lease")
     policy_limits = lifecycle.get("wip_limits", {})
     observed_at = str(subject["generated_at"])
+    risk_path, risk_raw = subject["catalog_sources"]["risk_register"][0]
+    decision_path, decision_raw = subject["catalog_sources"]["decision_register"][0]
     evidence_pairs = (
-        ("dashboard", DASHBOARD_PATH),
-        ("program-state", STATE_PATH),
-        ("source-catalog", SOURCE_CATALOG_PATH),
-        ("work-registry", WORK_REGISTRY_PATH),
-        ("use-case-registry", USE_CASE_REGISTRY_PATH),
-        ("test-run-ledger", TEST_LEDGER_PATH),
+        ("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH]),
+        ("program-state", STATE_PATH, blobs[STATE_PATH]),
+        ("source-catalog", SOURCE_CATALOG_PATH, blobs[SOURCE_CATALOG_PATH]),
+        ("work-registry", WORK_REGISTRY_PATH, blobs[WORK_REGISTRY_PATH]),
+        ("use-case-registry", USE_CASE_REGISTRY_PATH, blobs[USE_CASE_REGISTRY_PATH]),
+        ("test-run-ledger", TEST_LEDGER_PATH, blobs[TEST_LEDGER_PATH]),
+        ("risk-register", risk_path, risk_raw),
+        ("decision-register", decision_path, decision_raw),
     )
     return {
         "history": [
@@ -1652,8 +1767,8 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         "governance": {
             "corrections": [],
             "findings": [],
-            "risks": [],
-            "decisions": [],
+            "risks": risks,
+            "decisions": decisions,
             "verification": [],
             "limits": {
                 "wip_max": int(policy_limits["wip_max"]),
@@ -1664,8 +1779,16 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "active_feature_count": 1,
                 "active_lease_count": 1 if lease else 0,
                 "roadmap_blocker_count": 0,
-                "open_p0_decision_count": len(state.get("open_p0_decisions", [])),
-                "open_p0_risk_count": 0,
+                "open_p0_decision_count": sum(
+                    1
+                    for item in decisions
+                    if item["status"] == "open" and item["id"].startswith("DEC-P0-")
+                ),
+                "open_p0_risk_count": sum(
+                    1
+                    for item in risks
+                    if item["status"] == "open" and item["severity"] == "P0"
+                ),
             },
         },
         "evidence_index": [
@@ -1673,14 +1796,14 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "id": identifier,
                 "label": identifier.replace("-", " ").title(),
                 "path": path,
-                "sha256": _raw_digest(blobs[path]),
+                "sha256": _raw_digest(raw),
                 "summary": "Exact committed identity used to derive this status bundle.",
                 "freshness": "current",
                 "recovery": None,
                 "availability": "checkout_available",
                 "exact_url": None,
             }
-            for identifier, path in evidence_pairs
+            for identifier, path, raw in evidence_pairs
         ]
         + [historical_evidence[key] for key in sorted(historical_evidence)]
         + test_evidence_details,
