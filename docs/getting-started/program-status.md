@@ -38,3 +38,17 @@ prior known-good data-root copy to roll back.
 The browser polls conditionally and atomically swaps only a fully validated new
 identity. It preserves the last valid view during a failed refresh and displays
 publisher health separately from program readiness.
+
+## Packaged and lifecycle behavior
+
+The native wheel contains the validated fallback bundle, its exact source
+catalog, all five EPP-F01B schemas, the authoritative dashboard schema, and the
+compiled browser application. A packaged runtime can therefore serve both
+`/api/program-status` and `/program-status` without Git, a source checkout,
+network access, or a frontend build.
+
+An ordinary update, rollback, reinstall, or uninstall may replace runtime code
+but must preserve `<WRIGHT_HOME>/data/program-status/current.json`. Restore the
+previous immutable file to roll back status content. Only an explicitly
+confirmed Wright data purge may remove it. Wright's native lifecycle matrix
+checks this preservation path on Windows, Linux, and macOS.

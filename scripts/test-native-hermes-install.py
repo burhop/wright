@@ -620,9 +620,16 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
         _adapter_lifecycle(audit, plugin_dir, command, cwd=cwd, env=active)
         lifecycle.append(command)
     if args.runtime_smoke:
+        data_root = Path(environment["WRIGHT_HOME"]) / "data"
+        program_status = data_root / "program-status" / "current.json"
+        program_status.parent.mkdir(parents=True, exist_ok=True)
+        retained_status = b'{"bundle_id":"native-lifecycle-retained"}\n'
+        program_status.write_bytes(retained_status)
         for command in ("stop", "uninstall"):
             _adapter_lifecycle(audit, plugin_dir, command, cwd=cwd, env=active)
             lifecycle.append(command)
+        if program_status.read_bytes() != retained_status:
+            raise HarnessError("native uninstall did not preserve program status")
         return {
             "schema_version": 2,
             "status": "passed",
@@ -639,14 +646,17 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
                 "sha256": sha256_file(wheel),
             },
             "source_isolation": True,
+            "program_status_preserved_on_uninstall": True,
             "forbidden_executables": sorted(audit.forbidden),
             "observed_executables": sorted(set(audit.executables)),
             "lifecycle": lifecycle,
         }
     data_root = Path(environment["WRIGHT_HOME"]) / "data"
     data_root.mkdir(parents=True, exist_ok=True)
-    preserved = data_root / "preserved.txt"
-    preserved.write_text("keep\n", encoding="utf-8")
+    preserved = data_root / "program-status" / "current.json"
+    preserved.parent.mkdir(parents=True, exist_ok=True)
+    retained_status = b'{"bundle_id":"native-lifecycle-retained"}\n'
+    preserved.write_bytes(retained_status)
     candidate = _artifact_environment(environment, wheel)
     _adapter_lifecycle(
         audit,
@@ -657,8 +667,12 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
         env=candidate,
     )
     lifecycle.append("update")
+    if preserved.read_bytes() != retained_status:
+        raise HarnessError("update did not preserve program status")
     _adapter_lifecycle(audit, plugin_dir, "rollback", cwd=cwd, env=candidate)
     lifecycle.append("rollback")
+    if preserved.read_bytes() != retained_status:
+        raise HarnessError("rollback did not preserve program status")
     _adapter_lifecycle(
         audit,
         plugin_dir,
@@ -711,12 +725,12 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
     lifecycle.append("stop")
     _adapter_lifecycle(audit, plugin_dir, "uninstall", cwd=cwd, env=candidate)
     lifecycle.append("uninstall")
-    if not preserved.is_file():
-        raise HarnessError("default uninstall removed Wright data")
+    if preserved.read_bytes() != retained_status:
+        raise HarnessError("default uninstall did not preserve program status")
     _adapter_lifecycle(audit, plugin_dir, "start", cwd=cwd, env=candidate)
     _adapter_lifecycle(audit, plugin_dir, "stop", cwd=cwd, env=candidate)
-    if not preserved.is_file():
-        raise HarnessError("reinstall did not preserve Wright data")
+    if preserved.read_bytes() != retained_status:
+        raise HarnessError("reinstall did not preserve program status")
     preview = _adapter_lifecycle(
         audit,
         plugin_dir,
