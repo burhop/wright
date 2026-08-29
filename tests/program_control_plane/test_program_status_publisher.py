@@ -74,6 +74,17 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         assert len(observation["commit"]) == 40
         assert observation["observed_at"]
         assert observation["evidence"]
+    evidence_index = bundle["supplement"]["evidence_index"]
+    for series in histories.values():
+        for observation in series["observations"]:
+            for reference in observation["evidence"]:
+                matches = [
+                    detail
+                    for detail in evidence_index
+                    if all(detail[key] == reference[key] for key in reference)
+                ]
+                assert len(matches) == 1
+                assert matches[0]["availability"] == "identity_only"
     assert first.changed is True
 
     second = publish_program_status(request(tmp_path))

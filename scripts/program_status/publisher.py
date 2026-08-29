@@ -719,6 +719,34 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         "feature_tasks",
         "feature_task",
     )
+    historical_evidence: dict[str, dict[str, Any]] = {}
+    for observations in history_by_id.values():
+        for observation in observations:
+            for reference in observation["evidence"]:
+                detail = {
+                    **reference,
+                    "label": str(observation["label"]).replace("_", " ").title(),
+                    "summary": (
+                        "Exact committed identity for historical observation "
+                        f"{observation['commit'][:12]}."
+                    ),
+                    "freshness": (
+                        "current"
+                        if observation["commit"] == subject["commit"]
+                        else "stale"
+                    ),
+                    "recovery": None,
+                    "availability": "identity_only",
+                    "exact_url": None,
+                }
+                previous = historical_evidence.get(reference["id"])
+                if previous is not None and previous != detail:
+                    raise ProgramStatusPublishError(
+                        "PROGRAM_STATUS_EVIDENCE_ID_COLLISION",
+                        f"Historical evidence ID {reference['id']} is not unique.",
+                        "repair_history_evidence_identity",
+                    )
+                historical_evidence[reference["id"]] = detail
     graph_context = _graph_context([state_ref])
     benchmark_blocker = "Benchmark execution is not authorized and remains at 0/100."
     lane_blocker = "Push, PR, merge, and dev integration are not authorized."
@@ -927,7 +955,8 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "exact_url": None,
             }
             for identifier, path in evidence_pairs
-        ],
+        ]
+        + [historical_evidence[key] for key in sorted(historical_evidence)],
     }
 
 
