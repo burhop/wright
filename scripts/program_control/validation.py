@@ -48,9 +48,15 @@ REQUIRED_JSON = (
     "risk-register.json",
 )
 EPP_F01B_SCHEMA_ROUTED_DOCUMENTS = {
-    "work-registry.json": "schemas/work-registry.schema.json",
-    "use-case-registry.json": "schemas/use-case-registry.schema.json",
-    "test-run-ledger.json": "schemas/test-run-ledger.schema.json",
+    "docs/programs/engineering-process-platform/work-registry.json": (
+        "docs/programs/engineering-process-platform/schemas/work-registry.schema.json"
+    ),
+    "docs/programs/engineering-process-platform/use-case-registry.json": (
+        "docs/programs/engineering-process-platform/schemas/use-case-registry.schema.json"
+    ),
+    "docs/programs/engineering-process-platform/test-run-ledger.json": (
+        "docs/programs/engineering-process-platform/schemas/test-run-ledger.schema.json"
+    ),
 }
 
 
@@ -2743,11 +2749,9 @@ def _validate_documents(
                 _finding("JSON_TOP_LEVEL_INVALID", "fatal", path, "OBJECT_REQUIRED")
             )
             continue
-        relative_path = path.removeprefix(f"{program_root}/")
-        routed_schema_path = EPP_F01B_SCHEMA_ROUTED_DOCUMENTS.get(relative_path)
+        routed_schema_path = EPP_F01B_SCHEMA_ROUTED_DOCUMENTS.get(path)
         if routed_schema_path is not None:
-            schema_path = f"{program_root}/{routed_schema_path}"
-            schema = documents.get(schema_path)
+            schema = documents.get(routed_schema_path)
             if not isinstance(schema, dict):
                 findings.append(
                     _finding(

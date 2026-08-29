@@ -202,11 +202,15 @@ def test_epp_f01b_registry_documents_use_only_their_frozen_schemas(
     ]
 
 
-def test_epp_f01b_registry_routing_does_not_relax_generic_document_validation(
-    repository_root: Path,
+@pytest.mark.parametrize(
+    "registry_name",
+    ("work-registry.json", "use-case-registry.json", "test-run-ledger.json"),
+)
+def test_epp_f01b_registry_routing_is_exact_to_the_authoritative_program_root(
+    repository_root: Path, registry_name: str
 ) -> None:
-    program_root = "docs/programs/engineering-process-platform"
-    target = f"{program_root}/future-registry.json"
+    program_root = "docs/programs/alternate-engineering-program"
+    target = f"{program_root}/{registry_name}"
     blobs = {target: b'{"schema_version":"1.0.0"}\n'}
 
     class BlobReader:
