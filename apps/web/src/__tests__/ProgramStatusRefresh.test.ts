@@ -208,6 +208,13 @@ describe("program status conditional refresh transport", () => {
       "DELIVERY_LANE_RELATION_INVALID",
     );
 
+    const sharedBranch = makeProgramStatusBundle() as any;
+    sharedBranch.supplement.work.lanes[0].branch =
+      sharedBranch.supplement.work.lanes[1].branch;
+    expect(() => validateProgramStatusEvidenceRelations(sharedBranch)).toThrow(
+      "DELIVERY_LANE_RELATION_INVALID",
+    );
+
     const history = makeProgramStatusBundle() as any;
     history.supplement.history = [
       {
@@ -219,6 +226,43 @@ describe("program status conditional refresh transport", () => {
     ];
     expect(() => validateProgramStatusEvidenceRelations(history)).toThrow(
       "HISTORY_AVAILABILITY_MISMATCH",
+    );
+
+    const denominator = makeProgramStatusBundle() as any;
+    denominator.supplement.history = [
+      {
+        id: "feature_tasks",
+        availability: "available",
+        observations: [
+          {
+            commit: "c".repeat(40),
+            observed_at: "2026-08-29T00:00:00Z",
+            value: 1,
+            denominator: 1,
+          },
+        ],
+        latest_change: {
+          commit: "c".repeat(40),
+          observed_at: "2026-08-29T00:00:00Z",
+          from_value: null,
+          to_value: 1,
+        },
+      },
+    ];
+    denominator.supplement.history[0].observations[0].value = 2;
+    denominator.supplement.history[0].observations[0].denominator = 1;
+    expect(() => validateProgramStatusEvidenceRelations(denominator)).toThrow(
+      "HISTORY_DENOMINATOR_INVALID",
+    );
+  });
+
+  it("binds checkpoint time to the latest selected test source", () => {
+    const raw = makeProgramStatusBundle() as any;
+    addCanonicalTestRun(raw);
+    raw.supplement.test_history.checkpoints[0].observed_at =
+      "2026-08-29T00:00:00Z";
+    expect(() => validateProgramStatusEvidenceRelations(raw)).toThrow(
+      "TEST_CHECKPOINT_TIME_INVALID",
     );
   });
 

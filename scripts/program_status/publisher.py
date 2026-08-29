@@ -1902,6 +1902,7 @@ def _project_correction_graph(
 def _project_delivery_lanes(
     subject: Mapping[str, Any],
     state_ref: dict[str, str],
+    feature_tasks_ref: dict[str, str],
     feature_done: int,
     feature_total: int,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -2051,8 +2052,8 @@ def _project_delivery_lanes(
         "branch": str(lease["branch"]),
         "milestone": str(current_item["title"]),
         "latest_capability": (
-            f"EPP-F01B local implementation has completed {feature_done} of "
-            f"{feature_total} registered tasks."
+            "Unavailable: no committed customer acceptance evidence demonstrates "
+            "a customer-visible EPP-F01B capability yet."
         ),
         "blocker": None,
         "next_action": _action(
@@ -2062,7 +2063,7 @@ def _project_delivery_lanes(
             [state_ref],
         ),
         "observed_at": str(subject["generated_at"]),
-        "evidence": [state_ref, roadmap_ref],
+        "evidence": [state_ref, roadmap_ref, feature_tasks_ref],
         "base_commit": str(lease["dev_baseline"]["commit"]),
         "authority_state": "authorized",
     }
@@ -2117,8 +2118,19 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         blocker=action_label if requires_human_approval else None,
         requires_human_approval=requires_human_approval,
     )
+    active_task_source = next(
+        source
+        for source in subject["work_registry"]["task_sources"]
+        if source.get("active_feature") is True
+    )
+    feature_tasks_path = str(active_task_source["tasks_path"])
+    feature_tasks_ref = _evidence(
+        "active-feature-tasks",
+        feature_tasks_path,
+        _git_blob(repository, str(subject["commit"]), feature_tasks_path),
+    )
     integration_lane, development_lane = _project_delivery_lanes(
-        subject, state_ref, feature_done, feature_total
+        subject, state_ref, feature_tasks_ref, feature_done, feature_total
     )
     history_definitions = (
         (

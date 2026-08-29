@@ -145,7 +145,7 @@ function subscribeDesktopPolling(
   listener: SurfaceEventListener,
 ): () => void {
   let stopped = false;
-  let timer: number | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   let previous = new Map<string, SurfaceDescriptor>();
   const poll = async () => {
     try {

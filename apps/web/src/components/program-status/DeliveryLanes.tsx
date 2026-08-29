@@ -47,7 +47,7 @@ export function DeliveryLanes({
                 {text(lane, "milestone") ?? "Unavailable"}
               </p>
               <p>
-                <strong>Latest evidence-backed progress:</strong>{" "}
+                <strong>Latest demonstrated capability:</strong>{" "}
                 {text(lane, "latest_capability") ?? "Unavailable"}
               </p>
               <p>

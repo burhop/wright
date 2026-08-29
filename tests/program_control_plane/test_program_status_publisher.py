@@ -801,9 +801,18 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     state_ref = publisher._evidence(
         "program-state", publisher.STATE_PATH, subject["blobs"][publisher.STATE_PATH]
     )
+    tasks_ref = publisher._evidence(
+        "active-feature-tasks",
+        "specs/077-browser-program-status/tasks.md",
+        publisher._git_blob(
+            REPOSITORY,
+            subject["commit"],
+            "specs/077-browser-program-status/tasks.md",
+        ),
+    )
 
     integration, development = publisher._project_delivery_lanes(
-        subject, state_ref, 45, 48
+        subject, state_ref, tasks_ref, 45, 48
     )
 
     assert integration["kind"] == "integration"
@@ -827,6 +836,8 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     assert development["milestone"] == "Browser program-status dashboard"
     assert development["authority_state"] == "authorized"
     assert state_ref in development["evidence"]
+    assert tasks_ref in development["evidence"]
     assert development["latest_capability"] == (
-        "EPP-F01B local implementation has completed 45 of 48 registered tasks."
+        "Unavailable: no committed customer acceptance evidence demonstrates "
+        "a customer-visible EPP-F01B capability yet."
     )

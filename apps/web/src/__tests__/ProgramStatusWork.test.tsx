@@ -77,8 +77,21 @@ const supplement: any = {
         label: "Durable run evidence",
         status: "pending",
         blocking: true,
+        evidence: [
+          {
+            id: "roadmap",
+            path: "docs/programs/engineering-process-platform/roadmap.json",
+            sha256: "a".repeat(64),
+          },
+        ],
       },
     ],
+    phase: "on_hold",
+    authorization_state: "not_authorized",
+    next_qualifying_action: {
+      ...action,
+      label: "Authorize benchmark execution after dependencies pass",
+    },
   },
 };
 
@@ -107,8 +120,12 @@ describe("program status work and capability detail", () => {
     });
     expect(table).toHaveTextContent("100 proposed");
     expect(table).toHaveTextContent("0/100");
-    expect(screen.getByText(/not authorized/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/not authorized/i)).not.toHaveLength(0);
     expect(screen.getByText(/EPP-F03/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Authorize benchmark execution/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/roadmap\.json/)).toBeInTheDocument();
   });
 
   it("shows integration and development as separate evidence-backed lanes", () => {

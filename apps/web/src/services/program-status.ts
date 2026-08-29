@@ -1371,6 +1371,16 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
         observation.value,
         `${observationPath}/value`,
       );
+      const denominatorValue = integer(
+        observation.denominator,
+        `${observationPath}/denominator`,
+      );
+      if (valueNumber < 0 || valueNumber > denominatorValue) {
+        throw new ProgramStatusDecodeError(
+          "HISTORY_DENOMINATOR_INVALID",
+          observationPath,
+        );
+      }
       if (commits.has(commit) || observedAt < priorTime) {
         throw new ProgramStatusDecodeError(
           "HISTORY_ORDER_INVALID",
@@ -1474,6 +1484,7 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       }
     >();
     const seenCases = new Set<string>();
+    const sourceTimes: string[] = [];
     for (const [sourceIndex, sourceValue] of array(
       checkpoint.suite_sources,
       `${checkpointPath}/suite_sources`,
@@ -1487,6 +1498,9 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
         );
       }
       const runId = stringValue(suite.run_id, `${sourcePath}/run_id`);
+      sourceTimes.push(
+        stringValue(suite.observed_at, `${sourcePath}/observed_at`),
+      );
       const runKey = hex(suite.run_key, 64, `${sourcePath}/run_key`);
       if (runKeys.has(runKey)) {
         throw new ProgramStatusDecodeError(
@@ -1570,6 +1584,12 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
       checkpoint.counts,
       `${checkpointPath}/counts`,
     );
+    if (sourceTimes.length && observedAt !== [...sourceTimes].sort().at(-1)) {
+      throw new ProgramStatusDecodeError(
+        "TEST_CHECKPOINT_TIME_INVALID",
+        `${checkpointPath}/observed_at`,
+      );
+    }
     for (const name of [
       "total",
       "passed",
@@ -1685,6 +1705,7 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
     lanes.length !== 2 ||
     !integration ||
     !development ||
+    integration.branch === development.branch ||
     development.branch !== lease.branch ||
     development.base_commit !==
       record(lease.dev_baseline, "/supplement/work/lease/dev_baseline").commit
