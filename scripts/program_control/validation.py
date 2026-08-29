@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import posixpath
 import re
 import sys
@@ -102,6 +103,7 @@ def _finding(
         "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
         "REV58_RAW_IDENTITY_REPAIR_INVALID": "Restore the exact authorized revision-58 raw-identity repair evidence or stop.",
         "F01B_ACTIVATION_CORRECTION_INVALID": "Restore the exact authorized three-claim TR-0070 correction or stop.",
+        "F01B_LEASE_CHECKPOINT_CORRECTION_INVALID": "Restore the exact authorized revision-75 and TR-0074 three-claim correction or stop.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
         code=code if SAFE_CODE.fullmatch(code) else "INTERNAL_VALIDATION_FAILURE",
@@ -834,6 +836,48 @@ F01B_ACTIVATION_CLAIMS = (
         "2412b3c4d62baf60f7ab1178589d5aa0392e699693040d1bac8b06c48814f8c6",
         "2aba5e62e807dad3d8646da841500204d89075d3d7c253a75330629670d3f3d1",
     ),
+)
+
+F01B_LEASE_CHECKPOINT_SOURCE = "18635d6ba1d83cf68c80d1acf317497d95ec1c48"
+F01B_LEASE_CHECKPOINT_SOURCE_TREE = "a5bed23ab3a05996f5124608a8d6cf6ef48abed8"
+F01B_LEASE_CHECKPOINT_SOURCE_PROGRAM_TREE = "1b769f792c12ac946809d7e56038dde849c07a58"
+F01B_LEASE_CHECKPOINT_TRANSITION_SHA = (
+    "eb16d316403db35175b0bbf4b9259d91f6a967668ee1442ae094792cd7aa131c"
+)
+F01B_LEASE_CHECKPOINT_TRANSITION_BLOB = "689164ed6c150abca95553e2d733f89bdb100494"
+F01B_LEASE_CHECKPOINT_STATE_SHA = (
+    "8e39d8a9a7df71b4665bf96107838ce715ec86d948a0c9d432dccd233b3b7d53"
+)
+F01B_LEASE_CHECKPOINT_STATE_BLOB = "ac7b4e0bc2a1b43d93f4121675e5edf486279b92"
+F01B_LEASE_CHECKPOINT_SCHEMA_TARGETS = frozenset(
+    {
+        "docs/programs/engineering-process-platform/evidence/states/"
+        "program-state-revision-0075.json"
+    }
+)
+F01B_LEASE_CHECKPOINT_DIGEST_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/"
+            "TR-0074.json",
+            "/inputs/3/sha256",
+        ),
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/"
+            "TR-0074.json",
+            "/inputs/4/sha256",
+        ),
+    }
+)
+F01B_LEASE_CHECKPOINT_RESTRICTION = (
+    "The e83a78f8 requirements remain frozen. Allowed exceptions are TR-0073 "
+    "lifecycle-limit projection, the specialized test-result/checkpoint-binding "
+    "corrections through 1a2cebb4, task completion marks, acceptance evidence, "
+    "and bounded implementation results."
+)
+F01B_LEASE_CHECKPOINT_ACTION = (
+    "Append-only correction of revision 75's overlong path-restriction text and "
+    "TR-0074 input digest claims 3 and 4, with no authority or scope change."
 )
 
 
@@ -2845,6 +2889,7 @@ def _validate_transition_history(
             *CHECKPOINT_DIGEST_TARGETS,
             REV58_DIGEST_TARGET,
             *F01B_ACTIVATION_DIGEST_TARGETS,
+            *F01B_LEASE_CHECKPOINT_DIGEST_TARGETS,
         }
     ):
         findings.append(
@@ -3321,6 +3366,168 @@ def validate_f01b_activation_evidence_correction(
             "EXACT_THREE_CLAIM_GIT_NORMALIZED_RECOMPUTATION",
         )
     ], frozenset()
+
+
+def validate_f01b_lease_checkpoint_correction(
+    reader: GitReader,
+    current: str,
+    program_root: str,
+    transition: Mapping[str, Any],
+    successor_state: Mapping[str, Any],
+) -> tuple[list[Finding], frozenset[str], frozenset[tuple[str, str]]]:
+    """Recognize only the revision-75 length and two TR-0074 digest claims."""
+
+    correction_path = f"{program_root}/evidence/transitions/TR-0075.json"
+    source_transition_path = f"{program_root}/evidence/transitions/TR-0074.json"
+    source_state_path = (
+        f"{program_root}/evidence/states/program-state-revision-0075.json"
+    )
+    task_path = "specs/077-browser-program-status/tasks.md"
+    quickstart_path = "specs/077-browser-program-status/quickstart.md"
+    valid = True
+    try:
+        current_commit = reader.resolve_commit(current)
+        source_identity = reader.resolve_identity(
+            F01B_LEASE_CHECKPOINT_SOURCE, program_root
+        )
+        source_transition_raw = reader.blob(
+            F01B_LEASE_CHECKPOINT_SOURCE, source_transition_path
+        )
+        source_transition = strict_loads(source_transition_raw)
+        source_transition_blob = reader.object_ids(
+            [(F01B_LEASE_CHECKPOINT_SOURCE, source_transition_path)]
+        )[(F01B_LEASE_CHECKPOINT_SOURCE, source_transition_path)]
+        source_state_raw = reader.blob(F01B_LEASE_CHECKPOINT_SOURCE, source_state_path)
+        source_state = strict_loads(source_state_raw)
+        source_state_blob = reader.object_ids(
+            [(F01B_LEASE_CHECKPOINT_SOURCE, source_state_path)]
+        )[(F01B_LEASE_CHECKPOINT_SOURCE, source_state_path)]
+
+        expected_state = copy.deepcopy(source_state)
+        expected_state["revision"] = 76
+        expected_state["active_mutating_lease"]["path_restrictions"][0][
+            "restriction"
+        ] = F01B_LEASE_CHECKPOINT_RESTRICTION
+        expected_state["active_mutating_lease"]["recovery"]["last_audit_transition"] = (
+            "TR-0075"
+        )
+        expected_state["active_mutating_lease"]["recovery"]["rollback_state"] = (
+            "evidence/states/program-state-revision-0075.json"
+        )
+        expected_state["last_transition"] = "TR-0075"
+
+        claims = {
+            "/inputs/3/sha256": (
+                task_path,
+                "47467024581fcc42c7ab96a3008cd0939fd516036a7a788df91f8502fc27603b",
+                "a4d8abc71839b21a4ff2cb526c491b06843e04c35ba0e6aa7dbeb2920f69d2d7",
+                "11edaff8247a8b3ca31c3eac5b2482a88f6807c9",
+            ),
+            "/inputs/4/sha256": (
+                quickstart_path,
+                "97cb663b2c6eda98886a9ae57e62743b2c073812f22936208b041d52466528f8",
+                "85f4604d4df525c693c34ec94b4181b298375c82b474315ee94fbea84a85aba5",
+                "4be35f174b774a86490fdc8cec3c421203bd4934",
+            ),
+        }
+        for pointer, (
+            artifact_path,
+            recorded,
+            authoritative,
+            git_blob,
+        ) in claims.items():
+            artifact_raw = reader.blob(F01B_LEASE_CHECKPOINT_SOURCE, artifact_path)
+            artifact_object = reader.object_ids(
+                [(F01B_LEASE_CHECKPOINT_SOURCE, artifact_path)]
+            )[(F01B_LEASE_CHECKPOINT_SOURCE, artifact_path)]
+            valid = valid and all(
+                (
+                    _pointer_value(source_transition, pointer) == recorded,
+                    sha256_bytes(artifact_raw) == authoritative,
+                    artifact_object == git_blob,
+                    recorded != authoritative,
+                )
+            )
+
+        expected_changed_paths = {
+            "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0076.json",
+            "docs/programs/engineering-process-platform/evidence/transitions/TR-0075.json",
+            "docs/programs/engineering-process-platform/program-state.json",
+            "scripts/program_control/validation.py",
+            "tests/program_control_plane/test_transition_chain.py",
+        }
+        valid = valid and all(
+            (
+                source_identity.source_tree == F01B_LEASE_CHECKPOINT_SOURCE_TREE,
+                source_identity.program_tree
+                == F01B_LEASE_CHECKPOINT_SOURCE_PROGRAM_TREE,
+                reader.is_ancestor(F01B_LEASE_CHECKPOINT_SOURCE, current_commit),
+                sha256_bytes(source_transition_raw)
+                == F01B_LEASE_CHECKPOINT_TRANSITION_SHA,
+                source_transition_blob == F01B_LEASE_CHECKPOINT_TRANSITION_BLOB,
+                reader.blob(current_commit, source_transition_path)
+                == source_transition_raw,
+                sha256_bytes(source_state_raw) == F01B_LEASE_CHECKPOINT_STATE_SHA,
+                source_state_blob == F01B_LEASE_CHECKPOINT_STATE_BLOB,
+                reader.blob(current_commit, source_state_path) == source_state_raw,
+                len(
+                    source_state["active_mutating_lease"]["path_restrictions"][0][
+                        "restriction"
+                    ]
+                )
+                > 300,
+                len(F01B_LEASE_CHECKPOINT_RESTRICTION) <= 300,
+                successor_state == expected_state,
+                transition.get("schema_version") == "2.0",
+                transition.get("transition_id") == "TR-0075",
+                transition.get("program_id") == "EPP-2026",
+                transition.get("feature_id") == "EPP-F01B",
+                transition.get("state_domain") == "repair",
+                transition.get("event_kind") == "repair_checkpoint",
+                transition.get("from_state") == "IMPLEMENTATION_AUTHORIZED",
+                transition.get("to_state") == "IMPLEMENTATION_AUTHORIZED",
+                transition.get("prior_revision") == 75,
+                transition.get("new_revision") == 76,
+                transition.get("action") == F01B_LEASE_CHECKPOINT_ACTION,
+                transition.get("git", {}).get("source_commit")
+                == F01B_LEASE_CHECKPOINT_SOURCE,
+                transition.get("git", {}).get("source_tree")
+                == F01B_LEASE_CHECKPOINT_SOURCE_TREE,
+                transition.get("git", {}).get("source_program_tree")
+                == F01B_LEASE_CHECKPOINT_SOURCE_PROGRAM_TREE,
+                set(transition.get("git", {}).get("changed_paths_manifest", []))
+                == expected_changed_paths,
+                transition.get("repair")
+                == {
+                    "stable_cause_id": "EPP-F01B-LEASE-CHECKPOINT-EVIDENCE-001",
+                    "attempt": 1,
+                    "maximum": 2,
+                    "remaining": 1,
+                },
+                transition.get("next_action") == "START_CURRENT_FEATURE_IMPLEMENTATION",
+            )
+        )
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        valid = False
+
+    if valid:
+        return (
+            [],
+            F01B_LEASE_CHECKPOINT_SCHEMA_TARGETS,
+            F01B_LEASE_CHECKPOINT_DIGEST_TARGETS,
+        )
+    return (
+        [
+            _finding(
+                "F01B_LEASE_CHECKPOINT_CORRECTION_INVALID",
+                "fatal",
+                correction_path,
+                "EXACT_REV75_AND_TR0074_THREE_CLAIM_CORRECTION",
+            )
+        ],
+        frozenset(),
+        frozenset(),
+    )
 
 
 def _validate_state_chain(
@@ -4768,6 +4975,39 @@ def validate_program(
             {*corrected_digest_targets, *activation_digest_targets}
         )
         findings.extend(activation_findings)
+    lease_checkpoint_transition = documents.get(
+        f"{root}/evidence/transitions/TR-0075.json"
+    )
+    successor_state = documents.get(f"{root}/program-state.json")
+    if isinstance(lease_checkpoint_transition, Mapping) and isinstance(
+        successor_state, Mapping
+    ):
+        (
+            lease_checkpoint_findings,
+            lease_checkpoint_schema_targets,
+            lease_checkpoint_digest_targets,
+        ) = validate_f01b_lease_checkpoint_correction(
+            reader,
+            identity.source_commit,
+            root,
+            lease_checkpoint_transition,
+            successor_state,
+        )
+        corrected_schema_targets = frozenset(
+            {*corrected_schema_targets, *lease_checkpoint_schema_targets}
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *lease_checkpoint_digest_targets}
+        )
+        findings = [
+            finding
+            for finding in findings
+            if not (
+                finding.code == "SCHEMA_VALIDATION_FAILED"
+                and finding.artifact in lease_checkpoint_schema_targets
+            )
+        ]
+        findings.extend(lease_checkpoint_findings)
     _validate_state_chain(
         documents,
         root,
