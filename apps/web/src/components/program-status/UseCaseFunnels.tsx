@@ -80,7 +80,8 @@ export function UseCaseFunnels({
             {dependency.evidence.map((item) => (
               <span key={`${dependency.id}-${item.id}`}>
                 {" "}
-                <code>{item.path}</code> @ <code>{item.sha256.slice(0, 8)}</code>
+                <code>{item.path}</code> @{" "}
+                <code>{item.sha256.slice(0, 8)}</code>
               </span>
             ))}
           </li>

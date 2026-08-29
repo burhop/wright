@@ -53,10 +53,10 @@ export function AtAGlanceSummary({ bundle }: { bundle: ProgramStatusBundle }) {
     typeof dashboard.next_action === "string"
       ? dashboard.next_action
       : historicalAction && typeof historicalAction.action === "string"
-      ? historicalAction.action
-      : historicalAction && typeof historicalAction.label === "string"
-        ? historicalAction.label
-        : null;
+        ? historicalAction.action
+        : historicalAction && typeof historicalAction.label === "string"
+          ? historicalAction.label
+          : null;
 
   return (
     <section
