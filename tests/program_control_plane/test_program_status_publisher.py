@@ -170,3 +170,34 @@ def test_committed_watch_records_bounded_failure(
     assert heartbeat["state"] == "failed"
     assert heartbeat["failure_code"] == "PROGRAM_STATUS_TEST_FAILURE"
     assert heartbeat["recovery"] == "repair_test_subject"
+
+
+def test_action_preserves_human_approval_boundary() -> None:
+    evidence = [{"id": "state", "path": publisher.STATE_PATH, "sha256": "a" * 64}]
+
+    action = publisher._action(
+        "APPROVE_NEXT_GATE",
+        "Approve the next exact subject",
+        "current_program_action",
+        evidence,
+        eligible=False,
+        blocker="Human approval is required.",
+        requires_human_approval=True,
+    )
+
+    assert action["eligibility"] == "requires_approval"
+    assert action["authority_state"] == "not_authorized"
+    assert action["requires_human_approval"] is True
+    assert action["blocker"] == "Human approval is required."
+
+
+def test_initial_test_ledger_append_only_attestation_is_proven() -> None:
+    subject = publisher._load_subject(REPOSITORY, "HEAD")
+
+    assert publisher._verify_test_ledger_append_only(REPOSITORY, subject) is None
+
+    subject["ledger"] = {**subject["ledger"], "ledger_revision": 2}
+    with pytest.raises(ProgramStatusPublishError) as raised:
+        publisher._verify_test_ledger_append_only(REPOSITORY, subject)
+
+    assert raised.value.code == "PROGRAM_STATUS_TEST_LEDGER_INVALID"

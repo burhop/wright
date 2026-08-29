@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,15 @@ from tool_registry.program_status import (
     ProgramStatusErrorCode,
     ProgramStatusReadError,
     ProgramStatusReader,
+)
+
+
+FULL_CONTRACT_ROOT = (
+    Path(__file__).resolve().parents[3]
+    / "src"
+    / "wright_engineering"
+    / "static"
+    / "program-status"
 )
 
 
@@ -26,6 +36,16 @@ def canonical(value: object) -> bytes:
 
 def digest(value: object) -> str:
     return hashlib.sha256(canonical(value)).hexdigest()
+
+
+def rehash(value: dict[str, object]) -> None:
+    value["bundle_id"] = digest(
+        {
+            "source": value["source"],
+            "dashboard": value["dashboard"],
+            "supplement": value["supplement"],
+        }
+    )
 
 
 def write_contracts(root: Path) -> None:
@@ -85,9 +105,7 @@ def write_contracts(root: Path) -> None:
     }
     root.mkdir(parents=True)
     (root / "dashboard.schema.json").write_bytes(canonical(dashboard_schema))
-    (root / "program-status-bundle.schema.json").write_bytes(
-        canonical(bundle_schema)
-    )
+    (root / "program-status-bundle.schema.json").write_bytes(canonical(bundle_schema))
 
 
 def valid_bundle() -> dict[str, object]:
@@ -193,3 +211,54 @@ def test_publisher_state_is_validated_separately(tmp_path: Path) -> None:
     ).read_publisher()
 
     assert result.as_dict() == state
+
+
+def test_full_contract_rejects_false_source_catalog_identity(tmp_path: Path) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    value["source"]["source_catalog_sha256"] = "0" * 64
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+
+    assert raised.value.code is ProgramStatusErrorCode.IDENTITY_MISMATCH
+
+
+def test_full_contract_rejects_self_hashed_false_task_arithmetic(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "installed"
+    installed.mkdir()
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    value["supplement"]["work"]["tasks"]["remaining"] += 1
+    rehash(value)
+    (installed / "current.json").write_bytes(canonical(value))
+
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(
+            installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
+        ).read_bundle()
+
+    assert raised.value.code is ProgramStatusErrorCode.INVALID
+
+
+def test_full_contract_rejects_tampered_packaged_catalog(tmp_path: Path) -> None:
+    installed = tmp_path / "installed"
+    contracts = tmp_path / "contracts"
+    installed.mkdir()
+    shutil.copytree(FULL_CONTRACT_ROOT, contracts)
+    (installed / "current.json").write_bytes(
+        (FULL_CONTRACT_ROOT / "current.json").read_bytes()
+    )
+    catalog = contracts / "program-status-source-catalog.json"
+    catalog.write_bytes(catalog.read_bytes() + b"\n")
+
+    with pytest.raises(ProgramStatusReadError) as raised:
+        ProgramStatusReader(installed, contracts, schema_root=contracts).read_bundle()
+
+    assert raised.value.code is ProgramStatusErrorCode.IDENTITY_MISMATCH

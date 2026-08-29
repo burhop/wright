@@ -162,17 +162,85 @@ def _action(
     *,
     eligible: bool = True,
     blocker: str | None = None,
+    requires_human_approval: bool = False,
 ) -> dict[str, Any]:
+    if requires_human_approval:
+        eligibility = "requires_approval"
+        authority_state = "not_authorized"
+        action_blocker = blocker or label
+    elif eligible:
+        eligibility = "eligible"
+        authority_state = "authorized"
+        action_blocker = None
+    else:
+        eligibility = "blocked"
+        authority_state = "not_authorized"
+        action_blocker = blocker
     return {
         "id": identifier,
         "label": label[:500],
         "purpose": purpose,
-        "eligibility": "eligible" if eligible else "blocked",
-        "authority_state": "authorized" if eligible else "not_authorized",
-        "requires_human_approval": False,
-        "blocker": None if eligible else blocker,
+        "eligibility": eligibility,
+        "authority_state": authority_state,
+        "requires_human_approval": requires_human_approval,
+        "blocker": action_blocker,
         "evidence": evidence,
     }
+
+
+def _verify_test_ledger_append_only(
+    repository: Path, subject: Mapping[str, Any]
+) -> str | None:
+    ledger = subject["ledger"]
+    runs = ledger.get("runs")
+    if not isinstance(runs, list) or _digest(runs) != ledger.get("runs_sha256"):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "The test ledger runs digest does not reconcile.",
+            "repair_test_run_ledger",
+        )
+    revision = ledger.get("ledger_revision")
+    prior = ledger.get("prior_ledger")
+    if prior is None:
+        if revision != 1:
+            raise ProgramStatusPublishError(
+                "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+                "Only ledger revision 1 may omit prior-ledger identity.",
+                "repair_test_run_ledger",
+            )
+        return None
+    if (
+        not isinstance(prior, Mapping)
+        or revision != prior.get("ledger_revision", 0) + 1
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "The prior-ledger revision does not form one append-only step.",
+            "repair_test_run_ledger",
+        )
+    try:
+        prior_raw = _git_blob(repository, str(prior["commit"]), TEST_LEDGER_PATH)
+        prior_ledger = _strict_json(prior_raw, TEST_LEDGER_PATH)
+    except (KeyError, ProgramStatusPublishError) as exc:
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "The prior-ledger committed identity cannot be resolved.",
+            "repair_test_run_ledger",
+        ) from exc
+    prior_runs = prior_ledger.get("runs")
+    if (
+        prior_ledger.get("ledger_revision") != prior["ledger_revision"]
+        or prior_ledger.get("runs_sha256") != prior["runs_sha256"]
+        or not isinstance(prior_runs, list)
+        or _digest(prior_runs) != prior["runs_sha256"]
+        or runs[: len(prior_runs)] != prior_runs
+    ):
+        raise ProgramStatusPublishError(
+            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
+            "The test ledger does not preserve its exact committed prior prefix.",
+            "repair_test_run_ledger",
+        )
+    return str(prior["runs_sha256"])
 
 
 def _task_counts(raw: bytes) -> tuple[int, int]:
@@ -546,13 +614,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "repair_customer_story_catalog",
         )
     ledger = subject["ledger"]
-    runs = ledger.get("runs")
-    if not isinstance(runs, list) or _digest(runs) != ledger.get("runs_sha256"):
-        raise ProgramStatusPublishError(
-            "PROGRAM_STATUS_TEST_LEDGER_INVALID",
-            "The test ledger runs digest does not reconcile.",
-            "repair_test_run_ledger",
-        )
+    prior_ledger_runs_sha256 = _verify_test_ledger_append_only(repository, subject)
     next_action_record = (state.get("next_eligible_actions") or [{}])[0]
     action_id = str(
         next_action_record.get("action", "CONTINUE_CURRENT_FEATURE_IMPLEMENTATION")
@@ -562,8 +624,17 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "reason", "Continue the authorized current feature implementation."
         )
     )
+    requires_human_approval = bool(
+        next_action_record.get("requires_human_approval", False)
+    )
     current_action = _action(
-        action_id, action_label, "current_program_action", [state_ref]
+        action_id,
+        action_label,
+        "current_program_action",
+        [state_ref],
+        eligible=not requires_human_approval,
+        blocker=action_label if requires_human_approval else None,
+        requires_human_approval=requires_human_approval,
     )
     history_definitions = (
         (
@@ -820,7 +891,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
                 "source_path": TEST_LEDGER_PATH,
                 "source_digest": _raw_digest(blobs[TEST_LEDGER_PATH]),
                 "ledger_revision": int(ledger["ledger_revision"]),
-                "prior_ledger_runs_sha256": None,
+                "prior_ledger_runs_sha256": prior_ledger_runs_sha256,
                 "runs_sha256": str(ledger["runs_sha256"]),
                 "publisher_verified_append_only": True,
                 "selected_run_ids": [],
