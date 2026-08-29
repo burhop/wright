@@ -12,10 +12,10 @@
 
 **Purpose**: Establish owned paths and test data without changing runtime behavior.
 
-- [ ] T001 Create the EPP-F01B publisher module skeleton in `scripts/program_status/__init__.py`, `scripts/program_status/publisher.py`, and `scripts/publish-engineering-program-status.py`
-- [ ] T002 [P] Add valid, empty, stale, corrupt, identity-mismatch, unsafe-link, closed work-registry, governed use-case-registry, canonical test-ledger, absent-assignment, and unavailable-history fixtures under `tests/fixtures/program-status/`
-- [ ] T003 [P] Add TypeScript contract types and runtime decoder skeleton in `apps/web/src/services/program-status.ts`
-- [ ] T004 [P] Add API Pydantic response/error schema skeleton in `apps/api/src/api/schemas/program_status.py`
+- [x] T001 Create the EPP-F01B publisher module skeleton in `scripts/program_status/__init__.py`, `scripts/program_status/publisher.py`, and `scripts/publish-engineering-program-status.py`
+- [x] T002 [P] Add valid, empty, stale, corrupt, identity-mismatch, unsafe-link, closed work-registry, governed use-case-registry, canonical test-ledger, absent-assignment, and unavailable-history fixtures under `tests/fixtures/program-status/`
+- [x] T003 [P] Add TypeScript contract types and runtime decoder skeleton in `apps/web/src/services/program-status.ts`
+- [x] T004 [P] Add API Pydantic response/error schema skeleton in `apps/api/src/api/schemas/program_status.py`
 
 **Checkpoint**: Owned files exist; no route, publisher action, or visible page is active.
 

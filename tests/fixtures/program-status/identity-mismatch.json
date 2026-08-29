@@ -1,0 +1,9 @@
+{
+  "fixture_version": "1.0.0",
+  "scenario": "identity-mismatch",
+  "expected_result": "rejected",
+  "description": "Envelope, raw attestation, or canonical identity does not bind.",
+  "base": "base.json",
+  "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+  "operations": [{"op":"replace","target":"/bundle_id","value":"0000000000000000000000000000000000000000000000000000000000000000"}]
+}

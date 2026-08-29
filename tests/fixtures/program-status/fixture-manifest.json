@@ -1,0 +1,63 @@
+{
+  "fixture_version": "1.0.0",
+  "purpose": "EPP-F01B deterministic publisher/runtime/browser contract fixtures",
+  "base": "base.json",
+  "execution_rule": "materialize exact base subject, then apply each case's ordered operations",
+  "scenarios": [
+    {
+      "id": "valid",
+      "path": "valid.json",
+      "expected": "passed"
+    },
+    {
+      "id": "empty",
+      "path": "empty.json",
+      "expected": "unavailable"
+    },
+    {
+      "id": "stale",
+      "path": "stale.json",
+      "expected": "passed"
+    },
+    {
+      "id": "corrupt",
+      "path": "corrupt.json",
+      "expected": "rejected"
+    },
+    {
+      "id": "identity-mismatch",
+      "path": "identity-mismatch.json",
+      "expected": "rejected"
+    },
+    {
+      "id": "unsafe-link",
+      "path": "unsafe-link.json",
+      "expected": "rejected"
+    },
+    {
+      "id": "closed-work-registry",
+      "path": "closed-work-registry.json",
+      "expected": "passed"
+    },
+    {
+      "id": "governed-use-case-registry",
+      "path": "governed-use-case-registry.json",
+      "expected": "passed"
+    },
+    {
+      "id": "canonical-test-ledger",
+      "path": "canonical-test-ledger.json",
+      "expected": "passed"
+    },
+    {
+      "id": "absent-assignment",
+      "path": "absent-assignment.json",
+      "expected": "passed"
+    },
+    {
+      "id": "unavailable-history",
+      "path": "unavailable-history.json",
+      "expected": "passed"
+    }
+  ]
+}

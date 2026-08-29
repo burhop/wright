@@ -1,0 +1,9 @@
+{
+  "fixture_version": "1.0.0",
+  "scenario": "canonical-test-ledger",
+  "expected_result": "passed",
+  "description": "Latest terminal disjoint populations derive exact test history.",
+  "base": "base.json",
+  "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+  "operations": [{"op":"assert_population","target":"test_run_ledger","rule":"latest_terminal_disjoint_components"}]
+}
