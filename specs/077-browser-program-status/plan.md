@@ -8,7 +8,7 @@
 
 ## Summary
 
-Add a dedicated, authenticated `/program-status` page to Wright that makes the engineering-process program understandable to a product-minded solo developer. The page is a read-only projection of one atomically installed, schema-valid evidence bundle: EPP-F01's validated dashboard snapshot, a publisher-attested raw Git-blob identity, independently runtime-recomputable canonical identities, a digest-bound source catalog, derived checkpoint history, proposed customer-story catalog summary, typed benchmark and governance disclosures, and two delivery-lane summaries. A deterministic repository-side publisher validates committed inputs and installs the bundle in Wright's stable data root. A thin FastAPI route serves the last valid bundle with an ETag and a separate operational route serves publisher heartbeat; React conditionally refreshes and atomically replaces the view only when the evidence identity changes. Existing Plotly support renders accessible trend views with tabular/text fallbacks. No status, approval, readiness result, benchmark qualification, or current action can be edited or inferred by the page.
+Add a dedicated, authenticated `/program-status` page to Wright that makes the engineering-process program understandable to a product-minded solo developer. Its first viewport answers six practical questions about work size, active work, purpose, implemented customer capability, test trend, and the next change. The page is a read-only projection of one atomically installed, schema-valid evidence bundle: EPP-F01's validated dashboard snapshot, publisher-attested and runtime-recomputed identities, a digest-bound source catalog, a closed work registry, a governed use-case registry, an append-only test-run ledger, derived checkpoint history, the separate proposed-story catalog, typed benchmark/governance disclosures, and two delivery-lane summaries. A deterministic repository-side publisher validates committed inputs and installs the bundle in Wright's stable data root. A thin FastAPI route serves the last valid bundle with an ETag and a separate operational route serves publisher heartbeat; React conditionally refreshes and atomically replaces the view only when the evidence identity changes. Existing Plotly support renders accessible trend views with tabular/text fallbacks. No status, assignment, acceptance, test result, approval, readiness result, benchmark qualification, or current action can be edited or inferred by the page.
 
 ## Technical Context
 
@@ -28,7 +28,7 @@ Add a dedicated, authenticated `/program-status` page to Wright that makes the e
 
 **Constraints**: Read-only; one exact identity per view; no repository checkout required at packaged runtime; no Git execution in the API; no remote telemetry; no benchmark/product execution; no credentials/raw logs/absolute private paths; last-valid preservation on refresh failure; keyboard/200%-zoom/reduced-motion support
 
-**Scale/Scope**: One local operator; four readiness areas; 100 proposed stories; 100 governed benchmark slots; bounded checkpoint, task, finding, correction, and CI-event histories; one integration lane plus one continued-development lane
+**Scale/Scope**: One local operator; four readiness areas; up to 500 governed use cases; a distinct 100 proposed-story catalog; a 100-process subset and 100 governed benchmark slots; up to 100 registered task sources, 10 active assignments, 1,000 retained test attempts, and 250 rendered checkpoints per series; one integration lane plus one continued-development lane
 
 ## Constitution Check
 
@@ -52,7 +52,7 @@ Post-design re-check: the API and bundle contracts preserve all gates above. The
 
 ### Evidence publication boundary
 
-`scripts/publish-engineering-program-status.py` is the only component that reads repository evidence. It accepts an exact committed subject, validates the digest-bound `program-status-source-catalog.json`, rejects every unlisted path/schema/parser/selection route, invokes the EPP-F01 validator, embeds the validated EPP-F01 dashboard unchanged, verifies and attests the raw committed Git-blob digest, recomputes the Wright-canonical parsed-object digest, derives only catalog-contracted supplemental fields, and validates canonical evidence identities. It writes a same-directory temporary bundle, flushes/fsyncs it, validates it, and calls `os.replace`; supported platforms also sync the parent directory, and replacement failure preserves the prior file. Its standard `--watch-committed` contributor mode checks only `git rev-parse HEAD` every two seconds by default and publishes after that identity changes; dirty content is ignored and publisher state is written separately from the bundle. Package build/install atomically supplies a generated last-valid bundle and the source catalog, so runtime never needs Git or a source tree.
+`scripts/publish-engineering-program-status.py` is the only component that reads repository evidence. It accepts an exact committed subject, validates the digest-bound `program-status-source-catalog.json`, rejects every unlisted path/schema/parser/selection route, invokes the EPP-F01 validator, embeds the validated EPP-F01 dashboard unchanged, verifies and attests the raw committed Git-blob digest, recomputes the Wright-canonical parsed-object digest, derives only catalog-contracted supplemental fields, and validates canonical evidence identities. Program task counts come only from task sources named in the committed work registry; active-agent rows come only from exact committed assignments. Use-case stages are derived from evidence classes in the governed use-case registry. Test checkpoints select one latest terminal attempt per `(commit, suite_id, population_id)` and reject overlapping component populations. The publisher writes a same-directory temporary bundle, flushes/fsyncs it, validates it, and calls `os.replace`; supported platforms also sync the parent directory, and replacement failure preserves the prior file. Its standard `--watch-committed` contributor mode checks only `git rev-parse HEAD` every two seconds by default and publishes after that identity changes; dirty content is ignored and publisher state is written separately from the bundle. Package build/install atomically supplies a generated last-valid bundle and the source catalog, so runtime never needs Git or a source tree.
 
 ### Runtime read boundary
 
@@ -69,6 +69,10 @@ The React service makes authenticated conditional bundle GETs and bounded publis
 - The embedded dashboard action is historical to that snapshot; `work.current_next_action`, derived from validated current program state and lifecycle policy, is the sole current program action. Metric, benchmark, and lane actions are labeled guidance and cannot supersede it.
 - At `0/100`, typed benchmark context must state phase, hold reason, dependencies, authority, and the next qualifying action or publication fails.
 - Task completion is always labeled with its feature identifier and is never a whole-program completion percentage.
+- Program-wide task completion covers only the closed registered task-source population and discloses roadmap items not yet decomposed into tasks; repository-wide discovery is forbidden.
+- Active-agent identity and purpose are shown only from a committed assignment bound to an exact registered task and compatible lease; unavailable evidence stays unavailable.
+- Use-case definition, in-progress work, user-visible acceptance, tests, independent verification, and benchmark qualification are orthogonal. The proposed story catalog remains separate.
+- Test history retains attempts for traceability but aggregates only the latest terminal attempt per canonical key; parametrized identities count once each, aggregate/component overlap is rejected, and missing categories remain unavailable.
 - Customer capability, quality, automation, governance, readiness, benchmark, and delivery histories use contract-defined units and exact committed observations.
 - Each chart uses one contract-defined numerator/unit/inclusion rule/source class and includes deterministic latest-change, decision-use, limitation, and structured next-action evidence.
 - Integration/CI and continued-development lanes have exclusive branch identities and independent next actions.
@@ -90,7 +94,10 @@ specs/077-browser-program-status/
 │   ├── program-status-api.md
 │   ├── program-status-bundle.schema.json
 │   ├── program-status-source-catalog.json
-│   └── program-status-source-catalog.schema.json
+│   ├── program-status-source-catalog.schema.json
+│   ├── work-registry.schema.json
+│   ├── use-case-registry.schema.json
+│   └── test-run-ledger.schema.json
 ├── checklists/
 │   ├── requirements.md
 │   └── program-status.md
@@ -103,6 +110,11 @@ specs/077-browser-program-status/
 ```text
 scripts/
 └── publish-engineering-program-status.py
+
+docs/programs/engineering-process-platform/
+├── work-registry.json
+├── use-case-registry.json
+└── test-run-ledger.json
 
 packages/tool_registry/
 ├── src/tool_registry/program_status.py
@@ -134,9 +146,9 @@ tests/
 
 ## Delivery and Compatibility Gates
 
-1. Publisher contract fixtures cover valid, empty, stale, corrupt, source-catalog mutation, publisher raw-attestation mismatch, canonical-identity mismatch, current-versus-historical action precedence, benchmark hold context, correction/finding/verification linkage, canonical paths, parsed GitHub URLs, same-time causal ordering, concurrent read/replace, Windows replacement failure, and deterministic regeneration.
+1. Publisher contract fixtures cover valid, empty, stale, corrupt, source-catalog mutation, publisher raw-attestation mismatch, canonical-identity mismatch, current-versus-historical action precedence, benchmark hold context, correction/finding/verification linkage, canonical paths, parsed GitHub URLs, registered-versus-unregistered task sources, absent/exact assignments, use-case evidence-stage separation, test reruns/parametrization/overlap/count arithmetic, same-time causal ordering, concurrent read/replace, Windows replacement failure, and deterministic regeneration.
 2. Domain/API tests prove last-valid preservation, bounded reads, ETag/304 behavior, auth enforcement, and secret exclusion. Linux verification separately runs the EPP-F01B route tests and the named pre-existing surface auth baselines so an unrelated hang cannot conceal the new route's result.
-3. Component and UI-integration tests cover all five independently shippable stories, keyboard operation, text/non-color status, 200% zoom, narrow viewport, reduced motion, and chart fallbacks.
+3. Component and UI-integration tests cover all five independently shippable stories, the six-question first-viewport comprehension gate, keyboard operation, text/non-color status, 200% zoom, narrow viewport, reduced motion, accessible tooltips, and semantic chart tables.
 4. Packaged runtime and native lifecycle tests prove `/program-status` works without `.git`, checkout, Git, or network; installed data survives upgrade/rollback/uninstall rules and invalid installed data never silently falls back. Atomic replacement and native lifecycle coverage run explicitly on Windows, Linux, and macOS CI. The repeatable GB10 POSIX owned-listener baseline failure is tracked and classified independently; it may not be silently skipped or misattributed to EPP-F01B.
 5. Existing workspace routes and `DashboardPage` remain behaviorally compatible.
 6. Program-control validator, targeted tests, normal repository checks, `check-dev-push`, PR CI, `check-dev-merge`, and dev deployment verification must pass in sequence after implementation authority exists.
@@ -147,9 +159,9 @@ tests/
 Each slice is independently testable and shippable behind the same read-only route:
 
 1. **US1 — Honest readiness**: bundle envelope, API, four readiness areas, benchmark `0/100`, proposed-catalog separation, and release explanation.
-2. **US2 — Meaningful history**: exact-time checkpoint charts with defined units, explanatory annotations, and feature-local task semantics.
+2. **US2 — Meaningful history**: exact-time task burn-up, test outcomes, customer/roadmap capability, readiness, and benchmark charts with defined units and explanatory annotations.
 3. **US3 — Evidence traceability**: safe evidence detail, corrections, freshness, blockers, and recovery guidance.
-4. **US4 — Work lanes and next action**: integration/CI and continued-development lanes, bounded task/checkpoint progress, authority-aware next action.
+4. **US4 — Work, use cases, and next action**: program and active-feature task totals, committed assignments with purpose, governed use-case funnels, two delivery lanes, and the authority-aware next action.
 5. **US5 — Refresh resilience**: conditional refresh, atomic swap, honest empty/stale/failed states, and last-valid recovery.
 
 ## Complexity Tracking

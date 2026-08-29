@@ -34,4 +34,5 @@
 - Validation iteration 1 passed all checklist items.
 - Validation iteration 2 rechecked all 16 items after adding evidence-bound historical graphs, benchmark hold/blocker explanation, feature-local task context, separate catalog/benchmark populations, and the two delivery lanes; all items remain passing.
 - Validation iteration 3 rechecked all 16 items after making current-action precedence, typed zero-benchmark context, raw publisher attestation versus runtime recomputation, exact source boundaries, relational correction evidence, and canonical URL/path rejection explicit; independent exact-subject verification is still required.
-- The feature is ready for governed clarification or planning, but implementation remains blocked pending a frozen exact planning subject and explicit approval.
+- Validation iteration 4 rechecked all 16 items after adding closed program-work, governed use-case, and canonical test-history requirements; explicit evidence-stage separation; the six-question first viewport; and the expanded accessible graph set.
+- The amended feature is ready for planning analysis and independent review, but the prior implementation subject is superseded and implementation remains blocked pending a new frozen exact subject and explicit approval.

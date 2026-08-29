@@ -10,7 +10,8 @@
     "source_precedence": [
       "dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence",
       "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery",
-      "correction_evidence", "verification_evidence", "approval_evidence", "customer_story_catalog", "feature_tasks"
+      "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger",
+      "customer_story_catalog", "feature_tasks"
     ]
   },
   "sources": {
@@ -155,6 +156,33 @@
       "selection_rule": "Select only approval records referenced by the validated state/transition chain; preserve pending, stale, rejected, and approved distinctly and never infer authorization.",
       "projects_to": ["/supplement/governance/corrections", "/supplement/work/current_next_action", "/supplement/evidence_index"]
     },
+    "work_registry": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/work-registry.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/work-registry.schema.json"],
+      "parser_contract": "EPP_WORK_REGISTRY_V1",
+      "selection_rule": "Use the closed task-source list to parse program-wide and active-feature task counts. Project only exact active assignments whose task, branch, safe worktree identifier or lane, state, why-this-matters statement, timestamp, and evidence validate. Never discover task sources repository-wide or infer assignments from process activity.",
+      "projects_to": ["/supplement/work/program_tasks", "/supplement/work/tasks", "/supplement/work/active_assignments", "/supplement/history", "/supplement/evidence_index"]
+    },
+    "use_case_registry": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/use-case-registry.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/use-case-registry.schema.json"],
+      "parser_contract": "EPP_USE_CASE_REGISTRY_V1",
+      "selection_rule": "Derive orthogonal all-use-case and 100-process-subset counts from exact evidence references. Implementation requires user-visible acceptance evidence; independent verification, test evidence, and governed benchmark qualification remain separate. Proposed-story entries do not enter either governed population without an explicit registry identity.",
+      "projects_to": ["/supplement/use_cases", "/supplement/history", "/supplement/evidence_index"]
+    },
+    "test_run_ledger": {
+      "path_kind": "exact",
+      "path": "docs/programs/engineering-process-platform/test-run-ledger.json",
+      "path_pattern": null,
+      "schema_ids": ["https://wright.local/programs/epp/test-run-ledger.schema.json"],
+      "parser_contract": "EPP_TEST_RUN_LEDGER_V1",
+      "selection_rule": "Retain every committed attempt but aggregate only the latest terminal run per commit, suite_id, and population_id. Count each collected test identity, including each parametrized identity, once; reject overlapping aggregate/component populations; derive total and pass rate; and render unsupported or missing history unavailable.",
+      "projects_to": ["/supplement/test_history", "/supplement/history", "/supplement/evidence_index"]
+    },
     "customer_story_catalog": {
       "path_kind": "exact",
       "path": "docs/programs/engineering-process-platform/customer-process-user-stories.md",
@@ -170,7 +198,7 @@
       "path_pattern": null,
       "schema_ids": ["wright-parser://speckit/tasks-v1"],
       "parser_contract": "SPECKIT_TASKS_MARKDOWN_V1",
-      "selection_rule": "Parse exactly the unique EPP-F01B T001-T048 task IDs and their checkbox state; this population is feature-local and never a whole-program completion percentage.",
+      "selection_rule": "Parse exactly the unique task IDs in the current approved EPP-F01B task graph and their checkbox state; this population is the active-feature component of the closed work registry and never a whole-program completion percentage.",
       "projects_to": ["/supplement/work/tasks", "/supplement/history"]
     }
   }

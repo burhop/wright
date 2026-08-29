@@ -32,14 +32,16 @@ Configure `WRIGHT_DATA_ROOT` to the demo root using Wright's normal local runtim
 
 Confirm:
 
-1. Four independent readiness areas and non-compensating release state are clear.
-2. Benchmark is honestly `0/100` with typed phase, hold state/reason, dependency states, authority, and non-governing next qualifying action.
-3. `100 proposed customer stories` is separate from qualified benchmark results.
-4. Charts use exact times and commits and explain change, importance, limitation, and next action.
-5. Task completion is explicitly feature-local and does not imply whole-product completion.
-6. The dashboard's old action is visibly historical, exactly one current program action comes from current program state, and metric/lane guidance cannot supersede it.
-7. Integration/CI and continued-development lanes have distinct branches and purpose-labeled actions.
-8. Evidence details use canonical relative paths and parsed-safe URLs, expose freshness/recovery without sensitive content, and show reciprocal correction/finding/verification links plus verdict/blocking outcome.
+1. The first viewport answers how much registered work exists, what exact work is active, why it matters, how much customer capability is implemented, how tests are trending, and what changes next.
+2. Program-wide registered task totals are separate from active-feature totals; undecomposed roadmap work is disclosed; active-agent rows either cite exact assignment/lease evidence or say unavailable.
+3. The all-use-case funnel distinguishes in-progress, user-accepted implementation, and independent verification. The 100-process subset separately distinguishes defined, implemented, tested, independently verified, and benchmark-qualified.
+4. `100 proposed customer stories` remains separate from both governed use-case funnels and qualified benchmark results.
+5. Test history uses exact times, commits, suites, source identities, and canonical counts; reruns and parametrized identities do not inflate totals; unsupported categories say unavailable.
+6. Four independent readiness areas and non-compensating release state are clear. Benchmark is honestly `0/100` with typed phase, hold reason, dependencies, authority, and non-governing next qualifying action.
+7. Task burn-up, use-case funnels, test outcomes, roadmap/customer capability, readiness, and benchmark charts explain meaning, latest change, limitation, and next evidence-backed action and all have semantic tables.
+8. The dashboard's old action is visibly historical, exactly one current program action comes from current program state, and metric/lane guidance cannot supersede it.
+9. Integration/CI and continued-development lanes have distinct branches and purpose-labeled actions.
+10. Evidence details use canonical relative paths and parsed-safe URLs, expose freshness/recovery without sensitive content, and show reciprocal correction/finding/verification links plus verdict/blocking outcome.
 
 ## 4. Demonstrate failure containment
 

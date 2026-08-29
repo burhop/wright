@@ -102,3 +102,27 @@ A bounded read-only GB10 pass on clean `origin/dev` commit `b776b1182d5b6ee41364
 - three existing FastAPI surface test groups exceeded bounded Linux caps at named actor/token/scope cases.
 
 The listener failure and API-test hangs are pre-existing baseline risks, not evidence that EPP-F01B caused a regression. Implementation verification must run the EPP-F01B-specific route/service tests independently of those surface groups, rerun the named Linux baselines, and classify any persistence before claiming cross-platform readiness. No implementation may silently weaken or skip those checks merely to make the feature green.
+
+## Decision 13: Register program work; do not discover it from repository or process activity
+
+**Decision**: Add a closed committed work registry listing exact task sources and active assignments. The publisher parses registered task checkboxes to derive program and active-feature totals, reconciles entries with roadmap/current lease, and reports undecomposed roadmap items separately. Agent rows require stable identity, exact task, branch, safe worktree identifier or lane, state, purpose, timestamp, and evidence.
+
+**Rationale**: Repository-wide task discovery would mix historical and unrelated specifications, while operating-system process activity cannot prove assignment or authority. A registry makes the population and omissions inspectable without hand-setting totals.
+
+**Alternatives rejected**: Count every `tasks.md` file (misleading scope); infer work from Codex processes or commentary (uncommitted and non-authoritative); keep feature-only totals (does not answer overall work).
+
+## Decision 14: Model customer delivery as orthogonal evidence stages
+
+**Decision**: Add a governed use-case registry. All-use-case totals and the 100-process subset are derived from exact definition, progress, user-visible acceptance, test, independent-verification, and benchmark-qualification evidence. Acceptance evidence is the minimum for `implemented`; independent verification and benchmark qualification require their own evidence. The proposed 100-story catalog remains separate unless a registry entry explicitly relates it.
+
+**Rationale**: Code completion, customer-visible capability, testing, independent verification, and benchmark qualification answer different questions. Keeping them orthogonal prevents control-plane or planning progress from masquerading as product delivery.
+
+**Alternatives rejected**: Treat a proposed story as a use case (planning becomes delivery); infer implementation from commits (no user outcome); use one maturity score (hides missing gates).
+
+## Decision 15: Use an append-only canonical test ledger
+
+**Decision**: Record exact committed test attempts with commit, time, suite, population, category, framework-collected identity-set digest, result counts, and evidence. Retain reruns, but graph only the latest terminal attempt for each `(commit, suite_id, population_id)`. Parametrized cases count by collected identity; aggregate-only populations are not summed with components; overlapping component populations reject publication. Pass rate is `passed / (passed + failed)` and is unavailable when that denominator is zero.
+
+**Rationale**: This provides honest trends and provenance while preventing reruns, parametrization, and aggregate suites from inflating test totals.
+
+**Alternatives rejected**: Scrape recent console output (not durable); sum every run (double counting); treat skipped/not-run as passes or failures (distorts meaning); render absent categories as zero (false evidence).

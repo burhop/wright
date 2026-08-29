@@ -11,7 +11,7 @@ One immutable, size-bounded projection delivered atomically.
 | `generated_at` | UTC timestamp | Publisher observation only; excluded from identity |
 | `source` | SourceIdentity | Exact committed and validator identities |
 | `dashboard` | EPP-F01 dashboard | Embedded unchanged and valid against the EPP-F01 schema |
-| `supplement` | BrowserSupplement | History, catalog, benchmark context, work, governance disclosures, and evidence index only |
+| `supplement` | BrowserSupplement | History, catalog, governed use cases, test history, benchmark context, work, governance disclosures, and evidence index only |
 
 Validation recomputes `bundle_id`, verifies source and dashboard binding, and rejects unknown fields, unsafe paths, excessive counts, unsupported versions, or any attempt to restate/override dashboard truth in the supplement.
 
@@ -39,6 +39,8 @@ The supplement cannot shadow readiness, benchmark counts, or release truth. The 
 
 - `history`: bounded `MetricSeries` records.
 - `customer_catalog`: exact proposed-story summary, never benchmark authority.
+- `use_cases`: canonical all-use-case and 100-process-subset funnels derived from the governed use-case registry.
+- `test_history`: canonical committed test checkpoints with exact suite/source provenance and unavailable categories preserved.
 - `benchmark_context`: typed current phase, hold state/reason, dependency states, authorization state, non-governing next qualifying action, and evidence; it never restates the qualified count.
 - `work`: current milestone, active feature, lease identity, feature-local tasks/checkpoints, blockers, the sole `current_next_action`, and exactly two ordered delivery lanes.
 - `governance`: bounded correction, finding, risk, decision, independent-verification, WIP/repair/push-limit, and flow summaries derived from committed evidence.
@@ -96,7 +98,19 @@ Fields: phase, hold state and nullable/required hold reason, identified dependen
 
 Work includes an optional safe projection of the exact program-state lease: `feature_id`, `branch`, `worktree_id`, `dev_baseline`, `worktree_start`, `holder_role`, `lease_mode`, `lease_revision`, acquisition/expiry times, allowed paths, path restrictions, allowed actions, and bounded recovery state. It never exposes an absolute worktree path. Work also contains one feature-local task population, causal checkpoints, blockers, and exactly one `current_next_action` sourced from the validated current program state.
 
+`program_tasks` is derived only from task files listed by `WorkRegistry.task_sources` and contains completed, total, remaining, registered source paths, and roadmap item IDs not yet decomposed. `tasks` remains the active-feature subset. `active_assignments` contains only committed, lease-compatible records with stable agent ID, exact task ID/title/state, branch, safe worktree ID or lane, outcome-oriented purpose, time, and evidence. No valid record means unavailable; process activity is never an input.
+
 Lanes are exactly two closed records in order: `integration`, then `continued_development`. Common fields include exclusive branch, milestone, capability, blocker, structured action, time, and evidence. The integration schema alone admits target, frozen/pushed identity/time, PR, phase, check counts, CI failure, sync, merge gate, and bounded events. The continued-development schema admits only its exact base and authority state; integration-only properties are rejected rather than accepted as null.
+
+## GovernedUseCases
+
+The committed registry contains bounded stable use-case identities and orthogonal evidence lists for definition, progress, user-visible acceptance, tests, independent verification, and benchmark qualification. The publisher derives all governed use-case counts (`total`, `not_started`, `in_progress`, `implemented`, `independently_verified`, `remaining`) and the 100-process subset (`defined`, `in_progress`, `implemented`, `tested`, `independently_verified`, `benchmark_qualified`).
+
+`implemented` requires exact user-visible acceptance evidence. Code/progress evidence without acceptance remains `in_progress`. Independent verification must be passing and bound to that acceptance subject. Benchmark qualification must reconcile exactly with the authoritative dashboard and can never be derived from definition, implementation, tests, independent review, or the proposed story catalog.
+
+## TestRunLedger and TestHistory
+
+The ledger retains every attempt with exact commit, trustworthy time, suite ID, population ID, category (`unit`, `integration`, `e2e`, or `benchmark`), attempt number, terminal flag, aggregate role, collected-test-identity-set digest, counts, and evidence. A canonical checkpoint selects the latest terminal attempt for each `(commit, suite_id, population_id)`, sums only disjoint `component` populations, and keeps `summary_only` runs for detail without aggregation. Each parametrized case is one framework-collected identity. Counts satisfy `total = passed + failed + skipped + not_run`; pass rate is `passed / (passed + failed)` or unavailable when the denominator is zero. Missing categories and missing historical evidence are unavailable, never inferred as zero.
 
 ## EvidenceDetail
 
@@ -118,7 +132,11 @@ JSON Schema closes individual shapes; both the `tool_registry` reader and browse
 - benchmark context is missing/incoherent with the dashboard's qualification state, or a zero count lacks typed phase, hold/dependency/authority context and next qualifying action;
 - integration and continued-development branches are equal;
 - an observation source classification differs from its containing series;
-- completed tasks exceed total tasks; or
+- completed tasks exceed total tasks;
+- program or active-feature task totals do not equal their exact registered task sources, remaining arithmetic is wrong, a registered source is duplicated, or a roadmap item is omitted from both registered and undecomposed sets;
+- an active assignment does not resolve to one registered task and compatible current lease/branch, contains an absolute worktree path, or lacks exact evidence;
+- all-use-case or 100-process counts cannot be derived from orthogonal registry evidence, implementation lacks user-visible acceptance, independent verification is not passing/bound, or benchmark qualification disagrees with the dashboard;
+- a canonical test checkpoint uses a non-terminal or non-latest attempt, double-counts a parametrized identity or overlapping population, violates count arithmetic/pass-rate semantics, or substitutes zero for unavailable history; or
 - correction expected/verified claim IDs are not a subset/equality-consistent relation, resolved and unresolved finding IDs do not form a disjoint partition, a linked finding/correction/verification is absent or non-reciprocal, a resolved finding lacks a passing independent verification, or a verification verdict conflicts with its blocking outcome; or
 - the canonical dashboard or bundle digest fails independent recomputation. Raw Git-blob bytes are verified only by the repository publisher and carried as an explicit attestation, never falsely recomputed by source-free runtime.
 

@@ -4,9 +4,9 @@
 
 **Created**: 2026-08-28
 
-**Status**: Specified — planning only; implementation is not yet authorized
+**Status**: Material amendment in planning — prior implementation subject superseded; reapproval required
 
-**Input**: User description: "Deliver a browser-visible, evidence-derived program dashboard that lets one developer manage customer value and the AI development process, with meaningful metrics and graphs over committed checkpoints."
+**Input**: User description: "Deliver a browser-visible, evidence-derived program dashboard that lets one developer manage customer value and the AI development process, with meaningful metrics and graphs over committed checkpoints." Material clarification: the overview must show program and active-feature work, evidence-backed active-agent assignments and purpose, governed use-case delivery, the separate 100-process funnel, and canonical test-result history above detailed governance evidence.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -42,6 +42,8 @@ As a product-minded solo developer, I can see how customer capability, quality, 
 2. **Given** quality and governance checkpoints rise while customer capability remains flat, **When** the history view is opened, **Then** the imbalance is explicit and the page identifies the next customer-value milestone rather than implying the program is nearly complete.
 3. **Given** task completion is high for one bounded feature, **When** task history is shown, **Then** it is labeled as feature-local throughput and is paired with program-level customer, roadmap, readiness, and release context.
 4. **Given** a checkpoint lacks a trustworthy timestamp or source identity, **When** history is rendered, **Then** the point is omitted or labeled unavailable rather than assigned an inferred time or order.
+5. **Given** exact committed test-run evidence across several checkpoints, **When** test history is displayed, **Then** each point identifies its timestamp, commit, suite/source, canonical counting rule, totals, passed, failed, skipped or not-run, pass rate, and supported unit/integration/E2E/benchmark breakdown without double-counting reruns.
+6. **Given** no trustworthy historical test evidence for a suite or category, **When** its trend is requested, **Then** the page reports it unavailable rather than inferring a zero or a passing result.
 
 ---
 
@@ -76,6 +78,10 @@ As a program coordinator, I can see the current customer milestone, active branc
 3. **Given** a roadmap dependency or P0 blocker, **When** the maintainer reviews the next action, **Then** the blocker and required authority are shown without inventing an alternative action.
 4. **Given** feature tasks are nearly complete while the wider product program is still early, **When** progress is displayed, **Then** the page distinguishes feature-scope completion from customer-capability, roadmap, and release-gate maturity.
 5. **Given** an integration lane and continued-development lane, **When** their status is displayed, **Then** the integration lane shows its frozen/pushed/PR/CI/dev state and the continued lane shows its customer milestone, demonstrated capability, blocker, and next action without implying shared branch ownership.
+6. **Given** a committed program work registry, **When** the overview opens, **Then** it shows program-wide completed/total registered tasks separately from active-feature completed/total tasks and discloses roadmap work that has not yet been decomposed into tasks.
+7. **Given** one or more committed active assignments, **When** current work is displayed, **Then** each row shows stable agent identity, exact task ID and title, task state, branch and worktree identifier or lane, and a plain-language customer/gate/blocker/dependency outcome; absent assignment evidence is shown as unavailable and process activity is never treated as assignment evidence.
+8. **Given** a governed use-case registry and a separate proposed story catalog, **When** customer-delivery progress is displayed, **Then** all governed use cases show total, in progress, implemented, independently verified, and remaining counts; the 100-process subset separately shows defined, implemented, tested, and benchmark-qualified counts; and the proposed catalog remains a third, explicitly non-implemented population.
+9. **Given** code exists without acceptance evidence for a user-visible outcome, **When** the use-case funnel is derived, **Then** the item remains in progress and does not count as implemented; tested or implemented items do not count as independently verified or benchmark-qualified without the corresponding exact evidence.
 
 ---
 
@@ -110,6 +116,10 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - A checkpoint has a commit identity but no trustworthy event or commit time.
 - A nearly complete task list belongs to a narrow control-plane feature while no customer journey is yet demoable.
 - A push or CI event is unavailable, still running, superseded, or associated with a different branch/PR head.
+- Program task sources are partially registered or a roadmap item has no task graph yet.
+- Agent activity exists locally but no committed assignment or lease record binds an agent to an exact task.
+- A use case has code evidence but lacks user-visible acceptance, independent verification, test, or benchmark qualification evidence.
+- A test suite was rerun for the same commit, reports parametrized cases, overlaps an aggregate suite, or lacks a terminal result.
 
 ## Requirements *(mandatory)*
 
@@ -154,10 +164,19 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **FR-037**: The integration view MUST show branch, target, frozen candidate, last pushed identity and time, PR identity/link, phase, passing/failing/pending checks, CI age, first actionable failure, dev synchronization, merge-gate state, next action, and a bounded push/CI event history when present.
 - **FR-038**: The continued-development view MUST show its exclusive branch, current customer milestone, latest demonstrated capability, blocker, and next action independently from the integration lane.
 - **FR-039**: The page MUST avoid calendar-duration estimates as a proxy for work and MUST express remaining progress through observable capabilities, gates, dependencies, checkpoints, and evidence.
+- **FR-040**: Above detailed governance evidence, the overview MUST answer at a glance: how much registered work exists; what exact work is active; why it matters; how much customer capability is implemented and independently verified; how tests are trending; and what evidence-backed action changes next.
+- **FR-041**: The work summary MUST show program-wide completed, total, and remaining registered tasks; active-feature completed, total, and remaining tasks; and the count and identities of roadmap items not yet decomposed into registered task graphs. Program totals MUST be derived only from a closed committed work registry and its exact task sources, never from repository-wide discovery or process activity.
+- **FR-042**: For every committed active assignment, the page MUST show a stable agent identity, exact task ID and title, task state, branch, non-sensitive worktree identifier or lane, plain-language `why_this_matters`, timestamp, and evidence. If an assignment field lacks validated committed evidence, the field or entire assignment MUST be unavailable rather than inferred from running processes, local sessions, or prose status.
+- **FR-043**: The page MUST provide a canonical all-use-case funnel with total, not-started, in-progress, implemented, independently verified, and remaining counts derived from a closed governed use-case registry. `implemented` requires exact acceptance evidence for the user-visible outcome; code-only or partial work remains `in_progress`; `independently_verified` requires a passing independent verdict bound to that acceptance subject.
+- **FR-044**: The page MUST provide a separate 100-process subset funnel with defined, in-progress, implemented, tested, independently verified, and benchmark-qualified counts. Qualification MUST come only from the authoritative governed benchmark; definition, implementation, test, and independent-verification evidence MUST remain orthogonal and MUST NOT upgrade qualification.
+- **FR-045**: The proposed 100-story customer catalog MUST remain a separately labeled planning population and MUST NOT contribute to the canonical all-use-case or 100-process implemented, tested, independently verified, or benchmark-qualified counts unless an exact registry entry and its required evidence explicitly establish that relationship.
+- **FR-046**: Test history MUST use exact committed terminal test-run records and show total, passed, failed, skipped, not-run, and pass rate for each checkpoint, with supported unit, integration, E2E, and benchmark categories. Every point MUST identify timestamp, commit, suite and source identity, and evidence; missing history or unsupported categories MUST be unavailable, not zero.
+- **FR-047**: The canonical test-counting rule MUST retain all attempts for traceability but aggregate only the latest terminal run for each `(commit, suite_id, population_id)` counting key; count each framework-collected test-case identity, including each parametrized identity, once; reject overlapping component and aggregate populations; require `total = passed + failed + skipped + not_run`; and define pass rate as `passed / (passed + failed)`, unavailable when that denominator is zero.
+- **FR-048**: The overview visualization set MUST include task burn-up, canonical all-use-case and 100-process funnels, test outcomes over time, roadmap/customer-capability progress, and the four independent readiness areas plus benchmark qualification without a composite score. Every graph MUST include meaning, latest change, current blocker or limitation, evidence-backed next action, accessible legend/axes/tooltips, and a semantic table fallback.
 
 ### Scope Boundaries
 
-- This feature presents existing validated committed evidence; it does not create, edit, approve, or repair that evidence.
+- This feature presents existing validated committed evidence. Its implementation may add the closed work-registry, use-case-registry, and test-run-ledger formats and honest initial committed records required to project already-existing evidence, but it does not invent completion, acceptance, verification, qualification, assignment, or test results and does not edit the authoritative evidence those records reference.
 - This feature does not generate or qualify benchmark cases and does not execute the 100-process benchmark.
 - This feature does not implement the canonical process definition, process execution, authoring, commercial release, predictive schedules, or hand-authored trend values.
 - This feature does not add remote telemetry, hosted status services, automatic uploads, or manual score controls.
@@ -179,6 +198,10 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **Delivery Lane Status**: A read-only integration/CI or continued-development projection with exclusive branch ownership, current phase, evidence, blocker, and next action.
 - **Next Action**: A machine-readable action identity with eligibility, authority state, approval requirement, blocker, and evidence; display text alone never grants authority.
 - **Publisher Status**: Separate operational state for the bounded committed-identity publisher, including mode, last attempt/success, failure code, and recovery; it never changes bundle identity or readiness.
+- **Program Work Registry**: A closed committed index of in-scope task sources and exact active assignments. The publisher derives task totals from the registered sources; the registry never hand-sets totals or infers agent work from process activity.
+- **Active Assignment**: A committed binding of stable agent identity to one exact task, state, branch, safe worktree identifier or lane, outcome-oriented purpose, timestamp, and evidence.
+- **Governed Use-Case Registry**: The canonical bounded population of customer-visible use cases and exact definition, acceptance, test, independent-verification, and optional benchmark-subset evidence from which orthogonal funnel counts are derived.
+- **Test Run Ledger**: Append-only committed terminal test-run records with exact checkpoint, suite, population, category, attempt, counts, test-case-set identity, and evidence; canonical selection prevents rerun and aggregate overlap from inflating totals.
 
 ## Success Criteria *(mandatory)*
 
@@ -196,6 +219,11 @@ As a maintainer, I retain a clearly labeled last known valid view when new commi
 - **SC-010**: Across the history fixture set, 100% of plotted points retain their exact committed identity, trustworthy timestamp, metric unit, and source classification; no point is ordered or dated by an invented value.
 - **SC-011**: In 100% of fixtures where a bounded feature is at least 90% task-complete but the product program is not customer-ready, the page clearly reports the feature-local scope and does not present the program as nearly complete.
 - **SC-012**: Across catalog and benchmark fixtures, the page always preserves `100 proposed` and `0/100 qualified` as distinct labeled populations until governed qualification evidence changes the latter.
+- **SC-013**: In a six-question at-a-glance walkthrough, an independent reviewer correctly answers all six FR-040 questions within two minutes without opening deep governance or evidence panels.
+- **SC-014**: Across task fixtures, 100% of program and active-feature counts equal the registered task-source checkboxes, unregistered roadmap items are disclosed, and no agent assignment or field is displayed without an exact committed assignment/lease evidence reference.
+- **SC-015**: Across mixed use-case fixtures, code-only items never count as implemented, implemented items without passing independent verification never count as independently verified, and no defined, implemented, tested, or verified process changes the authoritative benchmark-qualified numerator.
+- **SC-016**: Across rerun, parametrized, overlapping-suite, missing-category, and zero-executed-test fixtures, canonical test totals and pass rates follow FR-047 exactly and unavailable data is never rendered as zero or success.
+- **SC-017**: Every required overview graph passes keyboard, non-color, narrow-viewport, tooltip, prose meaning, and semantic-table checks while displaying the exact current blocker/limitation and evidence-backed next action.
 
 ## Assumptions
 

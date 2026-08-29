@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/use-case-registry.schema.json",
+  "title": "Wright Engineering Process Platform Governed Use-Case Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "use_cases"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "program_id": { "const": "engineering-process-platform" },
+    "use_cases": {
+      "type": "array",
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/useCase" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/|tests/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "subject_id"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "subject_id": { "type": "string", "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "evidenceList": {
+      "type": "array",
+      "maxItems": 25,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "useCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "customer_outcome", "process_100_id", "definition_evidence", "progress_evidence", "acceptance_evidence", "test_evidence", "independent_verification_evidence", "benchmark_qualification_evidence"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^EPP-UC-[0-9]{3}$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-[0-9]{3}$" },
+        "definition_evidence": { "$ref": "#/$defs/evidenceList" },
+        "progress_evidence": { "$ref": "#/$defs/evidenceList" },
+        "acceptance_evidence": { "$ref": "#/$defs/evidenceList" },
+        "test_evidence": { "$ref": "#/$defs/evidenceList" },
+        "independent_verification_evidence": { "$ref": "#/$defs/evidenceList" },
+        "benchmark_qualification_evidence": { "$ref": "#/$defs/evidenceList" }
+      }
+    }
+  }
+}

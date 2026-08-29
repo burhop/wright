@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/test-run-ledger.schema.json",
+  "title": "Wright Engineering Process Platform Test Run Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "case_identity_rule", "canonical_selection_rule", "pass_rate_rule", "runs"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "program_id": { "const": "engineering-process-platform" },
+    "case_identity_rule": { "const": "framework_collected_identity_including_each_parameterized_identity_once" },
+    "canonical_selection_rule": { "const": "latest_terminal_attempt_per_commit_suite_id_population_id" },
+    "pass_rate_rule": { "const": "passed_divided_by_passed_plus_failed_else_unavailable" },
+    "runs": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": { "$ref": "#/$defs/run" }
+    }
+  },
+  "$defs": {
+    "gitSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/|test-results/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "skipped", "not_run"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "not_run": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "commit", "observed_at", "suite_id", "population_id", "category", "attempt", "terminal", "aggregate_role", "test_case_set_sha256", "counts", "evidence"],
+      "properties": {
+        "run_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$" },
+        "commit": { "$ref": "#/$defs/gitSha" },
+        "observed_at": { "$ref": "#/$defs/timestamp" },
+        "suite_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$" },
+        "population_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,159}$" },
+        "category": { "enum": ["unit", "integration", "e2e", "benchmark"] },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "terminal": { "type": "boolean" },
+        "aggregate_role": { "enum": ["component", "summary_only"] },
+        "test_case_set_sha256": { "$ref": "#/$defs/sha256" },
+        "counts": { "$ref": "#/$defs/counts" },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidence" } }
+      }
+    }
+  }
+}

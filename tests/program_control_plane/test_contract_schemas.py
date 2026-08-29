@@ -26,6 +26,14 @@ CONTRACT_NAMES = (
     "verification-evidence.schema.json",
 )
 
+EPP_F01B_CONTRACT_NAMES = (
+    "program-status-bundle.schema.json",
+    "program-status-source-catalog.schema.json",
+    "work-registry.schema.json",
+    "use-case-registry.schema.json",
+    "test-run-ledger.schema.json",
+)
+
 
 def test_f01b_activation_correction_is_closed_to_three_tr0070_digests(
     repository_root: Path,
@@ -90,6 +98,35 @@ def test_v9_preflight_correction_is_closed_and_externally_validates_discovery(
 
 def load(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize("name", EPP_F01B_CONTRACT_NAMES)
+def test_epp_f01b_planning_contract_is_valid_draft_2020_12(
+    repository_root: Path, name: str
+) -> None:
+    schema = load(
+        repository_root / "specs/077-browser-program-status/contracts" / name
+    )
+    validator_for(schema).check_schema(schema)
+    assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+
+
+def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
+    repository_root: Path,
+) -> None:
+    contracts = repository_root / "specs/077-browser-program-status/contracts"
+    schema = load(contracts / "program-status-source-catalog.schema.json")
+    catalog = load(contracts / "program-status-source-catalog.json")
+    validator_for(schema)(schema).validate(catalog)
+    assert list(catalog["sources"]) == catalog["conflict_policy"]["source_precedence"]
+    assert len(catalog["sources"]) == 20
+    assert list(catalog["sources"])[-5:] == [
+        "work_registry",
+        "use_case_registry",
+        "test_run_ledger",
+        "customer_story_catalog",
+        "feature_tasks",
+    ]
 
 
 @pytest.mark.parametrize("name", CONTRACT_NAMES)

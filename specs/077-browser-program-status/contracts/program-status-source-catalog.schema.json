@@ -36,12 +36,15 @@
             { "const": "correction_evidence" },
             { "const": "verification_evidence" },
             { "const": "approval_evidence" },
+            { "const": "work_registry" },
+            { "const": "use_case_registry" },
+            { "const": "test_run_ledger" },
             { "const": "customer_story_catalog" },
             { "const": "feature_tasks" }
           ],
           "items": false,
-          "minItems": 17,
-          "maxItems": 17
+          "minItems": 20,
+          "maxItems": 20
         }
       }
     },
@@ -51,7 +54,8 @@
       "required": [
         "dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence",
         "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery",
-        "correction_evidence", "verification_evidence", "approval_evidence", "customer_story_catalog", "feature_tasks"
+        "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger",
+        "customer_story_catalog", "feature_tasks"
       ],
       "properties": {
         "dashboard": { "$ref": "#/$defs/sourceRule" },
@@ -69,6 +73,9 @@
         "correction_evidence": { "$ref": "#/$defs/sourceRule" },
         "verification_evidence": { "$ref": "#/$defs/sourceRule" },
         "approval_evidence": { "$ref": "#/$defs/sourceRule" },
+        "work_registry": { "$ref": "#/$defs/sourceRule" },
+        "use_case_registry": { "$ref": "#/$defs/sourceRule" },
+        "test_run_ledger": { "$ref": "#/$defs/sourceRule" },
         "customer_story_catalog": { "$ref": "#/$defs/sourceRule" },
         "feature_tasks": { "$ref": "#/$defs/sourceRule" }
       }
