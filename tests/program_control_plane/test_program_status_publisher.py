@@ -418,14 +418,18 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> Non
     )
     task_path = "specs/077-browser-program-status/tasks.md"
     task_raw = publisher._git_blob(REPOSITORY, subject["commit"], task_path)
-    task = publisher._task_records(task_raw)["T005"]
+    task_id, task = next(
+        (task_id, record)
+        for task_id, record in publisher._task_records(task_raw).items()
+        if not record["completed"]
+    )
     subject["work_registry"] = {
         **subject["work_registry"],
         "active_assignments": [
             {
                 "agent_id": "primary-agent",
                 "feature_id": "EPP-F01B",
-                "task_id": "T005",
+                "task_id": task_id,
                 "task_title": task["title"],
                 "task_state": "in_progress",
                 "branch": subject["state"]["active_mutating_lease"]["branch"],
@@ -453,7 +457,7 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> Non
     ]
     assert 0 <= program_done <= program_total
     assert 0 <= feature_done < feature_total
-    assert assignments[0]["task_id"] == "T005"
+    assert assignments[0]["task_id"] == task_id
     assert assignments[0]["evidence"][0]["path"] == task_path
     assert "EPP-F02" in undecomposed
     assert "EPP-F01B" not in undecomposed
