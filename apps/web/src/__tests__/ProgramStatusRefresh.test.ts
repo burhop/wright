@@ -9,12 +9,28 @@ vi.mock("../services/host-adapter", () => ({
 
 import { hostAdapter } from "../services/host-adapter";
 import {
+  canonicalProgramStatusDigest,
+  canonicalProgramStatusJson,
   fetchProgramStatus,
   fetchProgramStatusPublisher,
+  verifyProgramStatusIdentity,
 } from "../services/program-status";
 import { makeProgramStatusBundle } from "./program-status-fixture";
 
 const mockedFetch = vi.mocked(hostAdapter.fetch);
+
+async function identityBoundBundle(): Promise<any> {
+  const bundle = makeProgramStatusBundle() as any;
+  bundle.source.dashboard_canonical_sha256 = await canonicalProgramStatusDigest(
+    bundle.dashboard,
+  );
+  bundle.bundle_id = await canonicalProgramStatusDigest({
+    source: bundle.source,
+    dashboard: bundle.dashboard,
+    supplement: bundle.supplement,
+  });
+  return bundle;
+}
 
 describe("program status conditional refresh transport", () => {
   beforeEach(() => mockedFetch.mockReset());
@@ -35,8 +51,9 @@ describe("program status conditional refresh transport", () => {
   });
 
   it("decodes a changed bundle as one complete 200 response", async () => {
+    const bundle = await identityBoundBundle();
     mockedFetch.mockResolvedValue(
-      new Response(JSON.stringify(makeProgramStatusBundle()), {
+      new Response(JSON.stringify(bundle), {
         status: 200,
         headers: { "content-type": "application/json", etag: '"bundle-2"' },
       }),
@@ -45,6 +62,37 @@ describe("program status conditional refresh transport", () => {
     expect(result.status).toBe(200);
     expect(result.etag).toBe('"bundle-2"');
     expect(result.bundle?.supplement.customer_catalog.proposed_total).toBe(100);
+  });
+
+  it("independently rejects dashboard and bundle identity drift", async () => {
+    const dashboardDrift = await identityBoundBundle();
+    dashboardDrift.dashboard.release_eligible = true;
+    await expect(verifyProgramStatusIdentity(dashboardDrift)).rejects.toThrow(
+      "DASHBOARD_IDENTITY_MISMATCH",
+    );
+
+    const supplementDrift = await identityBoundBundle();
+    supplementDrift.supplement.customer_catalog.proposed_total = 99;
+    await expect(verifyProgramStatusIdentity(supplementDrift)).rejects.toThrow(
+      "BUNDLE_IDENTITY_MISMATCH",
+    );
+  });
+
+  it("uses the declared bounded fixed-point canonical number subset", () => {
+    expect(
+      canonicalProgramStatusJson([
+        0, 1, 9007199254740991, 0.5, 0.125, 0.333333,
+      ]),
+    ).toBe("[0,1,9007199254740991,0.5,0.125,0.333333]");
+    expect(() => canonicalProgramStatusJson(-0)).toThrow(
+      "CANONICAL_NUMBER_INVALID",
+    );
+    expect(() => canonicalProgramStatusJson(0.0000001)).toThrow(
+      "CANONICAL_NUMBER_INVALID",
+    );
+    expect(() => canonicalProgramStatusJson(9007199254740992)).toThrow(
+      "CANONICAL_NUMBER_UNSAFE",
+    );
   });
 
   it("keeps typed failure recovery bounded", async () => {

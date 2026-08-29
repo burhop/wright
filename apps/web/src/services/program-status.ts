@@ -229,6 +229,14 @@ function integer(value: unknown, path: string): number {
   return value as number;
 }
 
+function hex(value: unknown, length: 40 | 64, path: string): string {
+  const parsed = stringValue(value, path);
+  if (!new RegExp(`^[0-9a-f]{${length}}$`).test(parsed)) {
+    throw new ProgramStatusDecodeError("IDENTITY_FORMAT_INVALID", path);
+  }
+  return parsed;
+}
+
 function array(value: unknown, path: string): unknown[] {
   if (!Array.isArray(value))
     throw new ProgramStatusDecodeError("EXPECTED_ARRAY", path);
@@ -343,14 +351,22 @@ function action(value: unknown, path: string): StatusAction {
     id: stringValue(row.id, `${path}/id`),
     label: stringValue(row.label, `${path}/label`),
     purpose: stringValue(row.purpose, `${path}/purpose`),
-    eligibility: stringValue(
+    eligibility: enumValue(
       row.eligibility,
+      ["eligible", "blocked", "requires_approval", "unavailable"] as const,
       `${path}/eligibility`,
-    ) as StatusAction["eligibility"],
-    authority_state: stringValue(
+    ),
+    authority_state: enumValue(
       row.authority_state,
+      [
+        "authorized",
+        "not_authorized",
+        "not_required",
+        "stale",
+        "unavailable",
+      ] as const,
       `${path}/authority_state`,
-    ) as StatusAction["authority_state"],
+    ),
     requires_human_approval: row.requires_human_approval,
     blocker: nullableString(row.blocker, `${path}/blocker`),
     evidence: array(row.evidence, `${path}/evidence`).map((item, index) =>
@@ -504,15 +520,16 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
     );
   return {
     schema_version: PROGRAM_STATUS_SCHEMA_VERSION,
-    bundle_id: stringValue(root.bundle_id, "/bundle_id"),
+    bundle_id: hex(root.bundle_id, 64, "/bundle_id"),
     generated_at: stringValue(root.generated_at, "/generated_at"),
     source: {
-      commit: stringValue(source.commit, "/source/commit"),
-      tree: stringValue(source.tree, "/source/tree"),
-      program_tree: stringValue(source.program_tree, "/source/program_tree"),
+      commit: hex(source.commit, 40, "/source/commit"),
+      tree: hex(source.tree, 40, "/source/tree"),
+      program_tree: hex(source.program_tree, 40, "/source/program_tree"),
       snapshot_path: stringValue(source.snapshot_path, "/source/snapshot_path"),
-      snapshot_raw_sha256: stringValue(
+      snapshot_raw_sha256: hex(
         source.snapshot_raw_sha256,
+        64,
         "/source/snapshot_raw_sha256",
       ),
       raw_identity_verification: "publisher_git_blob_attested",
@@ -520,16 +537,18 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
         source.raw_identity_evidence,
         "/source/raw_identity_evidence",
       ),
-      dashboard_canonical_sha256: stringValue(
+      dashboard_canonical_sha256: hex(
         source.dashboard_canonical_sha256,
+        64,
         "/source/dashboard_canonical_sha256",
       ),
       source_catalog_path: stringValue(
         source.source_catalog_path,
         "/source/source_catalog_path",
       ) as ProgramStatusBundle["source"]["source_catalog_path"],
-      source_catalog_sha256: stringValue(
+      source_catalog_sha256: hex(
         source.source_catalog_sha256,
+        64,
         "/source/source_catalog_sha256",
       ),
       validation_transition: stringValue(
@@ -713,14 +732,99 @@ export function decodeProgramStatusPublisher(
     "",
   );
   return {
-    state: stringValue(row.state, "/state") as ProgramStatusPublisher["state"],
-    mode: stringValue(row.mode, "/mode") as ProgramStatusPublisher["mode"],
+    state: enumValue(
+      row.state,
+      ["active", "inactive", "failed", "unavailable"] as const,
+      "/state",
+    ),
+    mode: enumValue(
+      row.mode,
+      ["committed_watch", "package_install", "manual"] as const,
+      "/mode",
+    ),
     observed_commit: nullableString(row.observed_commit, "/observed_commit"),
     last_attempt_at: nullableString(row.last_attempt_at, "/last_attempt_at"),
     last_success_at: nullableString(row.last_success_at, "/last_success_at"),
     failure_code: nullableString(row.failure_code, "/failure_code"),
     recovery: nullableString(row.recovery, "/recovery"),
   };
+}
+
+function canonicalNumber(value: number): string {
+  if (!Number.isFinite(value) || Object.is(value, -0)) {
+    throw new ProgramStatusDecodeError("CANONICAL_NUMBER_INVALID", "");
+  }
+  if (Number.isInteger(value)) {
+    if (!Number.isSafeInteger(value)) {
+      throw new ProgramStatusDecodeError("CANONICAL_NUMBER_UNSAFE", "");
+    }
+    return String(value);
+  }
+  const token = String(value);
+  if (/[eE]/.test(token) || !/^-?(?:0|[1-9][0-9]*)\.[0-9]{1,6}$/.test(token)) {
+    throw new ProgramStatusDecodeError("CANONICAL_NUMBER_INVALID", "");
+  }
+  const scaled = Number(token.replace(".", ""));
+  if (!Number.isSafeInteger(scaled)) {
+    throw new ProgramStatusDecodeError("CANONICAL_NUMBER_UNSAFE", "");
+  }
+  return token;
+}
+
+export function canonicalProgramStatusJson(value: unknown): string {
+  if (value === null) return "null";
+  if (typeof value === "boolean") return value ? "true" : "false";
+  if (typeof value === "string") return JSON.stringify(value);
+  if (typeof value === "number") return canonicalNumber(value);
+  if (Array.isArray(value)) {
+    return `[${value.map(canonicalProgramStatusJson).join(",")}]`;
+  }
+  if (typeof value === "object") {
+    const row = value as Record<string, unknown>;
+    return `{${Object.keys(row)
+      .sort()
+      .map(
+        (key) =>
+          `${JSON.stringify(key)}:${canonicalProgramStatusJson(row[key])}`,
+      )
+      .join(",")}}`;
+  }
+  throw new ProgramStatusDecodeError("CANONICAL_VALUE_INVALID", "");
+}
+
+export async function canonicalProgramStatusDigest(
+  value: unknown,
+): Promise<string> {
+  const raw = new TextEncoder().encode(canonicalProgramStatusJson(value));
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", raw);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+}
+
+export async function verifyProgramStatusIdentity(
+  bundle: ProgramStatusBundle,
+): Promise<void> {
+  if (
+    (await canonicalProgramStatusDigest(bundle.dashboard)) !==
+    bundle.source.dashboard_canonical_sha256
+  ) {
+    throw new ProgramStatusDecodeError(
+      "DASHBOARD_IDENTITY_MISMATCH",
+      "/source/dashboard_canonical_sha256",
+    );
+  }
+  const expected = await canonicalProgramStatusDigest({
+    source: bundle.source,
+    dashboard: bundle.dashboard,
+    supplement: bundle.supplement,
+  });
+  if (expected !== bundle.bundle_id) {
+    throw new ProgramStatusDecodeError(
+      "BUNDLE_IDENTITY_MISMATCH",
+      "/bundle_id",
+    );
+  }
 }
 
 async function typedError(response: Response): Promise<ProgramStatusError> {
@@ -756,10 +860,12 @@ export async function fetchProgramStatus(
     return { status: 304, etag: response.headers.get("etag"), bundle: null };
   if (!response.ok)
     throw new ProgramStatusServiceError(await typedError(response));
+  const bundle = decodeProgramStatusBundle(await response.json());
+  await verifyProgramStatusIdentity(bundle);
   return {
     status: 200,
     etag: response.headers.get("etag"),
-    bundle: decodeProgramStatusBundle(await response.json()),
+    bundle,
   };
 }
 
