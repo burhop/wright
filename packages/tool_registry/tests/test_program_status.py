@@ -493,3 +493,79 @@ def test_full_contract_recomputes_nonempty_orthogonal_use_case_funnels(
             installed, FULL_CONTRACT_ROOT, schema_root=FULL_CONTRACT_ROOT
         ).read_bundle()
     assert raised.value.code is ProgramStatusErrorCode.INVALID
+
+
+def test_runtime_requires_reciprocal_correction_finding_verification_graph() -> None:
+    value = json.loads((FULL_CONTRACT_ROOT / "current.json").read_bytes())
+    reference = {
+        "id": "correction-profile",
+        "path": "docs/programs/engineering-process-platform/evidence/corrections/COR-001.json",
+        "sha256": "5" * 64,
+    }
+    value["supplement"]["evidence_index"].append(
+        {
+            **reference,
+            "label": "Correction profile",
+            "summary": "Exact bounded correction profile.",
+            "freshness": "current",
+            "recovery": None,
+            "availability": "identity_only",
+            "exact_url": None,
+        }
+    )
+    governance = value["supplement"]["governance"]
+    governance["corrections"] = [
+        {
+            "profile_id": "COR-001",
+            "path": reference["path"],
+            "digest": reference["sha256"],
+            "correction_class": "bounded_test_correction",
+            "authority_status": "approved",
+            "approval_id": "APR-001",
+            "expected_claim_ids": ["FIND-001"],
+            "verified_claim_ids": ["FIND-001"],
+            "finding_ids": ["FIND-001"],
+            "resolved_finding_ids": ["FIND-001"],
+            "unresolved_finding_ids": [],
+            "verification_ids": ["VER-001"],
+            "verification_subject": "git:" + "a" * 40,
+            "verified_at": "2026-08-29T13:00:00Z",
+            "evidence": [reference],
+        }
+    ]
+    governance["findings"] = [
+        {
+            "id": "FIND-001",
+            "status": "resolved",
+            "severity": "P0",
+            "summary": "Bounded finding.",
+            "blocking": False,
+            "opened_at": None,
+            "resolved_at": "2026-08-29T13:00:00Z",
+            "correction_profile_id": "COR-001",
+            "resolution_verification_id": "VER-001",
+            "recovery": None,
+            "evidence": [reference],
+        }
+    ]
+    governance["verification"] = [
+        {
+            "id": "VER-001",
+            "author": "author",
+            "verifier": "independent-verifier",
+            "independent": True,
+            "subject": "git:" + "a" * 40,
+            "verdict": "passed",
+            "blocking": False,
+            "finding_ids": ["FIND-001"],
+            "correction_profile_ids": ["COR-001"],
+            "verified_at": "2026-08-29T13:00:00Z",
+            "evidence": [reference],
+        }
+    ]
+
+    ProgramStatusReader._validate_relations(value)
+
+    governance["corrections"][0]["verification_ids"] = []
+    with pytest.raises(ValueError, match="correction claim relations"):
+        ProgramStatusReader._validate_relations(value)

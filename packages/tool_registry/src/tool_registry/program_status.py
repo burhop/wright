@@ -451,6 +451,67 @@ class ProgramStatusReader:
         ):
             raise ValueError("100-process governed relations do not reconcile")
 
+        governance = supplement["governance"]
+        corrections = governance["corrections"]
+        findings = governance["findings"]
+        verifications = governance["verification"]
+        correction_by_id = {item["profile_id"]: item for item in corrections}
+        finding_by_id = {item["id"]: item for item in findings}
+        verification_by_id = {item["id"]: item for item in verifications}
+        if (
+            len(correction_by_id) != len(corrections)
+            or len(finding_by_id) != len(findings)
+            or len(verification_by_id) != len(verifications)
+        ):
+            raise ValueError(
+                "correction, finding, and verification identities must be unique"
+            )
+        for correction in corrections:
+            expected = set(correction["expected_claim_ids"])
+            verified = set(correction["verified_claim_ids"])
+            correction_findings = set(correction["finding_ids"])
+            resolved = set(correction["resolved_finding_ids"])
+            unresolved = set(correction["unresolved_finding_ids"])
+            correction_verifications = set(correction["verification_ids"])
+            if (
+                not verified <= expected
+                or correction_findings != expected
+                or resolved & unresolved
+                or resolved | unresolved != correction_findings
+                or not correction_verifications
+                or not correction_verifications <= set(verification_by_id)
+                or not correction_findings <= set(finding_by_id)
+            ):
+                raise ValueError("correction claim relations do not reconcile")
+            for finding_id in correction_findings:
+                finding = finding_by_id[finding_id]
+                if finding_id in resolved and (
+                    finding["status"] != "resolved"
+                    or finding["correction_profile_id"] != correction["profile_id"]
+                    or finding["resolution_verification_id"]
+                    not in correction_verifications
+                ):
+                    raise ValueError("resolved finding relation is not reciprocal")
+                if finding_id in unresolved and finding["status"] == "resolved":
+                    raise ValueError("unresolved finding is marked resolved")
+            for verification_id in correction_verifications:
+                verification = verification_by_id[verification_id]
+                if correction["profile_id"] not in verification[
+                    "correction_profile_ids"
+                ] or not correction_findings <= set(verification["finding_ids"]):
+                    raise ValueError(
+                        "correction verification relation is not reciprocal"
+                    )
+        for verification in verifications:
+            if (
+                verification["independent"] is not True
+                or verification["author"] == verification["verifier"]
+                or not set(verification["finding_ids"]) <= set(finding_by_id)
+                or not set(verification["correction_profile_ids"])
+                <= set(correction_by_id)
+            ):
+                raise ValueError("independent verification relation is invalid")
+
         history_ids = [series["id"] for series in supplement["history"]]
         if len(history_ids) != len(set(history_ids)):
             raise ValueError("history metric identities must be unique")
