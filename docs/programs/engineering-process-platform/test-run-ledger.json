@@ -1,14 +1,170 @@
 {
   "schema_version": "1.0.0",
   "program_id": "engineering-process-platform",
-  "ledger_revision": 1,
-  "prior_ledger": null,
-  "runs_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "ledger_revision": 2,
+  "prior_ledger": {
+    "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+    "ledger_revision": 1,
+    "runs_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "runs_sha256": "ef48dfef1b952406404f999df3e60d1b86f2a80acac2769e5e323f431d27d050",
   "runs_digest_rule": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order",
   "run_key_rule": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256",
   "case_identity_rule": "framework_collected_identity_including_each_parameterized_identity_once",
   "identity_digest_rule": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256",
   "canonical_selection_rule": "latest_terminal_attempt_per_commit_suite_id_population_id",
   "pass_rate_rule": "passed_divided_by_passed_plus_failed_else_unavailable",
-  "runs": []
+  "runs": [
+    {
+      "run_id": "epp-f01b-publisher-e6ba238d",
+      "run_key": "964125f54bfd4f26675dce2a5433cf58f2161d63f55b791ba312b1a66ef4cd83",
+      "commit": "e6ba238d352fc912fe044da32aca55f7045e08a3",
+      "observed_at": "2026-08-29T21:08:14Z",
+      "suite_id": "epp-f01b-publisher",
+      "population_id": "program-status-publisher-31",
+      "category": "integration",
+      "attempt": 1,
+      "terminal": true,
+      "aggregate_role": "component",
+      "test_case_ids": [
+        "tests/program_control_plane/test_program_status_publisher.py::test_canonical_numbers_match_browser_shortest_representation",
+        "tests/program_control_plane/test_program_status_publisher.py::test_publishes_exact_dashboard_and_deterministic_identity",
+        "tests/program_control_plane/test_program_status_publisher.py::test_nonexistent_subject_fails_without_installing",
+        "tests/program_control_plane/test_program_status_publisher.py::test_replacement_failure_preserves_prior_bundle",
+        "tests/program_control_plane/test_program_status_publisher.py::test_bundle_identity_recomputes_from_canonical_payload",
+        "tests/program_control_plane/test_program_status_publisher.py::test_committed_watch_publishes_once_and_refreshes_heartbeat",
+        "tests/program_control_plane/test_program_status_publisher.py::test_committed_watch_records_bounded_failure",
+        "tests/program_control_plane/test_program_status_publisher.py::test_action_preserves_human_approval_boundary",
+        "tests/program_control_plane/test_program_status_publisher.py::test_initial_test_ledger_append_only_attestation_is_proven",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_source_catalog_selects_only_its_20_committed_inputs",
+        "tests/program_control_plane/test_program_status_publisher.py::test_customer_story_maturity_is_derived_without_duplicate_definitions",
+        "tests/program_control_plane/test_program_status_publisher.py::test_use_case_projection_requires_resolved_evidence_and_independence",
+        "tests/program_control_plane/test_program_status_publisher.py::test_use_case_projection_rejects_wrong_path_digest_and_missing_subject",
+        "tests/program_control_plane/test_program_status_publisher.py::test_use_case_projection_rejects_duplicate_and_out_of_range_process_ids",
+        "tests/program_control_plane/test_program_status_publisher.py::test_governance_register_projection_uses_exact_catalog_sources",
+        "tests/program_control_plane/test_program_status_publisher.py::test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap",
+        "tests/program_control_plane/test_program_status_publisher.py::test_correction_graph_projects_only_closed_reciprocal_evidence",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[path-]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[path-docs//programs/status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[path-docs/./programs/status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[path-docs/programs/../status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[exact_url-https://user@github.com/burhop/wright/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/docs/status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[exact_url-https://github.com:443/burhop/wright/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/docs/status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[exact_url-https://github.com/burhop/wright/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/docs/status.json?raw=1]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[exact_url-https://github.com/burhop/wright/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/docs/status.json#frag]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_frozen_bundle_rejects_noncanonical_paths_and_github_urls[exact_url-https://github.com/burhop/wrong/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/docs/status.json]",
+        "tests/program_control_plane/test_program_status_publisher.py::test_canonical_test_identity_and_latest_terminal_selection",
+        "tests/program_control_plane/test_program_status_publisher.py::test_canonical_test_projection_rejects_run_key_and_count_drift",
+        "tests/program_control_plane/test_program_status_publisher.py::test_canonical_test_projection_rejects_overlapping_component_populations",
+        "tests/program_control_plane/test_program_status_publisher.py::test_history_series_have_fixed_semantics_and_causal_committed_order",
+        "tests/program_control_plane/test_program_status_publisher.py::test_delivery_lanes_are_derived_from_closed_committed_sources"
+      ],
+      "test_case_set_sha256": "e711855a4f0aa61187cbeb9be63efe29d3dede1837802159e2f2a51a1a83ac62",
+      "counts": {
+        "total": 31,
+        "passed": 31,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "evidence": [
+        {
+          "path": "test-results/program-status/epp-f01b-candidate-verification.json",
+          "sha256": "aa24e397d523f166d0946fb86413e888a59d6f050753d9f6d06b9cdf51a79db2"
+        }
+      ]
+    },
+    {
+      "run_id": "epp-f01b-browser-unit-b91a59cc",
+      "run_key": "bb9d58f6a47e76045cd8fc8b8fa4c4b7c6ac48c0b584bb76b6ff172a11968364",
+      "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+      "observed_at": "2026-08-29T21:11:21Z",
+      "suite_id": "epp-f01b-browser-unit",
+      "population_id": "program-status-vitest-32",
+      "category": "unit",
+      "attempt": 1,
+      "terminal": true,
+      "aggregate_role": "component",
+      "test_case_ids": [
+        "apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx::ProgramStatusPage refresh state > keeps the exact last bundle current after an unchanged 304",
+        "apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx::ProgramStatusPage refresh state > keeps the last valid bundle visible when a later refresh fails",
+        "apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx::ProgramStatusPage refresh state > shows an honest unavailable state when no prior bundle exists",
+        "apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx::ProgramStatusPage refresh state > does not retain a false active publisher when heartbeat polling fails",
+        "apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx::ProgramStatusPage refresh state > retains the last bundle but marks a failed publisher heartbeat stale",
+        "apps/web/src/__tests__/ProgramStatusEvidence.test.tsx::program status evidence > exposes exact identity and keyboard-operable bounded detail",
+        "apps/web/src/__tests__/ProgramStatusEvidence.test.tsx::program status evidence > rejects traversal and non-exact GitHub links before rendering",
+        "apps/web/src/__tests__/ProgramStatusHistory.test.tsx::ProgramHistory > explains task scope and preserves exact time/commit table evidence",
+        "apps/web/src/__tests__/ProgramStatusHistory.test.tsx::ProgramHistory > renders unavailable rather than inventing history",
+        "apps/web/src/__tests__/ProgramStatusWork.test.tsx::program status work and capability detail > states task denominator limitations and undecomposed roadmap work",
+        "apps/web/src/__tests__/ProgramStatusWork.test.tsx::program status work and capability detail > does not infer an agent assignment",
+        "apps/web/src/__tests__/ProgramStatusWork.test.tsx::program status work and capability detail > keeps proposed, implemented, tested, and qualified counts separate",
+        "apps/web/src/__tests__/ProgramStatusWork.test.tsx::program status work and capability detail > shows integration and development as separate evidence-backed lanes",
+        "apps/web/src/__tests__/ProgramStatusPage.test.tsx::program status contract and first viewport > decodes honest zero progress without conflating proposed stories",
+        "apps/web/src/__tests__/ProgramStatusPage.test.tsx::program status contract and first viewport > rejects unknown top-level fields and invalid task arithmetic",
+        "apps/web/src/__tests__/ProgramStatusPage.test.tsx::program status contract and first viewport > keeps publisher health separate and closed",
+        "apps/web/src/__tests__/ProgramStatusPage.test.tsx::program status contract and first viewport > answers customer and engineering questions in the first viewport",
+        "apps/web/src/__tests__/PackagedProgramStatus.test.ts::packaged program status fallback > is accepted by the same decoder and identity verifier as the browser",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > sends the prior exact identity and accepts a bodyless 304",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > decodes a changed bundle as one complete 200 response",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > independently rejects dashboard and bundle identity drift",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > verifies the complete raw supplement before projecting UI fields",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > requires each emitted evidence reference to resolve exactly once",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > binds raw snapshot, source catalog, history, and delivery-lane identities",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > binds checkpoint time to the latest selected test source",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > admits test-results evidence only for selected test suite sources",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > resolves evidence nested inside a non-empty governed use-case stage",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > recomputes a non-empty use-case funnel and rejects non-independent evidence",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > uses Python-compatible shortest canonical numbers",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > recomputes canonical test-case and run-key digests in the browser",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > keeps typed failure recovery bounded",
+        "apps/web/src/__tests__/ProgramStatusRefresh.test.ts::program status conditional refresh transport > reads publisher health separately with no-store semantics"
+      ],
+      "test_case_set_sha256": "c3afbb5146bf801db140442670002b6ad0965a38bbc40958eddbb17e9c63442d",
+      "counts": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "evidence": [
+        {
+          "path": "test-results/program-status/epp-f01b-candidate-verification.json",
+          "sha256": "aa24e397d523f166d0946fb86413e888a59d6f050753d9f6d06b9cdf51a79db2"
+        }
+      ]
+    },
+    {
+      "run_id": "epp-f01b-browser-e2e-b91a59cc",
+      "run_key": "fdd2739da60a70ceedbc5e6bf527f99cdbfb7f0478afeba039fb8a5ed2849c81",
+      "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+      "observed_at": "2026-08-29T21:11:45Z",
+      "suite_id": "epp-f01b-browser-e2e",
+      "population_id": "program-status-chromium-4",
+      "category": "e2e",
+      "attempt": 1,
+      "terminal": true,
+      "aggregate_role": "component",
+      "test_case_ids": [
+        "tests/ui-integration/program-status.spec.ts::Program status comprehension and accessibility::answers the six operator questions and keeps exact fallbacks usable",
+        "tests/ui-integration/program-status.spec.ts::Program status comprehension and accessibility::remains understandable when narrow, zoomed, reduced-motion, and graph code is unavailable",
+        "tests/ui-integration/program-status.spec.ts::Program status comprehension and accessibility::refreshes atomically after an exact committed publication and observes its separate heartbeat",
+        "tests/ui-integration/program-status.spec.ts::Program status comprehension and accessibility::keeps last-valid evidence on refresh failure and stays honest with no prior bundle"
+      ],
+      "test_case_set_sha256": "5b3007e5b306dd4e6aeb6a5ffb848ffd37ce2816ab919cde8c0633b752ff3ec9",
+      "counts": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      },
+      "evidence": [
+        {
+          "path": "test-results/program-status/epp-f01b-candidate-verification.json",
+          "sha256": "aa24e397d523f166d0946fb86413e888a59d6f050753d9f6d06b9cdf51a79db2"
+        }
+      ]
+    }
+  ]
 }

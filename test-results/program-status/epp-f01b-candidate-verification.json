@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F01B",
+  "recorded_at": "2026-08-29T21:12:02Z",
+  "benchmark_executed": false,
+  "readiness_changed": false,
+  "checkpoints": [
+    {
+      "commit": "e6ba238d352fc912fe044da32aca55f7045e08a3",
+      "platform": "linux-gb10",
+      "command": "uv run --offline --frozen --extra runtime pytest -p no:cacheprovider --import-mode=importlib tests/program_control_plane/test_program_status_publisher.py packages/tool_registry/tests/test_program_status.py apps/api/tests/test_program_status_api.py tests/e2e/test_program_status.py tests/packaging/test_wheel_contents.py tests/native_runtime/test_program_status_lifecycle.py",
+      "result": "passed",
+      "passed": 58,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 69.59,
+      "notes": "Includes 31 canonical publisher cases plus runtime, API, source-free package, wheel, and native/POSIX lifecycle checks. The authoritative validator separately passed with zero blockers."
+    },
+    {
+      "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+      "platform": "windows",
+      "command": "npm --prefix apps/web run test -- --run ProgramStatus",
+      "result": "passed",
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 12.41,
+      "notes": "Seven ProgramStatus test files; exact framework-collected identities are recorded in the canonical ledger."
+    },
+    {
+      "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+      "platform": "windows-chromium",
+      "command": "WRIGHT_PLAYWRIGHT_PORT=5191 CI=1 npx playwright test tests/ui-integration/program-status.spec.ts --project=chromium --workers=1",
+      "result": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 33.1,
+      "notes": "Six-question comprehension, accessible fallback, exact atomic refresh/heartbeat, and failure-containment walkthroughs passed. Unrelated absent API proxy calls were noisy but non-blocking."
+    },
+    {
+      "commit": "b91a59cc6be1a15876a887699c15c6438ba1ac4a",
+      "platform": "windows",
+      "command": "npm --prefix apps/web run test -- --run",
+      "result": "passed",
+      "passed": 404,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 117.82,
+      "aggregate_role": "summary_only",
+      "notes": "Full web regression; not included in canonical component totals to avoid double-counting the 32 ProgramStatus cases."
+    },
+    {
+      "commit": "e6ba238d352fc912fe044da32aca55f7045e08a3",
+      "platform": "linux-gb10",
+      "command": "publish-engineering-program-status --source HEAD",
+      "result": "passed",
+      "bundle_id": "9f666953ccdbc76cd8eb2a402b010db3e58b277b78cca8eed43bc71cd4821183",
+      "artifact_sha256": "dd1edb8daa42a55a3d21157fb0feeb2263e50d2fa88f71e6c5d120a45fc7b916",
+      "notes": "Exact generated fallback was copied back byte-for-byte and committed at b91a59cc."
+    }
+  ],
+  "platform_matrix": {
+    "windows": "passed focused browser, runtime, API, package/native, full web, production build, and Chromium walkthrough",
+    "linux": "passed authoritative validator, publisher/runtime/API/source-free/package/native/POSIX focused matrix on GB10",
+    "macos": "not_run_locally; required CI remains the delivery gate",
+    "benchmark": "not_run; execution remains unauthorized"
+  }
+}
