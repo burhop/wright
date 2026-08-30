@@ -126,6 +126,8 @@ def test_browser_gate_uses_isolated_configurable_ports() -> None:
     assert "WRIGHT_GATE_UI_PORT" in merge_gate
     assert "UV_PROJECT_ENVIRONMENT" in merge_gate
     assert "WRIGHT_PLAYWRIGHT_PORT" in playwright
+    assert '"test-results/playwright"' in playwright
+    assert "outputDir: testOutputDir" in playwright
     assert "WRIGHT_WEB_API_PROXY_TARGET" in vite
     assert "/.venv-dev-gate/" in _read(".gitignore")
     for gate in (push_gate, merge_gate):
