@@ -3416,6 +3416,42 @@ def validate_f01b_lease_checkpoint_correction(
         )
         expected_state["last_transition"] = "TR-0075"
 
+        correction_successor_state = successor_state
+        if successor_state.get("revision") != 76:
+            successor_archive_path = (
+                f"{program_root}/evidence/states/program-state-revision-0076.json"
+            )
+            correction_successor_state = strict_loads(
+                reader.blob(current_commit, successor_archive_path)
+            )
+            protected_lease_fields = (
+                "feature_id",
+                "branch",
+                "worktree_id",
+                "dev_baseline",
+                "worktree_start",
+                "holder_role",
+                "lease_mode",
+                "allowed_paths",
+                "path_restrictions",
+                "allowed_actions",
+            )
+            current_lease = successor_state.get("active_mutating_lease")
+            expected_lease = expected_state["active_mutating_lease"]
+            if not isinstance(current_lease, Mapping):
+                valid = False
+            else:
+                valid = valid and all(
+                    (
+                        isinstance(successor_state.get("revision"), int),
+                        successor_state.get("revision", 0) > 76,
+                        all(
+                            current_lease.get(field) == expected_lease.get(field)
+                            for field in protected_lease_fields
+                        ),
+                    )
+                )
+
         claims = {
             "/inputs/3/sha256": (
                 task_path,
@@ -3477,7 +3513,7 @@ def validate_f01b_lease_checkpoint_correction(
                 )
                 > 300,
                 len(F01B_LEASE_CHECKPOINT_RESTRICTION) <= 300,
-                successor_state == expected_state,
+                correction_successor_state == expected_state,
                 transition.get("schema_version") == "2.0",
                 transition.get("transition_id") == "TR-0075",
                 transition.get("program_id") == "EPP-2026",
