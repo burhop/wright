@@ -233,11 +233,11 @@
     },
     "feature_tasks": {
       "path_kind": "exact",
-      "path": "specs/077-browser-program-status/tasks.md",
+      "path": "specs/078-process-definition-view/tasks.md",
       "path_pattern": null,
       "schema_ids": ["wright-parser://speckit/tasks-v1"],
       "parser_contract": "SPECKIT_TASKS_MARKDOWN_V1",
-      "selection_rule": "Parse exactly the unique task IDs in the current approved EPP-F01B task graph and their checkbox state; this population is the active-feature component of the closed work registry and never a whole-program completion percentage.",
+      "selection_rule": "Parse exactly the unique task IDs in the current approved EPP-F02 task graph and their checkbox state; this population is the active-feature component of the closed work registry and never a whole-program completion percentage.",
       "projects_to": ["/supplement/work/tasks", "/supplement/history", "/supplement/use_cases/items/*/progress_evidence"]
     }
   }

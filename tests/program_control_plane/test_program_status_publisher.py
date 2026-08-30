@@ -82,7 +82,7 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         publisher._git_blob(
             REPOSITORY,
             first.source_commit,
-            "specs/077-browser-program-status/tasks.md",
+            "specs/078-process-definition-view/tasks.md",
         )
     )
     assert histories["feature_tasks"]["observations"][-1]["value"] == expected_completed
@@ -452,10 +452,10 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
         REPOSITORY, subject
     )
-    task_path = "specs/077-browser-program-status/tasks.md"
+    task_path = "specs/078-process-definition-view/tasks.md"
     task_raw = publisher._git_blob(REPOSITORY, subject["commit"], task_path)
-    incomplete_task_raw = task_raw.replace(b"- [x] T048", b"- [ ] T048", 1)
-    task_id = "T048"
+    incomplete_task_raw = task_raw
+    task_id = "T001"
     task = publisher._task_records(incomplete_task_raw)[task_id]
     original_git_blob = publisher._git_blob
 
@@ -470,7 +470,7 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
         "active_assignments": [
             {
                 "agent_id": "primary-agent",
-                "feature_id": "EPP-F01B",
+                "feature_id": "EPP-F02",
                 "task_id": task_id,
                 "task_title": task["title"],
                 "task_state": "in_progress",
@@ -495,19 +495,21 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
             "worktree_id": "test-assignment-worktree",
         },
     }
-    result = publisher._registered_task_counts(REPOSITORY, subject, "EPP-F01B")
+    result = publisher._registered_task_counts(REPOSITORY, subject, "EPP-F02")
 
     registered, program_done, program_total, feature_done, feature_total = result[:5]
     assignments, undecomposed = result[5:]
     assert registered == [
         "specs/076-control-plane-validator/tasks.md",
+        "specs/077-browser-program-status/tasks.md",
         task_path,
     ]
     assert 0 <= program_done <= program_total
     assert 0 <= feature_done < feature_total
     assert assignments[0]["task_id"] == task_id
     assert assignments[0]["evidence"][0]["path"] == task_path
-    assert "EPP-F02" in undecomposed
+    assert "EPP-F03" in undecomposed
+    assert "EPP-F02" not in undecomposed
     assert "EPP-F01B" not in undecomposed
 
     invalid = {**subject, "work_registry": {**subject["work_registry"]}}
@@ -516,7 +518,7 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
         subject["work_registry"]["task_sources"][1],
     ]
     with pytest.raises(ProgramStatusPublishError) as raised:
-        publisher._registered_task_counts(REPOSITORY, invalid, "EPP-F01B")
+        publisher._registered_task_counts(REPOSITORY, invalid, "EPP-F02")
     assert raised.value.code == "PROGRAM_STATUS_WORK_REGISTRY_INVALID"
 
 
@@ -832,16 +834,16 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     )
     tasks_ref = publisher._evidence(
         "active-feature-tasks",
-        "specs/077-browser-program-status/tasks.md",
+        "specs/078-process-definition-view/tasks.md",
         publisher._git_blob(
             REPOSITORY,
             subject["commit"],
-            "specs/077-browser-program-status/tasks.md",
+            "specs/078-process-definition-view/tasks.md",
         ),
     )
 
     integration, development = publisher._project_delivery_lanes(
-        subject, state_ref, tasks_ref, 45, 48
+        subject, state_ref, tasks_ref, 0, 19
     )
 
     assert integration["kind"] == "integration"
@@ -859,18 +861,18 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     assert integration["next_action"]["authority_state"] == "not_required"
 
     assert development["kind"] == "continued_development"
-    assert development["branch"] == "unavailable"
+    assert development["branch"] == "codex/078-process-definition-view-current-dev"
     assert development["base_commit"] == subject["state"]["baseline"]["commit"]
-    assert development["milestone"] == "Browser program-status dashboard"
-    assert development["authority_state"] == "not_authorized"
-    assert (
-        development["blocker"] == subject["state"]["next_eligible_actions"][0]["reason"]
+    assert development["milestone"] == (
+        "Canonical process definition and read-only engineer view"
     )
-    assert development["next_action"]["requires_human_approval"] is True
-    assert development["next_action"]["authority_state"] == "not_authorized"
+    assert development["authority_state"] == "authorized"
+    assert development["blocker"] is None
+    assert development["next_action"]["requires_human_approval"] is False
+    assert development["next_action"]["authority_state"] == "authorized"
     assert state_ref in development["evidence"]
     assert tasks_ref in development["evidence"]
     assert development["latest_capability"] == (
         "Unavailable: no committed customer acceptance evidence demonstrates "
-        "a customer-visible EPP-F01B capability yet."
+        "a customer-visible EPP-F02 capability yet."
     )

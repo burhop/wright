@@ -836,6 +836,7 @@ def _load_closed_catalog_sources(
         PROGRAM_ROOT,
         "specs/076-control-plane-validator/contracts",
         "specs/077-browser-program-status/contracts",
+        "specs/078-process-definition-view/contracts",
     )
     assert isinstance(listed_raw, str)
     repository_paths = tuple(path for path in listed_raw.splitlines() if path)
@@ -2065,7 +2066,7 @@ def _project_delivery_lanes(
         "milestone": str(current_item["title"]),
         "latest_capability": (
             "Unavailable: no committed customer acceptance evidence demonstrates "
-            "a customer-visible EPP-F01B capability yet."
+            f"a customer-visible {current_feature} capability yet."
         ),
         "blocker": blocker,
         "next_action": _action(
@@ -2089,7 +2090,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     blobs = subject["blobs"]
     state = subject["state"]
     lifecycle = subject["lifecycle"]
-    feature_id = str(state.get("current_feature") or "EPP-F01B")
+    feature_id = str(state.get("current_feature") or "EPP-F02")
     state_ref = _evidence("program-state", STATE_PATH, blobs[STATE_PATH])
     dashboard_ref = _evidence("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH])
     (
@@ -2288,7 +2289,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             for item in subject["work_registry"].get("task_sources", [])
             if isinstance(item, Mapping) and item.get("feature_id") == feature_id
         ),
-        "specs/077-browser-program-status/tasks.md",
+        "specs/078-process-definition-view/tasks.md",
     )
     history_by_id["feature_tasks"] = _observations_for_path(
         repository,

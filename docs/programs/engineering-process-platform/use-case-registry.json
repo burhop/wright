@@ -1,5 +1,18 @@
 {
   "schema_version": "1.0.0",
   "program_id": "engineering-process-platform",
-  "use_cases": []
+  "use_cases": [
+    {
+      "id": "EPP-UC-001",
+      "title": "Understand a versioned process definition",
+      "customer_outcome": "An engineer can inspect one exact process definition in complete text and a matching read-only diagram without implying that the process ran or produced artifacts.",
+      "process_100_id": null,
+      "definition_evidence": [],
+      "progress_evidence": [],
+      "acceptance_evidence": [],
+      "test_evidence": [],
+      "independent_verification_evidence": [],
+      "benchmark_qualification_evidence": []
+    }
+  ]
 }

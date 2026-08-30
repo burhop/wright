@@ -160,6 +160,68 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
     ]
 
 
+def test_epp_f02_source_admission_is_exact_and_parity_bound(
+    repository_root: Path,
+) -> None:
+    planning = repository_root / "specs/077-browser-program-status/contracts"
+    packaged = repository_root / "src/wright_engineering/static/program-status"
+    program = repository_root / "docs/programs/engineering-process-platform"
+
+    planning_bundle = load(planning / "program-status-bundle.schema.json")
+    packaged_bundle = load(packaged / "program-status-bundle.schema.json")
+    assert planning_bundle == packaged_bundle
+    bundle_pattern = planning_bundle["$defs"]["relativePath"]["pattern"]
+    assert re.fullmatch(bundle_pattern, "specs/078-process-definition-view/tasks.md")
+    assert re.fullmatch(bundle_pattern, "specs/079-process-definition-view/tasks.md") is None
+
+    use_case_schemas = [
+        load(planning / "use-case-registry.schema.json"),
+        load(packaged / "use-case-registry.schema.json"),
+        load(program / "schemas/use-case-registry.schema.json"),
+    ]
+    assert use_case_schemas[0] == use_case_schemas[1] == use_case_schemas[2]
+    use_case_pattern = use_case_schemas[0]["$defs"]["relativePath"]["pattern"]
+    assert re.fullmatch(use_case_pattern, "specs/078-process-definition-view/tasks.md")
+    assert re.fullmatch(use_case_pattern, "specs/078-process-definition-viewish/tasks.md") is None
+
+    planning_catalog = load(planning / "program-status-source-catalog.json")
+    packaged_catalog = load(packaged / "program-status-source-catalog.json")
+    assert planning_catalog == packaged_catalog
+    assert len(planning_catalog["sources"]) == 20
+    feature_tasks = planning_catalog["sources"]["feature_tasks"]
+    assert feature_tasks["path"] == "specs/078-process-definition-view/tasks.md"
+    assert "EPP-F02" in feature_tasks["selection_rule"]
+    assert "EPP-F01B task graph" not in feature_tasks["selection_rule"]
+
+    work_registry = load(program / "work-registry.json")
+    active = [
+        row for row in work_registry["task_sources"] if row["active_feature"] is True
+    ]
+    assert active == [
+        {
+            "feature_id": "EPP-F02",
+            "tasks_path": "specs/078-process-definition-view/tasks.md",
+            "roadmap_item_id": "EPP-F02",
+            "active_feature": True,
+        }
+    ]
+
+    use_case_registry = load(program / "use-case-registry.json")
+    assert len(use_case_registry["use_cases"]) == 1
+    use_case = use_case_registry["use_cases"][0]
+    assert use_case["id"] == "EPP-UC-001"
+    assert use_case["process_100_id"] is None
+    for stage in (
+        "definition_evidence",
+        "progress_evidence",
+        "acceptance_evidence",
+        "test_evidence",
+        "independent_verification_evidence",
+        "benchmark_qualification_evidence",
+    ):
+        assert use_case[stage] == []
+
+
 def test_epp_f01b_registry_documents_use_only_their_frozen_schemas(
     repository_root: Path,
 ) -> None:
