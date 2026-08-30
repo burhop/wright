@@ -374,6 +374,12 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
+      "action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE",
+      "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "BLOCKED",
       "action": "APPROVE_EPP_F01_NEXT_BOUNDED_LEASE",
       "requires_human_approval": true
     },
@@ -421,8 +427,14 @@
     },
     {
       "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "DEV_INTEGRATED",
+      "action": "VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
       "feature_state": "DEV_DEPLOYMENT_VERIFIED",
-      "action": "SELECT_EPP_F01B_PLANNING",
+      "action": "SELECT_NEXT_FEATURE_PLANNING",
       "requires_human_approval": false
     },
     {

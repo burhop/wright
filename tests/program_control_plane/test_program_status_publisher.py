@@ -474,8 +474,8 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
                 "task_id": task_id,
                 "task_title": task["title"],
                 "task_state": "in_progress",
-                "branch": subject["state"]["active_mutating_lease"]["branch"],
-                "worktree_id": subject["state"]["active_mutating_lease"]["worktree_id"],
+                "branch": "test-assignment-branch",
+                "worktree_id": "test-assignment-worktree",
                 "lane": "continued_development",
                 "why_this_matters": "Closes false status claims before customer review.",
                 "observed_at": subject["generated_at"],
@@ -488,7 +488,13 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
             }
         ],
     }
-
+    subject["state"] = {
+        **subject["state"],
+        "active_mutating_lease": {
+            "branch": "test-assignment-branch",
+            "worktree_id": "test-assignment-worktree",
+        },
+    }
     result = publisher._registered_task_counts(REPOSITORY, subject, "EPP-F01B")
 
     registered, program_done, program_total, feature_done, feature_total = result[:5]
@@ -852,12 +858,16 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     assert integration["latest_capability"].startswith("Verified integration evidence:")
     assert integration["next_action"]["authority_state"] == "not_required"
 
-    lease = subject["state"]["active_mutating_lease"]
     assert development["kind"] == "continued_development"
-    assert development["branch"] == lease["branch"]
-    assert development["base_commit"] == lease["dev_baseline"]["commit"]
+    assert development["branch"] == "unavailable"
+    assert development["base_commit"] == subject["state"]["baseline"]["commit"]
     assert development["milestone"] == "Browser program-status dashboard"
-    assert development["authority_state"] == "authorized"
+    assert development["authority_state"] == "not_authorized"
+    assert (
+        development["blocker"] == subject["state"]["next_eligible_actions"][0]["reason"]
+    )
+    assert development["next_action"]["requires_human_approval"] is True
+    assert development["next_action"]["authority_state"] == "not_authorized"
     assert state_ref in development["evidence"]
     assert tasks_ref in development["evidence"]
     assert development["latest_capability"] == (
