@@ -17,6 +17,7 @@ import SettingsPage from "./components/pages/SettingsPage";
 import ModelSetupPage from "./components/pages/ModelSetupPage";
 import EngineeringModelLibraryPage from "./components/pages/EngineeringModelLibraryPage";
 import ProgramStatusPage from "./components/pages/ProgramStatusPage";
+import ProcessDefinitionPage from "./components/pages/ProcessDefinitionPage";
 import { AuthGate } from "./components/common/AuthGate";
 
 import { ToolsProvider } from "./store/tools";
@@ -24,7 +25,10 @@ import { ChatProvider } from "./store/sessions";
 import { ViewerPanelProvider } from "./store/viewer";
 import { SurfaceStateProvider } from "./store/surfaces";
 import { hostAdapter } from "./services/host-adapter";
-import { workspaceSurfacesEnabled } from "./services/surfaces/feature-flags";
+import {
+  processDefinitionViewEnabled,
+  workspaceSurfacesEnabled,
+} from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 
 function App() {
@@ -45,6 +49,7 @@ function App() {
 
   const Router =
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
+  const processDefinitionEnabled = processDefinitionViewEnabled();
 
   const content = (
     <ViewerPanelProvider>
@@ -66,6 +71,12 @@ function App() {
                 element={<EngineeringModelLibraryPage />}
               />
               <Route path="/program-status" element={<ProgramStatusPage />} />
+              {processDefinitionEnabled && (
+                <Route
+                  path="/processes/product-definition-v1"
+                  element={<ProcessDefinitionPage />}
+                />
+              )}
               <Route path="/settings" element={<SettingsPage />} />
               {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
               <Route path="/agent-chat" element={<Navigate to="/" replace />} />

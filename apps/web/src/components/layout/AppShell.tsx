@@ -31,19 +31,14 @@ export function AppShell({ children }: AppShellProps) {
     >
       <Header />
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div
+        className={`app-shell__body${
+          isWorkspaceView ? " app-shell__body--workspace" : ""
+        }`}
+      >
         {!isWorkspaceView && <Sidebar />}
 
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: isWorkspaceView ? "0" : "var(--space-xl)",
-            backgroundColor: "var(--color-neutral)",
-          }}
-        >
-          {children}
-        </main>
+        <main className="app-shell__main">{children}</main>
       </div>
     </div>
   );

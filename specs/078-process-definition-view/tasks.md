@@ -28,12 +28,12 @@
 
 - [X] T005 [P] [US1] Add authenticated success, unauthorized-role 403/no-leak, ETag/304, exact-envelope, safe logical-source, and trace-header API tests in `apps/api/tests/test_process_definition_api.py`
 - [X] T006 [US1] Implement schemas, declarative route, composition wiring, and router registration in `apps/api/src/api/schemas/process_definition.py`, `apps/api/src/api/routers/process_definition.py`, `apps/api/src/api/composition.py`, and `apps/api/src/api/main.py`
-- [ ] T007 [P] [US1] Add closed-client parsing, identity, and response-state tests in `apps/web/src/__tests__/ProcessDefinitionService.test.ts`
-- [ ] T008 [US1] Implement the read-only client contract in `apps/web/src/services/process-definition.ts`
-- [ ] T009 [P] [US1] Add text completeness, text/diagram ID equivalence, empty-category, keyboard, Axe, non-color, 200%-zoom, 320-pixel viewport, reduced-motion, and bounded response/render sampling in `apps/web/src/__tests__/ProcessDefinitionPage.test.tsx`; diagnostic performance evidence uses one warm-up plus 20 serial observations on an otherwise idle declared host, records every observation, and computes nearest-rank p95 without concurrent suites, while only deterministic correctness and functional timeouts gate delivery
-- [ ] T010 [US1] Implement semantic text, derived diagram, loading, and source-identity components in `apps/web/src/components/process-definition/` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
-- [ ] T011 [US1] Add the default-off build-time `VITE_WRIGHT_PROCESS_DEFINITION_VIEW` removable feature boundary following the existing web feature-flag service pattern, stable route, navigation entry, and deletion fallback without altering existing routes in `apps/web/src/services/surfaces/feature-flags.ts`, `apps/web/src/App.tsx`, and `apps/web/src/components/layout/Sidebar.tsx`
-- [ ] T012 [US1] Add the mocked customer happy-path and explicit keyboard/Axe/200%-zoom/320-pixel/reduced-motion accessibility journey in `tests/ui-integration/process-definition.spec.ts`
+- [X] T007 [P] [US1] Add closed-client parsing, identity, and response-state tests in `apps/web/src/__tests__/ProcessDefinitionService.test.ts`
+- [X] T008 [US1] Implement the read-only client contract in `apps/web/src/services/process-definition.ts`
+- [X] T009 [P] [US1] Add text completeness, text/diagram ID equivalence, empty-category, keyboard, Axe, non-color, 200%-zoom, 320-pixel viewport, reduced-motion, and bounded response/render sampling in `apps/web/src/__tests__/ProcessDefinitionPage.test.tsx`; diagnostic performance evidence uses one warm-up plus 20 serial observations on an otherwise idle declared host, records every observation, and computes nearest-rank p95 without concurrent suites, while only deterministic correctness and functional timeouts gate delivery
+- [X] T010 [US1] Implement semantic text, derived diagram, loading, and source-identity components in `apps/web/src/components/process-definition/` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
+- [X] T011 [US1] Add the default-off build-time `VITE_WRIGHT_PROCESS_DEFINITION_VIEW` removable feature boundary following the existing web feature-flag service pattern, stable route, navigation entry, and deletion fallback without altering existing routes in `apps/web/src/services/surfaces/feature-flags.ts`, `apps/web/src/App.tsx`, and `apps/web/src/components/layout/Sidebar.tsx`
+- [X] T012 [US1] Add the mocked customer happy-path and explicit keyboard/Axe/200%-zoom/320-pixel/reduced-motion accessibility journey in `tests/ui-integration/process-definition.spec.ts`
 
 **Checkpoint**: US1 is independently shippable and explains one exact process without execution.
 
