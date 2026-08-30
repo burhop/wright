@@ -2041,31 +2041,46 @@ def _project_delivery_lanes(
         "events": events,
     }
 
-    if not isinstance(lease, Mapping):
-        raise ProgramStatusPublishError(
-            "PROGRAM_STATUS_LANE_SOURCE_INVALID",
-            "The continued-development lane needs the exact active lease.",
-            "repair_delivery_lane_sources",
+    next_action_record = (state.get("next_eligible_actions") or [{}])[0]
+    action_id = str(next_action_record.get("action", "NO_ELIGIBLE_ACTION"))
+    action_reason = str(
+        next_action_record.get(
+            "reason", "No committed next-action reason is available."
         )
+    )
+    requires_approval = bool(next_action_record.get("requires_human_approval", False))
+    if isinstance(lease, Mapping):
+        branch = str(lease["branch"])
+        base_commit = str(lease["dev_baseline"]["commit"])
+        authority_state = "authorized"
+        blocker = None
+    else:
+        branch = "unavailable"
+        base_commit = str(state["baseline"]["commit"])
+        authority_state = "not_authorized" if requires_approval else "unavailable"
+        blocker = action_reason
     development = {
         "kind": "continued_development",
-        "branch": str(lease["branch"]),
+        "branch": branch,
         "milestone": str(current_item["title"]),
         "latest_capability": (
             "Unavailable: no committed customer acceptance evidence demonstrates "
             "a customer-visible EPP-F01B capability yet."
         ),
-        "blocker": None,
+        "blocker": blocker,
         "next_action": _action(
-            str((state.get("next_eligible_actions") or [{}])[0].get("action")),
-            str((state.get("next_eligible_actions") or [{}])[0].get("reason")),
+            action_id,
+            action_reason,
             "lane_next_action",
             [state_ref],
+            eligible=isinstance(lease, Mapping) and not requires_approval,
+            blocker=action_reason,
+            requires_human_approval=requires_approval,
         ),
         "observed_at": str(subject["generated_at"]),
         "evidence": [state_ref, roadmap_ref, feature_tasks_ref],
-        "base_commit": str(lease["dev_baseline"]["commit"]),
-        "authority_state": "authorized",
+        "base_commit": base_commit,
+        "authority_state": authority_state,
     }
     return integration, development
 

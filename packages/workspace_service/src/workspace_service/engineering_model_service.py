@@ -1342,6 +1342,10 @@ class EngineeringModelService:
             platform=platform_name,
             architecture=architecture,
             execution_provider="cpu",
+            startup_timeout=min(
+                30.0,
+                max(2.0, variant.resources.load_timeout_ms / 1000),
+            ),
             maximum_artifact_bytes=max(
                 variant.resources.installed_bytes,
                 sum(item.size for item in variant.artifacts),

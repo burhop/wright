@@ -1,0 +1,147 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0077",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "BLOCKED",
+  "prior_revision": 77,
+  "new_revision": 78,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "e5391c79d72caac1f039665d960f0f0ec650f27ea24bb29c4bed87bf6d7adf36",
+  "new_state_digest": "e34e8637b1df8a1692f13f126398c206000cf300a1f8adca45435fa0cbe71030",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Record the exact PR #115 merge without claiming durable dev-integration approval or green deployment, release the completed implementation lease, and block at one explicit human integration-evidence gate.",
+  "started_at": "2026-08-30T16:47:16Z",
+  "finished_at": "2026-08-30T17:05:00Z",
+  "duration_ms": 1064000,
+  "classification": "blocked",
+  "git": {
+    "source_commit": "9f961d52683e0e999fe29a7fed4c1e016de29620",
+    "source_tree": "3e7c5d929d321052f9a34f629f1f023b8a88c805",
+    "source_program_tree": "a6d5849a0d61cb96528f10956fba3342c0096e3e",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0078.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0077.json",
+      "docs/programs/engineering-process-platform/lifecycle-policy.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "scripts/program_control/validation.py",
+      "tests/program_control_plane/test_roadmap_approval_and_lease.py",
+      "tests/program_control_plane/test_transition_chain.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0077.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0077.json",
+      "sha256": "1e88cfb8d667982e0443ff50a102801d72ad76541cad904bf2f02614272860ea",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0078.json",
+      "sha256": "95580d9f83f58877b6aeb89d5623745809dc4e143f66fad076dee7e97dce2186",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "95580d9f83f58877b6aeb89d5623745809dc4e143f66fad076dee7e97dce2186",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "d3bd8fe56b4d95865e65df36b3a103ed60638b26e1a518595548ab114fd4c6c2",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    },
+    {
+      "path": "lifecycle-policy.json",
+      "sha256": "6c1a8eeca1504c9d185183360cc04a4df0992b0d78caac0848934463d4b88fe7",
+      "schema_version": "1.0",
+      "role": "immutable_policy"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-DEV-SUBJECT-RECONCILIATION",
+      "method": "Require PR #115 to be merged at dev commit 9f961d52, require its tree to equal the frozen candidate tree 3e7c5d92, and release the implementation lease without claiming development deployment verification.",
+      "environment": "GitHub PR #115 terminal results plus exact local Git subjects; Windows integration lane",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "https://github.com/burhop/wright/pull/115",
+        "merged_dev:9f961d52683e0e999fe29a7fed4c1e016de29620",
+        "merged_tree:3e7c5d929d321052f9a34f629f1f023b8a88c805"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-INTEGRATION-CLOSURE-NON-INTERFERENCE",
+      "method": "Require product, benchmark, commercial, and program-health statuses to remain unchanged; benchmark qualification remains 0/100 and release eligibility remains false.",
+      "environment": "Canonical revision 77 versus revision 78 comparison",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0077.json",
+        "evidence/states/program-state-revision-0078.json"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+      "git_tree": "3a584940dfca227088c02b01aa74981baa847c06",
+      "program_tree": "8841bc1e0116fc2dd8950dd3e974f904d09d8edc",
+      "artifact_count": 17,
+      "manifest_transition": "TR-0072"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Bounded independent verification must pass before this transition is committed or pushed.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-DEV-CHECKOUT-LEASE-IDENTITY-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Durable dev-integration approval evidence is not bound to this transition.",
+    "Post-merge python-quality and test-windows are red on the branch/worktree lease-identity defect; development deployment is not verified."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0077.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE"
+}
