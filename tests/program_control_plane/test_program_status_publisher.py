@@ -102,12 +102,15 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         for observation in histories["feature_tasks"]["observations"]
     ]
     assert observed_times == sorted(observed_times)
+    feature_observations = histories["feature_tasks"]["observations"]
     assert histories["feature_tasks"]["latest_change"] == {
-        "commit": histories["feature_tasks"]["observations"][-1]["commit"],
-        "observed_at": histories["feature_tasks"]["observations"][-1]["observed_at"],
-        "from_value": histories["feature_tasks"]["observations"][-2]["value"],
-        "to_value": histories["feature_tasks"]["observations"][-1]["value"],
-        "reason": histories["feature_tasks"]["observations"][-1]["change_reason"],
+        "commit": feature_observations[-1]["commit"],
+        "observed_at": feature_observations[-1]["observed_at"],
+        "from_value": feature_observations[-2]["value"]
+        if len(feature_observations) > 1
+        else None,
+        "to_value": feature_observations[-1]["value"],
+        "reason": feature_observations[-1]["change_reason"],
     }
     evidence_index = bundle["supplement"]["evidence_index"]
     development_lane = bundle["supplement"]["work"]["lanes"][1]
