@@ -86,20 +86,63 @@ def test_live_harness_refuses_any_non_disposable_volume_name() -> None:
             _require_disposable_volume_name(unsafe)
 
 
+def _docker_daemon_available(docker: str) -> bool:
+    try:
+        daemon = subprocess.run(
+            [docker, "version", "--format", "{{.Server.Version}}"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+    except subprocess.TimeoutExpired:
+        return False
+    return daemon.returncode == 0
+
+
+def test_nonresponsive_docker_daemon_is_unavailable_host_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def time_out(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        raise subprocess.TimeoutExpired(cmd=args[0], timeout=kwargs["timeout"])
+
+    monkeypatch.setattr(subprocess, "run", time_out)
+
+    assert not _docker_daemon_available("docker")
+
+
+def test_responsive_docker_daemon_remains_available_host_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: list[tuple[object, dict[str, object]]] = []
+
+    def succeed(command: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        observed.append((command, kwargs))
+        return subprocess.CompletedProcess(command, 0, stdout="28.3.3\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", succeed)
+
+    assert _docker_daemon_available("docker")
+    assert observed == [
+        (
+            ["docker", "version", "--format", "{{.Server.Version}}"],
+            {
+                "capture_output": True,
+                "text": True,
+                "check": False,
+                "timeout": 10,
+            },
+        )
+    ]
+
+
 def test_available_local_wright_image_preserves_data_across_container_replacement() -> (
     None
 ):
     docker = shutil.which("docker")
     if docker is None:
         pytest.skip("Docker CLI unavailable; no supporting host evidence")
-    daemon = subprocess.run(
-        [docker, "version", "--format", "{{.Server.Version}}"],
-        capture_output=True,
-        text=True,
-        check=False,
-        timeout=10,
-    )
-    if daemon.returncode:
+    if not _docker_daemon_available(docker):
         pytest.skip("Docker daemon unavailable; no supporting host evidence")
     image = os.environ.get(
         "WRIGHT_DOCKER_PERSISTENCE_IMAGE", "wright:standard-linux-amd64"
