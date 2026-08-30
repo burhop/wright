@@ -101,6 +101,16 @@ def test_program_control_changes_route_through_focused_quality_gates() -> None:
     assert "mypy scripts/release scripts/program_control" in linux
 
 
+def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+
+    assert 'if [[ "$python_suite" == "tests" ]]; then' in gate
+    assert 'if [[ "$selected_suite" == tests/* ]]; then' in gate
+    assert 'python_suite_args+=("--ignore=$selected_suite")' in gate
+    assert 'python -m pytest -q "$python_suite" "${python_suite_args[@]}"' in gate
+    assert "--import-mode=importlib" not in gate
+
+
 def test_browser_gate_uses_isolated_configurable_ports() -> None:
     push_gate = _read("scripts/check-dev-push.sh")
     merge_gate = _read("scripts/check-dev-merge.sh")

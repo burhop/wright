@@ -33,6 +33,10 @@ The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Gate or workflow changes run all slices.
+When the broad `tests` target and a nested `tests/...` target are both selected,
+the fast gate excludes the nested target from the broad invocation and runs it
+separately. This preserves suite-local pytest imports while preventing duplicate
+collection of same-named test modules.
 Container and engineering-image changes also select the Docker bundle, smoke
 contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every

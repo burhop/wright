@@ -114,3 +114,11 @@ The approved append-only lease-checkpoint correction is committed at `7aa9816be4
 | Architecture/test review | Independent reviewer `architecture-auditor`, exact `d3119acc` | PASS, no new P0/P1; checkpoint/evidence binding, append-only correction closure, frozen scope, and packaged/source parity accepted. Transition chain `65 passed`, runtime relationship `1 passed`, browser relationship `14 passed`. The pre-existing nullable-denominator P2 remains unchanged and non-blocking. |
 
 Windows local and Linux GB10 evidence are green. macOS atomic replacement/native lifecycle remains CI-only and is not represented as locally executed. T046 and T047 are complete. T048 remains deliberately open: no dev push gate, push, PR, merge, benchmark, publication, release, or other external delivery action ran.
+
+## T048 dev push-gate checkpoint — 2026-08-29
+
+The authorized pytest collection-isolation correction keeps each selected suite's default import behavior and, when the broad `tests` target is also selected, excludes every nested `tests/...` target that the gate already runs separately. This prevents duplicate `test_cli.py` collection without breaking suite-local helper imports. The focused gate-policy regression passed `10/10`, Bash syntax passed, and `git diff --check` passed.
+
+The corrected `scripts/check-dev-push.sh` then completed UV synchronization, Ruff, formatting (`586` files), strict release MyPy (`32` source files), API tests (`382 passed, 1 skipped`), and tool-registry tests (`361 passed`). The broad test invocation collected cleanly and completed with `546 passed, 47 skipped, 1 failed`; the sole failure was the pre-existing host-dependent Docker persistence test because the installed Docker CLI's daemon query did not return within its explicit 10-second deadline. No EPP-F01B, collection-isolation, package, API, or browser failure occurred.
+
+T048 remains open because the authoritative gate is red. The Docker host limitation is outside the collection-only correction authority and was not changed, skipped, or documented as a pass. No push, PR, merge, benchmark, publication, release, or other external delivery action occurred.

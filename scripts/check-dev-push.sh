@@ -206,8 +206,16 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
 
   mapfile -t PYTHON_TEST_TARGETS < <(printf '%s\n' "${PYTHON_TEST_TARGETS[@]}" | sed '/^$/d' | sort -u)
   for python_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+    python_suite_args=()
+    if [[ "$python_suite" == "tests" ]]; then
+      for selected_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+        if [[ "$selected_suite" == tests/* ]]; then
+          python_suite_args+=("--ignore=$selected_suite")
+        fi
+      done
+    fi
     run uv run --extra runtime --extra engineering-models \
-      python -m pytest -q "$python_suite"
+      python -m pytest -q "$python_suite" "${python_suite_args[@]}"
   done
 fi
 
