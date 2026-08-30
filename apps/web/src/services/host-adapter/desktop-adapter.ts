@@ -14,7 +14,11 @@ import type {
 function requestHeaders(
   headers: HeadersInit | undefined,
 ): Record<string, string> {
-  return Object.fromEntries(new Headers(headers).entries());
+  const normalized: Record<string, string> = {};
+  new Headers(headers).forEach((value, key) => {
+    normalized[key] = value;
+  });
+  return normalized;
 }
 
 function isMetadataResponse(value: unknown): value is WrightApiResponse {
