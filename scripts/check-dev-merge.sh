@@ -177,8 +177,15 @@ for python_suite in \
   packages/tool_registry/tests \
   packages/workspace_service/tests \
   tests; do
+  python_suite_args=()
+  if [[ "$python_suite" == "tests" ]]; then
+    python_suite_args+=(
+      --ignore=tests/program_control_plane
+      --ignore=tests/native_runtime
+    )
+  fi
   run uv run --extra runtime --extra engineering-models \
-    python -m pytest "$python_suite"
+    python -m pytest "$python_suite" "${python_suite_args[@]}"
 done
 run uv run --isolated --reinstall-package hermes-plugin-wright \
   --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML \

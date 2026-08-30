@@ -68,12 +68,13 @@ uv run --extra runtime python -m pytest -q tests/program_control_plane
 
 The corresponding Ruff and format checks cover the entrypoint, package, and focused tests. No gate copies validator semantics; all invoke the same committed implementation and tests.
 
-The Linux quality job and Windows backend job fetch full Git history because the
-program-control tests verify immutable historical objects. After their focused
-program-control and native-runtime runs, their broad `tests` pass excludes those
-two already-executed roots. The workflow-policy test selected by the fast gate
-enforces both requirements so CI does not silently fall back to shallow history
-or duplicate pytest collection. Pull-request runners attach GitHub's synthetic
+The full merge gate, Linux quality job, and Windows backend job fetch or retain
+full Git history because the program-control tests verify immutable historical
+objects. After their focused program-control and native-runtime runs, their broad
+`tests` pass excludes those two already-executed roots. The gate-policy regression
+and workflow-policy test selected by the fast gate enforce these requirements so
+local and CI validation do not silently fall back to duplicate pytest collection
+or shallow history. Pull-request runners attach GitHub's synthetic
 merge commit to the governed feature branch name locally before validation. This
 preserves merge-result coverage while giving branch/worktree-bound leases an
 honest checkout identity; it does not update the remote feature branch. Windows

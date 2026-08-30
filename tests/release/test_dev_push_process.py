@@ -135,6 +135,19 @@ def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection(
     assert "--import-mode=importlib" not in gate
 
 
+def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
+    gate = _read("scripts/check-dev-merge.sh")
+
+    assert 'if [[ "$python_suite" == "tests" ]]; then' in gate
+    assert "--ignore=tests/program_control_plane" in gate
+    assert "--ignore=tests/native_runtime" in gate
+    assert 'python -m pytest "$python_suite" "${python_suite_args[@]}"' in gate
+    assert gate.index("python -m pytest -q tests/program_control_plane") < gate.index(
+        "--ignore=tests/program_control_plane"
+    )
+    assert "--import-mode=importlib" not in gate
+
+
 def test_browser_gate_uses_isolated_configurable_ports() -> None:
     push_gate = _read("scripts/check-dev-push.sh")
     merge_gate = _read("scripts/check-dev-merge.sh")
