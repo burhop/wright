@@ -47,8 +47,7 @@ test.describe("workspace surface keyboard and accessibility", () => {
     await page.keyboard.press("PageUp");
     await expect(separator).toHaveAttribute("aria-valuenow", /\d+/);
 
-    await page.getByTestId("composer-input").focus();
-    await page.keyboard.press("F6");
+    await page.getByTestId("composer-input").press("F6");
     await expect(tab).toBeFocused();
 
     await page.getByTestId("surface-open-panel").click();

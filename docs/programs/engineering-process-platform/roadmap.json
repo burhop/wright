@@ -25,8 +25,8 @@
       "kind": "program_control",
       "priority": 10,
       "title": "Control-plane validator and governed dashboard snapshot",
-      "outcome": "Maintainers and agents can validate schemas, digests, transitions, approvals, roadmap acyclicity and WIP; dispose only the five independently closed historical correction profiles, including V8's exact three T072 checkpoint claims and V9's exact two preflight claims, without rewriting history or changing readiness/authority; bind gate evidence to the final catalog; and generate a machine-readable snapshot with four non-substitutable readiness areas from committed evidence without hand-setting green status.",
-      "status": "active",
+      "outcome": "Integrated through PR #114 as dev commit b776b118 with the exact independently verified tree. Maintainers and agents can validate the program control plane and generate its governed four-area dashboard snapshot without hand-setting status.",
+      "status": "complete",
       "depends_on": [
         "EPP-P00"
       ],
@@ -46,7 +46,7 @@
       "priority": 15,
       "title": "Browser program-status dashboard",
       "outcome": "A maintainer can open an accessible read-only browser page that renders the validated committed dashboard snapshot, four independent readiness areas, 0-to-100 benchmark qualification progress, active feature and task/checkpoint progress, blockers, next action, evidence links and freshness without becoming a second authority.",
-      "status": "proposed",
+      "status": "active",
       "depends_on": [
         "EPP-F01"
       ],

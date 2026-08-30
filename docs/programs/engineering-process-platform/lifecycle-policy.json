@@ -418,12 +418,63 @@
       "feature_state": null,
       "action": "APPROVE_EXACT_RELEASE_SUBJECT",
       "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "DEV_DEPLOYMENT_VERIFIED",
+      "action": "SELECT_EPP_F01B_PLANNING",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "SELECTING_FEATURE",
+      "feature_state": "DEV_DEPLOYMENT_VERIFIED",
+      "action": "ACTIVATE_REVIEWED_CHILD_FEATURE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_APPROVAL_PENDING",
+      "action": "APPROVE_CURRENT_FEATURE_IMPLEMENTATION_SUBJECT",
+      "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_AUTHORIZED",
+      "action": "START_CURRENT_FEATURE_IMPLEMENTATION",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTING",
+      "action": "EXECUTE_CURRENT_FEATURE_TASKS",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "AUTHOR_VERIFIED",
+      "action": "FREEZE_CURRENT_FEATURE_CANDIDATE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "CANDIDATE_FROZEN",
+      "action": "VERIFY_CURRENT_FEATURE_CANDIDATE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "INDEPENDENTLY_VERIFIED",
+      "action": "REQUEST_CURRENT_FEATURE_PUSH_AUTHORIZATION",
+      "requires_human_approval": true
     }
   ],
   "wip_limits": {
     "mutating_leases": 1,
     "implementing_or_repairing_features": 1,
-    "read_only_auditors": 3
+    "read_only_auditors": 3,
+    "wip_max": 1,
+    "repair_max": 2,
+    "push_max": 2
   },
   "path_roles": [
     {

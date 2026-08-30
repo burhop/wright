@@ -98,23 +98,38 @@ CHANGED_FILES="$({
 CHECK_FRONTEND=0
 CHECK_PYTHON=0
 CHECK_DOCS=0
+CHECK_GITLEAKS=0
 PYTHON_TEST_TARGETS=()
 PLAYWRIGHT_TARGETS=()
+PLAYWRIGHT_ALL_PROJECTS=0
 while IFS= read -r changed_file; do
   [[ -z "$changed_file" ]] && continue
   case "$changed_file" in
     docs/programs/engineering-process-platform/*|specs/076-control-plane-validator/*)
       CHECK_PYTHON=1
       CHECK_DOCS=1
-      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      CHECK_GITLEAKS=1
+      PYTHON_TEST_TARGETS+=(
+        tests/program_control_plane
+        tests/release/test_dev_push_process.py
+        tests/test_security_scanner_setup.py
+      )
       ;;
     scripts/validate-engineering-process-program.py|scripts/program_control/*)
       CHECK_PYTHON=1
-      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      PYTHON_TEST_TARGETS+=(
+        tests/program_control_plane
+        tests/release/test_dev_push_process.py
+        tests/test_security_scanner_setup.py
+      )
       ;;
     tests/program_control_plane/*)
       CHECK_PYTHON=1
-      PYTHON_TEST_TARGETS+=(tests/program_control_plane)
+      PYTHON_TEST_TARGETS+=(
+        tests/program_control_plane
+        tests/release/test_dev_push_process.py
+        tests/test_security_scanner_setup.py
+      )
       ;;
     .github/workflows/docker-image-family.yml|docker/*|scripts/docker-*)
       CHECK_PYTHON=1
@@ -142,10 +157,18 @@ while IFS= read -r changed_file; do
       ;;
     .gitleaks.toml|.pre-commit-config.yaml)
       CHECK_PYTHON=1
+      CHECK_GITLEAKS=1
+      PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
+      ;;
+    scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS=1
       PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
       ;;
     apps/web/*|package.json|package-lock.json)
       CHECK_FRONTEND=1
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/test_docker_smoke_contract.py)
       ;;
     docs/*|specs/*|mkdocs.yml)
       CHECK_DOCS=1
@@ -153,19 +176,25 @@ while IFS= read -r changed_file; do
     scripts/*.md)
       CHECK_DOCS=1
       ;;
+    tests/ui-integration/workspace-surfaces/*.spec.ts)
+      CHECK_FRONTEND=1
+      PLAYWRIGHT_ALL_PROJECTS=1
+      PLAYWRIGHT_TARGETS+=("$changed_file")
+      ;;
     tests/ui-integration/*.spec.ts|tests/ui-integration/*/*.spec.ts)
       CHECK_FRONTEND=1
       PLAYWRIGHT_TARGETS+=("$changed_file")
       ;;
     apps/api/*)
       CHECK_PYTHON=1
-      PYTHON_TEST_TARGETS+=(apps/api/tests)
+      PYTHON_TEST_TARGETS+=(apps/api/tests tests/test_docker_smoke_contract.py)
       ;;
     packages/*/*)
       CHECK_PYTHON=1
       IFS=/ read -r package_parent package_name _ <<<"$changed_file"
       package_root="$package_parent/$package_name"
       [[ -d "$package_root/tests" ]] && PYTHON_TEST_TARGETS+=("$package_root/tests")
+      PYTHON_TEST_TARGETS+=(tests/test_docker_smoke_contract.py)
       ;;
     scripts/release/*)
       CHECK_PYTHON=1
@@ -198,6 +227,17 @@ if [[ "${#PLAYWRIGHT_TARGETS[@]}" -gt 0 ]]; then
   printf 'Selected Playwright target: %s\n' "${PLAYWRIGHT_TARGETS[@]}"
 fi
 
+if [[ "$CHECK_GITLEAKS" == "1" ]]; then
+  if command -v docker >/dev/null 2>&1 &&
+    command -v timeout >/dev/null 2>&1 &&
+    timeout 10 docker info >/dev/null 2>&1; then
+    run bash scripts/test-gitleaks-program-status-allowlist.sh
+    run bash scripts/security-scan.sh --include-untracked --skip-trufflehog
+  else
+    echo "Gitleaks contract/history scan unavailable: no responsive local Docker host within 10 seconds. GitHub security CI remains authoritative."
+  fi
+fi
+
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
   run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
@@ -205,9 +245,36 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv run --with mypy mypy scripts/release src/wright_engineering --ignore-missing-imports
 
   mapfile -t PYTHON_TEST_TARGETS < <(printf '%s\n' "${PYTHON_TEST_TARGETS[@]}" | sed '/^$/d' | sort -u)
+  for selected_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+    if [[ "$selected_suite" == "tests" ]]; then
+      PYTHON_TEST_TARGETS+=(
+        tests/program_control_plane
+        tests/native_runtime
+      )
+      mapfile -t PYTHON_TEST_TARGETS < <(printf '%s\n' "${PYTHON_TEST_TARGETS[@]}" | sort -u)
+      break
+    fi
+  done
   for python_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+    python_suite_args=()
+    if [[ "$python_suite" == packages/model_registry/tests* ]]; then
+      python_suite_args+=(-m "not performance")
+    fi
+    if [[ "$python_suite" == "tests" ]]; then
+      python_suite_args+=(
+        --ignore=tests/program_control_plane
+        --ignore=tests/native_runtime
+      )
+      for selected_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+        if [[ "$selected_suite" == tests/* &&
+          "$selected_suite" != "tests/program_control_plane" &&
+          "$selected_suite" != "tests/native_runtime" ]]; then
+          python_suite_args+=("--ignore=$selected_suite")
+        fi
+      done
+    fi
     run uv run --extra runtime --extra engineering-models \
-      python -m pytest -q "$python_suite"
+      python -m pytest -q "$python_suite" "${python_suite_args[@]}"
   done
 fi
 
@@ -270,11 +337,15 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     )
   fi
   mapfile -t PLAYWRIGHT_TARGETS < <(printf '%s\n' "${PLAYWRIGHT_TARGETS[@]}" | sort -u)
+  PLAYWRIGHT_PROJECT_ARGS=(--project=chromium)
+  if [[ "$PLAYWRIGHT_ALL_PROJECTS" == "1" ]]; then
+    PLAYWRIGHT_PROJECT_ARGS=()
+  fi
   run env -u PLAYWRIGHT_BASE_URL \
     CI=1 \
     WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
     WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
-    npx playwright test "${PLAYWRIGHT_TARGETS[@]}" --project=chromium
+    npx playwright test "${PLAYWRIGHT_TARGETS[@]}" "${PLAYWRIGHT_PROJECT_ARGS[@]}"
 fi
 
 if [[ "$CHECK_DOCS" == "1" ]]; then

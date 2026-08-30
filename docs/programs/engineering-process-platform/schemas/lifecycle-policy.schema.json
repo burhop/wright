@@ -55,11 +55,14 @@
     "wip_limits": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mutating_leases", "implementing_or_repairing_features", "read_only_auditors"],
+      "required": ["mutating_leases", "implementing_or_repairing_features", "read_only_auditors", "wip_max", "repair_max", "push_max"],
       "properties": {
         "mutating_leases": { "const": 1 },
         "implementing_or_repairing_features": { "const": 1 },
-        "read_only_auditors": { "const": 3 }
+        "read_only_auditors": { "const": 3 },
+        "wip_max": { "const": 1 },
+        "repair_max": { "const": 2 },
+        "push_max": { "const": 2 }
       }
     },
     "path_roles": {

@@ -1,0 +1,135 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0072",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 72,
+  "new_revision": 73,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "fda78e981f5f0e7c68cc18026a8e389567c0c57f68bc4fd6dbbb7519f41296a8",
+  "new_state_digest": "584d4790d620311727b8fb8435a5a26031162c06a6b81d17ba0e5dee747f707d",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer recording direct user approval"
+  },
+  "action": "Bind the independently reviewed operator-first EPP-F01B material amendment and activate its replacement local T001 through T048 implementation lease.",
+  "started_at": "2026-08-29T02:02:46Z",
+  "finished_at": "2026-08-29T02:02:46Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+    "source_tree": "3a584940dfca227088c02b01aa74981baa847c06",
+    "source_program_tree": "8841bc1e0116fc2dd8950dd3e974f904d09d8edc",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01B-IMPL-002.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0073.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0072.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0072.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0072.json", "sha256": "c4e1843f2fcd79015e748ceb49536293709bbebfd8a73efed8e54a6b538f2b4c", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "../../../specs/077-browser-program-status/analysis.md", "sha256": "dcbe8d9280a68315daae02886429191e6468b5b28967613f8f6ee3708d2970ec", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/checklists/program-status.md", "sha256": "5dc6bac8e23a30198a697501b3245ec0cc3ce5c88e5c17b4ccdd92bdefdd5144", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/checklists/requirements.md", "sha256": "a458b59806fa532151034ed3af70433efdc630b62d3727b66718eb58994ffa9f", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-api.md", "sha256": "629e9f11ce136e9a590376dae5efdac8e151798a0841cead1c530f7a78e47f20", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-bundle.schema.json", "sha256": "7aee61e1f571a98053e6ed3a9a52f5715a940fa6a5bfa31d72c4dd5067454c56", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.json", "sha256": "b28cbe9c59f8812ed7cc362180b06d625c61f1cca5b67f84143df2eef1b8f56e", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.schema.json", "sha256": "b73cb7b213a55d8d93145d34822fbd1a6cdb5bc97e6cd07101cad4c6c5e42498", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/test-run-ledger.schema.json", "sha256": "df655912161e191ea369a49881d73f897dc0bf003130eac289e9bf1695f5c6cf", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/use-case-registry.schema.json", "sha256": "6b66128f35313f9b5051f2666c75b2d5e738ddd07298be6cc2967fe2034c591c", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/work-registry.schema.json", "sha256": "f1baee77261b0409a9d4f5193b2bf11b74af2df427d6abdc9af747af3b62e821", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/data-model.md", "sha256": "6467ca0f95f822903038ef397692f57eb55ac882b38efb880d11420a7849a12b", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/plan.md", "sha256": "2f2af709003fbc75d69c26598b05e62b73c24824e78f185e31cffeae806c740a", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/quickstart.md", "sha256": "7f88afc457549a99431ba3c8d2fae16e4b919691ab85ebff1b807341aa793acc", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/research.md", "sha256": "e35b80d5d70878c5df2e79790dc6ec5d9a08c49a9f15e35cb9edf4dbec22bda0", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/spec.md", "sha256": "0d3c117b01c8d614ff1efbeb5e3d64afdf3753c3ad2dddd5f25357c6307919d8", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/tasks.md", "sha256": "824aab93919b203dd59a3fb83b25aa90005b3b5c2529e11c8c6aa6fd04d40392", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../tests/program_control_plane/test_contract_schemas.py", "sha256": "3d6afe7a66703a6681a0b35f0e58cbba67fe056d75b3421d98c5ab578b550754", "schema_version": null, "role": "feature_contract"}
+  ],
+  "outputs": [
+    {"path": "evidence/approvals/APR-EPP-F01B-IMPL-002.json", "sha256": "228fdafeba156d964298a8d2015c8173c3b94d09b66a5c6397bd79f9a4fc1d4d", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/approvals/APR-EPP-F01B-MC-002.json", "sha256": "ae44cbdde4757c9f50006bff053a45522a6a5840dbf55145f715c4ee2e3a4a16", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "evidence/states/program-state-revision-0073.json", "sha256": "f452fbec60f70a495c2824d5310e53c295d929ad4fc505c46e34914ec77bcb1c", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "f452fbec60f70a495c2824d5310e53c295d929ad4fc505c46e34914ec77bcb1c", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-REPLACEMENT-SUBJECT",
+      "method": "Verify exact commit, tree, program tree, all 17 Git-normalized artifact digests, and matching material-change and implementation approvals.",
+      "environment": "Local immutable Git object database and Draft 2020-12 schemas",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["APR-EPP-F01B-MC-002", "APR-EPP-F01B-IMPL-002"]
+    },
+    {
+      "check_id": "EPP-F01B-INDEPENDENT-REVIEWS",
+      "method": "Require the same engineering-usability and architecture/test reviewers to pass exact commit e83a78f8 with no remaining or new P0/P1 finding.",
+      "environment": "Two bounded read-only Codex subagent reviews",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["engineering-usability:PASS:e83a78f8", "architecture-test:PASS:e83a78f8"]
+    },
+    {
+      "check_id": "EPP-F01B-PROGRAM-CONTROL-REGRESSION",
+      "method": "Run focused contract validation and the complete program-control test suite.",
+      "environment": "Local Windows Python environment",
+      "duration_ms": 289100,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["37 focused contract tests passed", "272 full tests passed", "1 expected skip"]
+    }
+  ],
+  "authority": {
+    "required_scopes": ["material_change", "feature_implementation"],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+      "git_tree": "3a584940dfca227088c02b01aa74981baa847c06",
+      "program_tree": "8841bc1e0116fc2dd8950dd3e974f904d09d8edc",
+      "artifact_count": 17,
+      "manifest_transition": "TR-0072"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Engineering-usability PASS and architecture/test PASS for exact e83a78f8; local 37 focused and 272 full tests passed with one expected skip.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-PROGRESS-CONTRACT-001",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized.",
+    "Any change to frozen product contracts, readiness, benchmark policy, or feature scope requires new material authority."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0072.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

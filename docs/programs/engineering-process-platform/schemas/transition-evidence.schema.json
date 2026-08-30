@@ -840,7 +840,10 @@
           ],
           "properties": {
             "authority_kind": {
-              "const": "planning_reanalysis"
+              "enum": [
+                "planning_reanalysis",
+                "feature_planning"
+              ]
             },
             "required_scopes": {
               "oneOf": [
@@ -866,13 +869,22 @@
                   "uniqueItems": true,
                   "items": {
                     "type": "string",
-                    "pattern": "^evidence/approvals/APR-EPP-F01-(MC|IMPL)-[0-9]{3}\\.json$"
+                    "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-(MC|IMPL)-[0-9]{3}\\.json$"
                   }
                 },
                 {
                   "const": [
                     "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
                   ]
+                },
+                {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
+                  }
                 }
               ]
             },
@@ -966,32 +978,55 @@
                 "required": [
                   "authority_kind"
                 ],
-                "properties": {
-                  "approval_records": {
-                    "const": [
-                      "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
-                    ]
-                  },
-                  "subject": {
+                "oneOf": [
+                  {
                     "properties": {
-                      "git_commit": {
-                        "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47"
+                      "authority_kind": {
+                        "const": "planning_reanalysis"
                       },
-                      "git_tree": {
-                        "const": "574cd8919c62086e7b657f14c116ee4c6b2429ea"
+                      "approval_records": {
+                        "const": [
+                          "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                        ]
                       },
-                      "program_tree": {
-                        "const": "138debc23878ec34991af7e824667091c57b14e7"
+                      "subject": {
+                        "properties": {
+                          "git_commit": {
+                            "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47"
+                          },
+                          "git_tree": {
+                            "const": "574cd8919c62086e7b657f14c116ee4c6b2429ea"
+                          },
+                          "program_tree": {
+                            "const": "138debc23878ec34991af7e824667091c57b14e7"
+                          },
+                          "artifact_count": {
+                            "const": 2
+                          },
+                          "manifest_transition": {
+                            "const": "TR-0026"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "authority_kind": {
+                        "const": "feature_planning"
                       },
-                      "artifact_count": {
-                        "const": 2
-                      },
-                      "manifest_transition": {
-                        "const": "TR-0026"
+                      "approval_records": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
+                        }
                       }
                     }
                   }
-                }
+                ]
               }
             },
             {

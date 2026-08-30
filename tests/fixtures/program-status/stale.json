@@ -1,0 +1,9 @@
+{
+  "fixture_version": "1.0.0",
+  "scenario": "stale",
+  "expected_result": "passed",
+  "description": "A last-valid bundle is older than its freshness policy.",
+  "base": "base.json",
+  "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+  "operations": [{"op":"replace","target":"/generated_at","value":"2026-08-01T00:00:00Z"}]
+}

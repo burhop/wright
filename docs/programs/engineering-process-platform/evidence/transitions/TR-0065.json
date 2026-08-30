@@ -1,0 +1,114 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0065",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "DEV_MERGE_READY",
+  "to_state": "DEV_INTEGRATED",
+  "prior_revision": 65,
+  "new_revision": 66,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "76aa3076817e15cbbf86d0f6960f43c020a6d5f45e56e198660bd2a8f0403d6b",
+  "new_state_digest": "9f59411195cf9ec0e6399cb804a0f08d9e4290b75a821d5cc8e854d236ce403d",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Reconcile PR #114 merge to dev commit b776b118 with exact validated tree identity.",
+  "started_at": "2026-08-28T19:11:43Z",
+  "finished_at": "2026-08-28T19:11:43Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "eea661b06a1a76b6845c3acb34451f72d7969aeb",
+    "source_tree": "7c22f1c90ca6cd1557f1ef50f59991b8d388dabb",
+    "source_program_tree": "4d98e27c598c48e88c0b3088224e15c31ec50e57",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0066.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0065.json"
+  },
+  "inputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "7f58fc06a2420456771f18092f7983c0123704d6e33678984a6f60124a61ef58",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0066.json",
+      "sha256": "a41647571009a5053f8f0e21167c7b8d1ce508225541dab4e5cd9201bd47fed1",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "a41647571009a5053f8f0e21167c7b8d1ce508225541dab4e5cd9201bd47fed1",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "HISTORICAL-LIFECYCLE-RECONCILIATION",
+      "method": "Reconcile PR #114 merge to dev commit b776b118 with exact validated tree identity.",
+      "environment": "Committed Git evidence, GitHub PR #114, and terminal GitHub Actions observations",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "https://github.com/burhop/wright/pull/114",
+        "merged_dev:b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "merged_tree:f22f61791a2385723934558d8557881862221eb1"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "subject": {
+      "git_commit": "d96e8b68c9fda08eea84065186452581727ec4fa",
+      "git_tree": "d16d81afaabac73e4374ecb186089cb0a95dd1bc",
+      "program_tree": "ee2fbf3b1a15920701289a083431f0afd41ed4ec",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0053"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Existing EPP-F01 independent candidate evidence plus exact PR #114 and terminal dev workflow observations.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "eea661b06a1a76b6845c3acb34451f72d7969aeb",
+  "next_action": "VERIFY_EPP_F01_DEV_DEPLOYMENT"
+}

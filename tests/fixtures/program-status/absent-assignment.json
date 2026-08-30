@@ -1,0 +1,9 @@
+{
+  "fixture_version": "1.0.0",
+  "scenario": "absent-assignment",
+  "expected_result": "passed",
+  "description": "Missing committed assignment evidence renders unavailable.",
+  "base": "base.json",
+  "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+  "operations": [{"op":"remove","target":"/supplement/work/active_assignments"}]
+}

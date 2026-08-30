@@ -1,0 +1,129 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0073",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 73,
+  "new_revision": 74,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "584d4790d620311727b8fb8435a5a26031162c06a6b81d17ba0e5dee747f707d",
+  "new_state_digest": "2b94c568d56bb21743d42fc331f5dc7e0625af1aff4bd6a336e80bc30d7f69b3",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer recording direct user authority"
+  },
+  "action": "Record the bounded registry-routing and lifecycle-limit material correction, its exact-path repair, and two independent passing reviews before resuming EPP-F01B T005 through T048.",
+  "started_at": "2026-08-29T11:23:39Z",
+  "finished_at": "2026-08-29T11:35:00Z",
+  "duration_ms": 681000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "3bb076a7355dfc3cfd6469db05b40b54462a32b0",
+    "source_tree": "acdf292a12959368efa2e6a3f1ac97a5e87c98cc",
+    "source_program_tree": "646680333a0eb20d0efb70a14e0c43bb310456a1",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0074.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0073.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0073.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0073.json", "sha256": "f452fbec60f70a495c2824d5310e53c295d929ad4fc505c46e34914ec77bcb1c", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "lifecycle-policy.json", "sha256": "205cd2e790c7da0ffc427b6515b762d1a8661df04ebb62d9293d9b38e000518a", "schema_version": "1.0", "role": "immutable_policy"},
+    {"path": "schemas/lifecycle-policy.schema.json", "sha256": "6322201aea2c6f8820afcd9812d0ced468bd7eadd30493237e877b98cc4a65c8", "schema_version": null, "role": "immutable_policy"},
+    {"path": "../../../scripts/program_control/validation.py", "sha256": "30f2925100553b2c490746af24030bd2cd34fba6d3922b81a78f72e22611d29f", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json", "sha256": "6322201aea2c6f8820afcd9812d0ced468bd7eadd30493237e877b98cc4a65c8", "schema_version": null, "role": "feature_contract"},
+    {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.json", "sha256": "f53c194d1a09e3221d6712e4db4c34d483bc555522167b16d6be94b19b1c2250", "schema_version": "1.0", "role": "feature_contract"},
+    {"path": "../../../tests/program_control_plane/test_contract_schemas.py", "sha256": "1c2795eab7c22b5cf93a6da3d4c2546752ae4eb19e0c1352daf7b77c1b6be646", "schema_version": null, "role": "feature_contract"}
+  ],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0074.json", "sha256": "c43823a624e365148e7e2df1b6c2ad28396d023116e937ff537fad6039d4a0a1", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "c43823a624e365148e7e2df1b6c2ad28396d023116e937ff537fad6039d4a0a1", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-REGISTRY-ROUTING-EXACT",
+      "method": "Validate only the three canonical EPP-F01B registry paths against their frozen 1.0.0 schemas and reject the same basenames under an alternate program root.",
+      "environment": "Local Windows Python contract suite",
+      "duration_ms": 1750,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["42 contract tests passed", "all three alternate-root same-basename negatives passed"]
+    },
+    {
+      "check_id": "EPP-F01B-GOVERNANCE-LIMIT-SOURCE",
+      "method": "Validate lifecycle policy limits 1/2/2, byte-identical promoted/planning schemas, the closed 20-source catalog, and projection to /supplement/governance/limits.",
+      "environment": "Draft 2020-12 contract validation",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["wip_max=1", "repair_max=2", "push_max=2", "source count=20"]
+    },
+    {
+      "check_id": "EPP-F01B-MATERIAL-CORRECTION-INDEPENDENT-REVIEWS",
+      "method": "Require architecture/test and engineering-usability reviewers to verify exact commit 3bb076a7 independently with no remaining P0/P1 finding.",
+      "environment": "Two bounded read-only Codex reviews",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["architecture-test:PASS:3bb076a7", "engineering-usability:PASS:3bb076a7"]
+    },
+    {
+      "check_id": "EPP-F01B-MATERIAL-CORRECTION-FULL-REGRESSION",
+      "method": "Run the complete program-control test suite and the exact committed-subject validator.",
+      "environment": "Local Windows Python environment",
+      "duration_ms": 289730,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["277 passed", "1 declared platform skip", "validator passed with zero fatal findings"]
+    }
+  ],
+  "authority": {
+    "required_scopes": ["material_change", "feature_implementation"],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "3bb076a7355dfc3cfd6469db05b40b54462a32b0",
+      "git_tree": "acdf292a12959368efa2e6a3f1ac97a5e87c98cc",
+      "program_tree": "646680333a0eb20d0efb70a14e0c43bb310456a1",
+      "artifact_count": 7,
+      "manifest_transition": "TR-0073"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Architecture/test PASS and engineering-usability PASS for exact 3bb076a7; local 42 focused and 277 full program-control tests passed with one declared skip; exact validator passed.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-MATERIAL-CORRECTION-PATH-ISOLATION-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized.",
+    "Any further frozen product-contract, readiness, benchmark-policy, dependency, or feature-scope change requires new material authority."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0073.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

@@ -1,0 +1,139 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0075",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "state_domain": "repair",
+  "event_kind": "repair_checkpoint",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 75,
+  "new_revision": 76,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "05e387957ec95a343505c4b7b318d26569b46567c51a15a58163b13d858ef0cf",
+  "new_state_digest": "9906454a179d238ede0299924f77c67a1ef307998dbfee3d75a1f256f4af4e32",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer recording direct user authority"
+  },
+  "action": "Append-only correction of revision 75's overlong path-restriction text and TR-0074 input digest claims 3 and 4, with no authority or scope change.",
+  "started_at": "2026-08-29T23:07:00Z",
+  "finished_at": "2026-08-29T23:16:31Z",
+  "duration_ms": 571000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "18635d6ba1d83cf68c80d1acf317497d95ec1c48",
+    "source_tree": "a5bed23ab3a05996f5124608a8d6cf6ef48abed8",
+    "source_program_tree": "1b769f792c12ac946809d7e56038dde849c07a58",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0076.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0075.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "scripts/program_control/validation.py",
+      "tests/program_control_plane/test_transition_chain.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0075.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0075.json",
+      "sha256": "8e39d8a9a7df71b4665bf96107838ce715ec86d948a0c9d432dccd233b3b7d53",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "evidence/transitions/TR-0074.json",
+      "sha256": "eb16d316403db35175b0bbf4b9259d91f6a967668ee1442ae094792cd7aa131c",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0076.json",
+      "sha256": "024cf728af830f8bf51f733484135117fef344094a6a847116bf409e398cad8a",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "024cf728af830f8bf51f733484135117fef344094a6a847116bf409e398cad8a",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F01B-REV75-RESTRICTION-CORRECTION",
+      "method": "Preserve revision 75 unchanged, replace only its overlong first path-restriction text in revision 76, and require the successor to validate without changing lease paths, authority, readiness, or benchmark state.",
+      "environment": "Closed validator recomputation",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "target=program-state-revision-0075.json schema instance only",
+        "maxLength=300",
+        "successor revision=76 and allowed_paths unchanged"
+      ]
+    },
+    {
+      "check_id": "EPP-F01B-TR0074-GIT-NORMALIZED-DIGEST-CORRECTION",
+      "method": "Recompute only TR-0074 input claims 3 and 4 from immutable Git blob bytes and require both exact authoritative values.",
+      "environment": "Closed validator recomputation",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "/inputs/3/sha256=a4d8abc71839b21a4ff2cb526c491b06843e04c35ba0e6aa7dbeb2920f69d2d7",
+        "/inputs/4/sha256=85f4604d4df525c693c34ec94b4181b298375c82b474315ee94fbea84a85aba5",
+        "TR-0074 and its recorded values remain unchanged"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ],
+    "subject": {
+      "git_commit": "18635d6ba1d83cf68c80d1acf317497d95ec1c48",
+      "git_tree": "a5bed23ab3a05996f5124608a8d6cf6ef48abed8",
+      "program_tree": "1b769f792c12ac946809d7e56038dde849c07a58",
+      "artifact_count": 2,
+      "manifest_transition": "TR-0075"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Pending committed-subject validator and focused correction regression.",
+  "repair": {
+    "stable_cause_id": "EPP-F01B-LEASE-CHECKPOINT-EVIDENCE-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "The single packaged-browser rebuild remains unspent until this committed correction validates.",
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0075.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

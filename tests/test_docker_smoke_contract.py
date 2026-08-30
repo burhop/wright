@@ -154,6 +154,8 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "setuptools@78.1.1" in dockerfile
     assert "brace-expansion@5.0.9" in dockerfile
     assert "ip-address@10.3.1" in dockerfile
+    assert "tar@7.5.22" in dockerfile
+    assert "unexpected npm tar override" in dockerfile
     assert "libssl3t64" in dockerfile
     assert "npm install --global npm@12.0.2" in dockerfile
     assert "util-linux" in dockerfile

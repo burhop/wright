@@ -70,6 +70,34 @@ CHECKPOINT_EVENT_TARGETS = frozenset(
         )
     }
 )
+ACTIVATION_CORRECTION_ID = "COR-EPP-F01B-ACTIVATION-RAW-IDENTITY-001"
+ACTIVATION_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/{ACTIVATION_CORRECTION_ID}.json"
+)
+ACTIVATION_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0070.json",
+            f"/outputs/{index}/sha256",
+        )
+        for index in (3, 4, 5)
+    }
+)
+LEASE_CHECKPOINT_SCHEMA_TARGETS = frozenset(
+    {f"{PROGRAM_ROOT}/evidence/states/program-state-revision-0075.json"}
+)
+LEASE_CHECKPOINT_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0074.json",
+            "/inputs/3/sha256",
+        ),
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0074.json",
+            "/inputs/4/sha256",
+        ),
+    }
+)
 
 
 def load(path: Path) -> object:
@@ -119,6 +147,98 @@ def checkpoint_correction_inputs(
         path: load(repository_root / path) for path in CHECKPOINT_APPROVAL_PATHS
     }
     return profile, approvals
+
+
+def activation_correction_input(repository_root: Path) -> dict:
+    return load(repository_root / ACTIVATION_CORRECTION_PATH)
+
+
+def test_exact_f01b_activation_correction_recomputes_three_git_normalized_claims(
+    repository_root: Path,
+) -> None:
+    profile = activation_correction_input(repository_root)
+    original_profile = copy.deepcopy(profile)
+
+    findings, digest_targets = (
+        validation_module.validate_f01b_activation_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile
+        )
+    )
+
+    assert findings == []
+    assert digest_targets == ACTIVATION_DIGEST_TARGETS
+    assert profile == original_profile
+
+
+def test_f01b_activation_correction_rejects_any_target_expansion(
+    repository_root: Path,
+) -> None:
+    profile = activation_correction_input(repository_root)
+    mutated = copy.deepcopy(profile)
+    mutated["claims"][0]["json_pointer"] = "/outputs/2/sha256"
+
+    findings, digest_targets = (
+        validation_module.validate_f01b_activation_evidence_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, mutated
+        )
+    )
+
+    assert codes(findings) == {"F01B_ACTIVATION_CORRECTION_INVALID"}
+    assert digest_targets == frozenset()
+
+
+def test_exact_f01b_lease_checkpoint_correction_closes_only_three_claims(
+    repository_root: Path,
+) -> None:
+    transition = load(
+        repository_root / PROGRAM_ROOT / "evidence/transitions/TR-0075.json"
+    )
+    successor_state = load(repository_root / PROGRAM_ROOT / "program-state.json")
+
+    findings, schema_targets, digest_targets = (
+        validation_module.validate_f01b_lease_checkpoint_correction(
+            GitReader(repository_root),
+            "HEAD",
+            PROGRAM_ROOT,
+            transition,
+            successor_state,
+        )
+    )
+
+    assert findings == []
+    assert schema_targets == LEASE_CHECKPOINT_SCHEMA_TARGETS
+    assert digest_targets == LEASE_CHECKPOINT_DIGEST_TARGETS
+
+
+@pytest.mark.parametrize("target", ["transition", "successor"])
+def test_f01b_lease_checkpoint_correction_rejects_scope_expansion(
+    repository_root: Path,
+    target: str,
+) -> None:
+    transition = load(
+        repository_root / PROGRAM_ROOT / "evidence/transitions/TR-0075.json"
+    )
+    successor_state = load(repository_root / PROGRAM_ROOT / "program-state.json")
+    if target == "transition":
+        transition["action"] += " and widen authority"
+    else:
+        successor_state["active_mutating_lease"]["allowed_paths"].append(
+            "src/unapproved/**"
+        )
+
+    findings, schema_targets, digest_targets = (
+        validation_module.validate_f01b_lease_checkpoint_correction(
+            GitReader(repository_root),
+            "HEAD",
+            PROGRAM_ROOT,
+            transition,
+            successor_state,
+        )
+    )
+
+    assert codes(findings) == {"F01B_LEASE_CHECKPOINT_CORRECTION_INVALID"}
+    assert schema_targets == frozenset()
+    assert digest_targets == frozenset()
 
 
 def test_exact_repair_evidence_correction_recomputes_two_claims_and_occurrences(

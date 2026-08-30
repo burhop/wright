@@ -1,0 +1,41 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F01B-IMPL-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01B",
+  "bundle_id": "APB-EPP-F01B-001",
+  "decision": "approved_with_conditions",
+  "scope": "feature_implementation",
+  "subject": {
+    "git_commit": "595f0aa872964fef0db61fa35a163aaaa683ef68",
+    "git_tree": "c4be6a0556032b3631306e8873b8e103dd3d63d0",
+    "program_tree": "2a9437bdf470abc2ef5243358d9ceaf71fa3acc4",
+    "artifact_digests": [
+      {"path": "../../../specs/077-browser-program-status/analysis.md", "sha256": "f278caa0ce60cce6e29afb827c87cbb9477751eda352944c5ecc08a13ef49111"},
+      {"path": "../../../specs/077-browser-program-status/checklists/program-status.md", "sha256": "e77ebc7e0b308c66003779c56925ba069546ae804ae93adf69a0777847d23b5a"},
+      {"path": "../../../specs/077-browser-program-status/checklists/requirements.md", "sha256": "85c8e3dd8c164cf6a44b66156b8592690d7a1fd349be869d446fddca87c71ab3"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-api.md", "sha256": "ec24f1ccb36466336495d0a73917c3854a0c1f77f909293d9548df708f461698"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-bundle.schema.json", "sha256": "4641e4362f1b356d9ac82f113a2390b205f1c2116008cf5bb7c8a33a8da30a5b"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.json", "sha256": "3e99ef7b4c7890b6e834f5718495d2fe70d011f89224b1ef53d9d337b3a2bfd5"},
+      {"path": "../../../specs/077-browser-program-status/contracts/program-status-source-catalog.schema.json", "sha256": "e2e58c60f540d486b8c6ac952846d334dea5c00977d78a9f6cdf8a9568cd28d7"},
+      {"path": "../../../specs/077-browser-program-status/data-model.md", "sha256": "9085628fea3f2688fb4e270cb4d4d6f2c9e6b4a75e3682bdbb495cc759511513"},
+      {"path": "../../../specs/077-browser-program-status/plan.md", "sha256": "0ef799b0d7361be7f8cc5e36e680066f6f631de3d8d9dbf6bfe7d25059f41df6"},
+      {"path": "../../../specs/077-browser-program-status/quickstart.md", "sha256": "b0df3d3a86090cc908c9b1391ae822e28c3cf2eebafbbe4a687f486bae25876e"},
+      {"path": "../../../specs/077-browser-program-status/research.md", "sha256": "9facc97b9451faae02cb65576c44cfeb6b5091c0075e3fee35a98f2c745fd84e"},
+      {"path": "../../../specs/077-browser-program-status/spec.md", "sha256": "cddf37c09b18a459d1bc793a50be66c8c943038826c1ea494224648eb45aa247"},
+      {"path": "../../../specs/077-browser-program-status/tasks.md", "sha256": "3786d6ad2b962d6ab2e8ae1ed591b1cbdc6caa1a148003561a4253f8da9e48a9"}
+    ]
+  },
+  "approver": "Human user in Codex task 01a0400f-cc0e-7b12-8375-03e014c961e4",
+  "approved_at": "2026-08-28T23:26:33Z",
+  "expires_at": null,
+  "review": {"due_at": null, "last_reviewed_at": "2026-08-28T23:26:33Z"},
+  "supersedes": [],
+  "revocation_events": [],
+  "conditions": [
+    "Execute only local EPP-F01B tasks T001 through T048 in dependency order with one writer and test-first checkpoints.",
+    "Use at most two bounded repairs per stable cause and stop for scope, schema, dependency, authority, readiness, benchmark, or public-contract expansion outside the frozen plan.",
+    "Dependencies, benchmark execution, external changes, push, PR, merge, dev integration, publication, and release remain unauthorized."
+  ]
+}

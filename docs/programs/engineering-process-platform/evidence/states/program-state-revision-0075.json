@@ -1,0 +1,192 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 75,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {
+    "ref": "dev",
+    "commit": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+    "tree": "f22f61791a2385723934558d8557881862221eb1",
+    "observed_clean": true
+  },
+  "prototype_evidence": {
+    "branch": "076-engineering-workflow-prototype",
+    "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d",
+    "remote_matches": true,
+    "registered_worktree": false,
+    "mode": "read_only_evidence",
+    "uncommitted_evidence_status": "none_detected"
+  },
+  "control_plane": {
+    "root": "docs/programs/engineering-process-platform",
+    "candidate_subject_resolution": "EPP-F01B replacement material-change and feature-implementation approvals bind commit e83a78f86c3e53157386c105a9a3b6f495b76fd4, tree 3a584940dfca227088c02b01aa74981baa847c06, program tree 8841bc1e0116fc2dd8950dd3e974f904d09d8edc, and the 17 TR-0072 artifact digests to local tasks T001 through T048 only. Direct user authority on 2026-08-29 additionally permits the bounded registry-routing and lifecycle-limit correction independently verified at 3bb076a7355dfc3cfd6469db05b40b54462a32b0; the specialized test-result path contract and checkpoint-bound test-history correction through 1a2cebb42e4ce7b24ed48dceda6281cd39c68e02; and one deterministic packaged-browser rebuild under lease revision 5 at only src/wright_engineering/static/web/** and src/wright_engineering/runtime-extra-lock.json. TR-0074 records other already-changed candidate paths only as historical T001-T048 evidence and grants no future edit authority for them.",
+    "schema_status": "passed",
+    "audit_status": "passed"
+  },
+  "current_feature": "EPP-F01B",
+  "active_mutating_lease": {
+    "feature_id": "EPP-F01B",
+    "branch": "codex/epp-continued-development-reconciled",
+    "worktree_id": "wright",
+    "dev_baseline": {
+      "commit": "b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+      "tree": "f22f61791a2385723934558d8557881862221eb1"
+    },
+    "worktree_start": {
+      "commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+      "tree": "3a584940dfca227088c02b01aa74981baa847c06"
+    },
+    "holder_role": "feature_owner",
+    "lease_mode": "implementation",
+    "lease_revision": 5,
+    "acquired_at": "2026-08-29T11:35:00Z",
+    "expires_at": "2026-08-30T11:35:00Z",
+    "allowed_paths": [
+      "docs/programs/engineering-process-platform/**",
+      "specs/077-browser-program-status/**",
+      "scripts/program_status/**",
+      "scripts/program_control/validation.py",
+      "scripts/publish-engineering-program-status.py",
+      "tests/fixtures/program-status/**",
+      "tests/program_control_plane/test_contract_schemas.py",
+      "specs/076-control-plane-validator/contracts/lifecycle-policy.schema.json",
+      "tests/program_control_plane/test_program_status_publisher.py",
+      "packages/tool_registry/src/tool_registry/program_status.py",
+      "packages/tool_registry/src/tool_registry/__init__.py",
+      "packages/tool_registry/tests/test_program_status.py",
+      "apps/api/src/api/schemas/program_status.py",
+      "apps/api/src/api/routers/program_status.py",
+      "apps/api/src/api/main.py",
+      "apps/api/src/api/composition.py",
+      "apps/api/tests/test_program_status_api.py",
+      "apps/web/src/services/program-status.ts",
+      "apps/web/src/components/program-status/**",
+      "apps/web/src/components/pages/ProgramStatusPage.tsx",
+      "apps/web/src/App.tsx",
+      "apps/web/src/components/layout/Sidebar.tsx",
+      "apps/web/src/__tests__/**",
+      "tests/ui-integration/program-status.spec.ts",
+      "src/wright_engineering/static/program-status/**",
+      "tests/packaging/test_wheel_contents.py",
+      "tests/native_runtime/test_program_status_lifecycle.py",
+      "docs/getting-started/quickstart-local.md",
+      "docs/getting-started/program-status.md",
+      "tests/e2e/test_program_status.py",
+      "src/wright_engineering/static/web/**",
+      "src/wright_engineering/runtime-extra-lock.json",
+      "pyproject.toml"
+    ],
+    "path_restrictions": [
+      {
+        "path": "specs/077-browser-program-status/**",
+        "restriction": "The e83a78f8 reviewed requirements and contracts remain frozen except for the directly user-authorized lifecycle-policy governance-limit projection recorded by TR-0073 and the specialized test-result path plus checkpoint-bound test-history corrections completed through 1a2cebb4; only task completion marks, acceptance evidence, and bounded implementation results may otherwise change."
+      },
+      {
+        "path": "docs/programs/engineering-process-platform/**",
+        "restriction": "Only approval, lease, task/checkpoint, verification, and truthful generated status evidence may change; readiness and governed benchmark results must not be promoted by implementation activity."
+      },
+      {
+        "path": "tests/program_control_plane/test_contract_schemas.py",
+        "restriction": "Only the prior feature-neutral lease regression and the exact three-registry routing/non-interference tests independently verified at 3bb076a7 are permitted; no further EPP-F01B implementation edits may use this path."
+      }
+    ],
+    "allowed_actions": [
+      "inspect",
+      "edit_allowlisted_paths",
+      "run_deterministic_checks",
+      "create_local_artifacts",
+      "create_local_commits"
+    ],
+    "recovery": {
+      "status": "reactivated",
+      "last_audit_transition": "TR-0074",
+      "rollback_state": "evidence/states/program-state-revision-0074.json",
+      "exhausted_cause_ids": [
+        "EPP-FEATURE-NEUTRAL-PLANNING-AUTHORITY-001",
+        "EPP-F01B-FEATURE-NEUTRAL-ACTIVATION-001",
+        "EPP-F01B-PROGRESS-CONTRACT-001"
+      ],
+      "active_cause_id": "EPP-F01B-PACKAGED-BROWSER-REBUILD-001",
+      "repair_maximum": 2,
+      "repair_remaining": 1
+    }
+  },
+  "last_transition": "TR-0074",
+  "readiness": {
+    "product": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No product child feature is implemented or implementation-approved",
+        "The browser-accessible program-status page is implementation-authorized and partially implemented through 3bb076a7 but is not yet complete, candidate-frozen, or independently verified as a full feature"
+      ]
+    },
+    "benchmark": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No 100-process collection has been generated or qualified",
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ]
+    },
+    "commercial": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "DEC-P0-001",
+        "DEC-P0-004",
+        "DEC-P0-006",
+        "DEC-P0-011",
+        "DEC-P0-012",
+        "Repository external controls remain evidence requirements"
+      ]
+    },
+    "program_health": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "EPP-F01 is complete and integrated through PR #114.",
+        "EPP-F01B implementation remains authorized locally for T001 through T048 under lease revision 5; one deterministic packaged-browser rebuild is active at only the two generated packaging paths authorized by TR-0074, followed by exact Linux verification and two independent reviews.",
+        "Product, benchmark, and commercial readiness remain independent; benchmark execution remains unauthorized at 0/100 and release eligibility remains false.",
+        "RISK-017 remains open until the repository-owned browser program-status page is implemented and verified."
+      ]
+    }
+  },
+  "open_p0_decisions": [
+    "DEC-P0-001",
+    "DEC-P0-002",
+    "DEC-P0-003",
+    "DEC-P0-004",
+    "DEC-P0-005",
+    "DEC-P0-006",
+    "DEC-P0-007",
+    "DEC-P0-008",
+    "DEC-P0-009",
+    "DEC-P0-010",
+    "DEC-P0-011",
+    "DEC-P0-012"
+  ],
+  "next_eligible_actions": [
+    {
+      "action": "START_CURRENT_FEATURE_IMPLEMENTATION",
+      "roadmap_item": "EPP-F01B",
+      "requires_human_approval": false,
+      "reason": "APR-EPP-F01B-MC-002 and APR-EPP-F01B-IMPL-002 authorize local T001 through T048; direct user authority recorded by TR-0074 adds only one deterministic packaged-browser rebuild at the two generated packaging paths under implementation lease revision 5, exact Linux verification, and two independent reviews."
+    }
+  ],
+  "approval": {
+    "status": "approved",
+    "record": "evidence/approvals/APR-EPP-F01B-MC-002.json",
+    "required_records": [
+      "evidence/approvals/APR-EPP-F01B-MC-002.json",
+      "evidence/approvals/APR-EPP-F01B-IMPL-002.json"
+    ]
+  },
+  "feature_state": "IMPLEMENTATION_AUTHORIZED",
+  "policy_version": "EPP-LIFECYCLE-1"
+}

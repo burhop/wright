@@ -41,21 +41,23 @@ def test_current_pointer_matches_lifecycle_action(
     repository_root: Path,
 ) -> None:
     documents = current_documents(repository_root)
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    lease = state["active_mutating_lease"]
     findings, action = validate_roadmap_approval_and_lease(
         documents,
         PROGRAM_ROOT,
         observed_at=OBSERVED,
-        actual_branch="077-control-plane-validator",
-        worktree_id="epp-f01",
+        actual_branch=lease["branch"],
+        worktree_id=lease["worktree_id"],
     )
     assert findings == []
-    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
     policy = documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"]
     expected = next(
         rule["action"]
         for rule in policy["action_rules"]
         if rule["program_state"] == state["state"]
         and rule["feature_state"] == state["feature_state"]
+        and rule["action"] == state["next_eligible_actions"][0]["action"]
     )
     assert action == expected
 
@@ -63,15 +65,21 @@ def test_current_pointer_matches_lifecycle_action(
 def test_cycle_wip_and_pointer_mismatch_are_all_reported(repository_root: Path) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
     roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    lease = state["active_mutating_lease"]
     roadmap["items"][0]["depends_on"] = [roadmap["items"][-1]["id"]]
-    roadmap["items"][2]["status"] = "active"
-    documents[f"{PROGRAM_ROOT}/program-state.json"]["current_feature"] = "EPP-F99"
+    next(
+        item
+        for item in roadmap["items"]
+        if item["id"] != state["current_feature"] and item["status"] != "active"
+    )["status"] = "active"
+    state["current_feature"] = "EPP-F99"
     findings, _ = validate_roadmap_approval_and_lease(
         documents,
         PROGRAM_ROOT,
         observed_at=OBSERVED,
-        actual_branch="077-control-plane-validator",
-        worktree_id="epp-f01",
+        actual_branch=lease["branch"],
+        worktree_id=lease["worktree_id"],
     )
     assert {"ROADMAP_CYCLE", "WIP_LIMIT_EXCEEDED", "LEASE_IDENTITY_MISMATCH"}.issubset(
         code_set(findings)
@@ -209,8 +217,13 @@ def test_active_item_requires_complete_dependencies_and_resolved_decisions(
 ) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
     roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
-    active = next(item for item in roadmap["items"] if item["id"] == "EPP-F01")
-    next(item for item in roadmap["items"] if item["id"] == "EPP-P00")["status"] = (
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    lease = state["active_mutating_lease"]
+    active = next(
+        item for item in roadmap["items"] if item["id"] == state["current_feature"]
+    )
+    dependency = active["depends_on"][0]
+    next(item for item in roadmap["items"] if item["id"] == dependency)["status"] = (
         "proposed"
     )
     active["blocking_decisions"] = ["DEC-P0-001"]
@@ -218,8 +231,8 @@ def test_active_item_requires_complete_dependencies_and_resolved_decisions(
         documents,
         PROGRAM_ROOT,
         observed_at=OBSERVED,
-        actual_branch="077-control-plane-validator",
-        worktree_id="epp-f01",
+        actual_branch=lease["branch"],
+        worktree_id=lease["worktree_id"],
     )
     assert {
         "ROADMAP_DEPENDENCY_INCOMPLETE",
@@ -268,9 +281,10 @@ def test_dependency_priority_tie_is_ambiguous(repository_root: Path) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
     roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
     for item in roadmap["items"]:
-        if item["id"] == "EPP-F01":
+        if item["status"] == "active":
             item["status"] = "proposed"
         if item["id"] in {"EPP-F01", "EPP-F01B"}:
+            item["status"] = "proposed"
             item["depends_on"] = ["EPP-P00"]
             item["blocking_decisions"] = []
             item["priority"] = 10

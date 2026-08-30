@@ -43,7 +43,12 @@ describe("DesktopHostAdapter", () => {
   });
 
   it("should route fetch through wrightDesktop api bridge", async () => {
-    mockBridge.api.mockResolvedValue({ success: true, count: 42 });
+    mockBridge.api.mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+      headers: { "content-type": "application/json", etag: '"bundle-2"' },
+      body: { success: true, count: 42 },
+    });
 
     const res = await adapter.fetch(
       "http://localhost:8000/api/workspace/list",
@@ -58,12 +63,68 @@ describe("DesktopHostAdapter", () => {
       path: "/api/workspace/list",
       method: "POST",
       body: { active: true },
-      headers: { "X-Test": "yes" },
+      headers: { "x-test": "yes" },
+      includeResponseMetadata: true,
     });
 
     expect(res.ok).toBe(true);
     const json = await res.json();
     expect(json).toEqual({ success: true, count: 42 });
+    expect(res.headers.get("etag")).toBe('"bundle-2"');
+  });
+
+  it("preserves an allowlisted ETag and represents 304 without a body", async () => {
+    mockBridge.api.mockResolvedValue({
+      status: 304,
+      statusText: "Not Modified",
+      headers: {
+        etag: '"bundle-1"',
+        "cache-control": "private, no-cache",
+        "x-program-status-observed-at": "2026-08-29T03:19:23Z",
+      },
+      body: null,
+    });
+
+    const res = await adapter.fetch(
+      "http://localhost:8000/api/program-status",
+      {
+        headers: { "If-None-Match": '"bundle-1"' },
+      },
+    );
+
+    expect(mockBridge.api).toHaveBeenCalledWith({
+      path: "/api/program-status",
+      method: "GET",
+      body: undefined,
+      headers: { "if-none-match": '"bundle-1"' },
+      includeResponseMetadata: true,
+    });
+    expect(res.status).toBe(304);
+    expect(res.ok).toBe(false);
+    expect(res.headers.get("etag")).toBe('"bundle-1"');
+    expect(await res.text()).toBe("");
+  });
+
+  it("keeps JSON scalar strings distinct from plain text", async () => {
+    mockBridge.api
+      .mockResolvedValueOnce({
+        status: 200,
+        statusText: "OK",
+        headers: { "content-type": "application/json" },
+        body: "ready",
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        statusText: "OK",
+        headers: { "content-type": "text/plain" },
+        body: "ready",
+      });
+
+    const json = await adapter.fetch("/api/json-string");
+    const text = await adapter.fetch("/api/plain-text");
+
+    expect(await json.json()).toBe("ready");
+    expect(await text.text()).toBe("ready");
   });
 
   it("should return ok=false response when bridge API rejects", async () => {

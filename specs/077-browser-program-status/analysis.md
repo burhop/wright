@@ -1,0 +1,84 @@
+# Spec Kit Analysis: Browser Program Status
+
+**Analyzed**: 2026-08-28
+
+**Artifacts**: `spec.md`, `plan.md`, `research.md`, `data-model.md`, `contracts/`, `checklists/`, `tasks.md`, constitution v3.0.0
+
+## Result
+
+**LOCAL PASS after bounded repair 2 for the material work/use-case/test-visibility amendment — exact-commit re-reviews pending.**
+
+- Functional requirements: 48
+- Requirements mapped to implementation/test tasks: 48/48
+- Dependency-ordered tasks: 48, sequential and unique
+- Requirements-quality checks: 49/49 passed
+- Draft 2020-12 schema meta-validation: 5/5 passed
+- Closed source catalog: 20/20 sources validated in exact precedence order
+- Focused contract tests: 37 passed
+- Full program-control regression: 272 passed, 1 skipped (239/1 non-CLI plus 33/0 CLI)
+- Unresolved clarification markers: 0
+- Constitution violations: 0
+- Hidden or unresolved new P0 questions: 0
+
+## Coverage map
+
+| Requirement group | Requirements | Primary task coverage | Result |
+| --- | --- | --- | --- |
+| Authority, identity, atomicity | FR-001–FR-003, FR-020–FR-024 | T005–T012, T035–T044 | Covered |
+| Four readiness areas and release rule | FR-004–FR-008 | T013–T020 | Covered |
+| Product, benchmark, commercial, program health | FR-009–FR-012, FR-034 | T013–T025 | Covered |
+| Work, blockers, evidence, corrections | FR-013–FR-018 | T005–T017, T026–T034 | Covered |
+| Sensitive-data and offline boundaries | FR-025–FR-026 | T005, T012–T013, T041 | Covered |
+| Accessibility and dedicated page | FR-027–FR-030 | T014–T020, T027, T042–T043 | Covered |
+| Exact histories and non-misleading progress | FR-031–FR-035, FR-039 | T021–T025, T030–T034, T040 | Covered |
+| Proposed catalog and delivery lanes | FR-036–FR-038 | T015, T030–T034 | Covered |
+| First-viewport operator questions | FR-040 | T014–T019, T034, T042 | Covered |
+| Program tasks and exact active assignments | FR-041–FR-042 | T002, T005–T007, T010, T014–T019, T030–T034 | Covered |
+| Governed all-use-case and 100-process funnels | FR-043–FR-045 | T002, T005–T007, T010, T014–T019, T030–T034 | Covered |
+| Canonical test history | FR-046–FR-047 | T002, T005–T007, T010, T017, T021–T025 | Covered |
+| Required accessible visualization set | FR-048 | T018–T025, T031–T034, T042 | Covered |
+
+## Material amendment disposition
+
+The user clarified that feature-local task progress and governance history do not provide a credible feel for overall development progress. This amendment closes that gap without implementing the page or promoting any readiness result:
+
+1. **Program work**: a closed work registry names the only task sources included in program totals, reports active-feature totals separately, and exposes roadmap items that have no task graph. Active-agent rows require exact committed assignment and lease evidence; local process activity is excluded.
+2. **Customer delivery**: a governed use-case registry with unique use-case and `EPP-PROC-001..100` identities derives all-use-case and 100-process funnels from orthogonal evidence. `remaining = total - implemented`; code-only work is not implemented; the proposed catalog remains separate.
+3. **Test trend**: an append-only ledger retains attempts but selects only the latest terminal run per canonical key. Exact selected identities, source time, terminal/role, digest, and counts are carried into the bundle so runtime/browser can verify disjoint components, arithmetic, and pass rate. Missing categories remain unavailable.
+4. **Operator-first presentation**: the first viewport must answer six practical questions before detailed governance. The required charts are task burn-up, both use-case funnels, test outcomes, roadmap/customer capability, four independent readiness areas, and benchmark qualification, all without a composite score and all with accessible semantic tables.
+5. **Authority preservation**: the page remains a read-only atomic projection. The new registries index evidence but cannot hand-set implementation, verification, assignment, test, readiness, or benchmark truth.
+
+## Bounded repair 1 disposition
+
+The first exact-subject audits rejected `d327b71fb912fea546aeeb789fb9ef92a7b2e39a` on one P0 and five overlapping P1 findings. Repair 1 is closed to those causes:
+
+- the correction source rule now admits the exact F01B activation-correction schema referenced by TR-0071;
+- use-case and process identities are unique/ranged, `remaining` is exact, stage evidence is typed and source-bound, acceptance/verification bindings are explicit, and bounded per-item projections let runtime/browser recompute the funnels;
+- the test ledger now has revision/prior identity, runs digest, unique canonical run keys, exact collected identities, and deterministic selection rules; the bundle carries selected-source provenance/counts and an explicit publisher continuity/selection attestation while runtime/browser recompute everything possible from projected data; and
+- packaged-runtime work now includes the promoted authoritative dashboard schema needed to resolve the bundle's external `$ref` without a checkout.
+
+## Bounded repair 2 disposition
+
+The two repair-1 re-reviews converged on two P1 gaps. The final bounded repair closes only those causes:
+
+- use-case stage evidence now has a closed stage-to-source map, exact named-parser subject resolution, resolved-verdict checks, acceptance binding, and explicit evidence-author/verifier independence with negative cases for wrong source, missing subject, verdict mismatch, and equal identities; and
+- test identities, run keys, and complete-run-array digests now have exact cross-language NFC/UTF-8 byte algorithms, each source requires `total = len(test_case_ids)`, and Python/TypeScript golden fixtures are mandatory.
+
+Focused validation on the repair working tree: 37 contract/schema tests passed; all five EPP-F01B schemas meta-validated; the 20-source catalog validated; 48 requirements, 48 tasks, and 51 checklist items remain contiguous; and `git diff --check` passed.
+
+## Consistency conclusions
+
+- The amended five stories remain independently demonstrable after the shared identity/read foundation.
+- The task graph remains 48 unique dependency-ordered tasks; task descriptions now carry the added contract, publisher, runtime, UI, accessibility, packaging, and verification obligations.
+- Program totals cannot include unregistered historical or unrelated task files, and active process activity cannot masquerade as assigned work.
+- Proposed stories, governed use cases, the 100-process subset, and benchmark qualification are four explicitly separated concepts.
+- Customer-visible acceptance is required for implementation; independent verification and benchmark qualification remain separate gates.
+- Historical test points require exact commit, trustworthy time, suite/population identity, terminal selection, disjoint populations, arithmetic validity, and evidence.
+- The current TR-0071 activation correction schema is explicitly admitted by the closed correction source rule.
+- Runtime retains no source-checkout, Git, network, benchmark, product-execution, or mutation dependency.
+- The five schemas are Draft 2020-12 meta-valid; the exact 20-source catalog validates; requirement/task/check numbering is contiguous at 48/48/49; the focused planning-contract suite passes 37 tests; and the repaired split full program-control regression passes 272 with one declared skip.
+- Implementation, dependency, benchmark, push/PR/merge, publication, and release authority remain absent for the amended subject.
+
+## Remaining review gate
+
+Commit this exact amended planning tree, run the same engineering-usability and architecture/test reviews against that one commit, resolve only non-material omissions within the existing bounded review process, then append the minimum state/transition evidence that supersedes the prior implementation subject and freezes a replacement commit/tree/program-tree/digest manifest. Stop at explicit human `material_change` and `feature_implementation` approval before T001.

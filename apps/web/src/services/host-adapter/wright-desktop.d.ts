@@ -28,6 +28,14 @@ export interface WrightApiRequest {
   body?: any;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  includeResponseMetadata?: boolean;
+}
+
+export interface WrightApiResponse<T = unknown> {
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  body: T | null;
 }
 
 export interface TerminalSession {
@@ -41,7 +49,7 @@ export interface WrightConfig {
 }
 
 export interface WrightDesktopBridge {
-  api: <T>(request: WrightApiRequest) => Promise<T>;
+  api: <T>(request: WrightApiRequest) => Promise<T | WrightApiResponse<T>>;
   readFile: (path: string) => Promise<string>;
   writeFile: (path: string, content: string) => Promise<void>;
   listDirectory: (path: string) => Promise<FileEntry[]>;

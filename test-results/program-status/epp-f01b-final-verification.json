@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F01B",
+  "recorded_at": "2026-08-29T22:00:00Z",
+  "benchmark_executed": false,
+  "readiness_changed": false,
+  "generated_fallback": {
+    "source_commit": "0ea005a56143588fe4e25d428da5377e4408adb3",
+    "packaging_commit": "a424498bd322a186d329f62de763b0fdde8d8f02",
+    "bundle_id": "9069508abe2901355f9d2b112fba04ae9e1bfd3562acd6b2b0f3401ecfcceac8",
+    "sha256": "a80e4e90c8c7a33a2179a5fdbaf7d6b73b7f5a2c9e6eef2e0aa5e02439d68334"
+  },
+  "checks": [
+    {
+      "platform": "linux-gb10",
+      "commit": "0ea005a56143588fe4e25d428da5377e4408adb3",
+      "command": "validate-engineering-process-program validate --source HEAD --format text",
+      "result": "passed",
+      "passed": 1,
+      "failed": 0,
+      "duration_seconds": 1.94,
+      "notes": "Zero validation blockers; readiness, benchmark 0/100, and release eligibility were unchanged."
+    },
+    {
+      "platform": "linux-gb10",
+      "commit": "0ea005a56143588fe4e25d428da5377e4408adb3",
+      "command": "pytest focused publisher, schema, runtime, API, source-free, packaging, native lifecycle, and POSIX matrix",
+      "result": "passed",
+      "passed": 107,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 75.14
+    },
+    {
+      "platform": "windows",
+      "commit": "0ea005a56143588fe4e25d428da5377e4408adb3",
+      "command": "npm run test -- --run",
+      "result": "passed",
+      "passed": 404,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 93.79,
+      "aggregate_role": "summary_only"
+    },
+    {
+      "platform": "windows",
+      "commit": "0ea005a56143588fe4e25d428da5377e4408adb3",
+      "command": "npm run build",
+      "result": "passed",
+      "notes": "TypeScript project build and Vite production build passed; the sandbox-only dist cleanup denial was rerun with the same command outside the sandbox."
+    },
+    {
+      "platform": "windows-chromium",
+      "commit": "a424498bd322a186d329f62de763b0fdde8d8f02",
+      "command": "npx playwright test tests/ui-integration/program-status.spec.ts --project=chromium --workers=1 --output D:/repos/wright/test-results/epp-f01b-playwright-final",
+      "result": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 28.7,
+      "notes": "Unrelated absent local API proxy endpoints produced expected noise; all isolated program-status assertions passed."
+    }
+  ],
+  "platform_matrix": {
+    "windows": "passed full web regression, production build, and Chromium acceptance",
+    "linux": "passed authoritative validator and 107-case focused runtime/package/native matrix on GB10",
+    "macos": "not_run_locally; required CI remains the delivery gate",
+    "benchmark": "not_run; execution remains unauthorized"
+  },
+  "limitations": [
+    "macOS atomic replacement and native lifecycle remain CI-only.",
+    "Benchmark execution remains unauthorized and qualification remains 0/100.",
+    "The local immutable-history publisher is substantially slower than GB10 and should be optimized separately, not inside EPP-F01B closure."
+  ]
+}

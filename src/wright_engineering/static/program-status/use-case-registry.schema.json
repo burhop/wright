@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/use-case-registry.schema.json",
+  "title": "Wright Engineering Process Platform Governed Use-Case Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "program_id", "use_cases"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "program_id": { "const": "engineering-process-platform" },
+    "use_cases": {
+      "type": "array",
+      "maxItems": 500,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/useCase" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/(?:076-control-plane-validator|077-browser-program-status)/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+    },
+    "sourceName": {
+      "enum": ["dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence", "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery", "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger", "customer_story_catalog", "feature_tasks"]
+    },
+    "stageEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_class", "source_name", "path", "sha256", "subject_id", "verdict", "acceptance_subject_id", "evidence_author", "independent_verifier"],
+      "properties": {
+        "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
+        "source_name": { "$ref": "#/$defs/sourceName" },
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "subject_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
+        "acceptance_subject_id": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
+        "evidence_author": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
+        "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 }
+      }
+    },
+    "definitionEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "definition" }, "source_name": { "enum": ["roadmap", "customer_story_catalog"] }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "progressEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "progress" }, "source_name": { "enum": ["transition_evidence", "work_registry", "feature_tasks"] }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "acceptanceEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "customer_acceptance" }, "source_name": { "enum": ["gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "testEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "test" }, "source_name": { "enum": ["test_run_ledger", "verification_evidence"] }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }
+      ]
+    },
+    "verificationEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "independent_verification" }, "source_name": { "const": "verification_evidence" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+      ]
+    },
+    "qualificationEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/stageEvidence" },
+        { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "string" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }
+      ]
+    },
+    "useCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "customer_outcome", "process_100_id", "definition_evidence", "progress_evidence", "acceptance_evidence", "test_evidence", "independent_verification_evidence", "benchmark_qualification_evidence"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^EPP-UC-[0-9]{3}$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$" },
+        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/definitionEvidence" } },
+        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/progressEvidence" } },
+        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/acceptanceEvidence" } },
+        "test_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/testEvidence" } },
+        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/verificationEvidence" } },
+        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/qualificationEvidence" } }
+      }
+    }
+  }
+}

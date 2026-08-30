@@ -1,0 +1,9 @@
+{
+  "fixture_version": "1.0.0",
+  "scenario": "unsafe-link",
+  "expected_result": "rejected",
+  "description": "An evidence path or optional GitHub URL violates the closed grammar.",
+  "base": "base.json",
+  "source_commit": "e83a78f86c3e53157386c105a9a3b6f495b76fd4",
+  "operations": [{"op":"replace","target":"/supplement/evidence_index/0/github_url","value":"https://user:secret@github.com/burhop/wright/blob/e83a78f86c3e53157386c105a9a3b6f495b76fd4/README.md"}]
+}

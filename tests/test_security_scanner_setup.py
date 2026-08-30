@@ -42,7 +42,7 @@ def test_security_scan_scripts_use_pinned_scanner_images() -> None:
         assert ".gitleaks.toml" in script
 
     assert 'DOCKER_ROOT_DIR="$(cygpath -w "$ROOT_DIR")"' in bash_script
-    assert 'MSYS_NO_PATHCONV=1 docker run' in bash_script
+    assert "MSYS_NO_PATHCONV=1 docker run" in bash_script
     assert '-v "$DOCKER_ROOT_DIR:/repo"' in bash_script
 
     assert "scripts/security-scan.sh --include-untracked" in alpha_bash
@@ -53,14 +53,41 @@ def test_security_scan_scripts_use_pinned_scanner_images() -> None:
     assert "docker-smoke-test.sh" in alpha_powershell
 
 
-def test_gitleaks_config_keeps_placeholder_allowlist_narrow() -> None:
+def test_gitleaks_config_keeps_allowlists_narrow() -> None:
     config = read_text(".gitleaks.toml")
 
     assert "[extend]" in config
     assert "useDefault = true" in config
     assert "Historical Onshape credential examples" in config
     assert "specs/026-mcp-credential-setup/data-model\\.md" in config
-    assert "generic-api-key" not in config
+    assert 'targetRules = ["generic-api-key"]' in config
+    assert 'condition = "AND"' in config
+    assert 'regexTarget = "match"' in config
+    assert '''run_key"\\s*:\\s*"[0-9a-f]{64}"''' in config
+    assert config.count("test-run-ledger\\.json") == 1
+    assert config.count("test_program_status\\.py") == 1
+    assert config.count("static/program-status/current\\.json") == 1
+    assert '''"[0-9a-f]{32,}"''' not in config
+
+
+def test_program_status_gitleaks_allowlist_has_scanner_backed_negative_control() -> (
+    None
+):
+    contract = read_text("scripts/test-gitleaks-program-status-allowlist.sh")
+    push = read_text("scripts/check-dev-push.sh")
+
+    assert "ghcr.io/gitleaks/gitleaks:v8.30.1" in contract
+    assert '"run_key"' in contract
+    assert '"api_key"' in contract
+    assert "failed to detect a second API-key match" in contract
+    assert "longer than one SHA-256 identity" in contract
+    assert "test-gitleaks-program-status-allowlist.sh" in push
+    assert "scripts/security-scan.sh --include-untracked --skip-trufflehog" in push
+    assert "GitHub security CI remains authoritative" in push
+    assert (
+        "scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh"
+        in push
+    )
 
 
 def test_docs_and_makefile_expose_local_alpha_gate() -> None:

@@ -29,10 +29,36 @@ adopts a materially changed gate, run the full merge gate once before relying
 on the last-pushed-tip fast baseline. This one-time bootstrap prevents an older
 branch failure from hiding outside the latest incremental diff.
 
+## Delivery-speed budget
+
+- Local commits are cheap and may be created whenever they leave a reviewable
+  checkpoint. A feature branch normally gets at most **two pushes**: one complete
+  candidate and one consolidated correction after every first-cycle CI result is
+  terminal and classified.
+- Merge to `dev` once per independently useful customer capability. Do not use
+  either feature-branch pushes or `dev` integration as an incremental debugger.
+- A test-, CI-, or gate-only correction that cannot change shipped behavior runs
+  the directly affected deterministic checks and one CI cycle. It does not restart
+  a previously completed full local gate unless the correction changes product
+  behavior, a public contract, dependency resolution, packaging output, security
+  policy, or the merge gate's substantive coverage.
+- Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
+  not PR correctness gates. They run in the scheduled/manual performance workflow;
+  deterministic functional, security, compatibility, and customer-journey tests
+  remain blocking.
+- Track pushes per feature, CI cycles, first-push green rate, runner time, local
+  gate time, product-versus-infrastructure failures, and customer capabilities
+  delivered. Use these measures to remove process cost, never to weaken a red
+  customer, security, compatibility, or release signal.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Gate or workflow changes run all slices.
+When the broad `tests` target and a nested `tests/...` target are both selected,
+the fast gate excludes the nested target from the broad invocation and runs it
+separately. This preserves suite-local pytest imports while preventing duplicate
+collection of same-named test modules.
 Container and engineering-image changes also select the Docker bundle, smoke
 contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
@@ -49,8 +75,12 @@ lock a native Node binding that the merge gate tries to replace.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.
-The fast browser slice is a Chromium smoke; the full merge gate retains
-cross-browser coverage.
+The fast browser slice is normally a Chromium smoke. When the changed target is
+a `tests/ui-integration/workspace-surfaces/*.spec.ts` contract, the fast gate
+runs that selected spec across Chromium, Firefox, WebKit, and the desktop
+profile because directory, iframe, and surface interactions are
+platform-sensitive. Ordinary application-source fallback remains
+Chromium-only; the full merge gate retains cross-browser coverage.
 
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 
@@ -60,12 +90,30 @@ uv run --extra runtime python -m pytest -q tests/program_control_plane
 
 The corresponding Ruff and format checks cover the entrypoint, package, and focused tests. No gate copies validator semantics; all invoke the same committed implementation and tests.
 
-The Linux quality job and Windows backend job fetch full Git history because the
-program-control tests verify immutable historical objects. After their focused
-program-control and native-runtime runs, their broad `tests` pass excludes those
-two already-executed roots. The workflow-policy test selected by the fast gate
-enforces both requirements so CI does not silently fall back to shallow history
-or duplicate pytest collection.
+The full merge gate, Linux quality job, and Windows backend job fetch or retain
+full Git history because the program-control tests verify immutable historical
+objects. After their focused program-control and native-runtime runs, their broad
+`tests` pass excludes those two already-executed roots. The gate-policy regression
+and workflow-policy test selected by the fast gate enforce these requirements so
+local and CI validation do not silently fall back to duplicate pytest collection
+or shallow history. Pull-request runners attach GitHub's synthetic
+merge commit to the governed feature branch name locally before validation. This
+preserves merge-result coverage while giving branch/worktree-bound leases an
+honest checkout identity; it does not update the remote feature branch. Windows
+pytest steps also enable native-command fail-fast behavior so an early failing
+suite cannot be hidden by a later passing command.
+
+Committed program-status evidence also selects the scanner-configuration and
+CI-route regressions in the fast gate. The Gitleaks exception is limited to the
+`generic-api-key` rule, the exact three ledger/test/packaged-status paths, and a
+matched lowercase, exactly 64-hex `run_key` value; other matches on the same minified
+line and other key names or paths remain scannable. When Docker is responsive,
+the fast gate runs both a scanner-backed positive/negative allowlist contract
+and the pinned Gitleaks history scan. It reports an explicit bounded host skip
+otherwise, and GitHub security CI remains authoritative. Application and
+package changes select the container smoke contract because they trigger the
+OCI PR build. The current Trivy database and exact image scan remain
+authoritative in CI when a local Docker host is unavailable.
 
 ## Before merge to dev
 

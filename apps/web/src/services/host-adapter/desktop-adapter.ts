@@ -5,7 +5,44 @@ import {
   type ExternalOpenOptions,
   type HostAdapter,
 } from "./host-adapter";
-import type { FileEntry, SelectOptions } from "./wright-desktop";
+import type {
+  FileEntry,
+  SelectOptions,
+  WrightApiResponse,
+} from "./wright-desktop";
+
+function requestHeaders(
+  headers: HeadersInit | undefined,
+): Record<string, string> {
+  const normalized: Record<string, string> = {};
+  new Headers(headers).forEach((value, key) => {
+    normalized[key] = value;
+  });
+  return normalized;
+}
+
+function isMetadataResponse(value: unknown): value is WrightApiResponse {
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    return false;
+  const row = value as Record<string, unknown>;
+  return (
+    Number.isInteger(row.status) &&
+    typeof row.statusText === "string" &&
+    typeof row.headers === "object" &&
+    row.headers !== null &&
+    "body" in row
+  );
+}
+
+function responseBody(value: unknown, headers: Headers): BodyInit | null {
+  if (value === null || value === undefined) return null;
+  const mediaType = headers.get("content-type")?.toLowerCase() ?? "";
+  if (mediaType.includes("application/json")) return JSON.stringify(value);
+  if (typeof value === "string") return value;
+  if (!headers.has("content-type"))
+    headers.set("content-type", "application/json");
+  return JSON.stringify(value);
+}
 
 export class DesktopHostAdapter implements HostAdapter {
   readonly mode = "desktop";
@@ -136,36 +173,36 @@ export class DesktopHostAdapter implements HostAdapter {
         path: apiPath,
         method,
         body: bodyObj,
-        headers: init?.headers as Record<string, string>,
+        headers: requestHeaders(init?.headers),
+        includeResponseMetadata: true,
       });
-
-      return {
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        json: async () => result,
-        text: async () =>
-          typeof result === "string" ? result : JSON.stringify(result),
-        arrayBuffer: async () =>
-          new TextEncoder().encode(
-            typeof result === "string" ? result : JSON.stringify(result),
-          ).buffer,
-      } as Response;
+      if (!isMetadataResponse(result)) {
+        throw new Error(
+          "wrightDesktop bridge returned an invalid response envelope",
+        );
+      }
+      const headers = new Headers(result.headers);
+      return new Response(responseBody(result.body, headers), {
+        status: result.status,
+        statusText: result.statusText,
+        headers,
+      });
     } catch (err: any) {
       const statusCode = err.status || 500;
       const statusText = err.message || "Internal Server Error";
-      return {
-        ok: false,
-        status: statusCode,
-        statusText: statusText,
-        json: async () => ({
+      return new Response(
+        JSON.stringify({
           error_code: err.code || "API_ERROR",
           message: err.message || "API request failed",
           trace_id: "unknown",
           details: err.details,
         }),
-        text: async () => JSON.stringify(err),
-      } as Response;
+        {
+          status: statusCode,
+          statusText,
+          headers: { "content-type": "application/json" },
+        },
+      );
     }
   }
 

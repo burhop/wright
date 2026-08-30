@@ -64,6 +64,63 @@ const MOCK_SERVERS = [
   },
 ];
 
+const MOCK_CAPABILITIES = MOCK_SERVERS.map((server) => ({
+  capability_id: server.server_id,
+  canonical_id: server.server_id,
+  name: server.name,
+  vendor: "Test vendor",
+  description: server.description,
+  domains: [server.category],
+  tags: [],
+  aliases: [],
+  capability_summary: [],
+  field_provenance: {},
+  data_touched: [],
+  examples: [],
+  validation_history: [],
+  lifecycle_stage: server.verification_state,
+  maturity: "community",
+  evidence_class: "verified_community",
+  transport: server.type,
+  locality: "local",
+  risk_level: server.risk_level,
+  installability_tier: server.installability_tier,
+  compatibility: {
+    status: "uncertain",
+    platform_key: "windows_11_x64",
+    reasons: [
+      {
+        code: "fixture_platform_unobserved",
+        message: "The layout fixture does not observe host compatibility.",
+        recovery: "Run a machine observation before onboarding.",
+        source: "test_fixture",
+      },
+    ],
+  },
+  source_records: [],
+  requirements: {
+    host_software: server.host_software_required,
+    credentials: server.credentials_required,
+    approval_gates: server.approval_gates,
+  },
+  validation_result: server.validation_result,
+  local_validation: null,
+  windows_qualification: null,
+  user_state: {
+    server_id: server.server_id,
+    installed: server.is_installed,
+    active: server.is_active,
+    process_status: server.status,
+    explicit_disabled: false,
+    installed_version: server.installed_version,
+    credentials_configured: {},
+    enabled_workspaces: [],
+  },
+  custom: false,
+  available_actions: ["view_details"],
+  alternatives: [],
+}));
+
 const MOCK_TOOLS: any[] = [];
 
 test.describe("UI Consistency and Theme Configuration", () => {
@@ -88,7 +145,6 @@ test.describe("UI Consistency and Theme Configuration", () => {
     await page.route("**/api/mcp/tools", async (route) => {
       await route.fulfill({ json: { tools: MOCK_TOOLS } });
     });
-
     await page.goto("/tool-registry");
 
     // Confirm that the document root (html or body) contains the data-theme attribute
@@ -119,7 +175,6 @@ test.describe("UI Consistency and Theme Configuration", () => {
     await page.route("**/api/mcp/tools", async (route) => {
       await route.fulfill({ json: { tools: MOCK_TOOLS } });
     });
-
     await page.goto("/tool-registry");
 
     const themeAttr = await page.evaluate(() =>
@@ -147,6 +202,22 @@ test.describe("UI Consistency and Theme Configuration", () => {
     });
     await page.route("**/api/mcp/tools", async (route) => {
       await route.fulfill({ json: { tools: MOCK_TOOLS } });
+    });
+    await page.route("**/api/mcp/capabilities**", async (route) => {
+      await route.fulfill({
+        json: {
+          snapshot: {
+            snapshot_id: "test-fixture",
+            channel: "bundled",
+            sequence: 1,
+            offline: true,
+            updated_at: "2026-08-30T00:00:00Z",
+          },
+          capabilities: MOCK_CAPABILITIES,
+          next_cursor: null,
+          total: MOCK_CAPABILITIES.length,
+        },
+      });
     });
 
     await page.goto("/tool-registry");

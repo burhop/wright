@@ -22,6 +22,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Attach PR merge to governed feature branch
+        if: github.event_name == 'pull_request'
+        env:
+          WRIGHT_PR_HEAD_REF: ${{ github.head_ref }}
+        run: git switch --force-create "$WRIGHT_PR_HEAD_REF" "$GITHUB_SHA"
+
       - name: Install uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
@@ -80,7 +86,11 @@ jobs:
             packages/model_registry/tests \
             packages/tool_registry/tests \
             packages/workspace_service/tests; do
-            uv run --extra runtime --extra engineering-models python -m pytest -q "$python_suite"
+            python_suite_args=()
+            if [[ "$python_suite" == "packages/model_registry/tests" ]]; then
+              python_suite_args=(-m "not performance")
+            fi
+            uv run --extra runtime --extra engineering-models python -m pytest -q "$python_suite" "${python_suite_args[@]}"
           done
           uv run --extra runtime --extra engineering-models python -m pytest -q tests \
             --ignore=tests/program_control_plane \

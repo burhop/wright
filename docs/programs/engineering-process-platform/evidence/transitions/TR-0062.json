@@ -1,0 +1,114 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0062",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED",
+  "to_state": "PUSH_AUTHORIZATION_PENDING",
+  "prior_revision": 62,
+  "new_revision": 63,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "030ac11c40a11e27d74bd8a7e9cacdf1932b4bb2c94d69a4ce2c5b42173944be",
+  "new_state_digest": "5138258e8ec56dd8a7833d57e7ba2ecac0d80d338f3c5d4cce4f17d7d8f5821f",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole writer"
+  },
+  "action": "Reconcile completion of the local push gate and the explicit external-write approval boundary.",
+  "started_at": "2026-08-28T17:16:00Z",
+  "finished_at": "2026-08-28T17:16:00Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "aa522e6b52700b868340c88561e40e5e77f2379d",
+    "source_tree": "66c0cd395ae5792e49091df1ac1018039a80c661",
+    "source_program_tree": "ca95a86630e4f4d1fbf2b51f23d6e9b161bff6f3",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0063.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0062.json"
+  },
+  "inputs": [
+    {
+      "path": "program-state.json",
+      "sha256": "24452b810568c5954f2472719904d862c4ee000dfd86d1521f3d1b850e4179b1",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0063.json",
+      "sha256": "93f27c02cbc0f0b6fb72ac99a09ea4b5884b28f963eabe8a6c9c043c6fd6662d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "93f27c02cbc0f0b6fb72ac99a09ea4b5884b28f963eabe8a6c9c043c6fd6662d",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "HISTORICAL-LIFECYCLE-RECONCILIATION",
+      "method": "Reconcile completion of the local push gate and the explicit external-write approval boundary.",
+      "environment": "Committed Git evidence, GitHub PR #114, and terminal GitHub Actions observations",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "https://github.com/burhop/wright/pull/114",
+        "merged_dev:b776b1182d5b6ee41364eb40b1bc95bf4eff797c",
+        "merged_tree:f22f61791a2385723934558d8557881862221eb1"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F01-MC-009.json",
+      "evidence/approvals/APR-EPP-F01-IMPL-009.json"
+    ],
+    "subject": {
+      "git_commit": "d96e8b68c9fda08eea84065186452581727ec4fa",
+      "git_tree": "d16d81afaabac73e4374ecb186089cb0a95dd1bc",
+      "program_tree": "ee2fbf3b1a15920701289a083431f0afd41ed4ec",
+      "artifact_count": 31,
+      "manifest_transition": "TR-0053"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "Existing EPP-F01 independent candidate evidence plus exact PR #114 and terminal dev workflow observations.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [],
+  "rollback_subject": "aa522e6b52700b868340c88561e40e5e77f2379d",
+  "next_action": "OPEN_EPP_F01_PR"
+}
