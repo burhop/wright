@@ -45,8 +45,8 @@
       "kind": "program_control",
       "priority": 15,
       "title": "Browser program-status dashboard",
-      "outcome": "A maintainer can open an accessible read-only browser page that renders the validated committed dashboard snapshot, four independent readiness areas, 0-to-100 benchmark qualification progress, active feature and task/checkpoint progress, blockers, next action, evidence links and freshness without becoming a second authority.",
-      "status": "active",
+      "outcome": "Integrated through PR #115 as dev commit 9f961d52 with exact candidate tree 3e7c5d92. A maintainer can open an accessible read-only browser page that renders the validated committed dashboard snapshot, four independent readiness areas, 0-to-100 benchmark qualification progress, active feature and task/checkpoint progress, blockers, next action, evidence links and freshness without becoming a second authority.",
+      "status": "blocked",
       "depends_on": [
         "EPP-F01"
       ],

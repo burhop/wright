@@ -3438,9 +3438,20 @@ def validate_f01b_lease_checkpoint_correction(
             )
             current_lease = successor_state.get("active_mutating_lease")
             expected_lease = expected_state["active_mutating_lease"]
-            if not isinstance(current_lease, Mapping):
-                valid = False
-            else:
+            if current_lease is None:
+                valid = valid and successor_state.get("feature_state") in {
+                    "BLOCKED",
+                    "CANDIDATE_FROZEN",
+                    "INDEPENDENTLY_VERIFIED",
+                    "PUSH_AUTHORIZATION_PENDING",
+                    "PR_READY",
+                    "DEV_MERGE_READY",
+                    "DEV_INTEGRATED",
+                    "DEV_DEPLOYMENT_VERIFIED",
+                    "ROLLED_BACK",
+                    "STOPPED",
+                }
+            elif isinstance(current_lease, Mapping):
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
@@ -3451,6 +3462,8 @@ def validate_f01b_lease_checkpoint_correction(
                         ),
                     )
                 )
+            else:
+                valid = False
 
         claims = {
             "/inputs/3/sha256": (

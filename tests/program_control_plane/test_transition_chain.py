@@ -222,9 +222,7 @@ def test_f01b_lease_checkpoint_correction_rejects_scope_expansion(
     if target == "transition":
         transition["action"] += " and widen authority"
     else:
-        successor_state["active_mutating_lease"]["allowed_paths"].append(
-            "src/unapproved/**"
-        )
+        successor_state["feature_state"] = "IMPLEMENTING"
 
     findings, schema_targets, digest_targets = (
         validation_module.validate_f01b_lease_checkpoint_correction(
