@@ -83,15 +83,19 @@ def test_program_control_changes_route_through_focused_quality_gates() -> None:
         "tests/program_control_plane/*",
     ):
         assert path_pattern in push
-    assert "PYTHON_TEST_TARGETS+=(tests/program_control_plane)" in push
+    assert push.count("tests/program_control_plane") >= 4
 
     focused = "python -m pytest -q tests/program_control_plane"
     for gate in (merge, linux, windows):
         assert focused in gate
     for workflow in (linux, windows):
         assert "fetch-depth: 0" in workflow
+        assert "Attach PR merge to governed feature branch" in workflow
+        assert "WRIGHT_PR_HEAD_REF" in workflow
+        assert "git switch --force-create" in workflow
         assert "--ignore=tests/program_control_plane" in workflow
         assert "--ignore=tests/native_runtime" in workflow
+    assert "$PSNativeCommandUseErrorActionPreference = $true" in windows
     for gate in (push, merge, linux):
         assert "scripts/program_control" in gate
         assert "tests/program_control_plane" in gate
@@ -100,8 +104,19 @@ def test_program_control_changes_route_through_focused_quality_gates() -> None:
     assert "mypy scripts/release scripts/program_control" in merge
     assert "mypy scripts/release scripts/program_control" in linux
 
+    for focused_gate in (
+        "tests/release/test_dev_push_process.py",
+        "tests/test_security_scanner_setup.py",
+    ):
+        assert focused_gate in push
+    assert "CHECK_GITLEAKS=1" in push
+    assert "test-gitleaks-program-status-allowlist.sh" in push
+    assert "security-scan.sh --include-untracked --skip-trufflehog" in push
 
-def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection() -> None:
+
+def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection() -> (
+    None
+):
     gate = _read("scripts/check-dev-push.sh")
 
     assert 'if [[ "$python_suite" == "tests" ]]; then' in gate

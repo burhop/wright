@@ -445,18 +445,26 @@ def test_governance_register_projection_uses_exact_catalog_sources() -> None:
     assert raised.value.code == "PROGRAM_STATUS_GOVERNANCE_SOURCE_INVALID"
 
 
-def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> None:
+def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
         REPOSITORY, subject
     )
     task_path = "specs/077-browser-program-status/tasks.md"
     task_raw = publisher._git_blob(REPOSITORY, subject["commit"], task_path)
-    task_id, task = next(
-        (task_id, record)
-        for task_id, record in publisher._task_records(task_raw).items()
-        if not record["completed"]
-    )
+    incomplete_task_raw = task_raw.replace(b"- [x] T048", b"- [ ] T048", 1)
+    task_id = "T048"
+    task = publisher._task_records(incomplete_task_raw)[task_id]
+    original_git_blob = publisher._git_blob
+
+    def _git_blob_with_active_task(repository: Path, commit: str, path: str) -> bytes:
+        if path == task_path:
+            return incomplete_task_raw
+        return original_git_blob(repository, commit, path)
+
+    monkeypatch.setattr(publisher, "_git_blob", _git_blob_with_active_task)
     subject["work_registry"] = {
         **subject["work_registry"],
         "active_assignments": [
@@ -474,7 +482,7 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap() -> Non
                 "evidence": [
                     {
                         "path": task_path,
-                        "sha256": hashlib.sha256(task_raw).hexdigest(),
+                        "sha256": hashlib.sha256(incomplete_task_raw).hexdigest(),
                     }
                 ],
             }

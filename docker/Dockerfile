@@ -13,17 +13,19 @@ COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
 RUN npm ci
 # npm 12.0.2 still bundles fixed upstream dependencies at vulnerable versions.
-# Replace only those two nested packages in a temporary clean project so the
+# Replace only those three nested packages in a temporary clean project so the
 # global npm CLI remains functional without inheriting a vulnerable bundle.
 RUN npm install --global npm@12.0.2
 RUN set -eux; \
     mkdir -p /tmp/npm-security-overrides; \
     cd /tmp/npm-security-overrides; \
     npm init -y >/dev/null; \
-    npm install --omit=dev brace-expansion@5.0.9 ip-address@10.3.1 >/dev/null; \
-    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address; \
+    npm install --omit=dev brace-expansion@5.0.9 ip-address@10.3.1 tar@7.5.22 >/dev/null; \
+    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar; \
     cp -a node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/brace-expansion; \
     cp -a node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address; \
+    cp -a node_modules/tar /usr/local/lib/node_modules/npm/node_modules/tar; \
+    node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web

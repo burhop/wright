@@ -69,7 +69,24 @@ program-control tests verify immutable historical objects. After their focused
 program-control and native-runtime runs, their broad `tests` pass excludes those
 two already-executed roots. The workflow-policy test selected by the fast gate
 enforces both requirements so CI does not silently fall back to shallow history
-or duplicate pytest collection.
+or duplicate pytest collection. Pull-request runners attach GitHub's synthetic
+merge commit to the governed feature branch name locally before validation. This
+preserves merge-result coverage while giving branch/worktree-bound leases an
+honest checkout identity; it does not update the remote feature branch. Windows
+pytest steps also enable native-command fail-fast behavior so an early failing
+suite cannot be hidden by a later passing command.
+
+Committed program-status evidence also selects the scanner-configuration and
+CI-route regressions in the fast gate. The Gitleaks exception is limited to the
+`generic-api-key` rule, the exact three ledger/test/packaged-status paths, and a
+matched lowercase 64-hex `run_key` token; other matches on the same minified
+line and other key names or paths remain scannable. When Docker is responsive,
+the fast gate runs both a scanner-backed positive/negative allowlist contract
+and the pinned Gitleaks history scan. It reports an explicit bounded host skip
+otherwise, and GitHub security CI remains authoritative. Application and
+package changes select the container smoke contract because they trigger the
+OCI PR build. The current Trivy database and exact image scan remain
+authoritative in CI when a local Docker host is unavailable.
 
 ## Before merge to dev
 
