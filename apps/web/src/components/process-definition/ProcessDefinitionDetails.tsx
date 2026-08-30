@@ -27,7 +27,7 @@ export function ProcessDefinitionDetails({
         <dt>Supported schema versions</dt>
         <dd>{envelope.supported_schema_versions.join(", ")}</dd>
         <dt>Revision</dt>
-        <dd>{envelope.definition.revision}</dd>
+        <dd>{String(envelope.definition.revision)}</dd>
         <dt>Definition content SHA-256</dt>
         <dd>
           <code>{envelope.definition.content_sha256}</code>

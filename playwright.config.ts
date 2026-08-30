@@ -44,7 +44,7 @@ export default defineConfig({
     : {
         command: `npm run dev --prefix apps/web -- --host ${testUiHost} --port ${testUiPort}`,
         url: managedBaseUrl,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
         env: {
           ...webServerEnvironment,
           VITE_WRIGHT_PROCESS_DEFINITION_VIEW:

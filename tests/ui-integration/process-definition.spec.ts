@@ -211,6 +211,14 @@ async function uniqueSemanticIds(
     );
 }
 
+async function expectNoDocumentHorizontalOverflow(page: Page): Promise<void> {
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+}
+
 test.describe("Read-only process definition journey", () => {
   test("opens from customer navigation and presents one matching text and diagram definition", async ({
     page,
@@ -235,6 +243,7 @@ test.describe("Read-only process definition journey", () => {
         .getByText(definition.purpose, { exact: true })
         .first(),
     ).toBeVisible();
+    await expectNoDocumentHorizontalOverflow(page);
     await expect(page.getByTestId("process-definition-text")).toBeVisible();
     await expect(page.getByTestId("process-definition-diagram")).toBeVisible();
     await expect(
@@ -338,6 +347,7 @@ test.describe("Read-only process definition journey", () => {
           );
       });
     expect(movingElements).toEqual([]);
+    await expectNoDocumentHorizontalOverflow(page);
   });
 
   test("preserves explicit non-color meaning at 320 pixels with forced colors", async ({
@@ -376,5 +386,6 @@ test.describe("Read-only process definition journey", () => {
     await expect(
       page.getByTestId("process-definition-source-toggle"),
     ).toBeVisible();
+    await expectNoDocumentHorizontalOverflow(page);
   });
 });

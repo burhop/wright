@@ -12,6 +12,8 @@ vi.mock("../services/host-adapter", () => ({
 
 import { hostAdapter } from "../services/host-adapter";
 import {
+  MAX_PROCESS_DEFINITION_ENVELOPE_BYTES,
+  MAX_PROCESS_DEFINITION_ERROR_BYTES,
   PROCESS_DEFINITION_SCHEMA_VERSION,
   PROCESS_DEFINITION_SOURCE_ID,
   canonicalProcessDigest,
@@ -98,6 +100,17 @@ describe.sequential("wright-process-json-v1 browser parity", () => {
       parseProcessJsonBytes(bytesFromHex(vector.input_utf8_hex)),
     ).toThrow();
   });
+
+  it("preserves Python-compatible integers beyond the JavaScript safe range", async () => {
+    const value = parseProcessJsonBytes(
+      encoder.encode('{"n":9007199254740992}'),
+    );
+    expect(value).toEqual({ n: 9007199254740992n });
+    expect(canonicalProcessJson(value)).toBe('{"n":9007199254740992}');
+    expect(await canonicalProcessDigest(value)).toBe(
+      "66c87d9cb3014e05a11baa97df62282d89d425f22ee15816577c84534e2ef1bb",
+    );
+  });
 });
 
 describe("closed process-definition client", () => {
@@ -118,7 +131,9 @@ describe("closed process-definition client", () => {
       "UNKNOWN_FIELD",
     );
 
-    const nestedExtra = structuredClone(envelope) as ProcessDefinitionEnvelope & {
+    const nestedExtra = structuredClone(
+      envelope,
+    ) as ProcessDefinitionEnvelope & {
       definition: ProcessDefinitionEnvelope["definition"] & { run_id?: string };
     };
     nestedExtra.definition.run_id = "not-authorized";
@@ -130,13 +145,18 @@ describe("closed process-definition client", () => {
   it("rejects missing fields, wrong identities, bounds, duplicates, and non-NFC text", async () => {
     const envelope = await makeEnvelope();
 
-    const missing = structuredClone(envelope) as Partial<ProcessDefinitionEnvelope>;
+    const missing = structuredClone(
+      envelope,
+    ) as Partial<ProcessDefinitionEnvelope>;
     delete missing.source_id;
     expect(() => decodeProcessDefinitionEnvelope(missing)).toThrow(
       "MISSING_FIELD",
     );
 
-    const wrongSource = { ...envelope, source_id: "process-definitions/other.json" };
+    const wrongSource = {
+      ...envelope,
+      source_id: "process-definitions/other.json",
+    };
     expect(() => decodeProcessDefinitionEnvelope(wrongSource)).toThrow(
       "ENUM_INVALID",
     );
@@ -169,7 +189,9 @@ describe("closed process-definition client", () => {
 
   it("independently binds definition content and complete envelope identity", async () => {
     const envelope = await makeEnvelope();
-    await expect(verifyProcessDefinitionIdentity(envelope)).resolves.toBeUndefined();
+    await expect(
+      verifyProcessDefinitionIdentity(envelope),
+    ).resolves.toBeUndefined();
 
     const contentDrift = structuredClone(envelope);
     contentDrift.definition.title = "Changed with a stale content identity";
@@ -179,9 +201,26 @@ describe("closed process-definition client", () => {
 
     const envelopeDrift = structuredClone(envelope);
     envelopeDrift.source_kind = "packaged_fallback";
-    await expect(verifyProcessDefinitionIdentity(envelopeDrift)).rejects.toThrow(
-      "ENVELOPE_IDENTITY_MISMATCH",
-    );
+    await expect(
+      verifyProcessDefinitionIdentity(envelopeDrift),
+    ).rejects.toThrow("ENVELOPE_IDENTITY_MISMATCH");
+
+    const largeRevision = structuredClone(envelope);
+    largeRevision.definition.revision = 9007199254740992n;
+    const definitionMaterial = { ...largeRevision.definition };
+    delete (definitionMaterial as Partial<typeof largeRevision.definition>)
+      .content_sha256;
+    largeRevision.definition.content_sha256 =
+      await canonicalProcessDigest(definitionMaterial);
+    const envelopeMaterial = { ...largeRevision };
+    delete (envelopeMaterial as Partial<ProcessDefinitionEnvelope>).etag;
+    largeRevision.etag = await canonicalProcessDigest(envelopeMaterial);
+    expect(
+      decodeProcessDefinitionEnvelope(largeRevision).definition.revision,
+    ).toBe(9007199254740992n);
+    await expect(
+      verifyProcessDefinitionIdentity(largeRevision),
+    ).resolves.toBeUndefined();
   });
 
   it("fetches the fixed read-only route and verifies a complete 200 response", async () => {
@@ -271,7 +310,8 @@ describe("closed process-definition client", () => {
       new Response(
         JSON.stringify({
           error_code: "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
-          message: "The installed process definition uses an unsupported schema.",
+          message:
+            "The installed process definition uses an unsupported schema.",
           recovery_class: "install_compatible_wright",
           trace_id: "trace-1",
           supported_schema_versions: ["1.0.0"],
@@ -285,6 +325,52 @@ describe("closed process-definition client", () => {
         error_code: "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
         recovery_class: "install_compatible_wright",
         trace_id: "trace-1",
+      },
+    });
+
+    mockedFetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error_code: "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
+          message: "Mismatched status must not select recovery.",
+          recovery_class: "install_compatible_wright",
+          trace_id: "trace-2",
+          supported_schema_versions: ["1.0.0"],
+        }),
+        { status: 404 },
+      ),
+    );
+    await expect(fetchProcessDefinition()).rejects.toMatchObject({
+      status: 404,
+      detail: {
+        error_code: "PROCESS_DEFINITION_READ_FAILED",
+        recovery_class: "inspect_local_data_root",
+        trace_id: "unavailable",
+      },
+    });
+  });
+
+  it("bounds success and error response bodies before parsing", async () => {
+    mockedFetch.mockResolvedValueOnce(
+      new Response(" ".repeat(MAX_PROCESS_DEFINITION_ENVELOPE_BYTES + 1), {
+        status: 200,
+      }),
+    );
+    await expect(fetchProcessDefinition()).rejects.toThrow(
+      "RESPONSE_TOO_LARGE",
+    );
+
+    mockedFetch.mockResolvedValueOnce(
+      new Response(" ".repeat(MAX_PROCESS_DEFINITION_ERROR_BYTES + 1), {
+        status: 503,
+      }),
+    );
+    await expect(fetchProcessDefinition()).rejects.toMatchObject({
+      status: 503,
+      detail: {
+        error_code: "PROCESS_DEFINITION_READ_FAILED",
+        recovery_class: "inspect_local_data_root",
+        trace_id: "unavailable",
       },
     });
   });

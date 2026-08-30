@@ -22,7 +22,10 @@ export function ProcessDefinitionPage() {
     const controller = new AbortController();
     const load = async () => {
       try {
-        const result = await fetchProcessDefinition(undefined, controller.signal);
+        const result = await fetchProcessDefinition(
+          undefined,
+          controller.signal,
+        );
         if (!active) return;
         if (result.state !== "current") throw new Error("INITIAL_304_INVALID");
         setView({ state: "ready", envelope: result.envelope });
@@ -46,8 +49,13 @@ export function ProcessDefinitionPage() {
       aria-labelledby="process-definition-title"
     >
       <header className="process-definition__header">
-        <p className="process-definition__eyebrow">Engineering process definition</p>
-        <h1 id="process-definition-title" data-testid="process-definition-title">
+        <p className="process-definition__eyebrow">
+          Engineering process definition
+        </p>
+        <h1
+          id="process-definition-title"
+          data-testid="process-definition-title"
+        >
           {view.state === "ready"
             ? view.envelope.definition.title
             : "Product definition process"}
@@ -56,8 +64,8 @@ export function ProcessDefinitionPage() {
           <>
             <p>{view.envelope.definition.purpose}</p>
             <p className="process-definition__version">
-              Version {view.envelope.definition.schema_version} · revision {" "}
-              {view.envelope.definition.revision}
+              Version {view.envelope.definition.schema_version} · revision{" "}
+              {String(view.envelope.definition.revision)}
             </p>
           </>
         ) : null}
@@ -74,8 +82,8 @@ export function ProcessDefinitionPage() {
             The validated process definition is unavailable
           </h2>
           <p>
-            Wright did not display partial or unverified process content. Inspect
-            the local Wright service and try again.
+            Wright did not display partial or unverified process content.
+            Inspect the local Wright service and try again.
           </p>
         </section>
       ) : null}

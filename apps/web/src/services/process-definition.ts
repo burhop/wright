@@ -4,6 +4,8 @@ export const PROCESS_DEFINITION_ID = "product-definition-v1" as const;
 export const PROCESS_DEFINITION_SCHEMA_VERSION = "1.0.0" as const;
 export const PROCESS_DEFINITION_SOURCE_ID =
   "process-definitions/product-definition-v1.json" as const;
+export const MAX_PROCESS_DEFINITION_ENVELOPE_BYTES = 1024 * 1024 + 64 * 1024;
+export const MAX_PROCESS_DEFINITION_ERROR_BYTES = 16 * 1024;
 
 export interface ProcessDefinitionPhase {
   id: string;
@@ -70,7 +72,7 @@ export interface ProcessDefinition {
   $schema?: "./process-definition.schema.json";
   schema_version: typeof PROCESS_DEFINITION_SCHEMA_VERSION;
   process_id: typeof PROCESS_DEFINITION_ID;
-  revision: number;
+  revision: number | bigint;
   title: string;
   purpose: string;
   content_sha256: string;
@@ -302,7 +304,7 @@ class StrictJsonParser {
     return Number.parseInt(encoded, 16);
   }
 
-  private integer(): number {
+  private integer(): number | bigint {
     const start = this.position;
     if (this.source[this.position] === "-") this.position += 1;
     if (this.source[this.position] === "0") {
@@ -321,12 +323,13 @@ class StrictJsonParser {
     const token = this.source.slice(start, this.position);
     if (token === "-0") this.fail("NEGATIVE_ZERO_INVALID");
     const value = Number(token);
-    if (!Number.isSafeInteger(value)) this.fail("NUMBER_UNSAFE");
-    return value;
+    return Number.isSafeInteger(value) ? value : BigInt(token);
   }
 
   private literal<T>(token: string, value: T): T {
-    if (this.source.slice(this.position, this.position + token.length) !== token) {
+    if (
+      this.source.slice(this.position, this.position + token.length) !== token
+    ) {
       this.fail("LITERAL_INVALID");
     }
     this.position += token.length;
@@ -356,7 +359,10 @@ function validateCanonicalText(value: string, path: string): void {
     if (unit >= 0xd800 && unit <= 0xdbff) {
       const next = value.charCodeAt(index + 1);
       if (next < 0xdc00 || next > 0xdfff) {
-        throw new ProcessDefinitionDecodeError("UNICODE_SURROGATE_INVALID", path);
+        throw new ProcessDefinitionDecodeError(
+          "UNICODE_SURROGATE_INVALID",
+          path,
+        );
       }
       index += 1;
     } else if (unit >= 0xdc00 && unit <= 0xdfff) {
@@ -405,6 +411,7 @@ export function canonicalProcessJson(value: unknown, path = ""): string {
     }
     return String(value);
   }
+  if (typeof value === "bigint") return value.toString(10);
   if (Array.isArray(value)) {
     return `[${value
       .map((item, index) => canonicalProcessJson(item, `${path}/${index}`))
@@ -501,11 +508,14 @@ function digest(value: unknown, path: string): string {
   return parsed;
 }
 
-function positiveInteger(value: unknown, path: string): number {
-  if (!Number.isSafeInteger(value) || (value as number) < 1) {
-    throw new ProcessDefinitionDecodeError("POSITIVE_INTEGER_REQUIRED", path);
+function positiveInteger(value: unknown, path: string): number | bigint {
+  if (
+    (typeof value === "number" && Number.isSafeInteger(value) && value >= 1) ||
+    (typeof value === "bigint" && value >= 1n)
+  ) {
+    return value;
   }
-  return value as number;
+  throw new ProcessDefinitionDecodeError("POSITIVE_INTEGER_REQUIRED", path);
 }
 
 function arrayValue(
@@ -514,7 +524,11 @@ function arrayValue(
   maximum: number,
   minimum = 0,
 ): unknown[] {
-  if (!Array.isArray(value) || value.length < minimum || value.length > maximum) {
+  if (
+    !Array.isArray(value) ||
+    value.length < minimum ||
+    value.length > maximum
+  ) {
     throw new ProcessDefinitionDecodeError("ARRAY_BOUNDS_INVALID", path);
   }
   return value;
@@ -560,7 +574,10 @@ function action(value: unknown, path: string): ProcessDefinitionAction {
     input_port_ids: idList(row.input_port_ids, `${path}/input_port_ids`),
     output_port_ids: idList(row.output_port_ids, `${path}/output_port_ids`),
     gate_ids: idList(row.gate_ids, `${path}/gate_ids`),
-    feedback_path_ids: idList(row.feedback_path_ids, `${path}/feedback_path_ids`),
+    feedback_path_ids: idList(
+      row.feedback_path_ids,
+      `${path}/feedback_path_ids`,
+    ),
     expected_artifact_ids: idList(
       row.expected_artifact_ids,
       `${path}/expected_artifact_ids`,
@@ -582,7 +599,11 @@ function port(value: unknown, path: string): ProcessDefinitionPort {
   return {
     id: idValue(row.id, `${path}/id`),
     name: stringValue(row.name, `${path}/name`),
-    direction: enumValue(row.direction, ["input", "output"] as const, `${path}/direction`),
+    direction: enumValue(
+      row.direction,
+      ["input", "output"] as const,
+      `${path}/direction`,
+    ),
     value_type: enumValue(
       row.value_type,
       [
@@ -623,7 +644,10 @@ function gate(value: unknown, path: string): ProcessDefinitionGate {
   };
 }
 
-function feedbackPath(value: unknown, path: string): ProcessDefinitionFeedbackPath {
+function feedbackPath(
+  value: unknown,
+  path: string,
+): ProcessDefinitionFeedbackPath {
   const keys = ["id", "from_id", "to_id", "reason"] as const;
   const row = closedObject(value, keys, keys, path);
   return {
@@ -635,7 +659,13 @@ function feedbackPath(value: unknown, path: string): ProcessDefinitionFeedbackPa
 }
 
 function artifact(value: unknown, path: string): ProcessDefinitionArtifact {
-  const keys = ["id", "name", "artifact_type", "purpose", "produced_by_action_id"] as const;
+  const keys = [
+    "id",
+    "name",
+    "artifact_type",
+    "purpose",
+    "produced_by_action_id",
+  ] as const;
   const row = closedObject(value, keys, keys, path);
   return {
     id: idValue(row.id, `${path}/id`),
@@ -677,7 +707,10 @@ export function decodeProcessDefinition(value: unknown): ProcessDefinition {
   const required = allowed.filter((key) => key !== "$schema");
   const row = closedObject(value, allowed, required, "/definition");
   const schemaRef = row.$schema;
-  if (schemaRef !== undefined && schemaRef !== "./process-definition.schema.json") {
+  if (
+    schemaRef !== undefined &&
+    schemaRef !== "./process-definition.schema.json"
+  ) {
     throw new ProcessDefinitionDecodeError(
       "SCHEMA_REFERENCE_INVALID",
       "/definition/$schema",
@@ -701,8 +734,8 @@ export function decodeProcessDefinition(value: unknown): ProcessDefinition {
     title: stringValue(row.title, "/definition/title"),
     purpose: stringValue(row.purpose, "/definition/purpose"),
     content_sha256: digest(row.content_sha256, "/definition/content_sha256"),
-    phases: arrayValue(row.phases, "/definition/phases", 20, 1).map((item, index) =>
-      phase(item, `/definition/phases/${index}`),
+    phases: arrayValue(row.phases, "/definition/phases", 20, 1).map(
+      (item, index) => phase(item, `/definition/phases/${index}`),
     ),
     actions: arrayValue(row.actions, "/definition/actions", 100, 1).map(
       (item, index) => action(item, `/definition/actions/${index}`),
@@ -717,14 +750,18 @@ export function decodeProcessDefinition(value: unknown): ProcessDefinition {
       row.feedback_paths,
       "/definition/feedback_paths",
       100,
-    ).map((item, index) => feedbackPath(item, `/definition/feedback_paths/${index}`)),
+    ).map((item, index) =>
+      feedbackPath(item, `/definition/feedback_paths/${index}`),
+    ),
     artifacts: arrayValue(row.artifacts, "/definition/artifacts", 200).map(
       (item, index) => artifact(item, `/definition/artifacts/${index}`),
     ),
   };
 }
 
-export function decodeProcessDefinitionEnvelope(value: unknown): ProcessDefinitionEnvelope {
+export function decodeProcessDefinitionEnvelope(
+  value: unknown,
+): ProcessDefinitionEnvelope {
   const keys = [
     "definition",
     "source_kind",
@@ -789,7 +826,10 @@ export async function verifyProcessDefinitionIdentity(
   const envelopeMaterial = { ...envelope };
   delete (envelopeMaterial as Partial<ProcessDefinitionEnvelope>).etag;
   if ((await canonicalProcessDigest(envelopeMaterial)) !== envelope.etag) {
-    throw new ProcessDefinitionDecodeError("ENVELOPE_IDENTITY_MISMATCH", "/etag");
+    throw new ProcessDefinitionDecodeError(
+      "ENVELOPE_IDENTITY_MISMATCH",
+      "/etag",
+    );
   }
 }
 
@@ -800,13 +840,63 @@ function quotedEtag(value: string | null, path: string): string {
   return value;
 }
 
+async function readBoundedResponseBytes(
+  response: Response,
+  maximum: number,
+): Promise<Uint8Array> {
+  const declaredLength = response.headers.get("content-length");
+  if (declaredLength !== null) {
+    const parsedLength = Number(declaredLength);
+    if (Number.isFinite(parsedLength) && parsedLength > maximum) {
+      throw new ProcessDefinitionDecodeError("RESPONSE_TOO_LARGE", "/body");
+    }
+  }
+  if (response.body === null) return new Uint8Array();
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maximum) {
+      await reader.cancel();
+      throw new ProcessDefinitionDecodeError("RESPONSE_TOO_LARGE", "/body");
+    }
+    chunks.push(value);
+  }
+
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
+
 async function typedError(response: Response): Promise<ProcessDefinitionError> {
-  const recoveries: Record<ProcessDefinitionErrorCode, ProcessDefinitionRecoveryClass> = {
+  const recoveries: Record<
+    ProcessDefinitionErrorCode,
+    ProcessDefinitionRecoveryClass
+  > = {
     PROCESS_DEFINITION_UNAVAILABLE: "enable_or_reinstall",
     PROCESS_DEFINITION_IDENTITY_MISMATCH: "reinstall_exact_artifact",
     PROCESS_DEFINITION_INVALID: "replace_validated_definition",
     PROCESS_DEFINITION_UNSUPPORTED_VERSION: "install_compatible_wright",
     PROCESS_DEFINITION_READ_FAILED: "inspect_local_data_root",
+  };
+  const codesByStatus: Readonly<
+    Record<number, readonly ProcessDefinitionErrorCode[]>
+  > = {
+    404: ["PROCESS_DEFINITION_UNAVAILABLE"],
+    409: ["PROCESS_DEFINITION_IDENTITY_MISMATCH"],
+    422: [
+      "PROCESS_DEFINITION_INVALID",
+      "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
+    ],
+    503: ["PROCESS_DEFINITION_READ_FAILED"],
   };
   try {
     const allowed = [
@@ -816,13 +906,33 @@ async function typedError(response: Response): Promise<ProcessDefinitionError> {
       "trace_id",
       "supported_schema_versions",
     ] as const;
-    const required = ["error_code", "message", "recovery_class", "trace_id"] as const;
-    const row = closedObject(await response.json(), allowed, required, "");
+    const required = [
+      "error_code",
+      "message",
+      "recovery_class",
+      "trace_id",
+    ] as const;
+    const bytes = await readBoundedResponseBytes(
+      response,
+      MAX_PROCESS_DEFINITION_ERROR_BYTES,
+    );
+    const row = closedObject(
+      parseProcessJsonBytes(bytes),
+      allowed,
+      required,
+      "",
+    );
     const errorCode = enumValue(
       row.error_code,
       Object.keys(recoveries) as ProcessDefinitionErrorCode[],
       "/error_code",
     );
+    if (!(codesByStatus[response.status] ?? []).includes(errorCode)) {
+      throw new ProcessDefinitionDecodeError(
+        "ERROR_STATUS_MISMATCH",
+        "/status",
+      );
+    }
     const recovery = enumValue(
       row.recovery_class,
       [recoveries[errorCode]] as const,
@@ -869,27 +979,52 @@ export async function fetchProcessDefinition(
   );
   if (response.status === 304) {
     if (etag === undefined) {
-      throw new ProcessDefinitionDecodeError("UNSOLICITED_NOT_MODIFIED", "/status");
+      throw new ProcessDefinitionDecodeError(
+        "UNSOLICITED_NOT_MODIFIED",
+        "/status",
+      );
     }
-    const responseEtag = quotedEtag(response.headers.get("etag"), "/headers/etag");
+    const responseEtag = quotedEtag(
+      response.headers.get("etag"),
+      "/headers/etag",
+    );
     if (responseEtag !== etag) {
       throw new ProcessDefinitionDecodeError(
         "NOT_MODIFIED_IDENTITY_MISMATCH",
         "/headers/etag",
       );
     }
-    return { state: "not_modified", status: 304, etag: responseEtag, envelope: null };
+    return {
+      state: "not_modified",
+      status: 304,
+      etag: responseEtag,
+      envelope: null,
+    };
   }
   if (!response.ok) {
-    throw new ProcessDefinitionServiceError(response.status, await typedError(response));
+    throw new ProcessDefinitionServiceError(
+      response.status,
+      await typedError(response),
+    );
   }
   if (response.status !== 200) {
-    throw new ProcessDefinitionDecodeError("RESPONSE_STATUS_INVALID", "/status");
+    throw new ProcessDefinitionDecodeError(
+      "RESPONSE_STATUS_INVALID",
+      "/status",
+    );
   }
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  const envelope = decodeProcessDefinitionEnvelope(parseProcessJsonBytes(bytes));
+  const bytes = await readBoundedResponseBytes(
+    response,
+    MAX_PROCESS_DEFINITION_ENVELOPE_BYTES,
+  );
+  const envelope = decodeProcessDefinitionEnvelope(
+    parseProcessJsonBytes(bytes),
+  );
   await verifyProcessDefinitionIdentity(envelope);
-  const responseEtag = quotedEtag(response.headers.get("etag"), "/headers/etag");
+  const responseEtag = quotedEtag(
+    response.headers.get("etag"),
+    "/headers/etag",
+  );
   if (responseEtag !== `"${envelope.etag}"`) {
     throw new ProcessDefinitionDecodeError(
       "ETAG_IDENTITY_MISMATCH",

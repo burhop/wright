@@ -373,7 +373,7 @@ describe.sequential("ProcessDefinitionPage", () => {
     ).toEqual([]);
   });
 
-  it("preserves complete structure at 320 CSS pixels, 200% zoom, and reduced motion", async () => {
+  it("preserves complete semantic structure under narrow, zoom, and reduced-motion declarations", async () => {
     Object.defineProperty(window, "innerWidth", {
       configurable: true,
       value: 320,
@@ -440,9 +440,10 @@ describe.sequential("ProcessDefinitionPage", () => {
       "PROCESS_DEFINITION_RENDER_DIAGNOSTIC",
       JSON.stringify({
         host: {
-          label: "windows-11-local-ui-host",
           runtime: "vitest-jsdom",
-          execution: "serial-diagnostic",
+          component_order: "describe.sequential",
+          evidence_boundary:
+            "The checkpoint runner must declare the host and select this file alone before treating timings as isolated evidence.",
         },
         sample: "packaged product-definition-v1",
         warmup_ms: warmupMs,
