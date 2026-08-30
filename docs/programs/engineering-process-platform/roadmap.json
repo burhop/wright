@@ -79,7 +79,7 @@
         "PROD-02",
         "PROD-08",
         "PROD-10",
-        "BENCH-02"
+        "PROD-11"
       ],
       "independently_shippable": true,
       "spec_kit_feature": true
