@@ -29,6 +29,7 @@ from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.routers.engineering_models import router as engineering_models_router
 from api.routers.program_status import router as program_status_router
+from api.routers.process_definition import router as process_definition_router
 from api.routers.support_diagnostics import router as support_diagnostics_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
@@ -204,7 +205,9 @@ app.add_middleware(
         "Idempotency-Key",
         "Last-Event-ID",
         "X-Wright-Display-Contract",
+        "If-None-Match",
     ],
+    expose_headers=["ETag", "X-Trace-Id"],
 )
 app.add_middleware(ControlPlaneSecurityMiddleware)
 
@@ -291,6 +294,11 @@ app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
 app.include_router(
     program_status_router, prefix="/api/program-status", tags=["Program Status"]
+)
+app.include_router(
+    process_definition_router,
+    prefix="/api/process-definitions",
+    tags=["Process Definitions"],
 )
 app.include_router(
     engineering_models_router,

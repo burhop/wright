@@ -1,0 +1,42 @@
+{
+  "profile": "wright-process-json-v1",
+  "valid": [
+    {
+      "name": "ascii",
+      "input_utf8_hex": "7b227a223a322c2261223a2274657874222c226172726179223a5b332c315d7d",
+      "canonical_utf8_hex": "7b2261223a2274657874222c226172726179223a5b332c315d2c227a223a327d",
+      "canonical_sha256": "9b960038ea18141bdfdacc3e0b564c2dfafd70aa788c558be7f5e4b6e2bbadab"
+    },
+    {
+      "name": "nfc-unicode-slash-separators",
+      "input_utf8_hex": "7b22c3a9223a22636166c3a9222c227a223a225c75323032385c7532303239222c22736c617368223a22612f62227d",
+      "canonical_utf8_hex": "7b22736c617368223a22612f62222c227a223a22e280a8e280a9222c22c3a9223a22636166c3a9227d",
+      "canonical_sha256": "a4d9444fc96c2e389fca95496a94629c05ece857fe924bfb8cbc648e83b2f273"
+    },
+    {
+      "name": "controls",
+      "input_utf8_hex": "7b2274657874223a225c75303030305c625c745c6e5c665c725c225c5c222c226e223a377d",
+      "canonical_utf8_hex": "7b226e223a372c2274657874223a225c75303030305c625c745c6e5c665c725c225c5c227d",
+      "canonical_sha256": "a80581461300bc915e81b8122d7a60a93d2d1141b2ce88a78a61da54deff888a"
+    },
+    {
+      "name": "utf8-key-order-and-array-order",
+      "input_utf8_hex": "7b227a223a302c223130223a31302c2232223a322c2261223a317d",
+      "canonical_utf8_hex": "7b223130223a31302c2232223a322c2261223a312c227a223a307d",
+      "canonical_sha256": "773b0c541aed297b7968abafd0c058ccd9b7d741369e133ee5f9df2328eadedc"
+    }
+  ],
+  "invalid": [
+    {"name": "utf8-bom", "input_utf8_hex": "efbbbf7b7d"},
+    {"name": "malformed-utf8", "input_utf8_hex": "7b2273223a22ff227d"},
+    {"name": "duplicate-key", "input_utf8_hex": "7b2261223a312c2261223a327d"},
+    {"name": "fraction", "input_utf8_hex": "7b226e223a312e357d"},
+    {"name": "exponent", "input_utf8_hex": "7b226e223a3165327d"},
+    {"name": "negative-zero", "input_utf8_hex": "7b226e223a2d307d"},
+    {"name": "nan", "input_utf8_hex": "7b226e223a4e614e7d"},
+    {"name": "infinity", "input_utf8_hex": "7b226e223a496e66696e6974797d"},
+    {"name": "nfd-key", "input_utf8_hex": "7b2265cc81223a2278227d"},
+    {"name": "nfd-value", "input_utf8_hex": "7b2273223a2265cc81227d"},
+    {"name": "unpaired-surrogate", "input_utf8_hex": "7b2273223a225c7564383030227d"}
+  ]
+}

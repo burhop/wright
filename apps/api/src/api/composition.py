@@ -48,6 +48,7 @@ from tool_registry.gateway_resources import GatewayResourceProvider
 from tool_registry.gateway_service import GatewayService, SUPPORTED_PROTOCOL_VERSION
 from tool_registry.lifecycle_adapters import EngineMcpUiResourceReader
 from tool_registry.program_status import ProgramStatusReader
+from tool_registry.process_definition import ProcessDefinitionReader
 from tool_registry.ui.resources import McpUiResourceStore
 from tool_registry.wright_managed_servers import RIVET_WORKFLOW_MUTATION_APPROVAL
 
@@ -345,6 +346,19 @@ def program_status_reader() -> ProgramStatusReader:
     return ProgramStatusReader(installed_root, packaged_root)
 
 
+@lru_cache(maxsize=1)
+def process_definition_reader() -> ProcessDefinitionReader:
+    import wright_engineering  # type: ignore[import-untyped]
+
+    installed_root = Path(DATABASE_PATH).parent / "process-definitions"
+    packaged_root = (
+        Path(wright_engineering.__file__).resolve().parent
+        / "static"
+        / "process-definitions"
+    )
+    return ProcessDefinitionReader(installed_root, packaged_root)
+
+
 def build_engineering_model_application(db_path: str) -> EngineeringModelService:
     database = Path(db_path)
     upgrade_database(database)
@@ -358,6 +372,7 @@ def build_engineering_model_application(db_path: str) -> EngineeringModelService
 
 async def close_application_services() -> None:
     program_status_reader.cache_clear()
+    process_definition_reader.cache_clear()
     if support_diagnostic_application.cache_info().currsize:
         support_diagnostic_application().invalidate_all()
         support_diagnostic_application.cache_clear()

@@ -9,14 +9,14 @@
 ## Phase 1: Setup and Closed Contract
 
 - [X] T001 Activate EPP-F02 atomically after exact approval: complete EPP-F01B only after green dev evidence; bind `specs/078-process-definition-view/tasks.md`; minimally admit only the exact active `specs/078-process-definition-view/` source in `specs/077-browser-program-status/contracts/program-status-bundle.schema.json`, `specs/077-browser-program-status/contracts/program-status-source-catalog.json`, `src/wright_engineering/static/program-status/program-status-bundle.schema.json`, `src/wright_engineering/static/program-status/program-status-source-catalog.json`, the three `use-case-registry.schema.json` parity copies, the publisher/validator, and focused positive/negative parity tests without adding a source class or relaxing unrelated paths; update program state/roadmap/work registry; create the governed EPP-F02 use-case row with `process_100_id: null`, no implementation/acceptance/verification/qualification evidence, and empty process-100 stage arrays; and publish a truthful planning/0-of-19 dashboard checkpoint with every benchmark funnel stage still `0/100` and readiness unchanged
-- [ ] T002 Add cross-language ASCII/NFC-Unicode/control/order golden and negative `wright-process-json-v1` vectors, schema, frozen-sample, global-ID, port-source, gate-order, feedback-reciprocity, and artifact-reciprocity tests; then install the exact committed bytes of `contracts/product-definition-v1.sample.json` (raw SHA-256 `6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef`) under public/package name `process-definitions/product-definition-v1.json` with byte-for-byte source/install equality in `packages/tool_registry/tests/test_process_definition.py` and `src/wright_engineering/static/process-definitions/`
+- [X] T002 Add cross-language ASCII/NFC-Unicode/control/order golden and negative `wright-process-json-v1` vectors, schema, frozen-sample, global-ID, port-source, gate-order, feedback-reciprocity, and artifact-reciprocity tests; then install the exact committed bytes of `contracts/product-definition-v1.sample.json` (raw SHA-256 `6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef`) under public/package name `process-definitions/product-definition-v1.json` with byte-for-byte source/install equality in `packages/tool_registry/tests/test_process_definition.py` and `src/wright_engineering/static/process-definitions/`
 
 ---
 
 ## Phase 2: Foundational Validated Read Path
 
-- [ ] T003 Add bounded installed/fallback reader, ETag, strict-JSON, identity, and support-safe error tests in `packages/tool_registry/tests/test_process_definition.py`
-- [ ] T004 Implement and export the immutable validated reader in `packages/tool_registry/src/tool_registry/process_definition.py` and `packages/tool_registry/src/tool_registry/__init__.py`
+- [X] T003 Add bounded installed/fallback reader, ETag, strict-JSON, identity, and support-safe error tests in `packages/tool_registry/tests/test_process_definition.py`
+- [X] T004 Implement and export the immutable validated reader in `packages/tool_registry/src/tool_registry/process_definition.py` and `packages/tool_registry/src/tool_registry/__init__.py`
 
 **Checkpoint**: One exact definition can be validated and read offline; invalid definitions fail before presentation.
 
@@ -26,8 +26,8 @@
 
 **Independent Test**: Open the bundled process and identify all semantic elements in complete text and the matching diagram.
 
-- [ ] T005 [P] [US1] Add authenticated success, unauthorized-role 403/no-leak, ETag/304, exact-envelope, safe logical-source, and trace-header API tests in `apps/api/tests/test_process_definition_api.py`
-- [ ] T006 [US1] Implement schemas, declarative route, composition wiring, and router registration in `apps/api/src/api/schemas/process_definition.py`, `apps/api/src/api/routers/process_definition.py`, `apps/api/src/api/composition.py`, and `apps/api/src/api/main.py`
+- [X] T005 [P] [US1] Add authenticated success, unauthorized-role 403/no-leak, ETag/304, exact-envelope, safe logical-source, and trace-header API tests in `apps/api/tests/test_process_definition_api.py`
+- [X] T006 [US1] Implement schemas, declarative route, composition wiring, and router registration in `apps/api/src/api/schemas/process_definition.py`, `apps/api/src/api/routers/process_definition.py`, `apps/api/src/api/composition.py`, and `apps/api/src/api/main.py`
 - [ ] T007 [P] [US1] Add closed-client parsing, identity, and response-state tests in `apps/web/src/__tests__/ProcessDefinitionService.test.ts`
 - [ ] T008 [US1] Implement the read-only client contract in `apps/web/src/services/process-definition.ts`
 - [ ] T009 [P] [US1] Add text completeness, text/diagram ID equivalence, empty-category, keyboard, Axe, non-color, 200%-zoom, 320-pixel viewport, reduced-motion, and bounded response/render sampling in `apps/web/src/__tests__/ProcessDefinitionPage.test.tsx`; diagnostic performance evidence uses one warm-up plus 20 serial observations on an otherwise idle declared host, records every observation, and computes nearest-rank p95 without concurrent suites, while only deterministic correctness and functional timeouts gate delivery

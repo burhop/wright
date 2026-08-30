@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/process-definitions/process-definition.schema.json",
+  "title": "Wright Process Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "process_id",
+    "revision",
+    "title",
+    "purpose",
+    "content_sha256",
+    "phases",
+    "actions",
+    "ports",
+    "gates",
+    "feedback_paths",
+    "artifacts"
+  ],
+  "properties": {
+    "$schema": { "const": "./process-definition.schema.json" },
+    "schema_version": { "const": "1.0.0" },
+    "process_id": { "$ref": "#/$defs/id" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "title": { "$ref": "#/$defs/text" },
+    "purpose": { "$ref": "#/$defs/text" },
+    "content_sha256": { "$ref": "#/$defs/sha256" },
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/phase" }
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "ports": {
+      "type": "array",
+      "maxItems": 300,
+      "items": { "$ref": "#/$defs/port" }
+    },
+    "gates": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/gate" }
+    },
+    "feedback_paths": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/feedback" }
+    },
+    "artifacts": {
+      "type": "array",
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/artifact" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 80
+    },
+    "text": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "id_list": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "purpose", "action_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "action_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "purpose", "input_port_ids", "output_port_ids", "gate_ids", "feedback_path_ids", "expected_artifact_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "input_port_ids": { "$ref": "#/$defs/id_list" },
+        "output_port_ids": { "$ref": "#/$defs/id_list" },
+        "gate_ids": { "$ref": "#/$defs/id_list" },
+        "feedback_path_ids": { "$ref": "#/$defs/id_list" },
+        "expected_artifact_ids": { "$ref": "#/$defs/id_list" }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "direction", "value_type", "description", "owner_action_id", "source_port_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "direction": { "enum": ["input", "output"] },
+        "value_type": { "enum": ["customer-need", "requirement-set", "product-model", "review-decision", "release-package"] },
+        "description": { "$ref": "#/$defs/text" },
+        "owner_action_id": { "$ref": "#/$defs/id" },
+        "source_port_id": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/id" }
+          ]
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "condition", "owner_action_id", "pass_target_id", "fail_target_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "$ref": "#/$defs/text" },
+        "condition": { "$ref": "#/$defs/text" },
+        "owner_action_id": { "$ref": "#/$defs/id" },
+        "pass_target_id": { "$ref": "#/$defs/id" },
+        "fail_target_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from_id", "to_id", "reason"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "from_id": { "$ref": "#/$defs/id" },
+        "to_id": { "$ref": "#/$defs/id" },
+        "reason": { "$ref": "#/$defs/text" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "artifact_type", "purpose", "produced_by_action_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "artifact_type": { "enum": ["requirements-baseline", "product-definition", "review-record", "released-definition-package"] },
+        "purpose": { "$ref": "#/$defs/text" },
+        "produced_by_action_id": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}
