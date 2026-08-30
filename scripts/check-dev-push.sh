@@ -101,6 +101,7 @@ CHECK_DOCS=0
 CHECK_GITLEAKS=0
 PYTHON_TEST_TARGETS=()
 PLAYWRIGHT_TARGETS=()
+PLAYWRIGHT_ALL_PROJECTS=0
 while IFS= read -r changed_file; do
   [[ -z "$changed_file" ]] && continue
   case "$changed_file" in
@@ -174,6 +175,11 @@ while IFS= read -r changed_file; do
       ;;
     scripts/*.md)
       CHECK_DOCS=1
+      ;;
+    tests/ui-integration/workspace-surfaces/*.spec.ts)
+      CHECK_FRONTEND=1
+      PLAYWRIGHT_ALL_PROJECTS=1
+      PLAYWRIGHT_TARGETS+=("$changed_file")
       ;;
     tests/ui-integration/*.spec.ts|tests/ui-integration/*/*.spec.ts)
       CHECK_FRONTEND=1
@@ -312,11 +318,15 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     )
   fi
   mapfile -t PLAYWRIGHT_TARGETS < <(printf '%s\n' "${PLAYWRIGHT_TARGETS[@]}" | sort -u)
+  PLAYWRIGHT_PROJECT_ARGS=(--project=chromium)
+  if [[ "$PLAYWRIGHT_ALL_PROJECTS" == "1" ]]; then
+    PLAYWRIGHT_PROJECT_ARGS=()
+  fi
   run env -u PLAYWRIGHT_BASE_URL \
     CI=1 \
     WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
     WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
-    npx playwright test "${PLAYWRIGHT_TARGETS[@]}" --project=chromium
+    npx playwright test "${PLAYWRIGHT_TARGETS[@]}" "${PLAYWRIGHT_PROJECT_ARGS[@]}"
 fi
 
 if [[ "$CHECK_DOCS" == "1" ]]; then

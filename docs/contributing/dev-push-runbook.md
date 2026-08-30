@@ -53,8 +53,12 @@ lock a native Node binding that the merge gate tries to replace.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.
-The fast browser slice is a Chromium smoke; the full merge gate retains
-cross-browser coverage.
+The fast browser slice is normally a Chromium smoke. When the changed target is
+a `tests/ui-integration/workspace-surfaces/*.spec.ts` contract, the fast gate
+runs that selected spec across Chromium, Firefox, WebKit, and the desktop
+profile because directory, iframe, and surface interactions are
+platform-sensitive. Ordinary application-source fallback remains
+Chromium-only; the full merge gate retains cross-browser coverage.
 
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 

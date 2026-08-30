@@ -50,7 +50,16 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     assert "Selected scopes:" in gate
     assert 'npm run test --workspace=apps/web -- --changed "$BASE_REF"' in gate
     assert 'npx playwright test "${PLAYWRIGHT_TARGETS[@]}"' in gate
-    assert "--project=chromium" in gate
+    assert "tests/ui-integration/workspace-surfaces/*.spec.ts" in gate
+    assert "PLAYWRIGHT_ALL_PROJECTS=0" in gate
+    assert "PLAYWRIGHT_ALL_PROJECTS=1" in gate
+    assert "PLAYWRIGHT_PROJECT_ARGS=(--project=chromium)" in gate
+    assert 'if [[ "$PLAYWRIGHT_ALL_PROJECTS" == "1" ]]; then' in gate
+    assert "PLAYWRIGHT_PROJECT_ARGS=()" in gate
+    assert '"${PLAYWRIGHT_PROJECT_ARGS[@]}"' in gate
+    assert gate.index("tests/ui-integration/workspace-surfaces/*.spec.ts") < gate.index(
+        "tests/ui-integration/*.spec.ts|tests/ui-integration/*/*.spec.ts"
+    )
     assert "tests/ui-integration/navigation.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts" in gate

@@ -342,12 +342,24 @@ test.describe("Rivet 2 retained canvas", () => {
     if (!(await root.isVisible())) {
       await page.getByTestId("activity-bar-explorer-btn").click();
     }
-    await root.click();
-    await page.getByTestId("file-node-/workflows").click();
-    await page.getByTestId("file-node-/workflows/rivet").click();
-    await page
-      .getByTestId("file-node-/workflows/rivet/workflow.rivet-project")
-      .dblclick();
+    const workflows = page.getByTestId("file-node-/workflows");
+    if (!(await workflows.isVisible())) {
+      await root.locator(":scope > span").first().click();
+      await expect(workflows).toBeVisible();
+    }
+    const rivet = page.getByTestId("file-node-/workflows/rivet");
+    if (!(await rivet.isVisible())) {
+      await workflows.locator(":scope > span").first().click();
+      await expect(rivet).toBeVisible();
+    }
+    const projectFile = page.getByTestId(
+      "file-node-/workflows/rivet/workflow.rivet-project",
+    );
+    if (!(await projectFile.isVisible())) {
+      await rivet.locator(":scope > span").first().click();
+      await expect(projectFile).toBeVisible();
+    }
+    await projectFile.dblclick();
 
     await expect(page.getByTestId("direct-rivet-status")).toContainText(
       "Workflow opened",
