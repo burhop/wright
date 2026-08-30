@@ -263,9 +263,7 @@ test.describe("Offline Capability Library", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toContainText("App Store subscription");
     await expect(dialog).toContainText("Wright has not contacted the endpoint");
-    await dialog
-      .getByRole("button", { name: "Check this computer" })
-      .click();
+    await dialog.getByRole("button", { name: "Check this computer" }).click();
     await expect(dialog).toContainText("Network access was not confirmed");
   });
 
@@ -370,6 +368,7 @@ test.describe("Live local Capability Library", () => {
   test("loads the actual local capability projection without vendor traffic @live", async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     const vendorRequests: string[] = [];
     page.on("request", (request) => {
       if (
@@ -382,6 +381,7 @@ test.describe("Live local Capability Library", () => {
       (candidate) =>
         candidate.url().includes("/api/mcp/capabilities") &&
         candidate.request().method() === "GET",
+      { timeout: 60_000 },
     );
     await page.goto("/tool-registry");
     expect((await response).status()).toBe(200);

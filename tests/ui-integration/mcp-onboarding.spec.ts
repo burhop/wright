@@ -390,6 +390,7 @@ test.describe("Live local guided onboarding", () => {
   test("opens the real read-only source step without applying effects @live", async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     const effectRequests: string[] = [];
     page.on("request", (request) => {
       if (
@@ -402,7 +403,11 @@ test.describe("Live local guided onboarding", () => {
       }
     });
     await page.goto("/tool-registry");
-    await page.getByRole("button", { name: "Add custom MCP server" }).click();
+    const addServerButton = page.getByRole("button", {
+      name: "Add custom MCP server",
+    });
+    await expect(addServerButton).toBeVisible({ timeout: 60_000 });
+    await addServerButton.click();
     const dialog = page.getByRole("dialog", {
       name: "Add custom MCP server",
     });

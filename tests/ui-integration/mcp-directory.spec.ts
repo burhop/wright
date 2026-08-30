@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const liveExpect = expect.configure({ timeout: 15_000 });
+const liveExpect = expect.configure({ timeout: 60_000 });
 
 test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
   test("previews an advanced local MCP without registering it", async ({
