@@ -129,7 +129,13 @@ def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection(
     gate = _read("scripts/check-dev-push.sh")
 
     assert 'if [[ "$python_suite" == "tests" ]]; then' in gate
-    assert 'if [[ "$selected_suite" == tests/* ]]; then' in gate
+    assert "--ignore=tests/program_control_plane" in gate
+    assert "--ignore=tests/native_runtime" in gate
+    assert "PYTHON_TEST_TARGETS+=(" in gate
+    assert gate.count("tests/program_control_plane") >= 5
+    assert gate.count("tests/native_runtime") >= 2
+    assert 'if [[ "$selected_suite" == "tests" ]]; then' in gate
+    assert 'if [[ "$selected_suite" == tests/* &&' in gate
     assert 'python_suite_args+=("--ignore=$selected_suite")' in gate
     assert 'python -m pytest -q "$python_suite" "${python_suite_args[@]}"' in gate
     assert "--import-mode=importlib" not in gate
@@ -146,6 +152,30 @@ def test_full_gate_excludes_focused_roots_from_broad_tests_collection() -> None:
         "--ignore=tests/program_control_plane"
     )
     assert "--import-mode=importlib" not in gate
+
+
+def test_scheduler_sensitive_performance_evidence_is_non_blocking_and_scheduled() -> (
+    None
+):
+    push = _read("scripts/check-dev-push.sh")
+    merge = _read("scripts/check-dev-merge.sh")
+    linux = _read(".github/workflows/python-quality.yml")
+    windows = _read(".github/workflows/test-windows.yml")
+    scheduled = _read(".github/workflows/performance-observability.yml")
+    performance_tests = _read("packages/model_registry/tests/test_performance.py")
+    project = _read("pyproject.toml")
+    runbook = _read(RUNBOOK)
+
+    for required_gate in (push, merge, linux, windows):
+        assert "not performance" in required_gate
+    assert "@pytest.mark.performance" in performance_tests
+    assert '"performance:' in project
+    assert "schedule:" in scheduled
+    assert "workflow_dispatch:" in scheduled
+    assert "-m performance" in scheduled
+    assert "two pushes" in runbook
+    assert "one consolidated correction" in runbook
+    assert "not PR correctness gates" in runbook
 
 
 def test_browser_gate_uses_isolated_configurable_ports() -> None:

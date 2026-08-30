@@ -245,11 +245,30 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv run --with mypy mypy scripts/release src/wright_engineering --ignore-missing-imports
 
   mapfile -t PYTHON_TEST_TARGETS < <(printf '%s\n' "${PYTHON_TEST_TARGETS[@]}" | sed '/^$/d' | sort -u)
+  for selected_suite in "${PYTHON_TEST_TARGETS[@]}"; do
+    if [[ "$selected_suite" == "tests" ]]; then
+      PYTHON_TEST_TARGETS+=(
+        tests/program_control_plane
+        tests/native_runtime
+      )
+      mapfile -t PYTHON_TEST_TARGETS < <(printf '%s\n' "${PYTHON_TEST_TARGETS[@]}" | sort -u)
+      break
+    fi
+  done
   for python_suite in "${PYTHON_TEST_TARGETS[@]}"; do
     python_suite_args=()
+    if [[ "$python_suite" == packages/model_registry/tests* ]]; then
+      python_suite_args+=(-m "not performance")
+    fi
     if [[ "$python_suite" == "tests" ]]; then
+      python_suite_args+=(
+        --ignore=tests/program_control_plane
+        --ignore=tests/native_runtime
+      )
       for selected_suite in "${PYTHON_TEST_TARGETS[@]}"; do
-        if [[ "$selected_suite" == tests/* ]]; then
+        if [[ "$selected_suite" == tests/* &&
+          "$selected_suite" != "tests/program_control_plane" &&
+          "$selected_suite" != "tests/native_runtime" ]]; then
           python_suite_args+=("--ignore=$selected_suite")
         fi
       done

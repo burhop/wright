@@ -178,6 +178,9 @@ for python_suite in \
   packages/workspace_service/tests \
   tests; do
   python_suite_args=()
+  if [[ "$python_suite" == "packages/model_registry/tests" ]]; then
+    python_suite_args+=(-m "not performance")
+  fi
   if [[ "$python_suite" == "tests" ]]; then
     python_suite_args+=(
       --ignore=tests/program_control_plane

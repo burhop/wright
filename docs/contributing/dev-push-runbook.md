@@ -29,6 +29,28 @@ adopts a materially changed gate, run the full merge gate once before relying
 on the last-pushed-tip fast baseline. This one-time bootstrap prevents an older
 branch failure from hiding outside the latest incremental diff.
 
+## Delivery-speed budget
+
+- Local commits are cheap and may be created whenever they leave a reviewable
+  checkpoint. A feature branch normally gets at most **two pushes**: one complete
+  candidate and one consolidated correction after every first-cycle CI result is
+  terminal and classified.
+- Merge to `dev` once per independently useful customer capability. Do not use
+  either feature-branch pushes or `dev` integration as an incremental debugger.
+- A test-, CI-, or gate-only correction that cannot change shipped behavior runs
+  the directly affected deterministic checks and one CI cycle. It does not restart
+  a previously completed full local gate unless the correction changes product
+  behavior, a public contract, dependency resolution, packaging output, security
+  policy, or the merge gate's substantive coverage.
+- Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
+  not PR correctness gates. They run in the scheduled/manual performance workflow;
+  deterministic functional, security, compatibility, and customer-journey tests
+  remain blocking.
+- Track pushes per feature, CI cycles, first-push green rate, runner time, local
+  gate time, product-versus-infrastructure failures, and customer capabilities
+  delivered. Use these measures to remove process cost, never to weaken a red
+  customer, security, compatibility, or release signal.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate

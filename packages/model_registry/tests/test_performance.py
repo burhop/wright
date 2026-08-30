@@ -272,6 +272,7 @@ class TimedApplication:
 
 
 @pytest.mark.asyncio
+@pytest.mark.performance
 async def test_gateway_model_tool_overhead_stays_below_ten_percent() -> None:
     application = TimedApplication()
     provider = EngineeringModelGatewayProvider(application)

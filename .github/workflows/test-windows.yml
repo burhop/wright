@@ -64,7 +64,12 @@ jobs:
             'packages/workspace_service/tests'
           )
           foreach ($suite in $pythonSuites) {
-            uv run --extra runtime --extra engineering-models python -m pytest -q $suite
+            $suiteArgs = if ($suite -eq 'packages/model_registry/tests') {
+              @('-m', 'not performance')
+            } else {
+              @()
+            }
+            uv run --extra runtime --extra engineering-models python -m pytest -q $suite @suiteArgs
           }
           uv run --extra runtime --extra engineering-models python -m pytest -q tests `
             --ignore=tests/program_control_plane `
