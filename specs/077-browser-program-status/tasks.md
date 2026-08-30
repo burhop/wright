@@ -155,7 +155,7 @@
 - [x] T045 Run and record deterministic quickstart acceptance, including work/assignment provenance, wrong-source/missing-subject/verdict/independence use-case negatives, cross-language digest golden fixtures and test-count cardinality, canonical test-history edge cases, isolated evidence corruption, publisher state, internal evidence navigation, and automatic committed refresh, in `specs/077-browser-program-status/quickstart.md`
 - [x] T046 Run focused publisher, all five schemas plus the source catalog and three registry contracts, EPP-F01B API, named existing surface-auth Linux baselines, web, UI-integration, packaged/native lifecycle (including POSIX owned-listener detection), lint, format, type, security/secret, and program-control checks; record commands/results by stable cause, distinguish pre-existing baseline failures from feature regressions, and preserve an explicit Windows/Linux/macOS atomic-replacement/native-lifecycle matrix in feature evidence
 - [x] T047 Run the scripted engineering-usability comprehension review and independent architecture/test review; resolve each stable cause within two bounded repairs and preserve reviewer identity/results
-- [ ] T048 Freeze the exact implementation candidate and run Wright's dev push gate; stop for any missing authority before push, PR, merge, deployment, publication, or release
+- [x] T048 Freeze the exact implementation candidate and run Wright's dev push gate; stop for any missing authority before push, PR, merge, deployment, publication, or release
 
 **Checkpoint**: The implementation candidate is independently verified and ready for the separately authorized integration lifecycle.
 
