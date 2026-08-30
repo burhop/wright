@@ -1,0 +1,81 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0081",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "state_domain": "feature",
+  "event_kind": "approval_checkpoint",
+  "from_state": "IMPLEMENTATION_APPROVAL_PENDING",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 81,
+  "new_revision": 82,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "6030c81f1270c67aed537922681ea4a056d69148684166cec398cb00276f7cf4",
+  "new_state_digest": "e340bdf0487a6c07c55c416436be6165dab597033134678e0a6edc790090f861",
+  "actor": {"role": "coordinator", "identity": "Codex primary sole Windows writer"},
+  "action": "Activate the paired material-change and feature-implementation approvals for the exact reconciled EPP-F02 subject and acquire the bounded T001-T019 implementation lease.",
+  "started_at": "2026-08-30T22:45:00Z",
+  "finished_at": "2026-08-30T22:45:00Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "829d8e0ee85d115f149ad8485b585e0275c8a5bb",
+    "source_tree": "bf4a0db189f4844082902ec93ab4a9b1deb8dc64",
+    "source_program_tree": "0c32bb6d14cd326cabe7bd387c90be35784d9875",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F02-IMPL-001.json",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F02-MC-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0082.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0081.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "specs/078-process-definition-view/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0081.json"
+  },
+  "inputs": [],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0082.json", "sha256": "4ca47beb480e2dfd4bb798209429f5afa2a935e3b027215c0016c99cad5caff2", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "4ca47beb480e2dfd4bb798209429f5afa2a935e3b027215c0016c99cad5caff2", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F02-PAIRED-IMPLEMENTATION-APPROVAL",
+      "method": "Require active material-change and feature-implementation approvals with the same bundle, exact reconciled Git subject, identical 20-artifact manifest, and explicit bounded implementation conditions.",
+      "environment": "Committed approval evidence, program state, and lifecycle policy",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/approvals/APR-EPP-F02-MC-001.json", "evidence/approvals/APR-EPP-F02-IMPL-001.json", "program-state.json"]
+    }
+  ],
+  "authority": {
+    "required_scopes": ["material_change", "feature_implementation"],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F02-MC-001.json",
+      "evidence/approvals/APR-EPP-F02-IMPL-001.json"
+    ],
+    "subject": {
+      "git_commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+      "git_tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+      "program_tree": "09dc3d4506119e755504223fcf32586e28290cf3",
+      "artifact_count": 20,
+      "manifest_transition": "TR-0079"
+    },
+    "legacy_checkpoint": {"profile": "epp-bridge-v1-r10-r19", "transition": "TR-0018", "resolution_rule": "exact_material_change_approval_subject"},
+    "migration": {"from_schema_version": "1.0", "to_schema_version": "2.0", "sole_successor": true}
+  },
+  "independent_verifier": "The reconciled EPP-F02 subject, exact paired approvals, and bounded implementation lease passed deterministic schema and authority checks.",
+  "repair": {"stable_cause_id": "EPP-F02-TASK-AUTHORITY-CONTRACT-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": [
+    "The governed 100-process benchmark remains unauthorized and at 0/100.",
+    "No direct dev/main push, customer or production access, publication, release, or dev-to-main integration is authorized."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0081.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

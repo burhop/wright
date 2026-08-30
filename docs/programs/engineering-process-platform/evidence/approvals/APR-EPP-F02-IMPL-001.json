@@ -1,0 +1,49 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F02-IMPL-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "bundle_id": "APB-EPP-F02-001",
+  "decision": "approved_with_conditions",
+  "scope": "feature_implementation",
+  "subject": {
+    "git_commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+    "git_tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+    "program_tree": "09dc3d4506119e755504223fcf32586e28290cf3",
+    "artifact_digests": [
+      {"path": "../../../.specify/feature.json", "sha256": "7915148aa07d16d771da8b76228663a9a4ac714eef28626dde3a8ccc8f7fa263"},
+      {"path": "../../../AGENTS.md", "sha256": "327cc760cbd3486d9439317528240475e32cabb263aa6932efcd8cc3ccd8c751"},
+      {"path": "../../../docs/programs/engineering-process-platform/decision-register.json", "sha256": "8661a10d4d46a45ad3e187c440b43f9d560593f16990aa7ae6e8e80f2fb3860d"},
+      {"path": "../../../docs/programs/engineering-process-platform/decisions/0021-epp-f02-read-only-boundary.md", "sha256": "27a12fa3a610b2e8ec16612a3a5d1d03a54ce3da2d2d2feae0ffd7976898dc42"},
+      {"path": "../../../docs/programs/engineering-process-platform/execution-resource-plan.md", "sha256": "6d52bb52b547e6a74b1db6195c05467e022d2d9befa371e345fe2f1dd77d6039"},
+      {"path": "../../../docs/programs/engineering-process-platform/roadmap.json", "sha256": "328347e1373c6cf25fd53bb88b20d080b0852c0aa3417accc81353278645cb67"},
+      {"path": "../../../specs/078-process-definition-view/analysis.md", "sha256": "940899b204d3fa37699bde0f1462869e2ac9ca6755fe249e9409ac81138776a3"},
+      {"path": "../../../specs/078-process-definition-view/checklists/delivery-readiness.md", "sha256": "12f1610e6dd0d07097e8a143e36139a52a5084d51f8c55e98472ff427df4185a"},
+      {"path": "../../../specs/078-process-definition-view/checklists/requirements.md", "sha256": "a523f93afcd2de73c6c967b691e7844618e25e9726dbd862a22374939bcfef3d"},
+      {"path": "../../../specs/078-process-definition-view/contracts/process-definition-api.md", "sha256": "bc6f7c50080d661b84365d9e3f096e2caba1f256ba4bf8ddcbb9dfc007a9aa71"},
+      {"path": "../../../specs/078-process-definition-view/contracts/process-definition.schema.json", "sha256": "43294f90a680ec7f853422f628f0c1b9fe04f0f7deca785dec9215bae00d9f7f"},
+      {"path": "../../../specs/078-process-definition-view/contracts/prod-02-study.md", "sha256": "e44201e345cb293b9a6bc7a32c7059e60975a5ec4b7e76c9c4f0cc4820b819dd"},
+      {"path": "../../../specs/078-process-definition-view/contracts/product-definition-v1.sample.json", "sha256": "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef"},
+      {"path": "../../../specs/078-process-definition-view/contracts/recovery-fixtures.json", "sha256": "bffb23e808be86e5daf849c289b101c357e2d1746fd814598719218933ea965d"},
+      {"path": "../../../specs/078-process-definition-view/data-model.md", "sha256": "8534714df6d0789aeff56758c1e4dce3a167d4171f6f7b85e77bd6e1772324a2"},
+      {"path": "../../../specs/078-process-definition-view/plan.md", "sha256": "2f0706210c66f2b4fa23081ddc7076e0f36990c2a364c30ba97efbcba23f6c4d"},
+      {"path": "../../../specs/078-process-definition-view/quickstart.md", "sha256": "7ab6e1553bd41df5a1a822ebd51b022f049d9747a3463cd2481db0a8559929d6"},
+      {"path": "../../../specs/078-process-definition-view/research.md", "sha256": "c0251c96713d048c359fdea5b4f0a53cf3d95f800799f1ac3e503f10a1d79340"},
+      {"path": "../../../specs/078-process-definition-view/spec.md", "sha256": "e7719d2ca64dca518bd0615c1a337d0c9dba727a4949f1eb273a145163b9fb6b"},
+      {"path": "../../../specs/078-process-definition-view/tasks.md", "sha256": "02105676849c7c54dcb25ce19bb07539dd5c19b9726f61a0fe0feefab93524c8"}
+    ]
+  },
+  "approver": "Human user in Codex goal directive on 2026-08-30",
+  "approved_at": "2026-08-30T22:45:00Z",
+  "expires_at": null,
+  "review": {"due_at": null, "last_reviewed_at": "2026-08-30T22:45:00Z"},
+  "supersedes": [],
+  "revocation_events": [],
+  "conditions": [
+    "Implementation is limited to the exact 19-task EPP-F02 graph and its frozen acceptance contracts.",
+    "Only one bundled immutable process definition and read-only engineer view may be implemented; editing, Apply, execution, persistence, MCP invocation, LLM authoring, and benchmark qualification are excluded.",
+    "Windows is the sole writer; GB10 is limited to exact read-only verification and returns evidence only.",
+    "No dependency addition, governed 100-process benchmark, direct dev/main push, production/customer access, publication, release, or dev-to-main integration is authorized."
+  ]
+}
