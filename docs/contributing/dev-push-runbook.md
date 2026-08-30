@@ -79,7 +79,7 @@ suite cannot be hidden by a later passing command.
 Committed program-status evidence also selects the scanner-configuration and
 CI-route regressions in the fast gate. The Gitleaks exception is limited to the
 `generic-api-key` rule, the exact three ledger/test/packaged-status paths, and a
-matched lowercase 64-hex `run_key` token; other matches on the same minified
+matched lowercase, exactly 64-hex `run_key` value; other matches on the same minified
 line and other key names or paths remain scannable. When Docker is responsive,
 the fast gate runs both a scanner-backed positive/negative allowlist contract
 and the pinned Gitleaks history scan. It reports an explicit bounded host skip

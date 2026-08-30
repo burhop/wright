@@ -40,4 +40,16 @@ if MSYS_NO_PATHCONV=1 docker run --rm \
   exit 1
 fi
 
+printf '{"run_key":"%sa"}\n' "$run_key" >"$FIXTURE_PATH"
+if MSYS_NO_PATHCONV=1 docker run --rm \
+  -v "$DOCKER_ROOT_DIR:/repo" \
+  "$GITLEAKS_IMAGE" \
+  dir /repo/test-results/"$(basename "$FIXTURE_ROOT")" \
+  --config /repo/.gitleaks.toml \
+  --no-banner \
+  --redact >/dev/null 2>&1; then
+  echo "Gitleaks failed to detect a run_key longer than one SHA-256 identity." >&2
+  exit 1
+fi
+
 echo "Program-status Gitleaks allowlist contract passed."

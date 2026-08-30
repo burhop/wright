@@ -63,7 +63,7 @@ def test_gitleaks_config_keeps_allowlists_narrow() -> None:
     assert 'targetRules = ["generic-api-key"]' in config
     assert 'condition = "AND"' in config
     assert 'regexTarget = "match"' in config
-    assert '''run_key"\\s*:\\s*"[0-9a-f]{64}''' in config
+    assert '''run_key"\\s*:\\s*"[0-9a-f]{64}"''' in config
     assert config.count("test-run-ledger\\.json") == 1
     assert config.count("test_program_status\\.py") == 1
     assert config.count("static/program-status/current\\.json") == 1
@@ -80,9 +80,14 @@ def test_program_status_gitleaks_allowlist_has_scanner_backed_negative_control()
     assert '"run_key"' in contract
     assert '"api_key"' in contract
     assert "failed to detect a second API-key match" in contract
+    assert "longer than one SHA-256 identity" in contract
     assert "test-gitleaks-program-status-allowlist.sh" in push
     assert "scripts/security-scan.sh --include-untracked --skip-trufflehog" in push
     assert "GitHub security CI remains authoritative" in push
+    assert (
+        "scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh"
+        in push
+    )
 
 
 def test_docs_and_makefile_expose_local_alpha_gate() -> None:
