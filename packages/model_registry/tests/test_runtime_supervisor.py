@@ -10,6 +10,7 @@ from model_registry.models import canonical_digest
 from model_registry.runtime import (
     RuntimeAdapterRegistry,
     RuntimeFailure,
+    RuntimeSession,
     RuntimeSupervisor,
 )
 
@@ -32,6 +33,65 @@ async def opened(tmp_path, *, values=None):
         execution_provider="cpu",
     )
     return supervisor, session
+
+
+@pytest.mark.asyncio
+async def test_supervisor_applies_one_bounded_startup_deadline(
+    tmp_path, monkeypatch
+) -> None:
+    observed: list[float] = []
+    exchange = RuntimeSession._exchange
+
+    async def record_startup_timeout(self, operation, payload, **kwargs):
+        if operation == "health":
+            observed.append(kwargs["timeout"])
+        return await exchange(self, operation, payload, **kwargs)
+
+    monkeypatch.setattr(RuntimeSession, "_exchange", record_startup_timeout)
+    supervisor = RuntimeSupervisor(
+        RuntimeAdapterRegistry((registration(),)), scratch_root=tmp_path / "scratch"
+    )
+    system, architecture = _platform()
+    session = await supervisor.start_session(
+        adapter_id="wright-deterministic",
+        installation_id="installation-affine",
+        artifacts=artifacts(tmp_path),
+        model_format="wright-affine-json",
+        task_id="predict",
+        platform=system,
+        architecture=architecture,
+        execution_provider="cpu",
+        startup_timeout=5.0,
+    )
+    await session.shutdown()
+
+    assert observed == [5.0]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("startup_timeout", [0.0, -1.0, 30.1, float("inf")])
+async def test_supervisor_rejects_unbounded_startup_deadlines(
+    tmp_path, startup_timeout
+) -> None:
+    supervisor = RuntimeSupervisor(
+        RuntimeAdapterRegistry((registration(),)), scratch_root=tmp_path / "scratch"
+    )
+    system, architecture = _platform()
+    with pytest.raises(RuntimeFailure) as caught:
+        await supervisor.start_session(
+            adapter_id="wright-deterministic",
+            installation_id="installation-affine",
+            artifacts=artifacts(tmp_path),
+            model_format="wright-affine-json",
+            task_id="predict",
+            platform=system,
+            architecture=architecture,
+            execution_provider="cpu",
+            startup_timeout=startup_timeout,
+        )
+
+    assert caught.value.category == "resource_rejected"
+    assert supervisor.active_process_count == 0
 
 
 @pytest.mark.asyncio

@@ -821,6 +821,7 @@ class RuntimeSupervisor:
         architecture: str,
         execution_provider: str,
         health_fault_profile: str | None = None,
+        startup_timeout: float = 2.0,
         maximum_artifact_bytes: int = 1024 * 1024 * 1024,
         required_ram_bytes: int = 0,
         required_disk_bytes: int = 0,
@@ -837,6 +838,14 @@ class RuntimeSupervisor:
         )
         if not _IDENTITY.fullmatch(installation_id):
             raise RuntimeFailure("artifact_invalid", "Installation identity is invalid")
+        if (
+            not math.isfinite(startup_timeout)
+            or startup_timeout <= 0
+            or startup_timeout > 30
+        ):
+            raise RuntimeFailure(
+                "resource_rejected", "Runtime startup timeout is invalid"
+            )
         if not 1 <= maximum_artifact_bytes <= 1024 * 1024 * 1024 * 1024:
             raise RuntimeFailure(
                 "resource_rejected", "Runtime artifact limit is invalid"
@@ -904,7 +913,10 @@ class RuntimeSupervisor:
             )
             self._sessions.add(session)
             health = await session._exchange(
-                "health", {}, timeout=2.0, fault_profile=health_fault_profile
+                "health",
+                {},
+                timeout=startup_timeout,
+                fault_profile=health_fault_profile,
             )
             descriptor = AdapterDescriptor.parse(health)
             self._check_descriptor(registration, descriptor)
