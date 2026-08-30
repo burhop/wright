@@ -3452,14 +3452,37 @@ def validate_f01b_lease_checkpoint_correction(
                     "STOPPED",
                 }
             elif isinstance(current_lease, Mapping):
+                same_f01b_lease = all(
+                    current_lease.get(field) == expected_lease.get(field)
+                    for field in protected_lease_fields
+                )
+                exact_f02_successor = all(
+                    (
+                        successor_state.get("revision", 0) > 79,
+                        successor_state.get("current_feature") == "EPP-F02",
+                        successor_state.get("feature_state")
+                        in {
+                            "IMPLEMENTATION_APPROVAL_PENDING",
+                            "IMPLEMENTATION_AUTHORIZED",
+                        },
+                        current_lease.get("feature_id") == "EPP-F02",
+                        current_lease.get("dev_baseline")
+                        == {
+                            "commit": "e9dd5c38026d0b1b5b165ee803fe082068ecc128",
+                            "tree": "d7e2ddf8228263478475019099f424a91c3b96c2",
+                        },
+                        current_lease.get("worktree_start")
+                        == {
+                            "commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+                            "tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+                        },
+                    )
+                )
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
                         successor_state.get("revision", 0) > 76,
-                        all(
-                            current_lease.get(field) == expected_lease.get(field)
-                            for field in protected_lease_fields
-                        ),
+                        same_f01b_lease or exact_f02_successor,
                     )
                 )
             else:

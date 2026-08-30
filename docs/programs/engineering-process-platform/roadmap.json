@@ -46,7 +46,7 @@
       "priority": 15,
       "title": "Browser program-status dashboard",
       "outcome": "Complete through PR #115 plus bounded correction PR #116. Dev commit e9dd5c38 has exact gated tree d7e2ddf8 and all eight post-merge workflows passed. A maintainer can open an accessible read-only browser page that renders the validated committed dashboard snapshot, four independent readiness areas, 0-to-100 benchmark qualification progress, active feature and task/checkpoint progress, blockers, next action, evidence links and freshness without becoming a second authority.",
-      "status": "active",
+      "status": "complete",
       "depends_on": [
         "EPP-F01"
       ],
@@ -67,13 +67,11 @@
       "priority": 20,
       "title": "Canonical process definition and read-only engineer view",
       "outcome": "An engineer can open a versioned process, understand phases, blocks, ports, gates, feedback and intended artifacts, and inspect the same semantic identities in text and diagram without enabling execution or inheriting prototype runtime code.",
-      "status": "proposed",
+      "status": "active",
       "depends_on": [
         "EPP-F01B"
       ],
-      "blocking_decisions": [
-        "DEC-P0-002"
-      ],
+      "blocking_decisions": [],
       "gate_impacts": [
         "PROD-01",
         "PROD-02",
