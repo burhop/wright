@@ -1,0 +1,151 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0091",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "DEV_INTEGRATED",
+  "to_state": "DEV_DEPLOYMENT_VERIFIED",
+  "prior_revision": 91,
+  "new_revision": 92,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cf73fe7bd5cf7039854a7fffabfd99241a99a1f8722e1b7fae0927c0dc325ea4",
+  "new_state_digest": "0da5b31ab3d76618decbe819a5d83181a8b23d13016e171ec72ea1aba1624955",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex primary sole Windows writer"
+  },
+  "action": "Close EPP-F02 after PR #120 repaired the feature-enabled Docker boundary, all exact post-merge dev workflows passed, and GB10 independently built, deployed, exercised, and cleaned up the exact merged development image.",
+  "started_at": "2026-08-31T17:32:05Z",
+  "finished_at": "2026-08-31T17:50:11Z",
+  "duration_ms": 1086000,
+  "classification": "passed",
+  "git": {
+    "source_commit": "59bb53510346a9faf417d4c024a7b1b4d187c2ae",
+    "source_tree": "3124a803597bd6be401a960e556fee24b7946215",
+    "source_program_tree": "ded189818a240df74db0351d9e6d0699e298f500",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0092.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0091.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0091.json",
+      "sha256": "e32dd239220dec7d05e88ae28dadba14f28d9dec114fa190c5a243789d42eeb5",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0092.json",
+      "sha256": "03666bb455a45b548c3167a630f2794c1fc480804070a3002d9d8dae38fd4680",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    },
+    {
+      "path": "program-state.json",
+      "sha256": "03666bb455a45b548c3167a630f2794c1fc480804070a3002d9d8dae38fd4680",
+      "schema_version": "2.0",
+      "role": "operational_state"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F02-DOCKER-CORRECTION-INTEGRATED",
+      "method": "Require PR #120 to merge through GitHub as dev commit 7404a549, require its tree to equal the independently reviewed correction tree, and collect all eight core post-merge workflows to successful terminal status.",
+      "environment": "Fetched Git objects and GitHub Actions",
+      "duration_ms": 1086000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "https://github.com/burhop/wright/pull/120",
+        "dev:7404a549ae244cc05d89e062c60276e8862f53c9",
+        "tree:9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
+        "dev_workflows:8_passed_0_failed_0_pending"
+      ]
+    },
+    {
+      "check_id": "EPP-F02-EXACT-IMAGE-DEPLOYMENT",
+      "method": "On GB10, fetch exact dev 7404a549 into a clean disposable detached worktree, build Dockerfile with VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1, deploy only on isolated loopback, verify both supervised services, health, process API, ETag and conditional request, packaged source identity, authenticated SPA route and served feature markers, then remove the deployment.",
+      "environment": "promaxgb10-9666 Linux arm64 isolated Docker deployment",
+      "duration_ms": 517000,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "commit:7404a549ae244cc05d89e062c60276e8862f53c9",
+        "tree:9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
+        "image:sha256:db02e117748a4562d079d13227c200170435d3ad835d7df61e1e801ec259e924",
+        "etag:b240147c88a46d59eb22000fe146fb63219cbce94bd492eb7e59a302687918d7",
+        "api_body_sha256:9e4e4c67a23aa9e61758f83b9c17f803e996bc970aab0d81efb8c083d43e9fea",
+        "source_sha256:6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef",
+        "served_js_sha256:a7c30df48b1e3bbaf55be5963ce5ff12502cf017e5297899813221a7cb1f9f5e",
+        "cleanup:container_removed_port_closed_disposable_worktree_removed"
+      ]
+    },
+    {
+      "check_id": "EPP-F02-CLOSEOUT-NON-INTERFERENCE",
+      "method": "Keep all four readiness areas non-compensating, benchmark qualification at 0/100, release eligibility false, and EPP-F02B proposed but inactive while closing only the deployment-verified read-only slice.",
+      "environment": "Canonical revisions 91 and 92 plus roadmap/work registry",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "evidence/states/program-state-revision-0091.json",
+        "evidence/states/program-state-revision-0092.json",
+        "roadmap:EPP-F02=active_until_next_feature_selection",
+        "roadmap:EPP-F02B=proposed",
+        "benchmark:0/100"
+      ]
+    }
+  ],
+  "authority": {
+    "required_scopes": [
+      "material_change",
+      "feature_implementation"
+    ],
+    "approval_records": [
+      "evidence/approvals/APR-EPP-F02-MC-001.json",
+      "evidence/approvals/APR-EPP-F02-IMPL-001.json"
+    ],
+    "subject": {
+      "git_commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+      "git_tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+      "program_tree": "09dc3d4506119e755504223fcf32586e28290cf3",
+      "artifact_count": 20,
+      "manifest_transition": "TR-0079"
+    },
+    "legacy_checkpoint": {
+      "profile": "epp-bridge-v1-r10-r19",
+      "transition": "TR-0018",
+      "resolution_rule": "exact_material_change_approval_subject"
+    },
+    "migration": {
+      "from_schema_version": "1.0",
+      "to_schema_version": "2.0",
+      "sole_successor": true
+    }
+  },
+  "independent_verifier": "GB10 exact-commit build/deployment evidence plus terminal GitHub workflow results independently verify the merged development subject.",
+  "repair": {
+    "stable_cause_id": "EPP-F02-DOCKER-FEATURE-FLAG-001",
+    "attempt": 1,
+    "maximum": 2,
+    "remaining": 1
+  },
+  "blockers": [
+    "Product, benchmark, commercial, and program-health readiness remain independent; benchmark qualification is 0/100 and release eligibility is false.",
+    "EPP-F02B remains proposed and inactive until its reviewed-child lifecycle activation is committed."
+  ],
+  "rollback_subject": "image:sha256:db02e117748a4562d079d13227c200170435d3ad835d7df61e1e801ec259e924;prior_dev:a69cb74405350fc90f2c9ae91c82eec6fd17e91d",
+  "next_action": "SELECT_NEXT_FEATURE_PLANNING"
+}
