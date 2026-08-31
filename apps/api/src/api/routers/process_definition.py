@@ -16,6 +16,7 @@ from api.schemas.process_definition import (
     ProcessDefinitionErrorCode as ApiProcessDefinitionErrorCode,
     ProcessDefinitionErrorResponse,
 )
+from api.middleware.tracing import normalize_correlation_id
 
 
 router = APIRouter()
@@ -44,13 +45,15 @@ def get_process_definition_reader(request: Request) -> ProcessDefinitionReader:
 
 
 def _trace_id(request: Request) -> str:
-    return str(getattr(request.state, "trace_id", "no-active-span"))
+    value = getattr(request.state, "trace_id", None)
+    return normalize_correlation_id(value if isinstance(value, str) else None)
 
 
 def _error_response(
     request: Request,
     error: ProcessDefinitionReadError,
 ) -> JSONResponse:
+    trace_id = _trace_id(request)
     status_by_code = {
         ProcessDefinitionErrorCode.UNAVAILABLE: status.HTTP_404_NOT_FOUND,
         ProcessDefinitionErrorCode.IDENTITY_MISMATCH: status.HTTP_409_CONFLICT,
@@ -76,13 +79,13 @@ def _error_response(
         error_code=ApiProcessDefinitionErrorCode(error.code.value),
         message="Process definition is not available from validated local evidence.",
         recovery_class=recovery_by_code[error.code],
-        trace_id=_trace_id(request),
+        trace_id=trace_id,
         supported_schema_versions=supported_versions,
     )
     return JSONResponse(
         status_code=status_by_code[error.code],
         content=payload.model_dump(mode="json", exclude_none=True),
-        headers={"Cache-Control": "no-store", "X-Trace-Id": _trace_id(request)},
+        headers={"Cache-Control": "no-store", "X-Trace-Id": trace_id},
     )
 
 

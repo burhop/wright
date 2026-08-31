@@ -21,6 +21,7 @@ from tool_registry.process_definition import (
 from api.routers.process_definition import router
 from api.schemas.process_definition import ProcessDefinitionEnvelopeResponse
 from api.security import ControlPlaneSecurityMiddleware, SecuritySettings
+from api.middleware.tracing import TracingMiddleware
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
@@ -103,6 +104,15 @@ def make_authenticated_client(reader: Reader) -> TestClient:
     app.state.process_definition_reader = reader
     app.include_router(router, prefix="/api/process-definitions")
     app.add_middleware(ControlPlaneSecurityMiddleware)
+    return TestClient(app)
+
+
+def make_traced_client(reader: Reader) -> TestClient:
+    app = FastAPI()
+    app.state.security_settings = SimpleNamespace(enforced=False)
+    app.state.process_definition_reader = reader
+    app.include_router(router, prefix="/api/process-definitions")
+    app.add_middleware(TracingMiddleware)
     return TestClient(app)
 
 
@@ -453,6 +463,24 @@ def test_unknown_process_is_rejected_before_reader_without_path_construction() -
     assert response.status_code == 404
     assert reader.calls == []
     assert "not-the-bundled-process" not in response.text
+
+
+def test_oversized_trace_id_is_replaced_before_closed_error_response() -> None:
+    reader = FakeReader()
+    hostile_trace = "x" * 201
+
+    response = make_traced_client(reader).get(
+        "/api/process-definitions/not-the-bundled-process",
+        headers={"X-Trace-Id": hostile_trace},
+    )
+
+    assert response.status_code == 404
+    assert reader.calls == []
+    safe_trace = response.json()["trace_id"]
+    assert response.headers["X-Trace-Id"] == safe_trace
+    assert safe_trace != hostile_trace
+    assert len(safe_trace) == 32
+    assert safe_trace.isalnum()
 
 
 @pytest.mark.parametrize(

@@ -8,6 +8,7 @@ OpenTelemetry remains the source of trace_id/span_id.
 
 import secrets
 import time
+import re
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -20,6 +21,15 @@ from core.telemetry import (
 )
 
 _tracer = trace.get_tracer("wright.api")
+_CORRELATION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+
+
+def normalize_correlation_id(value: str | None) -> str:
+    """Keep caller correlation IDs bounded and safe for bodies, logs, and headers."""
+    if value is not None and _CORRELATION_ID.fullmatch(value) is not None:
+        return value
+    return secrets.token_hex(16)
+
 
 # Map route paths to semantic span names per spec.md span hierarchy
 _ROUTE_SPAN_MAP: dict[str, str] = {
@@ -97,7 +107,7 @@ class TracingMiddleware(BaseHTTPMiddleware):
     """Creates an OTel root span for every HTTP request with semantic naming."""
 
     async def dispatch(self, request: Request, call_next):
-        correlation_id = request.headers.get("x-trace-id") or secrets.token_hex(16)
+        correlation_id = normalize_correlation_id(request.headers.get("x-trace-id"))
         request.state.correlation_id = correlation_id
         # Compatibility: existing error responses expose this field as trace_id.
         request.state.trace_id = correlation_id
