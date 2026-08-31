@@ -27,11 +27,7 @@ from tool_registry.process_definition import (
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_ROOT = REPOSITORY_ROOT / "specs" / "078-process-definition-view" / "contracts"
 PACKAGED_ROOT = (
-    REPOSITORY_ROOT
-    / "src"
-    / "wright_engineering"
-    / "static"
-    / "process-definitions"
+    REPOSITORY_ROOT / "src" / "wright_engineering" / "static" / "process-definitions"
 )
 SAMPLE_SOURCE = CONTRACT_ROOT / "product-definition-v1.sample.json"
 SCHEMA_SOURCE = CONTRACT_ROOT / SCHEMA_FILENAME
@@ -116,7 +112,10 @@ def test_frozen_sample_has_exact_semantic_identity_and_valid_graph(
     material.pop("content_sha256")
 
     assert definition["content_sha256"] == CONTENT_SHA256
-    assert hashlib.sha256(canonical_process_json_bytes(material)).hexdigest() == CONTENT_SHA256
+    assert (
+        hashlib.sha256(canonical_process_json_bytes(material)).hexdigest()
+        == CONTENT_SHA256
+    )
 
     reader = ProcessDefinitionReader(
         tmp_path / "installed",
@@ -151,9 +150,7 @@ def test_frozen_sample_has_exact_semantic_identity_and_valid_graph(
             produced_by_action_id="define-product"
         ),
         lambda value: value["phases"][0].update(action_ids=["missing-action"]),
-        lambda value: value["actions"][0].update(
-            input_port_ids=["missing-input-port"]
-        ),
+        lambda value: value["actions"][0].update(input_port_ids=["missing-input-port"]),
         lambda value: value["actions"][0].update(
             output_port_ids=["missing-output-port"]
         ),
@@ -207,7 +204,9 @@ def test_graph_invariant_failures_are_rejected(
     assert error.recovery_class == "replace_validated_definition"
 
 
-def test_installed_definition_wins_and_fallback_is_only_for_absence(tmp_path: Path) -> None:
+def test_installed_definition_wins_and_fallback_is_only_for_absence(
+    tmp_path: Path,
+) -> None:
     installed = tmp_path / "installed"
     packaged = tmp_path / "packaged"
     _write_packaged(installed)
@@ -298,9 +297,7 @@ def test_identity_mismatch_is_closed(
     packaged = tmp_path / "packaged"
     _write_packaged(packaged, definition=raw)
 
-    error = _error(
-        ProcessDefinitionReader(tmp_path / "installed", packaged), expected
-    )
+    error = _error(ProcessDefinitionReader(tmp_path / "installed", packaged), expected)
     assert error.recovery_class == "reinstall_exact_artifact"
 
 
@@ -373,7 +370,9 @@ def test_external_schema_references_fail_without_network_access(
     assert network_calls == []
 
 
-def test_document_is_copy_safe_and_etag_binds_the_exact_envelope(tmp_path: Path) -> None:
+def test_document_is_copy_safe_and_etag_binds_the_exact_envelope(
+    tmp_path: Path,
+) -> None:
     packaged = tmp_path / "packaged"
     _write_packaged(packaged)
     reader = ProcessDefinitionReader(tmp_path / "installed", packaged)
@@ -389,9 +388,10 @@ def test_document_is_copy_safe_and_etag_binds_the_exact_envelope(tmp_path: Path)
     assert body["supported_schema_versions"] == list(SUPPORTED_SCHEMA_VERSIONS)
 
     body["definition"]["title"] = "mutated caller copy"
-    assert reader.read(PROCESS_ID).as_dict()["definition"]["title"] != body["definition"][
-        "title"
-    ]
+    assert (
+        reader.read(PROCESS_ID).as_dict()["definition"]["title"]
+        != body["definition"]["title"]
+    )
     with pytest.raises(FrozenInstanceError):
         first.etag = "0" * 64  # type: ignore[misc]
 

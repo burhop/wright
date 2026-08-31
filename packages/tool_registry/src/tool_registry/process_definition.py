@@ -204,7 +204,9 @@ def _validate_graph(definition: Mapping[str, Any]) -> None:
     feedback_by_id = {str(item["id"]): item for item in feedback_paths}
     artifact_by_id = {str(item["id"]): item for item in artifacts}
 
-    ordered_actions = [str(action_id) for phase in phases for action_id in phase["action_ids"]]
+    ordered_actions = [
+        str(action_id) for phase in phases for action_id in phase["action_ids"]
+    ]
     if len(ordered_actions) != len(set(ordered_actions)) or set(ordered_actions) != set(
         action_by_id
     ):
@@ -247,7 +249,9 @@ def _validate_graph(definition: Mapping[str, Any]) -> None:
     for port_id, port in port_by_id.items():
         owner = str(port["owner_action_id"])
         direction = str(port["direction"])
-        if owner not in action_by_id or port_references[port_id] != [(owner, direction)]:
+        if owner not in action_by_id or port_references[port_id] != [
+            (owner, direction)
+        ]:
             raise ValueError("port ownership and action references must be reciprocal")
         source_id = port["source_port_id"]
         if direction == "output":
@@ -296,8 +300,12 @@ def _validate_graph(definition: Mapping[str, Any]) -> None:
 
     for artifact_id, artifact in artifact_by_id.items():
         producer = str(artifact["produced_by_action_id"])
-        if producer not in action_by_id or artifact_references[artifact_id] != [producer]:
-            raise ValueError("artifact producer and action reference must be reciprocal")
+        if producer not in action_by_id or artifact_references[artifact_id] != [
+            producer
+        ]:
+            raise ValueError(
+                "artifact producer and action reference must be reciprocal"
+            )
 
 
 class ProcessDefinitionReader:
