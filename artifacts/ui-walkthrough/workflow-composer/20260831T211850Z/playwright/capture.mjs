@@ -1,5 +1,5 @@
 import { chromium } from "@playwright/test";
-import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const root = process.env.WRIGHT_WALKTHROUGH_ROOT;
@@ -7,6 +7,9 @@ const baseUrl = process.env.WRIGHT_WALKTHROUGH_URL;
 if (!root || !baseUrl) throw new Error("Walkthrough environment is incomplete");
 for (const directory of ["playwright", "screenshots/raw", "screenshots/annotated", "trace"]) {
   mkdirSync(path.join(root, directory), { recursive: true });
+}
+for (const staleStopImage of ["screenshots/raw/99-stopped.png", "screenshots/annotated/99-stopped.png"]) {
+  rmSync(path.join(root, staleStopImage), { force: true });
 }
 
 const subject = "e0354dd7346c7573f1aa6a36e1c29ed854a3bbe9";
