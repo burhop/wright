@@ -75,7 +75,7 @@ function canonicalSemanticIds(definition: ProcessDefinition): string[] {
 function projectionSemanticIds(root: HTMLElement): string[] {
   const nodes = [
     ...(root.hasAttribute("data-semantic-id") ? [root] : []),
-    ...root.querySelectorAll<HTMLElement>("[data-semantic-id]"),
+    ...Array.from(root.querySelectorAll<HTMLElement>("[data-semantic-id]")),
   ];
   return nodes.map((node) => node.dataset.semanticId ?? "").sort();
 }
