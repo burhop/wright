@@ -23,7 +23,7 @@
 - [X] T004 Implement closed immutable draft entities and canonical semantic/layout digests in packages/core/src/core/workflow_drafts.py
 - [X] T005 Implement stable diagnostics and complete graph/layout validation in packages/core/src/core/workflow_draft_validation.py
 - [X] T006 [P] Implement the feature-owned SQLite sidecar with append-only revisions and atomic compare-and-set head updates in packages/data_vault/src/data_vault/workflow_draft_repository.py
-- [ ] T007 Implement create/read/validate/save orchestration with last-valid preservation in packages/workspace_service/src/workspace_service/workflow_draft_service.py
+- [X] T007 Implement create/read/validate/save orchestration with last-valid preservation in packages/workspace_service/src/workspace_service/workflow_draft_service.py
 - [ ] T008 [P] Implement closed Pydantic transport and support-safe error models in apps/api/src/api/schemas/workflow_drafts.py
 - [ ] T009 Implement authenticated default-off create/read/validate/save routes in apps/api/src/api/routers/workflow_drafts.py and compose them in apps/api/src/api/{composition.py,main.py}
 - [ ] T010 [P] Implement strict bounded browser decoding, identity verification, and API calls in apps/web/src/services/workflow-drafts.ts

@@ -37,6 +37,14 @@ from .workflow_operations import (
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
 )
+from .workflow_draft_service import (
+    WorkflowDraftConflictError,
+    WorkflowDraftIdentityMismatchError,
+    WorkflowDraftInvalidError,
+    WorkflowDraftNotFoundError,
+    WorkflowDraftService,
+    WorkflowDraftValidationResult,
+)
 from .engineering_scenario_artifacts import (
     EngineeringArtifactNormalizerRegistry,
     artifact_content_digest,
@@ -119,6 +127,12 @@ __all__ = [
     "workspace_path_overlaps_application",
     "build_workspace_service",
     "WorkflowDocument",
+    "WorkflowDraftConflictError",
+    "WorkflowDraftIdentityMismatchError",
+    "WorkflowDraftInvalidError",
+    "WorkflowDraftNotFoundError",
+    "WorkflowDraftService",
+    "WorkflowDraftValidationResult",
     "WorkflowPersistenceError",
     "WorkflowRevisionConflict",
     "WorkspaceWorkflowStore",
