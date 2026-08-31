@@ -54,8 +54,8 @@
 
 **Independent Test**: Missing, malformed, unsupported, identity-mismatched, and disabled fixtures give bounded recovery while existing journeys remain unchanged.
 
-- [ ] T015 [US3] After T011, add the exact `contracts/recovery-fixtures.json` missing/invalid/unsupported cases plus closed API/UI failure, traversal/absolute/URL rejection, source non-mutation, disabled-boundary, and existing-route compatibility tests in `apps/api/tests/test_process_definition_api.py` and `apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx`
-- [ ] T016 [US3] Implement support-safe error mapping and disabled/unavailable browser states in `apps/api/src/api/routers/process_definition.py` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
+- [X] T015 [US3] After T011, add the exact `contracts/recovery-fixtures.json` missing/invalid/unsupported cases plus closed API/UI failure, traversal/absolute/URL rejection, source non-mutation, disabled-boundary, and existing-route compatibility tests in `apps/api/tests/test_process_definition_api.py` and `apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx`
+- [X] T016 [US3] Implement support-safe error mapping and disabled/unavailable browser states in `apps/api/src/api/routers/process_definition.py` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
 
 **Checkpoint**: US3 fails honestly and is removable without migrated state.
 

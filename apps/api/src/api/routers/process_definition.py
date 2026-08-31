@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Header, Request, Response, status
 from fastapi.responses import JSONResponse
 from tool_registry.process_definition import (
+    PROCESS_ID,
     ProcessDefinitionErrorCode,
     ProcessDefinitionReadError,
     ProcessDefinitionReader,
@@ -104,10 +105,26 @@ def read_process_definition(
     if_none_match: str | None = Header(default=None, alias="If-None-Match"),
     reader: ProcessDefinitionReader = Depends(get_process_definition_reader),
 ) -> Response:
+    if process_id != PROCESS_ID:
+        return _error_response(
+            request,
+            ProcessDefinitionReadError(
+                ProcessDefinitionErrorCode.UNAVAILABLE,
+                "enable_or_reinstall",
+            ),
+        )
     try:
         document = reader.read(process_id)
     except ProcessDefinitionReadError as error:
         return _error_response(request, error)
+    except Exception:
+        return _error_response(
+            request,
+            ProcessDefinitionReadError(
+                ProcessDefinitionErrorCode.READ_FAILED,
+                "inspect_local_data_root",
+            ),
+        )
     etag = f'"{document.etag}"'
     headers = {
         "Cache-Control": "no-cache, private",
