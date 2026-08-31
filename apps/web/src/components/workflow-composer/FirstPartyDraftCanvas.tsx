@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { DraftCanvasAdapterProps } from "./renderer-types";
 
@@ -12,10 +12,21 @@ export function FirstPartyDraftCanvas({
   onIntent,
 }: DraftCanvasAdapterProps): React.ReactNode {
   const [zoom, setZoom] = useState(100);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
   const blocks = useMemo(
     () => projection.phases.flatMap((phase) => phase.blocks),
     [projection],
   );
+  const fit = (): void => {
+    const viewportWidth = viewportRef.current?.clientWidth ?? 0;
+    const boardWidth = boardRef.current?.scrollWidth ?? 0;
+    if (viewportWidth <= 0 || boardWidth <= 0) {
+      setZoom(100);
+      return;
+    }
+    setZoom(Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.floor((viewportWidth / boardWidth) * 100))));
+  };
 
   return (
     <section className="workflow-canvas" data-testid="workflow-composer-canvas" aria-label="Workflow draft diagram">
@@ -28,12 +39,12 @@ export function FirstPartyDraftCanvas({
           <button data-testid="workflow-canvas-zoom-out" type="button" onClick={() => setZoom((value) => Math.max(MIN_ZOOM, value - ZOOM_STEP))} aria-label="Zoom out">−</button>
           <output aria-live="polite">{zoom}%</output>
           <button data-testid="workflow-canvas-zoom-in" type="button" onClick={() => setZoom((value) => Math.min(MAX_ZOOM, value + ZOOM_STEP))} aria-label="Zoom in">+</button>
-          <button data-testid="workflow-canvas-fit" type="button" onClick={() => setZoom(100)}>Fit</button>
+          <button data-testid="workflow-canvas-fit" type="button" onClick={fit}>Fit</button>
         </div>
       </header>
 
-      <div className="workflow-canvas__viewport">
-        <div className="workflow-canvas__board" style={{ "--workflow-canvas-zoom": zoom / 100 } as React.CSSProperties}>
+      <div className="workflow-canvas__viewport" ref={viewportRef}>
+        <div className="workflow-canvas__board" ref={boardRef} style={{ "--workflow-canvas-zoom": zoom / 100 } as React.CSSProperties}>
           <div className="workflow-canvas__lanes">
             {projection.phases.map((phase) => (
               <section className="workflow-canvas__lane" data-semantic-id={phase.semanticId} key={phase.semanticId}>
@@ -50,9 +61,16 @@ export function FirstPartyDraftCanvas({
                       data-role={block.role}
                       data-selected={selectedSemanticId === block.semanticId ? "true" : "false"}
                       data-semantic-id={block.semanticId}
+                      data-layout-x={block.position.x}
+                      data-layout-y={block.position.y}
                       key={block.semanticId}
+                      style={{
+                        "--workflow-block-order": block.position.x,
+                        "--workflow-block-offset-y": `${Math.max(0, Math.min(120, block.position.y))}px`,
+                      } as React.CSSProperties}
                     >
                       <button
+                        aria-pressed={selectedSemanticId === block.semanticId}
                         data-testid={`workflow-canvas-select-${block.semanticId}`}
                         type="button"
                         onClick={() => onIntent({ type: "select", semanticId: block.semanticId })}
@@ -60,6 +78,7 @@ export function FirstPartyDraftCanvas({
                         <span>{block.role}</span>
                         <strong>{block.title}</strong>
                         <code>{block.semanticId}</code>
+                        <small>Layout {block.position.x}, {block.position.y}{selectedSemanticId === block.semanticId ? " · Selected" : ""}</small>
                       </button>
                       <p>{block.purpose}</p>
                       <div className="workflow-canvas__ports">

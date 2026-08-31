@@ -1,11 +1,13 @@
 import type { DraftProjection } from "./draft-projection";
+import type { WorkflowDraftValidation } from "../../services/workflow-drafts";
 
 interface DraftInspectorProps {
   readonly projection: Readonly<DraftProjection>;
   readonly selectedSemanticId: string | null;
+  readonly validation: WorkflowDraftValidation | null;
 }
 
-export function DraftInspector({ projection, selectedSemanticId }: DraftInspectorProps): React.ReactNode {
+export function DraftInspector({ projection, selectedSemanticId, validation }: DraftInspectorProps): React.ReactNode {
   const selectedBlock = projection.phases
     .flatMap((phase) => phase.blocks)
     .find((block) => block.semanticId === selectedSemanticId);
@@ -41,7 +43,22 @@ export function DraftInspector({ projection, selectedSemanticId }: DraftInspecto
       </details>
       <details>
         <summary>Validation</summary>
-        <p className="workflow-composer__valid"><strong>Valid projection</strong> · all {projection.phases.flatMap((phase) => phase.blocks).length} block positions resolve.</p>
+        {validation === null ? (
+          <p><strong>Not checked</strong> · validate this working copy before saving.</p>
+        ) : validation.valid ? (
+          <p className="workflow-composer__valid"><strong>Validation passed</strong> · all {projection.phases.flatMap((phase) => phase.blocks).length} block positions and declared relationships resolve.</p>
+        ) : (
+          <div className="workflow-composer__invalid">
+            <strong>Validation found {validation.diagnostics.length} diagnostic{validation.diagnostics.length === 1 ? "" : "s"}</strong>
+            <ul>
+              {validation.diagnostics.map((diagnostic) => (
+                <li key={`${diagnostic.code}:${diagnostic.path}`}>
+                  <code>{diagnostic.code}</code> — {diagnostic.explanation} {diagnostic.correction}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </details>
     </aside>
   );

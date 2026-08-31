@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -173,6 +173,11 @@ describe("WorkflowComposer renderer contract", () => {
     await user.click(screen.getByTestId("workflow-canvas-select-block.define-product"));
     expect(screen.getByTestId("workflow-composer-inspector")).toHaveTextContent("Define product");
     expect(screen.getByTestId("workflow-composer-inspector")).toHaveTextContent("block.define-product");
+    expect(screen.getByTestId("workflow-canvas-select-block.define-product")).toHaveAttribute("aria-pressed", "true");
+    const positioned = canvas.querySelector<HTMLElement>('[data-semantic-id="block.define-product"]');
+    expect(positioned).toHaveAttribute("data-layout-x", "320");
+    expect(positioned).toHaveAttribute("data-layout-y", "0");
+    expect(positioned?.style.getPropertyValue("--workflow-block-order")).toBe("320");
 
     await user.click(screen.getByTestId("workflow-canvas-zoom-in"));
     expect(screen.getByText("120%")).toBeInTheDocument();
@@ -227,9 +232,86 @@ describe("WorkflowComposer renderer contract", () => {
 
     await user.click(screen.getByTestId("workflow-composer-save"));
 
-    expect(await screen.findByText(/no stale bytes were written/)).toBeInTheDocument();
+    expect(await screen.findByText(/local candidate is preserved/)).toBeInTheDocument();
     expect(readDraft).toHaveBeenCalledTimes(1);
     expect(saveDraft).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText("Working draft authority")).toHaveTextContent("Revision 1");
+
+    await user.click(screen.getByTestId("workflow-composer-use-current"));
+
     expect(screen.getByLabelText("Working draft authority")).toHaveTextContent("Revision 2");
+    expect(saveDraft).toHaveBeenCalledTimes(1);
+  });
+
+  it("builds the bounded four-block review composition from an empty draft", async () => {
+    const user = userEvent.setup();
+    const representative = decodeWorkflowDraft(fixture);
+    const empty = decodeWorkflowDraft({
+      ...representative,
+      semantic_sha256: "0".repeat(64),
+      layout_sha256: "0".repeat(64),
+      semantic: {
+        title: "Product definition draft",
+        purpose: "Capture, define, review, and release one product definition.",
+        phases: [{ id: "phase.draft", name: "Draft", purpose: "Organize provisional workflow blocks.", order: 0, block_ids: [] }],
+        blocks: [], ports: [], connections: [], gates: [], feedback_paths: [], intended_artifacts: [],
+      },
+      layout: { schema_version: "1.0.0", positions: [] },
+    });
+    validateDraft.mockResolvedValue({
+      valid: true,
+      semantic_sha256: representative.semantic_sha256,
+      layout_sha256: representative.layout_sha256,
+      diagnostics: [],
+    });
+    saveDraft.mockImplementation(async (candidate) => ({
+      draft: { ...candidate, revision: 2 },
+      etag: '"saved-etag"',
+    }));
+    render(<WorkflowComposer initialDraft={empty} initialEtag={'"empty-etag"'} />);
+
+    for (const role of ["input", "work", "review", "release"] as const) {
+      const button = screen.getByTestId(`workflow-composer-palette-${role}`);
+      await waitFor(() => expect(button).toBeEnabled());
+      await user.click(button);
+    }
+
+    await waitFor(() => expect(screen.getByTestId("workflow-composer-canvas")).toHaveTextContent("4 blocks · 3 phases"));
+    expect(renderedSemanticIds(screen.getByTestId("workflow-composer-canvas"))).toHaveLength(23);
+    expect(renderedSemanticIds(screen.getByTestId("workflow-composer-text"))).toEqual(renderedSemanticIds(screen.getByTestId("workflow-composer-canvas")));
+    expect(screen.getByText(/Representative four-block composition is complete/)).toBeInTheDocument();
+
+    await user.click(screen.getByTestId("workflow-composer-save"));
+    expect(await screen.findByText("Saved revision 2.")).toBeInTheDocument();
+    const savedCandidate = saveDraft.mock.calls[0]?.[0];
+    expect(savedCandidate?.semantic.blocks).toHaveLength(4);
+    expect(savedCandidate?.semantic.connections).toHaveLength(3);
+    expect(savedCandidate?.semantic.gates).toHaveLength(1);
+    expect(savedCandidate?.semantic.feedback_paths).toHaveLength(1);
+    expect(savedCandidate?.layout.positions.map(({ y }) => y)).toEqual([0, 32, 64, 96]);
+  });
+
+  it("keeps the inspector validation state consistent with server diagnostics", async () => {
+    const user = userEvent.setup();
+    const draft = decodeWorkflowDraft(fixture);
+    validateDraft.mockResolvedValue({
+      valid: false,
+      semantic_sha256: draft.semantic_sha256,
+      layout_sha256: draft.layout_sha256,
+      diagnostics: [{
+        code: "WORKFLOW_DRAFT_CONNECTION_TYPE_INCOMPATIBLE",
+        path: "/semantic/connections/0",
+        affected_semantic_ids: ["connection.requirements-to-definition"],
+        explanation: "The connected port value types differ.",
+        correction: "Connect ports with matching declared value types.",
+      }],
+    });
+    render(<WorkflowComposer initialDraft={draft} initialEtag={'"draft-etag"'} />);
+
+    await user.click(screen.getByTestId("workflow-composer-validate"));
+
+    expect(await screen.findByText("Validation found 1 diagnostic.")).toBeInTheDocument();
+    expect(screen.getByTestId("workflow-composer-inspector")).toHaveTextContent("WORKFLOW_DRAFT_CONNECTION_TYPE_INCOMPATIBLE");
+    expect(screen.getByTestId("workflow-composer-inspector")).not.toHaveTextContent("Validation passed");
   });
 });

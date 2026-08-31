@@ -112,6 +112,7 @@ const errorResult = z.object({
 }).strict();
 
 export type WorkflowDraft = z.infer<typeof workflowDraft>;
+export type WorkflowDraftValidation = z.infer<typeof validationResult>;
 
 export interface WorkflowDraftResult {
   draft: WorkflowDraft;
@@ -143,6 +144,14 @@ async function sha256(value: unknown): Promise<string> {
   const bytes = new TextEncoder().encode(canonical(value));
   const result = await crypto.subtle.digest("SHA-256", bytes);
   return [...new Uint8Array(result)].map((item) => item.toString(16).padStart(2, "0")).join("");
+}
+
+export async function bindWorkflowDraftIdentities(draft: WorkflowDraft): Promise<WorkflowDraft> {
+  return {
+    ...draft,
+    semantic_sha256: await sha256(draft.semantic),
+    layout_sha256: await sha256(draft.layout),
+  };
 }
 
 export function decodeWorkflowDraft(value: unknown): WorkflowDraft {
@@ -196,7 +205,7 @@ export async function readWorkflowDraft(draftId: string): Promise<WorkflowDraftR
   return decodeResponse(await hostAdapter.fetch(url(`/${encodeURIComponent(draftId)}`), { cache: "no-cache" }));
 }
 
-export async function validateWorkflowDraft(draft: WorkflowDraft): Promise<unknown> {
+export async function validateWorkflowDraft(draft: WorkflowDraft): Promise<WorkflowDraftValidation> {
   const response = await hostAdapter.fetch(url(`/${encodeURIComponent(draft.draft_id)}/validate`), {
     method: "POST", headers: { "Content-Type": "application/json" }, body: canonical(draft),
   });
