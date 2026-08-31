@@ -1,0 +1,79 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0092",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02B",
+  "state_domain": "program",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PROGRAM_ACTIVE",
+  "to_state": "SELECTING_FEATURE",
+  "prior_revision": 92,
+  "new_revision": 93,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "0da5b31ab3d76618decbe819a5d83181a8b23d13016e171ec72ea1aba1624955",
+  "new_state_digest": "3f545958fd4c53056848efdab5defc16a46891be2a929a8dbf2b8510be5d6e0b",
+  "actor": {"role": "coordinator", "identity": "Codex primary sole Windows writer"},
+  "action": "Close deployment-verified EPP-F02, bind the human-approved exact EPP-F02B planning subject, and begin the required reviewed-child selection sequence without yet activating an implementation lease.",
+  "started_at": "2026-08-31T17:56:54Z",
+  "finished_at": "2026-08-31T17:56:54Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "80e7e19d53e42c6c01990731d7cc111cef3009d8",
+    "source_tree": "66a8b54e7f90c783d351de3a9a677e7159c96ad8",
+    "source_program_tree": "6eec69efc74b2257b32448df6be5d4a883e678f5",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F02B-PLANNING-CLOSURE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0093.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0092.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0092.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0092.json", "sha256": "03666bb455a45b548c3167a630f2794c1fc480804070a3002d9d8dae38fd4680", "schema_version": "2.0", "role": "append_only_evidence"}
+  ],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0093.json", "sha256": "734b0135a56d041cf77f694fa6115150b327b159f0fec4ee3c094cc5ab5407f4", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "734b0135a56d041cf77f694fa6115150b327b159f0fec4ee3c094cc5ab5407f4", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F02B-APPROVED-SELECTION-SUBJECT",
+      "method": "Require EPP-F02 dev deployment verification, exact approved planning commit 871192c2 and 17-artifact manifest, proposed roadmap position, and tasks T001-T038 before selection.",
+      "environment": "Committed program control plane and exact Git objects",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["evidence/approvals/APR-EPP-F02B-PLANNING-CLOSURE-001.json", "evidence/states/program-state-revision-0092.json", "871192c2"]
+    }
+  ],
+  "authority": {
+    "authority_kind": "feature_planning",
+    "required_scopes": ["material_change"],
+    "approval_records": ["evidence/approvals/APR-EPP-F02B-PLANNING-CLOSURE-001.json"],
+    "subject": {
+      "git_commit": "871192c2ebdfbf8d4a162de16c13c45aab6d264d",
+      "git_tree": "4af191477014ece70f129e2aa593adbff4dcd1e6",
+      "program_tree": "cc854cb4542a5dfb9ce254cd4e34be44bf6bb571",
+      "artifact_count": 17,
+      "manifest_transition": "TR-0092"
+    },
+    "legacy_checkpoint": {"profile": "epp-bridge-v1-r10-r19", "transition": "TR-0018", "resolution_rule": "exact_material_change_approval_subject"},
+    "migration": {"from_schema_version": "1.0", "to_schema_version": "2.0", "sole_successor": true}
+  },
+  "independent_verifier": "The exact EPP-F02 dev deployment prerequisite and EPP-F02B planning subject were reconciled before selection.",
+  "repair": {"stable_cause_id": null, "attempt": 0, "maximum": 2, "remaining": 2},
+  "blockers": [
+    "EPP-F02B product implementation remains gated until the reviewed child and paired implementation approvals are activated.",
+    "Benchmark qualification remains unauthorized at 0/100; merge and release remain unauthorized."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0092.json",
+  "next_action": "ACTIVATE_REVIEWED_CHILD_FEATURE"
+}
