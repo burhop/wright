@@ -10,7 +10,14 @@ import hashlib
 import json
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 
 
 Identifier = Annotated[
@@ -23,7 +30,19 @@ Identifier = Annotated[
 ]
 BoundedText = Annotated[str, StringConstraints(min_length=1, max_length=500)]
 Sha256Digest = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
-IdentifierTuple = Annotated[tuple[Identifier, ...], Field(max_length=64)]
+
+
+def _unique_identifiers(value: tuple[str, ...]) -> tuple[str, ...]:
+    if len(set(value)) != len(value):
+        raise ValueError("Relationship identity lists must contain unique IDs")
+    return value
+
+
+IdentifierTuple = Annotated[
+    tuple[Identifier, ...],
+    Field(max_length=64),
+    AfterValidator(_unique_identifiers),
+]
 
 
 class _ClosedModel(BaseModel):

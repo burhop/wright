@@ -84,7 +84,9 @@ class WorkflowDraftRepository:
             ) as connection:
                 row = connection.execute(
                     """SELECT r.envelope_json, r.semantic_sha256, r.layout_sha256,
-                              h.current_revision AS revision
+                              h.current_revision AS revision,
+                              h.semantic_sha256 AS head_semantic_sha256,
+                              h.layout_sha256 AS head_layout_sha256
                     FROM workflow_draft_heads AS h
                     JOIN workflow_draft_revisions AS r
                       ON r.draft_id = h.draft_id
@@ -219,6 +221,14 @@ def _decode_revision(row: Mapping[str, Any] | None) -> WorkflowDraft | None:
         draft.revision != row["revision"]
         or draft.semantic_sha256 != row["semantic_sha256"]
         or draft.layout_sha256 != row["layout_sha256"]
+        or (
+            "head_semantic_sha256" in row.keys()
+            and draft.semantic_sha256 != row["head_semantic_sha256"]
+        )
+        or (
+            "head_layout_sha256" in row.keys()
+            and draft.layout_sha256 != row["head_layout_sha256"]
+        )
     ):
         raise ValueError("Persisted workflow draft identity does not match its envelope")
     return draft
