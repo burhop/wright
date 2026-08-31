@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F02",
+  "checkpoint": "US2_T014_US3_T016",
+  "recorded_at": "2026-08-31T00:36:30Z",
+  "source_commit": "184fbe3e5d35e8764303af88fc548fc07f087a32",
+  "source_tree": "4a031b6cb1abf04809ba19c31d2fda766fa4ba90",
+  "tasks": {
+    "completed": 16,
+    "total": 19,
+    "remaining": 3
+  },
+  "benchmark": {
+    "executed": false,
+    "process_100_id": null,
+    "proposed": 0,
+    "defined": 0,
+    "in_progress": 0,
+    "implemented": 0,
+    "tested": 0,
+    "independently_verified": 0,
+    "benchmark_qualified": 0
+  },
+  "readiness_changed": false,
+  "checkpoints": [
+    {
+      "platform": "windows-11",
+      "command": "npm run test --workspace=apps/web -- src/__tests__/ProcessDefinitionFailure.test.tsx src/__tests__/ProcessDefinitionPage.test.tsx src/__tests__/ProcessDefinitionService.test.ts src/__tests__/App.test.tsx src/services/surfaces/feature-flags.spec.ts tests/App.spec.tsx",
+      "result": "passed",
+      "passed": 58,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 6.35,
+      "notes": "Exact relationship trace, visible definition-only boundary, logical-source immutability, frozen recovery fixtures, closed support-safe failures, local identity drift, malformed schema classification, default-off route behavior, selected existing routes, feature flags, and closed browser transport passed."
+    },
+    {
+      "platform": "windows-11",
+      "command": "$env:PYTHONPATH='src;apps/api/src;packages/tool_registry/src'; D:\\repos\\wright\\.venv\\Scripts\\python.exe -m pytest apps/api/tests/test_process_definition_api.py apps/api/tests/test_trace_correlation.py -q",
+      "result": "passed",
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 7.25,
+      "notes": "Frozen fixture bytes, real-reader classifications, no installed-to-packaged fallback after invalid content, source bytes and mtimes, hostile identifiers, auth ordering, closed unexpected failures, and bounded trace correlation passed. One existing Starlette/httpx deprecation warning was emitted."
+    },
+    {
+      "platform": "windows-11",
+      "command": "npm run lint --workspace=apps/web -- --quiet",
+      "result": "passed",
+      "failed": 0,
+      "notes": "Full web ESLint passed with no findings."
+    },
+    {
+      "platform": "windows-11",
+      "command": "D:\\repos\\wright\\.venv\\Scripts\\ruff.exe check apps/api/src/api/middleware/tracing.py apps/api/src/api/routers/process_definition.py apps/api/tests/test_process_definition_api.py",
+      "result": "passed",
+      "failed": 0,
+      "notes": "Focused Python Ruff passed with no findings."
+    },
+    {
+      "platform": "windows-11",
+      "command": "npm run build --workspace=apps/web",
+      "result": "passed",
+      "failed": 0,
+      "notes": "TypeScript project build and production Vite bundle passed; only the existing large-chunk advisory was emitted."
+    }
+  ],
+  "independent_reviews": [
+    {
+      "subject_commit": "e8448474e1ed899be419a14d38f07e9cab9338f5",
+      "subject_tree": "4756872cffc189abce262fa1481c1e00ac635e6b",
+      "scope": "US2 relationship trace, visible boundary, accessibility, and safe logical source",
+      "verdict": "passed_no_p0_p1_p2"
+    },
+    {
+      "subject_commit": "ccbfba36491e96e08039cb3bcf2a6193a4c64ed7",
+      "subject_tree": "636b9e2d6c6f36c34961e15400d3189f93b8e5cb",
+      "scope": "US3 browser recovery, malformed schema classification, and behavioral disabled-route compatibility",
+      "verdict": "passed_no_p0_p1_p2"
+    },
+    {
+      "subject_commit": "184fbe3e5d35e8764303af88fc548fc07f087a32",
+      "subject_tree": "4a031b6cb1abf04809ba19c31d2fda766fa4ba90",
+      "scope": "US3 API recovery, immutable sources, hostile identifiers, auth ordering, and bounded trace correlation",
+      "verdict": "passed_no_p0_p1_p2"
+    }
+  ],
+  "limitations": [
+    "The page explains one exact definition only; it does not prove a process ran or an artifact exists.",
+    "Packaging, installed lifecycle, final candidate audit, and GB10 verification remain open in T018-T019.",
+    "T017 remains open until the final candidate dashboard checkpoint.",
+    "No benchmark generation, execution, evidence, or qualification occurred."
+  ]
+}
