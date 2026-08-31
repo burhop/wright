@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 
 import type { DraftCanvasAdapterProps } from "./renderer-types";
+import { useDraftDiagnosticIds } from "./DraftDiagnostics";
 
 const MIN_ZOOM = 60;
 const MAX_ZOOM = 140;
@@ -11,6 +12,7 @@ export function FirstPartyDraftCanvas({
   selectedSemanticId,
   onIntent,
 }: DraftCanvasAdapterProps): React.ReactNode {
+  const diagnosticIds = useDraftDiagnosticIds();
   const [zoom, setZoom] = useState(100);
   const viewportRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
@@ -63,6 +65,7 @@ export function FirstPartyDraftCanvas({
                       data-semantic-id={block.semanticId}
                       data-layout-x={block.position.x}
                       data-layout-y={block.position.y}
+                      data-diagnostic={diagnosticIds.has(block.semanticId) ? "true" : "false"}
                       key={block.semanticId}
                       style={{
                         "--workflow-block-order": block.position.x,
@@ -85,7 +88,7 @@ export function FirstPartyDraftCanvas({
                         <div>
                           <small>Inputs</small>
                           {block.inputs.length > 0 ? block.inputs.map((port) => (
-                            <span className="workflow-canvas__port" data-direction="input" data-semantic-id={port.semanticId} key={port.semanticId}>
+                            <span className="workflow-canvas__port" data-direction="input" data-semantic-id={port.semanticId} data-diagnostic={diagnosticIds.has(port.semanticId) ? "true" : "false"} key={port.semanticId}>
                               <b>IN</b> {port.name}<code>{port.semanticId}</code>
                             </span>
                           )) : <em>None</em>}
@@ -93,14 +96,14 @@ export function FirstPartyDraftCanvas({
                         <div>
                           <small>Outputs</small>
                           {block.outputs.length > 0 ? block.outputs.map((port) => (
-                            <span className="workflow-canvas__port" data-direction="output" data-semantic-id={port.semanticId} key={port.semanticId}>
+                            <span className="workflow-canvas__port" data-direction="output" data-semantic-id={port.semanticId} data-diagnostic={diagnosticIds.has(port.semanticId) ? "true" : "false"} key={port.semanticId}>
                               <b>OUT</b> {port.name}<code>{port.semanticId}</code>
                             </span>
                           )) : <em>None</em>}
                         </div>
                       </div>
                       {block.gates.map((gate) => (
-                        <section className="workflow-canvas__gate" data-semantic-id={gate.semanticId} key={gate.semanticId}>
+                        <section className="workflow-canvas__gate" data-semantic-id={gate.semanticId} data-diagnostic={diagnosticIds.has(gate.semanticId) ? "true" : "false"} key={gate.semanticId}>
                           <strong>◇ Approval gate</strong>
                           <code>{gate.semanticId}</code>
                           <span>{gate.condition}</span>
@@ -109,7 +112,7 @@ export function FirstPartyDraftCanvas({
                         </section>
                       ))}
                       {block.artifacts.map((artifact) => (
-                        <section className="workflow-canvas__artifact" data-semantic-id={artifact.semanticId} key={artifact.semanticId}>
+                        <section className="workflow-canvas__artifact" data-semantic-id={artifact.semanticId} data-diagnostic={diagnosticIds.has(artifact.semanticId) ? "true" : "false"} key={artifact.semanticId}>
                           <strong>▱ Intended artifact</strong>
                           <span>{artifact.title}</span>
                           <code>{artifact.semanticId}</code>
@@ -127,16 +130,23 @@ export function FirstPartyDraftCanvas({
             <div>
               <h3>Directed connections</h3>
               {projection.connections.map((connection) => (
-                <p data-semantic-id={connection.semanticId} key={connection.semanticId}>
+                <p data-semantic-id={connection.semanticId} data-diagnostic={diagnosticIds.has(connection.semanticId) ? "true" : "false"} key={connection.semanticId}>
                   <strong>→</strong> <code>{connection.semanticId}</code>
                   <span>{connection.source_port_id} → {connection.target_port_id}</span>
+                  <button
+                    data-testid={`workflow-connection-delete-${connection.semanticId}`}
+                    type="button"
+                    onClick={() => onIntent({ type: "delete-connection", semanticId: connection.semanticId })}
+                  >
+                    Delete connection
+                  </button>
                 </p>
               ))}
             </div>
             <div>
               <h3>Feedback</h3>
               {projection.feedbackPaths.map((feedback) => (
-                <p data-semantic-id={feedback.semanticId} key={feedback.semanticId}>
+                <p data-semantic-id={feedback.semanticId} data-diagnostic={diagnosticIds.has(feedback.semanticId) ? "true" : "false"} key={feedback.semanticId}>
                   <strong>↩</strong> <code>{feedback.semanticId}</code>
                   <span>{feedback.from_gate_id} → {feedback.to_block_id}</span>
                   <span>{feedback.label}</span>

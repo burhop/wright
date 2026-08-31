@@ -49,6 +49,8 @@ export default defineConfig({
           ...webServerEnvironment,
           VITE_WRIGHT_PROCESS_DEFINITION_VIEW:
             process.env.VITE_WRIGHT_PROCESS_DEFINITION_VIEW ?? "1",
+          VITE_WRIGHT_WORKFLOW_COMPOSER:
+            process.env.VITE_WRIGHT_WORKFLOW_COMPOSER ?? "1",
         },
       },
 });

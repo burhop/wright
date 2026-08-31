@@ -515,6 +515,106 @@
   font-style: italic;
 }
 
+.workflow-composer__diagnostics {
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-warning, #f59e0b) 10%, var(--color-surface));
+  border: 2px dashed var(--color-warning, #f59e0b);
+  border-radius: var(--radius-md);
+}
+
+.workflow-composer__diagnostics h2,
+.workflow-composer__diagnostics p,
+.workflow-composer__diagnostics ol {
+  margin: 0;
+}
+
+.workflow-composer__diagnostics ol,
+.workflow-composer__diagnostics li {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.workflow-composer__diagnostics ol {
+  padding-left: var(--space-lg);
+}
+
+.workflow-composer__diagnostics li {
+  padding: var(--space-xs);
+  background: var(--color-surface);
+  border-left: 4px solid var(--color-warning, #f59e0b);
+}
+
+.workflow-canvas [data-diagnostic="true"] {
+  outline: 3px dashed var(--color-warning, #f59e0b);
+  outline-offset: 2px;
+}
+
+.workflow-canvas [data-diagnostic="true"]::after {
+  content: "⚠ Diagnostic";
+  display: block;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+}
+
+.workflow-inspector__form {
+  display: grid;
+  gap: var(--space-xs);
+  padding-top: var(--space-xs);
+}
+
+.workflow-inspector__form label {
+  display: grid;
+  gap: 0.2rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.workflow-inspector__form input,
+.workflow-inspector__form textarea,
+.workflow-inspector__form select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 400;
+}
+
+.workflow-inspector__form button,
+.workflow-canvas__relationships button {
+  padding: 0.45rem 0.65rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--composer-accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.workflow-inspector__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-xs);
+}
+
+.workflow-inspector__danger {
+  border-style: dashed !important;
+  border-color: var(--color-warning, #f59e0b) !important;
+}
+
+.workflow-canvas__relationships button {
+  grid-column: 2;
+  justify-self: start;
+  font-size: var(--font-size-sm);
+}
+
 @media (max-width: 1180px) {
   .workflow-composer__workspace,
   .workflow-composer__workspace--diagram,

@@ -10,9 +10,14 @@ import {
   type WorkflowDraftValidation,
 } from "../../services/workflow-drafts";
 import { DraftInspector } from "./DraftInspector";
+import { DraftDiagnosticProvider, DraftDiagnostics } from "./DraftDiagnostics";
 import { DraftTextProjection } from "./DraftTextProjection";
 import { FirstPartyDraftCanvas } from "./FirstPartyDraftCanvas";
-import type { DraftCanvasIntent } from "./draft-intents";
+import {
+  reduceDraftCanvasIntent,
+  type DraftCanvasIntent,
+  type DraftDiagnostic,
+} from "./draft-intents";
 import { buildDraftProjection } from "./draft-projection";
 import type { DraftCanvasRenderer } from "./renderer-types";
 import {
@@ -47,9 +52,18 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
   const [busyAction, setBusyAction] = useState<"validate" | "save" | "reopen" | null>(null);
   const [paletteBusy, setPaletteBusy] = useState(false);
   const [validation, setValidation] = useState<WorkflowDraftValidation | null>(null);
+  const [localDiagnostics, setLocalDiagnostics] = useState<readonly DraftDiagnostic[]>([]);
   const [staleCurrent, setStaleCurrent] = useState<WorkflowDraftResult | null>(null);
   const projection = useMemo(() => buildDraftProjection(draft), [draft]);
   const nextRole = nextRepresentativeRole(draft);
+  const diagnostics = useMemo(
+    () => localDiagnostics.length > 0
+      ? localDiagnostics
+      : validation !== null && !validation.valid
+        ? validation.diagnostics
+        : [],
+    [localDiagnostics, validation],
+  );
 
   useEffect(() => {
     setDraft(initialDraft);
@@ -57,17 +71,29 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
     setClosed(false);
     setSelectedSemanticId(null);
     setValidation(null);
+    setLocalDiagnostics([]);
     setStaleCurrent(null);
   }, [initialDraft, initialEtag]);
 
   const handleIntent = useCallback((intent: DraftCanvasIntent) => {
-    if (intent.type === "select") {
-      setSelectedSemanticId(intent.semanticId);
-      setNotice(null);
-      return;
-    }
-    setNotice("Direct semantic editing is introduced in the next safe-edit checkpoint.");
-  }, []);
+    void reduceDraftCanvasIntent({
+      lastValidDraft: draft,
+      selectedSemanticId,
+      diagnostics: localDiagnostics,
+    }, intent).then((result) => {
+      setDraft(result.lastValidDraft);
+      setSelectedSemanticId(result.selectedSemanticId);
+      setLocalDiagnostics(result.diagnostics);
+      if (intent.type !== "select") setValidation(null);
+      setNotice(result.diagnostics.length > 0
+        ? "Edit stopped. The last valid working draft remains active; use the diagnostic correction below."
+        : intent.type === "select"
+          ? null
+          : "Working copy updated. Validate and save when the edit is complete.");
+    }).catch(() => {
+      setNotice("Edit could not be applied. The last valid working draft remains active.");
+    });
+  }, [draft, localDiagnostics, selectedSemanticId]);
 
   const addBoundedBlock = async (role: RepresentativeRole): Promise<void> => {
     setPaletteBusy(true);
@@ -76,6 +102,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
       const nextDraft = await addRepresentativeRole(draft, role);
       setDraft(nextDraft);
       setValidation(null);
+      setLocalDiagnostics([]);
       setStaleCurrent(null);
       const remaining = nextRepresentativeRole(nextDraft);
       setNotice(remaining === null
@@ -94,6 +121,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
     try {
       const result = await validateWorkflowDraft(draft);
       setValidation(result);
+      setLocalDiagnostics([]);
       setNotice(result.valid
         ? "Validation passed. The working draft is structurally valid."
         : `Validation found ${result.diagnostics.length} diagnostic${result.diagnostics.length === 1 ? "" : "s"}.`);
@@ -114,6 +142,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
     try {
       const result = await validateWorkflowDraft(draft);
       setValidation(result);
+      setLocalDiagnostics([]);
       if (!result.valid) {
         setNotice(`Save stopped: resolve ${result.diagnostics.length} validation diagnostic${result.diagnostics.length === 1 ? "" : "s"}.`);
         return;
@@ -122,6 +151,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
       setDraft(saved.draft);
       setEtag(saved.etag);
       setStaleCurrent(null);
+      setLocalDiagnostics([]);
       setNotice(`Saved revision ${saved.draft.revision}.`);
     } catch (error) {
       if (error instanceof WorkflowDraftClientError && error.errorCode === "WORKFLOW_DRAFT_STALE_REVISION") {
@@ -149,6 +179,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
       setEtag(current.etag);
       setStaleCurrent(null);
       setValidation(null);
+      setLocalDiagnostics([]);
       setClosed(false);
       setSelectedSemanticId(null);
       setNotice(`Reopened revision ${current.draft.revision} with its saved semantic and layout identities.`);
@@ -253,6 +284,7 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
               setEtag(staleCurrent.etag);
               setStaleCurrent(null);
               setValidation(null);
+              setLocalDiagnostics([]);
               setNotice(`Loaded current saved revision ${staleCurrent.draft.revision}.`);
             }}
           >
@@ -261,15 +293,24 @@ export function WorkflowComposer({ initialDraft, initialEtag, renderer: Renderer
         </div>
       )}
 
-      <div className={`workflow-composer__workspace workflow-composer__workspace--${view}`}>
-        {view !== "text" && (
-          <div className="workflow-composer__diagram-panel">
-            <Renderer projection={projection} selectedSemanticId={selectedSemanticId} onIntent={handleIntent} />
-          </div>
-        )}
-        {view !== "diagram" && <DraftTextProjection projection={projection} />}
-        <DraftInspector projection={projection} selectedSemanticId={selectedSemanticId} validation={validation} />
-      </div>
+      <DraftDiagnostics diagnostics={diagnostics} />
+      <DraftDiagnosticProvider diagnostics={diagnostics}>
+        <div className={`workflow-composer__workspace workflow-composer__workspace--${view}`}>
+          {view !== "text" && (
+            <div className="workflow-composer__diagram-panel">
+              <Renderer projection={projection} selectedSemanticId={selectedSemanticId} onIntent={handleIntent} />
+            </div>
+          )}
+          {view !== "diagram" && <DraftTextProjection projection={projection} />}
+          <DraftInspector
+            projection={projection}
+            selectedSemanticId={selectedSemanticId}
+            validation={validation}
+            diagnostics={diagnostics}
+            onIntent={handleIntent}
+          />
+        </div>
+      </DraftDiagnosticProvider>
     </section>
   );
 }

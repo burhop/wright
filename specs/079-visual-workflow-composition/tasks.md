@@ -71,8 +71,8 @@
 ### Implementation
 
 - [X] T024 [US2] Implement immutable intent reduction and last-valid working-copy containment in apps/web/src/components/workflow-composer/draft-intents.ts
-- [ ] T025 [US2] Implement select, move, create/edit/delete, port connection, gate, feedback, and artifact authoring controls in apps/web/src/components/workflow-composer/{FirstPartyDraftCanvas.tsx,DraftInspector.tsx}
-- [ ] T026 [US2] Map local and server diagnostics to affected identities, non-color canvas cues, explanation, and bounded correction in apps/web/src/components/workflow-composer/DraftDiagnostics.tsx
+- [X] T025 [US2] Implement select, move, create/edit/delete, port connection, gate, feedback, and artifact authoring controls in apps/web/src/components/workflow-composer/{FirstPartyDraftCanvas.tsx,DraftInspector.tsx}
+- [X] T026 [US2] Map local and server diagnostics to affected identities, non-color canvas cues, explanation, and bounded correction in apps/web/src/components/workflow-composer/DraftDiagnostics.tsx
 - [ ] T027 [US2] Publish Checkpoint D invalid-edit/recovery walkthrough and refresh docs/programs/engineering-process-platform/dashboard.json and artifacts/ui-walkthrough/workflow-composer/
 
 ---
