@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/epp-f02-verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F02-INDEPENDENT-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "kind": "independent",
+  "subject": {
+    "git_commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+    "git_tree": "de15cf16fd6a33a0b94221ae751e5d6f8a8ff351",
+    "artifact_digests": [
+      { "path": "specs/078-process-definition-view/contracts/product-definition-v1.sample.json", "sha256": "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef" },
+      { "path": "packages/tool_registry/src/tool_registry/process_definition.py", "sha256": "ed3a5ca4b99928dce7fe7cf98f94c9ef698f2faf4cbb72f81fa3d253b03cd650" },
+      { "path": "apps/api/src/api/routers/process_definition.py", "sha256": "ed8fc14b35af992e20d6806591f09eeffbbddc8d6a606819810f045d04a573c4" },
+      { "path": "apps/web/src/components/pages/ProcessDefinitionPage.tsx", "sha256": "79e9aa67851896d45865e8f5f212458f77b34da07a09416e0f3bd9fd81ba4969" },
+      { "path": "tests/ui-integration/process-definition.spec.ts", "sha256": "c780bef181c7b2fdfd5812b8d304cad7ca080a0a4d7d2a574241ba655021861c" }
+    ]
+  },
+  "actor": {
+    "identity": "agent:/root/repo_health",
+    "role": "independent_verifier",
+    "independent": true
+  },
+  "created_at": "2026-08-31T03:08:00Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "INDEPENDENT-WINDOWS-BROWSER",
+      "method": "On exact e9bfaea0, independently assert clean HEAD/tree, run the focused ProcessDefinition Vitest selection and a fresh Playwright-managed Chromium server on unused port 54445, then reassert unchanged identity and clean status. Vitest passed 46/46 and Chromium passed 4/4 with no P0/P1/P2.",
+      "environment": "WORK17 Windows 10.0.26200 x64 (Windows 11 build); distinct read-only agent; 2026-08-31T03:03:38.1400168Z through 03:05:45.8542233Z",
+      "duration_ms": 127714,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-GB10-LINUX",
+      "method": "Verify the 44,120,010-byte bundle SHA-256 d2432308, exact commit/tree, clean disposable checkout, untouched clean primary clone, 3/3 package/E2E checks, and zero-blocker exact validator on Linux aarch64. Require benchmark 0/100 and release false.",
+      "environment": "promaxgb10-9666; Linux aarch64; Python 3.13.12; SHA-matched complete-history bundle; read-only verification lane",
+      "duration_ms": 11580,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-PLAN-ARCHITECTURE-REVIEW",
+      "method": "Review the exact product candidate against the approved EPP-F02 plan, contracts, architecture, test boundaries, recovery semantics, and non-interference constraints; require no remaining P0/P1/P2 finding.",
+      "environment": "agent:/root/plan_state; distinct read-only review of committed Git objects",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-candidate.json", "sha256": "fcbe21d8cff6b1684ed228132bf0d898d88faadc85a971724062380d33d563b7" }
+      ]
+    },
+    {
+      "check_id": "INDEPENDENT-IDENTITY-SCOPE-AND-CONTAMINATION",
+      "method": "Require the same commit/tree on both hosts, complete-history bundle identity, zero feature holdout/oracle/process-dispatch terms, no prototype-spec changes, zero exact prototype blob reuse, no dependency change, no benchmark execution, and no release or external action.",
+      "environment": "Windows and GB10 read-only Git/path/blob audit against dev and 076-engineering-workflow-prototype",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" },
+        { "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-candidate.json", "sha256": "fcbe21d8cff6b1684ed228132bf0d898d88faadc85a971724062380d33d563b7" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "The initial GB10 detached checkout used randomized path and detached-HEAD identities that correctly failed the approved branch/worktree profile before product assertions; the unchanged candidate passed in a disposable checkout with the approved identities.",
+    "The initial independent Windows Chromium launch was blocked before assertions by host sandbox spawn EPERM; the authorized unchanged host rerun passed on a fresh port."
+  ],
+  "findings": [
+    {
+      "code": "SANDBOX-BROWSER-LAUNCH-LIMIT",
+      "severity": "info",
+      "artifact": "tests/ui-integration/process-definition.spec.ts",
+      "disposition": "Classified as host execution policy before assertions; authorized unchanged host rerun passed 4/4 and left the candidate clean."
+    },
+    {
+      "code": "INDEPENDENT-NO-MATERIAL-FINDINGS",
+      "severity": "info",
+      "artifact": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+      "disposition": "Distinct architecture/test, Windows browser, and GB10 Linux verification found no P0/P1/P2 candidate defect."
+    }
+  ],
+  "rollback_subject": "Disable VITE_WRIGHT_PROCESS_DEFINITION_VIEW for immediate exposure rollback; revert the feature PR for complete removal; clean dev baseline e9dd5c38026d0b1b5b165ee803fe082068ecc128.",
+  "delivery_relation": null
+}

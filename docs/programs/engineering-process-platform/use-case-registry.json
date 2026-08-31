@@ -9,9 +9,45 @@
       "process_100_id": null,
       "definition_evidence": [],
       "progress_evidence": [],
-      "acceptance_evidence": [],
-      "test_evidence": [],
-      "independent_verification_evidence": [],
+      "acceptance_evidence": [
+        {
+          "evidence_class": "customer_acceptance",
+          "source_name": "verification_evidence",
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-candidate.json",
+          "sha256": "fcbe21d8cff6b1684ed228132bf0d898d88faadc85a971724062380d33d563b7",
+          "subject_id": "VER-EPP-F02-CANDIDATE-001",
+          "verdict": "passed",
+          "acceptance_subject_id": null,
+          "evidence_author": "Codex primary sole writer",
+          "independent_verifier": null
+        }
+      ],
+      "test_evidence": [
+        {
+          "evidence_class": "test",
+          "source_name": "verification_evidence",
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-candidate.json",
+          "sha256": "fcbe21d8cff6b1684ed228132bf0d898d88faadc85a971724062380d33d563b7",
+          "subject_id": "CANDIDATE-TEST-MATRIX",
+          "verdict": "passed",
+          "acceptance_subject_id": null,
+          "evidence_author": "Codex primary sole writer",
+          "independent_verifier": null
+        }
+      ],
+      "independent_verification_evidence": [
+        {
+          "evidence_class": "independent_verification",
+          "source_name": "verification_evidence",
+          "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-independent.json",
+          "sha256": "4d5d43c04c3f29c75806397c6b387b4c8790de6f0b01e583ad586558126092f1",
+          "subject_id": "VER-EPP-F02-INDEPENDENT-001",
+          "verdict": "passed",
+          "acceptance_subject_id": "VER-EPP-F02-CANDIDATE-001",
+          "evidence_author": "Codex primary sole writer",
+          "independent_verifier": "agent:/root/repo_health"
+        }
+      ],
       "benchmark_qualification_evidence": []
     }
   ]

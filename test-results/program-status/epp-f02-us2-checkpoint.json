@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F02",
+  "checkpoint": "US2_T014",
+  "observed_at": "2026-08-31T00:14:00Z",
+  "recorded_at": "2026-08-31T03:08:00Z",
+  "recording_relation": "Append-only reconstruction from the contemporaneous recurring dashboard observation; the exact subject and result were independently retained in the later combined US2/US3 checkpoint.",
+  "source_commit": "e8448474e1ed899be419a14d38f07e9cab9338f5",
+  "source_tree": "4756872cffc189abce262fa1481c1e00ac635e6b",
+  "tasks": { "completed": 14, "total": 19, "remaining": 5 },
+  "benchmark": {
+    "executed": false,
+    "process_100_id": null,
+    "proposed": 0,
+    "defined": 0,
+    "in_progress": 0,
+    "implemented": 0,
+    "tested": 0,
+    "independently_verified": 0,
+    "benchmark_qualified": 0
+  },
+  "checkpoints": [
+    {
+      "platform": "windows-11",
+      "command": "npm run test --workspace=apps/web -- src/__tests__/ProcessDefinitionPage.test.tsx",
+      "result": "passed",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "notes": "The exact T014 observation proved one concrete review-to-release relationship trace, the visible definition-only boundary, logical-source immutability, accessibility, and safe plain-text source behavior."
+    },
+    {
+      "platform": "windows-11",
+      "command": "npm run lint --workspace=apps/web -- --quiet",
+      "result": "passed",
+      "failed": 0,
+      "notes": "Strict focused web lint passed at the exact US2 subject."
+    }
+  ],
+  "independent_reviews": [
+    {
+      "subject_commit": "e8448474e1ed899be419a14d38f07e9cab9338f5",
+      "subject_tree": "4756872cffc189abce262fa1481c1e00ac635e6b",
+      "scope": "US2 relationship trace, visible boundary, accessibility, and safe logical source",
+      "verdict": "passed_no_p0_p1_p2"
+    }
+  ],
+  "limitations": [
+    "This record reconstructs the separate T014 observation from the durable recurring dashboard checkpoint; it does not replace or mutate the raw combined T014/T016 record.",
+    "US3 recovery and packaging were still open at this observation.",
+    "No benchmark action occurred; every process-100 stage remained 0/100."
+  ]
+}

@@ -181,9 +181,9 @@
       "path_kind": "append_only_collection",
       "path": null,
       "path_pattern": "^docs/programs/engineering-process-platform/evidence/verification/(?!EPP-F01-V8-discovery\\.json$)[A-Za-z0-9][A-Za-z0-9._-]*\\.json$",
-      "schema_ids": ["https://wright.local/programs/epp/verification-evidence.schema.json", "https://wright.local/programs/epp/validation-report.schema.json"],
+      "schema_ids": ["https://wright.local/programs/epp/verification-evidence.schema.json", "https://wright.local/programs/epp/epp-f02-verification-evidence.schema.json", "https://wright.local/programs/epp/validation-report.schema.json"],
       "parser_contract": "EPP_VERIFICATION_COLLECTION_V1",
-      "selection_rule": "Select exact-subject reports referenced by validated transitions or correction profiles; preserve verdict and every finding code and never convert a failed, partial, or inconclusive report to passed.",
+      "selection_rule": "Select exact-subject reports referenced by validated transitions, correction profiles, or governed use-case registry evidence; preserve verdict and every finding code and never convert a failed, partial, or inconclusive report to passed.",
       "projects_to": ["/supplement/governance/verification", "/supplement/governance/findings", "/supplement/use_cases/items/*/acceptance_evidence", "/supplement/use_cases/items/*/test_evidence", "/supplement/use_cases/items/*/independent_verification_evidence", "/supplement/use_cases/items/*/benchmark_qualification_evidence", "/supplement/evidence_index"]
     },
     "approval_evidence": {

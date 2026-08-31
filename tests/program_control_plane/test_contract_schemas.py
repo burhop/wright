@@ -172,7 +172,10 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     assert planning_bundle == packaged_bundle
     bundle_pattern = planning_bundle["$defs"]["relativePath"]["pattern"]
     assert re.fullmatch(bundle_pattern, "specs/078-process-definition-view/tasks.md")
-    assert re.fullmatch(bundle_pattern, "specs/079-process-definition-view/tasks.md") is None
+    assert (
+        re.fullmatch(bundle_pattern, "specs/079-process-definition-view/tasks.md")
+        is None
+    )
 
     use_case_schemas = [
         load(planning / "use-case-registry.schema.json"),
@@ -182,7 +185,10 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     assert use_case_schemas[0] == use_case_schemas[1] == use_case_schemas[2]
     use_case_pattern = use_case_schemas[0]["$defs"]["relativePath"]["pattern"]
     assert re.fullmatch(use_case_pattern, "specs/078-process-definition-view/tasks.md")
-    assert re.fullmatch(use_case_pattern, "specs/078-process-definition-viewish/tasks.md") is None
+    assert (
+        re.fullmatch(use_case_pattern, "specs/078-process-definition-viewish/tasks.md")
+        is None
+    )
 
     planning_catalog = load(planning / "program-status-source-catalog.json")
     packaged_catalog = load(packaged / "program-status-source-catalog.json")
@@ -211,15 +217,41 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     use_case = use_case_registry["use_cases"][0]
     assert use_case["id"] == "EPP-UC-001"
     assert use_case["process_100_id"] is None
-    for stage in (
-        "definition_evidence",
-        "progress_evidence",
-        "acceptance_evidence",
-        "test_evidence",
-        "independent_verification_evidence",
-        "benchmark_qualification_evidence",
-    ):
-        assert use_case[stage] == []
+    assert use_case["definition_evidence"] == []
+    assert use_case["progress_evidence"] == []
+    assert len(use_case["acceptance_evidence"]) == 1
+    assert len(use_case["test_evidence"]) == 1
+    assert len(use_case["independent_verification_evidence"]) == 1
+    assert use_case["benchmark_qualification_evidence"] == []
+
+    verification_schema_id = (
+        "https://wright.local/programs/epp/epp-f02-verification-evidence.schema.json"
+    )
+    assert (
+        verification_schema_id
+        in planning_catalog["sources"]["verification_evidence"]["schema_ids"]
+    )
+    verification_schema = load(
+        program / "schemas/epp-f02-verification-evidence.schema.json"
+    )
+    validator_for(verification_schema).check_schema(verification_schema)
+    candidate = load(program / "evidence/verification/EPP-F02-candidate.json")
+    independent = load(program / "evidence/verification/EPP-F02-independent.json")
+    validator_for(verification_schema)(verification_schema).validate(candidate)
+    validator_for(verification_schema)(verification_schema).validate(independent)
+
+    acceptance = use_case["acceptance_evidence"][0]
+    tested = use_case["test_evidence"][0]
+    verified = use_case["independent_verification_evidence"][0]
+    assert acceptance["subject_id"] == candidate["evidence_id"]
+    assert tested["subject_id"] == "CANDIDATE-TEST-MATRIX"
+    assert verified["subject_id"] == independent["evidence_id"]
+    assert verified["acceptance_subject_id"] == candidate["evidence_id"]
+    assert acceptance["evidence_author"] == candidate["actor"]["identity"]
+    assert tested["evidence_author"] == candidate["actor"]["identity"]
+    assert verified["evidence_author"] == candidate["actor"]["identity"]
+    assert verified["independent_verifier"] == independent["actor"]["identity"]
+    assert verified["evidence_author"] != verified["independent_verifier"]
 
 
 def test_epp_f01b_registry_documents_use_only_their_frozen_schemas(

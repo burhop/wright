@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
   "program_id": "engineering-process-platform",
-  "ledger_revision": 4,
+  "ledger_revision": 5,
   "prior_ledger": {
-    "commit": "234566f4e979d0fe89af3e111a4c2e9ce74ce4d1",
-    "ledger_revision": 3,
-    "runs_sha256": "843f8dd5b3eea0bd41ac8fb1caab729b6432ee4461e5b0b8df2149b8e5db8a7b"
+    "commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+    "ledger_revision": 4,
+    "runs_sha256": "df1ababf07e53d15e70bb7187276cf4aee14901b3f8aeba71f1f8a1f7165218e"
   },
-  "runs_sha256": "df1ababf07e53d15e70bb7187276cf4aee14901b3f8aeba71f1f8a1f7165218e",
+  "runs_sha256": "4cf9930072a605af116d1e74fb12e605a9e71a7720af46c1ff3cb114cdc620ae",
   "runs_digest_rule": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order",
   "run_key_rule": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256",
   "case_identity_rule": "framework_collected_identity_including_each_parameterized_identity_once",
@@ -416,6 +416,94 @@
           "path": "test-results/program-status/epp-f02-us2-us3-checkpoint.json",
           "sha256": "9a2695f7e76f9388a6768c6be86e6ca6a9eec5a4a678cb8350fbae3e61a9747a"
         }
+      ]
+    },
+    {
+      "run_id": "epp-f02-candidate-browser-unit-e9bfaea0",
+      "run_key": "d6d53f1626cab49bd05fc0497270a7f6ffec9c6fe4c2125c8d2774c08045d7f4",
+      "commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+      "observed_at": "2026-08-31T03:03:49.7758118Z",
+      "suite_id": "epp-f02-candidate-browser-unit",
+      "population_id": "process-definition-vitest-46",
+      "category": "unit",
+      "attempt": 1,
+      "terminal": true,
+      "aggregate_role": "component",
+      "test_case_ids": [
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::shows a bounded loading state and never presents partial definition content",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::renders complete semantic text from the packaged definition",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::renders exactly the canonical semantic identities in both projections",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::traces a review input through its gate, feedback, release, and artifact relationships",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::names every action category and says None declared for each empty one",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::uses a native keyboard-operable disclosure for exact source identity",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::keeps the logical source and the complete definition view read-only",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::communicates direction, gate outcomes, feedback, and artifacts without color",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::has no serious or critical Axe findings in the ready component state",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::preserves complete semantic structure under narrow, zoom, and reduced-motion declarations",
+        "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx::ProcessDefinitionPage::records one warm-up and 20 serial response-to-render observations without a timing gate",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::binds the three frozen recovery fixtures to exact UTF-8 digests",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::renders closed support-safe recovery for 'missing-unavailable'",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::renders closed support-safe recovery for 'invalid-truncated-json'",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::renders closed support-safe recovery for 'unsupported-version'",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::maps identity drift to exact-artifact recovery without partial content",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::classifies 'missing schema version' as invalid rather than unsupported",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::classifies 'non-text schema version' as invalid rather than unsupported",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::classifies 'malformed supported versions' as invalid rather than unsupported",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::renders a bounded static failure for 'closed 503'",
+        "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx::ProcessDefinitionPage closed recovery::renders a bounded static failure for 'malformed success'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::uses the exact frozen profile",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::canonicalizes 'ascii' exactly",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::canonicalizes 'nfc-unicode-slash-separators' exactly",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::canonicalizes 'controls' exactly",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::canonicalizes 'utf8-key-order-and-array-order' exactly",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'utf8-bom'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'malformed-utf8'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'duplicate-key'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'fraction'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'exponent'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'negative-zero'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'nan'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'infinity'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'nfd-key'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'nfd-value'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::rejects invalid vector 'unpaired-surrogate'",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::wright-process-json-v1 browser parity::preserves Python-compatible integers beyond the JavaScript safe range",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::accepts only the fixed closed envelope with optional schema reference",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::rejects missing fields, wrong identities, bounds, duplicates, and non-NFC text",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::independently binds definition content and complete envelope identity",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::fetches the fixed read-only route and verifies a complete 200 response",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::rejects body, header, and successful-status identity drift",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::accepts only a requested bodyless 304 with the exact prior identity",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::keeps typed recovery closed and support safe",
+        "apps/web/src/__tests__/ProcessDefinitionService.test.ts::closed process-definition client::bounds success and error response bodies before parsing"
+      ],
+      "test_case_set_sha256": "6697469064398df06fee4397be7be5e0e5758ca70b95f083a29ded4c8ca4db45",
+      "counts": { "total": 46, "passed": 46, "failed": 0, "skipped": 0, "not_run": 0 },
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "run_id": "epp-f02-candidate-browser-e2e-e9bfaea0",
+      "run_key": "b28822e768a49b8ec68bd47f0239590179754b78409493b4ac1ecd209f301fe1",
+      "commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+      "observed_at": "2026-08-31T03:05:38.7920027Z",
+      "suite_id": "epp-f02-candidate-browser-e2e",
+      "population_id": "process-definition-chromium-4",
+      "category": "e2e",
+      "attempt": 1,
+      "terminal": true,
+      "aggregate_role": "component",
+      "test_case_ids": [
+        "tests/ui-integration/process-definition.spec.ts::Read-only process definition journey::opens from customer navigation and presents one matching text and diagram definition",
+        "tests/ui-integration/process-definition.spec.ts::Read-only process definition journey::supports the native source disclosure by keyboard with no serious or critical Axe findings",
+        "tests/ui-integration/process-definition.spec.ts::Read-only process definition journey::keeps the complete definition reachable at 200 percent zoom with reduced motion",
+        "tests/ui-integration/process-definition.spec.ts::Read-only process definition journey::preserves explicit non-color meaning at 320 pixels with forced colors"
+      ],
+      "test_case_set_sha256": "2eccf8e60dd247dad4c5a811abe6c9774faa767b3ac89a80d711c8f4a29d5c2f",
+      "counts": { "total": 4, "passed": 4, "failed": 0, "skipped": 0, "not_run": 0 },
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
       ]
     }
   ]
