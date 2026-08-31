@@ -43,11 +43,11 @@
 
 - [X] T012 [P] [US1] Add canonical round-trip, graph, layout, store atomicity, stale revision, and reopen tests in packages/core/tests/test_workflow_drafts.py and packages/data_vault/tests/test_workflow_draft_repository.py
 - [X] T013 [P] [US1] Add authenticated create/read/validate/save, ETag, closed-error, feature-disabled, and zero-release-authority API tests in apps/api/tests/test_workflow_drafts_api.py
-- [ ] T014 [P] [US1] Add projection/text semantic-ID parity and fake-renderer replacement component tests in apps/web/src/components/workflow-composer/WorkflowComposer.spec.tsx
+- [X] T014 [P] [US1] Add projection/text semantic-ID parity and fake-renderer replacement component tests in apps/web/src/components/workflow-composer/WorkflowComposer.spec.tsx
 
 ### Implementation
 
-- [ ] T015 [US1] Implement empty-draft creation, bounded block palette, diagram/text controls, and working-draft authority shell in apps/web/src/components/pages/WorkflowComposerPage.tsx and apps/web/src/components/workflow-composer/WorkflowComposer.tsx
+- [X] T015 [US1] Implement empty-draft creation, bounded block palette, diagram/text controls, and working-draft authority shell in apps/web/src/components/pages/WorkflowComposerPage.tsx and apps/web/src/components/workflow-composer/WorkflowComposer.tsx
 - [ ] T016 [US1] Implement the first-party phase-lane SVG/HTML canvas for blocks, typed ports, connections, gate, feedback, artifacts, zoom, and fit in apps/web/src/components/workflow-composer/FirstPartyDraftCanvas.tsx
 - [ ] T017 [US1] Implement text projection and Definition/Ports & relationships/Validation inspector from the same model in apps/web/src/components/workflow-composer/{DraftTextProjection.tsx,DraftInspector.tsx}
 - [ ] T018 [US1] Implement save, close, reopen, revision/digest display, and stale-save recovery in apps/web/src/components/workflow-composer/WorkflowComposer.tsx
