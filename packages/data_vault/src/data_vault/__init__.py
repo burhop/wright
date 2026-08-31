@@ -15,6 +15,12 @@ from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .workflow_repository import WorkflowIndexRecord, WorkflowRepository
 from .workflow_review_repository import WorkflowReview, WorkflowReviewRepository
+from .workflow_draft_repository import (
+    WorkflowDraftAlreadyExists,
+    WorkflowDraftRepository,
+    WorkflowDraftRevisionConflict,
+    WorkflowDraftStorageError,
+)
 from .workflow_runs import (
     WorkflowRunEventRecord,
     WorkflowRunRecord,
@@ -61,6 +67,10 @@ __all__ = [
     "UpgradeResult",
     "WorkspaceRepository",
     "WorkflowIndexRecord",
+    "WorkflowDraftAlreadyExists",
+    "WorkflowDraftRepository",
+    "WorkflowDraftRevisionConflict",
+    "WorkflowDraftStorageError",
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
