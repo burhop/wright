@@ -1,0 +1,81 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0093",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02B",
+  "state_domain": "program",
+  "event_kind": "lifecycle_transition",
+  "from_state": "SELECTING_FEATURE",
+  "to_state": "PROGRAM_ACTIVE",
+  "prior_revision": 93,
+  "new_revision": 94,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "3f545958fd4c53056848efdab5defc16a46891be2a929a8dbf2b8510be5d6e0b",
+  "new_state_digest": "0ac20f5b91c7192e717c1091130c9565672da7d0e8f3740b6976d759a48ef109",
+  "actor": {"role": "coordinator", "identity": "Codex primary sole Windows writer"},
+  "action": "Activate the exact approved EPP-F02B planning subject as the sole roadmap feature under a planning-only lease and stop at its paired implementation approval checkpoint.",
+  "started_at": "2026-08-31T18:34:10Z",
+  "finished_at": "2026-08-31T18:34:10Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "4951437bb9a1362c1fe5c3945074700213ef5b43",
+    "source_tree": "eff3a94352b2d29c94ffdb8337425c84754638a9",
+    "source_program_tree": "bd902fb52982703f45ca9ea440df0955a094b11f",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0094.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0093.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json",
+      "docs/programs/engineering-process-platform/schemas/use-case-registry.schema.json",
+      "docs/programs/engineering-process-platform/work-registry.json",
+      "scripts/program_control/validation.py",
+      "specs/077-browser-program-status/contracts/program-status-source-catalog.json",
+      "specs/077-browser-program-status/contracts/use-case-registry.schema.json",
+      "src/wright_engineering/static/program-status/program-status-source-catalog.json",
+      "src/wright_engineering/static/program-status/use-case-registry.schema.json",
+      "tests/program_control_plane/test_contract_schemas.py"
+    ],
+    "transition_path": "evidence/transitions/TR-0093.json"
+  },
+  "inputs": [
+    {"path": "evidence/states/program-state-revision-0093.json", "sha256": "734b0135a56d041cf77f694fa6115150b327b159f0fec4ee3c094cc5ab5407f4", "schema_version": "2.0", "role": "append_only_evidence"}
+  ],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0094.json", "sha256": "e27cf0dfbba3dea08beaf851ea46b73403f7512736f5ed2c798a6e5c57b7a846", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "e27cf0dfbba3dea08beaf851ea46b73403f7512736f5ed2c798a6e5c57b7a846", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F02B-REVIEWED-CHILD-ACTIVATION",
+      "method": "Require EPP-F02 complete, EPP-F02B active and dependency-eligible, one exact current feature pointer, active task registry parity, and a planning-only lease rooted at approved subject 871192c2.",
+      "environment": "Committed roadmap, work registry, program state, and lifecycle policy",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["roadmap.json", "work-registry.json", "program-state.json", "TR-0092"]
+    }
+  ],
+  "authority": {
+    "authority_kind": "feature_planning",
+    "required_scopes": ["material_change"],
+    "approval_records": ["evidence/approvals/APR-EPP-F02B-PLANNING-CLOSURE-001.json"],
+    "subject": {"git_commit": "871192c2ebdfbf8d4a162de16c13c45aab6d264d", "git_tree": "4af191477014ece70f129e2aa593adbff4dcd1e6", "program_tree": "cc854cb4542a5dfb9ce254cd4e34be44bf6bb571", "artifact_count": 17, "manifest_transition": "TR-0092"},
+    "legacy_checkpoint": {"profile": "epp-bridge-v1-r10-r19", "transition": "TR-0018", "resolution_rule": "exact_material_change_approval_subject"},
+    "migration": {"from_schema_version": "1.0", "to_schema_version": "2.0", "sole_successor": true}
+  },
+  "independent_verifier": "The exact approved subject and selection transition passed focused lifecycle contracts before activation.",
+  "repair": {"stable_cause_id": null, "attempt": 0, "maximum": 2, "remaining": 2},
+  "blockers": [
+    "Paired material-change and feature-implementation approvals are not active in current state yet.",
+    "No EPP-F02B product implementation, benchmark, publication, merge, or release action is authorized by this planning lease."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0093.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_IMPLEMENTATION_SUBJECT"
+}

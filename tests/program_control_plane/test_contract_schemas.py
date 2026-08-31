@@ -188,6 +188,9 @@ def test_epp_f02_and_f02b_source_admission_is_exact_and_parity_bound(
     assert use_case_schemas[0] == use_case_schemas[1] == use_case_schemas[2]
     use_case_pattern = use_case_schemas[0]["$defs"]["relativePath"]["pattern"]
     assert re.fullmatch(use_case_pattern, "specs/078-process-definition-view/tasks.md")
+    assert re.fullmatch(
+        use_case_pattern, "specs/079-visual-workflow-composition/tasks.md"
+    )
     assert (
         re.fullmatch(use_case_pattern, "specs/078-process-definition-viewish/tasks.md")
         is None
@@ -198,8 +201,8 @@ def test_epp_f02_and_f02b_source_admission_is_exact_and_parity_bound(
     assert planning_catalog == packaged_catalog
     assert len(planning_catalog["sources"]) == 20
     feature_tasks = planning_catalog["sources"]["feature_tasks"]
-    assert feature_tasks["path"] == "specs/078-process-definition-view/tasks.md"
-    assert "EPP-F02" in feature_tasks["selection_rule"]
+    assert feature_tasks["path"] == "specs/079-visual-workflow-composition/tasks.md"
+    assert "EPP-F02B" in feature_tasks["selection_rule"]
     assert "EPP-F01B task graph" not in feature_tasks["selection_rule"]
 
     work_registry = load(program / "work-registry.json")
@@ -208,9 +211,9 @@ def test_epp_f02_and_f02b_source_admission_is_exact_and_parity_bound(
     ]
     assert active == [
         {
-            "feature_id": "EPP-F02",
-            "tasks_path": "specs/078-process-definition-view/tasks.md",
-            "roadmap_item_id": "EPP-F02",
+            "feature_id": "EPP-F02B",
+            "tasks_path": "specs/079-visual-workflow-composition/tasks.md",
+            "roadmap_item_id": "EPP-F02B",
             "active_feature": True,
         }
     ]
@@ -218,7 +221,7 @@ def test_epp_f02_and_f02b_source_admission_is_exact_and_parity_bound(
         "feature_id": "EPP-F02B",
         "tasks_path": "specs/079-visual-workflow-composition/tasks.md",
         "roadmap_item_id": "EPP-F02B",
-        "active_feature": False,
+        "active_feature": True,
     } in work_registry["task_sources"]
 
     use_case_registry = load(program / "use-case-registry.json")

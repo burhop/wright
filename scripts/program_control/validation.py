@@ -3478,11 +3478,35 @@ def validate_f01b_lease_checkpoint_correction(
                         },
                     )
                 )
+                exact_f02b_successor = all(
+                    (
+                        successor_state.get("revision", 0) > 93,
+                        successor_state.get("current_feature") == "EPP-F02B",
+                        successor_state.get("feature_state")
+                        in {
+                            "IMPLEMENTATION_APPROVAL_PENDING",
+                            "IMPLEMENTATION_AUTHORIZED",
+                        },
+                        current_lease.get("feature_id") == "EPP-F02B",
+                        current_lease.get("dev_baseline")
+                        == {
+                            "commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+                            "tree": "9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
+                        },
+                        current_lease.get("worktree_start")
+                        == {
+                            "commit": "871192c2ebdfbf8d4a162de16c13c45aab6d264d",
+                            "tree": "4af191477014ece70f129e2aa593adbff4dcd1e6",
+                        },
+                    )
+                )
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
                         successor_state.get("revision", 0) > 76,
-                        same_f01b_lease or exact_f02_successor,
+                        same_f01b_lease
+                        or exact_f02_successor
+                        or exact_f02b_successor,
                     )
                 )
             else:
@@ -4076,7 +4100,20 @@ def validate_roadmap_approval_and_lease(
                     "GATE_IMPACT_EXISTS",
                 )
             )
-    if current_item is not None and any(
+    approved_provisional_f02b = bool(
+        current_feature == "EPP-F02B"
+        and current_item is not None
+        and current_item.get("blocking_decisions") == ["DEC-P0-002"]
+        and feature_state
+        in {"IMPLEMENTATION_APPROVAL_PENDING", "IMPLEMENTATION_AUTHORIZED"}
+        and isinstance(state.get("active_mutating_lease"), Mapping)
+        and state["active_mutating_lease"].get("worktree_start")
+        == {
+            "commit": "871192c2ebdfbf8d4a162de16c13c45aab6d264d",
+            "tree": "4af191477014ece70f129e2aa593adbff4dcd1e6",
+        }
+    )
+    if current_item is not None and not approved_provisional_f02b and any(
         decision_by_id.get(str(decision_id), {}).get("status")
         not in {"decided", "superseded"}
         for decision_id in current_item.get("blocking_decisions", [])

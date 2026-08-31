@@ -67,7 +67,7 @@
       "priority": 20,
       "title": "Canonical process definition and read-only engineer view",
       "outcome": "An engineer can open a versioned process, understand phases, blocks, ports, gates, feedback and intended artifacts, and inspect the same semantic identities in text and diagram without enabling execution or inheriting prototype runtime code.",
-      "status": "active",
+      "status": "complete",
       "depends_on": [
         "EPP-F01B"
       ],
@@ -88,7 +88,7 @@
       "priority": 25,
       "title": "Visual Workflow Composition Foundation",
       "outcome": "An engineer can visually compose a validated working draft from the canonical semantic model, inspect matching text and diagram identities, correct invalid edits, and save and reopen the draft without executing it or changing the released definition.",
-      "status": "proposed",
+      "status": "active",
       "depends_on": [
         "EPP-F02"
       ],
