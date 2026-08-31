@@ -1,0 +1,46 @@
+{
+  "$schema": "../../schemas/approval.schema.json",
+  "schema_version": "2.0",
+  "approval_id": "APR-EPP-F02B-IMPL-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02B",
+  "bundle_id": "APB-EPP-F02B-001",
+  "decision": "approved_with_conditions",
+  "scope": "feature_implementation",
+  "subject": {
+    "git_commit": "871192c2ebdfbf8d4a162de16c13c45aab6d264d",
+    "git_tree": "4af191477014ece70f129e2aa593adbff4dcd1e6",
+    "program_tree": "cc854cb4542a5dfb9ce254cd4e34be44bf6bb571",
+    "artifact_digests": [
+      {"path": "../../../.specify/feature.json", "sha256": "ff755e01c6b51f14d2f5d95193f9b331967423b1dbfb073b633518e267ff382a"},
+      {"path": "../../../AGENTS.md", "sha256": "63016331ade241f4f3644877c8b19d4bbb0513c4f338b1a849cc592e71611128"},
+      {"path": "../../../specs/079-visual-workflow-composition/spec.md", "sha256": "b18cff9a7359056b508b355ae2c582530a535ad85884a9418b62a38c879ed4ed"},
+      {"path": "../../../specs/079-visual-workflow-composition/plan.md", "sha256": "07541844562b0705dfe940ba221a054ff7d8d2d091be7f5c8e9c4dac29f387fc"},
+      {"path": "../../../specs/079-visual-workflow-composition/research.md", "sha256": "fc91ffc59e89cd2288e058f467b89263abedb075d90a14f578c246002fad98b6"},
+      {"path": "../../../specs/079-visual-workflow-composition/data-model.md", "sha256": "5f090de87773e56f9c9ebcfbc2fbddc57e8f2dcd1a3f5275210cb6cbbde0ebb5"},
+      {"path": "../../../specs/079-visual-workflow-composition/north-star.md", "sha256": "60dbc9eb18f54984dc77548515a73f4966fcc2f7cbc62df59f869681f0b6a1c9"},
+      {"path": "../../../specs/079-visual-workflow-composition/prototype-parity.md", "sha256": "45324358fdf27bc052d8d66199e04d3145a3769ed92beca5954288f8c8c8029d"},
+      {"path": "../../../specs/079-visual-workflow-composition/quickstart.md", "sha256": "730fde34ae26bd840057b7ab87ddc8123154db5299dbb48a5514dc17eb4ba477"},
+      {"path": "../../../specs/079-visual-workflow-composition/tasks.md", "sha256": "d4a85afd0a67352da53ee44c954629a18a797f5ed6089cb983ad7359c874c15d"},
+      {"path": "../../../specs/079-visual-workflow-composition/checklists/requirements.md", "sha256": "59ea92de96cd147b443e85fdc04bb475a8cd08df54bff3a73e4978439185c746"},
+      {"path": "../../../specs/079-visual-workflow-composition/checklists/ux.md", "sha256": "b3665ea075d3f9ba19e9bda62258e022ddba3f19e007bea8fb534153cf990771"},
+      {"path": "../../../specs/079-visual-workflow-composition/contracts/draft-api.md", "sha256": "ed9ce8f2e043a495d27787818ac3a21f1c96dbb044654c28f9abeb0cbd1513dd"},
+      {"path": "../../../specs/079-visual-workflow-composition/contracts/renderer-adapter.md", "sha256": "7cad624ae3812efd6a7a1ca9ef4f605a1575e78b56de528d47756f2fc994ab0a"},
+      {"path": "../../../specs/079-visual-workflow-composition/contracts/representative-workflow.json", "sha256": "e173aa327af21a0f14571eeb5865307951950930a109254108ca1461cf14fd19"},
+      {"path": "../../../specs/079-visual-workflow-composition/contracts/workflow-draft.schema.json", "sha256": "497e41556777062e3f64fa8e19812580af46afaed3f79348abe242b83d7d46b6"},
+      {"path": "../../../specs/079-visual-workflow-composition/decisions/0001-provisional-draft-boundary.md", "sha256": "3a35ff9397eba9b7954d3bb3477e5af474797c4f1cf90f38e14f9306d8939f4f"}
+    ]
+  },
+  "approver": "Human user in Codex message on 2026-08-31",
+  "approved_at": "2026-08-31T17:56:54Z",
+  "expires_at": null,
+  "review": {"due_at": null, "last_reviewed_at": "2026-08-31T17:56:54Z"},
+  "supersedes": [],
+  "revocation_events": [],
+  "conditions": [
+    "Implementation is limited to approved tasks T001 through T038 and Checkpoints C through E after verified EPP-F02 development deployment.",
+    "Windows is the sole writer; GB10 is an exact committed-candidate verifier when reachable and its temporary absence does not broaden scope.",
+    "Use first-party replaceable renderer seams and no Rivet, execution, MCP, LLM, benchmark, released-definition mutation, or permanent renderer commitment.",
+    "No feature merge, release, publication, registry change, direct dev/main push, force push, production/customer action, or benchmark qualification is authorized."
+  ]
+}

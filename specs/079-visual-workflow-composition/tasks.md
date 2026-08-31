@@ -4,6 +4,10 @@
 
 **Gate**: Do not start implementation until EPP-F02 deployment is verified from merged `dev`, the proposed EPP-F02B roadmap order is explicitly approved, and this exact spec/plan/tasks subject receives planning plus implementation approval.
 
+**Authority**: EPP-F02B T001 through T038 and Checkpoints C through E are authorized only for exact subject `871192c2` bound by `APR-EPP-F02B-MC-001`, `APR-EPP-F02B-IMPL-001`, and the active bounded implementation lease; merge and release remain unauthorized.
+
+**Implementation roots**: `packages/core/src/core`, `packages/core/tests`, `packages/data_vault/src/data_vault`, `packages/data_vault/tests`, `packages/workspace_service/src/workspace_service`, `apps/api/src/api`, `apps/api/tests`, `apps/web/src`, `tests/ui-integration/workflow-composer.spec.ts`, `tests/e2e/test_workflow_composer.py`, `tests/native_runtime/test_process_definition_lifecycle.py`, `tests/packaging/test_wheel_contents.py`, `tests/test_docker_smoke_contract.py`, `docs/programs/engineering-process-platform`, `specs/079-visual-workflow-composition`, and `artifacts/ui-walkthrough/workflow-composer`.
+
 ## Phase 1: Setup and Program Boundary
 
 - [X] T001 Record the approved proposed EPP-F02B roadmap entry and inactive spec 079 work registration, admit the exact tasks path in both program-status schema copies, and preserve the active EPP-F02 source in docs/programs/engineering-process-platform/{roadmap.json,work-registry.json}, specs/077-browser-program-status/contracts/program-status-bundle.schema.json, src/wright_engineering/static/program-status/program-status-bundle.schema.json, and tests/program_control_plane/test_contract_schemas.py
