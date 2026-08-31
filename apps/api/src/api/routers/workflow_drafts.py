@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import TypeVar
 
 from fastapi import APIRouter, Depends, Header, Request, Response, status
@@ -112,8 +113,21 @@ async def _parse_body(
             recovery_class="correct_candidate",
         )
     try:
-        return model.model_validate_json(body or b"{}")
-    except (ValidationError, ValueError):
+        value = json.loads(body or b"{}")
+        if (
+            model is WorkflowDraftEnvelope
+            and isinstance(value, dict)
+            and value.get("schema_version") not in {None, "1.0.0-draft.1"}
+        ):
+            return _error_response(
+                request,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                code=WorkflowDraftErrorCode.INCOMPATIBLE_SCHEMA,
+                message="Workflow draft schema is not supported.",
+                recovery_class="install_compatible_wright",
+            )
+        return model.model_validate(value)
+    except (json.JSONDecodeError, ValidationError, ValueError):
         return _error_response(
             request,
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,

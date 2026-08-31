@@ -42,7 +42,7 @@
 ### Tests
 
 - [X] T012 [P] [US1] Add canonical round-trip, graph, layout, store atomicity, stale revision, and reopen tests in packages/core/tests/test_workflow_drafts.py and packages/data_vault/tests/test_workflow_draft_repository.py
-- [ ] T013 [P] [US1] Add authenticated create/read/validate/save, ETag, closed-error, feature-disabled, and zero-release-authority API tests in apps/api/tests/test_workflow_drafts_api.py
+- [X] T013 [P] [US1] Add authenticated create/read/validate/save, ETag, closed-error, feature-disabled, and zero-release-authority API tests in apps/api/tests/test_workflow_drafts_api.py
 - [ ] T014 [P] [US1] Add projection/text semantic-ID parity and fake-renderer replacement component tests in apps/web/src/components/workflow-composer/WorkflowComposer.spec.tsx
 
 ### Implementation
