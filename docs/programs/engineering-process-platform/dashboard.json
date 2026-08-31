@@ -365,7 +365,7 @@
     "first_parent_must_equal_source": true
   },
   "data_cutoff": "2026-08-27T11:40:00Z",
-  "generated_at": "2026-08-31T00:06:20.867798Z",
+  "generated_at": "2026-08-31T00:42:08.144704Z",
   "generation_status": "candidate_not_evidence",
   "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION",
   "program_id": "EPP-2026",
@@ -2762,12 +2762,12 @@
         "sha256": "1cce6136eed41a38a5fd9dcdd726deba9fcb00025126a184fe5e131d1df9d112"
       },
       {
-        "git_blob": "ce056b33502e99a8488a89eeba11a96f004fcd68",
+        "git_blob": "056f0a1b850f837b9d0d20cb764c3c850e753d6f",
         "path": "docs/programs/engineering-process-platform/test-run-ledger.json",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": "1.0.0",
-        "sha256": "f1a7e52b24c7bffbba915c2d2f91edbfebf2b64a97bde96bdc016664a6ae0174"
+        "sha256": "3dd3266e506855cf77f86970aa49d24e467142c37108c81a5924cbdfb5be3eb6"
       },
       {
         "git_blob": "f9fdb6e55cf6043dd5d4e1c470fd4bedc67b5e2e",
@@ -3278,9 +3278,9 @@
     ],
     "generator_bundle_manifest_digest": "44410796c4ff0e1b688ea6adc2030fd42b1363c848c3100926bdc5c71ee9feac",
     "generator_version": "1.0.0",
-    "git_commit": "234566f4e979d0fe89af3e111a4c2e9ce74ce4d1",
-    "git_tree": "cacb14cd497dfe5c914072f766456617d9dee5c4",
-    "input_manifest_digest": "9edcfc8fb424020b6e5e4acb2944f303cc77f3a119bc87fedbb33ed46b4cc1f6",
-    "program_tree": "cc3ad7f091c295940146b59e2e86413488309c6d"
+    "git_commit": "339bb1626749fe673efa3c10ae97b1a7656b8524",
+    "git_tree": "27427321eed34c1d143876e0d98f931fc0b1440e",
+    "input_manifest_digest": "1f11bb2e41a723b9721eefaa80ef87d5804731a1d564a60e2494c9bec87293d7",
+    "program_tree": "8c9a16e2b4b2dc7daf0ae90aa15a3f411ea04f32"
   }
 }
