@@ -98,6 +98,12 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
+    assert "ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0" in dockerfile
+    assert (
+        'VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}"'
+        in dockerfile
+    )
+    assert "npm run build --workspace=apps/web" in dockerfile
     assert (
         "COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node" in dockerfile
     )
