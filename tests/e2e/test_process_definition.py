@@ -12,9 +12,11 @@ def test_process_definition_api_and_spa_shell_do_not_change_workspace_or_rivet(
     from api import composition
 
     monkeypatch.setenv("WRIGHT_RIVET_WORKFLOWS_ENABLED", "1")
+    database_path = offline_api_client.app.state.mcp_engine.db_path
+    monkeypatch.setattr(composition, "DATABASE_PATH", database_path)
     composition.process_definition_reader.cache_clear()
     reader = composition.process_definition_reader()
-    database_parent = Path(offline_api_client.app.state.mcp_engine.db_path).parent
+    database_parent = Path(database_path).parent
     assert reader.installed_root == database_parent / "process-definitions"
     assert not reader.installed_root.exists()
     workspace_before = offline_api_client.get("/api/workspace/recent")
