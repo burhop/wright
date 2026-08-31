@@ -83,6 +83,29 @@
       "spec_kit_feature": true
     },
     {
+      "id": "EPP-F02B",
+      "kind": "product_feature",
+      "priority": 25,
+      "title": "Visual Workflow Composition Foundation",
+      "outcome": "An engineer can visually compose a validated working draft from the canonical semantic model, inspect matching text and diagram identities, correct invalid edits, and save and reopen the draft without executing it or changing the released definition.",
+      "status": "proposed",
+      "depends_on": [
+        "EPP-F02"
+      ],
+      "blocking_decisions": [
+        "DEC-P0-002"
+      ],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-08",
+        "PROD-10",
+        "PROD-11"
+      ],
+      "independently_shippable": true,
+      "spec_kit_feature": true
+    },
+    {
       "id": "EPP-F03",
       "kind": "product_feature",
       "priority": 30,

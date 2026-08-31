@@ -19,6 +19,12 @@
       "tasks_path": "specs/078-process-definition-view/tasks.md",
       "roadmap_item_id": "EPP-F02",
       "active_feature": true
+    },
+    {
+      "feature_id": "EPP-F02B",
+      "tasks_path": "specs/079-visual-workflow-composition/tasks.md",
+      "roadmap_item_id": "EPP-F02B",
+      "active_feature": false
     }
   ],
   "active_assignments": []

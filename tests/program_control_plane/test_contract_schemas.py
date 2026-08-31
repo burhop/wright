@@ -160,7 +160,7 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
     ]
 
 
-def test_epp_f02_source_admission_is_exact_and_parity_bound(
+def test_epp_f02_and_f02b_source_admission_is_exact_and_parity_bound(
     repository_root: Path,
 ) -> None:
     planning = repository_root / "specs/077-browser-program-status/contracts"
@@ -172,6 +172,9 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     assert planning_bundle == packaged_bundle
     bundle_pattern = planning_bundle["$defs"]["relativePath"]["pattern"]
     assert re.fullmatch(bundle_pattern, "specs/078-process-definition-view/tasks.md")
+    assert re.fullmatch(
+        bundle_pattern, "specs/079-visual-workflow-composition/tasks.md"
+    )
     assert (
         re.fullmatch(bundle_pattern, "specs/079-process-definition-view/tasks.md")
         is None
@@ -211,6 +214,12 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
             "active_feature": True,
         }
     ]
+    assert {
+        "feature_id": "EPP-F02B",
+        "tasks_path": "specs/079-visual-workflow-composition/tasks.md",
+        "roadmap_item_id": "EPP-F02B",
+        "active_feature": False,
+    } in work_registry["task_sources"]
 
     use_case_registry = load(program / "use-case-registry.json")
     assert len(use_case_registry["use_cases"]) == 1
