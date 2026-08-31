@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F02",
+  "checkpoint": "CANDIDATE_T017_T019",
+  "recorded_at": "2026-08-31T03:08:00Z",
+  "source_commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+  "source_tree": "de15cf16fd6a33a0b94221ae751e5d6f8a8ff351",
+  "program_tree": "5713e23a354ec6fde2c37d23910e566c1af7754b",
+  "dev_baseline": "e9dd5c38026d0b1b5b165ee803fe082068ecc128",
+  "tasks": { "completed": 19, "total": 19, "remaining": 0 },
+  "benchmark": {
+    "executed": false,
+    "process_100_id": null,
+    "proposed": 0,
+    "defined": 0,
+    "in_progress": 0,
+    "implemented": 0,
+    "tested": 0,
+    "independently_verified": 0,
+    "benchmark_qualified": 0
+  },
+  "candidate_bundle": {
+    "path": "epp-f02-e9bfaea0.bundle",
+    "sha256": "d2432308c9fbc81367055eaa77242ff13bffcbcc4bb47b8597b78e81d8af0219",
+    "bytes": 44120010,
+    "history": "complete"
+  },
+  "checks": [
+    {
+      "check_id": "EXACT_VALIDATOR",
+      "platform": "windows-11",
+      "command": "uv run python scripts/validate-engineering-process-program.py validate --source e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+      "result": "passed",
+      "passed": 1,
+      "failed": 0,
+      "notes": "Zero blockers; benchmark 0/100; release eligibility false; exact commit/tree and clean worktree verified."
+    },
+    {
+      "check_id": "QUICKSTART_PYTHON",
+      "platform": "windows-11",
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/tool_registry/tests/test_process_definition.py apps/api/tests/test_process_definition_api.py tests/packaging/test_wheel_contents.py tests/native_runtime/test_process_definition_lifecycle.py tests/e2e/test_process_definition.py --import-mode=importlib",
+      "result": "passed",
+      "passed": 73,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "check_id": "FOCUSED_BROWSER",
+      "platform": "windows-11",
+      "command": "npm --prefix apps/web run test -- --run ProcessDefinition",
+      "result": "passed",
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "check_id": "ACCESSIBILITY_CHROMIUM",
+      "platform": "windows-11-chromium",
+      "command": "npx playwright test tests/ui-integration/process-definition.spec.ts --project=chromium",
+      "result": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "notes": "Fresh managed Vite server; keyboard, semantic parity, disclosure, Axe, zoom, narrow width, reduced motion, forced colors, and non-color meaning passed."
+    },
+    {
+      "check_id": "WRIGHT_FAST_PUSH_GATE",
+      "platform": "windows-11",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/check-dev-push.ps1 -Fast",
+      "result": "passed",
+      "passed": 1,
+      "failed": 0,
+      "notes": "API 417/1 skipped, tool registry 395, broad 405/38 skipped, E2E 1, native 132/10 skipped, native lifecycle 1, packaging 2, program control 312/1 skipped, release/security suites, web changed tests 84, build, Chromium 4, and strict docs passed. The documented linked-worktree Docker-history path limitation remained local; public-alpha and allowlist scans passed and GitHub security CI remains authoritative."
+    },
+    {
+      "check_id": "GB10_LINUX_PACKAGE",
+      "platform": "promaxgb10-9666 linux aarch64 python-3.13.12",
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest tests/packaging/test_wheel_contents.py tests/e2e/test_process_definition.py --import-mode=importlib",
+      "result": "passed",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 11.58,
+      "notes": "SHA-matched self-contained bundle in a disposable checkout; primary clone untouched and clean."
+    },
+    {
+      "check_id": "GB10_EXACT_VALIDATOR",
+      "platform": "promaxgb10-9666 linux aarch64",
+      "command": "uv run python scripts/validate-engineering-process-program.py validate --source e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+      "result": "passed",
+      "passed": 1,
+      "failed": 0,
+      "notes": "Zero blockers after using the exact approved branch/worktree profile; benchmark 0/100 and release false."
+    },
+    {
+      "check_id": "INDEPENDENT_WINDOWS_BROWSER",
+      "platform": "WORK17 windows-10.0.26200-x64 windows-11-build",
+      "started_at": "2026-08-31T03:03:38.1400168Z",
+      "finished_at": "2026-08-31T03:05:45.8542233Z",
+      "commands": [
+        "npm --prefix apps/web run test -- --run ProcessDefinition",
+        "npx playwright test tests/ui-integration/process-definition.spec.ts --project=chromium"
+      ],
+      "result": "passed",
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0,
+      "notes": "46/46 Vitest and 4/4 Chromium on fresh port 54445; no P0/P1/P2; exact HEAD/tree and clean worktree unchanged. Initial sandboxed browser launch was blocked before assertions by spawn EPERM; the authorized host rerun passed."
+    }
+  ],
+  "demonstration": {
+    "api_route": "/api/process-definitions/product-definition-v1",
+    "process_id": "product-definition-v1",
+    "revision": 1,
+    "schema_version": "1.0.0",
+    "content_sha256": "4617a8a6424b7c15712cd951c0b97a8c4ec5e77e29633e46e105d30ec65d5883",
+    "source_sha256": "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef",
+    "success": "HTTP 200 with exact ETag followed by bodyless conditional 304 from packaged_fallback.",
+    "failure": "Exact 39-byte invalid fixture SHA 7dcddf72598670f17b137e82dd73c657c7a825e92088f30ac3361c86dc014ad9 returned HTTP 422 PROCESS_DEFINITION_INVALID and replace_validated_definition with no partial content or byte mutation.",
+    "feature_disabled": "At 320x640 in real Chromium, the direct route recovered through bounded NotFound, the process navigation count was zero, and the existing dashboard remained visible."
+  },
+  "contamination_audit": {
+    "changed_paths": 89,
+    "feature_product_test_paths": 34,
+    "prototype_spec_changes": 0,
+    "holdout_oracle_process_term_hits": 0,
+    "same_path_names_with_prototype": 12,
+    "exact_prototype_blob_reuse": 0
+  },
+  "independent_reviews": [
+    { "identity": "agent:/root/plan_state", "scope": "exact plan, architecture, and test review", "verdict": "passed_no_p0_p1_p2" },
+    { "identity": "agent:/root/repo_health", "scope": "exact Windows Vitest and fresh-server Chromium verification", "verdict": "passed_no_p0_p1_p2" },
+    { "identity": "promaxgb10-9666:burhop", "scope": "exact Linux aarch64 package, validator, identity, and contamination verification", "verdict": "passed" }
+  ],
+  "original_failure_refs": [
+    "The first candidate gate exposed TypeScript NodeList iteration; Array.from supplied the smallest compatible repair.",
+    "Independent review found the clean-environment quickstart omitted the runtime extra and packaged current.json was outside the lease; the command and one generated-path lease were repaired without widening product scope.",
+    "The first exact validator run after repair found current.json incorrectly listed in the transition changed-path manifest; the unpushed commit was amended to remove the unchanged path.",
+    "The first detached randomized GB10 checkout could not satisfy the approved branch/worktree identity profile; a disposable checkout with the exact approved names passed unchanged.",
+    "The first independent Windows Chromium launch was blocked by sandbox spawn EPERM before assertions; the authorized host rerun passed unchanged."
+  ],
+  "limitations": [
+    "The feature explains one bundled definition only and does not edit, Apply, execute, persist, invoke tools, or produce engineering artifacts.",
+    "No governed process-100 benchmark case was generated, viewed, executed, scored, or qualified; every stage remains 0/100.",
+    "No dependency, release, publication, production, or customer-system action occurred."
+  ],
+  "rollback": "Keep VITE_WRIGHT_PROCESS_DEFINITION_VIEW disabled to remove navigation and route exposure; revert the feature PR to remove the packaged definition, read-only API, and page. The clean dev baseline is e9dd5c38026d0b1b5b165ee803fe082068ecc128."
+}

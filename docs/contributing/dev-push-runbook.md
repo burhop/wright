@@ -90,6 +90,13 @@ uv run --extra runtime python -m pytest -q tests/program_control_plane
 
 The corresponding Ruff and format checks cover the entrypoint, package, and focused tests. No gate copies validator semantics; all invoke the same committed implementation and tests.
 
+Before a program-control change can pass the fast push gate, its committed feature
+state must be `PUSH_AUTHORIZATION_PENDING`, `PR_READY`, or `DEV_MERGE_READY`, its
+mutating lease must be closed, and the authoritative validator must pass against
+the exact `HEAD`. This mirrors the non-mutating identity used by GitHub's synthetic
+merge checkout and prevents a locally named implementation worktree from hiding a
+lease/worktree mismatch that would fail pull-request validation.
+
 The full merge gate, Linux quality job, and Windows backend job fetch or retain
 full Git history because the program-control tests verify immutable historical
 objects. After their focused program-control and native-runtime runs, their broad

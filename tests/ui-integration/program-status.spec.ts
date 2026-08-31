@@ -144,7 +144,7 @@ test.describe("Program status comprehension and accessibility", () => {
       "100 proposed customer stories",
     );
     await expect(page.getByTestId("test-health-summary")).toContainText(
-      "36 passed · 0 failed",
+      "50 passed · 0 failed",
     );
     await expect(page.getByTestId("next-action-summary")).toContainText(
       "Authority: authorized; human approval: not required",
@@ -250,8 +250,8 @@ test.describe("Program status comprehension and accessibility", () => {
       const first = JSON.parse(firstRaw);
       const second = structuredClone(first);
       second.generated_at = "2026-08-29T14:00:00Z";
-      second.supplement.work.tasks.completed += 1;
-      second.supplement.work.tasks.remaining -= 1;
+      second.supplement.work.tasks.total += 1;
+      second.supplement.work.tasks.remaining += 1;
       second.supplement.work.current_milestone =
         "Committed refresh acceptance fixture";
       second.bundle_id = fixtureDigest({

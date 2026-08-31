@@ -836,6 +836,7 @@ def _load_closed_catalog_sources(
         PROGRAM_ROOT,
         "specs/076-control-plane-validator/contracts",
         "specs/077-browser-program-status/contracts",
+        "specs/078-process-definition-view/contracts",
     )
     assert isinstance(listed_raw, str)
     repository_paths = tuple(path for path in listed_raw.splitlines() if path)
@@ -1905,6 +1906,9 @@ def _project_delivery_lanes(
     feature_tasks_ref: dict[str, str],
     feature_done: int,
     feature_total: int,
+    customer_capability_evidence: list[dict[str, str]] | None = None,
+    accepted_use_cases: int = 0,
+    verified_use_cases: int = 0,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     state = subject["state"]
     lease = state.get("active_mutating_lease")
@@ -2059,14 +2063,25 @@ def _project_delivery_lanes(
         base_commit = str(state["baseline"]["commit"])
         authority_state = "not_authorized" if requires_approval else "unavailable"
         blocker = action_reason
+    capability_evidence = customer_capability_evidence or []
+    latest_capability = (
+        (
+            "Committed customer acceptance evidence: "
+            f"{accepted_use_cases} accepted and {verified_use_cases} independently "
+            f"verified {current_feature} use case; benchmark qualification remains "
+            "independent."
+        )
+        if accepted_use_cases
+        else (
+            "Unavailable: no committed customer acceptance evidence demonstrates "
+            f"a customer-visible {current_feature} capability yet."
+        )
+    )
     development = {
         "kind": "continued_development",
         "branch": branch,
         "milestone": str(current_item["title"]),
-        "latest_capability": (
-            "Unavailable: no committed customer acceptance evidence demonstrates "
-            "a customer-visible EPP-F01B capability yet."
-        ),
+        "latest_capability": latest_capability,
         "blocker": blocker,
         "next_action": _action(
             action_id,
@@ -2078,7 +2093,12 @@ def _project_delivery_lanes(
             requires_human_approval=requires_approval,
         ),
         "observed_at": str(subject["generated_at"]),
-        "evidence": [state_ref, roadmap_ref, feature_tasks_ref],
+        "evidence": [
+            state_ref,
+            roadmap_ref,
+            feature_tasks_ref,
+            *capability_evidence,
+        ],
         "base_commit": base_commit,
         "authority_state": authority_state,
     }
@@ -2089,7 +2109,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
     blobs = subject["blobs"]
     state = subject["state"]
     lifecycle = subject["lifecycle"]
-    feature_id = str(state.get("current_feature") or "EPP-F01B")
+    feature_id = str(state.get("current_feature") or "EPP-F02")
     state_ref = _evidence("program-state", STATE_PATH, blobs[STATE_PATH])
     dashboard_ref = _evidence("dashboard", DASHBOARD_PATH, blobs[DASHBOARD_PATH])
     (
@@ -2102,6 +2122,36 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         undecomposed_roadmap_items,
     ) = _registered_task_counts(repository, subject, feature_id)
     use_case_items, _process_ids, use_case_funnels = _derive_use_cases(subject)
+    customer_capability_evidence = [
+        record["evidence"]
+        for item in use_case_items
+        for record in item["acceptance_evidence"]
+    ]
+    use_case_evidence_details: dict[str, dict[str, Any]] = {}
+    for item in use_case_items:
+        for stage_name in (
+            "definition_evidence",
+            "progress_evidence",
+            "acceptance_evidence",
+            "test_evidence",
+            "independent_verification_evidence",
+            "benchmark_qualification_evidence",
+        ):
+            for record in item[stage_name]:
+                reference = record["evidence"]
+                detail = _checkout_evidence_detail(
+                    reference,
+                    f"{item['id']} {stage_name.replace('_', ' ')}",
+                    "Exact committed evidence for one governed use-case stage.",
+                )
+                previous = use_case_evidence_details.get(str(reference["id"]))
+                if previous is not None and previous != detail:
+                    raise ProgramStatusPublishError(
+                        "PROGRAM_STATUS_EVIDENCE_ID_COLLISION",
+                        f"Use-case evidence ID {reference['id']} is not unique.",
+                        "repair_use_case_evidence_identity",
+                    )
+                use_case_evidence_details[str(reference["id"])] = detail
     risks, decisions = _project_governance_registers(subject)
     corrections, findings, verifications, governance_evidence_details = (
         _project_correction_graph(subject)
@@ -2145,7 +2195,14 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
         _git_blob(repository, str(subject["commit"]), feature_tasks_path),
     )
     integration_lane, development_lane = _project_delivery_lanes(
-        subject, state_ref, feature_tasks_ref, feature_done, feature_total
+        subject,
+        state_ref,
+        feature_tasks_ref,
+        feature_done,
+        feature_total,
+        customer_capability_evidence,
+        int(use_case_funnels["all"]["implemented"]),
+        int(use_case_funnels["all"]["independently_verified"]),
     )
     history_definitions = (
         (
@@ -2288,7 +2345,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             for item in subject["work_registry"].get("task_sources", [])
             if isinstance(item, Mapping) and item.get("feature_id") == feature_id
         ),
-        "specs/077-browser-program-status/tasks.md",
+        "specs/078-process-definition-view/tasks.md",
     )
     history_by_id["feature_tasks"] = _observations_for_path(
         repository,
@@ -2608,6 +2665,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             for identifier, path, raw in evidence_pairs
         ]
         + [historical_evidence[key] for key in sorted(historical_evidence)]
+        + [use_case_evidence_details[key] for key in sorted(use_case_evidence_details)]
         + governance_evidence_details
         + test_evidence_details,
     }

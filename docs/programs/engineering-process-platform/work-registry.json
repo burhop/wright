@@ -12,6 +12,12 @@
       "feature_id": "EPP-F01B",
       "tasks_path": "specs/077-browser-program-status/tasks.md",
       "roadmap_item_id": "EPP-F01B",
+      "active_feature": false
+    },
+    {
+      "feature_id": "EPP-F02",
+      "tasks_path": "specs/078-process-definition-view/tasks.md",
+      "roadmap_item_id": "EPP-F02",
       "active_feature": true
     }
   ],

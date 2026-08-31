@@ -7,6 +7,11 @@ const testUiPort = process.env.WRIGHT_PLAYWRIGHT_PORT || "5173";
 const managedBaseUrl = `http://${testUiHost}:${testUiPort}`;
 const testOutputDir =
   process.env.WRIGHT_PLAYWRIGHT_OUTPUT_DIR || "test-results/playwright";
+const webServerEnvironment = Object.fromEntries(
+  Object.entries(process.env).filter(
+    (entry): entry is [string, string] => entry[1] !== undefined,
+  ),
+);
 
 export default defineConfig({
   testDir: "./tests/ui-integration",
@@ -39,6 +44,11 @@ export default defineConfig({
     : {
         command: `npm run dev --prefix apps/web -- --host ${testUiHost} --port ${testUiPort}`,
         url: managedBaseUrl,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
+        env: {
+          ...webServerEnvironment,
+          VITE_WRIGHT_PROCESS_DEFINITION_VIEW:
+            process.env.VITE_WRIGHT_PROCESS_DEFINITION_VIEW ?? "1",
+        },
       },
 });

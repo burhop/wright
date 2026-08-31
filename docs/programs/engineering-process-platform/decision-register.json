@@ -43,10 +43,9 @@
       "due": {
         "before_event": "EPP-F02 planning approval",
         "due_at": null,
-        "last_reviewed_at": "2026-08-27T11:04:37Z"
+        "last_reviewed_at": "2026-08-30T17:30:00Z"
       },
       "blocks": [
-        "EPP-F02",
         "EPP-F06",
         "PROD-01",
         "PROD-10"
@@ -62,7 +61,7 @@
         "Round-trip and invalid-edit behavior",
         "Compatibility and migration analysis"
       ],
-      "decision_record": null
+      "decision_record": "decisions/0021-epp-f02-read-only-boundary.md"
     },
     {
       "id": "DEC-P0-003",

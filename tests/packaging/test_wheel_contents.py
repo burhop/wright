@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import tomllib
@@ -65,6 +66,7 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
     )
     wheels = list(tmp_path.glob("*.whl"))
     assert len(wheels) == 1
+    installed = tmp_path / "installed"
     with zipfile.ZipFile(wheels[0]) as archive:
         names = set(archive.namelist())
         editor_manifest = json.loads(
@@ -86,6 +88,33 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
 
         assert runner_manifest["bytes"] == len(runner_artifact)
         assert runner_manifest["sha256"] == hashlib.sha256(runner_artifact).hexdigest()
+        process_definition_member = (
+            "wright_engineering/static/process-definitions/product-definition-v1.json"
+        )
+        process_schema_member = (
+            "wright_engineering/static/process-definitions/"
+            "process-definition.schema.json"
+        )
+        process_definition_bytes = archive.read(process_definition_member)
+        process_schema_bytes = archive.read(process_schema_member)
+        assert (
+            process_definition_bytes
+            == (
+                ROOT / "src/wright_engineering/static/process-definitions/"
+                "product-definition-v1.json"
+            ).read_bytes()
+        )
+        assert (
+            process_schema_bytes
+            == (
+                ROOT / "src/wright_engineering/static/process-definitions/"
+                "process-definition.schema.json"
+            ).read_bytes()
+        )
+        assert hashlib.sha256(process_definition_bytes).hexdigest() == (
+            "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef"
+        )
+        archive.extractall(installed)
     required = {
         "wright/__init__.py",
         "core/surfaces/schemas/v1/display-envelope.schema.json",
@@ -103,6 +132,11 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
         "wright_engineering/static/program-status/work-registry.schema.json",
         "wright_engineering/static/program-status/use-case-registry.schema.json",
         "wright_engineering/static/program-status/test-run-ledger.schema.json",
+        "wright_engineering/static/process-definitions/product-definition-v1.json",
+        "wright_engineering/static/process-definitions/process-definition.schema.json",
+        "tool_registry/process_definition.py",
+        "api/routers/process_definition.py",
+        "api/schemas/process_definition.py",
         "tool_registry/catalog/catalog-snapshot-envelope.schema.json",
         "tool_registry/catalog/engineering-catalog.yaml",
         "tool_registry/catalog/import-preview.schema.json",
@@ -139,3 +173,37 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
         "workspace_service/_rivet/runner/src/wright-runner.ts",
     }
     assert required <= names
+
+    environment = dict(os.environ)
+    environment.pop("PYTHONPATH", None)
+    probe = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            (
+                "import pathlib, socket, sys; "
+                f"target=pathlib.Path({str(installed)!r}).resolve(); "
+                "sys.path.insert(0, str(target)); "
+                "socket.create_connection=lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError('network')); "
+                "socket.socket.connect=lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError('network')); "
+                "import api.routers.process_definition as router_module; "
+                "import api.schemas.process_definition as schema_module; "
+                "import tool_registry.process_definition as process_module; "
+                "from importlib.resources import files; "
+                "from tool_registry.process_definition import PROCESS_ID, ProcessDefinitionReader; "
+                "packaged=pathlib.Path(str(files('wright_engineering').joinpath('static/process-definitions'))); "
+                "document=ProcessDefinitionReader(target/'absent', packaged).read(PROCESS_ID); "
+                "assert document.source_kind == 'packaged_fallback'; "
+                "assert document.source_sha256 == '6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef'; "
+                "assert all(pathlib.Path(module.__file__).resolve().is_relative_to(target) for module in (router_module, schema_module, process_module))"
+            ),
+        ],
+        cwd=tmp_path,
+        env=environment,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert probe.returncode == 0, probe.stdout + probe.stderr

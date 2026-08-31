@@ -1,0 +1,79 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0079",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "state_domain": "program",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PROGRAM_ACTIVE",
+  "to_state": "SELECTING_FEATURE",
+  "prior_revision": 79,
+  "new_revision": 80,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "c80a35dbeaa2df6f59f4012364650d3eb8c15aae232da43e78009b2983ea9eb0",
+  "new_state_digest": "d03f8321cec63d991d010ccf8e926a478a8c518a3286fb3cfd6c673306e2c531",
+  "actor": {"role": "coordinator", "identity": "Codex primary sole Windows writer"},
+  "action": "Accept ADR 0021 for the exact reconciled EPP-F02 read-only subject, close EPP-F01B on the roadmap, and begin the required reviewed-child selection sequence without implementation authority.",
+  "started_at": "2026-08-30T22:22:19Z",
+  "finished_at": "2026-08-30T22:22:19Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+    "source_tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+    "source_program_tree": "09dc3d4506119e755504223fcf32586e28290cf3",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/decision-register.json",
+      "docs/programs/engineering-process-platform/decisions/0021-epp-f02-read-only-boundary.md",
+      "docs/programs/engineering-process-platform/evidence/approvals/APR-EPP-F02-PLANNING-CLOSURE-001.json",
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0080.json",
+      "docs/programs/engineering-process-platform/evidence/transitions/TR-0079.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0079.json"
+  },
+  "inputs": [],
+  "outputs": [
+    {"path": "evidence/states/program-state-revision-0080.json", "sha256": "26e2eebfcc867d826c19834818ace2439de5ec23625182591365c7d62710ed6a", "schema_version": "2.0", "role": "append_only_evidence"},
+    {"path": "program-state.json", "sha256": "26e2eebfcc867d826c19834818ace2439de5ec23625182591365c7d62710ed6a", "schema_version": "2.0", "role": "operational_state"}
+  ],
+  "checks": [
+    {
+      "check_id": "EPP-F02-RECONCILED-EXACT-SUBJECT",
+      "method": "Require current dev e9dd5c38, approved planning 5f2aa529, and closeout 61178077 to be ancestors of reconciled fd93daf6 and require the program validator to pass with zero blockers.",
+      "environment": "Windows 11 clean worktree and exact Git objects",
+      "duration_ms": 12200,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": ["fd93daf6", "38cbb5c6", "validator:passed:0-blockers"]
+    }
+  ],
+  "authority": {
+    "authority_kind": "feature_planning",
+    "required_scopes": ["material_change"],
+    "approval_records": ["evidence/approvals/APR-EPP-F02-PLANNING-CLOSURE-001.json"],
+    "subject": {
+      "git_commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+      "git_tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93",
+      "program_tree": "09dc3d4506119e755504223fcf32586e28290cf3",
+      "artifact_count": 20,
+      "manifest_transition": "TR-0079"
+    },
+    "legacy_checkpoint": {"profile": "epp-bridge-v1-r10-r19", "transition": "TR-0018", "resolution_rule": "exact_material_change_approval_subject"},
+    "migration": {"from_schema_version": "1.0", "to_schema_version": "2.0", "sole_successor": true}
+  },
+  "independent_verifier": "The exact reconciled subject passed the program validator with zero blockers before this transition.",
+  "repair": {"stable_cause_id": "EPP-F02-SELECTION-CHECKPOINT-CONTRACT-001", "attempt": 1, "maximum": 2, "remaining": 1},
+  "blockers": [
+    "EPP-F02 implementation remains gated until the paired material-change and feature-implementation approvals are activated.",
+    "Readiness and governed benchmark qualification remain unchanged at 0/100."
+  ],
+  "rollback_subject": "fd93daf6d5826da436f394ab1afb9298f5e8a32b",
+  "next_action": "ACTIVATE_REVIEWED_CHILD_FEATURE"
+}

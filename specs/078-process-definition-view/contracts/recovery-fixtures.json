@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "encoding": "UTF-8 without BOM",
+  "fixtures": [
+    {
+      "id": "missing-unavailable",
+      "kind": "request_descriptor",
+      "exact_text": "{\"source_id\":\"process-definitions/missing-product-definition-v1.json\"}",
+      "sha256": "84f9b511212481cd336f1eab0a162f0314d2591da82772c43a485e2977fa2ea0",
+      "expected_http_status": 404,
+      "expected_code": "PROCESS_DEFINITION_UNAVAILABLE",
+      "expected_recovery": "enable_or_reinstall"
+    },
+    {
+      "id": "invalid-truncated-json",
+      "kind": "payload",
+      "exact_text": "{\"schema_version\":\"1.0.0\",\"process_id\":",
+      "sha256": "7dcddf72598670f17b137e82dd73c657c7a825e92088f30ac3361c86dc014ad9",
+      "expected_http_status": 422,
+      "expected_code": "PROCESS_DEFINITION_INVALID",
+      "expected_recovery": "replace_validated_definition"
+    },
+    {
+      "id": "unsupported-version",
+      "kind": "payload",
+      "exact_text": "{\"schema_version\":\"99.0.0\",\"process_id\":\"product-definition-v1\"}",
+      "sha256": "d245aa29cb91a573a87f98b9b7e10e68864740b49200ac5e59ea8091c0a3dfe4",
+      "expected_http_status": 422,
+      "expected_code": "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
+      "expected_recovery": "install_compatible_wright"
+    }
+  ]
+}

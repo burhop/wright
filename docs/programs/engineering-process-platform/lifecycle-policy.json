@@ -478,6 +478,24 @@
       "feature_state": "INDEPENDENTLY_VERIFIED",
       "action": "REQUEST_CURRENT_FEATURE_PUSH_AUTHORIZATION",
       "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "PUSH_AUTHORIZATION_PENDING",
+      "action": "OPEN_CURRENT_FEATURE_PR",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "PR_READY",
+      "action": "VERIFY_CURRENT_FEATURE_CI",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "DEV_MERGE_READY",
+      "action": "MERGE_CURRENT_FEATURE_TO_DEV",
+      "requires_human_approval": false
     }
   ],
   "wip_limits": {

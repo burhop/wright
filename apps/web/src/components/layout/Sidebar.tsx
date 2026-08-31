@@ -1,6 +1,7 @@
 import NavItem from "../common/NavItem";
 import type { NavigationSection } from "../../store/types";
 import { useTools } from "../../store/tools";
+import { processDefinitionViewEnabled } from "../../services/surfaces/feature-flags";
 
 export function Sidebar() {
   let servers = [];
@@ -61,30 +62,22 @@ export function Sidebar() {
       icon: "settings",
       order: 7,
     },
+    ...(processDefinitionViewEnabled()
+      ? [
+          {
+            id: "process-definition",
+            label: "Process Definition",
+            path: "/processes/product-definition-v1",
+            icon: "layout-dashboard",
+            order: 8,
+          },
+        ]
+      : []),
   ];
 
   return (
-    <aside
-      data-testid="sidebar"
-      style={{
-        width: "180px",
-        backgroundColor: "var(--color-surface-subtle)",
-        borderRight: "1px solid var(--color-border)",
-        display: "flex",
-        flexDirection: "column",
-        padding: "var(--space-lg) var(--space-md)",
-        gap: "var(--space-sm)",
-        height: "100%",
-        overflowY: "auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-xs)",
-        }}
-      >
+    <aside data-testid="sidebar" className="app-sidebar">
+      <div className="app-sidebar__navigation">
         {sections.map((sec) => (
           <NavItem
             key={sec.id}

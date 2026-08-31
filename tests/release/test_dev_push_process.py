@@ -123,6 +123,21 @@ def test_program_control_changes_route_through_focused_quality_gates() -> None:
     assert "security-scan.sh --include-untracked --skip-trufflehog" in push
 
 
+def test_program_control_push_requires_closed_non_mutating_state() -> None:
+    push = _read("scripts/check-dev-push.sh")
+    runbook = _read(RUNBOOK)
+
+    assert "CHECK_PROGRAM_CONTROL=1" in push
+    assert "PROGRAM_PUSH_STATE" in push
+    assert "PROGRAM_LEASE_STATE" in push
+    for state in ("PUSH_AUTHORIZATION_PENDING", "PR_READY", "DEV_MERGE_READY"):
+        assert state in push
+        assert state in runbook
+    assert "active mutating lease" in push
+    assert "synthetic" in runbook
+    assert "scripts/validate-engineering-process-program.py validate --source HEAD" in push
+
+
 def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection() -> (
     None
 ):

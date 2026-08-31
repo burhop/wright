@@ -39,6 +39,12 @@ from .program_status import (
     ProgramStatusReadError,
     ProgramStatusReader,
 )
+from .process_definition import (
+    ProcessDefinitionDocument,
+    ProcessDefinitionErrorCode,
+    ProcessDefinitionReadError,
+    ProcessDefinitionReader,
+)
 
 
 def __getattr__(name: str):
@@ -89,4 +95,8 @@ __all__ = [
     "ProgramStatusPublisherState",
     "ProgramStatusReadError",
     "ProgramStatusReader",
+    "ProcessDefinitionDocument",
+    "ProcessDefinitionErrorCode",
+    "ProcessDefinitionReadError",
+    "ProcessDefinitionReader",
 ]

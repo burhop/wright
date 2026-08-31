@@ -1,0 +1,102 @@
+{
+  "$schema": "../../schemas/epp-f02-verification-evidence.schema.json",
+  "schema_version": "1.0",
+  "evidence_id": "VER-EPP-F02-CANDIDATE-001",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-F02",
+  "kind": "candidate",
+  "subject": {
+    "git_commit": "e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f",
+    "git_tree": "de15cf16fd6a33a0b94221ae751e5d6f8a8ff351",
+    "artifact_digests": [
+      { "path": "specs/078-process-definition-view/contracts/product-definition-v1.sample.json", "sha256": "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef" },
+      { "path": "src/wright_engineering/static/process-definitions/product-definition-v1.json", "sha256": "6a02f71e35f9c3d9a3184509ddeab2df251cff454b6d6ce66d7244d015eefdef" },
+      { "path": "packages/tool_registry/src/tool_registry/process_definition.py", "sha256": "ed3a5ca4b99928dce7fe7cf98f94c9ef698f2faf4cbb72f81fa3d253b03cd650" },
+      { "path": "apps/api/src/api/routers/process_definition.py", "sha256": "ed8fc14b35af992e20d6806591f09eeffbbddc8d6a606819810f045d04a573c4" },
+      { "path": "apps/web/src/components/pages/ProcessDefinitionPage.tsx", "sha256": "79e9aa67851896d45865e8f5f212458f77b34da07a09416e0f3bd9fd81ba4969" },
+      { "path": "tests/ui-integration/process-definition.spec.ts", "sha256": "c780bef181c7b2fdfd5812b8d304cad7ca080a0a4d7d2a574241ba655021861c" },
+      { "path": "specs/078-process-definition-view/quickstart.md", "sha256": "9a23f93fb69949c775cfdd44a5c0f9d0411fb0be64b4b1d81631a9f570e73539" }
+    ]
+  },
+  "actor": {
+    "identity": "Codex primary sole writer",
+    "role": "feature_owner",
+    "independent": false
+  },
+  "created_at": "2026-08-31T03:08:00Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "check_id": "CANDIDATE-TEST-MATRIX",
+      "method": "Require the exact e9bfaea0 product candidate to pass the zero-blocker validator, corrected 73-test Python quickstart matrix, 46 focused browser tests, four Chromium acceptance/accessibility journeys, TypeScript, Wright fast push gate, GB10 package/E2E slice, and distinct Windows browser verification. Preserve every terminal total and limitation in the candidate checkpoint.",
+      "environment": "Windows 11 WORK17 plus SHA-matched disposable Linux aarch64 checkout on promaxgb10-9666; offline product verification",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-CUSTOMER-DEMONSTRATION",
+      "method": "Run the isolated quickstart success, invalid-content, and feature-disabled paths: require packaged-fallback 200 with exact ETag, bodyless 304, exact 422 recovery without partial content or source mutation, and real-Chromium default-off route/navigation compatibility at 320 by 640 CSS pixels.",
+      "environment": "Windows 11; isolated local API/web ports and data root; no MCP, model, network, or external service",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-CONTAMINATION-AND-DIFF",
+      "method": "Audit the complete dev-to-candidate path set and the 34 feature product/test paths; require no holdout, oracle, or governed process dispatch terms, no prototype-spec mutation, and no exact prototype blob reuse. Twelve shared path names are structural names only, not wholesale product-code promotion.",
+      "environment": "Read-only Git object and path comparison against dev and 076-engineering-workflow-prototype",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    },
+    {
+      "check_id": "CANDIDATE-BENCHMARK-NONPROMOTION",
+      "method": "Require process_100_id to remain null, benchmark qualification evidence to remain empty, and every governed process-100 funnel stage to remain 0/100. No benchmark input, fixture, oracle, case, or result was opened or produced.",
+      "environment": "Committed EPP-F02 checkpoint series and governed source registry",
+      "duration_ms": 0,
+      "result": "passed",
+      "evidence": [
+        { "path": "test-results/program-status/epp-f02-us1-checkpoint.json", "sha256": "cfb8e28590875180f43bbe5ec0f2d1e032960656dc7394ea6abd08db92ca3aa7" },
+        { "path": "test-results/program-status/epp-f02-us2-checkpoint.json", "sha256": "e99ba848dfabd6f721198555d4c4da05f56d02baaa43a463f56ee2e6698c7850" },
+        { "path": "test-results/program-status/epp-f02-us2-us3-checkpoint.json", "sha256": "9a2695f7e76f9388a6768c6be86e6ca6a9eec5a4a678cb8350fbae3e61a9747a" },
+        { "path": "test-results/program-status/epp-f02-candidate-verification.json", "sha256": "dad8dd916f2627ae24724437561ae14c804cc638f7553f15b09a0d5abdacb44f" }
+      ]
+    }
+  ],
+  "original_failure_refs": [
+    "The first candidate gate exposed TypeScript NodeList iteration; Array.from supplied the smallest compatible repair.",
+    "Independent review found a clean-environment runtime-extra omission and packaged current.json lease gap; both were repaired without widening product scope.",
+    "The first repaired exact validator found an unchanged generated path in the transition manifest; the unpushed commit was amended before freezing e9bfaea0.",
+    "The first GB10 detached/random-name checkout mismatched the approved identity profile; an exact-name disposable checkout passed the unchanged candidate.",
+    "The first independent Windows browser launch was blocked before assertions by sandbox spawn EPERM; the authorized unchanged host rerun passed."
+  ],
+  "findings": [
+    {
+      "code": "LOCAL-DOCKER-LINKED-WORKTREE-LIMIT",
+      "severity": "medium",
+      "artifact": "scripts/check-dev-push.ps1",
+      "disposition": "The gate's public-alpha and allowlist scans passed. The local Docker history path translation limitation is recorded; GitHub security/container jobs remain authoritative before merge."
+    },
+    {
+      "code": "FEATURE-DEFINITION-ONLY",
+      "severity": "info",
+      "artifact": "specs/078-process-definition-view/quickstart.md",
+      "disposition": "The page explains one exact definition only and never claims process execution or artifact production."
+    },
+    {
+      "code": "BENCHMARK-NOT-EXECUTED",
+      "severity": "info",
+      "artifact": "docs/programs/engineering-process-platform/use-case-registry.json",
+      "disposition": "process_100_id remains null, qualification evidence remains empty, and every governed process-100 stage remains 0/100."
+    }
+  ],
+  "rollback_subject": "Disable VITE_WRIGHT_PROCESS_DEFINITION_VIEW to remove navigation and route exposure; revert the feature PR to remove the packaged definition, read-only API, and page; clean dev baseline e9dd5c38026d0b1b5b165ee803fe082068ecc128.",
+  "delivery_relation": null
+}

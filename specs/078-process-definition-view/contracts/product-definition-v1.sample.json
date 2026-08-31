@@ -1,0 +1,106 @@
+{
+  "$schema": "./process-definition.schema.json",
+  "schema_version": "1.0.0",
+  "process_id": "product-definition-v1",
+  "revision": 1,
+  "title": "Product definition from customer need to released package",
+  "purpose": "Explain how an engineering team captures needs, defines a product, reviews it, and releases an inspectable definition package.",
+  "content_sha256": "4617a8a6424b7c15712cd951c0b97a8c4ec5e77e29633e46e105d30ec65d5883",
+  "phases": [
+    {
+      "id": "understand-needs",
+      "title": "Understand needs",
+      "purpose": "Turn customer needs into an agreed requirements baseline.",
+      "action_ids": ["capture-requirements"]
+    },
+    {
+      "id": "define-and-review",
+      "title": "Define and review",
+      "purpose": "Create the product model and decide whether it is ready for release.",
+      "action_ids": ["define-product", "review-product-definition"]
+    },
+    {
+      "id": "release-definition",
+      "title": "Release definition",
+      "purpose": "Package the approved definition for downstream use.",
+      "action_ids": ["release-product-definition"]
+    }
+  ],
+  "actions": [
+    {
+      "id": "capture-requirements",
+      "title": "Capture requirements",
+      "purpose": "Translate customer needs into a versioned requirements baseline.",
+      "input_port_ids": ["customer-needs"],
+      "output_port_ids": ["requirements-baseline"],
+      "gate_ids": [],
+      "feedback_path_ids": [],
+      "expected_artifact_ids": ["requirements-specification"]
+    },
+    {
+      "id": "define-product",
+      "title": "Define product",
+      "purpose": "Create the product model that satisfies the requirements baseline.",
+      "input_port_ids": ["requirements-input"],
+      "output_port_ids": ["product-model"],
+      "gate_ids": [],
+      "feedback_path_ids": [],
+      "expected_artifact_ids": ["product-definition"]
+    },
+    {
+      "id": "review-product-definition",
+      "title": "Review product definition",
+      "purpose": "Evaluate completeness and decide whether to release or revise the model.",
+      "input_port_ids": ["model-review-input"],
+      "output_port_ids": ["review-decision"],
+      "gate_ids": ["definition-approval"],
+      "feedback_path_ids": ["revise-definition"],
+      "expected_artifact_ids": ["definition-review-record"]
+    },
+    {
+      "id": "release-product-definition",
+      "title": "Release product definition",
+      "purpose": "Assemble the approved model and review decision into a released package.",
+      "input_port_ids": ["approved-model-input", "approval-input"],
+      "output_port_ids": ["released-package"],
+      "gate_ids": [],
+      "feedback_path_ids": [],
+      "expected_artifact_ids": ["released-definition-package"]
+    }
+  ],
+  "ports": [
+    {"id": "customer-needs", "name": "Customer needs", "direction": "input", "value_type": "customer-need", "description": "External customer needs and constraints.", "owner_action_id": "capture-requirements", "source_port_id": null},
+    {"id": "requirements-baseline", "name": "Requirements baseline", "direction": "output", "value_type": "requirement-set", "description": "Agreed versioned requirements.", "owner_action_id": "capture-requirements", "source_port_id": null},
+    {"id": "requirements-input", "name": "Requirements input", "direction": "input", "value_type": "requirement-set", "description": "Requirements consumed by product definition.", "owner_action_id": "define-product", "source_port_id": "requirements-baseline"},
+    {"id": "product-model", "name": "Product model", "direction": "output", "value_type": "product-model", "description": "The proposed product definition.", "owner_action_id": "define-product", "source_port_id": null},
+    {"id": "model-review-input", "name": "Model review input", "direction": "input", "value_type": "product-model", "description": "The model submitted for review.", "owner_action_id": "review-product-definition", "source_port_id": "product-model"},
+    {"id": "review-decision", "name": "Review decision", "direction": "output", "value_type": "review-decision", "description": "The approval or revision decision.", "owner_action_id": "review-product-definition", "source_port_id": null},
+    {"id": "approved-model-input", "name": "Approved model", "direction": "input", "value_type": "product-model", "description": "The approved product model.", "owner_action_id": "release-product-definition", "source_port_id": "product-model"},
+    {"id": "approval-input", "name": "Approval input", "direction": "input", "value_type": "review-decision", "description": "The release approval decision.", "owner_action_id": "release-product-definition", "source_port_id": "review-decision"},
+    {"id": "released-package", "name": "Released package", "direction": "output", "value_type": "release-package", "description": "The released product-definition package.", "owner_action_id": "release-product-definition", "source_port_id": null}
+  ],
+  "gates": [
+    {
+      "id": "definition-approval",
+      "title": "Definition approval",
+      "condition": "The product model is complete, consistent with requirements, and approved for release.",
+      "owner_action_id": "review-product-definition",
+      "pass_target_id": "release-product-definition",
+      "fail_target_id": "define-product"
+    }
+  ],
+  "feedback_paths": [
+    {
+      "id": "revise-definition",
+      "from_id": "definition-approval",
+      "to_id": "define-product",
+      "reason": "Return the model for revision when the approval condition is not met."
+    }
+  ],
+  "artifacts": [
+    {"id": "requirements-specification", "name": "Requirements specification", "artifact_type": "requirements-baseline", "purpose": "Record the agreed needs and constraints.", "produced_by_action_id": "capture-requirements"},
+    {"id": "product-definition", "name": "Product definition", "artifact_type": "product-definition", "purpose": "Record the proposed product model.", "produced_by_action_id": "define-product"},
+    {"id": "definition-review-record", "name": "Definition review record", "artifact_type": "review-record", "purpose": "Record the approval decision and findings.", "produced_by_action_id": "review-product-definition"},
+    {"id": "released-definition-package", "name": "Released definition package", "artifact_type": "released-definition-package", "purpose": "Provide the approved definition for downstream engineering work.", "produced_by_action_id": "release-product-definition"}
+  ]
+}

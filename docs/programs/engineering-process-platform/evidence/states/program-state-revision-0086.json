@@ -1,0 +1,24 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 86,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {"ref": "dev", "commit": "e9dd5c38026d0b1b5b165ee803fe082068ecc128", "tree": "d7e2ddf8228263478475019099f424a91c3b96c2", "observed_clean": true},
+  "prototype_evidence": {"branch": "076-engineering-workflow-prototype", "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d", "remote_matches": true, "registered_worktree": false, "mode": "read_only_evidence", "uncommitted_evidence_status": "none_detected"},
+  "control_plane": {"root": "docs/programs/engineering-process-platform", "candidate_subject_resolution": "EPP-F02 candidate A is frozen at commit e9bfaea0cd6f6f0671966ae12dcabd7c3b6d256f, tree de15cf16fd6a33a0b94221ae751e5d6f8a8ff351, and program tree 5713e23a354ec6fde2c37d23910e566c1af7754b. Its generated status and later governed evidence containers do not change the frozen product subject. APR-EPP-F02-MC-001 and APR-EPP-F02-IMPL-001 remain the exact implementation authority.", "schema_status": "passed", "audit_status": "passed"},
+  "current_feature": "EPP-F02",
+  "active_mutating_lease": null,
+  "last_transition": "TR-0085",
+  "readiness": {
+    "product": {"status": "not_started", "gate_file": "gates.md", "blockers": ["No customer product child feature is integrated and deployment-verified on dev", "The browser-accessible program-status page is integrated program-control capability and does not by itself advance product readiness"]},
+    "benchmark": {"status": "not_started", "gate_file": "gates.md", "blockers": ["No 100-process collection has been generated or qualified", "DEC-P0-007", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"]},
+    "commercial": {"status": "blocked", "gate_file": "gates.md", "blockers": ["DEC-P0-001", "DEC-P0-004", "DEC-P0-006", "DEC-P0-011", "DEC-P0-012", "Repository external controls remain evidence requirements"]},
+    "program_health": {"status": "blocked", "gate_file": "gates.md", "blockers": ["EPP-F01 is complete and integrated through PR #114.", "EPP-F01B is complete: PR #115 integrated the feature, bounded correction af95730b passed the full merge gate and PR #116 CI, PR #116 merged as dev commit e9dd5c38 with exact tree d7e2ddf8, and all eight post-merge dev workflows passed.", "Product, benchmark, and commercial readiness remain independent; benchmark execution remains unauthorized at 0/100 and release eligibility remains false.", "EPP-F02 candidate A is frozen unchanged and the implementation lease is released; independent verification is the sole next checkpoint."]}
+  },
+  "open_p0_decisions": ["DEC-P0-001", "DEC-P0-002", "DEC-P0-003", "DEC-P0-004", "DEC-P0-005", "DEC-P0-006", "DEC-P0-007", "DEC-P0-008", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"],
+  "next_eligible_actions": [{"action": "VERIFY_CURRENT_FEATURE_CANDIDATE", "roadmap_item": "EPP-F02", "requires_human_approval": false, "reason": "Candidate A is immutable, all author checks are terminal, and the separate GB10 and independent-review evidence can now be reconciled against the exact subject."}],
+  "approval": {"status": "approved", "record": "evidence/approvals/APR-EPP-F02-MC-001.json", "required_records": ["evidence/approvals/APR-EPP-F02-MC-001.json", "evidence/approvals/APR-EPP-F02-IMPL-001.json"]},
+  "feature_state": "CANDIDATE_FROZEN",
+  "policy_version": "EPP-LIFECYCLE-1"
+}

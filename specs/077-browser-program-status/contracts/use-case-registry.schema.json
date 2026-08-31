@@ -21,7 +21,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/(?:076-control-plane-validator|077-browser-program-status)/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/(?:076-control-plane-validator|077-browser-program-status|078-process-definition-view)/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
     "sourceName": {
       "enum": ["dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence", "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery", "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger", "customer_story_catalog", "feature_tasks"]

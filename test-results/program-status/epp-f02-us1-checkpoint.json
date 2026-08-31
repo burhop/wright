@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0.0",
+  "feature_id": "EPP-F02",
+  "checkpoint": "US1_T012",
+  "recorded_at": "2026-08-31T00:04:10Z",
+  "source_commit": "f70b8cf3a6fbb1df315c02d51743760ad820fdaf",
+  "source_tree": "217885f67170e07f0bf3a7e15522dbb96a6ef5eb",
+  "tasks": {
+    "completed": 12,
+    "total": 19,
+    "remaining": 7
+  },
+  "benchmark": {
+    "executed": false,
+    "process_100_id": null,
+    "proposed": 0,
+    "defined": 0,
+    "in_progress": 0,
+    "implemented": 0,
+    "tested": 0,
+    "independently_verified": 0,
+    "benchmark_qualified": 0
+  },
+  "readiness_changed": false,
+  "checkpoints": [
+    {
+      "platform": "windows-11",
+      "command": "npm run test --workspace=apps/web -- src/__tests__/ProcessDefinitionService.test.ts src/__tests__/ProcessDefinitionPage.test.tsx src/services/surfaces/feature-flags.spec.ts src/__tests__/App.test.tsx",
+      "result": "passed",
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 3.98,
+      "notes": "Closed client parsing and identity, all shared valid/invalid byte vectors, Python-compatible large integers, status-bound typed errors, bounded bodies, complete semantic text/diagram parity, accessibility, empty-category behavior, feature boundary, and route compatibility passed."
+    },
+    {
+      "platform": "windows-11",
+      "command": "npm run lint --workspace=apps/web -- --quiet",
+      "result": "passed",
+      "failed": 0,
+      "notes": "Full web ESLint passed with no findings."
+    },
+    {
+      "platform": "windows-11",
+      "command": "npm run build --workspace=apps/web",
+      "result": "passed",
+      "failed": 0,
+      "notes": "TypeScript project build and production Vite bundle passed; only the existing large-chunk advisory was emitted."
+    },
+    {
+      "platform": "windows-11-chromium",
+      "command": "$env:WRIGHT_PLAYWRIGHT_PORT='5189'; npx playwright test tests/ui-integration/process-definition.spec.ts --project=chromium",
+      "result": "passed",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 5.6,
+      "notes": "Fresh feature-flagged server with reuse disabled: customer keyboard navigation, exact semantic-ID parity, native disclosure, serious/critical Axe, 200% zoom, reduced motion, real document overflow checks at normal/zoom/narrow widths, 320 CSS pixels, forced colors, and explicit non-color meaning passed."
+    },
+    {
+      "platform": "windows-11-local-ui-host",
+      "command": "npm exec --workspace=apps/web vitest -- run src/__tests__/ProcessDefinitionPage.test.tsx --reporter=verbose --disableConsoleIntercept --maxWorkers=1",
+      "result": "passed",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 3.44,
+      "diagnostic_performance": {
+        "execution": "serial-diagnostic",
+        "sample": "packaged product-definition-v1",
+        "warmup_ms": 26.332499999999982,
+        "observations_ms": [
+          29.413900000000012,
+          29.147500000000036,
+          19.77260000000024,
+          23.04609999999957,
+          30.754199999999855,
+          28.295399999999972,
+          29.535100000000057,
+          19.32589999999982,
+          31.97499999999991,
+          48.00099999999975,
+          23.518200000000434,
+          33.47199999999975,
+          28.49260000000004,
+          29.754899999999907,
+          31.466300000000047,
+          30.791699999999764,
+          29.413200000000415,
+          31.614000000000033,
+          41.691299999999956,
+          34.05629999999974
+        ],
+        "nearest_rank_p95_ms": 41.691299999999956,
+        "gating_threshold_ms": null
+      },
+      "notes": "One warm-up plus 20 observations from a single selected test file with maxWorkers=1 on the declared Windows 11 local UI host. Timing is diagnostic only; deterministic correctness and functional timeouts are the delivery gates."
+    }
+  ],
+  "independent_reviews": [
+    {
+      "subject_commit": "f70b8cf3a6fbb1df315c02d51743760ad820fdaf",
+      "scope": "service contract and browser decoder",
+      "verdict": "passed_no_p0_p1_p2"
+    },
+    {
+      "subject_commit": "f70b8cf3a6fbb1df315c02d51743760ad820fdaf",
+      "scope": "UI semantics and diagnostic evidence boundary",
+      "verdict": "passed_no_p0_p1_p2"
+    },
+    {
+      "subject_commit": "f70b8cf3a6fbb1df315c02d51743760ad820fdaf",
+      "scope": "Playwright feature-server isolation and real-browser overflow",
+      "verdict": "passed_no_p0_p1_p2"
+    }
+  ],
+  "limitations": [
+    "US1 explains one exact definition only; it does not prove a process ran or an artifact exists.",
+    "US2 inspectable relationship tracing and US3 bounded recovery remain open.",
+    "No benchmark generation, execution, evidence, or qualification occurred."
+  ]
+}

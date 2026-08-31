@@ -1,0 +1,44 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 85,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {"ref": "dev", "commit": "e9dd5c38026d0b1b5b165ee803fe082068ecc128", "tree": "d7e2ddf8228263478475019099f424a91c3b96c2", "observed_clean": true},
+  "prototype_evidence": {"branch": "076-engineering-workflow-prototype", "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d", "remote_matches": true, "registered_worktree": false, "mode": "read_only_evidence", "uncommitted_evidence_status": "none_detected"},
+  "control_plane": {
+    "root": "docs/programs/engineering-process-platform",
+    "candidate_subject_resolution": "EPP-F01B is complete and its implementation and integration leases are released. Human authority on 2026-08-30 accepted ADR 0021 and the exact EPP-F02 local T001-T019 subject. Reconciled commit fd93daf6d5826da436f394ab1afb9298f5e8a32b, tree 38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93, and program tree 09dc3d4506119e755504223fcf32586e28290cf3 preserve current dev e9dd5c38, approved planning commit 5f2aa529, and closeout commit 61178077 as ancestors with no material scope change. APR-EPP-F02-MC-001 and APR-EPP-F02-IMPL-001 bind the same 20 reviewed artifacts and authorize only local T001-T019 under the bounded implementation lease.",
+    "schema_status": "passed",
+    "audit_status": "passed"
+  },
+  "current_feature": "EPP-F02",
+  "active_mutating_lease": {
+    "feature_id": "EPP-F02",
+    "branch": "codex/078-process-definition-view-current-dev",
+    "worktree_id": "wright-epp-f02",
+    "dev_baseline": {"commit": "e9dd5c38026d0b1b5b165ee803fe082068ecc128", "tree": "d7e2ddf8228263478475019099f424a91c3b96c2"},
+    "worktree_start": {"commit": "fd93daf6d5826da436f394ab1afb9298f5e8a32b", "tree": "38cbb5c63b1f11303b6c9569de0c3c0e6f9b0b93"},
+    "holder_role": "feature_owner",
+    "lease_mode": "implementation",
+    "lease_revision": 3,
+    "acquired_at": "2026-08-30T22:45:00Z",
+    "expires_at": "2026-08-31T22:45:00Z",
+    "allowed_paths": ["docs/programs/engineering-process-platform/**", "specs/078-process-definition-view/**", "specs/077-browser-program-status/contracts/program-status-bundle.schema.json", "specs/077-browser-program-status/contracts/program-status-source-catalog.json", "specs/077-browser-program-status/contracts/use-case-registry.schema.json", "src/wright_engineering/static/program-status/program-status-bundle.schema.json", "src/wright_engineering/static/program-status/program-status-source-catalog.json", "src/wright_engineering/static/program-status/use-case-registry.schema.json", "src/wright_engineering/static/program-status/current.json", "src/wright_engineering/static/process-definitions/**", "scripts/program_status/**", "scripts/program_control/validation.py", "tests/program_control_plane/test_contract_schemas.py", "tests/program_control_plane/test_program_status_publisher.py", "tests/program_control_plane/test_transition_chain.py", "packages/tool_registry/src/tool_registry/process_definition.py", "packages/tool_registry/src/tool_registry/__init__.py", "packages/tool_registry/tests/test_process_definition.py", "apps/api/src/api/schemas/process_definition.py", "apps/api/src/api/routers/process_definition.py", "apps/api/src/api/composition.py", "apps/api/src/api/main.py", "apps/api/tests/test_process_definition_api.py", "apps/web/src/services/process-definition.ts", "apps/web/src/services/surfaces/feature-flags.ts", "apps/web/src/components/process-definition/**", "apps/web/src/components/pages/ProcessDefinitionPage.tsx", "apps/web/src/App.tsx", "apps/web/src/components/layout/Sidebar.tsx", "apps/web/src/__tests__/ProcessDefinitionService.test.ts", "apps/web/src/__tests__/ProcessDefinitionPage.test.tsx", "apps/web/src/__tests__/ProcessDefinitionFailure.test.tsx", "tests/ui-integration/process-definition.spec.ts", "tests/packaging/test_wheel_contents.py", "tests/native_runtime/test_process_definition_lifecycle.py", "tests/e2e/test_process_definition.py"],
+    "path_restrictions": [{"path": "specs/078-process-definition-view/**", "restriction": "The approved requirements and contracts remain frozen; only task completion marks, quickstart evidence, and bounded implementation results may change."}, {"path": "docs/programs/engineering-process-platform/**", "restriction": "Only approval, lease, task/checkpoint, verification, and truthful generated status evidence may change; readiness and governed benchmark results remain unpromoted."}, {"path": "scripts/program_control/validation.py", "restriction": "Only the exact EPP-F02 source admission and closed F01B successor compatibility may change; historical identities and claims remain fixed."}, {"path": "src/wright_engineering/static/program-status/**", "restriction": "Only the named schema and source-catalog parity copies plus deterministic packaged current.json regeneration may change. The generated projection must match committed sources exactly and may not promote readiness, benchmark qualification, release eligibility, or any product claim."}],
+    "allowed_actions": ["inspect", "edit_allowlisted_paths", "run_deterministic_checks", "create_local_artifacts", "create_local_commits"],
+    "recovery": {"status": "reactivated", "last_audit_transition": "TR-0082", "rollback_state": "evidence/states/program-state-revision-0082.json", "exhausted_cause_ids": [], "active_cause_id": null, "repair_maximum": 2, "repair_remaining": 1}
+  },
+  "last_transition": "TR-0084",
+  "readiness": {
+    "product": {"status": "not_started", "gate_file": "gates.md", "blockers": ["No customer product child feature is integrated and deployment-verified on dev", "The browser-accessible program-status page is integrated program-control capability and does not by itself advance product readiness"]},
+    "benchmark": {"status": "not_started", "gate_file": "gates.md", "blockers": ["No 100-process collection has been generated or qualified", "DEC-P0-007", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"]},
+    "commercial": {"status": "blocked", "gate_file": "gates.md", "blockers": ["DEC-P0-001", "DEC-P0-004", "DEC-P0-006", "DEC-P0-011", "DEC-P0-012", "Repository external controls remain evidence requirements"]},
+    "program_health": {"status": "blocked", "gate_file": "gates.md", "blockers": ["EPP-F01 is complete and integrated through PR #114.", "EPP-F01B is complete: PR #115 integrated the feature, bounded correction af95730b passed the full merge gate and PR #116 CI, PR #116 merged as dev commit e9dd5c38 with exact tree d7e2ddf8, and all eight post-merge dev workflows passed.", "Product, benchmark, and commercial readiness remain independent; benchmark execution remains unauthorized at 0/100 and release eligibility remains false.", "EPP-F02 T001-T019 and author verification are complete; the exact candidate is ready to freeze with the product subject unchanged."]}
+  },
+  "open_p0_decisions": ["DEC-P0-001", "DEC-P0-002", "DEC-P0-003", "DEC-P0-004", "DEC-P0-005", "DEC-P0-006", "DEC-P0-007", "DEC-P0-008", "DEC-P0-009", "DEC-P0-010", "DEC-P0-011", "DEC-P0-012"],
+  "next_eligible_actions": [{"action": "FREEZE_CURRENT_FEATURE_CANDIDATE", "roadmap_item": "EPP-F02", "requires_human_approval": false, "reason": "Author verification, compatibility, rollback, accessibility, contamination, documentation, and benchmark non-interference checks are terminal and passing."}],
+  "approval": {"status": "approved", "record": "evidence/approvals/APR-EPP-F02-MC-001.json", "required_records": ["evidence/approvals/APR-EPP-F02-MC-001.json", "evidence/approvals/APR-EPP-F02-IMPL-001.json"]},
+  "feature_state": "AUTHOR_VERIFIED",
+  "policy_version": "EPP-LIFECYCLE-1"
+}

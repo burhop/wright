@@ -1,0 +1,260 @@
+.process-definition {
+  display: grid;
+  width: min(100%, 1440px);
+  min-width: 0;
+  gap: var(--space-lg);
+  padding: clamp(var(--space-sm), 3vw, var(--space-lg));
+  margin: 0 auto;
+  overflow-wrap: anywhere;
+}
+
+.process-definition__header {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.process-definition__header h1,
+.process-definition__header p,
+.process-definition__projection h2,
+.process-definition__projection h3,
+.process-definition__projection h4,
+.process-definition__projection h5,
+.process-definition__projection p {
+  margin: 0;
+}
+
+.process-definition__eyebrow,
+.process-definition__step {
+  color: var(--color-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.process-definition__version {
+  width: fit-content;
+  padding: 0.2rem 0.55rem;
+  color: var(--color-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-lg);
+}
+
+.process-definition__projections {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.process-definition__projection,
+.process-definition__source,
+.process-definition__boundary,
+.process-definition__state {
+  min-width: 0;
+  padding: clamp(var(--space-md), 2.5vw, var(--space-lg));
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.process-definition__boundary {
+  display: grid;
+  gap: var(--space-xs);
+  border-left: 4px solid var(--color-secondary);
+}
+
+.process-definition__boundary p {
+  margin: 0;
+}
+
+.process-definition__projection > header,
+.process-definition__projection > figcaption {
+  display: grid;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.process-definition__phase {
+  display: grid;
+  gap: var(--space-sm);
+  padding-top: var(--space-lg);
+}
+
+.process-definition__action {
+  display: grid;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.process-definition__action > section,
+.process-definition__diagram-groups > section {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.process-definition__action ul {
+  display: grid;
+  gap: var(--space-xs);
+  padding-left: var(--space-lg);
+}
+
+.process-definition__action li,
+.process-definition__diagram-groups article {
+  min-width: 0;
+  padding: var(--space-sm);
+  background: var(--color-surface);
+  border-left: 3px solid var(--color-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.process-definition__none {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.process-definition code {
+  color: var(--color-secondary);
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.process-definition__flow,
+.process-definition__action-flow {
+  display: grid;
+  gap: var(--space-md);
+  padding: 0;
+  margin: var(--space-lg) 0 0;
+  list-style: none;
+}
+
+.process-definition__phase-card,
+.process-definition__action-card {
+  display: grid;
+  gap: var(--space-md);
+  min-width: 0;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.process-definition__phase-card + .process-definition__phase-card::before {
+  display: block;
+  content: "Then ↓";
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+.process-definition__diagram-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.process-definition__diagram-groups article {
+  margin-top: var(--space-xs);
+}
+
+.process-definition__source summary {
+  width: fit-content;
+  color: var(--color-secondary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.process-definition__source summary:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 4px;
+}
+
+.process-definition__source dl,
+.process-definition__state dl {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.35fr) minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.process-definition__source dt,
+.process-definition__state dt {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.process-definition__source dd,
+.process-definition__state dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.process-definition__state {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 900px) {
+  .process-definition__projections,
+  .process-definition__diagram-groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .process-definition {
+    gap: var(--space-md);
+    padding: var(--space-xs);
+  }
+
+  .process-definition__projection,
+  .process-definition__source,
+  .process-definition__boundary,
+  .process-definition__state,
+  .process-definition__phase-card,
+  .process-definition__action-card,
+  .process-definition__action {
+    padding: var(--space-sm);
+  }
+
+  .process-definition__source dl,
+  .process-definition__state dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-definition *,
+  .process-definition *::before,
+  .process-definition *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .process-definition__projection,
+  .process-definition__source,
+  .process-definition__boundary,
+  .process-definition__state,
+  .process-definition__phase-card,
+  .process-definition__action-card,
+  .process-definition__action,
+  .process-definition__action li,
+  .process-definition__diagram-groups article {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .process-definition__action li,
+  .process-definition__diagram-groups article {
+    border-left-color: LinkText;
+  }
+}

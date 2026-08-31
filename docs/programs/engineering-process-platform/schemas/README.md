@@ -18,7 +18,7 @@ All machine-readable artifacts use JSON Schema draft 2020-12 and reject unknown 
 - every oracle with `oracle-manifest.schema.json`, referenced by immutable ID/revision/digest;
 - every append-only blind-holdout custody/access/contamination event with `holdout-ledger.schema.json`;
 - `dashboard.json` with `dashboard.schema.json`;
-- every validation and independent-verification envelope with `validation-report.schema.json` and `verification-evidence.schema.json`;
+- every validation and independent-verification envelope with `validation-report.schema.json`, the frozen EPP-F01 `verification-evidence.schema.json`, or the closed candidate/independent EPP-F02 `epp-f02-verification-evidence.schema.json`;
 - `risk-register.json` and `decision-register.json` with their schemas.
 
 Schema validity is necessary, not sufficient. Digests, references, allowed transitions, independence, freshness, WIP, and exact-subject rules require semantic validation. Unknown fields fail closed unless a schema explicitly permits an extension point.
