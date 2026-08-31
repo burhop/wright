@@ -27,7 +27,7 @@
 - [X] T008 [P] Implement closed Pydantic transport and support-safe error models in apps/api/src/api/schemas/workflow_drafts.py
 - [X] T009 Implement authenticated default-off create/read/validate/save routes in apps/api/src/api/routers/workflow_drafts.py and compose them in apps/api/src/api/{composition.py,main.py}
 - [X] T010 [P] Implement strict bounded browser decoding, identity verification, and API calls in apps/web/src/services/workflow-drafts.ts
-- [ ] T011 [P] Implement renderer-neutral projection, intent, semantic-ID parity, and fake-renderer contracts in apps/web/src/components/workflow-composer/{draft-model.ts,draft-projection.ts,draft-intents.ts,renderer-types.ts}
+- [X] T011 [P] Implement renderer-neutral projection, intent, semantic-ID parity, and fake-renderer contracts in apps/web/src/components/workflow-composer/{draft-model.ts,draft-projection.ts,draft-intents.ts,renderer-types.ts}
 
 **Checkpoint**: Pure contract, validation, persistence, API, and renderer seams pass focused tests; no composer UI or released-definition mutation exists.
 
