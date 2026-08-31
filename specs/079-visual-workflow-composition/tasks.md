@@ -50,8 +50,8 @@
 - [X] T015 [US1] Implement empty-draft creation, bounded block palette, diagram/text controls, and working-draft authority shell in apps/web/src/components/pages/WorkflowComposerPage.tsx and apps/web/src/components/workflow-composer/WorkflowComposer.tsx
 - [X] T016 [US1] Implement the first-party phase-lane SVG/HTML canvas for blocks, typed ports, connections, gate, feedback, artifacts, zoom, and fit in apps/web/src/components/workflow-composer/FirstPartyDraftCanvas.tsx
 - [X] T017 [US1] Implement text projection and Definition/Ports & relationships/Validation inspector from the same model in apps/web/src/components/workflow-composer/{DraftTextProjection.tsx,DraftInspector.tsx}
-- [ ] T018 [US1] Implement save, close, reopen, revision/digest display, and stale-save recovery in apps/web/src/components/workflow-composer/WorkflowComposer.tsx
-- [ ] T019 [US1] Add route/navigation exposure under the separate web flag and preserve Process Definition behavior in apps/web/src/{App.tsx,components/layout/Sidebar.tsx}
+- [X] T018 [US1] Implement save, close, reopen, revision/digest display, and stale-save recovery in apps/web/src/components/workflow-composer/WorkflowComposer.tsx
+- [X] T019 [US1] Add route/navigation exposure under the separate web flag and preserve Process Definition behavior in apps/web/src/{App.tsx,components/layout/Sidebar.tsx}
 - [ ] T020 [US1] Publish Checkpoint C rendered-canvas evidence and the first Checkpoint E save/reopen evidence, then refresh docs/programs/engineering-process-platform/dashboard.json and artifacts/ui-walkthrough/workflow-composer/
 
 ---

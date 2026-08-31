@@ -6,7 +6,7 @@ import Sidebar from "../components/layout/Sidebar";
 import appSource from "../App.tsx?raw";
 
 const { featureFlags, logger, workspaceService } = vi.hoisted(() => ({
-  featureFlags: { processDefinitionEnabled: false },
+  featureFlags: { processDefinitionEnabled: false, workflowComposerEnabled: false },
   logger: { info: vi.fn(), error: vi.fn() },
   workspaceService: {
     getRecentWorkspaces: vi.fn().mockResolvedValue([]),
@@ -32,10 +32,14 @@ vi.mock("../services/surfaces/feature-flags", async (importOriginal) => {
     processDefinitionViewEnabled: () => featureFlags.processDefinitionEnabled,
   };
 });
+vi.mock("../config/workflow-composer", () => ({
+  workflowComposerEnabled: () => featureFlags.workflowComposerEnabled,
+}));
 
 describe("App route compatibility", () => {
   beforeEach(() => {
     featureFlags.processDefinitionEnabled = false;
+    featureFlags.workflowComposerEnabled = false;
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -100,6 +104,17 @@ describe("App route compatibility", () => {
     expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(wildcard));
   });
 
+  it("guards the separate composer route with its independent browser flag", () => {
+    const guard = "{composerEnabled && (";
+    const route = 'path="/workflow-composer"';
+    const wildcard = 'path="*"';
+
+    expect(appSource).toContain("const composerEnabled = workflowComposerEnabled();");
+    expect(appSource.indexOf(guard)).toBeGreaterThan(-1);
+    expect(appSource.indexOf(route)).toBeGreaterThan(appSource.indexOf(guard));
+    expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(wildcard));
+  });
+
   it("shows the process navigation entry only while the flag is enabled", () => {
     const { rerender } = render(
       <MemoryRouter>
@@ -121,5 +136,25 @@ describe("App route compatibility", () => {
       "href",
       "/processes/product-definition-v1",
     );
+  });
+
+  it("shows the composer navigation separately without changing Process Definition", () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByTestId("nav-workflow-composer")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("nav-process-definition")).not.toBeInTheDocument();
+
+    featureFlags.workflowComposerEnabled = true;
+    rerender(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("nav-workflow-composer")).toHaveAttribute("href", "/workflow-composer");
+    expect(screen.queryByTestId("nav-process-definition")).not.toBeInTheDocument();
   });
 });
