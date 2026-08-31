@@ -254,6 +254,34 @@ describe("program status conditional refresh transport", () => {
       "DELIVERY_LANE_RELATION_INVALID",
     );
 
+    const closedLease = makeProgramStatusBundle() as any;
+    closedLease.supplement.work.lease = null;
+    closedLease.supplement.work.lanes[0].branch = "unavailable";
+    closedLease.supplement.work.lanes[1].branch = "unavailable";
+    closedLease.supplement.work.lanes[1].authority_state = "unavailable";
+    expect(() =>
+      validateProgramStatusEvidenceRelations(closedLease),
+    ).not.toThrow();
+
+    const unleasedConcreteBranch = makeProgramStatusBundle() as any;
+    unleasedConcreteBranch.supplement.work.lease = null;
+    unleasedConcreteBranch.supplement.work.lanes[0].branch = "unavailable";
+    unleasedConcreteBranch.supplement.work.lanes[1].authority_state =
+      "unavailable";
+    expect(() =>
+      validateProgramStatusEvidenceRelations(unleasedConcreteBranch),
+    ).toThrow("DELIVERY_LANE_RELATION_INVALID");
+
+    const unleasedConcreteAuthority = makeProgramStatusBundle() as any;
+    unleasedConcreteAuthority.supplement.work.lease = null;
+    unleasedConcreteAuthority.supplement.work.lanes[0].branch = "unavailable";
+    unleasedConcreteAuthority.supplement.work.lanes[1].branch = "unavailable";
+    unleasedConcreteAuthority.supplement.work.lanes[1].authority_state =
+      "authorized";
+    expect(() =>
+      validateProgramStatusEvidenceRelations(unleasedConcreteAuthority),
+    ).toThrow("DELIVERY_LANE_RELATION_INVALID");
+
     const history = makeProgramStatusBundle() as any;
     history.supplement.history = [
       {

@@ -1693,7 +1693,8 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
     }
     dependencyIds.add(id);
   }
-  const lease = record(work.lease, "/supplement/work/lease");
+  const lease =
+    work.lease === null ? null : record(work.lease, "/supplement/work/lease");
   const lanes = array(work.lanes, "/supplement/work/lanes").map((item, index) =>
     record(item, `/supplement/work/lanes/${index}`),
   );
@@ -1701,14 +1702,24 @@ export function validateProgramStatusEvidenceRelations(value: unknown): void {
   const development = lanes.find(
     (lane) => lane.kind === "continued_development",
   );
+  const concreteBranchesConflict =
+    integration?.branch !== "unavailable" &&
+    development?.branch !== "unavailable" &&
+    integration?.branch === development?.branch;
+  const leaseRelationInvalid =
+    lease === null
+      ? development?.branch !== "unavailable" ||
+        development?.authority_state !== "unavailable"
+      : development?.branch !== lease.branch ||
+        development?.base_commit !==
+          record(lease.dev_baseline, "/supplement/work/lease/dev_baseline")
+            .commit;
   if (
     lanes.length !== 2 ||
     !integration ||
     !development ||
-    integration.branch === development.branch ||
-    development.branch !== lease.branch ||
-    development.base_commit !==
-      record(lease.dev_baseline, "/supplement/work/lease/dev_baseline").commit
+    concreteBranchesConflict ||
+    leaseRelationInvalid
   ) {
     throw new ProgramStatusDecodeError(
       "DELIVERY_LANE_RELATION_INVALID",
