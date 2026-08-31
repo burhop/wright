@@ -99,8 +99,8 @@ function failureDiagnostic(error: unknown): FailureDiagnostic {
     if (IDENTITY_DECODE_CODES.has(error.code)) {
       code = "PROCESS_DEFINITION_IDENTITY_MISMATCH";
     } else if (
-      error.path === "/definition/schema_version" ||
-      error.path === "/supported_schema_versions"
+      error.code === "ENUM_INVALID" &&
+      error.path === "/definition/schema_version"
     ) {
       code = "PROCESS_DEFINITION_UNSUPPORTED_VERSION";
       supportedVersions = [PROCESS_DEFINITION_SCHEMA_VERSION];

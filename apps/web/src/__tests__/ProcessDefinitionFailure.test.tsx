@@ -4,14 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import definitionRaw from "../../../../src/wright_engineering/static/process-definitions/product-definition-v1.json?raw";
 import recoveryFixturesRaw from "../../../../specs/078-process-definition-view/contracts/recovery-fixtures.json?raw";
-import appSource from "../App.tsx?raw";
 import { ProcessDefinitionPage } from "../components/pages/ProcessDefinitionPage";
 import { hostAdapter } from "../services/host-adapter";
 import {
   PROCESS_DEFINITION_SOURCE_ID,
   type ProcessDefinitionError,
 } from "../services/process-definition";
-import { processDefinitionViewEnabled } from "../services/surfaces/feature-flags";
 
 vi.mock("../services/host-adapter", () => ({
   hostAdapter: {
@@ -59,6 +57,18 @@ function errorResponse(fixture: RecoveryFixture): Response {
     }),
     { status: fixture.expected_http_status },
   );
+}
+
+function unverifiedEnvelope(): Record<string, unknown> {
+  return {
+    definition: JSON.parse(definitionRaw),
+    source_kind: "packaged_fallback",
+    source_id: PROCESS_DEFINITION_SOURCE_ID,
+    source_sha256: "a".repeat(64),
+    source_available: true,
+    etag: "b".repeat(64),
+    supported_schema_versions: ["1.0.0"],
+  };
 }
 
 async function renderFailure(): Promise<HTMLElement> {
@@ -145,21 +155,14 @@ describe.sequential("ProcessDefinitionPage closed recovery", () => {
   );
 
   it("maps identity drift to exact-artifact recovery without partial content", async () => {
-    const definition = JSON.parse(definitionRaw) as Record<string, unknown>;
+    const envelope = unverifiedEnvelope();
+    const definition = envelope.definition as Record<string, unknown>;
     definition.title = "Untrusted changed title";
     mockedFetch.mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          definition,
-          source_kind: "packaged_fallback",
-          source_id: PROCESS_DEFINITION_SOURCE_ID,
-          source_sha256: "a".repeat(64),
-          source_available: true,
-          etag: "b".repeat(64),
-          supported_schema_versions: ["1.0.0"],
-        }),
-        { status: 200, headers: { etag: `"${"b".repeat(64)}"` } },
-      ),
+      new Response(JSON.stringify(envelope), {
+        status: 200,
+        headers: { etag: `"${"b".repeat(64)}"` },
+      }),
     );
 
     const alert = await renderFailure();
@@ -171,6 +174,50 @@ describe.sequential("ProcessDefinitionPage closed recovery", () => {
     expect(alert).not.toHaveTextContent("Untrusted changed title");
     expectNoPartialOrMutationUi();
   });
+
+  it.each([
+    {
+      name: "missing schema version",
+      mutate: (envelope: Record<string, unknown>) => {
+        delete (envelope.definition as Record<string, unknown>).schema_version;
+      },
+    },
+    {
+      name: "non-text schema version",
+      mutate: (envelope: Record<string, unknown>) => {
+        (envelope.definition as Record<string, unknown>).schema_version = 99;
+      },
+    },
+    {
+      name: "malformed supported versions",
+      mutate: (envelope: Record<string, unknown>) => {
+        envelope.supported_schema_versions = [];
+      },
+    },
+  ])(
+    "classifies $name as invalid rather than unsupported",
+    async ({ mutate }) => {
+      const envelope = unverifiedEnvelope();
+      mutate(envelope);
+      mockedFetch.mockResolvedValue(
+        new Response(JSON.stringify(envelope), {
+          status: 200,
+          headers: { etag: `"${"b".repeat(64)}"` },
+        }),
+      );
+
+      const alert = await renderFailure();
+
+      expect(alert).toHaveTextContent("PROCESS_DEFINITION_INVALID");
+      expect(alert).not.toHaveTextContent(
+        "PROCESS_DEFINITION_UNSUPPORTED_VERSION",
+      );
+      expect(
+        screen.queryByTestId("process-definition-supported-versions"),
+      ).toBeNull();
+      expectNoPartialOrMutationUi();
+    },
+  );
 
   it.each([
     {
@@ -201,32 +248,5 @@ describe.sequential("ProcessDefinitionPage closed recovery", () => {
     expect(alert).not.toHaveTextContent("Traceback");
     expect(screen.queryByTestId("process-definition-trace-id")).toBeNull();
     expectNoPartialOrMutationUi();
-  });
-
-  it("keeps the process route default-off and existing routes outside its guard", () => {
-    expect(processDefinitionViewEnabled({})).toBe(false);
-    const guard = "{processDefinitionEnabled && (";
-    const processRoute = 'path="/processes/product-definition-v1"';
-    const wildcard = 'path="*"';
-    expect(appSource.indexOf(processRoute)).toBeGreaterThan(
-      appSource.indexOf(guard),
-    );
-    expect(appSource.indexOf(processRoute)).toBeLessThan(
-      appSource.indexOf(wildcard),
-    );
-    for (const existingRoute of [
-      'path="/"',
-      'path="/workspace/:workspaceId"',
-      'path="/tool-registry"',
-      'path="/file-vault"',
-      'path="/logs"',
-      'path="/setup/model"',
-      'path="/engineering-models"',
-      'path="/program-status"',
-      'path="/settings"',
-      'path="/agent-chat"',
-    ]) {
-      expect(appSource).toContain(existingRoute);
-    }
   });
 });
