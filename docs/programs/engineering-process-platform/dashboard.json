@@ -365,7 +365,7 @@
     "first_parent_must_equal_source": true
   },
   "data_cutoff": "2026-08-27T11:40:00Z",
-  "generated_at": "2026-08-31T05:31:47.775588Z",
+  "generated_at": "2026-08-31T05:46:45.318771Z",
   "generation_status": "candidate_not_evidence",
   "next_action": "VERIFY_CURRENT_FEATURE_CI",
   "program_id": "EPP-2026",
@@ -3414,9 +3414,9 @@
     ],
     "generator_bundle_manifest_digest": "44410796c4ff0e1b688ea6adc2030fd42b1363c848c3100926bdc5c71ee9feac",
     "generator_version": "1.0.0",
-    "git_commit": "b89233f152720dd49f0cfd67be3d0e4bbfc38da5",
-    "git_tree": "76ca9096aa6cac9ee308f79247226e3eec937250",
+    "git_commit": "6aa63f01fd3c4ac8cb8b8267562751f53a9acafb",
+    "git_tree": "b50e59828775b5dd8b5f5748d525b37feb5b1bbe",
     "input_manifest_digest": "d8774adf465a4ab914942ccf3558a82e85b86a46714e6d49fe287b2fc21d00c1",
-    "program_tree": "e4cd95dd11e87c2b7b63e4b5f34db937eb772dc5"
+    "program_tree": "354e382ebb31250e44e8929331f391a1ba86748b"
   }
 }
