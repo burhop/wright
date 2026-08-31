@@ -8,6 +8,9 @@ from typing import Iterable
 from .workflow_drafts import WorkflowDraft
 
 
+MAX_WORKFLOW_DRAFT_DIAGNOSTICS = 256
+
+
 @dataclass(frozen=True, slots=True)
 class WorkflowDraftDiagnostic:
     code: str
@@ -98,6 +101,16 @@ def validate_workflow_draft(
                     "Assign each phase a distinct contiguous order.",
                 )
             )
+    if sorted(phase_orders) != list(range(len(semantic.phases))):
+        diagnostics.append(
+            _diagnostic(
+                "PHASE_ORDER_NOT_CONTIGUOUS",
+                "/semantic/phases/order",
+                phases,
+                "Phase order values are not one contiguous zero-based sequence.",
+                "Assign phase orders from zero through the phase count minus one.",
+            )
+        )
 
     for block in semantic.blocks:
         phase = phases.get(block.phase_id)
@@ -347,12 +360,24 @@ def validate_workflow_draft(
                 )
             )
 
-    return tuple(
-        sorted(
-            diagnostics,
-            key=lambda item: (item.code, item.path, item.affected_semantic_ids),
-        )
+    ordered = tuple(
+        sorted(diagnostics, key=lambda item: (item.code, item.path, item.affected_semantic_ids))
     )
+    if len(ordered) > MAX_WORKFLOW_DRAFT_DIAGNOSTICS:
+        return ordered[: MAX_WORKFLOW_DRAFT_DIAGNOSTICS - 1] + (
+            _diagnostic(
+                "DIAGNOSTICS_TRUNCATED",
+                "/",
+                (),
+                "Additional validation diagnostics were omitted from this bounded response.",
+                "Correct the reported issues, then validate the complete draft again.",
+            ),
+        )
+    return ordered
 
 
-__all__ = ["WorkflowDraftDiagnostic", "validate_workflow_draft"]
+__all__ = [
+    "MAX_WORKFLOW_DRAFT_DIAGNOSTICS",
+    "WorkflowDraftDiagnostic",
+    "validate_workflow_draft",
+]
