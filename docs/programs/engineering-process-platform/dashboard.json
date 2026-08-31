@@ -365,7 +365,7 @@
     "first_parent_must_equal_source": true
   },
   "data_cutoff": "2026-08-27T11:40:00Z",
-  "generated_at": "2026-08-31T00:42:08.144704Z",
+  "generated_at": "2026-08-31T03:29:21.231186Z",
   "generation_status": "candidate_not_evidence",
   "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION",
   "program_id": "EPP-2026",
@@ -1602,6 +1602,14 @@
         "sha256": "4ca47beb480e2dfd4bb798209429f5afa2a935e3b027215c0016c99cad5caff2"
       },
       {
+        "git_blob": "3ce47106b1ff56a44dba3c464943a5030c0623fd",
+        "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0083.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
+        "schema_version": "2.0",
+        "sha256": "7cd6a407730d426f98a4d2f8e5c26daad3b1fe65d524be4f348f12b8c9beb9dd"
+      },
+      {
         "git_blob": "c53d86b91d2120c09abe28f1e77f77f6eb5a6e71",
         "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0001.json",
         "role": "append_only_evidence",
@@ -2250,6 +2258,14 @@
         "sha256": "96664362fdb930784777b91ec9ec8a4b85837b9ef2739e5b9476c5881f4b98d3"
       },
       {
+        "git_blob": "c07402ac8309d9f3d8e0272ece619a0ab83a31fd",
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0082.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/transition-evidence.schema.json",
+        "schema_version": "2.0",
+        "sha256": "f64a2d51f22ab1c02afe6ee35cb1f84d6dd491699740753e6b0a214e63de69c3"
+      },
+      {
         "git_blob": "5c8c8048ce378c365cbe04f1e65e512d9a07b51d",
         "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-T072-blocked.json",
         "role": "append_only_evidence",
@@ -2386,6 +2402,22 @@
         "sha256": "664fdc23fce1970119d5a35bce06e2a420b4ce28f68b37a43841c73e2ad0403d"
       },
       {
+        "git_blob": "e5a2c35ba010243b60438f7856afac6e15c99f1a",
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-candidate.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/epp-f02-verification-evidence.schema.json",
+        "schema_version": "1.0",
+        "sha256": "fcbe21d8cff6b1684ed228132bf0d898d88faadc85a971724062380d33d563b7"
+      },
+      {
+        "git_blob": "c8a322e6d1577453df6a0790efb08ba8d5ebec9a",
+        "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F02-independent.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/epp-f02-verification-evidence.schema.json",
+        "schema_version": "1.0",
+        "sha256": "4d5d43c04c3f29c75806397c6b387b4c8790de6f0b01e583ad586558126092f1"
+      },
+      {
         "git_blob": "cbb640d37ddd5e65051d3c09ac8f37a45b8f1f9d",
         "path": "docs/programs/engineering-process-platform/evidence/verification/VER-EPP-F01-REV58-RAW-IDENTITY-001.json",
         "role": "append_only_evidence",
@@ -2450,12 +2482,12 @@
         "sha256": "f34ed972c8b737c7e5028f65224ec7cf41669a4b9f48d850a48f606ebbcd8537"
       },
       {
-        "git_blob": "e80955152f26819f319ecb04be95ae458833a75c",
+        "git_blob": "3ce47106b1ff56a44dba3c464943a5030c0623fd",
         "path": "docs/programs/engineering-process-platform/program-state.json",
         "role": "operational_state",
         "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
         "schema_version": "2.0",
-        "sha256": "4ca47beb480e2dfd4bb798209429f5afa2a935e3b027215c0016c99cad5caff2"
+        "sha256": "7cd6a407730d426f98a4d2f8e5c26daad3b1fe65d524be4f348f12b8c9beb9dd"
       },
       {
         "git_blob": "a43c1fc2a4cf5a0569c4a481894a6d20a44fb56e",
@@ -2498,12 +2530,12 @@
         "sha256": "2e4face4571b26aea37dee733e0b5d93ae12b48367a4aedc105661389bcd4566"
       },
       {
-        "git_blob": "538d0ffc106e98a85d804568dd64740253e6672c",
+        "git_blob": "d4c3876df3103af8a8ace3c6ad2df9262fa72838",
         "path": "docs/programs/engineering-process-platform/schemas/README.md",
         "role": "immutable_policy",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "0e427dcac1aed1798b4d4468c0d4e21f82bea10ff636d03ebbc95faacff7dffb"
+        "sha256": "023eee7e8c50a0065076594cc5dc8bb4d4f9061a9daf6f4c0bdabb2e6037e014"
       },
       {
         "git_blob": "e6ee672e31bc9e099e329b8764850bcc8c40ae10",
@@ -2584,6 +2616,14 @@
         "schema_id": "https://wright.local/programs/epp/decision-register.schema.json",
         "schema_version": null,
         "sha256": "3ffda6510827c8fa3d9c698394f3fe4d20038aff27945360ce68232060c2b6e1"
+      },
+      {
+        "git_blob": "6f32d328e4902cb121abf8fdfc35d8273ebdf74d",
+        "path": "docs/programs/engineering-process-platform/schemas/epp-f02-verification-evidence.schema.json",
+        "role": "immutable_policy",
+        "schema_id": "https://wright.local/programs/epp/epp-f02-verification-evidence.schema.json",
+        "schema_version": null,
+        "sha256": "19a9dec3563aaa491a97671e3f04e4c4390f31446cc5ccdd4743f585d99d2dd8"
       },
       {
         "git_blob": "c97c806e93913f630f35630cf45f023f60b81707",
@@ -2762,20 +2802,20 @@
         "sha256": "1cce6136eed41a38a5fd9dcdd726deba9fcb00025126a184fe5e131d1df9d112"
       },
       {
-        "git_blob": "056f0a1b850f837b9d0d20cb764c3c850e753d6f",
+        "git_blob": "3d850da5c6c2103553aa1502c48cb3b3de3bfe81",
         "path": "docs/programs/engineering-process-platform/test-run-ledger.json",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": "1.0.0",
-        "sha256": "3dd3266e506855cf77f86970aa49d24e467142c37108c81a5924cbdfb5be3eb6"
+        "sha256": "06e555420d6a7393ddae0eb803605676a259c1e78c5f1eabef65d907be41926c"
       },
       {
-        "git_blob": "f9fdb6e55cf6043dd5d4e1c470fd4bedc67b5e2e",
+        "git_blob": "248aab4faf8b22ae5d30e7dcd4319266001b053c",
         "path": "docs/programs/engineering-process-platform/use-case-registry.json",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": "1.0.0",
-        "sha256": "e659f0bd8e349bd6af0b6f76e1d285beafa91f0e081b0e47c2c9b653094a6c70"
+        "sha256": "66433780080a22e8f106493a6a4a1a3e2f7a09fdce6bb8f881d2ce07c983df7c"
       },
       {
         "git_blob": "1dc4900c69b4ca92024fe1effb3e156c8f1523d5",
@@ -3122,12 +3162,12 @@
         "sha256": "b65a67d0ccaf819e6a79cc3720852aaec433a26cbf4d3bb61774aefafd495c23"
       },
       {
-        "git_blob": "390e35a5cbdf33b8e715798ae9b0a81bd0e8d2dc",
+        "git_blob": "cc1a005a48b05791a8c906c931461e64fe9e259b",
         "path": "tests/program_control_plane/test_contract_schemas.py",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "570bf288ed197bad299351eec9cb112dee0830690df2de6738afdf38d3796278"
+        "sha256": "889f12c4096c7c9964be5534ad16eb7fc518cab3a056073d51cb7a9e5d8950e0"
       },
       {
         "git_blob": "7d001a16793a98b8788137f667f9b830bc12b19f",
@@ -3186,12 +3226,12 @@
         "sha256": "df0f1af38f27b6a11fc7b1c36d00d15ac8a1d485d0fff1a89ac6307b6fcd64af"
       },
       {
-        "git_blob": "307580dbc4886762b9282f475de9d800ff2868d1",
+        "git_blob": "e29a5c0028301dcffd20a5c7620768ad5e7cb40c",
         "path": "tests/program_control_plane/test_program_status_publisher.py",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "7c63678a4abcad348cfb983d2c17a0bc5bd174b0e7bac54c96fab64e27f5efb6"
+        "sha256": "5031a47013bc227340aa0031c7531899b9b110198b3c35f5e016b57ebfbe7fe3"
       },
       {
         "git_blob": "cfceacc49869f18cc2430cf4489d1f3b86082235",
@@ -3278,9 +3318,9 @@
     ],
     "generator_bundle_manifest_digest": "44410796c4ff0e1b688ea6adc2030fd42b1363c848c3100926bdc5c71ee9feac",
     "generator_version": "1.0.0",
-    "git_commit": "339bb1626749fe673efa3c10ae97b1a7656b8524",
-    "git_tree": "27427321eed34c1d143876e0d98f931fc0b1440e",
-    "input_manifest_digest": "1f11bb2e41a723b9721eefaa80ef87d5804731a1d564a60e2494c9bec87293d7",
-    "program_tree": "8c9a16e2b4b2dc7daf0ae90aa15a3f411ea04f32"
+    "git_commit": "d2e313d5b9fcb5606e2b589fd755746841ab9734",
+    "git_tree": "ffff69b4eeb4712d549b05d4ec746eca8368c344",
+    "input_manifest_digest": "0e58152e02f92e964a70dcf1e92289b1ab31a099b66052a7e8404ecb15bc47ee",
+    "program_tree": "416784a4f6b1c776ae3ad1c560bed774483e8b20"
   }
 }
