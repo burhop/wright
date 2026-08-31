@@ -99,6 +99,7 @@ CHECK_FRONTEND=0
 CHECK_PYTHON=0
 CHECK_DOCS=0
 CHECK_GITLEAKS=0
+CHECK_PROGRAM_CONTROL=0
 PYTHON_TEST_TARGETS=()
 PLAYWRIGHT_TARGETS=()
 PLAYWRIGHT_ALL_PROJECTS=0
@@ -109,6 +110,7 @@ while IFS= read -r changed_file; do
       CHECK_PYTHON=1
       CHECK_DOCS=1
       CHECK_GITLEAKS=1
+      CHECK_PROGRAM_CONTROL=1
       PYTHON_TEST_TARGETS+=(
         tests/program_control_plane
         tests/release/test_dev_push_process.py
@@ -117,6 +119,7 @@ while IFS= read -r changed_file; do
       ;;
     scripts/validate-engineering-process-program.py|scripts/program_control/*)
       CHECK_PYTHON=1
+      CHECK_PROGRAM_CONTROL=1
       PYTHON_TEST_TARGETS+=(
         tests/program_control_plane
         tests/release/test_dev_push_process.py
@@ -125,6 +128,7 @@ while IFS= read -r changed_file; do
       ;;
     tests/program_control_plane/*)
       CHECK_PYTHON=1
+      CHECK_PROGRAM_CONTROL=1
       PYTHON_TEST_TARGETS+=(
         tests/program_control_plane
         tests/release/test_dev_push_process.py
@@ -240,6 +244,22 @@ fi
 
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
+  if [[ "$CHECK_PROGRAM_CONTROL" == "1" ]]; then
+    PROGRAM_PUSH_STATE="$($GATE_PYTHON -c 'import json; print(json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["feature_state"])')"
+    PROGRAM_LEASE_STATE="$($GATE_PYTHON -c 'import json; print("closed" if json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["active_mutating_lease"] is None else "open")')"
+    case "$PROGRAM_PUSH_STATE" in
+      PUSH_AUTHORIZATION_PENDING|PR_READY|DEV_MERGE_READY) ;;
+      *)
+        echo "Program-control changes may be pushed only after the governed feature reaches PUSH_AUTHORIZATION_PENDING, PR_READY, or DEV_MERGE_READY; found $PROGRAM_PUSH_STATE."
+        exit 1
+        ;;
+    esac
+    if [[ "$PROGRAM_LEASE_STATE" != "closed" ]]; then
+      echo "Program-control changes may not be pushed with an active mutating lease. Freeze the candidate and close the lease first."
+      exit 1
+    fi
+    run "$GATE_PYTHON" scripts/validate-engineering-process-program.py validate --source HEAD --format text
+  fi
   run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
   run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
   run uv run --with mypy mypy scripts/release src/wright_engineering --ignore-missing-imports
