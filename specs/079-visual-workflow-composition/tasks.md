@@ -11,8 +11,8 @@
 ## Phase 1: Setup and Program Boundary
 
 - [X] T001 Record the approved proposed EPP-F02B roadmap entry and inactive spec 079 work registration, admit the exact tasks path in both program-status schema copies, and preserve the active EPP-F02 source in docs/programs/engineering-process-platform/{roadmap.json,work-registry.json}, specs/077-browser-program-status/contracts/program-status-bundle.schema.json, src/wright_engineering/static/program-status/program-status-bundle.schema.json, and tests/program_control_plane/test_contract_schemas.py
-- [ ] T002 [P] Add contract-validation fixtures for the representative workflow and strict rejection cases in packages/core/tests/fixtures/workflow_drafts/ and packages/core/tests/test_workflow_drafts.py
-- [ ] T003 [P] Add default-off server and browser authoring flags without changing EPP-F02 flags in apps/api/src/api/config.py and apps/web/src/config/workflow-composer.ts
+- [X] T002 [P] Add contract-validation fixtures for the representative workflow and strict rejection cases in packages/core/tests/fixtures/workflow_drafts/ and packages/core/tests/test_workflow_drafts.py
+- [X] T003 [P] Add default-off server and browser authoring flags without changing EPP-F02 flags in apps/api/src/api/config.py and apps/web/src/config/workflow-composer.ts
 
 ---
 
