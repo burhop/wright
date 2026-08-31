@@ -30,6 +30,7 @@ from api.routers.gateway import router as gateway_router
 from api.routers.engineering_models import router as engineering_models_router
 from api.routers.program_status import router as program_status_router
 from api.routers.process_definition import router as process_definition_router
+from api.routers.workflow_drafts import router as workflow_drafts_router
 from api.routers.support_diagnostics import router as support_diagnostics_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
@@ -299,6 +300,11 @@ app.include_router(
     process_definition_router,
     prefix="/api/process-definitions",
     tags=["Process Definitions"],
+)
+app.include_router(
+    workflow_drafts_router,
+    prefix="/api/workflow-drafts",
+    tags=["Workflow Drafts"],
 )
 app.include_router(
     engineering_models_router,

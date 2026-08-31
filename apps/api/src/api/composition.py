@@ -9,6 +9,7 @@ from typing import Callable
 from workspace_service import (  # type: ignore[import-untyped]
     EngineeringModelService,
     SupportDiagnosticService,
+    WorkflowDraftService,
     WorkspaceService,
     build_workspace_service,
     RivetApprovalService,
@@ -336,6 +337,11 @@ def support_diagnostic_application() -> SupportDiagnosticService:
 
 
 @lru_cache(maxsize=1)
+def workflow_draft_service() -> WorkflowDraftService:
+    return WorkflowDraftService(DATABASE_PATH)
+
+
+@lru_cache(maxsize=1)
 def program_status_reader() -> ProgramStatusReader:
     import wright_engineering  # type: ignore[import-untyped]
 
@@ -373,6 +379,7 @@ def build_engineering_model_application(db_path: str) -> EngineeringModelService
 async def close_application_services() -> None:
     program_status_reader.cache_clear()
     process_definition_reader.cache_clear()
+    workflow_draft_service.cache_clear()
     if support_diagnostic_application.cache_info().currsize:
         support_diagnostic_application().invalidate_all()
         support_diagnostic_application.cache_clear()
