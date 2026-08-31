@@ -28,7 +28,9 @@ RUN set -eux; \
     node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
-RUN npm run build --workspace=apps/web
+ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0
+RUN VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}" \
+    npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
 FROM python:3.13-slim@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a AS hermes-base
