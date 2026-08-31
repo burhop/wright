@@ -457,8 +457,11 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
     )
     task_path = "specs/078-process-definition-view/tasks.md"
     task_raw = publisher._git_blob(REPOSITORY, subject["commit"], task_path)
-    incomplete_task_raw = task_raw
     task_id = "T001"
+    completed_marker = f"- [X] {task_id} ".encode()
+    incomplete_marker = f"- [ ] {task_id} ".encode()
+    assert task_raw.count(completed_marker) == 1
+    incomplete_task_raw = task_raw.replace(completed_marker, incomplete_marker, 1)
     task = publisher._task_records(incomplete_task_raw)[task_id]
     original_git_blob = publisher._git_blob
 
