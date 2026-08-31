@@ -250,8 +250,8 @@ test.describe("Program status comprehension and accessibility", () => {
       const first = JSON.parse(firstRaw);
       const second = structuredClone(first);
       second.generated_at = "2026-08-29T14:00:00Z";
-      second.supplement.work.tasks.completed += 1;
-      second.supplement.work.tasks.remaining -= 1;
+      second.supplement.work.tasks.total += 1;
+      second.supplement.work.tasks.remaining += 1;
       second.supplement.work.current_milestone =
         "Committed refresh acceptance fixture";
       second.bundle_id = fixtureDigest({
