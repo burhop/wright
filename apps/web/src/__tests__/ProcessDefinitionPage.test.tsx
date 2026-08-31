@@ -278,6 +278,51 @@ describe.sequential("ProcessDefinitionPage", () => {
     }
   });
 
+  it("traces a review input through its gate, feedback, release, and artifact relationships", async () => {
+    await renderReady();
+
+    const text = screen.getByTestId("process-definition-text");
+    const reviewInput = semanticNode(text, "model-review-input");
+    expect(reviewInput).toHaveTextContent(/Owner:\s*review-product-definition/);
+    expect(reviewInput).toHaveTextContent(/Source:\s*product-model/);
+
+    const reviewAction = semanticNode(text, "review-product-definition");
+    for (const relationship of [
+      "review-decision",
+      "definition-approval",
+      "revise-definition",
+      "definition-review-record",
+    ]) {
+      expect(semanticNode(reviewAction, relationship)).toHaveTextContent(
+        relationship,
+      );
+    }
+
+    const approvalGate = semanticNode(reviewAction, "definition-approval");
+    expect(approvalGate).toHaveTextContent(
+      /Pass\s*→\s*release-product-definition/,
+    );
+    expect(approvalGate).toHaveTextContent(/Fail\s*→\s*define-product/);
+
+    const releaseAction = semanticNode(text, "release-product-definition");
+    for (const relationship of [
+      "approved-model-input",
+      "approval-input",
+      "released-package",
+      "released-definition-package",
+    ]) {
+      expect(semanticNode(releaseAction, relationship)).toHaveTextContent(
+        relationship,
+      );
+    }
+
+    const artifact = semanticNode(releaseAction, "released-definition-package");
+    expect(artifact).toHaveTextContent(/Expected artifact/);
+    expect(artifact).toHaveTextContent(
+      /Produced by\s*release-product-definition/,
+    );
+  });
+
   it("names every action category and says None declared for each empty one", async () => {
     await renderReady();
     const text = screen.getByTestId("process-definition-text");
@@ -338,6 +383,42 @@ describe.sequential("ProcessDefinitionPage", () => {
     expect(details).toHaveTextContent(envelope.source_sha256);
     expect(details).toHaveTextContent(envelope.source_kind);
     expect(details.querySelector("a")).toBeNull();
+  });
+
+  it("keeps the logical source and the complete definition view read-only", async () => {
+    const user = userEvent.setup();
+    const view = await renderReady();
+
+    const boundary = screen.getByRole("note", {
+      name: "Read-only definition boundary",
+    });
+    expect(boundary).toHaveTextContent(
+      "Definition only — not evidence that a process ran or an artifact exists",
+    );
+    expect(fetchDefinition).toHaveBeenCalledTimes(1);
+    expect(fetchDefinition).toHaveBeenCalledWith(
+      undefined,
+      expect.any(AbortSignal),
+    );
+
+    const details = screen.getByTestId("process-definition-source-details");
+    await user.click(screen.getByTestId("process-definition-source-toggle"));
+    expect(details).toHaveTextContent(
+      "process-definitions/product-definition-v1.json",
+    );
+    expect(details).toHaveTextContent(
+      "Package-relative identity only; not a filesystem path or external URL.",
+    );
+    expect(details.querySelector("a[href], [role='link']")).toBeNull();
+    expect(
+      view.container.querySelector(
+        "form, button, input, textarea, select, [contenteditable='true']",
+      ),
+    ).toBeNull();
+    expect(fetchDefinition).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByTestId("process-definition-source-toggle"));
+    expect(fetchDefinition).toHaveBeenCalledTimes(1);
   });
 
   it("communicates direction, gate outcomes, feedback, and artifacts without color", async () => {

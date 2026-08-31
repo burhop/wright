@@ -13,8 +13,11 @@ export function ProcessDefinitionDetails({
       <summary data-testid="process-definition-source-toggle">
         Validated source identity
       </summary>
+      <p>
+        Package-relative identity only; not a filesystem path or external URL.
+      </p>
       <dl>
-        <dt>Logical source</dt>
+        <dt>Internal logical source</dt>
         <dd>
           <code>{envelope.source_id}</code>
         </dd>

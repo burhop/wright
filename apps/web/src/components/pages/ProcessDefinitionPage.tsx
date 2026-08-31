@@ -89,6 +89,20 @@ export function ProcessDefinitionPage() {
       ) : null}
       {view.state === "ready" ? (
         <>
+          <aside
+            className="process-definition__boundary"
+            role="note"
+            aria-label="Read-only definition boundary"
+          >
+            <strong>
+              Definition only — not evidence that a process ran or an artifact
+              exists
+            </strong>
+            <p>
+              This page explains validated declarations. It cannot edit, apply,
+              execute, invoke tools, or persist process data.
+            </p>
+          </aside>
           <div className="process-definition__projections">
             <ProcessDefinitionText definition={view.envelope.definition} />
             <ProcessDefinitionDiagram definition={view.envelope.definition} />

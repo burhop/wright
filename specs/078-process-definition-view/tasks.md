@@ -43,8 +43,8 @@
 
 **Independent Test**: Trace one input through action, gate, output, and expected artifact while observing exact source identity and zero mutation requests.
 
-- [ ] T013 [P] [US2] Add UI trace, exact safe logical-source, zero-mutation request, and accessible visible-boundary notice tests proving the page says it is a definition only and provides no process-run or artifact-existence evidence in `apps/web/src/__tests__/ProcessDefinitionPage.test.tsx`
-- [ ] T014 [US2] Complete inspectable relationship details, the fixed internal `process-definitions/product-definition-v1.json` source identity/detail behavior, and the concise accessible visible notice “Definition only — not evidence that a process ran or an artifact exists” in `apps/web/src/components/process-definition/ProcessDefinitionDetails.tsx` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
+- [X] T013 [P] [US2] Add UI trace, exact safe logical-source, zero-mutation request, and accessible visible-boundary notice tests proving the page says it is a definition only and provides no process-run or artifact-existence evidence in `apps/web/src/__tests__/ProcessDefinitionPage.test.tsx`
+- [X] T014 [US2] Complete inspectable relationship details, the fixed internal `process-definitions/product-definition-v1.json` source identity/detail behavior, and the concise accessible visible notice “Definition only — not evidence that a process ran or an artifact exists” in `apps/web/src/components/process-definition/ProcessDefinitionDetails.tsx` and `apps/web/src/components/pages/ProcessDefinitionPage.tsx`
 
 **Checkpoint**: US2 is independently demonstrable and cannot be mistaken for a run or produced artifact.
 
