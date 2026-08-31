@@ -24,7 +24,8 @@ export interface ProcessPhaseProjection {
 
 function required<T>(registry: Map<string, T>, id: string): T {
   const value = registry.get(id);
-  if (value === undefined) throw new Error(`PROCESS_REFERENCE_UNRESOLVED:${id}`);
+  if (value === undefined)
+    throw new Error(`PROCESS_REFERENCE_UNRESOLVED:${id}`);
   return value;
 }
 

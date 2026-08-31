@@ -21,8 +21,8 @@ export function ProcessDefinitionDiagram({
           Process ID: <code>{definition.process_id}</code>
         </p>
         <p>
-          Read top to bottom. Words and arrows carry every relationship; color is
-          supplementary.
+          Read top to bottom. Words and arrows carry every relationship; color
+          is supplementary.
         </p>
       </figcaption>
 
@@ -42,8 +42,18 @@ export function ProcessDefinitionDiagram({
 
             <ol className="process-definition__action-flow">
               {actions.map(
-                ({ action, inputs, outputs, gates, feedbackPaths, artifacts }) => (
-                  <li className="process-definition__action-card" key={action.id}>
+                ({
+                  action,
+                  inputs,
+                  outputs,
+                  gates,
+                  feedbackPaths,
+                  artifacts,
+                }) => (
+                  <li
+                    className="process-definition__action-card"
+                    key={action.id}
+                  >
                     <section data-semantic-id={action.id}>
                       <h4>
                         {action.title} <code>{action.id}</code>
@@ -59,9 +69,10 @@ export function ProcessDefinitionDiagram({
                         ) : (
                           inputs.map((port) => (
                             <article data-semantic-id={port.id} key={port.id}>
-                              <strong>Input:</strong> {port.name} <code>{port.id}</code>
+                              <strong>Input:</strong> {port.name}{" "}
+                              <code>{port.id}</code>
                               <p>
-                                {port.value_type}; source {" "}
+                                {port.value_type}; source{" "}
                                 {port.source_port_id ?? "None declared."}
                               </p>
                             </article>
@@ -75,7 +86,8 @@ export function ProcessDefinitionDiagram({
                         ) : (
                           outputs.map((port) => (
                             <article data-semantic-id={port.id} key={port.id}>
-                              <strong>Output:</strong> {port.name} <code>{port.id}</code>
+                              <strong>Output:</strong> {port.name}{" "}
+                              <code>{port.id}</code>
                               <p>{port.value_type}</p>
                             </article>
                           ))
@@ -88,10 +100,12 @@ export function ProcessDefinitionDiagram({
                         ) : (
                           gates.map((gate) => (
                             <article data-semantic-id={gate.id} key={gate.id}>
-                              <strong>{gate.title}</strong> <code>{gate.id}</code>
+                              <strong>{gate.title}</strong>{" "}
+                              <code>{gate.id}</code>
                               <p>{gate.condition}</p>
                               <p>
-                                Pass → {gate.pass_target_id}; Fail → {gate.fail_target_id}
+                                Pass → {gate.pass_target_id}; Fail →{" "}
+                                {gate.fail_target_id}
                               </p>
                             </article>
                           ))
@@ -118,9 +132,12 @@ export function ProcessDefinitionDiagram({
                           <p>None declared.</p>
                         ) : (
                           artifacts.map((artifact) => (
-                            <article data-semantic-id={artifact.id} key={artifact.id}>
-                              <strong>Expected artifact:</strong> {artifact.name}{" "}
-                              <code>{artifact.id}</code>
+                            <article
+                              data-semantic-id={artifact.id}
+                              key={artifact.id}
+                            >
+                              <strong>Expected artifact:</strong>{" "}
+                              {artifact.name} <code>{artifact.id}</code>
                               <p>{artifact.artifact_type}</p>
                             </article>
                           ))

@@ -31,8 +31,12 @@ function PortItem({ port }: { port: ProcessDefinitionPort }) {
         {port.description}
       </p>
       <p>
-        Owner: <code>{port.owner_action_id}</code>. Source: {" "}
-        {port.source_port_id ? <code>{port.source_port_id}</code> : "None declared."}
+        Owner: <code>{port.owner_action_id}</code>. Source:{" "}
+        {port.source_port_id ? (
+          <code>{port.source_port_id}</code>
+        ) : (
+          "None declared."
+        )}
       </p>
     </li>
   );
@@ -44,7 +48,7 @@ function GateItem({ gate }: { gate: ProcessDefinitionGate }) {
       <strong>{gate.title}</strong> <code>{gate.id}</code>
       <p>{gate.condition}</p>
       <p>
-        Pass → <code>{gate.pass_target_id}</code>. Fail → {" "}
+        Pass → <code>{gate.pass_target_id}</code>. Fail →{" "}
         <code>{gate.fail_target_id}</code>.
       </p>
     </li>
@@ -56,7 +60,8 @@ function FeedbackItem({ path }: { path: ProcessDefinitionFeedbackPath }) {
     <li data-semantic-id={path.id}>
       <strong>Feedback →</strong> <code>{path.id}</code>
       <p>
-        From <code>{path.from_id}</code> to <code>{path.to_id}</code>: {path.reason}
+        From <code>{path.from_id}</code> to <code>{path.to_id}</code>:{" "}
+        {path.reason}
       </p>
     </li>
   );
@@ -126,19 +131,34 @@ export function ProcessDefinitionText({
                 <section aria-label={`${action.title} inputs`}>
                   <h5>Inputs</h5>
                   <EmptyOrList items={inputs}>
-                    {(item) => <PortItem key={item.id} port={item as ProcessDefinitionPort} />}
+                    {(item) => (
+                      <PortItem
+                        key={item.id}
+                        port={item as ProcessDefinitionPort}
+                      />
+                    )}
                   </EmptyOrList>
                 </section>
                 <section aria-label={`${action.title} outputs`}>
                   <h5>Outputs</h5>
                   <EmptyOrList items={outputs}>
-                    {(item) => <PortItem key={item.id} port={item as ProcessDefinitionPort} />}
+                    {(item) => (
+                      <PortItem
+                        key={item.id}
+                        port={item as ProcessDefinitionPort}
+                      />
+                    )}
                   </EmptyOrList>
                 </section>
                 <section aria-label={`${action.title} gates`}>
                   <h5>Gates</h5>
                   <EmptyOrList items={gates}>
-                    {(item) => <GateItem key={item.id} gate={item as ProcessDefinitionGate} />}
+                    {(item) => (
+                      <GateItem
+                        key={item.id}
+                        gate={item as ProcessDefinitionGate}
+                      />
+                    )}
                   </EmptyOrList>
                 </section>
                 <section aria-label={`${action.title} feedback paths`}>

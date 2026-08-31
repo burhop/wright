@@ -24,15 +24,7 @@ describe("Workspace Surfaces feature flag", () => {
 
 describe("Process Definition View feature flag", () => {
   it("is default-off and rejects values outside the explicit allowlist", () => {
-    for (const value of [
-      undefined,
-      "",
-      "0",
-      "false",
-      "no",
-      "off",
-      "enabled",
-    ]) {
+    for (const value of [undefined, "", "0", "false", "no", "off", "enabled"]) {
       expect(
         processDefinitionViewEnabled({
           VITE_WRIGHT_PROCESS_DEFINITION_VIEW: value,

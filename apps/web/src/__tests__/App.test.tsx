@@ -26,13 +26,10 @@ vi.mock("../hooks/useHealthStatus", () => ({
 vi.mock("../services/workspace-service", () => ({ workspaceService }));
 vi.mock("../services/surfaces/feature-flags", async (importOriginal) => {
   const actual =
-    await importOriginal<
-      typeof import("../services/surfaces/feature-flags")
-    >();
+    await importOriginal<typeof import("../services/surfaces/feature-flags")>();
   return {
     ...actual,
-    processDefinitionViewEnabled: () =>
-      featureFlags.processDefinitionEnabled,
+    processDefinitionViewEnabled: () => featureFlags.processDefinitionEnabled,
   };
 });
 

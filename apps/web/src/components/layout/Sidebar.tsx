@@ -1,9 +1,7 @@
 import NavItem from "../common/NavItem";
 import type { NavigationSection } from "../../store/types";
 import { useTools } from "../../store/tools";
-import {
-  processDefinitionViewEnabled,
-} from "../../services/surfaces/feature-flags";
+import { processDefinitionViewEnabled } from "../../services/surfaces/feature-flags";
 
 export function Sidebar() {
   let servers = [];
@@ -78,10 +76,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside
-      data-testid="sidebar"
-      className="app-sidebar"
-    >
+    <aside data-testid="sidebar" className="app-sidebar">
       <div className="app-sidebar__navigation">
         {sections.map((sec) => (
           <NavItem
