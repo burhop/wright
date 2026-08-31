@@ -829,6 +829,34 @@ def test_history_series_have_fixed_semantics_and_causal_committed_order(
     )
     assert work["program_tasks"]["undecomposed_roadmap_items"]
 
+    details = bundle["supplement"]["evidence_index"]
+    use_case = bundle["supplement"]["use_cases"]["items"][0]
+    for stage_name in (
+        "acceptance_evidence",
+        "test_evidence",
+        "independent_verification_evidence",
+    ):
+        for record in use_case[stage_name]:
+            reference = record["evidence"]
+            assert [
+                detail
+                for detail in details
+                if all(
+                    detail[key] == reference[key] for key in ("id", "path", "sha256")
+                )
+            ]
+
+    development = next(
+        lane
+        for lane in bundle["supplement"]["work"]["lanes"]
+        if lane["kind"] == "continued_development"
+    )
+    assert development["latest_capability"].startswith(
+        "Committed customer acceptance evidence: 1 accepted and 1 independently "
+        "verified EPP-F02 use case"
+    )
+    assert use_case["acceptance_evidence"][0]["evidence"] in development["evidence"]
+
 
 def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")

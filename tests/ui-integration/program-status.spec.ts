@@ -144,7 +144,7 @@ test.describe("Program status comprehension and accessibility", () => {
       "100 proposed customer stories",
     );
     await expect(page.getByTestId("test-health-summary")).toContainText(
-      "36 passed · 0 failed",
+      "50 passed · 0 failed",
     );
     await expect(page.getByTestId("next-action-summary")).toContainText(
       "Authority: authorized; human approval: not required",
