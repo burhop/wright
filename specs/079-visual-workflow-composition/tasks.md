@@ -64,9 +64,9 @@
 
 ### Tests
 
-- [ ] T021 [P] [US2] Add intent-reducer all-or-none tests for create/select/move/edit/connect/delete and invalid recovery in apps/web/src/components/workflow-composer/draft-intents.spec.ts
-- [ ] T022 [P] [US2] Add incompatible, duplicate, dangling, gate/feedback, artifact-producer, and identity-conflict fixtures with expected stable diagnostics in packages/core/tests/test_workflow_draft_validation.py
-- [ ] T023 [P] [US2] Add mocked Playwright edit/diagnostic/correction/save coverage in tests/ui-integration/workflow-composer.spec.ts
+- [X] T021 [P] [US2] Add intent-reducer all-or-none tests for create/select/move/edit/connect/delete and invalid recovery in apps/web/src/components/workflow-composer/draft-intents.spec.ts
+- [X] T022 [P] [US2] Add incompatible, duplicate, dangling, gate/feedback, artifact-producer, and identity-conflict fixtures with expected stable diagnostics in packages/core/tests/test_workflow_draft_validation.py
+- [X] T023 [P] [US2] Add mocked Playwright edit/diagnostic/correction/save coverage in tests/ui-integration/workflow-composer.spec.ts
 
 ### Implementation
 
