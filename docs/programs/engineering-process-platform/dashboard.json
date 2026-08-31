@@ -365,9 +365,9 @@
     "first_parent_must_equal_source": true
   },
   "data_cutoff": "2026-08-27T11:40:00Z",
-  "generated_at": "2026-08-31T05:46:45.318771Z",
+  "generated_at": "2026-08-31T14:50:28.055836Z",
   "generation_status": "candidate_not_evidence",
-  "next_action": "VERIFY_CURRENT_FEATURE_CI",
+  "next_action": "VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT",
   "program_id": "EPP-2026",
   "release_approval": {
     "approval_id": null,
@@ -1658,6 +1658,22 @@
         "sha256": "2b4797197faec931162fc5fdbfe090fbcade75dfef7807b56d1e3288d920f53e"
       },
       {
+        "git_blob": "ea3844aecaf55397a14fe11966d03a848df1a0fc",
+        "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0090.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
+        "schema_version": "2.0",
+        "sha256": "a333d38311788acf5e9ca04c66d01577c4de8393c59c7acbdf0bbc7e9625508b"
+      },
+      {
+        "git_blob": "e05b99e325b225a3cf01fafee653787ea28c986f",
+        "path": "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0091.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
+        "schema_version": "2.0",
+        "sha256": "e32dd239220dec7d05e88ae28dadba14f28d9dec114fa190c5a243789d42eeb5"
+      },
+      {
         "git_blob": "c53d86b91d2120c09abe28f1e77f77f6eb5a6e71",
         "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0001.json",
         "role": "append_only_evidence",
@@ -2362,6 +2378,22 @@
         "sha256": "82eaa41db8d0b6da1582bedbe58f46a464a315160ed5c33b20c19ffd32ebec11"
       },
       {
+        "git_blob": "97754b6dae4eaae3913d36c675d28a181f3f6dab",
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0089.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/transition-evidence.schema.json",
+        "schema_version": "2.0",
+        "sha256": "7fc72aeb987ca24a2bd73b4881c102db06a07afb1574ba70b7cb4c24354106ac"
+      },
+      {
+        "git_blob": "c48fe7e4f330589ffb5de47e8367d1508e8b7ee7",
+        "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0090.json",
+        "role": "append_only_evidence",
+        "schema_id": "https://wright.local/programs/epp/transition-evidence.schema.json",
+        "schema_version": "2.0",
+        "sha256": "bc81805da6b17302dfa625e4aeb0a6250c30441e30cb65ac7273a26969b7b117"
+      },
+      {
         "git_blob": "5c8c8048ce378c365cbe04f1e65e512d9a07b51d",
         "path": "docs/programs/engineering-process-platform/evidence/verification/EPP-F01-T072-blocked.json",
         "role": "append_only_evidence",
@@ -2578,12 +2610,12 @@
         "sha256": "f34ed972c8b737c7e5028f65224ec7cf41669a4b9f48d850a48f606ebbcd8537"
       },
       {
-        "git_blob": "c7bad1beae3de02bfedb30cc483023a0c4138d06",
+        "git_blob": "e05b99e325b225a3cf01fafee653787ea28c986f",
         "path": "docs/programs/engineering-process-platform/program-state.json",
         "role": "operational_state",
         "schema_id": "https://wright.local/programs/epp/program-state.schema.json",
         "schema_version": "2.0",
-        "sha256": "2b4797197faec931162fc5fdbfe090fbcade75dfef7807b56d1e3288d920f53e"
+        "sha256": "e32dd239220dec7d05e88ae28dadba14f28d9dec114fa190c5a243789d42eeb5"
       },
       {
         "git_blob": "a43c1fc2a4cf5a0569c4a481894a6d20a44fb56e",
@@ -3414,9 +3446,9 @@
     ],
     "generator_bundle_manifest_digest": "44410796c4ff0e1b688ea6adc2030fd42b1363c848c3100926bdc5c71ee9feac",
     "generator_version": "1.0.0",
-    "git_commit": "6aa63f01fd3c4ac8cb8b8267562751f53a9acafb",
-    "git_tree": "b50e59828775b5dd8b5f5748d525b37feb5b1bbe",
-    "input_manifest_digest": "d8774adf465a4ab914942ccf3558a82e85b86a46714e6d49fe287b2fc21d00c1",
-    "program_tree": "354e382ebb31250e44e8929331f391a1ba86748b"
+    "git_commit": "f3fa274210745e3570af1a5de64d4e44a3d9dafe",
+    "git_tree": "0744e5310d7b2d0ed7c01fd5502fffb755c352aa",
+    "input_manifest_digest": "3c461ad7633b68a9d5a1d4e9616593b0df0ed837db30e83cd313e8417f874fec",
+    "program_tree": "342f9bafad2bb360273caf469e8d459fec1b23dd"
   }
 }
