@@ -895,15 +895,18 @@ def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     assert integration["next_action"]["authority_state"] == "not_required"
 
     assert development["kind"] == "continued_development"
-    assert development["branch"] == "codex/078-process-definition-view-current-dev"
+    assert subject["state"]["active_mutating_lease"] is None
+    assert development["branch"] == "unavailable"
     assert development["base_commit"] == subject["state"]["baseline"]["commit"]
     assert development["milestone"] == (
         "Canonical process definition and read-only engineer view"
     )
-    assert development["authority_state"] == "authorized"
-    assert development["blocker"] is None
+    assert development["authority_state"] == "unavailable"
+    assert (
+        development["blocker"] == subject["state"]["next_eligible_actions"][0]["reason"]
+    )
     assert development["next_action"]["requires_human_approval"] is False
-    assert development["next_action"]["authority_state"] == "authorized"
+    assert development["next_action"]["authority_state"] == "not_authorized"
     assert state_ref in development["evidence"]
     assert tasks_ref in development["evidence"]
     assert development["latest_capability"] == (
