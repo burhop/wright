@@ -655,10 +655,15 @@ def test_runtime_requires_reciprocal_correction_finding_verification_graph() -> 
             "human approval action",
         ),
         (
-            lambda value: value["supplement"]["work"]["lanes"][1].update(
-                {"branch": "wrong-branch"}
+            lambda value: (
+                value["supplement"]["work"]["lanes"][0].update(
+                    {"branch": "duplicate-branch"}
+                ),
+                value["supplement"]["work"]["lanes"][1].update(
+                    {"branch": "duplicate-branch"}
+                ),
             ),
-            "continued-development lane",
+            "branch ownership",
         ),
         (
             lambda value: value["supplement"]["history"][10]["latest_change"].update(

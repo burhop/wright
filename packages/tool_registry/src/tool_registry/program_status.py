@@ -375,7 +375,10 @@ class ProgramStatusReader:
             "continued_development",
         ]:
             raise ValueError("delivery lanes are not in their closed order")
-        if len({lane["branch"] for lane in lanes}) != len(lanes):
+        owned_branches = [
+            lane["branch"] for lane in lanes if lane["branch"] != "unavailable"
+        ]
+        if len(set(owned_branches)) != len(owned_branches):
             raise ValueError("delivery lane branch ownership is not exclusive")
         if lease is not None and (
             lanes[1]["branch"] != lease["branch"]
