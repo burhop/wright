@@ -365,7 +365,7 @@
     "first_parent_must_equal_source": true
   },
   "data_cutoff": "2026-08-27T11:40:00Z",
-  "generated_at": "2026-08-31T14:50:28.055836Z",
+  "generated_at": "2026-08-31T17:49:52.636585Z",
   "generation_status": "candidate_not_evidence",
   "next_action": "VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT",
   "program_id": "EPP-2026",
@@ -402,20 +402,20 @@
         "sha256": "5cafadc4250593ef578fb8aa07eee6a8502c8f24a9fed6b523c110c984629e16"
       },
       {
-        "git_blob": "173c3794ede9ca9af5e255dde9aefba658e004d0",
+        "git_blob": "89365b72bb3c88747837a1924b229b23d440fc3d",
         "path": ".specify/feature.json",
         "role": "operational_state",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "7915148aa07d16d771da8b76228663a9a4ac714eef28626dde3a8ccc8f7fa263"
+        "sha256": "ff755e01c6b51f14d2f5d95193f9b331967423b1dbfb073b633518e267ff382a"
       },
       {
-        "git_blob": "3143b7ba4f45b827cef2be980a94552410baf6f8",
+        "git_blob": "4ba5453cebf225021e600cbdd4a9c843d2e57514",
         "path": "AGENTS.md",
         "role": "operational_state",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "327cc760cbd3486d9439317528240475e32cabb263aa6932efcd8cc3ccd8c751"
+        "sha256": "63016331ade241f4f3644877c8b19d4bbb0513c4f338b1a849cc592e71611128"
       },
       {
         "git_blob": "525b6f23efe07fa82680ac3ccefe6a608f28b30a",
@@ -2650,12 +2650,12 @@
         "sha256": "9f2f5169abe9e28a9401d0f26fc7a7107f89ef526d21d20a401cd286816f7859"
       },
       {
-        "git_blob": "ea4629ddd4c3e77489e2ebd06c5b68512573953d",
+        "git_blob": "302726cd3c80cdc46d0f87eb15a27abc0bc7923a",
         "path": "docs/programs/engineering-process-platform/roadmap.json",
         "role": "operational_state",
         "schema_id": "https://wright.local/programs/epp/roadmap.schema.json",
         "schema_version": "1.0",
-        "sha256": "2e4face4571b26aea37dee733e0b5d93ae12b48367a4aedc105661389bcd4566"
+        "sha256": "d6f628b02ce5617238685178199b1114b99fe91bfd949ee41d16f702526dc80a"
       },
       {
         "git_blob": "d4c3876df3103af8a8ace3c6ad2df9262fa72838",
@@ -2946,12 +2946,12 @@
         "sha256": "66433780080a22e8f106493a6a4a1a3e2f7a09fdce6bb8f881d2ce07c983df7c"
       },
       {
-        "git_blob": "1dc4900c69b4ca92024fe1effb3e156c8f1523d5",
+        "git_blob": "90074ae8139c5a86ed0210e03fdbce7b109577fd",
         "path": "docs/programs/engineering-process-platform/work-registry.json",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": "1.0.0",
-        "sha256": "f783727306703f23c9ea9e5bd09de5650389f7cf95277c36dbbb13b0953eb29d"
+        "sha256": "cc944618e4b354a62b0ad44e59d9fd18f207dbcc9a0636f4dad1d3c2421347ab"
       },
       {
         "git_blob": "1c2120b2c614feec7c2888504222fce249c03ecb",
@@ -3290,12 +3290,12 @@
         "sha256": "b65a67d0ccaf819e6a79cc3720852aaec433a26cbf4d3bb61774aefafd495c23"
       },
       {
-        "git_blob": "cc1a005a48b05791a8c906c931461e64fe9e259b",
+        "git_blob": "52087ee25b9522ac3317d453b91c6ebd2aa6627c",
         "path": "tests/program_control_plane/test_contract_schemas.py",
         "role": "feature_contract",
         "schema_id": null,
         "schema_version": null,
-        "sha256": "889f12c4096c7c9964be5534ad16eb7fc518cab3a056073d51cb7a9e5d8950e0"
+        "sha256": "2fb187bae6eab594acafc1382b9837d33350db17f9d908c7c1aa5f2fbe56779f"
       },
       {
         "git_blob": "7d001a16793a98b8788137f667f9b830bc12b19f",
@@ -3446,9 +3446,9 @@
     ],
     "generator_bundle_manifest_digest": "44410796c4ff0e1b688ea6adc2030fd42b1363c848c3100926bdc5c71ee9feac",
     "generator_version": "1.0.0",
-    "git_commit": "f3fa274210745e3570af1a5de64d4e44a3d9dafe",
-    "git_tree": "0744e5310d7b2d0ed7c01fd5502fffb755c352aa",
-    "input_manifest_digest": "3c461ad7633b68a9d5a1d4e9616593b0df0ed837db30e83cd313e8417f874fec",
-    "program_tree": "342f9bafad2bb360273caf469e8d459fec1b23dd"
+    "git_commit": "f8637a473817ccff71cfbdba8a68b3a0b7343cf9",
+    "git_tree": "292e6ee5fd3b12a519b51a2d4458b1cdd3dc3e2d",
+    "input_manifest_digest": "4b6a7b32605df57a3d23f58975aa9d2ab20b58dd7c5f89e65edb41ae05b8718a",
+    "program_tree": "450762191b5e3005c087ee94d1acc6dccf9b42e3"
   }
 }
