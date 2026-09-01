@@ -41,6 +41,16 @@ from .workflow_definitions import (
     rollback_recovery_workflow_definition as rollback_recovery_workflow_definition,
     rollback_workflow_draft as rollback_workflow_draft,
 )
+from .workflow_layouts import (
+    WorkflowLayout as WorkflowLayout,
+    WorkflowLayoutDecodeResult as WorkflowLayoutDecodeResult,
+    WorkflowLayoutPromotion as WorkflowLayoutPromotion,
+    canonical_layout_sha256 as canonical_layout_sha256,
+    decode_workflow_layout as decode_workflow_layout,
+    promote_recovery_workflow_layout as promote_recovery_workflow_layout,
+    rollback_recovery_workflow_layout as rollback_recovery_workflow_layout,
+    validate_workflow_layout_subject as validate_workflow_layout_subject,
+)
 from .workflow_editor import (
     EditorAssetManifest as EditorAssetManifest,
     EditorAvailability as EditorAvailability,

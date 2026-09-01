@@ -144,3 +144,21 @@ Expected: Ruff passes; the focused suite reports 21 passed; the broad suite
 reports 216 passed and 1 retained skip. Exact migration digests, rollback rules,
 and deferred boundaries are recorded in
 `evidence/production-promotion.md` and ADR 0002.
+
+## Verify T053 durable layout persistence
+
+The approved recovery layout fixture promotes explicitly to stable
+`workflow-layout/1.0.0` and persists in its own append-only
+`workflow-layouts.sqlite3` sidecar.
+
+```powershell
+uv run pytest -q packages/core/tests/test_workflow_layouts.py `
+  packages/data_vault/tests/test_workflow_layout_repository.py
+
+uv run pytest -q packages/core/tests packages/data_vault/tests
+```
+
+Expected: the focused suite reports 11 passed; the broad suite reports 227
+passed and 1 retained skip. ADR 0003 and
+`evidence/durable-layout-persistence.md` record exact digests, reopen behavior,
+CAS containment, unknown-version recovery, and rollback limits.

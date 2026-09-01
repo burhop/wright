@@ -199,9 +199,12 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
   recovery definition `2.0.0-recovery.1` to stable definition `2.0.0` and
   recovery command semantics to stable command batch `1.0.0`; source and target
   digests plus exact source bytes make the initial promotion rollbackable.
-- Layout and run projections remain recovery-only until T053/T054. Historical
-  run behavior remains a T054 verification gate and must retain its original
-  definition revision/digest rather than being rewritten.
+- ADR 0003 promotes recovery layout `1.0.0-recovery.1` to stable layout `1.0.0`
+  with independent append-only revisions, semantic-revision binding, exact-byte
+  rollback, and recoverable unknown-version reopen.
+- Run projections remain recovery-only until T054. Historical run behavior
+  remains a T054 verification gate and must retain its original definition
+  revision/digest rather than being rewritten.
 
 ## Required invariants
 

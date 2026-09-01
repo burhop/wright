@@ -30,6 +30,15 @@ from .workflow_definition_repository import (
     rollback_workflow_definition_schema,
     upgrade_workflow_definition_schema,
 )
+from .workflow_layout_repository import (
+    WORKFLOW_LAYOUT_MIGRATIONS,
+    WorkflowLayoutAlreadyExists,
+    WorkflowLayoutRepository,
+    WorkflowLayoutRevisionConflict,
+    WorkflowLayoutSchemaError,
+    rollback_workflow_layout_schema,
+    upgrade_workflow_layout_schema,
+)
 from .workflow_runs import (
     WorkflowRunEventRecord,
     WorkflowRunRecord,
@@ -85,6 +94,11 @@ __all__ = [
     "WorkflowDefinitionRepository",
     "WorkflowDefinitionRevisionConflict",
     "WorkflowDefinitionSchemaError",
+    "WORKFLOW_LAYOUT_MIGRATIONS",
+    "WorkflowLayoutAlreadyExists",
+    "WorkflowLayoutRepository",
+    "WorkflowLayoutRevisionConflict",
+    "WorkflowLayoutSchemaError",
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
@@ -126,6 +140,8 @@ __all__ = [
     "database_status",
     "restore_backup",
     "rollback_workflow_definition_schema",
+    "rollback_workflow_layout_schema",
     "upgrade_database",
     "upgrade_workflow_definition_schema",
+    "upgrade_workflow_layout_schema",
 ]
