@@ -78,6 +78,10 @@ Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
   contracts, and a zero-mutation dry-run rehearsal.
 - Capability coverage remains 859/859 source requirements and 33/33 roll-up
   capabilities with zero unexplained omissions.
+- The deterministic recovery completion audit passes all seven locally provable
+  objective requirements, recomputes the 204-file walkthrough manifest, and
+  reports the exact remaining ledger as T056/T058/T060 with `goal_complete:
+  false`, no prohibited actions, and customer readiness false.
 
 ## Conclusion
 
@@ -91,3 +95,5 @@ no decision artifact, and four proposed roadmap dependencies. This is not a task
 ordering contradiction: T058 remains open while locally independent T059 is
 complete. T060 remains prohibited because the
 current authorization explicitly excludes push, merge, publication, and release.
+The machine completion audit therefore classifies the current checkpoint as
+`blocked_external`, not complete, and provides the exact T058 resumption command.

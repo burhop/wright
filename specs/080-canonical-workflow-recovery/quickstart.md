@@ -324,3 +324,19 @@ rehearsal's simulated `release_ready` state as public or customer readiness.
 T060 still requires separate authorization for dev-push/merge/release gates,
 Linux/macOS and public-artifact verification, registry promotion, docs, tag,
 and GitHub Release.
+
+## Recompute the full recovery completion audit
+
+```powershell
+python scripts/recovery/audit_recovery_completion.py `
+  --output specs/080-canonical-workflow-recovery/evidence/recovery-completion-audit.json
+
+python -m pytest -q -p no:cacheprovider `
+  tests/recovery/test_recovery_completion_audit.py
+```
+
+Expected: audit status `PASS`, seven locally provable objective requirements
+passed, exact walkthrough manifest integrity intact, recovery ledger `57/60`,
+goal status `blocked_external`, open tasks exactly T056/T058/T060, prohibited
+actions empty, and customer readiness false. A passing audit deliberately does
+not convert the three external gates into completed work.
