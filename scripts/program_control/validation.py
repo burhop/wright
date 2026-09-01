@@ -2913,6 +2913,7 @@ def _validate_transition_history(
             REV58_DIGEST_TARGET,
             *F01B_ACTIVATION_DIGEST_TARGETS,
             *F01B_LEASE_CHECKPOINT_DIGEST_TARGETS,
+            *F02B_CHECKPOINT_DIGEST_TARGETS,
         }
     ):
         findings.append(
