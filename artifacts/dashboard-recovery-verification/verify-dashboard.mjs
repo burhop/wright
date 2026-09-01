@@ -28,9 +28,9 @@ async function inspect(name, viewport, screenshot) {
     subject: body.includes("f9237763"),
     tree: body.includes("aeca6ab8"),
     manifest: body.includes("f2b4964e"),
-    recoveryLedger: body.includes("53/60"),
+    recoveryLedger: body.includes("54/60"),
     productionBoundary: body.includes(
-      "T053 durable workflow-layout persistence, recoverable reopen, unknown-version containment, and compare-and-set history are complete",
+      "T054 durable run, step, activity, artifact, cancellation, reconnect, cleanup, and historical-run preservation are complete",
     ),
     approval: body.includes("T051 exact-subject product/visual approval is complete"),
     readiness: body.includes("Customer readiness is incomplete"),
@@ -98,7 +98,7 @@ for (const name of ["desktop", "mobile"]) {
   if (result.galleryCount !== 8) failures.push(`${name}.galleryCount=${result.galleryCount}`);
   if (result.horizontalOverflowPixels !== 0) failures.push(`${name}.overflow=${result.horizontalOverflowPixels}`);
 }
-if (checks.api.status !== 200 || checks.api.completed !== 53 || checks.api.total !== 60 ||
+if (checks.api.status !== 200 || checks.api.completed !== 54 || checks.api.total !== 60 ||
     checks.api.approval !== "complete" || checks.api.decision !== "approved" || checks.api.customerReady !== false) {
   failures.push("api recovery ledger/approval/readiness mismatch");
 }

@@ -162,3 +162,22 @@ Expected: the focused suite reports 11 passed; the broad suite reports 227
 passed and 1 retained skip. ADR 0003 and
 `evidence/durable-layout-persistence.md` record exact digests, reopen behavior,
 CAS containment, unknown-version recovery, and rollback limits.
+
+## Verify T054 durable workflow execution
+
+Canonical run, step, activity, and artifact records use stable
+`workflow-run/1.0.0` in an independent `workflow-runs.sqlite3` sidecar. The
+legacy primary run tables remain untouched.
+
+```powershell
+uv run pytest -q packages/core/tests/test_canonical_workflow_runs.py `
+  packages/data_vault/tests/test_canonical_workflow_run_repository.py
+
+uv run pytest -q packages/core/tests packages/data_vault/tests
+```
+
+Expected: the focused suite reports 16 passed; the broad suite reports 243
+passed and 1 retained skip. ADR 0004 and
+`evidence/durable-workflow-execution.md` record subject identity, component and
+artifact lineage, cancellation, reconnect, cleanup, historical recovery-run
+preservation, schema checksum, and explicit non-authority boundaries.

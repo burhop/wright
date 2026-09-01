@@ -39,6 +39,15 @@ from .workflow_layout_repository import (
     rollback_workflow_layout_schema,
     upgrade_workflow_layout_schema,
 )
+from .workflow_execution_repository import (
+    WORKFLOW_EXECUTION_MIGRATIONS,
+    CanonicalWorkflowRunRepository,
+    WorkflowExecutionSchemaError,
+    WorkflowRunReconnectSnapshot,
+    WorkflowRunStateConflict,
+    rollback_workflow_execution_schema,
+    upgrade_workflow_execution_schema,
+)
 from .workflow_runs import (
     WorkflowRunEventRecord,
     WorkflowRunRecord,
@@ -99,6 +108,11 @@ __all__ = [
     "WorkflowLayoutRepository",
     "WorkflowLayoutRevisionConflict",
     "WorkflowLayoutSchemaError",
+    "WORKFLOW_EXECUTION_MIGRATIONS",
+    "CanonicalWorkflowRunRepository",
+    "WorkflowExecutionSchemaError",
+    "WorkflowRunReconnectSnapshot",
+    "WorkflowRunStateConflict",
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
@@ -141,7 +155,9 @@ __all__ = [
     "restore_backup",
     "rollback_workflow_definition_schema",
     "rollback_workflow_layout_schema",
+    "rollback_workflow_execution_schema",
     "upgrade_database",
     "upgrade_workflow_definition_schema",
     "upgrade_workflow_layout_schema",
+    "upgrade_workflow_execution_schema",
 ]

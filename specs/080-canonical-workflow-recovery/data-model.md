@@ -202,9 +202,12 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 - ADR 0003 promotes recovery layout `1.0.0-recovery.1` to stable layout `1.0.0`
   with independent append-only revisions, semantic-revision binding, exact-byte
   rollback, and recoverable unknown-version reopen.
-- Run projections remain recovery-only until T054. Historical run behavior
-  remains a T054 verification gate and must retain its original definition
-  revision/digest rather than being rewritten.
+- ADR 0004 adopts stable `workflow-run` / `1.0.0` for new canonical execution
+  records. Normalized run, step, activity, and artifact lineage persists in an
+  independent sidecar with cancellation, cursor reconnect, and terminal cleanup.
+- Historical recovery `workflow-run` / `1.0.0-recovery.1` envelopes remain
+  exact immutable bytes bound to their original recovery definition
+  revision/digest; they are not silently rewritten as stable-definition runs.
 
 ## Required invariants
 

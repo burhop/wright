@@ -25,6 +25,18 @@ from .workflow_runs import (
     WorkflowRunEvent as WorkflowRunEvent,
     WorkflowRunState as WorkflowRunState,
 )
+from .canonical_workflow_runs import (
+    CanonicalWorkflowRun as CanonicalWorkflowRun,
+    RecoveryWorkflowRunEnvelope as RecoveryWorkflowRunEnvelope,
+    WorkflowArtifactRecord as WorkflowArtifactRecord,
+    WorkflowComponentScope as WorkflowComponentScope,
+    WorkflowRunActivity as WorkflowRunActivity,
+    WorkflowRunStepRecord as WorkflowRunStepRecord,
+    capture_recovery_workflow_run as capture_recovery_workflow_run,
+    validate_artifact_subject as validate_artifact_subject,
+    validate_run_subject as validate_run_subject,
+    validate_step_subject as validate_step_subject,
+)
 from .workflow_definitions import (
     WorkflowCommandBatch as WorkflowCommandBatch,
     WorkflowDefinition as WorkflowDefinition,

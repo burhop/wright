@@ -14,7 +14,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Primary Dependencies**: Existing FastAPI, Pydantic 2, SQLite, PyYAML 6, React, Zod, Vitest, and Playwright; provisional `@xyflow/react` 12.11.3 only in the explicitly disposable recovery renderer
 
-**Storage**: Preserve the existing feature-owned SQLite append-only workflow draft revisions and compare-and-set head. T052 adds independent append-only stable definition storage; T053 adds independent append-only stable layout storage with recoverable unknown-version reopen. Run state remains separate and deferred to T054.
+**Storage**: Preserve existing draft and legacy run storage. T052 adds independent stable definition storage, T053 adds independent stable layout storage, and T054 adds an independent normalized execution sidecar for canonical runs, immutable steps/activities/artifact lineage, reconnect, cancellation, cleanup, and exact historical recovery envelopes.
 
 **Testing**: pytest for syntax evidence and retained Python invariants; Vitest for conformance, commands, projection, renderer, and component behavior; Playwright for human-repeatable direct manipulation, text correspondence, AI review, run visualization, screenshots, trace, and diagnostics
 
@@ -35,7 +35,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 - **Modular monorepo and thin routes — PASS**: no new route business logic is required for the recovery concept; retained API/service boundaries remain unchanged. Any future persistence expansion belongs in core/data-vault/workspace-service before transport.
 - **Offline-first — PASS**: fixtures, parsing, validation, graph editing, proposal review, and simulated run evidence operate locally without cloud or external MCP dependencies.
 - **Distribution and rollback — PASS**: no released artifact, installer, or main database version changes. The new definition sidecar is independent, its empty schema rolls back transactionally, populated history refuses destructive rollback, and exact promotion-source envelopes are retained for verified rollback.
-- **Embedded state — PASS**: retained drafts remain SQLite-backed and untouched. Stable definitions and layouts now have separate append-only SQLite authorities; simulated-run state remains disposable evidence pending T054.
+- **Embedded state — PASS**: retained stores remain untouched. Stable definitions, layouts, and canonical execution records now have separate SQLite authorities. The recovery UI's simulated runner remains disposable presentation evidence and gains no external execution authority.
 - **Security, RBAC, and authority — PASS**: no new external write or runtime authority. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
 - **Engineering tooling protocol — PASS**: exact tool/MCP bindings are modeled and inspectable, but no GUI-only agent execution or tool invocation occurs.
 - **UI atomic design — PASS**: the recovery stylesheet has zero raw color
@@ -178,12 +178,14 @@ packages/core/src/core/
 ├── workflow_drafts.py                    # retained production foundation
 ├── workflow_draft_validation.py          # retained production foundation
 ├── workflow_definitions.py               # stable v2 definition/kernel/projection and migration
-└── workflow_layouts.py                   # stable v1 renderer-neutral layout and migration
+├── workflow_layouts.py                   # stable v1 renderer-neutral layout and migration
+└── canonical_workflow_runs.py            # stable run/step/activity/artifact contracts
 
 packages/data_vault/src/data_vault/
 ├── workflow_draft_repository.py          # retained immutable revision/CAS foundation
 ├── workflow_definition_repository.py     # independent append-only stable-definition sidecar
-└── workflow_layout_repository.py         # independent append-only layout/CAS/reopen sidecar
+├── workflow_layout_repository.py         # independent append-only layout/CAS/reopen sidecar
+└── workflow_execution_repository.py      # independent lifecycle/lineage/reconnect sidecar
 
 apps/web/src/components/workflow-composer/
 ├── renderer-types.ts                     # retained renderer seam
