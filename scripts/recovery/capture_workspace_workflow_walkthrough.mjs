@@ -193,6 +193,7 @@ const responseInspections = new Set();
 const instrumentedPages = new WeakSet();
 
 const compact = (value) => String(value).replace(/\s+/g, " ").trim();
+const normalizeTextNewlines = (value) => String(value).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -983,7 +984,10 @@ try {
   const copyMessage = page.getByTestId("workflow-recovery-conflict-action-message");
   await copyMessage.filter({ hasText: "Local workflow source copied" }).waitFor({ state: "visible" });
   const clipboardSource = await page.evaluate(() => navigator.clipboard.readText());
-  assert(clipboardSource === localComparison, "Clipboard text does not exactly equal the protected local source.");
+  assert(
+    normalizeTextNewlines(clipboardSource) === normalizeTextNewlines(localComparison),
+    "Clipboard text does not equal the protected local source after operating-system newline normalization.",
+  );
   await completeStep("S17", "17-copy-local-source", "Protected local source copied exactly", [
     { selector: testIdSelector("workflow-recovery-conflict-copy-local"), label: "Copy local source" },
     { selector: testIdSelector("workflow-recovery-conflict-action-message"), label: "Copy confirmation without mutation" },
