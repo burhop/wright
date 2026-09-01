@@ -766,7 +766,10 @@ try {
   assert(!friendlySource.includes("\ngroup "), "The nine-step source must omit low-value group sections.");
   assert(friendlySource.includes("  group: null"), "The source must show that grouping is optional.");
   for (const hostField of ["revision", "parent", "semantic_sha256", "storage_revision", "storage_digest", "layout", "run_state"]) assert(!new RegExp(`^\\s*${hostField}\\s*:`, "m").test(friendlySource), `Friendly source assigns host field ${hostField}.`);
-  for (const canonicalToken of ["type.", "block.", "port.", "artifact."]) assert(!friendlySource.includes(canonicalToken), `Friendly source exposes opaque canonical token ${canonicalToken}.`);
+  for (const canonicalPrefix of ["type", "block", "port", "artifact"]) {
+    const opaqueIdentifier = new RegExp(`\\b${canonicalPrefix}\\.[a-z0-9_-]+`, "i");
+    assert(!opaqueIdentifier.test(friendlySource), `Friendly source exposes opaque canonical ${canonicalPrefix}.* identity.`);
+  }
   for (const engineeringKind of ['"kind":"design_intent"', '"kind":"cad_model"', '"kind":"step_file"']) assert(friendlySource.includes(engineeringKind), `Friendly source is missing engineering kind ${engineeringKind}.`);
   const managed = page.locator(".recovery-code__managed");
   assert(!(await managed.evaluate((element) => element.open)), "Managed by Wright details are expanded by default.");
