@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -224,7 +226,15 @@ def test_active_item_requires_complete_dependencies_and_resolved_decisions(
 ) -> None:
     documents = copy.deepcopy(current_documents(repository_root))
     roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
-    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    state = load(
+        repository_root
+        / PROGRAM_ROOT
+        / "evidence/states/program-state-revision-0095.json"
+    )
+    documents[f"{PROGRAM_ROOT}/program-state.json"] = state
+    next(item for item in roadmap["items"] if item["id"] == "EPP-F02B")[
+        "status"
+    ] = "active"
     branch, worktree_id = lease_identity(state)
     active = next(
         item for item in roadmap["items"] if item["id"] == state["current_feature"]
@@ -245,6 +255,60 @@ def test_active_item_requires_complete_dependencies_and_resolved_decisions(
         "ROADMAP_DEPENDENCY_INCOMPLETE",
         "ROADMAP_BLOCKING_DECISION_OPEN",
     }.issubset(code_set(findings))
+
+
+def test_blocked_item_retains_open_decision_without_active_lease(
+    repository_root: Path,
+) -> None:
+    documents = copy.deepcopy(current_documents(repository_root))
+    roadmap = documents[f"{PROGRAM_ROOT}/roadmap.json"]
+    state = documents[f"{PROGRAM_ROOT}/program-state.json"]
+    current = next(
+        item for item in roadmap["items"] if item["id"] == state["current_feature"]
+    )
+    current["status"] = "blocked"
+    current["blocking_decisions"] = ["DEC-P0-002"]
+    for item in roadmap["items"]:
+        if item["id"] != current["id"] and item["status"] == "active":
+            item["status"] = "proposed"
+    state["feature_state"] = "BLOCKED"
+    state["active_mutating_lease"] = None
+    state["approval"]["status"] = "stale"
+    state["next_eligible_actions"] = [
+        {
+            "action": "PLAN_EPP_F02C_CANONICAL_WORKFLOW_RECOVERY",
+            "roadmap_item": "EPP-F02C",
+            "requires_human_approval": True,
+            "reason": "The current feature is frozen for product recovery planning.",
+        }
+    ]
+    findings, action = validate_roadmap_approval_and_lease(
+        documents,
+        PROGRAM_ROOT,
+        observed_at=OBSERVED,
+        actual_branch="codex/080-canonical-workflow-recovery",
+        worktree_id="wright",
+    )
+    assert "ROADMAP_BLOCKING_DECISION_OPEN" not in code_set(findings)
+    assert action == "PLAN_EPP_F02C_CANONICAL_WORKFLOW_RECOVERY"
+
+
+def test_f02b_freeze_preserves_t027_boundary(repository_root: Path) -> None:
+    tasks_path = (
+        repository_root / "specs/079-visual-workflow-composition/tasks.md"
+    )
+    raw = tasks_path.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == (
+        "5cb199486883607ba38111f946673eddd7b83846310837f653054a73762b1ce4"
+    )
+    text = raw.decode("utf-8")
+    marks = {
+        int(task_id): mark.lower() == "x"
+        for mark, task_id in re.findall(r"^- \[([ xX])\].*?T(\d{3})\b", text, re.MULTILINE)
+    }
+    assert len(marks) == 38
+    assert all(marks[task_id] for task_id in range(1, 28))
+    assert all(not marks[task_id] for task_id in range(28, 39))
 
 
 def test_missing_decision_gate_and_risk_references_fail(repository_root: Path) -> None:

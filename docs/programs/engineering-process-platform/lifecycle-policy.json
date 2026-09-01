@@ -374,6 +374,12 @@
     {
       "program_state": "PROGRAM_ACTIVE",
       "feature_state": "BLOCKED",
+      "action": "PLAN_EPP_F02C_CANONICAL_WORKFLOW_RECOVERY",
+      "requires_human_approval": true
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "BLOCKED",
       "action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE",
       "requires_human_approval": true
     },

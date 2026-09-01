@@ -88,7 +88,7 @@
       "priority": 25,
       "title": "Visual Workflow Composition Foundation",
       "outcome": "An engineer can visually compose a validated working draft from the canonical semantic model, inspect matching text and diagram identities, correct invalid edits, and save and reopen the draft without executing it or changing the released definition.",
-      "status": "active",
+      "status": "blocked",
       "depends_on": [
         "EPP-F02"
       ],
@@ -103,6 +103,31 @@
         "PROD-11"
       ],
       "independently_shippable": true,
+      "spec_kit_feature": true
+    },
+    {
+      "id": "EPP-F02C",
+      "kind": "product_feature",
+      "priority": 26,
+      "title": "Canonical Workflow Model and Visual Experience Recovery",
+      "outcome": "One versioned typed workflow model drives lossless diagram and textual editing, reviewed human and AI command batches, separate stable layout, immutable run evidence, and a canvas-first engineering experience that is product-approved before production hardening.",
+      "status": "proposed",
+      "depends_on": [
+        "EPP-F02"
+      ],
+      "blocking_decisions": [],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-03",
+        "PROD-04",
+        "PROD-06",
+        "PROD-08",
+        "PROD-09",
+        "PROD-10",
+        "PROD-11"
+      ],
+      "independently_shippable": false,
       "spec_kit_feature": true
     },
     {

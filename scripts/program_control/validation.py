@@ -4113,10 +4113,15 @@ def validate_roadmap_approval_and_lease(
             "tree": "4af191477014ece70f129e2aa593adbff4dcd1e6",
         }
     )
-    if current_item is not None and not approved_provisional_f02b and any(
+    if (
+        current_item is not None
+        and not blocked_control
+        and not approved_provisional_f02b
+        and any(
         decision_by_id.get(str(decision_id), {}).get("status")
         not in {"decided", "superseded"}
         for decision_id in current_item.get("blocking_decisions", [])
+        )
     ):
         findings.append(
             _finding(
