@@ -46,7 +46,7 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(concept).toHaveAttribute("data-revision", "1");
   await expect(page.getByText("PROVISIONAL · NOT PRODUCTION")).toBeVisible();
   await expect(page.getByText("SIMULATED", { exact: true })).toBeVisible();
-  await expect(page.locator('[data-testid^="workflow-recovery-block-"]')).toHaveCount(6);
+  await expect(page.locator(".react-flow__node")).toHaveCount(6);
 
   await page.getByRole("button", { name: "Port lab" }).click();
   await expect(page.getByTestId("workflow-port-lab-dot")).toBeVisible();
@@ -126,7 +126,8 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await page.goto("/workflow-recovery");
   const concept = page.getByTestId("workflow-recovery-concept");
 
-  await expect(concept).toHaveAttribute("data-semantic-digest", "sha256:6afbdcecffce772a27e272f6d582ba227db8218f263ffa1a6e1bea128f121bbc");
+  await expect(concept).toHaveAttribute("data-semantic-digest", "sha256:57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889");
+  await page.getByTestId("workflow-recovery-attachment-attach-artifact.brief").click();
   const semanticBeforeDrag = await concept.getAttribute("data-semantic-digest");
   const layoutBeforeDrag = await concept.getAttribute("data-layout-digest");
   const draggable = page.locator('.react-flow__node[data-id="block.generate-geometry"]');
@@ -187,6 +188,7 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
   await mockRecoveryShell(page);
   await page.goto("/workflow-recovery");
   const concept = page.getByTestId("workflow-recovery-concept");
+  await page.getByTestId("workflow-recovery-attachment-attach-artifact.brief").click();
 
   await page.getByTestId("workflow-recovery-view-code").click();
   const editor = page.getByTestId("workflow-recovery-source-editor");
@@ -266,6 +268,7 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
 test("keeps paired edits and the run overlay inside the local one-second feedback bound", async ({ page }) => {
   await mockRecoveryShell(page);
   await page.goto("/workflow-recovery");
+  await page.getByTestId("workflow-recovery-attachment-attach-artifact.brief").click();
   await page.getByTestId("workflow-recovery-view-split").click();
   const source = page.getByTestId("workflow-recovery-source-editor");
 
@@ -302,6 +305,7 @@ test("keeps concept states accessible, reduced-motion legible, and mobile-contai
   await mockRecoveryShell(page);
   await page.goto("/workflow-recovery");
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
+  await page.getByTestId("workflow-recovery-attachment-attach-artifact.brief").click();
 
   const serious = async () => (await new AxeBuilder({ page }).include('[data-testid="workflow-recovery-concept"]').analyze())
     .violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical")
