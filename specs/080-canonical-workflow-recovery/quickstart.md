@@ -108,8 +108,8 @@ Open `http://127.0.0.1:8765/`. The server is launched against this recovery
 worktree and presents two deliberately separate ledgers:
 
 - governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
-- projected EPP-F02C recovery is `proposed`, unregistered, 51/60 through the
-  approved T051 exact subject, with T052–T060 open.
+- projected EPP-F02C recovery is `proposed`, unregistered, 55/60 through the
+  verified T055 component/large-graph checkpoint, with T056–T060 open.
 
 The live recovery gallery serves only the exact frozen and passing recovery
 walkthrough roots. Report, status, manifest, frozen screenshot, and all seven
@@ -181,3 +181,24 @@ passed and 1 retained skip. ADR 0004 and
 `evidence/durable-workflow-execution.md` record subject identity, component and
 artifact lineage, cancellation, reconnect, cleanup, historical recovery-run
 preservation, schema checksum, and explicit non-authority boundaries.
+
+## Verify T055 component and large-graph behavior
+
+```powershell
+npm run test --workspace=apps/web -- --run `
+  src/components/workflow-composer/component-graph.spec.ts `
+  src/prototypes/workflow-recovery/ReactFlowRecoveryCanvas.spec.tsx
+
+$env:WRIGHT_PLAYWRIGHT_PORT = "5195"
+npx playwright test tests/ui-integration/workflow-recovery.spec.ts --project=chromium
+
+npm run build --workspace=apps/web
+```
+
+Expected: component projection rejects invalid internal scopes/paths, collapsed
+instances retain scoped run-lineage targets, expansion does not change revision
+or semantic digest, and the 100-block renderer switches to compact presentation
+while fit, minimap, stable-ID search, and selection remain available. The final
+Chromium suite reports 6 passed. See
+`evidence/component-large-graph-promotion.md`; its 100-block result is bounded
+behavior evidence, not a production performance benchmark.

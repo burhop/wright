@@ -176,7 +176,7 @@
 - [x] T052 Promote only approved IR/kernel/renderer concepts into production boundaries with migrations and rollback in `packages/core/src/core/` and `packages/data_vault/src/data_vault/`
 - [x] T053 [P] Implement durable layout persistence, reopen, unknown-version recovery, and compare-and-set tests in `packages/data_vault/src/data_vault/` and `tests/`
 - [x] T054 [P] Implement durable run/step/activity/artifact records, cancellation, reconnect, and cleanup in `packages/core/src/core/`, `packages/data_vault/src/data_vault/`, and `tests/`
-- [ ] T055 Implement approved component/collapsed-graph and large-graph behavior in `apps/web/src/components/workflow-composer/` and `tests/ui-integration/`
+- [x] T055 Implement approved component/collapsed-graph and large-graph behavior in `apps/web/src/components/workflow-composer/` and `tests/ui-integration/`
 - [ ] T056 Complete representative keyboard-only, 200% zoom, focus-order, screen-reader, and moderated engineer-usability gates in `tests/ui-integration/` and `specs/080-canonical-workflow-recovery/evidence/`
 - [ ] T057 Complete security, RBAC, secret-redaction, resource-isolation, and offline qualification in `tests/security/` and `tests/e2e/`
 - [ ] T058 Complete independent engineering-oracle and benchmark qualification without changing the current `0/100` result until evidence passes in `benchmarks/` and `test-results/dataset-evaluation/`
