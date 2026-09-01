@@ -56,3 +56,10 @@ state.db
 apps/state.db
 .specify/
 specs/
+!specs/
+specs/*
+!specs/080-canonical-workflow-recovery/
+specs/080-canonical-workflow-recovery/*
+!specs/080-canonical-workflow-recovery/fixtures/
+specs/080-canonical-workflow-recovery/fixtures/*
+!specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json

@@ -110,6 +110,10 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     ):
         assert f"COPY {build_fixture} {build_fixture}" in dockerfile
     assert (
+        "!specs/080-canonical-workflow-recovery/fixtures/"
+        "mounting-bracket.workflow.json" in dockerignore
+    )
+    assert (
         "COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node" in dockerfile
     )
     assert "COPY --from=web-builder /usr/local/lib/node_modules" in dockerfile
