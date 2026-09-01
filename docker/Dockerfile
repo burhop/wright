@@ -28,6 +28,11 @@ RUN set -eux; \
     node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
+# TypeScript validates the colocated frontend specs during the production build.
+# Keep their canonical cross-package fixtures available in this build-only stage;
+# neither source path is copied from the web builder into the runtime image.
+COPY packages/core/tests/fixtures/workflow_drafts/representative-workflow.json packages/core/tests/fixtures/workflow_drafts/representative-workflow.json
+COPY specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json
 ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0
 RUN VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}" \
     npm run build --workspace=apps/web
