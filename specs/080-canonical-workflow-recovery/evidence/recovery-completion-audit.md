@@ -1,9 +1,9 @@
 # Canonical workflow recovery completion audit
 
-**Audit subject**: commit `36b9431049c25c0eb2e5988bb1a8d24b8e0eba39` /
-tree `ea88da2699f64949f7f70b9ee4ba6d041b45e10c`
+**Exact UI subject**: commit `38b409bf149a1241cc87cdedd48f83fed16b5050` /
+tree `452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6`
 
-**Generated**: `2026-09-01T06:16:05.072214Z`
+**Generated**: `2026-09-01T20:27:41.156949Z`
 
 **Audit result**: **PASS** for every locally provable requirement in the user's
 recovery objective. **The overall goal is not complete**: T056, T058, and T060
@@ -19,23 +19,28 @@ The machine-readable result is
 | Objective requirement | Result | Exact evidence |
 |---|---|---|
 | Preserve frozen EPP-F02B | PASS | Git diff from `b4a7e996` is empty for `specs/079-visual-workflow-composition/tasks.md`; T028–T038 remain unchecked. |
-| Complete canonical definition/layout/command/run/component contracts | PASS | Recovery tasks through T055, three syntax treatments with five common edits, promoted definition/layout/run evidence, and component-address evidence. |
-| Prove graph/text conformance and atomic containment | PASS | Python/TypeScript conformance sources plus the exact approved paired-edit and invalid-containment walkthrough states. |
-| Preserve the approved canvas-first experience | PASS | Exact subject `f9237763` / tree `aeca6ab8`; 50/50 steps, 99 raw plus 99 annotated screenshots, 204 digest-bound files, and zero browser diagnostics. |
-| Record T051 honestly | PASS | The approval record cites the requesting user's message and explicitly records that reviewer name and timestamp were not supplied. |
-| Refresh capability, dashboard, plan/task/parity/quickstart/analysis evidence | PASS | 859/859 rows, 33/33 capabilities, recovery ledger 57/60, customer readiness false, and passing desktop/mobile dashboard verification. |
-| Continue dependency-ordered locally safe implementation | PASS | T052–T055, T057, and T059 are locally qualified; no push, merge, publication, release, or customer action occurred. |
+| Complete canonical definition/layout/command/run/component contracts | PASS | Recovery tasks through T080 except the three declared external gates, three syntax treatments with five common edits, promoted definition/layout/run evidence, and component-address evidence. |
+| Prove graph/text conformance and atomic containment | PASS | Python/TypeScript conformance sources plus continuation-14 S07–S18 bidirectional, managed-field, save, and stale-conflict evidence. |
+| Preserve the approved canvas-first experience | PASS | Exact subject `38b409bf` / tree `452c1ab8`; 24/24 steps, 26 raw plus 26 annotated screenshots, 59 digest-bound files, two expected HTTP responses, and zero unexpected diagnostics. |
+| Record T051 honestly | PASS | The approval record cites the requesting user's conditional direction approval and subsequent hands-on feedback, identifies them only as a self-described mechanical engineer, and explicitly says reviewer name, formal role, and timestamp were not supplied. |
+| Refresh capability, dashboard, plan/task/parity/quickstart/analysis evidence | PASS | 881/881 rows, 33/33 capabilities, recovery ledger 77/80, customer readiness false, and passing desktop/mobile dashboard verification. |
+| Continue dependency-ordered locally safe implementation | PASS | T052–T055, T057, T059, and locally provable T061–T080 work are qualified; no push, merge, publication, release, or customer action occurred. |
 
-The audit recomputes all 204 walkthrough manifest entries, exact manifest hash,
-task counts, frozen diff, approval identity, syntax/capability metrics, dashboard
+The audit recomputes both walkthrough manifests, exact manifest hashes, task
+counts, frozen diff, approval identity, syntax/capability metrics, dashboard
 status, and T059 machine evidence. It reports no missing or digest-mismatched
-walkthrough files and no local integrity findings.
+walkthrough files and no local integrity findings. The exact current package is:
+
+- walkthrough `artifacts/ui-walkthrough/workflow-recovery-usability/20260901T200836Z-continuation-14/`;
+- manifest SHA-256 `b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335`;
+- 65,547,032-byte trace;
+- independently validated artifact structure.
 
 ## Exact remaining boundary
 
 - **T056 — real human evidence**: run the committed moderated-engineer protocol
-  with real representative participants and a real assistive-technology session;
-  retain consent-aware contemporaneous notes against the exact subject.
+  with five real representative participants and a real assistive-technology
+  session; retain consent-aware contemporaneous notes against the exact subject.
 - **T058 — human authority and roadmap dependencies**: supply the named decision
   artifacts, F03/F05/F06/B01 dependencies, independent oracles, holdout, and 100
   qualified cases. Then rerun:
@@ -48,12 +53,13 @@ walkthrough files and no local integrity findings.
   any push, merge, publication, release, registry, documentation deployment, or
   customer action.
 
-The pre-existing untracked `.tmp-pytest-program/` path is disclosed by the audit
-and is not used as evidence, staged, altered, or represented as part of the
-committed recovery checkpoint.
+The pre-existing untracked `.test-tmp/` and `.tmp-pytest-program/` paths are
+disclosed by the audit and are not used as evidence, staged, altered, or
+represented as part of the committed recovery checkpoint.
 
-The dashboard was refreshed to this completion-audit checkpoint and verified at
-`2026-09-01T06:17:33.199Z`. Desktop and 390 px mobile document overflow are zero,
-all eight evidence images load, browser diagnostics are empty, evidence routes
-return HTTP 200, traversal probes return HTTP 403, the API ledger is 57/60, the
-exact T051 subject remains bound, and `customerReady` remains false.
+The dashboard was refreshed and verified at `2026-09-01T20:26:49.538Z`.
+Desktop and 390 px mobile document overflow are zero, all 15 evidence images
+load, browser diagnostics are empty, current evidence routes return HTTP 200,
+encoded and plain traversal probes return HTTP 403, the API ledger is 77/80,
+the current correction identity and manifest are exact, and `customerReady`
+remains false.

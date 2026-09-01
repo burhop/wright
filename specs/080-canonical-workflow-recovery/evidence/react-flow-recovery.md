@@ -29,7 +29,7 @@ The historical direction-approval package is the [passing walkthrough](../../../
 
 The later `c5fb7d8e4a722f84956ebe22085e7fdf38b1b1d5` / continuation-5 package is prior automated correction evidence: 12/12 steps at 1070×791, 12 raw and 12 annotated screenshots, a 16,542,037-byte trace, zero browser diagnostics, tree `148a935edd38e9abe91b9ed284cd04882acf59c6`, and manifest SHA-256 `e661bf45ff1449abc87399b928156fc336f367f260368a2966645a0026afd96e`. It does not constitute a second human approval.
 
-## Workspace-owned correction awaiting exact evidence
+## Exact workspace-owned correction evidence
 
 The current correction changes the surrounding product contract while retaining React Flow only as a renderer:
 
@@ -42,7 +42,7 @@ The current correction changes the surrounding product contract while retaining 
 - design-intent attachment state, simulation state, and demo STEP/report outputs are not claimed as workspace-persisted workflow content.
 - after the requesting engineer reported that the prior graph was too complicated and messy at 1537×791, the default renderer now shows only role, title, state, and compact input/output count in each 224 px block; 10 px visible sockets retain larger invisible hit targets; relationship labels appear only on focus, selection, or activity; and reusable-component targets/addresses stay behind Details.
 
-A fresh exact commit, tree, raw/annotated walkthrough, trace, diagnostics, manifest, and validated report are explicitly pending. Until that package exists, these changes are implementation and automated-test claims rather than new exact-subject walkthrough evidence.
+The exact correction subject is commit `38b409bf149a1241cc87cdedd48f83fed16b5050`, tree `452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6`, and [passing continuation-14 report](../../../artifacts/ui-walkthrough/workflow-recovery-usability/20260901T200836Z-continuation-14/report.html). Its validated package contains 24/24 passing steps, 26 raw and 26 annotated screenshots, 59 manifest-bound files, a 65,547,032-byte trace, two expected control-plane responses, zero unexpected diagnostics, and manifest SHA-256 `b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335`.
 
 ## Test evidence
 

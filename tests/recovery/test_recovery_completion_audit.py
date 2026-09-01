@@ -70,23 +70,23 @@ def test_recovery_completion_audit_reports_current_evidence_truthfully() -> None
     assert result["approved_walkthrough"]["browser_diagnostics"] == 0
     assert (
         result["usability_correction_walkthrough"]["commit"]
-        == "c5fb7d8e4a722f84956ebe22085e7fdf38b1b1d5"
+        == "38b409bf149a1241cc87cdedd48f83fed16b5050"
     )
     assert (
         result["usability_correction_walkthrough"]["tree"]
-        == "148a935edd38e9abe91b9ed284cd04882acf59c6"
+        == "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6"
     )
     assert (
         result["usability_correction_walkthrough"]["manifest_sha256"]
-        == "e661bf45ff1449abc87399b928156fc336f367f260368a2966645a0026afd96e"
+        == "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335"
     )
-    assert result["usability_correction_walkthrough"]["steps_passed"] == 12
-    assert result["usability_correction_walkthrough"]["steps_total"] == 12
-    assert result["usability_correction_walkthrough"]["raw_screenshots"] == 12
-    assert result["usability_correction_walkthrough"]["annotated_screenshots"] == 12
-    assert result["usability_correction_walkthrough"]["manifest_files"] == 30
+    assert result["usability_correction_walkthrough"]["steps_passed"] == 24
+    assert result["usability_correction_walkthrough"]["steps_total"] == 24
+    assert result["usability_correction_walkthrough"]["raw_screenshots"] == 26
+    assert result["usability_correction_walkthrough"]["annotated_screenshots"] == 26
+    assert result["usability_correction_walkthrough"]["manifest_files"] == 59
     assert result["usability_correction_walkthrough"]["browser_diagnostics"] == 0
-    assert result["capability_coverage"]["mapped"] == capability_map["row_count"] == 879
+    assert result["capability_coverage"]["mapped"] == capability_map["row_count"] == 881
     assert (
         result["capability_coverage"]["unique"]
         == capability_map["unique_source_key_count"]

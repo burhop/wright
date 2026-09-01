@@ -33,15 +33,15 @@ CORRECTION_WALKTHROUGH = (
     / "artifacts"
     / "ui-walkthrough"
     / "workflow-recovery-usability"
-    / "20260901T151651Z-continuation-5"
+    / "20260901T200836Z-continuation-14"
 )
 FROZEN_COMMIT = "b4a7e996f10ec95f7d24185a43fd1401843db66d"
 APPROVED_COMMIT = "f9237763d6fa6e9748dfb7b713e753a7fc4b4d17"
 APPROVED_TREE = "aeca6ab8294dd54112d3e9ac10148537af32b0f0"
 APPROVED_MANIFEST = "f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347"
-CORRECTION_COMMIT = "c5fb7d8e4a722f84956ebe22085e7fdf38b1b1d5"
-CORRECTION_TREE = "148a935edd38e9abe91b9ed284cd04882acf59c6"
-CORRECTION_MANIFEST = "e661bf45ff1449abc87399b928156fc336f367f260368a2966645a0026afd96e"
+CORRECTION_COMMIT = "38b409bf149a1241cc87cdedd48f83fed16b5050"
+CORRECTION_TREE = "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6"
+CORRECTION_MANIFEST = "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335"
 T059_SOURCE = "fe6140d85f0598454394d7b7105d756c3794a7dd"
 T059_TREE = "8df2b19c94926c8fe922870de4bbad92bb285720"
 FROZEN_TASK_FILES = ("specs/079-visual-workflow-composition/tasks.md",)
@@ -99,7 +99,12 @@ def _walkthrough_evidence(
     annotated_count = len(list((root / "screenshots" / "annotated").glob("*.png")))
     diagnostic_count = len(diagnostics.get("diagnostics", [])) + sum(
         len(diagnostics.get(key, []))
-        for key in ("consoleErrors", "pageErrors", "failedResponses")
+        for key in (
+            "consoleErrors",
+            "pageErrors",
+            "requestFailures",
+            "unexpectedHttpResponses",
+        )
     )
     passed_steps = sum(step.get("state") == "pass" for step in status.get("steps", []))
     ok = (
@@ -258,9 +263,9 @@ def collect() -> dict[str, Any]:
         commit=CORRECTION_COMMIT,
         tree=CORRECTION_TREE,
         manifest_sha256=CORRECTION_MANIFEST,
-        steps=12,
-        screenshots=12,
-        files=30,
+        steps=24,
+        screenshots=26,
+        files=59,
     )
     walkthrough_ok = approved_walkthrough["ok"] and correction_walkthrough["ok"]
 
@@ -388,7 +393,7 @@ def collect() -> dict[str, Any]:
                 str(APPROVED_WALKTHROUGH.relative_to(ROOT)).replace("\\", "/"),
                 str(CORRECTION_WALKTHROUGH.relative_to(ROOT)).replace("\\", "/"),
             ],
-            "The immutable approval baseline and the current 12/12 mechanical-engineer correction walkthrough both have exact subject/tree binding, complete manifest integrity, paired screenshots, and zero diagnostics.",
+            "The immutable approval baseline and the current 24/24 workspace-owned correction walkthrough both have exact subject/tree binding, complete manifest integrity, paired screenshots, and zero unexpected diagnostics.",
         ),
         _requirement(
             "OBJ-005",

@@ -12,7 +12,7 @@ python -m pytest tests/recovery/test_workflow_conformance.py -q --basetemp .test
 
 Expected evidence:
 
-- 879/879 source rows mapped into 33/33 capabilities using the generated CAP labels;
+- 881/881 source rows mapped into 33/33 capabilities using the generated CAP labels;
 - 11/11 product gates, 100/100 stories, and 25/25 lessons covered;
 - strict JSON, YAML, internal IR, and friendly engineer source rehydrate one accepted semantic identity;
 - 36/36 conformance tests pass and every internal treatment rejects its complete invalid-control matrix,
@@ -188,10 +188,13 @@ intentionally retained as failure-and-repair evidence. The prior package
 verifies material equivalence to the approved direction after the requesting
 engineer's corrections; it does not invent a second human approval.
 
-The workspace-owned engineer-source correction has no exact commit, tree,
-walkthrough, manifest, or approval claim yet. Generate and validate a fresh raw
-and annotated walkthrough only after the implementation is committed; do not
-reuse continuation 5 as current evidence.
+The workspace-owned engineer-source correction is bound to commit
+`38b409bf149a1241cc87cdedd48f83fed16b5050`, tree
+`452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6`, and continuation 14. Its validated
+package passes 24/24 steps with 26 raw and 26 annotated screenshots, 59
+manifest-bound files, zero unexpected diagnostics, and manifest SHA-256
+`b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335`.
+Continuation 5 remains prior formative correction evidence, not current proof.
 
 ## Verify the recovery dashboard
 
@@ -205,8 +208,8 @@ worktree and presents two deliberately separate ledgers:
   continuation 5.
 
 The live recovery gallery separates the frozen checkpoint, original approval
-baseline, and prior continuation-5 correction walkthrough. The workspace-owned
-correction remains pending and must not be shown as an exact walkthrough yet.
+baseline, prior continuation-5 correction walkthrough, and current validated
+workspace-owned continuation-14 subject.
 Existing report, status, manifest, and selected screenshots return HTTP 200;
 raw encoded and plain `..` evidence-mount
 traversal attempts return HTTP 403. Headless Chromium verifies the recovery
@@ -432,9 +435,7 @@ python -m pytest -q -p no:cacheprovider `
 ```
 
 Expected: audit status `PASS`, locally provable objective requirements passed,
-historical approval and prior continuation-5 integrity intact, the current task
-ledger reproduced exactly, prohibited actions empty, and customer readiness
-false. Until the workspace-owned exact walkthrough exists, the audit must show
-that evidence as pending rather than silently treating continuation 5 as the
-new subject. A passing audit does not convert external gates into completed
-work.
+historical approval, prior continuation-5 integrity, and current continuation-14
+integrity intact; the 77/80 task ledger reproduced exactly; prohibited actions
+empty; and customer readiness false. A passing audit does not convert T056,
+T058, or T060 into completed work.

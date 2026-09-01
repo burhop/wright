@@ -32,7 +32,7 @@
 
 **Critical gate**: No user-story claim is valid unless the canonical fixture round-trips through every adapter without semantic loss.
 
-- [x] T006 [P] Inventory all 879 uniquely keyed requirement, gate, story, lesson, and prior-spec sources—including adjacent specs 055, 064, and 068–074—in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/capability-source-map.csv`
+- [x] T006 [P] Inventory all 881 uniquely keyed requirement, gate, story, lesson, and prior-spec sources—including adjacent specs 055, 064, and 068–080—in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/capability-source-map.csv`
 - [x] T007 [P] Define the canvas-first product authority and supersession boundary in `specs/080-canonical-workflow-recovery/north-star.md`
 - [x] T008 Define canonical IR, layout, proposal, renderer, and run decisions in `specs/080-canonical-workflow-recovery/decisions/0001-canonical-workflow-ir-vnext.md` and `specs/080-canonical-workflow-recovery/data-model.md`
 - [x] T009 [P] Publish strict canonical-definition, command-batch, layout, and run-projection schemas plus explicit supported-version and unknown-version contracts in `specs/080-canonical-workflow-recovery/contracts/`
@@ -148,7 +148,7 @@
 ### Tests and Evidence for User Story 5
 
 - [x] T044 [P] [US5] Document retained foundations, provisional choices, limitations, and frozen-prototype parity in `specs/080-canonical-workflow-recovery/research.md`, `prototype-parity.md`, and `evidence/react-flow-recovery.md`
-- [x] T045 [P] [US5] Verify capability coverage remains 879/879 with current recovery completion gates retained in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/evidence/capability-coverage.json`
+- [x] T045 [P] [US5] Verify capability coverage remains 881/881 with current recovery completion gates retained in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/evidence/capability-coverage.json`
 - [x] T046 [US5] Run and record conformance, focused Vitest, web build, full recovery Chromium, accessibility, responsive, schema, capability, program, freeze, and package-lock dry-run gates against the final source in `specs/080-canonical-workflow-recovery/quickstart.md`
 - [x] T047 [US5] Capture the complete raw/annotated Playwright walkthrough, trace, browser diagnostics, manifest, status, and traffic-light report against the exact committed review subject in `artifacts/ui-walkthrough/workflow-recovery/<timestamp>/`
 - [x] T048 [US5] Bind the final exact walkthrough paths into `specs/080-canonical-workflow-recovery/capability-inventory.md` and update frozen-versus-recovery evidence in `specs/080-canonical-workflow-recovery/evidence/prototype-side-by-side.md`
@@ -193,9 +193,9 @@
 - [x] T062 Replace the fictional single PDF-brief input with three explicit sources—reference images, design intent as text/common document, and approved company context—feeding one reviewed design specification in the canonical model and UI
 - [x] T063 Repair live drag projection, give the minimap an explicit current-view frame, remove decorative phase backdrops, use contextual downstream additions, move internal terminology behind progressive disclosure, and replace the oversized hero with a compact single-workflow-file/status bar
 - [x] T064 Synchronize the revision-2 JSON, YAML, workflow-language, and layout fixtures and update browser, TypeScript, Python kernel, repository, security, and offline tests without rewriting historical revision-1 evidence
-- [ ] T065 Capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated report against the exact committed correction subject
-- [ ] T066 Bind the user's direction approval and correction feedback honestly to that exact subject; refresh capability, parity, quickstart, analysis, dashboard, and approval evidence without inventing reviewer facts
-- [ ] T067 Run focused and broad validation, record the current one-engineer result, and leave T056 open for representative moderated participants and real screen-reader evidence
+- [x] T065 Capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated report against the exact committed correction subject
+- [x] T066 Bind the user's direction approval and correction feedback honestly to that exact subject; refresh capability, parity, quickstart, analysis, dashboard, and approval evidence without inventing reviewer facts
+- [x] T067 Run focused and broad validation, record the current one-engineer result, and leave T056 open for representative moderated participants and real screen-reader evidence
 
 ---
 
@@ -213,9 +213,9 @@
 - [x] T073 Remove low-value search from the nine-step graph, retain bounded search at 26 or more tasks, keep optional groups non-decorative, compact the file/status bar, and enforce the no-document-scroll 1070×791 workbench in the canvas, concept, and CSS component tests
 - [x] T074 Update the workspace-entered Playwright journey and accessibility checks for the original missing-file create interaction, existing-file load, Diagram/Source correspondence, save, conflict containment, proposal/run/output behavior, exact viewport containment, and browser diagnostics in `tests/ui-integration/workflow-recovery*.spec.ts` (missing-file interaction superseded by T079)
 - [x] T075 Run focused and broad API/service, Python conformance, Vitest, production build, mocked Playwright, accessibility, responsive, capability, freeze, and completion-audit gates; repair failures without changing the approved direction
-- [ ] T076 Create a coherent local implementation commit, then capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated clickable report against that exact committed subject
-- [ ] T077 Bind the requesting user's recorded direction approval and subsequent workspace/vocabulary feedback honestly to the exact subject; refresh capability, parity, quickstart, Spec Kit analysis, dashboard, and approval evidence without inventing reviewer facts
-- [ ] T078 Record the current one-mechanical-engineer result and internal-versus-visible vocabulary boundary, keep T056 and T058 open, and leave push/merge/publication/release/customer actions unperformed
+- [x] T076 Create a coherent local implementation commit, then capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated clickable report against that exact committed subject
+- [x] T077 Bind the requesting user's recorded direction approval and subsequent workspace/vocabulary feedback honestly to the exact subject; refresh capability, parity, quickstart, Spec Kit analysis, dashboard, and approval evidence without inventing reviewer facts
+- [x] T078 Record the current one-mechanical-engineer result and internal-versus-visible vocabulary boundary, keep T056 and T058 open, and leave push/merge/publication/release/customer actions unperformed
 - [x] T079 Replace the missing-file confirmation state with workspace-scoped idempotent default bootstrap: entering Workflows creates and immediately opens the validated default only when absent, re-entry and first-entry races preserve existing source without identity advance, ordinary workspace/global entry creates nothing, and focused service/API/component/browser tests prove the boundary in `packages/workspace_service/`, `apps/api/`, `apps/web/src/components/pages/WorkflowRecoveryPage.tsx`, `apps/web/src/services/workspace-service.ts`, and their tests
 - [x] T080 Apply the requesting engineer's latest graph-density correction: make the nine-step canvas overview-first, reduce connection-point chrome, hide edge and port metadata until focus/selection/inspection, collapse reusable-component internals behind one Details action, compact the layout, and pass focused component plus the complete 14-journey Chromium suite without weakening the accessible typed-port contract
 

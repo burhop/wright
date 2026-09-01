@@ -67,15 +67,14 @@ async function inspect(name, viewport, screenshot) {
   );
   checks[name] = {
     viewport: page.viewportSize(),
-    subject: body.includes("f9237763"),
-    tree: body.includes("aeca6ab8"),
-    manifest: body.includes("f2b4964e"),
-    recoveryLedger: body.includes("57/60"),
-    productionBoundary: body.includes(
-      "T059 local release-candidate hardening is complete",
-    ),
-    approval: body.includes("T051 exact-subject product/visual approval is complete"),
-    readiness: body.includes("Customer readiness is incomplete"),
+    historicalSubject: body.includes("f9237763"),
+    correctionSubject: body.includes("38b409bf"),
+    correctionTree: body.includes("452c1ab8"),
+    correctionManifest: body.includes("b8764a02"),
+    recoveryLedger: body.includes("77/80"),
+    productionBoundary: body.includes("No artifact was pushed, published, or released"),
+    approval: body.includes("conditional approval is now bound honestly to the exact correction"),
+    readiness: body.toLowerCase().includes("customer readiness") && body.toLowerCase().includes("false"),
     governedFreeze: body.includes("F02B remains 27/38 with T028–T038 open"),
     galleryCount: images.length,
     imagesLoaded: images.every((image) => image.complete && image.width > 0),
@@ -100,20 +99,21 @@ checks.api = {
   completed: apiBody.recovery.completed,
   total: apiBody.recovery.total,
   approval: apiBody.recovery.approval,
-  decision: apiBody.recovery.approvalEvidence.decision,
-  commit: apiBody.recovery.approvalEvidence.commit,
-  tree: apiBody.recovery.approvalEvidence.tree,
-  manifestSha256: apiBody.recovery.approvalEvidence.manifestSha256,
+  decision: apiBody.recovery.approvalBaseline.decision,
+  baselineCommit: apiBody.recovery.approvalBaseline.commit,
+  correctionCommit: apiBody.recovery.correctionEvidence.commit,
+  correctionTree: apiBody.recovery.correctionEvidence.tree,
+  correctionManifestSha256: apiBody.recovery.correctionEvidence.manifestSha256,
   customerReady: apiBody.recovery.customerReady,
 };
 for (const [label, path] of Object.entries({
   root: "/",
-  report: apiBody.recovery.evidence.recoveryReport,
-  status: apiBody.recovery.evidence.recoveryStatus,
-  manifest: apiBody.recovery.evidence.recoveryManifest,
+  report: apiBody.recovery.evidence.correctionReport,
+  status: apiBody.recovery.evidence.correctionStatus,
+  manifest: apiBody.recovery.evidence.correctionManifest,
   frozen: apiBody.recovery.evidence.frozenImage,
   ...Object.fromEntries(
-    apiBody.recovery.evidence.recoveryImages.map((path, index) => [`recoveryImage${index + 1}`, path]),
+    apiBody.recovery.evidence.correctionImages.map((path, index) => [`correctionImage${index + 1}`, path]),
   ),
 })) {
   checks[`http:${label}`] = (await page.request.get(`${base}${path}`)).status();
@@ -137,13 +137,13 @@ for (const [name, value] of Object.entries(checks)) {
 }
 for (const name of ["desktop", "mobile"]) {
   const result = checks[name];
-  for (const field of ["subject", "tree", "manifest", "recoveryLedger", "productionBoundary", "approval", "readiness", "governedFreeze", "imagesLoaded"]) {
+  for (const field of ["historicalSubject", "correctionSubject", "correctionTree", "correctionManifest", "recoveryLedger", "productionBoundary", "approval", "readiness", "governedFreeze", "imagesLoaded"]) {
     if (!result[field]) failures.push(`${name}.${field}=false`);
   }
-  if (result.galleryCount !== 8) failures.push(`${name}.galleryCount=${result.galleryCount}`);
+  if (result.galleryCount !== 15) failures.push(`${name}.galleryCount=${result.galleryCount}`);
   if (result.horizontalOverflowPixels !== 0) failures.push(`${name}.overflow=${result.horizontalOverflowPixels}`);
 }
-if (checks.api.status !== 200 || checks.api.completed !== 57 || checks.api.total !== 60 ||
+if (checks.api.status !== 200 || checks.api.completed !== 77 || checks.api.total !== 80 ||
     checks.api.approval !== "complete" || checks.api.decision !== "approved" || checks.api.customerReady !== false) {
   failures.push("api recovery ledger/approval/readiness mismatch");
 }

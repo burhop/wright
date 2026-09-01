@@ -1,6 +1,6 @@
 # Canvas-First Workflow North Star
 
-**Status**: approved recovery product/visual direction for historical exact subject `f9237763`; production and customer readiness remain incomplete. The workspace-owned engineer-source correction that follows the prior `c5fb7d8e` / continuation-5 correction is not yet bound to a new exact commit or walkthrough. This document explicitly supersedes the product direction in spec 079's four-block north star and parity matrix. The frozen 079 artifacts remain historical evidence, but their rejection of AI review, execution-state projection, and output inspection does not constrain this recovery treatment.
+**Status**: approved recovery product/visual direction, now bound to the workspace-owned exact correction subject `38b409bf149a1241cc87cdedd48f83fed16b5050` / tree `452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6` and its validated 24/24 continuation-14 walkthrough. Production and customer readiness remain incomplete. This document explicitly supersedes the product direction in spec 079's four-block north star and parity matrix. The frozen 079 artifacts remain historical evidence, but their rejection of AI review, execution-state projection, and output inspection does not constrain this recovery treatment.
 
 ## Product promise
 

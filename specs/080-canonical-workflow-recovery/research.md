@@ -29,7 +29,7 @@ Its direct manipulation was disabled, its five-person study did not run, and its
 
 ## Capability disposition
 
-The source audit extracts 879/879 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, the frozen prototype, and every named adjacent feature/spec source through 080 (including 055, 064, and 068–075 plus 078–079). Wrapped requirements are classified from their complete statement rather than only their first physical line. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
+The source audit extracts 881/881 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, the frozen prototype, and every named adjacent feature/spec source through 080 (including 055, 064, and 068–075 plus 078–080). Wrapped requirements are classified from their complete statement rather than only their first physical line. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
 
 The principal disposition is:
 
@@ -102,7 +102,7 @@ New local browser evidence closes the prototype’s most important gap:
 - fixed-height 1070×791 application containment with no document/page scrolling.
 - overview-first nine-step projection at 1537×791 and 1070×791: compact 224 px blocks, 10 px visible sockets with larger invisible hit targets, relationship labels shown only on focus/selection/activity, and component internals behind a Details action.
 
-The nine-step product journey is proven on the prior `c5fb7d8e` correction subject, but the workspace-owned correction still needs a fresh exact committed walkthrough. The prior single-run 100-node prototype observation is retained only as non-qualifying evidence; bounded automated 25/26/100-step navigation does not close production scale.
+The nine-step workspace-owned product journey is proven on exact subject `38b409bf` by continuation 14, including bootstrap, source/CAS conflict recovery, live drag, AI review, simulated run recovery, and output lineage. The prior single-run 100-node prototype observation is retained only as non-qualifying evidence; bounded automated 25/26/100-step navigation does not close production scale.
 
 ## Port treatment laboratory
 
@@ -127,4 +127,4 @@ The comparison remains available in the connection-style preview, but the defaul
 
 ## Decision summary
 
-The recovery direction is internally coherent and the exact `f9237763` subject remains product/visual-direction approved. The `c5fb7d8e` / continuation-5 package is prior automated correction evidence. The current workspace-owned correction adds one idempotently bootstrapped and compare-and-swap-saved engineer source file, optional groups, Diagram/Source/Side by side, bounded search, fixed-height containment, and workspace-only entry; its exact commit and walkthrough are pending. The current authorization permits dependency-ordered locally safe implementation, but no mutating production lease, push, merge, publication, release, customer action, or readiness claim.
+The recovery direction is internally coherent and the exact `f9237763` subject remains the historical product/visual-direction baseline. The `c5fb7d8e` / continuation-5 package is prior automated correction evidence. The workspace-owned correction adds one idempotently bootstrapped and compare-and-swap-saved engineer source file, optional groups, Diagram/Source/Side by side, bounded search, fixed-height containment, compact overview-first graph treatment, and workspace-only entry. It is now bound to commit `38b409bf149a1241cc87cdedd48f83fed16b5050`, tree `452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6`, and a validated 24/24 continuation-14 walkthrough with zero unexpected diagnostics. The current authorization permits dependency-ordered locally safe implementation, but no mutating production lease, push, merge, publication, release, customer action, or readiness claim.
