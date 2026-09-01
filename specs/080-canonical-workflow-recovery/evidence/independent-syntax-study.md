@@ -61,7 +61,7 @@ The recovery conformance kernel and `tests/recovery/test_workflow_conformance.py
 - structured `WFR-*` diagnostics with explanation and correction;
 - last-valid preservation for invalid text, graph commands, and stale AI proposals.
 
-The focused suite passes 20/20 tests, and every treatment now rejects 8/8 syntax controls. The additional graph controls cover duplicate endpoints, feedback ownership/order, non-feedback cycles, cardinality, exact phase/port reciprocity, binding-map sources, and component interface ports. This proves the recovery kernel behavior for the golden fixture; it does not prove a permanent syntax.
+The focused suite passes 23/23 tests, and every treatment now rejects 8/8 syntax controls. The additional graph controls cover duplicate endpoints, feedback ownership/order, non-feedback cycles, cardinality, exact phase/port reciprocity, binding-map sources, component interface ports, and exact semantic/layout history authority. This proves the recovery kernel behavior for the golden fixture; it does not prove a permanent syntax.
 
 ## Conclusion
 

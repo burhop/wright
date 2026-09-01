@@ -157,7 +157,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **FR-036**: The capability inventory MUST trace every previously defined capability to user task, model, text, canvas, manipulation, inspector, run overlay, test, evidence, and disposition with no silent omission.
 - **FR-037**: Frozen Checkpoint D at `b4a7e996` and prototype evidence at `e7bb75c1` MUST remain immutable reference subjects and MUST be labeled with known evidence limitations.
 - **FR-038**: The progress dashboard MUST show this recovery goal, phase, active work, blockers, decisions, artifacts, screenshots, task/checkpoint trends, and separate feature-slice completion from customer readiness.
-- **FR-039**: Product and visual parity MUST be reviewed before accessibility, packaging, release-candidate hardening, broad implementation, merge, or release work resumes.
+- **FR-039**: Product and visual parity MUST be reviewed before broad accessibility qualification/hardening, packaging, release-candidate hardening, production promotion, merge, or release work resumes; bounded automated accessibility checks needed to verify the review subject MUST run before that decision.
 - **FR-040**: This slice MUST preserve the existing canonical draft model, validation, immutable revisions, compare-and-set persistence, closed API, browser decoding, and renderer-neutral seams unless evidence records a superseding decision.
 - **FR-041**: Raw and annotated screenshots, browser diagnostics, a human-repeatable walkthrough, and a clickable report MUST be produced for the complete concept.
 - **FR-042**: Disposable recovery code and production foundations MUST be explicitly labeled; completion MUST stop at one product-approval checkpoint.
@@ -197,7 +197,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **SC-009**: The successful run exposes one recognizable output with lineage and working open or download behavior; the recovery case explains a bounded correction without raw JSON or log reading.
 - **SC-010**: Raw and annotated screenshots exist for every material walkthrough state, the report is clickable and human-repeatable, validation reports zero missing evidence fields, and browser diagnostics distinguish product defects from environment limitations.
 - **SC-011**: Changing only layout produces zero semantic-digest change, and changing run state produces zero workflow-definition byte change across all automated fixtures.
-- **SC-012**: The dashboard is reachable, names canonical workflow recovery as the in-progress recovery goal while EPP-F02C remains proposed and unregistered, orders checkpoint history newest-to-oldest deterministically, and clearly shows that product approval is pending while overall customer readiness remains incomplete.
+- **SC-012**: The dashboard is reachable, names canonical workflow recovery as the current recovery goal while EPP-F02C remains proposed and unregistered, orders checkpoint history newest-to-oldest deterministically, shows the exact current product-approval decision and evidence subject, and keeps overall customer readiness visibly incomplete.
 - **SC-013**: Revised specification, plan, roadmap, parity, and task artifacts place product/visual approval before accessibility, packaging, candidate hardening, push, merge, or release work.
 - **SC-014**: No broad production implementation, merge, release, package publication, or external customer action occurs before explicit product approval.
 

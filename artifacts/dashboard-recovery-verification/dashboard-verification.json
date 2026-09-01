@@ -1,0 +1,65 @@
+{
+  "overall": "pass",
+  "checkedAt": "2026-09-01T03:37:23.882Z",
+  "checks": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "subject": true,
+      "tree": true,
+      "manifest": true,
+      "recoveryLedger": true,
+      "approval": true,
+      "readiness": true,
+      "governedFreeze": true,
+      "galleryCount": 8,
+      "imagesLoaded": true,
+      "horizontalOverflowPixels": 0
+    },
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "subject": true,
+      "tree": true,
+      "manifest": true,
+      "recoveryLedger": true,
+      "approval": true,
+      "readiness": true,
+      "governedFreeze": true,
+      "galleryCount": 8,
+      "imagesLoaded": true,
+      "horizontalOverflowPixels": 0
+    },
+    "api": {
+      "status": 200,
+      "completed": 51,
+      "total": 60,
+      "approval": "complete",
+      "decision": "approved",
+      "commit": "f9237763d6fa6e9748dfb7b713e753a7fc4b4d17",
+      "tree": "aeca6ab8294dd54112d3e9ac10148537af32b0f0",
+      "manifestSha256": "f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347",
+      "customerReady": false
+    },
+    "http:root": 200,
+    "http:report": 200,
+    "http:status": 200,
+    "http:manifest": 200,
+    "http:frozen": 200,
+    "http:recoveryImage1": 200,
+    "http:recoveryImage2": 200,
+    "http:recoveryImage3": 200,
+    "http:recoveryImage4": 200,
+    "http:recoveryImage5": 200,
+    "http:recoveryImage6": 200,
+    "http:recoveryImage7": 200,
+    "http:encodedTraversal": 403,
+    "http:plainTraversal": 403
+  },
+  "diagnostics": [],
+  "failures": []
+}

@@ -149,11 +149,11 @@
 
 - [x] T044 [P] [US5] Document retained foundations, provisional choices, limitations, and frozen-prototype parity in `specs/080-canonical-workflow-recovery/research.md`, `prototype-parity.md`, and `evidence/react-flow-recovery.md`
 - [x] T045 [P] [US5] Verify capability coverage remains 859/859 with current recovery completion gates retained in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/evidence/capability-coverage.json`
-- [ ] T046 [US5] Run and record conformance, focused Vitest, web build, full recovery Chromium, accessibility, responsive, schema, capability, program, freeze, and package-lock dry-run gates against the final source in `specs/080-canonical-workflow-recovery/quickstart.md`
-- [ ] T047 [US5] Capture the complete raw/annotated Playwright walkthrough, trace, browser diagnostics, manifest, status, and traffic-light report against the exact committed review subject in `artifacts/ui-walkthrough/workflow-recovery/<timestamp>/`
-- [ ] T048 [US5] Bind the final exact walkthrough paths into `specs/080-canonical-workflow-recovery/capability-inventory.md` and update frozen-versus-recovery evidence in `specs/080-canonical-workflow-recovery/evidence/prototype-side-by-side.md`
-- [ ] T049 [US5] Refresh the reachable progress dashboard with recovery goal, exact tasks/artifacts, final screenshot gallery, newest-first history, product-direction approval state, and incomplete customer readiness in the active Codex visualization workspace
-- [ ] T050 [US5] Validate program-roadmap dependency, freeze immutability, Spec Kit consistency, and agent context; record results in `specs/080-canonical-workflow-recovery/evidence/specification-analysis.md` and `AGENTS.md`
+- [x] T046 [US5] Run and record conformance, focused Vitest, web build, full recovery Chromium, accessibility, responsive, schema, capability, program, freeze, and package-lock dry-run gates against the final source in `specs/080-canonical-workflow-recovery/quickstart.md`
+- [x] T047 [US5] Capture the complete raw/annotated Playwright walkthrough, trace, browser diagnostics, manifest, status, and traffic-light report against the exact committed review subject in `artifacts/ui-walkthrough/workflow-recovery/<timestamp>/`
+- [x] T048 [US5] Bind the final exact walkthrough paths into `specs/080-canonical-workflow-recovery/capability-inventory.md` and update frozen-versus-recovery evidence in `specs/080-canonical-workflow-recovery/evidence/prototype-side-by-side.md`
+- [x] T049 [US5] Refresh the reachable progress dashboard with recovery goal, exact tasks/artifacts, final screenshot gallery, newest-first history, product-direction approval state, and incomplete customer readiness in the active Codex visualization workspace
+- [x] T050 [US5] Validate program-roadmap dependency, freeze immutability, Spec Kit consistency, and agent context; record results in `specs/080-canonical-workflow-recovery/evidence/specification-analysis.md` and `AGENTS.md`
 
 **Checkpoint**: Recovery evidence is complete and the exact subject is ready for product review; customer readiness is still incomplete.
 
@@ -163,7 +163,7 @@
 
 **Purpose**: Stop all broader work until a human reviews the exact recovery subject.
 
-- [ ] T051 Conduct and record explicit product/visual approval for the digest-bound walkthrough and recovery commit in `specs/080-canonical-workflow-recovery/evidence/product-approval.md`
+- [x] T051 Conduct and record explicit product/visual approval for the digest-bound walkthrough and recovery commit in `specs/080-canonical-workflow-recovery/evidence/product-approval.md`
 
 **STOP**: T052–T060 are blocked unless T051 records an approved exact commit, tree, walkthrough manifest digest, reviewer, decision, and allowed next action. Rejection or requested changes create a new bounded recovery iteration instead.
 

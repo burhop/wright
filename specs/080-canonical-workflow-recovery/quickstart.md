@@ -15,7 +15,7 @@ Expected evidence:
 - 859/859 source rows mapped into 33/33 capabilities;
 - 11/11 product gates, 100/100 stories, and 25/25 lessons covered;
 - JSON, YAML, and DSL parse to one canonical semantic identity;
-- 20/20 conformance tests pass and every treatment rejects 8/8 invalid controls,
+- 23/23 conformance tests pass and every treatment rejects 8/8 invalid controls,
   including graph cycles, feedback ownership/order, duplicate endpoints,
   cardinality, reciprocal phase/port ownership, binding-map, and component
   interface violations.
@@ -32,7 +32,7 @@ npm run test --workspace=apps/web -- --run `
 npm run build --workspace=apps/web
 ```
 
-Expected: 28/28 focused recovery/config/routing tests pass and the
+Expected: 35/35 focused recovery/config/routing tests pass and the
 recovery page builds into a lazy route chunk. Existing Vite chunk-size and
 config-loader warnings are not introduced by this feature.
 
@@ -66,16 +66,18 @@ Open `http://127.0.0.1:5195/workflow-recovery` and verify:
 7. queued → running → needs-input → recovered → succeeded simulation;
 8. STEP preview, report, download name, and lineage.
 
-Stop on the first ambiguity. Do not treat this concept as production authority, merge it, or release it before explicit product approval.
+Stop on the first ambiguity. The exact subject below has product/visual-direction
+approval, but it is still not production authority and MUST NOT be merged or
+released under the current authorization.
 
 ## Recorded exact-subject gate — 2026-08-31 EDT
 
 | Gate | Result |
 |---|---|
-| Strict JSON/YAML/DSL and graph conformance | **PASS · 20/20** |
-| Focused model, command, config, and route tests | **PASS · 28/28** |
+| Strict JSON/YAML/DSL and graph conformance | **PASS · 23/23** |
+| Focused model, command, config, and route tests | **PASS · 35/35** |
 | Production TypeScript/Vite build | **PASS** · recovery remains a lazy route chunk |
-| Chromium recovery journey | **PASS · 4/4** · includes pointer/keyboard handles, axe, reduced motion, 390×844 containment, run recovery, output popup, and download |
+| Chromium recovery journey | **PASS · 5/5** · includes pointer/keyboard handles, axe, reduced motion, 390×844 containment, run recovery, output popup, and download |
 | `npm ci --dry-run` | **PASS** · lockfile is reproducible; the existing `jsdom` Node-engine warning remains visible under local Node 25.2.0 |
 
 The Vite native-config-loader and existing large-chunk warnings are recorded,
@@ -84,19 +86,21 @@ external execution, or customer action occurred.
 
 ## Inspect the digest-bound walkthrough
 
-- Passing report: `artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/report.html`
-- Passing manifest SHA-256: `3b7aec8fbf5d4c4f33c108a47906def7be883259a13425a11ce297aa366ca594`
-- Exact subject: `4c717e22c812f2d1dc3bb6618229371561ba5aaa`
-- Exact tree: `9c1d044b26d90cf5763578d3c9410878bafb1d52`
+- Passing report: `artifacts/ui-walkthrough/workflow-recovery/20260901T031913Z-continuation-1/report.html`
+- Passing manifest SHA-256: `f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347`
+- Exact subject: `f9237763d6fa6e9748dfb7b713e753a7fc4b4d17`
+- Exact tree: `aeca6ab8294dd54112d3e9ac10148537af32b0f0`
+- Result: 50/50 steps, 99 raw and 99 annotated screenshots, 204
+  manifest-bound files, a 94,777,058-byte trace, and zero browser diagnostics.
 
 ```powershell
 python C:\Users\markb\.codex\skills\playwright-ui-walkthrough\scripts\validate_walkthrough.py `
-  artifacts\ui-walkthrough\workflow-recovery\20260901T012043Z-continuation-2
+  artifacts\ui-walkthrough\workflow-recovery\20260901T031913Z-continuation-1
 ```
 
-Expected: `Walkthrough artifact structure is valid.` The two preceding blocked
-roots are intentionally retained as harness-stop evidence; the linked passing
-continuation is the product-approval subject.
+Expected: `Walkthrough artifact structure is valid.` Earlier stopped roots are
+intentionally retained as failure-and-repair evidence. The linked passing
+continuation is the exact approved product/visual-direction subject.
 
 ## Verify the recovery dashboard
 
@@ -104,15 +108,15 @@ Open `http://127.0.0.1:8765/`. The server is launched against this recovery
 worktree and presents two deliberately separate ledgers:
 
 - governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
-- projected EPP-F02C recovery is `proposed`, unregistered, 49/60 after T049,
-  with T050–T060 open and T051 the mandatory approval stop.
+- projected EPP-F02C recovery is `proposed`, unregistered, 51/60 through the
+  approved T051 exact subject, with T052–T060 open.
 
 The live recovery gallery serves only the exact frozen and passing recovery
-walkthrough roots. Report, status, manifest, frozen screenshot, and all five
+walkthrough roots. Report, status, manifest, frozen screenshot, and all seven
 recovery thumbnails return HTTP 200; raw encoded and plain `..` evidence-mount
 traversal attempts return HTTP 403. Headless Chromium verifies the recovery
-ledger, governed-truth warning, pending approval, incomplete customer readiness,
-six loaded gallery images, no console/page errors, and no horizontal overflow at
+ledger, governed-truth warning, approved exact subject, incomplete customer readiness,
+eight loaded gallery images, no console/page errors, and no horizontal overflow at
 1440 or 390 pixels. Local captures are in
 `artifacts/dashboard-recovery-verification/desktop-goal.png` and
 `artifacts/dashboard-recovery-verification/mobile-goal.png`.

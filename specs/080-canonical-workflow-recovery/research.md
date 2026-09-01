@@ -64,7 +64,7 @@ All treatments use the same 44-section mounting-bracket model and the same five 
 | YAML | 13,909 / 467 | 5/5 | 33.8944 ms | none | 4/8 rejected | 8/8 rejected |
 | DSL | 13,077 / 468 | 5/5 | 0.6179 ms | 44 section spans | 4/8 rejected | 8/8 rejected |
 
-The original failures are preserved rather than hidden. Strict duplicate-key/non-finite handling plus global identity/reference/ownership/direction/type validation repaired the recovery boundary. The focused Python conformance suite passes 20/20, including duplicate-endpoint, feedback-source/order, cycle-policy, cardinality, reciprocal phase/port ownership, binding-map, and component-interface controls.
+The original failures are preserved rather than hidden. Strict duplicate-key/non-finite handling plus global identity/reference/ownership/direction/type validation repaired the recovery boundary. The focused Python conformance suite passes 23/23, including duplicate-endpoint, feedback-source/order, cycle-policy, cardinality, reciprocal phase/port ownership, binding-map, component-interface controls, and exact semantic/layout history authority.
 
 Decision: strict JSON remains the internal interchange baseline; the compact DSL is only the disposable Code treatment because it exposes the clearest one-section-per-identity correspondence. YAML remains viable if a concrete-syntax-tree and comment/source-map policy is justified. No permanent user-facing syntax is selected.
 
@@ -98,7 +98,7 @@ Three treatments use the same `Approved geometry` port and state language:
 
 The concept uses the hybrid treatment. This is an expert comparative choice, not an engineer-study result. An unprompted product reviewer must still connect a port and inspect its artifact without coaching; hesitation is a stop condition. See [evidence/block-port-lab.md](evidence/block-port-lab.md).
 
-## Risks carried to approval
+## Risks carried beyond approval
 
 - The DSL owns a new grammar and only section-level source spans.
 - React Flow dependency/scale and desktop embedding remain provisional.
@@ -109,4 +109,4 @@ The concept uses the hybrid treatment. This is an expert comparative choice, not
 
 ## Decision summary
 
-The recovery direction is internally coherent enough for a product-approval walkthrough: one complete typed model, one mutation protocol, separate layout/run records, lossless paired projections, real direct manipulation, reviewable AI, and a recognizable simulated output. Production implementation remains paused until the reviewer accepts the canvas/port/product grammar and explicitly authorizes the next bounded lease.
+The recovery direction is internally coherent and the exact `f9237763` subject is product/visual-direction approved: one complete typed model, one mutation protocol, separate layout/run records, lossless paired projections, real direct manipulation, reviewable AI, and a recognizable simulated output. The current authorization permits dependency-ordered locally safe implementation, but no mutating production lease, push, merge, publication, release, customer action, or readiness claim.

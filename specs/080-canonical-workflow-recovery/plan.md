@@ -6,7 +6,7 @@
 
 ## Summary
 
-Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. It stops at product approval before broad production hardening, merge, or release.
+Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; dependency-ordered locally safe implementation may continue, while push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Performance Goals**: A valid graphical or text edit updates its paired projection within 1 second; invalid edits preserve the prior graph immediately; active run overlays update within 1 second; the final concept remains responsive for its 6-block acceptance workflow while retaining the frozen prototype's single non-qualifying 100-block observation only as provisional scale evidence
 
-**Constraints**: Offline-first; one integration writer; no Rivet or orchestration resurrection; no renderer/source/run authority; no AI direct mutation/execution/approval; no broad production migration; no benchmark qualification; no accessibility/package/release-candidate hardening, push, merge, or release before product approval
+**Constraints**: Offline-first; one integration writer; no Rivet or orchestration resurrection; no renderer/source/run authority; no AI direct mutation/execution/approval; no benchmark qualification; locally safe post-approval work only; no push, merge, publication, release, customer action, destructive external change, or material product-direction change under the current authorization
 
 **Scale/Scope**: One coherent mounting-bracket workflow with 6–8 visible blocks, typed ports, a gate/feedback path, exact binding disclosure, attached input, reviewed AI proposal, simulated immutable run, and recognizable output; three syntax treatments; three block/port treatments; one product-owner walkthrough
 
@@ -56,7 +56,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
   the host-component regression enumerates rendered interactive elements and
   fails if an ID is missing.
 - **Observability and transparency — PASS**: the walkthrough captures trace, console/page/network failures, raw/annotated screenshots, proposal assumptions/diff, run activity, artifact lineage, and known limitations.
-- **Phase isolation and manual gate — PASS**: this plan is the recovery implementation authority supplied by the user. The work ends at an explicit product-review checkpoint and does not resume broad production implementation.
+- **Phase isolation and manual gate — PASS**: this plan is the recovery implementation authority supplied by the user. The exact `f9237763` subject passed the explicit product-review checkpoint; only dependency-ordered locally safe follow-on work is authorized.
 - **Branch discipline — PASS**: all writes occur on `codex/080-canonical-workflow-recovery`, based exactly on frozen `b4a7e996`; no direct `dev` or `main` action is planned.
 - **Post-design recheck — PASS**: the contracts keep semantic definition, layout, command candidates, proposals, and immutable run records separate; no constitutional exception is introduced.
 
@@ -233,7 +233,7 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 6. Build and compare three block/port treatments; select the treatment with distinct connection and artifact-inspection targets.
 7. Build the full React Flow recovery concept over the existing adapter, including manual editing, attachments, Diagram/Code/Split, AI preview/accept/reject, run overlays, diagnosis/recovery, and output actions.
 8. Run the complete Playwright walkthrough with raw/annotated screenshots, trace, diagnostics, and clickable report. Stop immediately on unresolved product ambiguity under the walkthrough rule.
-9. Update dashboard and program/spec/roadmap/parity/tasks artifacts, run Spec Kit consistency analysis, commit coherent evidence checkpoints, and stop for product-owner approval.
+9. Update dashboard and program/spec/roadmap/parity/tasks artifacts, run Spec Kit consistency analysis, bind the exact subject to product-owner direction approval, and continue only the authorized dependency-ordered locally safe work.
 
 ## Test and Evidence Gates
 

@@ -10,20 +10,20 @@
 | Validation/diagnostics | retained, tested | partial | strict kernel, stable `WFR-*` diagnostics | retain kernel behavior; expand source spans later |
 | Immutable revisions/CAS | retained production foundation | simulated | host revision semantics in memory | retain backend; concept persistence intentionally absent |
 | Renderer adapter | retained | renderer-specific experiments | reused unchanged via `DraftCanvasRenderer` | retain |
-| Block/flow visual hierarchy | lane/form dominated | strong | strong, phase-secondary canvas | reviewer approval pending |
+| Block/flow visual hierarchy | lane/form dominated | strong | strong, phase-secondary canvas | exact `f9237763` subject approved |
 | Direct block movement | bounded custom interaction | disabled | real React Flow drag → layout command | browser test and digest-bound walkthrough pass |
-| Direct connection | absent/indirect | disabled | real typed handle pointer and keyboard contracts | pointer and keyboard Chromium tests pass; human visual approval pending |
+| Direct connection | absent/indirect | disabled | real typed handle pointer and keyboard contracts | pointer and keyboard Chromium tests pass; approved direction retained |
 | Disconnect and identity | limited | visual only | accessible edge label, stable relationship ID, undo/redo | browser test passes |
-| Typed port language | weak | strong visual | name/type/required/cardinality plus state language | three-treatment evidence captured; human hybrid approval pending |
-| Artifact vs handle | not applicable | ambiguous | separate labeled artifact action | automated distinction passes; unprompted human gate pending |
+| Typed port language | weak | strong visual | name/type/required/cardinality plus state language | three-treatment evidence captured; hybrid direction approved |
+| Artifact vs handle | not applicable | ambiguous | separate labeled artifact action | automated distinction passes; exact subject approved |
 | Diagram/Code/Split | diagram + read-only text | experimental | lossless editable DSL projection | permanent syntax remains open |
 | Invalid-source containment | absent | conceptual | invalid draft retained; graph/revision unchanged | browser and kernel tests pass |
 | Selection sync | partial | prototype | semantic ID drives block, source range, inspector | browser and walkthrough evidence pass |
 | AI multi-block proposal | excluded | conceptual | assumptions, warnings, diff, ghost preview, reject/accept | simulated only; acceptance advances once |
 | Run overlay | excluded | strong visual fixtures | queued/running/needs-input/blocked/failed/stale/succeeded | simulated only; immutable production run remains future |
-| Recovery action | excluded | fixture | supply 6061-T6 with consequence text | product wording review pending |
+| Recovery action | excluded | fixture | supply 6061-T6 with consequence text | exact subject approved; production wording hardening remains |
 | Output recognition/lineage | excluded | visual concept | bracket preview, report, STEP download, producer/run/revision/type/digest | browser download passes; fixture is simulated |
-| Accessibility | later checkpoint | partial | stable controls, focus trap/return, keyboard handles, axe zero serious/critical, reduced motion | automated keyboard evidence passes; human 200% zoom review pending |
+| Accessibility | later checkpoint | partial | stable controls, focus trap/return, keyboard handles, axe zero serious/critical, reduced motion | bounded concept evidence passes; broad qualification remains downstream |
 | Mobile containment | not target | unproven | 390×844 no document overflow | passing annotated walkthrough captured; representative usability open |
 | 100-node behavior | unproven | one non-qualifying run | retained as evidence only | production/qualifying scale still open |
 
@@ -37,4 +37,4 @@
 
 ## Current conclusion
 
-The recovery concept reaches functional parity with the useful visual direction and surpasses the frozen prototype on direct manipulation, paired editing, proposal review, invalid containment, and bounded run recovery. The [digest-bound comparison](evidence/prototype-side-by-side.md) and passing walkthrough close the automated evidence slice. They do not establish production persistence/runtime integration, representative usability, human product approval, or qualifying scale. Those remain downstream of T051.
+The recovery concept reaches functional parity with the useful visual direction and surpasses the frozen prototype on direct manipulation, paired editing, proposal review, invalid containment, and bounded run recovery. The [digest-bound comparison](evidence/prototype-side-by-side.md), passing walkthrough, and [approval record](evidence/product-approval.md) close T051 for the exact materially equivalent subject. They do not establish production persistence/runtime integration, representative usability, broad accessibility qualification, or qualifying scale. Those remain downstream production obligations.

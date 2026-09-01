@@ -1,6 +1,6 @@
 # Canvas-First Workflow North Star
 
-**Status**: recovery product-direction authority, pending product approval. This document explicitly supersedes the product direction in spec 079's four-block north star and parity matrix. The frozen 079 artifacts remain historical evidence, but their rejection of AI review, execution-state projection, and output inspection does not constrain this recovery treatment.
+**Status**: approved recovery product/visual direction for exact subject `f9237763`; production and customer readiness remain incomplete. This document explicitly supersedes the product direction in spec 079's four-block north star and parity matrix. The frozen 079 artifacts remain historical evidence, but their rejection of AI review, execution-state projection, and output inspection does not constrain this recovery treatment.
 
 ## Product promise
 
