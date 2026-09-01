@@ -36,6 +36,31 @@ async function mockRecoveryShell(page: Page): Promise<void> {
   });
 }
 
+test("expands a reusable component and focuses stable identities without changing the accepted subject", async ({ page }) => {
+  await mockRecoveryShell(page);
+  await page.goto("/workflow-recovery");
+
+  const concept = page.getByTestId("workflow-recovery-concept");
+  const revision = await concept.getAttribute("data-revision");
+  const digest = await concept.getAttribute("data-semantic-digest");
+  const component = page.getByTestId("workflow-recovery-block-block.review-design");
+  await expect(component).toHaveAttribute("data-component-collapsed", "true");
+  await expect(component).toContainText("4 stable internal addresses");
+  await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design")).toHaveCount(0);
+
+  await page.getByTestId("workflow-recovery-component-toggle-block.review-design").click();
+  await expect(component).toHaveAttribute("data-component-collapsed", "false");
+  await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design"))
+    .toContainText("component.review-cell.relationship.accept");
+
+  await page.getByTestId("workflow-recovery-find-input").fill("block.export-step");
+  await page.getByTestId("workflow-recovery-find-submit").click();
+  await expect(page.getByRole("status").filter({ hasText: "Focused Export STEP" })).toBeVisible();
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("block.export-step");
+  await expect(concept).toHaveAttribute("data-revision", revision ?? "1");
+  await expect(concept).toHaveAttribute("data-semantic-digest", digest ?? "");
+});
+
 test("keeps one accepted definition across canvas, source, AI review, and simulation", async ({ page }) => {
   await mockRecoveryShell(page);
   await page.goto("/workflow-recovery");

@@ -22,6 +22,12 @@ import "@xyflow/react/dist/style.css";
 
 import type { DraftBlockProjection, DraftPortProjection } from "../../components/workflow-composer/draft-projection";
 import type { DraftCanvasRenderer } from "../../components/workflow-composer/renderer-types";
+import {
+  findBlockByIdentity,
+  graphDetailLevel,
+  projectComponentStates,
+  type DraftComponentState,
+} from "../../components/workflow-composer/component-graph";
 import { validateRecoveryRunProjection, type RecoveryRelationship, type RecoveryRunProjection, type RecoveryRunState, type RecoveryRunSubject } from "./model";
 
 interface RecoveryCanvasRuntime {
@@ -82,9 +88,12 @@ interface RecoveryNodeData extends Record<string, unknown> {
   readonly runState: RecoveryRunState;
   readonly active: boolean;
   readonly proposed: boolean;
+  readonly componentState: DraftComponentState | null;
+  readonly detailLevel: "detailed" | "compact";
   readonly keyboardSource: string | null;
   readonly onSelect: (semanticId: string) => void;
   readonly onPortKey: (port: DraftPortProjection) => void;
+  readonly onToggleComponent: (semanticId: string) => void;
 }
 
 type RecoveryFlowNode = Node<RecoveryNodeData, "recovery">;
@@ -179,6 +188,8 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       data-selected={data.selected}
       data-run-state={data.runState}
       data-active={data.active}
+      data-component-collapsed={data.componentState?.collapsed ?? undefined}
+      data-detail-level={data.detailLevel}
       role="group"
       aria-label={`${block.title} workflow block`}
       tabIndex={0}
@@ -199,7 +210,43 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
         </span>
       </header>
       <h3>{block.title}</h3>
-      <p>{block.purpose}</p>
+      {data.detailLevel === "detailed" && <p>{block.purpose}</p>}
+      {data.componentState !== null && (
+        <section className="recovery-component" aria-label={`${data.componentState.component.title} reusable component`}>
+          <header>
+            <strong>{data.componentState.component.title} · v{data.componentState.component.version}</strong>
+            <button
+              className="nodrag nopan"
+              data-testid={`workflow-recovery-component-toggle-${block.semanticId}`}
+              type="button"
+              aria-expanded={!data.componentState.collapsed}
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onToggleComponent(block.semanticId);
+              }}
+            >
+              {data.componentState.collapsed ? "Expand" : "Collapse"}
+            </button>
+          </header>
+          <small>{data.componentState.internalAddressCount} stable internal addresses</small>
+          {data.componentState.targetedInternalSemanticIds.length > 0 && (
+            <div className="recovery-component__targets" role="note">
+              <b>{data.componentState.targetedInternalSemanticIds.length} internal target{data.componentState.targetedInternalSemanticIds.length === 1 ? "" : "s"}</b>
+              {data.componentState.targetedInternalSemanticIds.map((id) => <code key={id}>{id}</code>)}
+            </div>
+          )}
+          {!data.componentState.collapsed && (
+            <ul data-testid={`workflow-recovery-component-addresses-${block.semanticId}`}>
+              {data.componentState.component.internalAddresses.map((address) => (
+                <li data-semantic-id={address.semanticId} key={address.semanticId}>
+                  <span>{address.conceptKind.replace("_", " ")}</span>
+                  <code>{address.semanticId}</code>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
       <div className="recovery-block__ports recovery-block__ports--inputs">
         {block.inputs.map((port) => <PortRow key={port.semanticId} port={port} side="input" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />)}
       </div>
@@ -223,7 +270,8 @@ type RecoveryFlowEdge = Edge<RecoveryEdgeData, "recovery">;
 function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd, label, data, selected }: EdgeProps<RecoveryFlowEdge>) {
   const [path, labelX, labelY] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, curvature: data?.kind === "feedback" ? 0.5 : 0.24 });
   const active = Boolean(data?.active);
-  const labelOffsetY = data?.kind === "decision" ? -20 : data?.kind === "data" ? 10 : 0;
+  const stableLabelLane = [...id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 5 - 2;
+  const labelOffsetY = (data?.kind === "decision" ? -20 : data?.kind === "data" ? 10 : 0) + stableLabelLane * 14;
   return (
     <g
       className={`recovery-edge${active ? " is-active" : ""}${data?.kind === "feedback" ? " is-feedback" : ""}${selected ? " is-selected" : ""}`}
@@ -270,12 +318,71 @@ function RecoveryCanvasControls() {
   );
 }
 
+function RecoveryCanvasNavigator({
+  projection,
+  onSelect,
+}: {
+  readonly projection: Parameters<typeof findBlockByIdentity>[0];
+  readonly onSelect: (semanticId: string) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("");
+  const { getNode, setCenter } = useReactFlow();
+  const focus = () => {
+    const block = findBlockByIdentity(projection, query);
+    if (block === null) {
+      setStatus(`No workflow block matches ${query.trim() || "the empty query"}.`);
+      return;
+    }
+    onSelect(block.semanticId);
+    const node = getNode(block.semanticId);
+    if (node !== undefined) {
+      void setCenter(
+        node.position.x + (node.measured?.width ?? 260) / 2,
+        node.position.y + (node.measured?.height ?? 180) / 2,
+        { zoom: 1, duration: 250 },
+      );
+    }
+    setStatus(`Focused ${block.title} (${block.semanticId}).`);
+  };
+  return (
+    <form className="recovery-canvas__find nodrag nopan" onSubmit={(event) => { event.preventDefault(); focus(); }}>
+      <label htmlFor="workflow-recovery-find">Find block</label>
+      <input
+        id="workflow-recovery-find"
+        data-testid="workflow-recovery-find-input"
+        value={query}
+        placeholder="Stable ID or title"
+        onChange={(event) => setQuery(event.currentTarget.value)}
+      />
+      <button data-testid="workflow-recovery-find-submit" type="submit">Focus</button>
+      {status !== "" && <output role="status" aria-live="polite">{status}</output>}
+    </form>
+  );
+}
+
 export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selectedSemanticId, onIntent }) => {
   const runtime = useContext(RuntimeContext);
   const runIssue = validateRecoveryRunProjection(runtime.run, runtime.runSubject)[0];
   if (runIssue) throw new Error(runIssue.code);
   const [keyboardSource, setKeyboardSource] = useState<string | null>(null);
-  const blocks = projection.phases.flatMap((phase) => phase.blocks);
+  const blocks = useMemo(() => projection.phases.flatMap((phase) => phase.blocks), [projection]);
+  const [expandedComponentIds, setExpandedComponentIds] = useState<ReadonlySet<string>>(() => new Set());
+  const detailLevel = graphDetailLevel(blocks.length);
+  const componentTargets = useMemo(
+    () => Object.values(runtime.run.steps).flatMap((step) => step.componentScope === undefined ? [] : [step.componentScope]),
+    [runtime.run.steps],
+  );
+  const collapsedComponentIds = useMemo(
+    () => new Set(blocks
+      .filter((block) => block.componentRef !== null && block.componentRef !== undefined && !expandedComponentIds.has(block.semanticId))
+      .map((block) => block.semanticId)),
+    [blocks, expandedComponentIds],
+  );
+  const componentStates = useMemo(
+    () => new Map(projectComponentStates(projection, collapsedComponentIds, componentTargets).map((state) => [state.instanceSemanticId, state])),
+    [projection, collapsedComponentIds, componentTargets],
+  );
   const gateOwners = useMemo(() => new Map(blocks.flatMap((block) => block.gates.map((gate) => [gate.semanticId, block.semanticId] as const))), [blocks]);
 
   const portLookup = useMemo(() => new Map(blocks.flatMap((block) => [...block.inputs, ...block.outputs]).map((port) => [port.semanticId, port])), [blocks]);
@@ -301,9 +408,17 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       runState: runtime.run.steps[block.semanticId]?.state ?? "idle",
       active: runtime.run.activeBlockId === block.semanticId,
       proposed: runtime.proposedBlockIds.has(block.semanticId),
+      componentState: componentStates.get(block.semanticId) ?? null,
+      detailLevel,
       keyboardSource,
       onSelect: (semanticId) => onIntent({ type: "select", semanticId }),
       onPortKey,
+      onToggleComponent: (semanticId) => setExpandedComponentIds((current) => {
+        const next = new Set(current);
+        if (next.has(semanticId)) next.delete(semanticId);
+        else next.add(semanticId);
+        return next;
+      }),
     },
   }));
 
@@ -351,7 +466,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   };
 
   return (
-    <div className={`recovery-canvas recovery-canvas--${runtime.portTreatment}`} data-testid="workflow-recovery-canvas" data-port-treatment={runtime.portTreatment} aria-label="Mounting bracket workflow diagram">
+    <div className={`recovery-canvas recovery-canvas--${runtime.portTreatment}`} data-testid="workflow-recovery-canvas" data-port-treatment={runtime.portTreatment} data-detail-level={detailLevel} aria-label="Mounting bracket workflow diagram">
       <div className="recovery-phase-stripe recovery-phase-stripe--define"><b>01 · Define</b><span>Requirements and geometry</span></div>
       <div className="recovery-phase-stripe recovery-phase-stripe--verify"><b>02 · Verify</b><span>Evidence and approval</span></div>
       <div className="recovery-phase-stripe recovery-phase-stripe--deliver"><b>03 · Deliver</b><span>Neutral output package</span></div>
@@ -395,6 +510,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       >
         <Background color="var(--recovery-grid)" gap={24} size={1} />
         <MiniMap nodeStrokeWidth={3} ariaLabel="Workflow overview map" data-testid="workflow-recovery-minimap" />
+        <RecoveryCanvasNavigator projection={projection} onSelect={(semanticId) => onIntent({ type: "select", semanticId })} />
         <RecoveryCanvasControls />
       </ReactFlow>
     </div>

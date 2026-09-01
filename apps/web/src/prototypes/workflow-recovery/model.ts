@@ -461,6 +461,10 @@ export function toDraftProjection(workflow: RecoveryWorkflow, layout: RecoveryLa
         produced_by_block_id: block.id,
         semanticId: artifact.id,
       })),
+      componentRef: block.componentRef === null ? null : {
+        componentId: block.componentRef.componentId,
+        versionRange: block.componentRef.versionRange,
+      },
     }];
   }));
   const portOwners = new Map(workflow.ports.map((item) => [item.id, item.ownerBlockId]));
@@ -515,6 +519,15 @@ export function toDraftProjection(workflow: RecoveryWorkflow, layout: RecoveryLa
         label: relationship.label,
       }];
     }),
+    components: workflow.components.map((component) => ({
+      semanticId: component.id,
+      version: component.version,
+      title: component.title,
+      inputPortIds: [...component.inputPortIds],
+      outputPortIds: [...component.outputPortIds],
+      internalDefinitionDigest: component.internalDefinitionDigest,
+      internalAddresses: component.internalAddresses.map((address) => ({ ...address })),
+    })),
   };
 }
 

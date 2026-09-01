@@ -29,6 +29,38 @@ function runtime(run = initialRunProjection(initialWorkflow, "a".repeat(64), "20
 }
 
 describe("ReactFlowRecoveryCanvas component contract", () => {
+  it("collapses reusable components without losing internal run-lineage addresses", () => {
+    const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
+    const run = initialRunProjection(initialWorkflow, "a".repeat(64), "2026-08-31T00:00:00Z");
+    run.steps["block.review-design"] = {
+      state: "blocked",
+      label: "Internal review blocked",
+      detail: "The reusable review cell needs attention.",
+      componentScope: {
+        componentInstanceId: "block.review-design",
+        componentId: "component.review-cell",
+        componentVersion: "1.0.0",
+        internalSemanticId: "component.review-cell.block.evaluate",
+      },
+    };
+    render(
+      <RecoveryCanvasRuntimeProvider value={runtime(run)}>
+        <ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={() => undefined} />
+      </RecoveryCanvasRuntimeProvider>,
+    );
+
+    const node = screen.getByTestId("workflow-recovery-block-block.review-design");
+    expect(node).toHaveAttribute("data-component-collapsed", "true");
+    expect(node).toHaveTextContent("Reusable design review cell · v1.0.0");
+    expect(node).toHaveTextContent("1 internal target");
+    expect(node).toHaveTextContent("component.review-cell.block.evaluate");
+    fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
+    expect(node).toHaveAttribute("data-component-collapsed", "false");
+    expect(node).toHaveTextContent("component.review-cell.relationship.accept");
+    fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
+    expect(node).toHaveAttribute("data-component-collapsed", "true");
+  });
+
   it("renders the default projection with identified controls and emits host-owned selection", () => {
     const onIntent = vi.fn();
     const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
@@ -142,10 +174,13 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
       </RecoveryCanvasRuntimeProvider>,
     );
     const elapsed = performance.now() - started;
+    expect(screen.getByTestId("workflow-recovery-canvas")).toHaveAttribute("data-detail-level", "compact");
     expect(screen.getAllByTestId(/^workflow-recovery-block-block\.large-/)).toHaveLength(100);
     fireEvent.click(screen.getByTestId("workflow-recovery-canvas-fit"));
-    fireEvent.click(screen.getByTestId("workflow-recovery-block-block.large-100"));
+    fireEvent.change(screen.getByTestId("workflow-recovery-find-input"), { target: { value: "block.large-100" } });
+    fireEvent.click(screen.getByTestId("workflow-recovery-find-submit"));
     expect(onIntent).toHaveBeenCalledWith({ type: "select", semanticId: "block.large-100" });
+    expect(screen.getByRole("status")).toHaveTextContent("Focused Large graph block 100");
     expect(elapsed).toBeLessThan(5000);
   });
 });

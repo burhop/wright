@@ -15,6 +15,25 @@ import {
 export interface DraftPortProjection extends DraftPort { readonly semanticId: string }
 export interface DraftGateProjection extends DraftGate { readonly semanticId: string }
 export interface DraftArtifactProjection extends DraftArtifact { readonly semanticId: string }
+export type DraftComponentConceptKind = "block" | "port" | "relationship" | "artifact_contract" | "binding" | "component";
+export interface DraftComponentInternalAddressProjection {
+  readonly semanticId: string;
+  readonly conceptKind: DraftComponentConceptKind;
+  readonly relativePath: string;
+}
+export interface DraftComponentProjection {
+  readonly semanticId: string;
+  readonly version: string;
+  readonly title: string;
+  readonly inputPortIds: readonly string[];
+  readonly outputPortIds: readonly string[];
+  readonly internalDefinitionDigest: string;
+  readonly internalAddresses: readonly DraftComponentInternalAddressProjection[];
+}
+export interface DraftComponentReferenceProjection {
+  readonly componentId: string;
+  readonly versionRange: string;
+}
 export interface DraftBlockProjection extends DraftBlock {
   readonly semanticId: string;
   readonly position: DraftPosition;
@@ -22,6 +41,7 @@ export interface DraftBlockProjection extends DraftBlock {
   readonly outputs: readonly DraftPortProjection[];
   readonly gates: readonly DraftGateProjection[];
   readonly artifacts: readonly DraftArtifactProjection[];
+  readonly componentRef?: DraftComponentReferenceProjection | null;
 }
 export interface DraftPhaseProjection extends DraftPhase {
   readonly semanticId: string;
@@ -44,6 +64,7 @@ export interface DraftProjection {
   readonly phases: readonly DraftPhaseProjection[];
   readonly connections: readonly DraftConnectionProjection[];
   readonly feedbackPaths: readonly DraftFeedbackProjection[];
+  readonly components: readonly DraftComponentProjection[];
 }
 
 function required<T>(registry: ReadonlyMap<string, T>, id: string): T {
@@ -83,6 +104,7 @@ export function buildDraftProjection(draft: WorkflowDraft): DraftProjection {
       outputs: block.output_port_ids.map(portProjection),
       gates: block.gate_ids.map(gateProjection),
       artifacts: block.intended_artifact_ids.map(artifactProjection),
+      componentRef: null,
     };
   };
   const portOwners = new Map(source.semantic.ports.map((item) => [item.id, item.owner_block_id]));
@@ -110,6 +132,7 @@ export function buildDraftProjection(draft: WorkflowDraft): DraftProjection {
       semanticId: item.id,
       label: item.reason,
     })),
+    components: [],
   };
   assertSemanticIdParity(draft, projection);
   return deepFreeze(projection);

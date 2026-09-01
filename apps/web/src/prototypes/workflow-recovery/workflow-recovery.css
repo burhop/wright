@@ -202,6 +202,22 @@
 .recovery-canvas--hybrid .recovery-port__handle { width: var(--recovery-size-27) !important; height: var(--recovery-size-27) !important; border-radius: var(--recovery-size-6) 50% 50% var(--recovery-size-6) !important; }
 .recovery-canvas--hybrid .recovery-port__handle--input { border-radius: 50% var(--recovery-size-6) var(--recovery-size-6) 50% !important; }
 .recovery-block__gate { padding: var(--recovery-size-7) var(--recovery-size-10); border-top: var(--recovery-size-1) solid var(--color-error); border-radius: 0 0 var(--recovery-size-9) var(--recovery-size-9); background: var(--color-surface); color: var(--recovery-amber); font-size: var(--recovery-size-9); font-weight: 700; }
+.recovery-component { margin: var(--recovery-size-8) var(--recovery-size-10); border: var(--recovery-size-1) solid var(--recovery-violet); border-radius: var(--recovery-radius-md); background: color-mix(in srgb, var(--recovery-violet) 9%, var(--color-surface)); }
+.recovery-component > header { display: flex; align-items: center; justify-content: space-between; gap: var(--recovery-size-8); padding: var(--recovery-size-7) var(--recovery-size-8); }
+.recovery-component > header strong { font-size: var(--recovery-size-10); }
+.recovery-component button { padding: var(--recovery-size-5) var(--recovery-size-7); border: var(--recovery-size-1) solid var(--recovery-violet); border-radius: var(--recovery-radius-sm); background: var(--color-surface); color: var(--color-primary); font-size: var(--recovery-size-9); font-weight: 800; }
+.recovery-component > small { display: block; padding: 0 var(--recovery-size-8) var(--recovery-size-7); color: var(--recovery-muted); }
+.recovery-component__targets { display: grid; gap: var(--recovery-size-3); padding: var(--recovery-size-7) var(--recovery-size-8); border-top: var(--recovery-size-1) solid var(--recovery-violet); }
+.recovery-component__targets code, .recovery-component li code { overflow-wrap: anywhere; color: var(--recovery-amber); font-size: var(--recovery-size-8); }
+.recovery-component ul { display: grid; gap: var(--recovery-size-4); max-height: 180px; margin: 0; padding: var(--recovery-size-7) var(--recovery-size-8); overflow-y: auto; border-top: var(--recovery-size-1) solid var(--recovery-violet); list-style: none; }
+.recovery-component li { display: grid; gap: var(--recovery-size-2); }
+.recovery-canvas[data-detail-level="compact"] .recovery-block { min-width: 220px; }
+.recovery-canvas[data-detail-level="compact"] .recovery-block__ports { max-height: 70px; overflow: hidden; }
+.recovery-canvas__find { position: absolute; z-index: 10; top: var(--recovery-size-58); right: var(--recovery-size-12); display: grid; grid-template-columns: auto minmax(150px, 240px) auto; align-items: center; gap: var(--recovery-size-6); padding: var(--recovery-size-7); border: var(--recovery-size-1) solid var(--color-border); border-radius: var(--recovery-radius-md); background: color-mix(in srgb, var(--color-neutral) 92%, transparent); box-shadow: 0 var(--recovery-size-6) var(--recovery-size-18) var(--recovery-shadow-color); }
+.recovery-canvas__find label { font-size: var(--recovery-size-9); font-weight: 800; }
+.recovery-canvas__find input { min-width: 0; padding: var(--recovery-size-6) var(--recovery-size-8); border: var(--recovery-size-1) solid var(--color-border); border-radius: var(--recovery-radius-sm); background: var(--color-surface); color: var(--color-primary); }
+.recovery-canvas__find button { padding: var(--recovery-size-6) var(--recovery-size-8); border: var(--recovery-size-1) solid var(--recovery-teal); border-radius: var(--recovery-radius-sm); background: var(--color-surface); color: var(--color-primary); font-weight: 800; }
+.recovery-canvas__find output { grid-column: 1 / -1; min-height: 1em; color: var(--recovery-muted); font-size: var(--recovery-size-8); }
 .recovery-edge { cursor: pointer; }
 .recovery-edge path.react-flow__edge-path { stroke: var(--color-secondary); stroke-width: 2; }
 .recovery-edge.is-selected path.react-flow__edge-path { stroke: var(--color-primary); stroke-width: 3; }
