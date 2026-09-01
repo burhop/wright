@@ -51,3 +51,9 @@ walkthrough files and no local integrity findings.
 The pre-existing untracked `.tmp-pytest-program/` path is disclosed by the audit
 and is not used as evidence, staged, altered, or represented as part of the
 committed recovery checkpoint.
+
+The dashboard was refreshed to this completion-audit checkpoint and verified at
+`2026-09-01T06:17:33.199Z`. Desktop and 390 px mobile document overflow are zero,
+all eight evidence images load, browser diagnostics are empty, evidence routes
+return HTTP 200, traversal probes return HTTP 403, the API ledger is 57/60, the
+exact T051 subject remains bound, and `customerReady` remains false.
