@@ -24,11 +24,13 @@ Every surface answers a different question about the same accepted definition:
 - A workflow opens only from an active workspace through **Workflows**. Choosing it is explicit creation intent: if the default file is absent, Wright creates it once and opens the usable editor immediately; if it exists, Wright opens it unchanged. Merely opening a workspace creates nothing, and the primary surface has no global workflow-recovery entry.
 - One visible `workflows/<name>.workflow.wflow` file carries engineer-authored workflow meaning. Host-managed revision, digest, compare-and-swap, and integrity metadata stay outside that file and remain available in technical details.
 - Reference images, design intent, and company standards/context are three explicit sources with visible provenance; they feed one editable, engineer-reviewed design specification before CAD begins.
-- Inputs are on the left; outputs are on the right; friendly file/model/report names and requiredness lead while exact types and cardinality remain available.
+- Inputs are on the left and outputs are on the right. The overview shows a compact input/output count and small sockets; friendly file/model/report names, requiredness, exact types, and cardinality appear on focus, selection, or in the inspector.
 - A connection socket and an action that opens a file, model, report, or record are different controls with different shapes, labels, and behaviors.
 - Data, decision, and feedback relationships remain visually distinct without relying on color alone.
 - Groups are optional organizational aids, not required workflow phases; a short workflow needs none.
 - Step search is absent for 25 or fewer steps and becomes available at 26 or more, where it materially helps navigation.
+- Edge labels are not persistent canvas decoration. They appear when a relationship is focused, selected, or active, and their full meaning remains available to keyboard and assistive-technology users.
+- Reusable review steps show one compact group summary; internal targets and stable addresses appear only after an explicit **Details** action.
 - At the 1070×791 review viewport the application is fixed-height with no document/page scrolling; the bounded source list and inspector may scroll internally when their own content requires it.
 - Semantic changes advance the accepted revision once. Layout, selection, previews, rejection, invalid source, and run activity do not.
 - Invalid candidates stay editable while the last-valid graph remains trustworthy.
@@ -60,7 +62,7 @@ Every surface answers a different question about the same accepted definition:
 The product reviewer should be able to answer “yes” without coaching:
 
 1. Can I read the bracket workflow from blocks and flows alone?
-2. Can I tell where to connect and where to inspect an artifact?
+2. Can I tell where to connect, then use focus or the inspector to see the exact item contract and artifact action without crowding the overview?
 3. Can I add, move, connect, configure, delete, undo, and redo safely?
 4. Can I reconcile canvas, source, and inspector as one workflow?
 5. Can I understand an AI proposal before accepting it?

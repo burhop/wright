@@ -55,14 +55,16 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
 
     const node = screen.getByTestId("workflow-recovery-block-block.review-design");
     expect(node).toHaveAttribute("data-component-collapsed", "true");
-    expect(node).toHaveTextContent("Design review step group");
-    expect(node).toHaveTextContent("Grouped review step · 4 technical items");
-    expect(node).toHaveTextContent("1 review item needs attention");
-    expect(node).toHaveTextContent("Evaluate the design review");
+    expect(node).toHaveTextContent("Review group");
+    expect(node).toHaveTextContent("1 issue");
+    expect(node).not.toHaveTextContent("technical review items");
+    expect(node).not.toHaveTextContent("Evaluate the design review");
     expect(screen.queryByTestId("workflow-recovery-find-input")).not.toBeInTheDocument();
-    expect(screen.getByTestId("workflow-recovery-component-keyboard-block.review-design")).toBeVisible();
+    expect(screen.queryByTestId("workflow-recovery-component-keyboard-block.review-design")).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
     expect(node).toHaveAttribute("data-component-collapsed", "false");
+    expect(node).toHaveTextContent("4 technical review items");
+    expect(node).toHaveTextContent("Evaluate the design review");
     expect(node).toHaveTextContent("Accept the reviewed design");
     expect(node).not.toHaveTextContent("component.review-cell.relationship.accept");
     fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
@@ -81,9 +83,11 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     expect(screen.getByTestId("workflow-recovery-canvas-zoom-in")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-canvas-zoom-out")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-canvas-fit")).toBeVisible();
-    expect(screen.getByTestId("workflow-recovery-block-block.reference-images")).toHaveTextContent("JPG or PNG images");
-    expect(screen.getByTestId("workflow-recovery-block-block.design-intent")).toHaveTextContent("text or document");
-    expect(screen.getByTestId("workflow-recovery-block-block.company-context")).toHaveTextContent("approved company knowledge");
+    expect(screen.getByTestId("workflow-recovery-block-block.reference-images")).toHaveTextContent("Reference images");
+    expect(screen.getByTestId("workflow-recovery-block-block.reference-images")).toHaveTextContent("0 in → 1 out");
+    expect(screen.getByTestId("workflow-recovery-block-block.reference-images")).not.toHaveTextContent("JPG or PNG images");
+    expect(screen.getByTestId("workflow-recovery-block-block.design-intent")).not.toHaveTextContent("text or document");
+    expect(screen.getByTestId("workflow-recovery-block-block.company-context")).not.toHaveTextContent("approved company knowledge");
     const minimap = screen.getByTestId("rf__minimap");
     expect(screen.getByRole("img", { name: "Workflow overview; blue frame shows the visible area" })).toBeVisible();
     expect(minimap).toHaveStyle({

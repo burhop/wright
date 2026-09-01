@@ -33,6 +33,7 @@
 - [x] Workspace ownership, workspace-scoped idempotent default bootstrap/open/save behavior, no global or ordinary-workspace auto-creation, no silent overwrite, and the single visible definition-file boundary are unambiguous
 - [x] Engineer-facing language is friendly to code-literate engineering-tool users while internal schemas, identities, revisions, digests, atomic commands, and evidence remain precise
 - [x] Optional grouping, bounded search, fixed-height desktop layout, and conflict containment have measurable acceptance behavior
+- [x] Overview-first graph density, compact connection points, progressive port/edge/component disclosure, and complete keyboard-accessible technical detail have measurable acceptance behavior
 
 ## Validation Notes
 
@@ -40,4 +41,5 @@
 - The specification intentionally requires a syntax comparison and renderer evidence without preselecting either permanent implementation choice.
 - Recovery concept work is authorized; broad production hardening remains explicitly gated by product approval.
 - Iteration 2 incorporates the requesting mechanical engineer's hands-on direction: workflows are workspace-owned, entering Workflows is explicit intent to idempotently bootstrap and open a usable default when missing, the visible source resembles an engineering script rather than internal IR, and strong software-development vocabulary remains behind the interface and in technical disclosures.
+- Iteration 3 incorporates the requesting engineer's latest constrained-screen review: the canvas communicates topology and step identity first, while complete typed-port, artifact, connection, and component details remain available through focus, selection, and the inspector instead of crowding every block.
 - No clarification marker remains. The user's latest direction resolves the apparent vocabulary tension: friendliness applies to the primary engineer surface, not to internal contracts, tests, trace evidence, or implementation documentation.

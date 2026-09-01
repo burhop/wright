@@ -4,7 +4,7 @@
 
 **Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
 
-**Scope rule**: Tasks T001–T050 form the original recovery evidence slice. T051 is the mandatory product/visual approval stop. T052–T060 were dependency-ordered post-approval work. T061–T067 record the first mechanical-engineer correction. T068–T079 supersede the remaining obsolete global-route/source and missing-file treatments with the approved workspace-owned engineer-authoring correction; a fresh exact subject is required before the approval/evidence loop may close.
+**Scope rule**: Tasks T001–T050 form the original recovery evidence slice. T051 is the mandatory product/visual approval stop. T052–T060 were dependency-ordered post-approval work. T061–T067 record the first mechanical-engineer correction. T068–T080 supersede the remaining obsolete global-route/source, missing-file, and overloaded-canvas treatments with the approved workspace-owned engineer-authoring correction; a fresh exact subject is required before the approval/evidence loop may close.
 
 **Tests**: The specification requires conformance, component, browser, accessibility, responsive, and human-repeatable evidence, so test tasks are included in each user-story phase.
 
@@ -217,6 +217,7 @@
 - [ ] T077 Bind the requesting user's recorded direction approval and subsequent workspace/vocabulary feedback honestly to the exact subject; refresh capability, parity, quickstart, Spec Kit analysis, dashboard, and approval evidence without inventing reviewer facts
 - [ ] T078 Record the current one-mechanical-engineer result and internal-versus-visible vocabulary boundary, keep T056 and T058 open, and leave push/merge/publication/release/customer actions unperformed
 - [x] T079 Replace the missing-file confirmation state with workspace-scoped idempotent default bootstrap: entering Workflows creates and immediately opens the validated default only when absent, re-entry and first-entry races preserve existing source without identity advance, ordinary workspace/global entry creates nothing, and focused service/API/component/browser tests prove the boundary in `packages/workspace_service/`, `apps/api/`, `apps/web/src/components/pages/WorkflowRecoveryPage.tsx`, `apps/web/src/services/workspace-service.ts`, and their tests
+- [x] T080 Apply the requesting engineer's latest graph-density correction: make the nine-step canvas overview-first, reduce connection-point chrome, hide edge and port metadata until focus/selection/inspection, collapse reusable-component internals behind one Details action, compact the layout, and pass focused component plus the complete 14-journey Chromium suite without weakening the accessible typed-port contract
 
 ---
 
@@ -232,8 +233,8 @@
 - **US5** consumes completed US1–US4 evidence and must close before product review.
 - **T051** depends on T046–T050.
 - **T052–T060** depend on an approved T051 exact subject and separate implementation authorization.
-- **T061–T067** form the first bounded correction loop triggered by the requesting mechanical engineer's hands-on feedback; their remaining evidence work is superseded by the more complete T068–T079 loop.
-- **T068–T073** implement the workspace/source correction and may proceed in dependency-safe parallel slices; T074 follows their integrated interfaces, T075 validates the whole subject, and T079 applies the latest hands-on first-entry correction. T076 may commit and capture the exact subject only after the T079 implementation and rerun gates pass; only then may T077–T078 close.
+- **T061–T067** form the first bounded correction loop triggered by the requesting mechanical engineer's hands-on feedback; their remaining evidence work is superseded by the more complete T068–T080 loop.
+- **T068–T073** implement the workspace/source correction and may proceed in dependency-safe parallel slices; T074 follows their integrated interfaces, T075 validates the whole subject, T079 applies the first-entry correction, and T080 applies the latest hands-on graph-density correction. T076 may commit and capture the exact subject only after the T079–T080 implementation and rerun gates pass; only then may T077–T078 close.
 
 ### User-story completion order
 
@@ -243,7 +244,7 @@ Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 ap
                                                                    ├─ approved + separately authorized → T052–T060
                                                                    └─ hands-on correction → T061–T067
                                                                                               ↓
-                                                               workspace/source correction → T068–T075 → T079 → T076–T078 → refreshed exact subject
+                                                               workspace/source correction → T068–T075 → T079–T080 → T076–T078 → refreshed exact subject
 ```
 
 ### Parallel opportunities
@@ -255,7 +256,7 @@ Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 ap
 - US4 fixture verification and run-projection tests can proceed in parallel.
 - T044 and T045 can run in parallel; T047 walkthrough capture must use the fully verified subject from T046.
 - Post-approval T053/T054 may run in parallel only after T052 fixes the promoted version/migration boundary.
-- T074 can run after T069–T073 stabilize; T075 validation may overlap independent stacks. T079's first-entry correction and its focused tests must pass before T076 exact-subject capture. Documentation/dashboard/approval work in T077–T078 may proceed only against the captured exact subject.
+- T074 can run after T069–T073 stabilize; T075 validation may overlap independent stacks. T079's first-entry correction and T080's overview-density correction plus their focused tests must pass before T076 exact-subject capture. Documentation/dashboard/approval work in T077–T078 may proceed only against the captured exact subject.
 
 ## Parallel examples
 
@@ -274,7 +275,7 @@ US5: T044 parity documentation || T045 capability audit
 3. Add AI review and simulated run evidence without granting either authority.
 4. Complete T046–T050 against one exact worktree subject.
 5. Bind an exact subject to the user's recorded product-direction approval at T051 only when it remains materially equivalent to the reviewed experience.
-6. Apply the user's subsequent hands-on corrections through T061–T079, preserving failed-first evidence and producing a new exact-subject walkthrough rather than treating the earlier approval as proof of the changed implementation.
+6. Apply the user's subsequent hands-on corrections through T061–T080, preserving failed-first evidence and producing a new exact-subject walkthrough rather than treating the earlier approval as proof of the changed implementation.
 7. Continue only dependency-ordered locally safe work explicitly covered by the user's authorization; push, merge, publication, release, destructive external actions, and materially different product direction remain prohibited.
 
 ## Notes

@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "row_count": 879,
-  "unique_source_key_count": 879,
+  "row_count": 881,
+  "unique_source_key_count": 881,
   "capability_count": 33,
   "capabilities_represented": 33,
   "core_expected": {
@@ -41,7 +41,7 @@
     "specs/075-rivet-run-inspector/spec.md": 32,
     "specs/078-process-definition-view/spec.md": 23,
     "specs/079-visual-workflow-composition/spec.md": 30,
-    "specs/080-canonical-workflow-recovery/spec.md": 76
+    "specs/080-canonical-workflow-recovery/spec.md": 78
   },
   "scanned_spec_directories": [
     "054-rivet-workflow-integration",

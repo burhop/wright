@@ -384,7 +384,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   const [redoStack, setRedoStack] = useState<Snapshot[]>([]);
   const [designIntentName, setDesignIntentName] = useState<string | null>(null);
   const [modal, setModal] = useState<"none" | "port-lab" | "design-intent" | "output" | "source-compare" | "reload-stored">("none");
-  const [portTreatment, setPortTreatment] = useState<PortTreatment>("hybrid");
+  const [portTreatment, setPortTreatment] = useState<PortTreatment>("dot");
   const [proposal, setProposal] = useState<RecoveryCommandBatch | null>(null);
   const [proposalResult, setProposalResult] = useState<ReturnType<typeof applyRecoveryBatch> | null>(null);
   const [runStage, setRunStage] = useState(0);

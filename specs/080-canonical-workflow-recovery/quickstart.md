@@ -120,6 +120,7 @@ Then verify:
 7. AI proposal assumptions, warnings, diff, preview, reject, and accept;
 8. queued → running → needs-input → recovered → succeeded simulation;
 9. STEP preview, report, download name, and full three-source lineage.
+10. overview-first graph density: all nine step titles and the left-to-right flow are readable without persistent edge labels or per-port metadata; focus a socket or relationship and select a step to verify the complete accessible details remain available.
 
 Diagram, Source, and the inspector are synchronized views of one visible
 `workflows/mounting-bracket.workflow.wflow` file. Groups are optional, and the
@@ -134,6 +135,11 @@ source.
 At 1070×791, verify no document/page scrolling. The bounded source list or
 inspector may scroll internally. The nine-step workflow has no Find control;
 search appears only for graphs with 26 or more steps.
+
+At both 1537×791 and 1070×791, verify compact blocks, small connection points,
+hidden-by-default relationship labels, and a one-line reusable review-group
+summary. Keyboard focus, selection, the **Details** action, and inspector tabs
+must reveal the full typed contracts without expanding the default graph.
 
 Stop on the first ambiguity. Historical approval remains bound only to its exact
 subject below; the workspace-owned correction needs a fresh committed

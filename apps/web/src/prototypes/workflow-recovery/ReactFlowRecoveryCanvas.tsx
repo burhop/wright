@@ -70,7 +70,7 @@ const RuntimeContext = createContext<RecoveryCanvasRuntime>({
   portArtifactIds: {},
   relationshipLabels: {},
   overlayRelationships: [],
-  portTreatment: "hybrid",
+  portTreatment: "dot",
   onArtifactInspect: () => undefined,
 });
 
@@ -124,25 +124,6 @@ function componentAddressLabel(semanticId: string, conceptKind: string): string 
   if (semanticId.endsWith(".artifact.approved")) return "Approved design record";
   if (semanticId.endsWith(".port.approved")) return "Approved CAD model output";
   return conceptKind.replace("_", " ");
-}
-
-function portQualifier(port: DraftPortProjection): string {
-  const required = port.required ? "Required" : "Optional";
-  return port.cardinality === "many" ? `${required} · multiple allowed` : required;
-}
-
-function portValueLabel(typeId: string): string {
-  if (typeId === "type.design.intent" || typeId === "type.requirements.bundle") return "text or document";
-  if (typeId === "type.image.reference-set") return "JPG or PNG images";
-  if (typeId === "type.context.company") return "approved company knowledge";
-  if (typeId === "type.design.specification") return "editable design specification";
-  if (typeId === "type.geometry.brep") return "3D design model";
-  if (typeId === "type.geometry.approved") return "approved 3D model";
-  if (typeId === "type.material.spec") return "material specification";
-  if (typeId === "type.report.manufacturability") return "engineering report";
-  if (typeId === "type.file.step") return "STEP file";
-  if (typeId === "type.package.review") return "review ZIP file";
-  return "engineering input or output";
 }
 
 type RecoveryRoutingKind = "flow" | "feedback";
@@ -202,8 +183,6 @@ function PortRow({
   readonly keyboardSource: string | null;
   readonly onPortKey: (port: DraftPortProjection) => void;
 }) {
-  const runtime = useContext(RuntimeContext);
-  const artifactId = runtime.portArtifactIds[port.semanticId];
   const handle = (
     <Handle
       id={port.semanticId}
@@ -229,27 +208,9 @@ function PortRow({
     />
   );
   return (
-    <div className={`recovery-port recovery-port--${side}`} data-semantic-id={port.semanticId}>
+    <div className={`recovery-port recovery-port--${side}`} data-semantic-id={port.semanticId} title={port.name}>
       {side === "input" && handle}
-      <div className="recovery-port__copy">
-        <strong>{port.name}</strong>
-        <span>{portValueLabel(port.value_type_id)}</span>
-        <small>{portQualifier(port)}</small>
-      </div>
-      {artifactId && (
-        <button
-          type="button"
-          className="recovery-port__artifact nodrag nopan"
-          data-testid={`workflow-recovery-artifact-${port.semanticId}`}
-          aria-label={`Open ${port.name} ${side}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            runtime.onArtifactInspect(port.semanticId);
-          }}
-        >
-          ▧ <span>Open</span>
-        </button>
-      )}
+      <span className="recovery-port__tooltip" aria-hidden="true">{port.name}</span>
       {side === "output" && handle}
     </div>
   );
@@ -294,15 +255,17 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       <header>
         <span className="recovery-block__kind">{roleLabel[block.role]}</span>
         <span className={`recovery-state recovery-state--${data.runState}`} aria-label={`Run state ${data.runState}`}>
-          {stateGlyph[data.runState]} {data.runState.replace("-", " ")}
+          {stateGlyph[data.runState]}{data.runState === "idle" ? "" : ` ${data.runState.replace("-", " ")}`}
         </span>
       </header>
       <h3>{block.title}</h3>
-      {data.detailLevel === "detailed" && <p>{block.purpose}</p>}
+      <div className="recovery-block__io-summary" aria-label={`${block.inputs.length} inputs and ${block.outputs.length} outputs`}>
+        {block.inputs.length} in <span aria-hidden="true">→</span> {block.outputs.length} out
+      </div>
       {data.componentState !== null && (
-        <section className="recovery-component" aria-label={`${data.componentState.component.title} grouped review details`}>
+        <section className={`recovery-component${data.componentState.collapsed ? " is-collapsed" : ""}`} aria-label={`${data.componentState.component.title} grouped review details`}>
           <header>
-            <strong>{data.componentState.component.title}</strong>
+            <strong>Review group</strong>
             <button
               className="nodrag nopan"
               data-testid={`workflow-recovery-component-toggle-${block.semanticId}`}
@@ -321,28 +284,30 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
                 }
               }}
             >
-              {data.componentState.collapsed ? "Expand" : "Collapse"}
+              {data.componentState.collapsed ? "Details" : "Hide details"}
             </button>
           </header>
-          <small>Grouped review step · {data.componentState.internalAddressCount} technical item{data.componentState.internalAddressCount === 1 ? "" : "s"}</small>
           {data.componentState.targetedInternalSemanticIds.length > 0 && (
             <div className="recovery-component__targets" role="note">
-              <b>{data.componentState.targetedInternalSemanticIds.length} review item{data.componentState.targetedInternalSemanticIds.length === 1 ? " needs" : "s need"} attention</b>
-              {data.componentState.targetedInternalSemanticIds.map((id) => {
+              <b>{data.componentState.targetedInternalSemanticIds.length} issue{data.componentState.targetedInternalSemanticIds.length === 1 ? "" : "s"}</b>
+              {!data.componentState.collapsed && data.componentState.targetedInternalSemanticIds.map((id) => {
                 const address = data.componentState?.component.internalAddresses.find((item) => item.semanticId === id);
                 return <span key={id}>{componentAddressLabel(id, address?.conceptKind ?? "review item")}</span>;
               })}
             </div>
           )}
           {!data.componentState.collapsed && (
-            <ul data-testid={`workflow-recovery-component-addresses-${block.semanticId}`}>
-              {data.componentState.component.internalAddresses.map((address) => (
-                <li data-semantic-id={address.semanticId} key={address.semanticId}>
-                  <span>{componentAddressLabel(address.semanticId, address.conceptKind)}</span>
-                  <small>{address.conceptKind.replace("_", " ")}</small>
-                </li>
-              ))}
-            </ul>
+            <div className="recovery-component__details">
+              <small>{data.componentState.internalAddressCount} technical review items</small>
+              <ul data-testid={`workflow-recovery-component-addresses-${block.semanticId}`}>
+                {data.componentState.component.internalAddresses.map((address) => (
+                  <li data-semantic-id={address.semanticId} key={address.semanticId}>
+                    <span>{componentAddressLabel(address.semanticId, address.conceptKind)}</span>
+                    <small>{address.conceptKind.replace("_", " ")}</small>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </section>
       )}
@@ -352,7 +317,7 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       <div className="recovery-block__ports recovery-block__ports--outputs">
         {block.outputs.map((port) => <PortRow key={port.semanticId} port={port} side="output" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />)}
       </div>
-      {block.gates.length > 0 && <div className="recovery-block__gate">◇ Design approval required</div>}
+      {block.gates.length > 0 && <div className="recovery-block__gate">◇ Approval required</div>}
     </article>
   );
 });
@@ -389,7 +354,7 @@ function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, 
       <EdgeLabelRenderer>
         <button
           type="button"
-          className="recovery-edge__label nodrag nopan"
+          className={`recovery-edge__label nodrag nopan${selected || active ? " is-visible" : ""}`}
           style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY + labelOffsetY}px)` }}
           data-testid={`workflow-recovery-edge-select-${data?.semanticId ?? id}`}
           aria-label={`Select connection ${String(label ?? data?.semanticId ?? id)}`}
@@ -422,14 +387,10 @@ function RecoveryCanvasControls() {
 function RecoveryCanvasNavigator({
   projection,
   onSelect,
-  componentStates,
-  onToggleComponent,
   showSearch,
 }: {
   readonly projection: Parameters<typeof findBlockByIdentity>[0];
   readonly onSelect: (semanticId: string) => void;
-  readonly componentStates: readonly DraftComponentState[];
-  readonly onToggleComponent: (semanticId: string) => void;
   readonly showSearch: boolean;
 }) {
   const [query, setQuery] = useState("");
@@ -466,21 +427,6 @@ function RecoveryCanvasNavigator({
         <button data-testid="workflow-recovery-find-submit" type="submit">Show</button>
         {status !== "" && <output role="status" aria-live="polite">{status}</output>}
       </form>
-    )}
-    {componentStates.length > 0 && (
-      <div className="recovery-canvas__components nodrag nopan" aria-label="Grouped review step controls">
-        {componentStates.map((state) => (
-          <button
-            data-testid={`workflow-recovery-component-keyboard-${state.instanceSemanticId}`}
-            key={state.instanceSemanticId}
-            type="button"
-            aria-expanded={!state.collapsed}
-            onClick={() => onToggleComponent(state.instanceSemanticId)}
-          >
-            {state.collapsed ? "Show" : "Hide"} {state.component.title} details
-          </button>
-        ))}
-      </div>
     )}
   </>;
 }
@@ -721,8 +667,6 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         <RecoveryCanvasNavigator
           projection={projection}
           onSelect={(semanticId) => onIntent({ type: "select", semanticId })}
-          componentStates={[...componentStates.values()]}
-          onToggleComponent={toggleComponent}
           showSearch={detailLevel === "compact"}
         />
         <RecoveryCanvasControls />

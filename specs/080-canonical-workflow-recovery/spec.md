@@ -184,6 +184,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **FR-054**: Existing workspace workflow behavior MUST remain available on ordinary workspace routes; the canonical editor MUST be entered through an explicit workspace-scoped action while it remains feature-gated.
 - **FR-055**: Internally, canonical schemas, typed IDs, immutable revisions, semantic digests, atomic commands, conflict detection, validation, tracing, and evidence vocabulary MUST remain precise and testable even when the primary engineer-facing labels are friendlier.
 - **FR-056**: Workspace context MUST be the ownership boundary for the workflow definition and any attached inputs or produced outputs; the concept MUST NOT imply that simulated inputs or outputs are durably stored when they are not.
+- **FR-057**: The default canvas MUST be an overview rather than a complete technical report: each visible block MUST lead with its engineering role, name, run state, and compact input/output count; connection points MUST remain small but keyboard-operable; port names, exact types, requiredness, cardinality, artifact actions, connection labels, and reusable-component internals MUST appear on focus, selection, explicit disclosure, or in the inspector instead of remaining persistently rendered across the graph.
 
 ### Key Entities
 
@@ -229,6 +230,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **SC-018**: At exactly 1070 by 791 pixels, automated browser evidence reports no document overflow, no overlapping editor columns, and no unreachable save or inspector action.
 - **SC-019**: The nine-step acceptance workflow exposes no graph search control, while a 26-step fixture exposes a usable search control; both retain keyboard navigation and the minimap's explicit current-view frame.
 - **SC-020**: One workspace has exactly one visible `.workflow.wflow` definition after explicit creation and save; host-managed metadata remains non-authorable, and layout/run changes do not alter the saved semantic source bytes.
+- **SC-021**: At 1537 by 791 and 1070 by 791 pixels, all nine workflow step titles and the primary left-to-right topology remain readable without persistent edge-label or per-port metadata clutter; the default nodes use compact connection points and summaries, while keyboard focus or inspector selection exposes the complete accessible port and artifact contracts.
 
 ## Assumptions
 

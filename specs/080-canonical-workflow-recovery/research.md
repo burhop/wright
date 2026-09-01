@@ -100,6 +100,7 @@ New local browser evidence closes the prototype’s most important gap:
 - workspace-only route isolation and lazy loading;
 - no step-search control through 25 steps, with search available at 26 or more;
 - fixed-height 1070×791 application containment with no document/page scrolling.
+- overview-first nine-step projection at 1537×791 and 1070×791: compact 224 px blocks, 10 px visible sockets with larger invisible hit targets, relationship labels shown only on focus/selection/activity, and component internals behind a Details action.
 
 The nine-step product journey is proven on the prior `c5fb7d8e` correction subject, but the workspace-owned correction still needs a fresh exact committed walkthrough. The prior single-run 100-node prototype observation is retained only as non-qualifying evidence; bounded automated 25/26/100-step navigation does not close production scale.
 
@@ -113,7 +114,7 @@ Three treatments use the same `Approved geometry` port and state language:
 | Terminal block | square electrical terminal | separate inspect control | connection affordance is forceful | visually heavy and domain-specific |
 | Hybrid terminal | outlined asymmetric socket | labeled `▧ artifact` control | connection and artifact action have distinct shape, label, and hit target | needs moderated confirmation at multiple densities |
 
-The concept uses the hybrid treatment. This is an expert comparative choice, not an engineer-study result. An unprompted product reviewer must still connect a port and inspect its artifact without coaching; hesitation is a stop condition. See [evidence/block-port-lab.md](evidence/block-port-lab.md).
+The comparison remains available in the connection-style preview, but the default canvas now uses the compact round/dot treatment after the requesting engineer found the prior hybrid terminals and persistent metadata too visually heavy. The visible socket is 10 px with a larger invisible pointer target; keyboard focus exposes the friendly item name, and the inspector carries the complete contract and artifact action. This is still one engineer's formative correction, not the representative study required by T056. See [evidence/block-port-lab.md](evidence/block-port-lab.md).
 
 ## Risks carried beyond approval
 

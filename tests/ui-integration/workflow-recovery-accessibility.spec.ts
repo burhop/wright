@@ -39,12 +39,10 @@ test("supports representative authoring and component inspection with keyboard a
 
   const componentNode = page.getByTestId("workflow-recovery-block-block.review-design");
   const componentToggle = page.getByTestId("workflow-recovery-component-toggle-block.review-design");
-  const componentKeyboard = page.getByTestId("workflow-recovery-component-keyboard-block.review-design");
-  await componentKeyboard.focus();
-  await expect(componentKeyboard).toBeFocused();
+  await componentToggle.focus();
+  await expect(componentToggle).toBeFocused();
   await expect(componentNode).toHaveAttribute("aria-expanded", "false");
   await page.keyboard.press("Enter");
-  await expect(componentKeyboard).toHaveAttribute("aria-expanded", "true");
   await expect(componentToggle).toHaveAttribute("aria-expanded", "true");
   await expect(componentNode).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design"))
@@ -101,15 +99,20 @@ test("keeps the complete screen-reader contract available at a two-times page sc
   await expect(page.getByRole("tablist", { name: "Step detail sections" })).toBeVisible();
   await expect(page.getByLabel("Mounting bracket workflow diagram")).toBeVisible();
   await expect(page.getByRole("button", { name: "Connect from Approved CAD model output" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Open Approved CAD model output" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open Approved CAD model output" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Fit workflow to view" })).toBeVisible();
+  await page.getByTestId("workflow-recovery-block-block.review-design").focus();
+  await page.keyboard.press("Enter");
+  await page.getByTestId("workflow-recovery-inspector-tab-outputs").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Approved CAD model");
 
   const aria = await concept.ariaSnapshot();
   expect(aria).toContain('heading "Mounting bracket workflow" [level=1]');
   expect(aria).toContain('tablist "Workflow view"');
-  expect(aria).toContain('button "Expand"');
+  expect(aria).toContain('button "Details"');
   expect(aria).toContain('button "Connect from Approved CAD model output"');
-  expect(aria).toContain('button "Open Approved CAD model output"');
+  expect(aria).not.toContain('button "Open Approved CAD model output"');
 
   const serious = (await new AxeBuilder({ page }).include('[data-testid="workflow-recovery-concept"]').analyze())
     .violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical")

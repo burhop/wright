@@ -159,12 +159,14 @@ test("expands a reusable component without adding search clutter to a small grap
   const digest = await concept.getAttribute("data-semantic-digest");
   const component = page.getByTestId("workflow-recovery-block-block.review-design");
   await expect(component).toHaveAttribute("data-component-collapsed", "true");
-  await expect(component).toContainText("Grouped review step · 4 technical items");
-  await expect(component).toContainText("1 review item needs attention");
+  await expect(component).toContainText("Review group");
+  await expect(component).toContainText("1 issue");
+  await expect(component).not.toContainText("technical review items");
   await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design")).toHaveCount(0);
 
   await page.getByTestId("workflow-recovery-component-toggle-block.review-design").click();
   await expect(component).toHaveAttribute("data-component-collapsed", "false");
+  await expect(component).toContainText("4 technical review items");
   await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design"))
     .toContainText("Accept the reviewed design");
 
@@ -225,7 +227,7 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await page.getByRole("button", { name: "Connection style preview" }).click();
   await expect(page.getByTestId("workflow-port-lab-dot")).toBeVisible();
   await expect(page.getByTestId("workflow-port-lab-terminal")).toBeVisible();
-  await expect(page.getByTestId("workflow-port-lab-hybrid")).toHaveClass(/is-selected/);
+  await expect(page.getByTestId("workflow-port-lab-dot")).toHaveClass(/is-selected/);
   await page.getByRole("button", { name: "dot connect socket" }).click();
   await expect(page.getByTestId("workflow-port-lab-dot")).toContainText("Connection started");
   await page.getByRole("button", { name: "dot open CAD model" }).click();
@@ -265,7 +267,8 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await page.getByLabel("Thickness (mm)").fill("8");
   await page.getByTestId("workflow-recovery-config-apply").click();
   await expect(concept).toHaveAttribute("data-revision", "7");
-  await page.getByTestId("workflow-recovery-edge-select-rel.review-revise").click();
+  await page.getByTestId("workflow-recovery-edge-select-rel.review-revise").focus();
+  await page.keyboard.press("Enter");
   await page.getByLabel("Condition or reason").fill("A requirement or manufacturability warning requires revision");
   await page.getByTestId("workflow-recovery-relationship-apply-rel.review-revise").click();
   await expect(concept).toHaveAttribute("data-revision", "8");
@@ -321,9 +324,9 @@ test("uses real typed handles and preserves revision during a simulated run", as
   const draggable = page.locator('.react-flow__node[data-id="block.generate-geometry"]');
   const dragBox = await draggable.boundingBox();
   expect(dragBox).not.toBeNull();
-  await page.mouse.move(dragBox!.x + dragBox!.width / 2, dragBox!.y + 45);
+  await page.mouse.move(dragBox!.x + dragBox!.width / 2, dragBox!.y + dragBox!.height / 2);
   await page.mouse.down();
-  await page.mouse.move(dragBox!.x + dragBox!.width / 2 + 80, dragBox!.y + 75, { steps: 10 });
+  await page.mouse.move(dragBox!.x + dragBox!.width / 2 + 80, dragBox!.y + dragBox!.height / 2 + 30, { steps: 10 });
   await expect.poll(async () => (await draggable.boundingBox())?.x ?? dragBox!.x).toBeGreaterThan(dragBox!.x + 40);
   await expect(concept).toHaveAttribute("data-revision", "2");
   await expect(concept).toHaveAttribute("data-semantic-digest", semanticBeforeDrag!);
@@ -350,7 +353,8 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await exportNode.press("Enter");
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Export approved STEP file");
 
-  await page.getByTestId("workflow-recovery-edge-select-rel.review-to-export").click();
+  await page.getByTestId("workflow-recovery-edge-select-rel.review-to-export").focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByTestId("workflow-recovery-disconnect-rel.review-to-export")).toBeVisible();
   await page.getByTestId("workflow-recovery-disconnect-rel.review-to-export").click();
   await expect(concept).toHaveAttribute("data-revision", "3");
@@ -365,7 +369,8 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await expect(page.getByTestId("workflow-recovery-edge-rel.review-to-export")).toBeVisible();
   await expect(concept).toHaveAttribute("data-revision", "4");
 
-  await page.getByTestId("workflow-recovery-edge-select-rel.review-to-export").click();
+  await page.getByTestId("workflow-recovery-edge-select-rel.review-to-export").focus();
+  await page.keyboard.press("Enter");
   await page.getByTestId("workflow-recovery-disconnect-rel.review-to-export").click();
   await expect(concept).toHaveAttribute("data-revision", "5");
   await sourceHandle.focus();
