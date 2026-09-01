@@ -6,7 +6,7 @@
 
 ## Summary
 
-Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; T052–T055 promote stable definition, layout, execution, reusable-component identity, collapsed-graph interaction, and bounded large-graph navigation. T057 qualifies exact RBAC scope, fail-closed secret handling, resource isolation, and offline restart. T059 qualifies deterministic local package candidates, Windows native lifecycle/rollback, Docker smoke, and a zero-mutation rehearsal at exact subject `fe6140d8`. T056's human gates and T058's independent-oracle qualification remain open. Push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
+Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 records the requesting user's approval of the canvas-first direction; after hands-on mechanical-engineer feedback, the current correction subject is `533b7157`, with a revision-2 nine-step workflow in which reference images, design intent as text/common document, and approved company context feed one reviewed design specification before CAD and downstream tolerance work. T052–T055 promote stable definition, layout, execution, reusable-component identity, collapsed-graph interaction, and bounded large-graph navigation. T057 qualifies exact RBAC scope, fail-closed secret handling, resource isolation, and offline restart. T059 qualifies deterministic local package candidates, Windows native lifecycle/rollback, Docker smoke, and a zero-mutation rehearsal at exact subject `fe6140d8`. T056's representative-participant and real assistive-technology gates and T058's independent-oracle qualification remain open. Push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
 
 ## Technical Context
 
@@ -22,7 +22,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Project Type**: Existing modular-monorepo local web application with Python domain/services and React frontend
 
-**Performance Goals**: A valid graphical or text edit updates its paired projection within 1 second; invalid edits preserve the prior graph immediately; active run overlays update within 1 second; the final concept remains responsive for its 6-block acceptance workflow while retaining the frozen prototype's single non-qualifying 100-block observation only as provisional scale evidence
+**Performance Goals**: A valid graphical or text edit updates its paired projection within 1 second; a dragged block follows the pointer before mouse-up while semantic and layout identities remain unchanged until the atomic layout command is accepted; invalid edits preserve the prior graph immediately; active run overlays update within 1 second; the final concept remains responsive for its nine-step acceptance workflow while retaining the frozen prototype's single non-qualifying 100-block observation only as provisional scale evidence
 
 **Constraints**: Offline-first; one integration writer; no Rivet or orchestration resurrection; no renderer/source/run authority; no AI direct mutation/execution/approval; no benchmark qualification; locally safe post-approval work only; local build/rehearsal is not production release authority; no push, merge, publication, release, customer action, destructive external change, or material product-direction change under the current authorization
 
@@ -32,7 +32,7 @@ human oracle/holdout/population/license decisions and B01 dependencies remain
 unresolved. The deterministic preflight therefore remains `BLOCKED` at `0/100`
 with zero cases and zero state violations.
 
-**Scale/Scope**: One coherent mounting-bracket workflow with 6–8 visible blocks, typed ports, a gate/feedback path, exact binding disclosure, attached input, reviewed AI proposal, simulated immutable run, and recognizable output; three syntax treatments; three block/port treatments; one product-owner walkthrough
+**Scale/Scope**: One coherent mounting-bracket workflow with nine visible steps, three explicit source inputs and provenance, one reviewed design specification, typed ports, a gate/feedback path, exact binding disclosure, contextual downstream additions, reviewed AI proposal, simulated immutable run, and recognizable output; three syntax treatments; three block/port treatments; one requesting mechanical engineer's hands-on correction pass plus a still-open representative-participant protocol
 
 ## Constitution Check
 
@@ -44,9 +44,9 @@ with zero cases and zero state violations.
 - **Embedded state — PASS**: retained stores remain untouched. Stable definitions, layouts, and canonical execution records now have separate SQLite authorities. The recovery UI's simulated runner remains disposable presentation evidence and gains no external execution authority.
 - **Security, RBAC, and authority — PASS**: no new external write or runtime authority. T057 proves exact workspace/session lookup, exact one-shot mutating capability grants, administrator-only attachment authority, fail-closed secret rejection before canonical hashing/immutable persistence, and bounded command/envelope resources. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
 - **Engineering tooling protocol — PASS**: exact tool/MCP bindings are modeled and inspectable, but no GUI-only agent execution or tool invocation occurs.
-- **UI atomic design — PASS**: the recovery stylesheet has zero raw color
-  literals, 184 references to shared Wright tokens, and no malformed token
-  expressions. One-off geometry dimensions are centralized as recovery tokens;
+- **UI atomic design — PASS**: the recovery stylesheet routes semantic color,
+  contrast, focus, surface, and state styling through shared Wright tokens and
+  contains no malformed token expressions. One-off geometry dimensions are centralized as recovery tokens;
   canvas dimensions and responsive breakpoints remain documented structural
   exceptions. React Flow stays behind the existing adapter rather than becoming
   semantic authority.
@@ -63,7 +63,7 @@ with zero cases and zero state violations.
   the host-component regression enumerates rendered interactive elements and
   fails if an ID is missing.
 - **Observability and transparency — PASS**: the walkthrough captures trace, console/page/network failures, raw/annotated screenshots, proposal assumptions/diff, run activity, artifact lineage, and known limitations.
-- **Phase isolation and manual gate — PASS**: this plan is the recovery implementation authority supplied by the user. The exact `f9237763` subject passed the explicit product-review checkpoint; only dependency-ordered locally safe follow-on work is authorized.
+- **Phase isolation and manual gate — PASS**: this plan is the recovery implementation authority supplied by the user. The initial `f9237763` subject records approval of the canvas-first direction; the current `533b7157` correction subject remains within that direction and is separately bound to fresh walkthrough evidence before its approval record is refreshed. One requesting mechanical engineer's feedback is recorded honestly and does not close T056's representative-participant or real screen-reader gates. Only dependency-ordered locally safe follow-on work is authorized.
 - **Branch discipline — PASS**: all writes occur on `codex/080-canonical-workflow-recovery`, based exactly on frozen `b4a7e996`; no direct `dev` or `main` action is planned.
 - **Post-design recheck — PASS**: the contracts keep semantic definition, layout, command candidates, proposals, and immutable run records separate; no constitutional exception is introduced.
 
@@ -74,6 +74,7 @@ with zero cases and zero state violations.
 3. **Production foundations retained**: canonical draft and separate digests; complete validation; immutable revisions and head CAS; service/API/browser closed decoding; renderer-neutral projection and intent seam; strict process-definition parser/canonical vectors.
 4. **Current shell disposition**: retain backend/domain seams, revise the interaction/product grammar, and freeze custom SVG/HTML canvas polish. T028–T038 remain paused.
 5. **Recovery code disposition**: ADR 0002 promotes only renderer-neutral definition, validation, atomic-command, semantic-diff, projection, migration, and storage concepts. React Flow, the DSL editor, simulated AI proposal, simulated run, and layout remain concept code.
+6. **Mechanical-engineer correction**: preserve the seven-issue failed-first checkpoint, replace the fictional PDF brief with three provenance-labeled engineering sources feeding one reviewed design specification, make tolerance inspection downstream, project live drag before atomic release, remove decorative phase backdrops, clarify the minimap, and keep internal IDs behind Technical details. The current correction subject is `533b7157` (tree `caa83fc7`).
 
 ## Architecture and Boundaries
 
@@ -231,7 +232,8 @@ tests/recovery/
 tests/ui-integration/
 └── workflow-recovery.spec.ts
 
-artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
+artifacts/ui-walkthrough/workflow-recovery/<historical-timestamp>/
+artifacts/ui-walkthrough/workflow-recovery-usability/<correction-timestamp>/
 ```
 
 **Structure Decision**: Keep the recovery interaction code in its explicitly named concept module. After approval, promote only its renderer-neutral semantic concepts into `core` and an independent `data_vault` sidecar under ADR 0002. Evidence generators live under `scripts/recovery`; product evidence and decisions live under spec 080; the walkthrough remains a timestamped immutable artifact.
@@ -244,9 +246,10 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 4. Generate identical JSON/YAML/DSL workflows, execute the same edit/error corpus, record measured and qualitative evidence, and select only a provisional concept syntax.
 5. Implement and test the conformance kernel plus its required round-trip, containment, digest, revision, proposal, and run-separation invariants.
 6. Build and compare three block/port treatments; select the treatment with distinct connection and artifact-inspection targets.
-7. Build the full React Flow recovery concept over the existing adapter, including manual editing, attachments, Diagram/Code/Split, AI preview/accept/reject, run overlays, diagnosis/recovery, and output actions.
+7. Build the full React Flow recovery concept over the existing adapter, including three explicit engineering source inputs, one reviewed design specification, contextual downstream editing, Diagram/Code/Split, AI preview/accept/reject, run overlays, diagnosis/recovery, and output actions.
 8. Run the complete Playwright walkthrough with raw/annotated screenshots, trace, diagnostics, and clickable report. Stop immediately on unresolved product ambiguity under the walkthrough rule.
 9. Update dashboard and program/spec/roadmap/parity/tasks artifacts, run Spec Kit consistency analysis, bind the exact subject to product-owner direction approval, and continue only the authorized dependency-ordered locally safe work.
+10. Apply the requesting mechanical engineer's hands-on correction feedback, rerun focused and broad validation, capture a fresh exact-subject walkthrough, and refresh the approval/dashboard evidence while keeping T056 open.
 
 ## Test and Evidence Gates
 
@@ -261,8 +264,8 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
   through the explicit digest-bound migration. Unknown inputs are preserved unchanged.
 - **Component identity**: collapsed reusable components expose non-empty scoped
   internal semantic addresses that diagnostics and run lineage can retain.
-- **Renderer**: visible left/right handles, drag, connect, disconnect, selection, separate artifact controls, non-color active overlays, and a keyboard path; the frozen prototype's single 100-node observation remains explicitly non-qualifying and production-scale evidence stays deferred.
-- **Product journey**: one coherent no-code graphical path plus valid/invalid code edits, proposal review, needs-input recovery, and recognizable output.
+- **Renderer**: visible left/right handles, pointer-following drag before atomic release, connect, disconnect, selection, edge labels that do not obstruct blocks, a visible minimap frame, separate output controls, non-color active overlays, and a keyboard path; decorative phase backdrops are omitted while phase remains canonical metadata. The frozen prototype's single 100-node observation remains explicitly non-qualifying and production-scale evidence stays deferred.
+- **Product journey**: reference images, ordinary text/common-document design intent, and approved company context visibly feed one reviewed design specification; tolerance inspection appears only in downstream CAD context; the same coherent journey includes valid/invalid code edits, proposal review, needs-input recovery, and recognizable output.
 - **Responsiveness**: local command application plus graph→text,
   text→graph, and run-overlay browser transitions each remain below the explicit
   one-second recovery bound.
