@@ -202,3 +202,23 @@ while fit, minimap, stable-ID search, and selection remain available. The final
 Chromium suite reports 6 passed. See
 `evidence/component-large-graph-promotion.md`; its 100-block result is bounded
 behavior evidence, not a production performance benchmark.
+
+## Verify the automated portion of T056
+
+```powershell
+$env:WRIGHT_PLAYWRIGHT_PORT = "5195"
+npx playwright test `
+  tests/ui-integration/workflow-recovery.spec.ts `
+  tests/ui-integration/workflow-recovery-accessibility.spec.ts `
+  --project=chromium
+```
+
+Expected: 8/8 pass. The focused accessibility file proves keyboard activation
+and focus order, modal focus containment/return, a two-times Chromium page
+scale, accessibility-tree names/roles, zero serious/critical Axe findings, and
+zero document overflow. See `evidence/accessibility-qualification.md`.
+
+T056 remains open: an accessibility-tree snapshot is not a real screen-reader
+session, and the representative-engineer study in
+`evidence/moderated-engineer-usability-protocol.md` has not been run. Do not
+mark either gate complete from automation or protocol preparation.

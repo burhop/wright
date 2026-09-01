@@ -23,7 +23,7 @@
 | Run overlay | excluded | strong visual fixtures | queued/running/needs-input/blocked/failed/stale/succeeded | UI remains simulated; T054 separately proves durable immutable production run records |
 | Recovery action | excluded | fixture | supply 6061-T6 with consequence text | exact subject approved; production wording hardening remains |
 | Output recognition/lineage | excluded | visual concept | bracket preview, report, STEP download, producer/run/revision/type/digest | browser download passes; fixture is simulated |
-| Accessibility | later checkpoint | partial | stable controls, focus trap/return, keyboard handles, axe zero serious/critical, reduced motion | bounded concept evidence passes; broad qualification remains downstream |
+| Accessibility | later checkpoint | partial | stable controls, focus trap/return, keyboard handles/component disclosure, 2× scale, named accessibility tree, axe zero serious/critical, reduced motion | automated T056 portion passes; real assistive-technology and moderated engineer gates remain open |
 | Mobile containment | not target | unproven | 390×844 no document overflow | passing annotated walkthrough captured; representative usability open |
 | Reusable component collapse | unproven | model-only | stable internal scopes, collapsed target summary, and expansion | T055 renderer and Chromium tests pass without semantic/revision mutation |
 | 100-node behavior | unproven | one non-qualifying run | deterministic compact mode, fit/minimap, stable identity search and selection | T055 automated behavior passes; representative production performance remains open |

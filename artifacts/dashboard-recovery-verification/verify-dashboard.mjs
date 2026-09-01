@@ -30,7 +30,7 @@ async function inspect(name, viewport, screenshot) {
     manifest: body.includes("f2b4964e"),
     recoveryLedger: body.includes("55/60"),
     productionBoundary: body.includes(
-      "T055 reusable-component collapse/expand, internal target identity, deterministic large-graph compact mode, and stable-ID navigation are complete",
+      "T056 automated keyboard, focus-order, 2× page-scale, accessibility-tree, Axe, reduced-motion, and responsive qualification pass",
     ),
     approval: body.includes("T051 exact-subject product/visual approval is complete"),
     readiness: body.includes("Customer readiness is incomplete"),
