@@ -924,7 +924,12 @@ try {
   await page.getByTestId("workflow-recovery-source-editor").fill(localConflictSource);
   await recordAction({ action: "Entered a distinct local semantic edit against the now-stale page identity.", control: "Workflow source", value: "Create bracket CAD model local conflict", expected: "The local source is not overwritten by the second writer.", actual: "The local source retained its own CAD title and remained unapplied until checked." });
   await page.getByTestId("workflow-recovery-source-apply").click();
-  await page.getByTestId("workflow-recovery-block-block.generate-geometry").filter({ hasText: "local conflict" }).waitFor({ state: "visible" });
+  await page.getByTestId("workflow-recovery-view-split").click();
+  await waitForValue(
+    () => page.getByTestId("workflow-recovery-block-block.generate-geometry").innerText(),
+    (value) => value.includes("local conflict"),
+    "local conflict source-to-diagram synchronization",
+  );
   await completeStep("S14", "14-real-second-writer", "Real second writer plus distinct local edit", [
     { selector: testIdSelector("workflow-recovery-source-editor"), label: "Local conflict source is visible" },
     { selector: testIdSelector("workflow-recovery-block-block.generate-geometry"), label: "Local diagram says local conflict" },
