@@ -218,6 +218,8 @@
 .recovery-canvas__find input { min-width: 0; padding: var(--recovery-size-6) var(--recovery-size-8); border: var(--recovery-size-1) solid var(--color-border); border-radius: var(--recovery-radius-sm); background: var(--color-surface); color: var(--color-primary); }
 .recovery-canvas__find button { padding: var(--recovery-size-6) var(--recovery-size-8); border: var(--recovery-size-1) solid var(--recovery-teal); border-radius: var(--recovery-radius-sm); background: var(--color-surface); color: var(--color-primary); font-weight: 800; }
 .recovery-canvas__find output { grid-column: 1 / -1; min-height: 1em; color: var(--recovery-muted); font-size: var(--recovery-size-8); }
+.recovery-canvas__components { display: flex; grid-column: 1 / -1; flex-wrap: wrap; gap: var(--recovery-size-5); border-top: var(--recovery-size-1) solid var(--color-border); padding-top: var(--recovery-size-5); }
+.recovery-canvas__components::before { align-self: center; color: var(--recovery-muted); content: "Components"; font-size: var(--recovery-size-8); font-weight: 800; text-transform: uppercase; }
 .recovery-edge { cursor: pointer; }
 .recovery-edge path.react-flow__edge-path { stroke: var(--color-secondary); stroke-width: 2; }
 .recovery-edge.is-selected path.react-flow__edge-path { stroke: var(--color-primary); stroke-width: 3; }

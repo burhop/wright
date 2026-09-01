@@ -192,12 +192,22 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       data-detail-level={data.detailLevel}
       role="group"
       aria-label={`${block.title} workflow block`}
+      aria-expanded={data.componentState === null ? undefined : !data.componentState.collapsed}
+      aria-description={data.componentState === null ? undefined : "Use Right Arrow to expand this reusable component and Left Arrow to collapse it."}
       tabIndex={0}
       onClick={() => data.onSelect(block.semanticId)}
       onKeyDown={(event) => {
-        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
-          event.preventDefault();
-          data.onSelect(block.semanticId);
+        if (event.target === event.currentTarget) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            data.onSelect(block.semanticId);
+          } else if (data.componentState !== null && event.key === "ArrowRight" && data.componentState.collapsed) {
+            event.preventDefault();
+            data.onToggleComponent(block.semanticId);
+          } else if (data.componentState !== null && event.key === "ArrowLeft" && !data.componentState.collapsed) {
+            event.preventDefault();
+            data.onToggleComponent(block.semanticId);
+          }
         }
       }}
     >
@@ -219,10 +229,18 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
               className="nodrag nopan"
               data-testid={`workflow-recovery-component-toggle-${block.semanticId}`}
               type="button"
+              tabIndex={0}
               aria-expanded={!data.componentState.collapsed}
               onClick={(event) => {
                 event.stopPropagation();
                 data.onToggleComponent(block.semanticId);
+              }}
+              onKeyDown={(event) => {
+                event.stopPropagation();
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  data.onToggleComponent(block.semanticId);
+                }
               }}
             >
               {data.componentState.collapsed ? "Expand" : "Collapse"}
@@ -321,9 +339,13 @@ function RecoveryCanvasControls() {
 function RecoveryCanvasNavigator({
   projection,
   onSelect,
+  componentStates,
+  onToggleComponent,
 }: {
   readonly projection: Parameters<typeof findBlockByIdentity>[0];
   readonly onSelect: (semanticId: string) => void;
+  readonly componentStates: readonly DraftComponentState[];
+  readonly onToggleComponent: (semanticId: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
@@ -357,6 +379,21 @@ function RecoveryCanvasNavigator({
       />
       <button data-testid="workflow-recovery-find-submit" type="submit">Focus</button>
       {status !== "" && <output role="status" aria-live="polite">{status}</output>}
+      {componentStates.length > 0 && (
+        <div className="recovery-canvas__components" aria-label="Reusable component view controls">
+          {componentStates.map((state) => (
+            <button
+              data-testid={`workflow-recovery-component-keyboard-${state.instanceSemanticId}`}
+              key={state.instanceSemanticId}
+              type="button"
+              aria-expanded={!state.collapsed}
+              onClick={() => onToggleComponent(state.instanceSemanticId)}
+            >
+              {state.collapsed ? "Expand" : "Collapse"} {state.component.title}
+            </button>
+          ))}
+        </div>
+      )}
     </form>
   );
 }
@@ -383,6 +420,12 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
     () => new Map(projectComponentStates(projection, collapsedComponentIds, componentTargets).map((state) => [state.instanceSemanticId, state])),
     [projection, collapsedComponentIds, componentTargets],
   );
+  const toggleComponent = (semanticId: string) => setExpandedComponentIds((current) => {
+    const next = new Set(current);
+    if (next.has(semanticId)) next.delete(semanticId);
+    else next.add(semanticId);
+    return next;
+  });
   const gateOwners = useMemo(() => new Map(blocks.flatMap((block) => block.gates.map((gate) => [gate.semanticId, block.semanticId] as const))), [blocks]);
 
   const portLookup = useMemo(() => new Map(blocks.flatMap((block) => [...block.inputs, ...block.outputs]).map((port) => [port.semanticId, port])), [blocks]);
@@ -413,12 +456,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       keyboardSource,
       onSelect: (semanticId) => onIntent({ type: "select", semanticId }),
       onPortKey,
-      onToggleComponent: (semanticId) => setExpandedComponentIds((current) => {
-        const next = new Set(current);
-        if (next.has(semanticId)) next.delete(semanticId);
-        else next.add(semanticId);
-        return next;
-      }),
+      onToggleComponent: toggleComponent,
     },
   }));
 
@@ -505,12 +543,32 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
               event.preventDefault();
               onIntent({ type: "select", semanticId: node.dataset.id ?? null });
             }
+            return;
+          }
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            const target = event.target instanceof HTMLElement ? event.target : null;
+            const node = target?.closest<HTMLElement>('.react-flow__node[data-id]');
+            const semanticId = node?.dataset.id;
+            const componentState = semanticId === undefined ? undefined : componentStates.get(semanticId);
+            if (node && target === node && componentState !== undefined) {
+              const shouldExpand = event.key === "ArrowRight" && componentState.collapsed;
+              const shouldCollapse = event.key === "ArrowLeft" && !componentState.collapsed;
+              if (shouldExpand || shouldCollapse) {
+                event.preventDefault();
+                toggleComponent(componentState.instanceSemanticId);
+              }
+            }
           }
         }}
       >
         <Background color="var(--recovery-grid)" gap={24} size={1} />
         <MiniMap nodeStrokeWidth={3} ariaLabel="Workflow overview map" data-testid="workflow-recovery-minimap" />
-        <RecoveryCanvasNavigator projection={projection} onSelect={(semanticId) => onIntent({ type: "select", semanticId })} />
+        <RecoveryCanvasNavigator
+          projection={projection}
+          onSelect={(semanticId) => onIntent({ type: "select", semanticId })}
+          componentStates={[...componentStates.values()]}
+          onToggleComponent={toggleComponent}
+        />
         <RecoveryCanvasControls />
       </ReactFlow>
     </div>
