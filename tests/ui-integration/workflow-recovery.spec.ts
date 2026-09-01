@@ -87,6 +87,10 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(concept).toHaveAttribute("data-revision", "2");
   await expect(page.getByText("PROVISIONAL · NOT PRODUCTION")).toBeVisible();
   await expect(page.getByText("SIMULATION", { exact: true })).toBeVisible();
+  const filebar = page.getByTestId("workflow-recovery-filebar");
+  await expect(filebar).toContainText("mounting-bracket.workflow.wflow · one workflow file · all views synchronized");
+  expect((await filebar.boundingBox())?.height).toBeLessThanOrEqual(72);
+  await expect(page.getByText(/Build and review the work as a diagram/)).toHaveCount(0);
   await expect(page.locator(".react-flow__node")).toHaveCount(9);
   await expect(page.getByTestId("workflow-recovery-input-source-reference-images")).toContainText("Engineer upload");
   await expect(page.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toContainText("Typed text or common document");

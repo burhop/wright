@@ -25,6 +25,8 @@ describe("WorkflowRecoveryConcept component states", () => {
     const { container } = render(<WorkflowRecoveryConcept />);
     expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-authority")).toHaveTextContent("Current workflow version 2");
+    expect(screen.getByTestId("workflow-recovery-filebar")).toHaveTextContent("mounting-bracket.workflow.wflow · one workflow file · all views synchronized");
+    expect(screen.queryByText(/Build and review the work as a diagram/)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Three source inputs" })).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("Engineer upload");
     expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("JPG or PNG images");

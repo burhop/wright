@@ -471,11 +471,13 @@ function WorkflowRecoveryReadyConcept() {
       data-semantic-digest={semanticDigest}
       data-layout-digest={layoutDigest}
     >
-      <header className="recovery-hero">
-        <div>
-          <div className="recovery-kicker">Engineering workflow builder · local concept</div>
-          <h1>Mounting bracket workflow</h1>
-          <p>Build and review the work as a diagram with design files, editable step instructions, an AI suggestion, and a simulated run.</p>
+      <header className="recovery-filebar" data-testid="workflow-recovery-filebar">
+        <div className="recovery-filebar__identity">
+          <span className="recovery-filebar__icon" aria-hidden="true">WF</span>
+          <div>
+            <h1>Mounting bracket workflow</h1>
+            <small title="Diagram, Code, and the inspector read this workflow file. Layout and workflow-test records are stored separately.">mounting-bracket.workflow.wflow · one workflow file · all views synchronized</small>
+          </div>
         </div>
         <div className="recovery-authority" data-testid="workflow-recovery-authority" data-revision={workflow.revision} data-semantic-digest={semanticDigest} data-layout-digest={layoutDigest}>
           <b>PROVISIONAL · NOT PRODUCTION</b>
