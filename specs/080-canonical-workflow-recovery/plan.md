@@ -26,6 +26,12 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Constraints**: Offline-first; one integration writer; no Rivet or orchestration resurrection; no renderer/source/run authority; no AI direct mutation/execution/approval; no benchmark qualification; locally safe post-approval work only; no push, merge, publication, release, customer action, destructive external change, or material product-direction change under the current authorization
 
+**Benchmark preflight**: T058 may audit schemas, decisions, dependencies, and
+the honest denominator, but cannot generate or count a case while the named
+human oracle/holdout/population/license decisions and B01 dependencies remain
+unresolved. The deterministic preflight therefore remains `BLOCKED` at `0/100`
+with zero cases and zero state violations.
+
 **Scale/Scope**: One coherent mounting-bracket workflow with 6–8 visible blocks, typed ports, a gate/feedback path, exact binding disclosure, attached input, reviewed AI proposal, simulated immutable run, and recognizable output; three syntax treatments; three block/port treatments; one product-owner walkthrough
 
 ## Constitution Check
@@ -263,6 +269,7 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 - **Walkthrough**: progress/status/report remain current after every action; raw and annotated images are separate; browser diagnostics are captured; validator has zero missing evidence fields.
 - **Program**: dashboard names the recovery goal as in progress while EPP-F02C remains proposed and unregistered, keeps the governed F02B ledger separate from a recovery task projection, orders checkpoint history newest-first, and leaves customer readiness incomplete.
 - **Security/offline**: exact capability and workspace/session scopes fail closed; secret-shaped keys, bearer/assignment material, and credential-bearing URLs cannot enter canonical or immutable records; oversized batches/envelopes fail before write; definition/layout/run sidecars remain isolated and reopen with zero network calls.
+- **Benchmark preflight**: schemas compile and denominator/case/decision/dependency drift fails closed. Current output is intentionally blocked at `0/100`; no self-authored oracle, visible fake holdout, or unapproved case can create qualification evidence.
 
 ## Resource Strategy
 

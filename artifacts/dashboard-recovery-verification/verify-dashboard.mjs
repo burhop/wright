@@ -30,7 +30,7 @@ async function inspect(name, viewport, screenshot) {
     manifest: body.includes("f2b4964e"),
     recoveryLedger: body.includes("56/60"),
     productionBoundary: body.includes(
-      "T057 security, RBAC, secret, resource-isolation, and offline qualification passes",
+      "T058 benchmark preflight is truthfully BLOCKED at 0/100",
     ),
     approval: body.includes("T051 exact-subject product/visual approval is complete"),
     readiness: body.includes("Customer readiness is incomplete"),

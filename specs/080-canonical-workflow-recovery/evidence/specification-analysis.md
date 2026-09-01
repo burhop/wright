@@ -77,9 +77,10 @@ Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
 
 The recovery evidence slice, T052–T055 production-promotion checkpoints, and
 T057 security/offline qualification are internally consistent. T056's automated
-portion passes while its human-only evidence remains open. The next independently
-local task is T058 engineering-oracle and benchmark qualification, which must
-retain the truthful `0/100` score until qualifying evidence passes. T059 may
-perform only local packaging/lifecycle hardening. T060 remains prohibited
-because the current authorization explicitly excludes push, merge, publication,
-and release.
+portion passes while its human-only evidence remains open. T058's deterministic
+preflight compiles all three benchmark schemas and preserves `0/100`, but full
+qualification is blocked by four open human decisions, one decided record with
+no decision artifact, and four proposed roadmap dependencies. This is not a task
+ordering contradiction: T058 remains open and T059 may advance only its locally
+independent packaging/lifecycle checks. T060 remains prohibited because the
+current authorization explicitly excludes push, merge, publication, and release.

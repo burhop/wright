@@ -256,3 +256,26 @@ administrator-only authority, fail-closed secret handling before hashing or
 immutable storage, command/envelope resource limits, independent sidecars,
 cross-root isolation, and restart/reconnect with zero network calls. See
 `evidence/security-offline-qualification.md`.
+
+## Verify the bounded T058 benchmark preflight
+
+```powershell
+uv run pytest -q `
+  tests/recovery/test_benchmark_preflight.py `
+  tests/recovery/test_workflow_conformance.py
+
+uv run ruff check `
+  scripts/recovery/benchmark_preflight.py `
+  tests/recovery/conftest.py `
+  tests/recovery/test_benchmark_preflight.py
+
+uv run python scripts/recovery/benchmark_preflight.py `
+  --output test-results/dataset-evaluation/benchmark-preflight.json
+```
+
+Expected: 26 tests and Ruff pass, while the preflight truthfully reports
+`BLOCKED`, `0/100`, zero cases, zero schema findings, and zero state violations.
+It lists `DEC-P0-007`, `009`, `010`, `011`, and `012` plus `EPP-F03`, `F05`,
+`F06`, and `B01` as blockers. Do not generate or count cases until the named
+human decisions and roadmap dependencies are satisfied. See
+`evidence/benchmark-preflight.md`.
