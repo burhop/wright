@@ -16,6 +16,7 @@ from pydantic import (
     model_validator,
 )
 
+from .rivet_mcp import reject_secret_material
 from .workflow_definitions import WorkflowDefinition
 
 
@@ -122,6 +123,7 @@ class CanonicalWorkflowRun(_ClosedModel):
 
     @model_validator(mode="after")
     def validate_lifecycle(self) -> "CanonicalWorkflowRun":
+        reject_secret_material(self.model_dump(mode="python"))
         terminal = self.state in {
             "cancelled",
             "succeeded",
@@ -160,6 +162,7 @@ class WorkflowRunStepRecord(_ClosedModel):
 
     @model_validator(mode="after")
     def validate_step(self) -> "WorkflowRunStepRecord":
+        reject_secret_material(self.model_dump(mode="python"))
         _unique(self.input_artifact_ids)
         _unique(self.output_artifact_ids)
         _unique(self.diagnosis_codes)
@@ -182,6 +185,11 @@ class WorkflowRunActivity(_ClosedModel):
     summary: BoundedText
     evidence_reference: Reference | None
 
+    @model_validator(mode="after")
+    def validate_activity(self) -> "WorkflowRunActivity":
+        reject_secret_material(self.model_dump(mode="python"))
+        return self
+
 
 class WorkflowArtifactRecord(_ClosedModel):
     artifact_id: Identifier
@@ -203,6 +211,7 @@ class WorkflowArtifactRecord(_ClosedModel):
 
     @model_validator(mode="after")
     def validate_artifact(self) -> "WorkflowArtifactRecord":
+        reject_secret_material(self.model_dump(mode="python"))
         _unique(self.upstream_artifact_ids)
         _unique(self.allowed_actions)
         if self.artifact_id in self.upstream_artifact_ids:
@@ -311,6 +320,7 @@ def capture_recovery_workflow_run(original: bytes) -> RecoveryWorkflowRunEnvelop
                 ValueError(f"non-finite number {item}")
             ),
         )
+        reject_secret_material(value)
         identity = _RecoveryRunIdentity.model_validate(value)
     except (
         UnicodeDecodeError,

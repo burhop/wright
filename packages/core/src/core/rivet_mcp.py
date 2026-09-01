@@ -14,6 +14,8 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Mapping, Sequence
 
+from .redaction import redact_text
+
 
 _DIGEST = re.compile(r"^[a-f0-9]{64}$")
 _QUALIFIED_TOOL = re.compile(
@@ -61,8 +63,11 @@ def reject_secret_material(value: Any, *, path: str = "$") -> None:
     elif isinstance(value, (list, tuple, set, frozenset)):
         for index, item in enumerate(value):
             reject_secret_material(item, path=f"{path}[{index}]")
-    elif isinstance(value, str) and _URL_CREDENTIAL.search(value):
-        raise ValueError(f"secret-bearing URL is not permitted at {path}")
+    elif isinstance(value, str):
+        if _URL_CREDENTIAL.search(value):
+            raise ValueError(f"secret-bearing URL is not permitted at {path}")
+        if redact_text(value) != value:
+            raise ValueError(f"secret material is not permitted at {path}")
 
 
 def _require_text(value: str, label: str, *, maximum: int = 512) -> None:

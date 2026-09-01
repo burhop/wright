@@ -23,6 +23,7 @@ from pydantic import (
     model_validator,
 )
 
+from .rivet_mcp import reject_secret_material
 from .workflow_drafts import WorkflowDraft, WorkflowLayout, canonical_json_bytes
 
 
@@ -416,6 +417,7 @@ def _all_finite(value: Any) -> bool:
 
 
 def _validate_definition(definition: WorkflowDefinition) -> None:
+    reject_secret_material(definition.model_dump(mode="python"))
     collections: dict[str, tuple[Any, ...]] = {
         "phases": definition.phases,
         "blocks": definition.blocks,
