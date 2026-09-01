@@ -150,7 +150,7 @@
 .recovery-source-card > header > div:last-child { display: grid; min-width: 0; }
 .recovery-source-card > header span { overflow: hidden; color: var(--recovery-muted); font-size: var(--recovery-size-9); text-overflow: ellipsis; white-space: nowrap; }
 .recovery-source-card__icon { display: grid; place-items: center; width: var(--recovery-size-36); height: var(--recovery-size-36); border-radius: var(--recovery-radius-md); background: color-mix(in srgb, var(--recovery-teal) 22%, var(--color-surface)); color: var(--recovery-teal); font-size: var(--recovery-size-9); font-weight: 900; }
-.recovery-source-card__icon--text { background: var(--recovery-violet); color: #07111f; }
+.recovery-source-card__icon--text { background: var(--recovery-violet); color: var(--color-neutral); }
 .recovery-source-card__icon--context { background: color-mix(in srgb, var(--recovery-green) 22%, var(--color-surface)); color: var(--recovery-green); }
 .recovery-source-card dl { display: grid; gap: var(--recovery-size-4); margin: 0; }
 .recovery-source-card dl > div { display: grid; grid-template-columns: 68px 1fr; gap: var(--recovery-size-5); }

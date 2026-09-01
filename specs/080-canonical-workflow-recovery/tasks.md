@@ -63,9 +63,9 @@
 - [x] T018 [US1] Implement the provisional React Flow renderer behind the retained adapter in `apps/web/src/prototypes/workflow-recovery/ReactFlowRecoveryCanvas.tsx`
 - [x] T019 [US1] Implement typed left/right handles, canonical relationship labels, gate/feedback notation, and separate artifact actions in `apps/web/src/prototypes/workflow-recovery/ReactFlowRecoveryCanvas.tsx`
 - [x] T020 [US1] Route add, move, connect, disconnect, configure, delete, undo, and redo gestures through versioned atomic host commands, including isolated validated history restores, in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx`
-- [x] T021 [P] [US1] Implement searchable engineering blocks and the brief preview/replace fixture in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx` and `apps/web/public/recovery-concept/`
+- [x] T021 [P] [US1] Implement the three explicit input-source controls, design-intent text/common-document preview and replacement, and contextual downstream engineering block library in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx` and `apps/web/public/recovery-concept/`
 - [x] T022 [P] [US1] Build the three-treatment interactive port laboratory and evidence record in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx` and `specs/080-canonical-workflow-recovery/evidence/block-port-lab.md`
-- [x] T023 [US1] Apply shared-token-only responsive, focus, non-color, selected, and phase-secondary visual language and stable test identities to every authored interaction in `apps/web/src/prototypes/workflow-recovery/workflow-recovery.css` and the recovery components
+- [x] T023 [US1] Apply shared-token-only responsive, focus, non-color, and selected-state visual language; keep phase metadata non-decorative; and give every authored interaction a stable test identity in `apps/web/src/prototypes/workflow-recovery/workflow-recovery.css` and the recovery components
 
 **Checkpoint**: User Story 1 works independently in Diagram view; implementation bindings remain progressive disclosure.
 
@@ -211,13 +211,15 @@
 - **US5** consumes completed US1–US4 evidence and must close before product review.
 - **T051** depends on T046–T050.
 - **T052–T060** depend on an approved T051 exact subject and separate implementation authorization.
+- **T061–T067** form a bounded correction loop triggered by the requesting mechanical engineer's hands-on feedback; T065 must bind the corrected exact subject before T066 or T067 may close.
 
 ### User-story completion order
 
 ```text
 Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 approval STOP
                                                                    |
-                                                                   └─ approved + separately authorized → T052–T060
+                                                                   ├─ approved + separately authorized → T052–T060
+                                                                   └─ hands-on correction → T061–T067 → refreshed exact subject
 ```
 
 ### Parallel opportunities
@@ -229,6 +231,7 @@ Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 ap
 - US4 fixture verification and run-projection tests can proceed in parallel.
 - T044 and T045 can run in parallel; T047 walkthrough capture must use the fully verified subject from T046.
 - Post-approval T053/T054 may run in parallel only after T052 fixes the promoted version/migration boundary.
+- T065 exact-subject capture follows T061–T064; the documentation/dashboard refresh in T066 and broad validation record in T067 may proceed only against that captured subject.
 
 ## Parallel examples
 

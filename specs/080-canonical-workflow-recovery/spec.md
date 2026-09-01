@@ -16,15 +16,16 @@ As a mechanical engineer, I can create a recognizable engineering workflow entir
 
 **Why this priority**: The canvas is the primary product experience. If engineers cannot recognize, compose, and inspect the workflow graphically, the underlying platform architecture does not yet deliver customer value.
 
-**Independent Test**: Start from a new workflow, find blocks by engineering name, add and arrange them, attach an input file, connect compatible ports, configure a review gate and feedback path, delete and restore an edit, and verify that the completed workflow remains understandable without opening Code mode.
+**Independent Test**: Start from a new workflow, supply reference images, design intent as typed text or a common document, and approved company context, verify that those three sources feed one reviewed design specification, then find and arrange downstream blocks, connect compatible ports, configure a review gate and feedback path, delete and restore an edit, and verify that the completed workflow remains understandable without opening Code mode.
 
 **Acceptance Scenarios**:
 
 1. **Given** a new workflow, **When** an engineer searches for and adds engineering capabilities, **Then** each block has a friendly name, recognizable purpose, left-side inputs, right-side outputs, and separately discoverable implementation details.
 2. **Given** two blocks with compatible typed ports, **When** the engineer connects their visible handles, **Then** the connection has a stable identity and the target used to connect is distinct from the control used to inspect an artifact.
-3. **Given** an input port that accepts a file, **When** the engineer attaches, previews, or replaces a file, **Then** the block shows the attachment state and the inspector exposes its origin and intended use.
-4. **Given** a composed workflow, **When** the engineer moves, configures, disconnects, deletes, undoes, or redoes an edit, **Then** unrelated workflow identities remain stable and the result is immediately visible.
-5. **Given** a decision or approval point, **When** the engineer configures proceed and revise outcomes, **Then** the canvas distinguishes the gate and its feedback path from ordinary data flow without relying only on color.
+3. **Given** an engineer is defining a design, **When** they provide reference images, design intent as text or a common document, and approved company context, **Then** the interface states what each source contains, where it comes from, and how all three feed one reviewed design specification; tolerance inspection is not presented as an initial requirement source.
+4. **Given** an input source that accepts a file, **When** the engineer attaches, previews, or replaces it, **Then** the source shows its state and the inspector exposes its origin and intended use.
+5. **Given** a composed workflow, **When** the engineer moves, configures, disconnects, deletes, undoes, or redoes an edit, **Then** unrelated workflow identities remain stable and the result is immediately visible.
+6. **Given** a decision or approval point, **When** the engineer configures proceed and revise outcomes, **Then** the canvas distinguishes the gate and its feedback path from ordinary data flow without relying only on color.
 
 ---
 
@@ -109,6 +110,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - An AI proposal is valid but based on an old revision, contains a command outside the allowed set, or would require authority the user does not have.
 - A manual edit and an AI proposal target the same base revision; only one may advance the accepted state.
 - An input file is missing, replaced with an incompatible type, too large to preview, or no longer available when a historical run is inspected.
+- An input source is labeled with a software type instead of its engineering purpose, its provenance is unclear, or a downstream tolerance check is mistaken for initial design input.
 - A run pauses for input, fails before producing output, succeeds with a partially previewable artifact, or becomes stale after losing its live event source.
 - A reusable component is collapsed while a diagnostic or active run step targets a concept inside it.
 - A large graph exceeds the demonstrated concept scale; navigation remains usable and the product makes no unsupported production-scale claim.
@@ -135,7 +137,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **FR-014**: Blocks and connections MUST be readable, with visible left input and right output handles and a separate artifact-inspection target.
 - **FR-015**: The capability palette MUST be searchable by friendly engineering names while retaining exact implementation identities behind progressive disclosure.
 - **FR-016**: Manual add, move, connect, disconnect, configure, delete, undo, and redo MUST use one atomic, validated command system.
-- **FR-017**: File inputs MUST support attachment, preview where safe, replacement, type guidance, and origin inspection.
+- **FR-017**: Input authoring MUST distinguish reference images, design intent as typed text or a common document, and approved company context; file-backed sources MUST support attachment, preview where safe, replacement, friendly type guidance, and origin inspection.
 - **FR-018**: Outputs MUST support inspection, lineage, preview where safe, opening, and downloading according to existing authorization boundaries.
 - **FR-019**: Diagram, Code, and Split modes MUST project and edit the same model without semantic loss.
 - **FR-020**: Selection MUST synchronize among source locations, blocks, ports, connections, inspector sections, and diagnostics.
@@ -151,7 +153,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **FR-030**: Queued, running, needs-input, succeeded, failed, blocked, and stale states MUST be distinguishable and consistent across canvas and inspector.
 - **FR-031**: Every executable block MUST expose Inputs, Outputs, Activity, and Diagnosis.
 - **FR-032**: Recovery guidance MUST identify the affected concept and safe next action without requiring engineers to read raw JSON or logs.
-- **FR-033**: The recovery concept MUST demonstrate one coherent mechanical-engineering workflow from attached input through recognizable downloadable output.
+- **FR-033**: The recovery concept MUST demonstrate one coherent mechanical-engineering workflow from three explicit engineering input sources through one reviewed design specification to recognizable downloadable output.
 - **FR-034**: The renderer adapter MUST remain replaceable and the renderer decision MUST be justified by direct-manipulation, handle, overlay, keyboard, and scale evidence.
 - **FR-035**: Automated invariants MUST prove semantic round trips, command atomicity, last-valid containment, layout independence, proposal revision safety, and run-definition separation.
 - **FR-036**: The capability inventory MUST trace every previously defined capability to user task, model, text, canvas, manipulation, inspector, run overlay, test, evidence, and disposition with no silent omission.
@@ -192,7 +194,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **SC-004**: One graphical edit updates text and one valid text edit updates the graph in under one second in the local concept; one invalid text edit leaves the prior graph unchanged and presents a stable diagnostic.
 - **SC-005**: The three syntax alternatives use the same golden workflow and at least five identical edit/error tasks, with recorded readability, validity, review, parsing, source-map, preservation, and migration evidence; any provisional choice lists its unresolved risks.
 - **SC-006**: The block/port laboratory compares three treatments and the selected treatment receives no unresolved ambiguity between connection handles and artifact-inspection controls in the final walkthrough.
-- **SC-007**: The final concept visibly demonstrates add, move, connect, disconnect, configure, delete, undo, redo, file attachment, input/output inspection, all three view modes, selection sync, and a reviewable AI multi-block proposal.
+- **SC-007**: The final concept visibly distinguishes all three engineering input sources and demonstrates text/common-document design intent, downstream-only tolerance inspection, add, live move, connect, disconnect, configure, delete, undo, redo, file attachment, input/output inspection, all three view modes, selection sync, and a reviewable AI multi-block proposal.
 - **SC-008**: The simulated run visibly demonstrates active block and connection cues plus queued, running, needs-input or failed, recovered, and succeeded states using at least one non-color cue each.
 - **SC-009**: The successful run exposes one recognizable output with lineage and working open or download behavior; the recovery case explains a bounded correction without raw JSON or log reading.
 - **SC-010**: Raw and annotated screenshots exist for every material walkthrough state, the report is clickable and human-repeatable, validation reports zero missing evidence fields, and browser diagnostics distinguish product defects from environment limitations.
