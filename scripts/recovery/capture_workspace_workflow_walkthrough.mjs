@@ -407,6 +407,23 @@ function safeWorkflowBody(body) {
   return result;
 }
 
+async function boundedResponseJson(response, timeoutMs = 5000) {
+  let timeoutId;
+  try {
+    return await Promise.race([
+      response.json(),
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new Error(`Response body inspection exceeded ${timeoutMs} ms`)),
+          timeoutMs,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 async function inspectResponse(response) {
   const request = response.request();
   const url = new URL(response.url());
@@ -424,7 +441,7 @@ async function inspectResponse(response) {
   }
   if (isWorkflowSource) {
     let body = null;
-    try { body = safeWorkflowBody(await response.json()); } catch { body = null; }
+    try { body = safeWorkflowBody(await boundedResponseJson(response)); } catch { body = null; }
     controlPlane.workflowSourceResponses.push({ ...entry, body });
   }
 }
