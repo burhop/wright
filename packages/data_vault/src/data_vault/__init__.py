@@ -21,6 +21,15 @@ from .workflow_draft_repository import (
     WorkflowDraftRevisionConflict,
     WorkflowDraftStorageError,
 )
+from .workflow_definition_repository import (
+    WORKFLOW_DEFINITION_MIGRATIONS,
+    WorkflowDefinitionAlreadyExists,
+    WorkflowDefinitionRepository,
+    WorkflowDefinitionRevisionConflict,
+    WorkflowDefinitionSchemaError,
+    rollback_workflow_definition_schema,
+    upgrade_workflow_definition_schema,
+)
 from .workflow_runs import (
     WorkflowRunEventRecord,
     WorkflowRunRecord,
@@ -71,6 +80,11 @@ __all__ = [
     "WorkflowDraftRepository",
     "WorkflowDraftRevisionConflict",
     "WorkflowDraftStorageError",
+    "WORKFLOW_DEFINITION_MIGRATIONS",
+    "WorkflowDefinitionAlreadyExists",
+    "WorkflowDefinitionRepository",
+    "WorkflowDefinitionRevisionConflict",
+    "WorkflowDefinitionSchemaError",
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
@@ -111,5 +125,7 @@ __all__ = [
     "create_backup",
     "database_status",
     "restore_backup",
+    "rollback_workflow_definition_schema",
     "upgrade_database",
+    "upgrade_workflow_definition_schema",
 ]

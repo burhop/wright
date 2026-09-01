@@ -120,3 +120,27 @@ eight loaded gallery images, no console/page errors, and no horizontal overflow 
 1440 or 390 pixels. Local captures are in
 `artifacts/dashboard-recovery-verification/desktop-goal.png` and
 `artifacts/dashboard-recovery-verification/mobile-goal.png`.
+
+## Verify the T052 stable production boundary
+
+The approved recovery definition now enters production only through the explicit
+`2.0.0-recovery.1` to `2.0.0` migration in
+`packages/core/src/core/workflow_definitions.py`. Definition revisions persist in
+the independent `workflow-definitions.sqlite3` sidecar; legacy drafts, layout,
+and runs remain separate.
+
+```powershell
+uv run ruff check packages/core/src/core/workflow_definitions.py `
+  packages/data_vault/src/data_vault/workflow_definition_repository.py
+
+uv run pytest -q packages/core/tests/test_workflow_definitions.py `
+  packages/data_vault/tests/test_workflow_definition_repository.py `
+  packages/data_vault/tests/test_workflow_draft_repository.py
+
+uv run pytest -q packages/core/tests packages/data_vault/tests
+```
+
+Expected: Ruff passes; the focused suite reports 21 passed; the broad suite
+reports 216 passed and 1 retained skip. Exact migration digests, rollback rules,
+and deferred boundaries are recorded in
+`evidence/production-promotion.md` and ADR 0002.

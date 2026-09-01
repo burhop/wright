@@ -6,7 +6,7 @@
 
 ## Summary
 
-Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; dependency-ordered locally safe implementation may continue, while push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
+Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; T052 promotes its renderer-neutral definition/kernel/projection into stable Python and append-only definition-storage boundaries under ADR 0002. Dependency-ordered locally safe implementation may continue, while push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
 
 ## Technical Context
 
@@ -14,7 +14,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Primary Dependencies**: Existing FastAPI, Pydantic 2, SQLite, PyYAML 6, React, Zod, Vitest, and Playwright; provisional `@xyflow/react` 12.11.3 only in the explicitly disposable recovery renderer
 
-**Storage**: Preserve the existing feature-owned SQLite append-only workflow draft revisions and compare-and-set head as a production foundation; the recovery concept uses committed golden fixtures plus in-memory candidate/layout/run state and makes no production migration
+**Storage**: Preserve the existing feature-owned SQLite append-only workflow draft revisions and compare-and-set head. After T051 approval, T052 adds an independent append-only `workflow-definitions.sqlite3` sidecar for stable definitions only; layout and run state remain separate and deferred.
 
 **Testing**: pytest for syntax evidence and retained Python invariants; Vitest for conformance, commands, projection, renderer, and component behavior; Playwright for human-repeatable direct manipulation, text correspondence, AI review, run visualization, screenshots, trace, and diagnostics
 
@@ -34,8 +34,8 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 - **Modular monorepo and thin routes — PASS**: no new route business logic is required for the recovery concept; retained API/service boundaries remain unchanged. Any future persistence expansion belongs in core/data-vault/workspace-service before transport.
 - **Offline-first — PASS**: fixtures, parsing, validation, graph editing, proposal review, and simulated run evidence operate locally without cloud or external MCP dependencies.
-- **Distribution and rollback — PASS for recovery scope**: no released artifact, installer, migration, or main database version changes. Existing workflow-draft sidecar remains inert to older binaries.
-- **Embedded state — PASS**: retained authoritative drafts remain SQLite-backed. Concept-only candidate, layout, and simulated-run state is explicitly disposable evidence, not production authority.
+- **Distribution and rollback — PASS**: no released artifact, installer, or main database version changes. The new definition sidecar is independent, its empty schema rolls back transactionally, populated history refuses destructive rollback, and exact promotion-source envelopes are retained for verified rollback.
+- **Embedded state — PASS**: retained drafts remain SQLite-backed and untouched. Stable definitions now have an append-only SQLite authority; concept-only layout and simulated-run state remains disposable evidence pending T053/T054.
 - **Security, RBAC, and authority — PASS**: no new external write or runtime authority. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
 - **Engineering tooling protocol — PASS**: exact tool/MCP bindings are modeled and inspectable, but no GUI-only agent execution or tool invocation occurs.
 - **UI atomic design — PASS**: the recovery stylesheet has zero raw color
@@ -66,7 +66,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 2. **Frozen prototype direction**: inspect `e7bb75c1` (tree `88fe1511...`) only as evidence. Its React Flow bakeoff scored 91/100 and its visual work demonstrates ports, connections, palette, and overlays, but its renderer disabled dragging/connecting, the five-person study never ran, and its implementation is not merged or promoted.
 3. **Production foundations retained**: canonical draft and separate digests; complete validation; immutable revisions and head CAS; service/API/browser closed decoding; renderer-neutral projection and intent seam; strict process-definition parser/canonical vectors.
 4. **Current shell disposition**: retain backend/domain seams, revise the interaction/product grammar, and freeze custom SVG/HTML canvas polish. T028–T038 remain paused.
-5. **Recovery code disposition**: React Flow renderer, DSL editor, simulated AI proposal, and simulated run are disposable concept code until product approval and a subsequent production plan explicitly promotes them.
+5. **Recovery code disposition**: ADR 0002 promotes only renderer-neutral definition, validation, atomic-command, semantic-diff, projection, migration, and storage concepts. React Flow, the DSL editor, simulated AI proposal, simulated run, and layout remain concept code.
 
 ## Architecture and Boundaries
 
@@ -176,10 +176,12 @@ specs/080-canonical-workflow-recovery/
 ```text
 packages/core/src/core/
 ├── workflow_drafts.py                    # retained production foundation
-└── workflow_draft_validation.py          # retained production foundation
+├── workflow_draft_validation.py          # retained production foundation
+└── workflow_definitions.py               # stable v2 definition/kernel/projection and migration
 
 packages/data_vault/src/data_vault/
-└── workflow_draft_repository.py          # retained immutable revision/CAS foundation
+├── workflow_draft_repository.py          # retained immutable revision/CAS foundation
+└── workflow_definition_repository.py     # independent append-only stable-definition sidecar
 
 apps/web/src/components/workflow-composer/
 ├── renderer-types.ts                     # retained renderer seam
@@ -221,7 +223,7 @@ tests/ui-integration/
 artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 ```
 
-**Structure Decision**: Keep retained production boundaries untouched and place all new interaction work in an explicitly named recovery-concept module. Reuse the renderer contract and project canonical vNext through it. Evidence generators live under `scripts/recovery`; product evidence and decisions live under spec 080; the walkthrough remains a timestamped immutable artifact.
+**Structure Decision**: Keep the recovery interaction code in its explicitly named concept module. After approval, promote only its renderer-neutral semantic concepts into `core` and an independent `data_vault` sidecar under ADR 0002. Evidence generators live under `scripts/recovery`; product evidence and decisions live under spec 080; the walkthrough remains a timestamped immutable artifact.
 
 ## Delivery Sequence
 
@@ -242,9 +244,10 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 - **Commands**: manual and AI paths share a versioned base-revision envelope;
   stale and unsupported commands fail atomically; undo/redo restores through an
   isolated validated history command and returns exact semantic states.
-- **Document versions**: definition `2.0.0-recovery.1` and layout, command, and
-  run `1.0.0-recovery.1` are independently checked before mutation or
-  projection; unknown inputs are preserved unchanged.
+- **Document versions**: the approved concept uses definition `2.0.0-recovery.1`
+  and layout, command, and run `1.0.0-recovery.1`. The production boundary uses
+  definition `2.0.0` and command `1.0.0`; recovery definition input enters only
+  through the explicit digest-bound migration. Unknown inputs are preserved unchanged.
 - **Component identity**: collapsed reusable components expose non-empty scoped
   internal semantic addresses that diagnostics and run lineage can retain.
 - **Renderer**: visible left/right handles, drag, connect, disconnect, selection, separate artifact controls, non-color active overlays, and a keyboard path; the frozen prototype's single 100-node observation remains explicitly non-qualifying and production-scale evidence stays deferred.

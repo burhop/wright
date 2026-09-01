@@ -25,6 +25,22 @@ from .workflow_runs import (
     WorkflowRunEvent as WorkflowRunEvent,
     WorkflowRunState as WorkflowRunState,
 )
+from .workflow_definitions import (
+    WorkflowCommandBatch as WorkflowCommandBatch,
+    WorkflowDefinition as WorkflowDefinition,
+    WorkflowDefinitionProjection as WorkflowDefinitionProjection,
+    WorkflowDraftPromotion as WorkflowDraftPromotion,
+    WorkflowRecoveryPromotion as WorkflowRecoveryPromotion,
+    accept_workflow_candidate as accept_workflow_candidate,
+    apply_workflow_commands as apply_workflow_commands,
+    canonical_definition_sha256 as canonical_definition_sha256,
+    decode_workflow_definition as decode_workflow_definition,
+    project_workflow_definition as project_workflow_definition,
+    promote_recovery_workflow_definition as promote_recovery_workflow_definition,
+    promote_workflow_draft as promote_workflow_draft,
+    rollback_recovery_workflow_definition as rollback_recovery_workflow_definition,
+    rollback_workflow_draft as rollback_workflow_draft,
+)
 from .workflow_editor import (
     EditorAssetManifest as EditorAssetManifest,
     EditorAvailability as EditorAvailability,

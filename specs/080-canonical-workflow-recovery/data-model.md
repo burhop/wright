@@ -195,7 +195,13 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 - Readers support an explicit version set; unknown versions are preserved byte-for-byte and never silently rewritten.
 - Compatible migrations are pure, deterministic, idempotent functions with before/after digests and a reversible or explicit one-way policy.
 - Historical run records continue to reference the original definition revision/digest even after a definition migration.
-- The recovery version has no production migration. Promotion requires a superseding accepted ADR and fixtures proving prior-draft and historical-run behavior.
+- ADR 0002 now supplies the required superseding production decision. It promotes
+  recovery definition `2.0.0-recovery.1` to stable definition `2.0.0` and
+  recovery command semantics to stable command batch `1.0.0`; source and target
+  digests plus exact source bytes make the initial promotion rollbackable.
+- Layout and run projections remain recovery-only until T053/T054. Historical
+  run behavior remains a T054 verification gate and must retain its original
+  definition revision/digest rather than being rewritten.
 
 ## Required invariants
 

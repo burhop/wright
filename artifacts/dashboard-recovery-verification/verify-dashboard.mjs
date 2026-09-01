@@ -28,7 +28,10 @@ async function inspect(name, viewport, screenshot) {
     subject: body.includes("f9237763"),
     tree: body.includes("aeca6ab8"),
     manifest: body.includes("f2b4964e"),
-    recoveryLedger: body.includes("51/60"),
+    recoveryLedger: body.includes("52/60"),
+    productionBoundary: body.includes(
+      "T052 stable definition/kernel/projection promotion and append-only definition persistence are complete",
+    ),
     approval: body.includes("T051 exact-subject product/visual approval is complete"),
     readiness: body.includes("Customer readiness is incomplete"),
     governedFreeze: body.includes("F02B remains 27/38 with T028–T038 open"),
@@ -89,13 +92,13 @@ for (const [name, value] of Object.entries(checks)) {
 }
 for (const name of ["desktop", "mobile"]) {
   const result = checks[name];
-  for (const field of ["subject", "tree", "manifest", "recoveryLedger", "approval", "readiness", "governedFreeze", "imagesLoaded"]) {
+  for (const field of ["subject", "tree", "manifest", "recoveryLedger", "productionBoundary", "approval", "readiness", "governedFreeze", "imagesLoaded"]) {
     if (!result[field]) failures.push(`${name}.${field}=false`);
   }
   if (result.galleryCount !== 8) failures.push(`${name}.galleryCount=${result.galleryCount}`);
   if (result.horizontalOverflowPixels !== 0) failures.push(`${name}.overflow=${result.horizontalOverflowPixels}`);
 }
-if (checks.api.status !== 200 || checks.api.completed !== 51 || checks.api.total !== 60 ||
+if (checks.api.status !== 200 || checks.api.completed !== 52 || checks.api.total !== 60 ||
     checks.api.approval !== "complete" || checks.api.decision !== "approved" || checks.api.customerReady !== false) {
   failures.push("api recovery ledger/approval/readiness mismatch");
 }

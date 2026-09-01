@@ -169,11 +169,11 @@
 
 ---
 
-## Phase 9: Post-Approval Production Work — Deferred
+## Phase 9: Post-Approval Production Work
 
 **Purpose**: Preserve remaining capability work without implying authorization or readiness.
 
-- [ ] T052 Promote only approved IR/kernel/renderer concepts into production boundaries with migrations and rollback in `packages/core/src/core/` and `packages/data_vault/src/data_vault/`
+- [x] T052 Promote only approved IR/kernel/renderer concepts into production boundaries with migrations and rollback in `packages/core/src/core/` and `packages/data_vault/src/data_vault/`
 - [ ] T053 [P] Implement durable layout persistence, reopen, unknown-version recovery, and compare-and-set tests in `packages/data_vault/src/data_vault/` and `tests/`
 - [ ] T054 [P] Implement durable run/step/activity/artifact records, cancellation, reconnect, and cleanup in `packages/core/src/core/`, `packages/data_vault/src/data_vault/`, and `tests/`
 - [ ] T055 Implement approved component/collapsed-graph and large-graph behavior in `apps/web/src/components/workflow-composer/` and `tests/ui-integration/`

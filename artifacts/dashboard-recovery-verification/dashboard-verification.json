@@ -1,6 +1,6 @@
 {
   "overall": "pass",
-  "checkedAt": "2026-09-01T03:37:23.882Z",
+  "checkedAt": "2026-09-01T03:59:27.914Z",
   "checks": {
     "desktop": {
       "viewport": {
@@ -11,6 +11,7 @@
       "tree": true,
       "manifest": true,
       "recoveryLedger": true,
+      "productionBoundary": true,
       "approval": true,
       "readiness": true,
       "governedFreeze": true,
@@ -27,6 +28,7 @@
       "tree": true,
       "manifest": true,
       "recoveryLedger": true,
+      "productionBoundary": true,
       "approval": true,
       "readiness": true,
       "governedFreeze": true,
@@ -36,7 +38,7 @@
     },
     "api": {
       "status": 200,
-      "completed": 51,
+      "completed": 52,
       "total": 60,
       "approval": "complete",
       "decision": "approved",
