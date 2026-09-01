@@ -75,7 +75,7 @@ block block.check-manufacturability
 end
 
 block block.review-design
-  kind: approval
+  kind: component
   title: "Review bracket design"
   purpose: "Approve the geometry and manufacturability findings or return them for revision."
   phase: phase.verify
@@ -85,7 +85,7 @@ block block.review-design
   inputs: ["port.geometry-review-in","port.report-in"]
   outputs: ["port.approved-geometry-out"]
   binding: null
-  component: null
+  component: {"component_id":"component.review-cell","version_range":"^1.0.0"}
 end
 
 block block.export-step
@@ -465,4 +465,13 @@ binding binding.release-package
   results: [{"implementation_target":"package","semantic_source":"port.package-out"}]
   approval: none
   capability: "Assemble local design review package"
+end
+
+component component.review-cell
+  version: "1.0.0"
+  title: "Reusable design review cell"
+  inputs: ["port.geometry-review-in","port.report-in"]
+  outputs: ["port.approved-geometry-out"]
+  digest: sha256:5555555555555555555555555555555555555555555555555555555555555555
+  addresses: [{"concept_kind":"block","relative_path":"blocks/block.evaluate","semantic_id":"component.review-cell.block.evaluate"},{"concept_kind":"relationship","relative_path":"relationships/rel.accept","semantic_id":"component.review-cell.relationship.accept"},{"concept_kind":"artifact_contract","relative_path":"artifact-contracts/artifact.approved","semantic_id":"component.review-cell.artifact.approved"},{"concept_kind":"port","relative_path":"ports/port.approved","semantic_id":"component.review-cell.port.approved"}]
 end

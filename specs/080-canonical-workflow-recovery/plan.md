@@ -22,7 +22,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Project Type**: Existing modular-monorepo local web application with Python domain/services and React frontend
 
-**Performance Goals**: A valid graphical or text edit updates its paired projection within 1 second; invalid edits preserve the prior graph immediately; active run overlays update within 1 second; the final concept remains responsive for its 6-block acceptance workflow and records a non-qualifying 100-block projection check
+**Performance Goals**: A valid graphical or text edit updates its paired projection within 1 second; invalid edits preserve the prior graph immediately; active run overlays update within 1 second; the final concept remains responsive for its 6-block acceptance workflow while retaining the frozen prototype's single non-qualifying 100-block observation only as provisional scale evidence
 
 **Constraints**: Offline-first; one integration writer; no Rivet or orchestration resurrection; no renderer/source/run authority; no AI direct mutation/execution/approval; no broad production migration; no benchmark qualification; no accessibility/package/release-candidate hardening, push, merge, or release before product approval
 
@@ -38,9 +38,23 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 - **Embedded state — PASS**: retained authoritative drafts remain SQLite-backed. Concept-only candidate, layout, and simulated-run state is explicitly disposable evidence, not production authority.
 - **Security, RBAC, and authority — PASS**: no new external write or runtime authority. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
 - **Engineering tooling protocol — PASS**: exact tool/MCP bindings are modeled and inspectable, but no GUI-only agent execution or tool invocation occurs.
-- **UI atomic design — PASS**: the concept reuses Wright tokens and component layers. React Flow is confined behind the existing adapter rather than becoming semantic authority.
-- **Three-tier testing — PASS**: conformance/component tests, a page-level Playwright journey, and retained backend contract tests are planned. A production system E2E is deferred because this slice uses a simulated run and commits no production executor.
-- **Stable test identities — PASS**: every interactive concept control receives a stable `data-testid`.
+- **UI atomic design — PASS**: the recovery stylesheet has zero raw color
+  literals, 184 references to shared Wright tokens, and no malformed token
+  expressions. One-off geometry dimensions are centralized as recovery tokens;
+  canvas dimensions and responsive breakpoints remain documented structural
+  exceptions. React Flow stays behind the existing adapter rather than becoming
+  semantic authority.
+- **Three-tier testing — PASS for this bounded concept**: four host-component
+  tests cover default, loading, error, and invalid-source containment; three
+  renderer-component tests cover default interaction, run overlays, and
+  unknown-version rejection; the page-level mocked Playwright journey covers
+  the complete product path. Retained backend contract tests remain available.
+  Production system E2E is deferred because this slice uses a simulated run and
+  commits no production executor.
+- **Stable test identities — PASS**: every authored interactive concept control
+  and every explicit renderer navigation control has a stable `data-testid`;
+  the host-component regression enumerates rendered interactive elements and
+  fails if an ID is missing.
 - **Observability and transparency — PASS**: the walkthrough captures trace, console/page/network failures, raw/annotated screenshots, proposal assumptions/diff, run activity, artifact lineage, and known limitations.
 - **Phase isolation and manual gate — PASS**: this plan is the recovery implementation authority supplied by the user. The work ends at an explicit product-review checkpoint and does not resume broad production implementation.
 - **Branch discipline — PASS**: all writes occur on `codex/080-canonical-workflow-recovery`, based exactly on frozen `b4a7e996`; no direct `dev` or `main` action is planned.
@@ -133,6 +147,9 @@ specs/080-canonical-workflow-recovery/
 ├── checklists/
 ├── contracts/
 │   ├── canonical-workflow-ir.schema.json
+│   ├── workflow-command-batch.schema.json
+│   ├── workflow-layout.schema.json
+│   ├── workflow-run-record.schema.json
 │   ├── command-protocol.md
 │   ├── conformance-kernel.md
 │   ├── renderer-adapter-vnext.md
@@ -150,6 +167,7 @@ specs/080-canonical-workflow-recovery/
     ├── syntax-evaluation.md
     ├── block-port-lab.md
     ├── react-flow-recovery.md
+    ├── prototype-side-by-side.md
     └── specification-analysis.md
 ```
 
@@ -169,12 +187,12 @@ apps/web/src/components/workflow-composer/
 └── draft-intents.ts                      # retained atomic intent foundation
 
 apps/web/src/prototypes/workflow-recovery/
-├── model.ts / model.spec.ts               # ergonomic view plus adapter projection tests
+├── model.ts / model.spec.ts               # ergonomic view plus adapter/replacement projection tests
 ├── canonical-wire.ts                     # exact snake_case vNext wire boundary
 ├── recovery-dsl.ts                       # disposable source-mapped Code projection
 ├── command-system.ts / command-system.spec.ts # shared atomic graph/form/text/AI commands
-├── ReactFlowRecoveryCanvas.tsx           # disposable renderer
-├── WorkflowRecoveryConcept.tsx           # host authority, embedded port lab, proposal/run views
+├── ReactFlowRecoveryCanvas.tsx / ReactFlowRecoveryCanvas.spec.tsx # disposable renderer and local state tests
+├── WorkflowRecoveryConcept.tsx / WorkflowRecoveryConcept.spec.tsx # host authority, port lab, proposal/run and component-state tests
 └── workflow-recovery.css
 
 apps/web/src/components/pages/
@@ -221,11 +239,21 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
 
 - **Conformance**: `parse(format(IR)) == IR`; text→IR→diagram and graph→IR→text→parse preserve semantics; invalid text/graph/AI never replaces last-valid state.
 - **Identity**: diagnostics include stable codes/IDs/spans/explanation/correction; layout-only edits leave semantic digest unchanged; run updates leave definition bytes unchanged.
-- **Commands**: manual and AI paths share base-revision semantics; stale and unsupported commands fail atomically; undo/redo returns exact semantic states.
-- **Renderer**: visible left/right handles, drag, connect, disconnect, selection, separate artifact controls, non-color active overlays, keyboard path, and bounded 100-node evidence.
+- **Commands**: manual and AI paths share a versioned base-revision envelope;
+  stale and unsupported commands fail atomically; undo/redo restores through an
+  isolated validated history command and returns exact semantic states.
+- **Document versions**: definition `2.0.0-recovery.1` and layout, command, and
+  run `1.0.0-recovery.1` are independently checked before mutation or
+  projection; unknown inputs are preserved unchanged.
+- **Component identity**: collapsed reusable components expose non-empty scoped
+  internal semantic addresses that diagnostics and run lineage can retain.
+- **Renderer**: visible left/right handles, drag, connect, disconnect, selection, separate artifact controls, non-color active overlays, and a keyboard path; the frozen prototype's single 100-node observation remains explicitly non-qualifying and production-scale evidence stays deferred.
 - **Product journey**: one coherent no-code graphical path plus valid/invalid code edits, proposal review, needs-input recovery, and recognizable output.
+- **Responsiveness**: local command application plus graph→text,
+  text→graph, and run-overlay browser transitions each remain below the explicit
+  one-second recovery bound.
 - **Walkthrough**: progress/status/report remain current after every action; raw and annotated images are separate; browser diagnostics are captured; validator has zero missing evidence fields.
-- **Program**: dashboard names recovery as active, checkpoint history is newest-first, task/checkpoint graphs include feature 080, and customer readiness remains incomplete.
+- **Program**: dashboard names the recovery goal as in progress while EPP-F02C remains proposed and unregistered, keeps the governed F02B ledger separate from a recovery task projection, orders checkpoint history newest-first, and leaves customer readiness incomplete.
 
 ## Resource Strategy
 

@@ -4,32 +4,37 @@
 
 ```json
 {
-  "command_batch_id": "batch.add-manufacturability",
-  "workflow_id": "workflow.mounting-bracket",
+  "document_kind": "workflow-command-batch",
+  "schema_version": "1.0.0-recovery.1",
   "base_revision": 3,
-  "source": "ai_proposal",
-  "commands": []
+  "origin": "ai_proposal",
+  "commands": [
+    {
+      "kind": "set_block_title",
+      "block_id": "block.generate-geometry",
+      "title": "Generate manufacturable bracket geometry"
+    }
+  ]
 }
 ```
 
-Supported semantic command families are:
+This is the closed, portable snake_case recovery envelope implemented by the
+Python conformance slice and validated by
+`workflow-command-batch.schema.json`. The workflow subject is the accepted
+definition passed to `apply`; `base_revision` binds the batch to that subject.
+Unknown root, command, or nested fields fail closed.
 
-- add, update, and remove block;
-- add, update, and remove port;
-- connect and disconnect relationship;
-- add, update, and remove phase, gate/decision outcome, feedback path, artifact contract, binding, and component instance;
-- update instructions and configuration.
+| Document kind | Supported version | Unknown-version behavior |
+|---|---|---|
+| `workflow-command-batch` | `1.0.0-recovery.1` | Return `WFR-COMMAND-VERSION-UNSUPPORTED`, preserve the definition, layout, and original batch unchanged, and require an explicitly compatible reader. |
 
-These families define the promotion contract for the complete IR; they are not
-all claimed as interactive controls in this disposable concept. The recovery
-implementation exercises one bounded, fail-closed subset through the shared
-command boundary:
-
-- add, update, and remove blocks;
-- connect, disconnect, relabel, redirect, and condition relationships;
-- update block instructions and configuration;
-- update port requiredness and cardinality; and
-- update an existing binding's exact tool identity.
+The portable subset is exactly: set block title/configuration scalar, set port
+requiredness/cardinality, set binding tool identity, set relationship
+condition, connect, and disconnect. TypeScript uses an ergonomic camelCase host
+representation and a tested local extension for add/delete block,
+relabel/redirect relationship, layout-only move, and validated undo/redo
+snapshot restoration. Those host-only commands are not represented as if they
+were proven portable wire commands.
 
 The JSON, YAML, and DSL projections still round-trip every phase, block, port,
 relationship, artifact contract, binding, and component instance losslessly.
@@ -38,7 +43,11 @@ and preserve the last-valid definition. Adding/removing ports, phases, artifact
 contracts, bindings, or component instances remains a post-approval promotion
 task; no UI path is allowed to mutate those structures by bypassing commands.
 
-Layout move/resize/collapse commands use a separate layout batch and never appear in a semantic batch.
+The host-only block move updates the separately versioned layout document.
+A batch containing both a move and a semantic command fails with
+`WFR-COMMAND-MIXED-CONTAINMENT`; accepting a move-only batch advances
+`layout_revision` without changing canonical definition bytes or semantic
+digest. Resize and collapse are not implemented by this recovery contract.
 
 Every command names stable target identities and all values needed for deterministic application. The kernel never invents IDs for AI; manual UI may request an ID from the host before constructing the command.
 
@@ -68,10 +77,18 @@ AI can create the envelope only. It cannot call accept, invoke a binding, mark a
 
 ## Concurrency
 
-- Base mismatch returns `WFR-REVISION-STALE` with current/base identities and a regenerate/rebase correction.
+- Base mismatch returns `WFR-COMMAND-STALE-BASE` with current/base identities and a regenerate/rebase correction.
 - Two candidates from the same base may be previewed, but only the first explicit accepted save can advance that base.
-- Undo/redo is a local stack of previously accepted in-memory states until save; it does not rewrite immutable stored revisions.
+- Undo/redo is a TypeScript-host local stack of previously accepted in-memory states until save;
+  each action is applied as one isolated `restore_snapshot` command with
+  host-only `origin: history`, then the complete restored definition and layout are
+  validated through the same fail-closed boundary. A history command cannot be
+  mixed with any other command and does not rewrite immutable stored revisions.
 
 ## Audit facts
 
-Accepted change records retain command batch ID, source, base/new revision, semantic diff digest, user acceptance fact, and proposal ID when applicable. They do not log secrets or full proprietary payloads.
+Future promoted accepted change records would retain durable batch ID, origin, workflow
+identity, base/new revision, semantic diff digest, user acceptance fact, and
+proposal ID when applicable. Those audit facts wrap the bounded recovery batch;
+they do not alter its versioned shape and do not log secrets or full proprietary
+payloads.

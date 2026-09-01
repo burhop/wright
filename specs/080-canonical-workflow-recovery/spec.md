@@ -197,7 +197,7 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **SC-009**: The successful run exposes one recognizable output with lineage and working open or download behavior; the recovery case explains a bounded correction without raw JSON or log reading.
 - **SC-010**: Raw and annotated screenshots exist for every material walkthrough state, the report is clickable and human-repeatable, validation reports zero missing evidence fields, and browser diagnostics distinguish product defects from environment limitations.
 - **SC-011**: Changing only layout produces zero semantic-digest change, and changing run state produces zero workflow-definition byte change across all automated fixtures.
-- **SC-012**: The dashboard is reachable, names canonical workflow recovery as active, orders checkpoint history newest-to-oldest deterministically, and clearly shows that product approval is pending while overall customer readiness remains incomplete.
+- **SC-012**: The dashboard is reachable, names canonical workflow recovery as the in-progress recovery goal while EPP-F02C remains proposed and unregistered, orders checkpoint history newest-to-oldest deterministically, and clearly shows that product approval is pending while overall customer readiness remains incomplete.
 - **SC-013**: Revised specification, plan, roadmap, parity, and task artifacts place product/visual approval before accessibility, packaging, candidate hardening, push, merge, or release work.
 - **SC-014**: No broad production implementation, merge, release, package publication, or external customer action occurs before explicit product approval.
 

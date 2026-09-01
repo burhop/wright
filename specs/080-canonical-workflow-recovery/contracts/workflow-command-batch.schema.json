@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/recovery/workflow-command-batch.schema.json",
+  "title": "Wright recovery workflow command batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["document_kind", "schema_version", "base_revision", "origin", "commands"],
+  "properties": {
+    "document_kind": { "const": "workflow-command-batch" },
+    "schema_version": { "const": "1.0.0-recovery.1" },
+    "base_revision": { "type": "integer", "minimum": 1 },
+    "origin": { "enum": ["graph", "form", "text", "ai_proposal"] },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1000,
+      "items": { "$ref": "#/$defs/command" }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1 },
+    "scalar": { "type": ["string", "number", "boolean"] },
+    "command": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "block_id", "title"],
+          "properties": {
+            "kind": { "const": "set_block_title" },
+            "block_id": { "$ref": "#/$defs/id" },
+            "title": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "block_id", "key", "value"],
+          "properties": {
+            "kind": { "const": "set_block_configuration" },
+            "block_id": { "$ref": "#/$defs/id" },
+            "key": { "$ref": "#/$defs/id" },
+            "value": { "$ref": "#/$defs/scalar" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "port_id", "required", "cardinality"],
+          "properties": {
+            "kind": { "const": "set_port_contract" },
+            "port_id": { "$ref": "#/$defs/id" },
+            "required": { "type": "boolean" },
+            "cardinality": { "enum": ["one", "optional", "many"] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "binding_id", "tool_id"],
+          "properties": {
+            "kind": { "const": "set_binding_tool" },
+            "binding_id": { "$ref": "#/$defs/id" },
+            "tool_id": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "relationship_id", "condition"],
+          "properties": {
+            "kind": { "const": "set_relationship_condition" },
+            "relationship_id": { "$ref": "#/$defs/id" },
+            "condition": { "type": ["string", "null"] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "relationship"],
+          "properties": {
+            "kind": { "const": "connect" },
+            "relationship": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "kind", "source_id", "target_id", "label", "condition"],
+              "properties": {
+                "id": { "$ref": "#/$defs/id" },
+                "kind": { "enum": ["data", "control", "decision", "feedback"] },
+                "source_id": { "$ref": "#/$defs/id" },
+                "target_id": { "$ref": "#/$defs/id" },
+                "label": { "type": "string", "maxLength": 500 },
+                "condition": { "type": ["string", "null"], "maxLength": 1000 }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "relationship_id"],
+          "properties": {
+            "kind": { "const": "disconnect" },
+            "relationship_id": { "$ref": "#/$defs/id" }
+          }
+        }
+      ]
+    }
+  }
+}

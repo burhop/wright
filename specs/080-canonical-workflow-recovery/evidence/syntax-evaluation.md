@@ -1,6 +1,6 @@
 # Workflow Syntax Evaluation
 
-**Canonical subject**: `mounting-bracket.workflow` / `dadc3d6a2e274973a9fd16f6eecd95ac1c3dac2f6ebd38c5b83b4e6a2705acb6`
+**Canonical subject**: `mounting-bracket.workflow` / `57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889`
 
 **Evidence class**: single-agent exploratory generation/edit evidence. This is not an independent mechanical-engineer study, model benchmark, or permanent syntax approval.
 
@@ -8,9 +8,9 @@ All three files validate against the same IR schema, parse to byte-identical can
 
 | Treatment | Bytes | Lines | Max nesting | Readability /5* | Valid edits | Mean diff lines | Comments/format | Source maps | Parser cost |
 |---|---:|---:|---:|---:|---:|---:|---|---|---:|
-| JSON | 18858 | 622 | 5 | 2.5 | 5/5 | 2.4 | unsupported | custom parser required | 1 LOC |
-| YAML | 13909 | 467 | 2 | 4.0 | 5/5 | 2.4 | lost by evaluated safe parser | event parser or CST required | 2 LOC |
-| DSL | 13077 | 468 | 1 | 4.5 | 5/5 | 2.4 | leading comments preserved; canonical formatting normalized | section spans implemented | 96 LOC |
+| JSON | 20116 | 661 | 5 | 2.5 | 5/5 | 2.4 | unsupported | custom parser required | 1 LOC |
+| YAML | 14806 | 491 | 2 | 4.0 | 5/5 | 2.4 | lost by evaluated safe parser | event parser or CST required | 2 LOC |
+| DSL | 13941 | 477 | 1 | 4.5 | 5/5 | 2.4 | leading comments preserved; canonical formatting normalized | section spans implemented | 96 LOC |
 
 \* Readability is an explicit expert heuristic based on labels, nesting, noise, and direct correspondence to blocks/ports. It must not be treated as moderated-user evidence.
 

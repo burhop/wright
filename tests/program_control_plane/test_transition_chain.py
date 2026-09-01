@@ -83,6 +83,18 @@ ACTIVATION_DIGEST_TARGETS = frozenset(
         for index in (3, 4, 5)
     }
 )
+F02B_CORRECTION_PATH = (
+    f"{PROGRAM_ROOT}/evidence/corrections/COR-EPP-F02B-TR0095-RAW-IDENTITY-001.json"
+)
+F02B_DIGEST_TARGETS = frozenset(
+    {
+        (
+            f"{PROGRAM_ROOT}/evidence/transitions/TR-0095.json",
+            f"/outputs/{index}/sha256",
+        )
+        for index in (2, 3, 4, 5)
+    }
+)
 LEASE_CHECKPOINT_SCHEMA_TARGETS = frozenset(
     {f"{PROGRAM_ROOT}/evidence/states/program-state-revision-0075.json"}
 )
@@ -184,6 +196,40 @@ def test_f01b_activation_correction_rejects_any_target_expansion(
     )
 
     assert codes(findings) == {"F01B_ACTIVATION_CORRECTION_INVALID"}
+    assert digest_targets == frozenset()
+
+
+def test_exact_f02b_checkpoint_correction_recomputes_four_git_normalized_claims(
+    repository_root: Path,
+) -> None:
+    profile = load(repository_root / F02B_CORRECTION_PATH)
+    original_profile = copy.deepcopy(profile)
+
+    findings, digest_targets = (
+        validation_module.validate_f02b_checkpoint_raw_identity_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, profile
+        )
+    )
+
+    assert findings == []
+    assert digest_targets == F02B_DIGEST_TARGETS
+    assert profile == original_profile
+
+
+def test_f02b_checkpoint_correction_rejects_any_target_expansion(
+    repository_root: Path,
+) -> None:
+    profile = load(repository_root / F02B_CORRECTION_PATH)
+    mutated = copy.deepcopy(profile)
+    mutated["claims"][0]["json_pointer"] = "/outputs/1/sha256"
+
+    findings, digest_targets = (
+        validation_module.validate_f02b_checkpoint_raw_identity_correction(
+            GitReader(repository_root), "HEAD", PROGRAM_ROOT, mutated
+        )
+    )
+
+    assert codes(findings) == {"F02B_CHECKPOINT_CORRECTION_INVALID"}
     assert digest_targets == frozenset()
 
 

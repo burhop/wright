@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from scripts.recovery.evaluate_workflow_syntaxes import dsl_text, json_text, yaml_text
 from scripts.recovery.workflow_conformance import (
@@ -23,6 +24,7 @@ FEATURE = Path("specs/080-canonical-workflow-recovery")
 JSON_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.json"
 YAML_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.yaml"
 DSL_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.wflow"
+CONTRACTS = FEATURE / "contracts"
 
 
 @pytest.fixture
@@ -50,7 +52,7 @@ def test_committed_treatments_are_current_and_semantically_identical(workflow: d
         assert reparsed.ok
         assert canonical_bytes(reparsed.ir) == canonical_bytes(workflow)
         if syntax == "dsl":
-            assert len(source_map) == 44
+            assert len(source_map) == 45
 
 
 def invalid_treatments(workflow: dict, syntax: str) -> list[tuple[str, str]]:
@@ -119,6 +121,8 @@ def test_all_eight_invalid_controls_fail_closed(workflow: dict, syntax: str) -> 
 
 def five_edit_batch(revision: int, origin: str = "graph") -> dict:
     return {
+        "document_kind": "workflow-command-batch",
+        "schema_version": "1.0.0-recovery.1",
         "base_revision": revision,
         "origin": origin,
         "commands": [
@@ -129,6 +133,91 @@ def five_edit_batch(revision: int, origin: str = "graph") -> dict:
             {"kind": "set_relationship_condition", "relationship_id": "rel.review-revise", "condition": "Any required input is missing or a warning remains unresolved"},
         ],
     }
+
+
+def layout_document(workflow: dict, positions: dict | None = None) -> dict:
+    return {
+        "document_kind": "workflow-layout",
+        "schema_version": "1.0.0-recovery.1",
+        "workflow_id": workflow["workflow_id"],
+        "semantic_revision": workflow["revision"],
+        "layout_revision": 1,
+        "positions": positions or {},
+        "viewport": {"x": 0, "y": 0, "zoom": 1},
+    }
+
+
+def run_document(workflow: dict) -> dict:
+    return {
+        "document_kind": "workflow-run",
+        "schema_version": "1.0.0-recovery.1",
+        "run_id": "run.test-001",
+        "workflow_id": workflow["workflow_id"],
+        "workflow_revision": workflow["revision"],
+        "semantic_sha256": semantic_digest(workflow),
+        "created_at": "2026-08-31T05:00:00Z",
+        "completed_at": None,
+        "mode": "simulated",
+        "state": "running",
+        "active_block_id": "block.check-manufacturability",
+        "active_relationship_id": "rel.geometry-to-check",
+        "steps": {
+            "block.check-manufacturability": {"state": "running", "label": "ACTIVE", "detail": "Checking the accepted geometry."},
+            "block.review-design": {
+                "state": "queued",
+                "label": "QUEUED",
+                "detail": "Waiting for the manufacturability result.",
+                "component_scope": {
+                    "component_instance_id": "block.review-design",
+                    "component_id": "component.review-cell",
+                    "component_version": "1.0.0",
+                    "internal_semantic_id": "component.review-cell.block.evaluate",
+                },
+            },
+        },
+        "activity": [],
+        "artifact_records": [],
+        "material_supplied": False,
+        "outputs_ready": False,
+    }
+
+
+def test_all_recovery_wire_examples_validate_against_their_published_schemas(workflow: dict) -> None:
+    examples = [
+        ("canonical-workflow-ir.schema.json", workflow),
+        ("workflow-command-batch.schema.json", five_edit_batch(workflow["revision"])),
+        ("workflow-layout.schema.json", layout_document(workflow)),
+        ("workflow-run-record.schema.json", run_document(workflow)),
+    ]
+    for schema_name, example in examples:
+        schema = json.loads((CONTRACTS / schema_name).read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        errors = sorted(Draft202012Validator(schema).iter_errors(example), key=lambda error: list(error.path))
+        assert errors == [], f"{schema_name}: {[error.message for error in errors]}"
+
+        unknown = copy.deepcopy(example)
+        unknown["unknown_field"] = "must fail closed"
+        assert list(Draft202012Validator(schema).iter_errors(unknown)), schema_name
+
+    command_schema = json.loads((CONTRACTS / "workflow-command-batch.schema.json").read_text(encoding="utf-8"))
+    invalid_command = five_edit_batch(workflow["revision"])
+    invalid_command["commands"][0]["kind"] = "unknown_command"
+    assert list(Draft202012Validator(command_schema).iter_errors(invalid_command))
+
+    run_schema = json.loads((CONTRACTS / "workflow-run-record.schema.json").read_text(encoding="utf-8"))
+    invalid_run = run_document(workflow)
+    invalid_run["steps"]["block.check-manufacturability"]["unknown_field"] = True
+    assert list(Draft202012Validator(run_schema).iter_errors(invalid_run))
+
+    layout_schema = json.loads((CONTRACTS / "workflow-layout.schema.json").read_text(encoding="utf-8"))
+    invalid_layout = layout_document(workflow)
+    invalid_layout["viewport"]["zoom"] = 0
+    assert list(Draft202012Validator(layout_schema).iter_errors(invalid_layout))
+
+    canonical_schema = json.loads((CONTRACTS / "canonical-workflow-ir.schema.json").read_text(encoding="utf-8"))
+    invalid_canonical = copy.deepcopy(workflow)
+    invalid_canonical["blocks"][0]["configuration"]["nested"] = {"not": "portable"}
+    assert list(Draft202012Validator(canonical_schema).iter_errors(invalid_canonical))
 
 
 def test_graph_commands_round_trip_through_every_text_treatment(workflow: dict) -> None:
@@ -152,7 +241,7 @@ def test_valid_text_edit_updates_projection_and_invalid_text_preserves_last_vali
     )
     valid = parse(valid_text, "dsl")
     assert valid.ok and valid.ir is not None
-    canvas = project(valid.ir, {"positions": {}})
+    canvas = project(valid.ir, layout_document(valid.ir))
     assert next(node for node in canvas["nodes"] if node["id"] == "block.generate-geometry")["title"] == "Create parametric bracket"
 
     last_valid = copy.deepcopy(valid.ir)
@@ -167,6 +256,8 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
     invalid = apply(
         workflow,
         {
+            "document_kind": "workflow-command-batch",
+            "schema_version": "1.0.0-recovery.1",
             "base_revision": 1,
             "origin": "graph",
             "commands": [
@@ -303,6 +394,7 @@ def test_single_cardinality_input_rejects_a_second_distinct_source(workflow: dic
                 "input_port_ids": ["port.brief-out"],
                 "output_port_ids": [],
                 "internal_definition_digest": f"sha256:{'a' * 64}",
+                "internal_addresses": [{"semantic_id": "component.invalid-interface.block.inner", "concept_kind": "block", "relative_path": "blocks/block.inner"}],
             }),
             "WFR-COMPONENT-PORT-DIRECTION",
         ),
@@ -327,17 +419,69 @@ def test_ai_uses_the_same_command_protocol_and_deterministic_diff(workflow: dict
 def test_layout_and_run_projection_never_change_semantic_digest(workflow: dict) -> None:
     before = copy.deepcopy(workflow)
     digest = semantic_digest(workflow)
-    layout_a = {"positions": {"block.capture-brief": {"x": 80, "y": 80}}}
-    layout_b = {"positions": {"block.capture-brief": {"x": 640, "y": 220}}}
-    run = {
-        "active_relationship_id": "rel.geometry-to-check",
-        "steps": {"block.check-manufacturability": {"state": "running", "label": "ACTIVE"}},
-    }
+    layout_a = layout_document(workflow, {"block.capture-brief": {"x": 80, "y": 80}})
+    layout_b = layout_document(workflow, {"block.capture-brief": {"x": 640, "y": 220}})
+    run = run_document(workflow)
     projection_a = project(workflow, layout_a)
     projection_b = project(workflow, layout_b, run)
     assert projection_a["semantic_digest"] == projection_b["semantic_digest"] == digest
     assert next(edge for edge in projection_b["edges"] if edge["id"] == "rel.geometry-to-check")["active"] is True
     assert canonical_bytes(workflow) == canonical_bytes(before)
+
+
+def test_command_layout_and_run_unknown_versions_fail_closed_without_rewrite(workflow: dict) -> None:
+    batch = five_edit_batch(workflow["revision"])
+    unknown_batch = copy.deepcopy(batch)
+    unknown_batch["schema_version"] = "99.0.0"
+    batch_before = copy.deepcopy(unknown_batch)
+    command_result = apply(workflow, unknown_batch, workflow["revision"])
+    assert not command_result.ok
+    assert command_result.diagnostics[0].code == "WFR-COMMAND-VERSION-UNSUPPORTED"
+    assert unknown_batch == batch_before
+
+    layout = layout_document(workflow)
+    unknown_layout = copy.deepcopy(layout)
+    unknown_layout["schema_version"] = "99.0.0"
+    layout_before = copy.deepcopy(unknown_layout)
+    with pytest.raises(ValueError, match="WFR-LAYOUT-VERSION-UNSUPPORTED"):
+        project(workflow, unknown_layout)
+    assert unknown_layout == layout_before
+
+    run = run_document(workflow)
+    unknown_run = copy.deepcopy(run)
+    unknown_run["schema_version"] = "99.0.0"
+    run_before = copy.deepcopy(unknown_run)
+    with pytest.raises(ValueError, match="WFR-RUN-VERSION-UNSUPPORTED"):
+        project(workflow, layout, unknown_run)
+    assert unknown_run == run_before
+
+
+def test_reusable_component_internal_addresses_round_trip_and_reject_duplicates(workflow: dict) -> None:
+    component = workflow["components"][0]
+    assert component["id"] == "component.review-cell"
+    instance = next(block for block in workflow["blocks"] if block["id"] == "block.review-design")
+    assert instance["kind"] == "component"
+    assert instance["component_ref"] == {"component_id": "component.review-cell", "version_range": "^1.0.0"}
+    scoped_step = run_document(workflow)["steps"]["block.review-design"]["component_scope"]
+    assert scoped_step == {
+        "component_instance_id": "block.review-design",
+        "component_id": "component.review-cell",
+        "component_version": "1.0.0",
+        "internal_semantic_id": "component.review-cell.block.evaluate",
+    }
+    assert {address["concept_kind"] for address in component["internal_addresses"]} >= {"block", "port", "relationship", "artifact_contract"}
+    for syntax in ("json", "yaml", "dsl"):
+        text, _ = format(workflow, syntax)
+        reparsed = parse(text, syntax)
+        assert reparsed.ok
+        assert reparsed.ir["components"][0]["internal_addresses"] == component["internal_addresses"]
+
+    duplicate = copy.deepcopy(workflow)
+    duplicate_address = copy.deepcopy(duplicate["components"][0]["internal_addresses"][0])
+    duplicate["components"][0]["internal_addresses"].append(duplicate_address)
+    result = validate(duplicate)
+    assert not result.valid
+    assert "WFR-COMPONENT-ADDRESS-DUPLICATE" in {diagnostic.code for diagnostic in result.diagnostics}
 
 
 def test_dsl_leading_comment_and_source_identity_survive_format(workflow: dict) -> None:

@@ -1,6 +1,7 @@
 import {
   cloneLayout,
   cloneWorkflow,
+  validateRecoveryLayoutDocument,
   type RecoveryBlock,
   type RecoveryDiagnostic,
   type RecoveryLayout,
@@ -21,12 +22,23 @@ export type RecoveryCommand =
   | { kind: "add_block"; block: RecoveryBlock; ports: RecoveryPort[]; position: { x: number; y: number } }
   | { kind: "delete_block"; blockId: string }
   | { kind: "connect"; relationship: RecoveryRelationship }
-  | { kind: "disconnect"; relationshipId: string };
+  | { kind: "disconnect"; relationshipId: string }
+  | { kind: "restore_snapshot"; direction: "undo" | "redo"; workflow: RecoveryWorkflow; layout: RecoveryLayout };
 
 export interface RecoveryCommandBatch {
+  documentKind: "workflow-command-batch";
+  schemaVersion: "1.0.0-recovery.1";
   baseRevision: number;
-  origin: "graph" | "form" | "text" | "ai_proposal";
+  origin: "graph" | "form" | "text" | "ai_proposal" | "history";
   commands: RecoveryCommand[];
+}
+
+export function recoveryCommandBatch(
+  baseRevision: number,
+  origin: RecoveryCommandBatch["origin"],
+  commands: RecoveryCommand[],
+): RecoveryCommandBatch {
+  return { documentKind: "workflow-command-batch", schemaVersion: "1.0.0-recovery.1", baseRevision, origin, commands };
 }
 
 export interface RecoveryApplyResult {
@@ -49,6 +61,11 @@ function block(workflow: RecoveryWorkflow, id: string): RecoveryBlock {
 }
 
 function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, command: RecoveryCommand): void {
+  if (command.kind === "restore_snapshot") {
+    Object.assign(workflow, cloneWorkflow(command.workflow));
+    Object.assign(layout, cloneLayout(command.layout));
+    return;
+  }
   if (command.kind === "move_block") {
     if (!workflow.blocks.some((item) => item.id === command.blockId) || !Number.isFinite(command.x) || !Number.isFinite(command.y)) {
       throw new Error(`WFR-COMMAND-MOVE-INVALID:${command.blockId}`);
@@ -183,10 +200,24 @@ export function applyRecoveryBatch(
   layoutValue: RecoveryLayout,
   batch: RecoveryCommandBatch,
 ): RecoveryApplyResult {
+  if (batch.documentKind !== "workflow-command-batch" || batch.schemaVersion !== "1.0.0-recovery.1") {
+    return failure("WFR-COMMAND-VERSION-UNSUPPORTED", `Unsupported command document ${String(batch.documentKind)} version ${String(batch.schemaVersion)}.`, "Preserve the original command bytes and use an explicitly compatible reader; never silently rewrite an unknown version.");
+  }
+  const inputLayoutIssue = validateRecoveryLayoutDocument(workflowValue, layoutValue)[0];
+  if (inputLayoutIssue) return failure(inputLayoutIssue.code, inputLayoutIssue.explanation, inputLayoutIssue.correction, inputLayoutIssue.semanticId);
   if (batch.baseRevision !== workflowValue.revision) {
     return failure("WFR-COMMAND-STALE-BASE", `Revision ${batch.baseRevision} is stale; the current definition is revision ${workflowValue.revision}.`, "Refresh, rebase, and review the new semantic diff.");
   }
   if (batch.commands.length === 0) return failure("WFR-COMMAND-BATCH-EMPTY", "A command batch must contain at least one change.", "Add a command or reject the proposal.");
+  const historyCommands = batch.commands.filter((command) => command.kind === "restore_snapshot");
+  if ((historyCommands.length > 0 && (batch.origin !== "history" || batch.commands.length !== 1)) || (batch.origin === "history" && historyCommands.length !== 1)) {
+    return failure("WFR-HISTORY-BATCH-INVALID", "Undo/redo must be one isolated restore command in a history-origin batch.", "Submit exactly one validated restore snapshot command.");
+  }
+  const hasLayoutOnlyCommand = batch.commands.some((command) => command.kind === "move_block");
+  const hasSemanticCommand = batch.commands.some((command) => command.kind !== "move_block" && command.kind !== "restore_snapshot");
+  if (hasLayoutOnlyCommand && hasSemanticCommand) {
+    return failure("WFR-COMMAND-MIXED-CONTAINMENT", "Layout-only moves and semantic definition changes cannot share one atomic batch.", "Submit one semantic batch and one layout batch so revision ownership remains explicit.");
+  }
   const workflow = cloneWorkflow(workflowValue);
   const layout = cloneLayout(layoutValue);
   try {
@@ -199,19 +230,26 @@ export function applyRecoveryBatch(
   const candidateText = formatRecoveryDsl(workflow).text;
   const parsed = parseRecoveryDsl(candidateText);
   if (!parsed.ok || parsed.workflow === null) return { ok: false, workflow: null, layout: null, diagnostics: parsed.diagnostics, diff: [], semanticChanged: false };
+  const candidateLayoutIssue = validateRecoveryLayoutDocument(parsed.workflow, layout)[0];
+  if (candidateLayoutIssue) return failure(candidateLayoutIssue.code, candidateLayoutIssue.explanation, candidateLayoutIssue.correction, candidateLayoutIssue.semanticId);
   const diff = modelDiff(workflowValue, parsed.workflow);
   const semanticChanged = diff.length > 0;
   return { ok: true, workflow: parsed.workflow, layout, diagnostics: [], diff, semanticChanged };
 }
 
-export function acceptRecoveryResult(current: RecoveryWorkflow, result: RecoveryApplyResult): { workflow: RecoveryWorkflow; layout: RecoveryLayout } | null {
+export function acceptRecoveryResult(current: RecoveryWorkflow, currentLayout: RecoveryLayout, result: RecoveryApplyResult): { workflow: RecoveryWorkflow; layout: RecoveryLayout } | null {
   if (!result.ok || result.workflow === null || result.layout === null) return null;
   const workflow = cloneWorkflow(result.workflow);
   if (result.semanticChanged) {
     workflow.parentRevision = current.revision;
     workflow.revision = current.revision + 1;
   }
-  return { workflow, layout: cloneLayout(result.layout) };
+  const layout = cloneLayout(result.layout);
+  const layoutChanged = stableValue({ positions: currentLayout.positions, viewport: currentLayout.viewport }) !== stableValue({ positions: layout.positions, viewport: layout.viewport });
+  layout.workflowId = workflow.workflowId;
+  layout.semanticRevision = workflow.revision;
+  layout.layoutRevision = layoutChanged || result.semanticChanged ? currentLayout.layoutRevision + 1 : currentLayout.layoutRevision;
+  return { workflow, layout };
 }
 
 function normalized(workflow: RecoveryWorkflow): string {
@@ -266,7 +304,15 @@ export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkfl
     if (current.toolId !== edited.toolId) commands.push({ kind: "set_binding_tool", bindingId: current.id, toolId: edited.toolId });
   }
   const candidate = cloneWorkflow(before);
-  for (const command of commands) applyCommand(candidate, { positions: {}, viewport: { x: 0, y: 0, zoom: 1 } }, command);
+  for (const command of commands) applyCommand(candidate, {
+    documentKind: "workflow-layout",
+    schemaVersion: "1.0.0-recovery.1",
+    workflowId: before.workflowId,
+    semanticRevision: before.revision,
+    layoutRevision: 1,
+    positions: {},
+    viewport: { x: 0, y: 0, zoom: 1 },
+  }, command);
   if (normalized(candidate) !== normalized(after)) {
     return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: null, line: null, explanation: "The text contains a structural or authority change outside this disposable Code treatment.", correction: "Restore the last-valid source or make the structural change on the canvas." }];
   }
@@ -323,14 +369,10 @@ export function aiDrawingProposal(workflow: RecoveryWorkflow): RecoveryCommandBa
     { id: "port.drawing-review-in", ownerBlockId: second.id, direction: "input", name: "Inspection drawing", typeId: "type.file.drawing", required: true, cardinality: "one", artifactContractId: null, description: "Drawing presented for checking." },
     { id: "port.drawing-approved-out", ownerBlockId: second.id, direction: "output", name: "Approved drawing", typeId: "type.file.drawing.approved", required: true, cardinality: "one", artifactContractId: null, description: "Drawing plus checker decision." },
   ];
-  return {
-    baseRevision: workflow.revision,
-    origin: "ai_proposal",
-    commands: [
+  return recoveryCommandBatch(workflow.revision, "ai_proposal", [
       { kind: "add_block", block: first, ports: ports.slice(0, 2), position: { x: 1030, y: 400 } },
       { kind: "add_block", block: second, ports: ports.slice(2), position: { x: 1380, y: 410 } },
       { kind: "connect", relationship: { id: "rel.approved-to-drawing", kind: "data", sourceId: "port.approved-geometry-out", targetId: "port.drawing-geometry-in", label: "approved geometry", condition: "decision.accepted" } },
       { kind: "connect", relationship: { id: "rel.drawing-to-review", kind: "data", sourceId: "port.drawing-out", targetId: "port.drawing-review-in", label: "drawing", condition: null } },
-    ],
-  };
+  ]);
 }

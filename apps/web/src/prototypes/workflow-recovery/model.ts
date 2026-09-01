@@ -89,6 +89,11 @@ export interface RecoveryComponent {
   inputPortIds: string[];
   outputPortIds: string[];
   internalDefinitionDigest: string;
+  internalAddresses: {
+    semanticId: string;
+    conceptKind: "block" | "port" | "relationship" | "artifact_contract" | "binding" | "component";
+    relativePath: string;
+  }[];
 }
 
 export interface RecoveryWorkflow {
@@ -114,6 +119,11 @@ export interface RecoveryWorkflow {
 }
 
 export interface RecoveryLayout {
+  documentKind: "workflow-layout";
+  schemaVersion: "1.0.0-recovery.1";
+  workflowId: string;
+  semanticRevision: number;
+  layoutRevision: number;
   positions: Record<string, { x: number; y: number }>;
   viewport: { x: number; y: number; zoom: number };
 }
@@ -124,15 +134,26 @@ export interface RecoveryDiagnostic {
   line: number | null;
   explanation: string;
   correction: string;
+  componentScope?: RecoveryComponentScope;
+}
+
+export interface RecoveryComponentScope {
+  componentInstanceId: string;
+  componentId: string;
+  componentVersion: string;
+  internalSemanticId: string;
 }
 
 export interface RecoveryStepProjection {
   state: RecoveryRunState;
   label: string;
   detail: string;
+  componentScope?: RecoveryComponentScope;
 }
 
 export interface RecoveryRunProjection {
+  documentKind: "workflow-run";
+  schemaVersion: "1.0.0-recovery.1";
   runId: string;
   workflowId: string;
   workflowRevision: number;
@@ -155,6 +176,12 @@ export interface RecoveryRunProjection {
   }[];
   materialSupplied: boolean;
   outputsReady: boolean;
+}
+
+export interface RecoveryRunSubject {
+  workflowId: string;
+  workflowRevision: number;
+  semanticSha256: string;
 }
 
 const sha = (digit: string) => `sha256:${digit.repeat(64)}`;
@@ -197,10 +224,10 @@ export const initialWorkflow: RecoveryWorkflow = {
       configuration: { process: "machined-and-bent", minimum_edge_ratio: 1.5 }, inputPortIds: ["port.geometry-check-in", "port.material-in"], outputPortIds: ["port.report-out"], bindingId: "binding.check-manufacturability", componentRef: null,
     },
     {
-      id: "block.review-design", kind: "approval", title: "Review bracket design",
+      id: "block.review-design", kind: "component", title: "Review bracket design",
       purpose: "Approve the geometry and manufacturability findings or return them for revision.", phaseId: "phase.verify",
       executionKind: "human", instructions: "Approve only when all required inputs are present and every warning is dispositioned.",
-      configuration: { required_role: "design-reviewer" }, inputPortIds: ["port.geometry-review-in", "port.report-in"], outputPortIds: ["port.approved-geometry-out"], bindingId: null, componentRef: null,
+      configuration: { required_role: "design-reviewer" }, inputPortIds: ["port.geometry-review-in", "port.report-in"], outputPortIds: ["port.approved-geometry-out"], bindingId: null, componentRef: { componentId: "component.review-cell", versionRange: "^1.0.0" },
     },
     {
       id: "block.export-step", kind: "work", title: "Export STEP",
@@ -257,10 +284,28 @@ export const initialWorkflow: RecoveryWorkflow = {
     { id: "binding.export-step", kind: "mcp_tool", providerId: "provider.wright-local", serverId: "server.solid-edge", toolId: "tool.export-step-ap242", schemaDigest: sha("3"), argumentMap: [{ semanticSource: "port.approved-geometry-in", implementationTarget: "arguments.model" }], resultMap: [{ semanticSource: "port.step-out", implementationTarget: "result.step_file" }], approvalPolicy: "review_before_run", capabilityName: "Export approved model as STEP AP242" },
     { id: "binding.release-package", kind: "internal", providerId: "provider.wright-local", serverId: null, toolId: "package.local-review-bundle", schemaDigest: sha("4"), argumentMap: [{ semanticSource: "port.step-in", implementationTarget: "files.step" }, { semanticSource: "port.report-package-in", implementationTarget: "files.report" }], resultMap: [{ semanticSource: "port.package-out", implementationTarget: "package" }], approvalPolicy: "none", capabilityName: "Assemble local design review package" },
   ],
-  components: [],
+  components: [{
+    id: "component.review-cell",
+    version: "1.0.0",
+    title: "Reusable design review cell",
+    inputPortIds: ["port.geometry-review-in", "port.report-in"],
+    outputPortIds: ["port.approved-geometry-out"],
+    internalDefinitionDigest: sha("5"),
+    internalAddresses: [
+      { semanticId: "component.review-cell.block.evaluate", conceptKind: "block", relativePath: "blocks/block.evaluate" },
+      { semanticId: "component.review-cell.relationship.accept", conceptKind: "relationship", relativePath: "relationships/rel.accept" },
+      { semanticId: "component.review-cell.artifact.approved", conceptKind: "artifact_contract", relativePath: "artifact-contracts/artifact.approved" },
+      { semanticId: "component.review-cell.port.approved", conceptKind: "port", relativePath: "ports/port.approved" },
+    ],
+  }],
 };
 
 export const initialLayout: RecoveryLayout = {
+  documentKind: "workflow-layout",
+  schemaVersion: "1.0.0-recovery.1",
+  workflowId: "workflow.mounting-bracket",
+  semanticRevision: 1,
+  layoutRevision: 1,
   positions: {
     "block.capture-brief": { x: 20, y: 30 },
     "block.generate-geometry": { x: 365, y: 55 },
@@ -280,6 +325,23 @@ export function cloneLayout(layout: RecoveryLayout): RecoveryLayout {
   return structuredClone(layout);
 }
 
+export function validateRecoveryLayoutDocument(workflow: RecoveryWorkflow, layout: RecoveryLayout): RecoveryDiagnostic[] {
+  if (layout.documentKind !== "workflow-layout" || layout.schemaVersion !== "1.0.0-recovery.1") {
+    return [{ code: "WFR-LAYOUT-VERSION-UNSUPPORTED", semanticId: null, line: null, explanation: `Unsupported layout document ${String(layout.documentKind)} version ${String(layout.schemaVersion)}.`, correction: "Preserve the original bytes and use an explicitly compatible reader; never silently rewrite an unknown version." }];
+  }
+  if (layout.workflowId !== workflow.workflowId || layout.semanticRevision !== workflow.revision) {
+    return [{ code: "WFR-LAYOUT-SUBJECT-MISMATCH", semanticId: null, line: null, explanation: "The layout does not target the current workflow identity and semantic revision.", correction: "Load or explicitly migrate a layout bound to the accepted workflow revision." }];
+  }
+  const blockIds = new Set(workflow.blocks.map((item) => item.id));
+  const unknown = Object.keys(layout.positions).find((id) => !blockIds.has(id));
+  if (unknown) return [{ code: "WFR-LAYOUT-IDENTITY-UNKNOWN", semanticId: unknown, line: null, explanation: `Layout position ${unknown} has no canonical block.`, correction: "Remove the unknown presentation identity or restore its canonical block." }];
+  const numbers = [layout.viewport.x, layout.viewport.y, layout.viewport.zoom, ...Object.values(layout.positions).flatMap((position) => [position.x, position.y])];
+  if (!numbers.every(Number.isFinite)) return [{ code: "WFR-LAYOUT-NUMBER-NONFINITE", semanticId: null, line: null, explanation: "Layout coordinates and viewport values must be finite.", correction: "Replace NaN or infinity with bounded numeric presentation metadata." }];
+  if (!Number.isInteger(layout.layoutRevision) || layout.layoutRevision < 1) return [{ code: "WFR-LAYOUT-REVISION-INVALID", semanticId: null, line: null, explanation: "Layout revision must be a positive integer.", correction: "Use the next positive layout revision assigned by the host." }];
+  if (layout.viewport.zoom <= 0) return [{ code: "WFR-LAYOUT-ZOOM-INVALID", semanticId: null, line: null, explanation: "Layout zoom must be greater than zero.", correction: "Use a positive finite zoom value." }];
+  return [];
+}
+
 export function findBlock(workflow: RecoveryWorkflow, id: string | null): RecoveryBlock | null {
   return id === null ? null : workflow.blocks.find((block) => block.id === id) ?? null;
 }
@@ -294,12 +356,34 @@ export function phaseName(workflow: RecoveryWorkflow, id: string | null): string
 
 function roleFor(block: RecoveryBlock): "input" | "work" | "review" | "release" {
   if (block.id === "block.capture-brief") return "input";
-  if (block.kind === "approval") return "review";
+  if (block.kind === "approval" || block.componentRef?.componentId === "component.review-cell") return "review";
   if (block.id.includes("release") || block.id.includes("export")) return "release";
   return "work";
 }
 
+export function resolveRecoveryComponentScope(
+  workflow: RecoveryWorkflow,
+  componentInstanceId: string,
+  internalSemanticId: string,
+): RecoveryComponentScope {
+  const instance = workflow.blocks.find((block) => block.id === componentInstanceId);
+  if (!instance?.componentRef) throw new Error(`WFR-COMPONENT-INSTANCE-MISSING:${componentInstanceId}`);
+  const component = workflow.components.find((item) => item.id === instance.componentRef?.componentId);
+  if (!component) throw new Error(`WFR-COMPONENT-REFERENCE-MISSING:${instance.componentRef.componentId}`);
+  if (!component.internalAddresses.some((address) => address.semanticId === internalSemanticId)) {
+    throw new Error(`WFR-COMPONENT-ADDRESS-MISSING:${internalSemanticId}`);
+  }
+  return {
+    componentInstanceId,
+    componentId: component.id,
+    componentVersion: component.version,
+    internalSemanticId,
+  };
+}
+
 export function toDraftProjection(workflow: RecoveryWorkflow, layout: RecoveryLayout): DraftProjection {
+  const layoutIssue = validateRecoveryLayoutDocument(workflow, layout)[0];
+  if (layoutIssue) throw new Error(layoutIssue.code);
   const port = (identity: string) => {
     const source = workflow.ports.find((item) => item.id === identity);
     if (!source) throw new Error(`RECOVERY_PORT_MISSING:${identity}`);
@@ -325,7 +409,8 @@ export function toDraftProjection(workflow: RecoveryWorkflow, layout: RecoveryLa
     semanticId: string;
   }>();
   for (const block of workflow.blocks) {
-    if (block.kind !== "approval") continue;
+    const isReviewGate = block.kind === "approval" || block.componentRef?.componentId === "component.review-cell";
+    if (!isReviewGate) continue;
     const decision = workflow.relationships
       .filter((relationship) => relationship.kind === "decision" && relationship.sourceId === block.id)
       .sort((left, right) => left.id.localeCompare(right.id))[0];
@@ -439,6 +524,8 @@ export function initialRunProjection(
   createdAt = "",
 ): RecoveryRunProjection {
   return {
+    documentKind: "workflow-run",
+    schemaVersion: "1.0.0-recovery.1",
     runId: "run.demo-001",
     workflowId: subject.workflowId,
     workflowRevision: subject.revision,
@@ -455,4 +542,30 @@ export function initialRunProjection(
     materialSupplied: false,
     outputsReady: false,
   };
+}
+
+export function validateRecoveryRunProjection(run: RecoveryRunProjection, subject: RecoveryRunSubject | null = null): RecoveryDiagnostic[] {
+  if (run.documentKind !== "workflow-run" || run.schemaVersion !== "1.0.0-recovery.1") {
+    return [{
+      code: "WFR-RUN-VERSION-UNSUPPORTED",
+      semanticId: run.runId ?? null,
+      line: null,
+      explanation: `Unsupported run document ${String(run.documentKind)} version ${String(run.schemaVersion)}.`,
+      correction: "Preserve the original record bytes and open them with an explicitly compatible reader; never rewrite an unknown version.",
+    }];
+  }
+  if (subject !== null && (
+    run.workflowId !== subject.workflowId
+    || run.workflowRevision !== subject.workflowRevision
+    || run.semanticSha256 !== subject.semanticSha256
+  )) {
+    return [{
+      code: "WFR-RUN-SUBJECT-MISMATCH",
+      semanticId: run.runId,
+      line: null,
+      explanation: "The run projection does not match the captured workflow identity, revision, and semantic digest.",
+      correction: "Project only the immutable run record captured for this exact accepted definition subject.",
+    }];
+  }
+  return [];
 }

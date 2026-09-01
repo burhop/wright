@@ -12,7 +12,7 @@ python -m pytest tests/recovery/test_workflow_conformance.py -q --basetemp .test
 
 Expected evidence:
 
-- 555/555 source rows mapped into 33/33 capabilities;
+- 859/859 source rows mapped into 33/33 capabilities;
 - 11/11 product gates, 100/100 stories, and 25/25 lessons covered;
 - JSON, YAML, and DSL parse to one canonical semantic identity;
 - 20/20 conformance tests pass and every treatment rejects 8/8 invalid controls,
@@ -81,3 +81,38 @@ Stop on the first ambiguity. Do not treat this concept as production authority, 
 The Vite native-config-loader and existing large-chunk warnings are recorded,
 not introduced or hidden by this recovery concept. No push, merge, release,
 external execution, or customer action occurred.
+
+## Inspect the digest-bound walkthrough
+
+- Passing report: `artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/report.html`
+- Passing manifest SHA-256: `3b7aec8fbf5d4c4f33c108a47906def7be883259a13425a11ce297aa366ca594`
+- Exact subject: `4c717e22c812f2d1dc3bb6618229371561ba5aaa`
+- Exact tree: `9c1d044b26d90cf5763578d3c9410878bafb1d52`
+
+```powershell
+python C:\Users\markb\.codex\skills\playwright-ui-walkthrough\scripts\validate_walkthrough.py `
+  artifacts\ui-walkthrough\workflow-recovery\20260901T012043Z-continuation-2
+```
+
+Expected: `Walkthrough artifact structure is valid.` The two preceding blocked
+roots are intentionally retained as harness-stop evidence; the linked passing
+continuation is the product-approval subject.
+
+## Verify the recovery dashboard
+
+Open `http://127.0.0.1:8765/`. The server is launched against this recovery
+worktree and presents two deliberately separate ledgers:
+
+- governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
+- projected EPP-F02C recovery is `proposed`, unregistered, 49/60 after T049,
+  with T050–T060 open and T051 the mandatory approval stop.
+
+The live recovery gallery serves only the exact frozen and passing recovery
+walkthrough roots. Report, status, manifest, frozen screenshot, and all five
+recovery thumbnails return HTTP 200; raw encoded and plain `..` evidence-mount
+traversal attempts return HTTP 403. Headless Chromium verifies the recovery
+ledger, governed-truth warning, pending approval, incomplete customer readiness,
+six loaded gallery images, no console/page errors, and no horizontal overflow at
+1440 or 390 pixels. Local captures are in
+`artifacts/dashboard-recovery-verification/desktop-goal.png` and
+`artifacts/dashboard-recovery-verification/mobile-goal.png`.

@@ -16,15 +16,23 @@ FEATURE = ROOT / "specs" / "080-canonical-workflow-recovery"
 
 RELEVANT_SPECS = (
     "054-rivet-workflow-integration",
+    "055-rivet-compatibility-spike",
     "056-rivet-workspace-persistence",
     "057-rivet-headless-runner",
     "058-rivet-editor-host-adapters",
     "059-rivet-workspace-tab",
     "060-rivet-wright-nodes",
     "061-rivet-workflow-operations",
+    "064-retained-editor-host",
     "066-rivet2-canvas",
     "067-rivet-hermes-ai",
+    "068-capability-library",
     "069-rivet-mcp-gateway",
+    "070-engineering-scenario-harness",
+    "071-local-engineering-model-library",
+    "072-chatter-rivet-scenarios",
+    "073-program-hardening",
+    "074-windows-mcp-qualification",
     "075-rivet-run-inspector",
     "078-process-definition-view",
     "079-visual-workflow-composition",
@@ -105,8 +113,9 @@ def table_sources(path: str, prefixes: tuple[str, ...]) -> list[Source]:
 def requirement_sources(source_name: str, text: str) -> list[Source]:
     result: list[Source] = []
     pattern = re.compile(
-        r"^\s*-\s+(?:\*\*)?((?:FR|SC)-\d{3}|RQ-\d{2})(?:\*\*)?:\s*(.*)$",
-        re.MULTILINE,
+        r"^\s*-\s+(?:\*\*)?((?:FR|SC)-\d{3}|RQ-\d{2})(?:\*\*)?:\s*(.*?)"
+        r"(?=^\s*-\s+(?:\*\*)?(?:(?:FR|SC)-\d{3}|RQ-\d{2})(?:\*\*)?:|^#{1,6}\s|\Z)",
+        re.MULTILINE | re.DOTALL,
     )
     for requirement_id, title in pattern.findall(text):
         result.append(
@@ -292,6 +301,7 @@ def main() -> int:
         "core_expected": expected,
         "core_actual": actual,
         "counts_by_source": dict(sorted(counts_by_source.items())),
+        "scanned_spec_directories": list(RELEVANT_SPECS),
         "unexplained_omissions": [],
     }
     (FEATURE / "evidence" / "capability-coverage.json").write_text(

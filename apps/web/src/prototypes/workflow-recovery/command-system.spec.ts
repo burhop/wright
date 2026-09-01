@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { acceptRecoveryResult, aiDrawingProposal, applyRecoveryBatch, textEditCommands } from "./command-system";
+import { acceptRecoveryResult, aiDrawingProposal, applyRecoveryBatch, recoveryCommandBatch, textEditCommands, type RecoveryCommandBatch } from "./command-system";
 import { fromCanonicalWire, toCanonicalWire, type CanonicalWorkflowWire } from "./canonical-wire";
 import { cloneLayout, cloneWorkflow, initialLayout, initialWorkflow } from "./model";
 import { formatRecoveryDsl, parseRecoveryDsl } from "./recovery-dsl";
@@ -25,52 +25,57 @@ describe("recovery command and source conformance", () => {
     const parsed = parseRecoveryDsl(formatted.text);
     expect(parsed.ok).toBe(true);
     expect(parsed.workflow).toEqual(initialWorkflow);
-    expect(Object.keys(parsed.sourceMap)).toHaveLength(44);
+    expect(Object.keys(parsed.sourceMap)).toHaveLength(45);
     expect(parsed.sourceMap["block.check-manufacturability"]).toBeDefined();
   });
 
   it("applies a semantic batch atomically and advances one revision", () => {
-    const result = applyRecoveryBatch(cloneWorkflow(initialWorkflow), cloneLayout(initialLayout), {
-      baseRevision: 1,
-      origin: "form",
-      commands: [{ kind: "set_block_configuration", blockId: "block.generate-geometry", key: "thickness_mm", value: 8 }],
-    });
+    const result = applyRecoveryBatch(cloneWorkflow(initialWorkflow), cloneLayout(initialLayout), recoveryCommandBatch(1, "form", [
+      { kind: "set_block_configuration", blockId: "block.generate-geometry", key: "thickness_mm", value: 8 },
+    ]));
     expect(result.ok).toBe(true);
     expect(result.semanticChanged).toBe(true);
-    const accepted = acceptRecoveryResult(initialWorkflow, result);
+    const accepted = acceptRecoveryResult(initialWorkflow, initialLayout, result);
     expect(accepted?.workflow.revision).toBe(2);
     expect(accepted?.workflow.parentRevision).toBe(1);
     expect(accepted?.workflow.blocks.find((block) => block.id === "block.generate-geometry")?.configuration.thickness_mm).toBe(8);
   });
 
   it("keeps layout moves outside the semantic revision", () => {
-    const result = applyRecoveryBatch(initialWorkflow, initialLayout, {
-      baseRevision: 1,
-      origin: "graph",
-      commands: [{ kind: "move_block", blockId: "block.export-step", x: 900, y: 120 }],
-    });
+    const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "graph", [
+      { kind: "move_block", blockId: "block.export-step", x: 900, y: 120 },
+    ]));
     expect(result.ok).toBe(true);
     expect(result.semanticChanged).toBe(false);
-    const accepted = acceptRecoveryResult(initialWorkflow, result);
+    const accepted = acceptRecoveryResult(initialWorkflow, initialLayout, result);
     expect(accepted?.workflow.revision).toBe(1);
     expect(accepted?.layout.positions["block.export-step"]).toEqual({ x: 900, y: 120 });
   });
 
+  it("rejects mixed semantic and layout batches atomically", () => {
+    const beforeWorkflow = structuredClone(initialWorkflow);
+    const beforeLayout = structuredClone(initialLayout);
+    const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "graph", [
+      { kind: "move_block", blockId: "block.export-step", x: 900, y: 120 },
+      { kind: "set_block_title", blockId: "block.export-step", title: "Export reviewed STEP" },
+    ]));
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics[0]?.code).toBe("WFR-COMMAND-MIXED-CONTAINMENT");
+    expect(initialWorkflow).toEqual(beforeWorkflow);
+    expect(initialLayout).toEqual(beforeLayout);
+  });
+
   it("fails a stale or invalid batch without a partial mutation", () => {
-    const stale = applyRecoveryBatch(initialWorkflow, initialLayout, {
-      baseRevision: 0,
-      origin: "ai_proposal",
-      commands: [{ kind: "set_block_title", blockId: "block.generate-geometry", title: "Changed" }],
-    });
+    const stale = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(0, "ai_proposal", [
+      { kind: "set_block_title", blockId: "block.generate-geometry", title: "Changed" },
+    ]));
     expect(stale.ok).toBe(false);
     expect(stale.diagnostics[0]?.code).toBe("WFR-COMMAND-STALE-BASE");
     expect(initialWorkflow.blocks[1]?.title).toBe("Generate bracket geometry");
 
-    const invalid = applyRecoveryBatch(initialWorkflow, initialLayout, {
-      baseRevision: 1,
-      origin: "graph",
-      commands: [{ kind: "connect", relationship: { id: "rel.invalid", kind: "data", sourceId: "port.material-in", targetId: "port.step-out", label: "invalid", condition: null } }],
-    });
+    const invalid = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "graph", [
+      { kind: "connect", relationship: { id: "rel.invalid", kind: "data", sourceId: "port.material-in", targetId: "port.step-out", label: "invalid", condition: null } },
+    ]));
     expect(invalid.ok).toBe(false);
     expect(initialWorkflow.relationships.some((item) => item.id === "rel.invalid")).toBe(false);
   });
@@ -80,11 +85,9 @@ describe("recovery command and source conformance", () => {
     ["rel.invalid-feedback-source", "feedback", "block.generate-geometry", "block.capture-brief", "WFR-RELATIONSHIP-SOURCE-KIND"],
     ["rel.non-feedback-cycle", "control", "block.release-package", "block.capture-brief", "WFR-CYCLE-NON-FEEDBACK"],
   ] as const)("rejects invalid relationship topology %s", (id, kind, sourceId, targetId, code) => {
-    const result = applyRecoveryBatch(initialWorkflow, initialLayout, {
-      baseRevision: 1,
-      origin: "graph",
-      commands: [{ kind: "connect", relationship: { id, kind, sourceId, targetId, label: id, condition: null } }],
-    });
+    const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "graph", [
+      { kind: "connect", relationship: { id, kind, sourceId, targetId, label: id, condition: null } },
+    ]));
     expect(result.ok).toBe(false);
     expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toContain(code);
     expect(initialWorkflow.relationships).toHaveLength(9);
@@ -110,18 +113,72 @@ describe("recovery command and source conformance", () => {
   });
 
   it("reports every fact changed by one reviewed batch", () => {
-    const result = applyRecoveryBatch(initialWorkflow, initialLayout, {
-      baseRevision: 1,
-      origin: "ai_proposal",
-      commands: [
+    const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "ai_proposal", [
         { kind: "set_block_title", blockId: "block.generate-geometry", title: "Generate production geometry" },
         { kind: "set_block_configuration", blockId: "block.generate-geometry", key: "thickness_mm", value: 8 },
-      ],
-    });
+    ]));
     expect(result.ok).toBe(true);
     expect(result.diff).toEqual([
       'Configure block.generate-geometry · {"inside_radius_mm":4,"thickness_mm":6} → {"inside_radius_mm":4,"thickness_mm":8}',
       'Rename block.generate-geometry · "Generate bracket geometry" → "Generate production geometry"',
     ]);
+  });
+
+  it("rejects unknown command and layout versions without rewriting either input", () => {
+    const command = recoveryCommandBatch(1, "form", [{ kind: "set_block_title", blockId: "block.generate-geometry", title: "Changed" }]);
+    const unknownCommand = { ...command, schemaVersion: "99.0.0" } as unknown as RecoveryCommandBatch;
+    const commandBefore = structuredClone(unknownCommand);
+    const commandResult = applyRecoveryBatch(initialWorkflow, initialLayout, unknownCommand);
+    expect(commandResult.ok).toBe(false);
+    expect(commandResult.diagnostics[0]?.code).toBe("WFR-COMMAND-VERSION-UNSUPPORTED");
+    expect(unknownCommand).toEqual(commandBefore);
+
+    const unknownLayout = { ...cloneLayout(initialLayout), schemaVersion: "99.0.0" } as unknown as typeof initialLayout;
+    const layoutBefore = structuredClone(unknownLayout);
+    const layoutResult = applyRecoveryBatch(initialWorkflow, unknownLayout, command);
+    expect(layoutResult.ok).toBe(false);
+    expect(layoutResult.diagnostics[0]?.code).toBe("WFR-LAYOUT-VERSION-UNSUPPORTED");
+    expect(unknownLayout).toEqual(layoutBefore);
+  });
+
+  it("routes undo and redo snapshots through one atomic validated history batch", () => {
+    const changedResult = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "form", [
+      { kind: "set_block_title", blockId: "block.generate-geometry", title: "Changed geometry" },
+    ]));
+    const changed = acceptRecoveryResult(initialWorkflow, initialLayout, changedResult)!;
+    const historyResult = applyRecoveryBatch(changed.workflow, changed.layout, recoveryCommandBatch(2, "history", [{
+      kind: "restore_snapshot",
+      direction: "undo",
+      workflow: cloneWorkflow(initialWorkflow),
+      layout: cloneLayout(initialLayout),
+    }]));
+    const restored = acceptRecoveryResult(changed.workflow, changed.layout, historyResult)!;
+    expect(restored.workflow.revision).toBe(3);
+    expect(restored.workflow.parentRevision).toBe(2);
+    expect(restored.workflow.blocks[1]?.title).toBe("Generate bracket geometry");
+
+    const invalidWorkflow = cloneWorkflow(initialWorkflow);
+    invalidWorkflow.blocks[0]!.outputPortIds.push("port.missing");
+    const invalid = applyRecoveryBatch(changed.workflow, changed.layout, recoveryCommandBatch(2, "history", [{
+      kind: "restore_snapshot",
+      direction: "undo",
+      workflow: invalidWorkflow,
+      layout: cloneLayout(initialLayout),
+    }]));
+    expect(invalid.ok).toBe(false);
+    expect(changed.workflow.blocks[1]?.title).toBe("Changed geometry");
+  });
+
+  it("keeps a local semantic edit and paired projection comfortably inside the one-second bound", () => {
+    const durations: number[] = [];
+    for (let index = 0; index < 25; index += 1) {
+      const started = performance.now();
+      const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(1, "form", [
+        { kind: "set_block_title", blockId: "block.generate-geometry", title: `Geometry treatment ${index}` },
+      ]));
+      expect(result.ok).toBe(true);
+      durations.push(performance.now() - started);
+    }
+    expect(Math.max(...durations)).toBeLessThan(1000);
   });
 });

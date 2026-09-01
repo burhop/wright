@@ -63,7 +63,19 @@ export interface CanonicalWorkflowWire {
     approval_policy: "none" | "review_before_run" | "explicit_external_write";
     capability_name: string;
   }[];
-  components: { id: string; version: string; title: string; input_port_ids: string[]; output_port_ids: string[]; internal_definition_digest: string }[];
+  components: {
+    id: string;
+    version: string;
+    title: string;
+    input_port_ids: string[];
+    output_port_ids: string[];
+    internal_definition_digest: string;
+    internal_addresses: {
+      semantic_id: string;
+      concept_kind: "block" | "port" | "relationship" | "artifact_contract" | "binding" | "component";
+      relative_path: string;
+    }[];
+  }[];
 }
 
 function stableValue(value: unknown): unknown {
@@ -138,7 +150,15 @@ export function toCanonicalWire(workflow: RecoveryWorkflow): CanonicalWorkflowWi
       approval_policy: binding.approvalPolicy,
       capability_name: binding.capabilityName,
     })),
-    components: workflow.components.map((component) => ({ id: component.id, version: component.version, title: component.title, input_port_ids: [...component.inputPortIds], output_port_ids: [...component.outputPortIds], internal_definition_digest: component.internalDefinitionDigest })),
+    components: workflow.components.map((component) => ({
+      id: component.id,
+      version: component.version,
+      title: component.title,
+      input_port_ids: [...component.inputPortIds],
+      output_port_ids: [...component.outputPortIds],
+      internal_definition_digest: component.internalDefinitionDigest,
+      internal_addresses: component.internalAddresses.map((address) => ({ semantic_id: address.semanticId, concept_kind: address.conceptKind, relative_path: address.relativePath })),
+    })),
   };
 }
 
@@ -181,6 +201,14 @@ export function fromCanonicalWire(wire: CanonicalWorkflowWire): RecoveryWorkflow
       approvalPolicy: binding.approval_policy,
       capabilityName: binding.capability_name,
     })),
-    components: wire.components.map((component) => ({ id: component.id, version: component.version, title: component.title, inputPortIds: [...component.input_port_ids], outputPortIds: [...component.output_port_ids], internalDefinitionDigest: component.internal_definition_digest })),
+    components: wire.components.map((component) => ({
+      id: component.id,
+      version: component.version,
+      title: component.title,
+      inputPortIds: [...component.input_port_ids],
+      outputPortIds: [...component.output_port_ids],
+      internalDefinitionDigest: component.internal_definition_digest,
+      internalAddresses: component.internal_addresses.map((address) => ({ semanticId: address.semantic_id, conceptKind: address.concept_kind, relativePath: address.relative_path })),
+    })),
   };
 }

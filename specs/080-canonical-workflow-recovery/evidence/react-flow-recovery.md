@@ -28,4 +28,6 @@ React Flow receives an immutable `DraftProjection` plus selection and an intent 
 
 `tests/ui-integration/workflow-recovery.spec.ts` uses real Chromium and real React Flow. It proves direct connection, revision isolation, paired source editing, invalid containment, AI reject/accept, needs-input recovery, successful output lineage/download, reduced motion, automated accessibility, and mobile containment.
 
+The digest-bound [passing walkthrough report](../../../artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/report.html) records the complete product journey against commit `4c717e22c812f2d1dc3bb6618229371561ba5aaa`. Its manifest SHA-256 is `3b7aec8fbf5d4c4f33c108a47906def7be883259a13425a11ce297aa366ca594`; it contains 27 passing steps, 53 raw and 53 annotated screenshots, trace, diagnostics, report, status, and manifest. Human product approval remains separate.
+
 The frozen prototype’s 91/100 bakeoff and single 100-node run remain supporting but non-qualifying evidence. This recovery slice does not promote a permanent renderer or claim production-scale performance.

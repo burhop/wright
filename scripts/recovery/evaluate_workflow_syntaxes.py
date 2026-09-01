@@ -43,7 +43,12 @@ class DslDocument:
 
 
 def canonical_bytes(value: dict[str, Any]) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    canonical = copy.deepcopy(value)
+    canonical.pop("semantic_sha256", None)
+    for collection in ("blocks", "ports", "relationships", "artifact_contracts", "bindings", "components"):
+        if isinstance(canonical.get(collection), list):
+            canonical[collection] = sorted(canonical[collection], key=lambda row: str(row["id"]))
+    return json.dumps(canonical, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
 
 
 def json_text(value: dict[str, Any]) -> str:
@@ -182,6 +187,7 @@ def dsl_text(value: dict[str, Any], comments: tuple[str, ...] = ()) -> str:
                 ("inputs", component["input_port_ids"]),
                 ("outputs", component["output_port_ids"]),
                 ("digest", component["internal_definition_digest"]),
+                ("addresses", component["internal_addresses"]),
             ],
         )
     return "\n".join(lines).rstrip() + "\n"
@@ -212,7 +218,7 @@ DSL_FIELDS: dict[str, frozenset[str]] = {
     "relationship": frozenset({"kind", "source", "target", "label", "condition"}),
     "artifact": frozenset({"name", "type", "media", "description", "producer", "required_for", "preview", "actions"}),
     "binding": frozenset({"kind", "provider", "server", "tool", "schema", "arguments", "results", "approval", "capability"}),
-    "component": frozenset({"version", "title", "inputs", "outputs", "digest"}),
+    "component": frozenset({"version", "title", "inputs", "outputs", "digest", "addresses"}),
 }
 
 
@@ -300,8 +306,8 @@ def parse_dsl(text: str) -> DslDocument:
         return {"id": identity, "kind": fields["kind"], "provider_id": fields["provider"], "server_id": fields["server"], "tool_id": fields["tool"], "schema_digest": fields["schema"], "argument_map": fields["arguments"], "result_map": fields["results"], "approval_policy": fields["approval"], "capability_name": fields["capability"]}
 
     def component(identity: str, fields: dict[str, Any]) -> dict[str, Any]:
-        require(fields, "version", "title", "inputs", "outputs", "digest")
-        return {"id": identity, "version": fields["version"], "title": fields["title"], "input_port_ids": fields["inputs"], "output_port_ids": fields["outputs"], "internal_definition_digest": fields["digest"]}
+        require(fields, "version", "title", "inputs", "outputs", "digest", "addresses")
+        return {"id": identity, "version": fields["version"], "title": fields["title"], "input_port_ids": fields["inputs"], "output_port_ids": fields["outputs"], "internal_definition_digest": fields["digest"], "internal_addresses": fields["addresses"]}
 
     require(workflow, "version", "revision", "parent", "semantic_sha256", "title", "purpose", "domain", "authorship")
     ir = {

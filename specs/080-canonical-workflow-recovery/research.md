@@ -28,7 +28,7 @@ Its direct manipulation was disabled, its five-person study did not run, and its
 
 ## Capability disposition
 
-The source audit extracts 555/555 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, and the named feature/spec sources. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
+The source audit extracts 859/859 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, the frozen prototype, and every named adjacent feature/spec source through 080 (including 055, 064, and 068–074). Wrapped requirements are classified from their complete statement rather than only their first physical line. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
 
 The principal disposition is:
 

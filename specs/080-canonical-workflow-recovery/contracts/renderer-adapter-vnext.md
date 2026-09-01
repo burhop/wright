@@ -20,7 +20,9 @@ The recovery renderer extends the existing `DraftCanvasAdapterProps` seam by ada
 - Emit select, move, connect, disconnect, and keyboard gesture intents.
 - Render active block/connection overlays and all run states using non-color cues.
 - Expose stable test IDs and accessible names.
-- Support fit/focus/navigation for the acceptance graph and recorded 100-block evidence.
+- Support fit/focus/navigation for the acceptance graph. The frozen prototype's
+  single 100-block observation remains explicitly non-qualifying; production
+  large-graph qualification is deferred until after product approval.
 
 ## Forbidden renderer authority
 
@@ -36,5 +38,9 @@ The selected treatment must prove that a first-time reviewer can identify connec
 
 ## Replacement proof
 
-A contract fake must consume the same projection and emit the same intents while definition bytes, text, validation, diffs, layout digest, and run records remain unchanged.
-
+`model.spec.ts` supplies two renderer contract fakes. Both consume the same
+immutable projection and emit the same stable selection intent while canonical
+definition bytes remain byte-identical. This is the bounded recovery proof that
+the React Flow implementation can be replaced without transferring authority.
+Promotion still requires broader text, validation, diff, layout, and run
+contract qualification against a production replacement.

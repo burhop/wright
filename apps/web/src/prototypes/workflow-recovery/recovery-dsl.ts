@@ -42,7 +42,7 @@ const fieldSets: Record<SectionKind, readonly string[]> = {
   relationship: ["kind", "source", "target", "label", "condition"],
   artifact: ["name", "type", "media", "description", "producer", "required_for", "preview", "actions"],
   binding: ["kind", "provider", "server", "tool", "schema", "arguments", "results", "approval", "capability"],
-  component: ["version", "title", "inputs", "outputs", "digest"],
+  component: ["version", "title", "inputs", "outputs", "digest", "addresses"],
 };
 
 function sorted(value: unknown): unknown {
@@ -103,6 +103,7 @@ export function formatRecoveryDsl(workflow: RecoveryWorkflow): { text: string; s
   for (const component of workflow.components) section(lines, "component", component.id, [
     ["version", component.version], ["title", component.title], ["inputs", component.inputPortIds],
     ["outputs", component.outputPortIds], ["digest", component.internalDefinitionDigest],
+    ["addresses", component.internalAddresses.map((address) => ({ semantic_id: address.semanticId, concept_kind: address.conceptKind, relative_path: address.relativePath }))],
   ]);
   const text = `${lines.join("\n").trimEnd()}\n`;
   return { text, sourceMap: sourceMapFor(text) };
@@ -200,9 +201,34 @@ function asBindingMaps(value: unknown, field: string): RecoveryBinding["argument
   });
 }
 
+function asComponentAddresses(value: unknown): RecoveryComponent["internalAddresses"] {
+  if (!Array.isArray(value)) throw new Error("WFR-TEXT-FIELD-TYPE:addresses");
+  return value.map((item) => {
+    if (item === null || typeof item !== "object" || Array.isArray(item)) throw new Error("WFR-TEXT-FIELD-TYPE:addresses");
+    const row = item as Record<string, unknown>;
+    if (Object.keys(row).sort().join(",") !== "concept_kind,relative_path,semantic_id") throw new Error("WFR-TEXT-FIELD-TYPE:addresses");
+    return {
+      semanticId: asString(row.semantic_id, "semantic_id"),
+      conceptKind: oneOf(row.concept_kind, ["block", "port", "relationship", "artifact_contract", "binding", "component"] as const, "concept_kind"),
+      relativePath: asString(row.relative_path, "relative_path"),
+    };
+  });
+}
+
 function oneOf<T extends string>(value: unknown, options: readonly T[], field: string): T {
   if (typeof value !== "string" || !options.includes(value as T)) throw new Error(`WFR-TEXT-FIELD-ENUM:${field}`);
   return value as T;
+}
+
+function componentVersionMatches(version: string, range: string): boolean {
+  if (range === version) return true;
+  const versionMatch = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
+  const rangeMatch = /^\^(\d+)\.(\d+)\.(\d+)$/.exec(range);
+  if (!versionMatch || !rangeMatch) return false;
+  const current = versionMatch.slice(1).map(Number);
+  const minimum = rangeMatch.slice(1).map(Number);
+  if (current[0] !== minimum[0]) return false;
+  return current[1]! > minimum[1]! || (current[1] === minimum[1] && current[2]! >= minimum[2]!);
 }
 
 function exactFields(sectionValue: Section): void {
@@ -262,7 +288,7 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
   const phases = new Set(workflow.phases.map((phase) => phase.id));
   const ports = new Map(workflow.ports.map((port) => [port.id, port]));
   const bindings = new Set(workflow.bindings.map((binding) => binding.id));
-  const components = new Set(workflow.components.map((component) => component.id));
+  const components = new Map(workflow.components.map((component) => [component.id, component]));
   const artifacts = new Set(workflow.artifactContracts.map((artifact) => artifact.id));
   const blockOrder = new Map<string, number>();
   for (const phase of [...workflow.phases].sort((left, right) => left.order - right.order)) {
@@ -285,7 +311,16 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
     const memberships = phaseMembership.get(block.id) ?? [];
     if (block.phaseId === null ? memberships.length !== 0 : memberships.length !== 1 || memberships[0] !== block.phaseId) diagnostics.push(diagnostic("WFR-PHASE-MEMBERSHIP", `${block.id} and its declared phase are not exactly reciprocal.`, "List the block exactly once in its declared phase, or in no phase when phase is null.", block.id));
     if (block.bindingId !== null && !bindings.has(block.bindingId)) diagnostics.push(diagnostic("WFR-REFERENCE-DANGLING", `${block.id} references missing binding ${block.bindingId}.`, "Choose an existing binding.", block.id));
-    if (block.componentRef !== null && !components.has(block.componentRef.componentId)) diagnostics.push(diagnostic("WFR-REFERENCE-DANGLING", `${block.id} references missing component ${block.componentRef.componentId}.`, "Choose an existing component.", block.id));
+    if (block.kind === "component" && block.componentRef === null) diagnostics.push(diagnostic("WFR-COMPONENT-REFERENCE-REQUIRED", `${block.id} is a component instance without a component reference.`, "Reference an existing component and compatible version range.", block.id));
+    if (block.kind !== "component" && block.componentRef !== null) diagnostics.push(diagnostic("WFR-COMPONENT-BLOCK-KIND", `${block.id} references a reusable component but is not kind component.`, "Use kind component for reusable component instances.", block.id));
+    if (block.componentRef !== null) {
+      const component = components.get(block.componentRef.componentId);
+      if (!component) diagnostics.push(diagnostic("WFR-REFERENCE-DANGLING", `${block.id} references missing component ${block.componentRef.componentId}.`, "Choose an existing component.", block.id));
+      else {
+        if (!componentVersionMatches(component.version, block.componentRef.versionRange)) diagnostics.push(diagnostic("WFR-COMPONENT-VERSION-INCOMPATIBLE", `${block.id} requests ${block.componentRef.versionRange}, but ${component.id} is ${component.version}.`, "Select a compatible component version or update the reviewed range.", block.id));
+        if (block.inputPortIds.join("\n") !== component.inputPortIds.join("\n") || block.outputPortIds.join("\n") !== component.outputPortIds.join("\n")) diagnostics.push(diagnostic("WFR-COMPONENT-INTERFACE-MISMATCH", `${block.id} does not expose the exact reviewed interface of ${component.id}.`, "Use the component's ordered input and output port identities.", block.id));
+      }
+    }
     for (const [portIds, direction] of [[block.inputPortIds, "input"], [block.outputPortIds, "output"]] as const) {
       if (new Set(portIds).size !== portIds.length) diagnostics.push(diagnostic("WFR-ID-DUPLICATE", `${block.id} lists a ${direction} port more than once.`, "Keep each port identity once.", block.id));
       for (const portId of portIds) {
@@ -326,7 +361,8 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
       targetBlockId = relationship.targetId;
       const sourceBlock = blocks.get(relationship.sourceId);
       if (!sourceBlock || !blocks.has(relationship.targetId)) diagnostics.push(diagnostic("WFR-REFERENCE-DANGLING", `${relationship.id} has a missing block endpoint.`, "Choose existing blocks.", relationship.id));
-      if ((relationship.kind === "decision" || relationship.kind === "feedback") && sourceBlock && sourceBlock.kind !== "decision" && sourceBlock.kind !== "approval") {
+      const isReviewComponent = sourceBlock?.kind === "component" && sourceBlock.componentRef?.componentId === "component.review-cell";
+      if ((relationship.kind === "decision" || relationship.kind === "feedback") && sourceBlock && sourceBlock.kind !== "decision" && sourceBlock.kind !== "approval" && !isReviewComponent) {
         diagnostics.push(diagnostic("WFR-RELATIONSHIP-SOURCE-KIND", `${relationship.id} must originate at a decision or approval block.`, "Choose a decision/approval source or use data/control flow.", relationship.id));
       }
       if (relationship.kind === "feedback") {
@@ -389,6 +425,17 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
       else if (port.direction !== direction) diagnostics.push(diagnostic("WFR-COMPONENT-PORT-DIRECTION", `${component.id} exposes ${portId} as ${direction}, but the port is ${port.direction}.`, "Use a component interface port with the matching direction.", component.id));
     }
     if (!/^sha256:[a-f0-9]{64}$/.test(component.internalDefinitionDigest)) diagnostics.push(diagnostic("WFR-DIGEST-INVALID", `${component.id} has an invalid internal definition digest.`, "Use a sha256-prefixed 64-hex digest.", component.id));
+    const semanticIds = new Set<string>();
+    const relativePaths = new Set<string>();
+    const pathRoots: Record<RecoveryComponent["internalAddresses"][number]["conceptKind"], string> = { block: "blocks/", port: "ports/", relationship: "relationships/", artifact_contract: "artifact-contracts/", binding: "bindings/", component: "components/" };
+    if (component.internalAddresses.length === 0) diagnostics.push(diagnostic("WFR-COMPONENT-ADDRESS-EMPTY", `${component.id} has no stable internal semantic addresses.`, "Address each internal concept required by diagnostics and historical run lineage.", component.id));
+    for (const address of component.internalAddresses) {
+      if (!address.semanticId.startsWith(`${component.id}.`)) diagnostics.push(diagnostic("WFR-COMPONENT-ADDRESS-SCOPE", `${address.semanticId} is outside ${component.id}.`, "Prefix every internal semantic address with the component identity.", component.id));
+      if (semanticIds.has(address.semanticId) || relativePaths.has(address.relativePath)) diagnostics.push(diagnostic("WFR-COMPONENT-ADDRESS-DUPLICATE", `${component.id} repeats an internal semantic identity or relative path.`, "Assign one stable identity and one relative path per internal concept.", component.id));
+      if (!address.relativePath.startsWith(pathRoots[address.conceptKind]) || address.relativePath.split("/").some((segment) => segment === "." || segment === "..")) diagnostics.push(diagnostic("WFR-COMPONENT-ADDRESS-PATH", `${address.relativePath} does not match ${address.conceptKind}.`, "Use the matching collection root and no dot traversal segments.", component.id));
+      semanticIds.add(address.semanticId);
+      relativePaths.add(address.relativePath);
+    }
   }
   return diagnostics;
 }
@@ -447,6 +494,7 @@ export function parseRecoveryDsl(text: string): RecoveryParseResult {
       inputPortIds: asStringArray(item.fields.inputs, "inputs"),
       outputPortIds: asStringArray(item.fields.outputs, "outputs"),
       internalDefinitionDigest: asString(item.fields.digest, "digest"),
+      internalAddresses: asComponentAddresses(item.fields.addresses),
     });
     const workflow: RecoveryWorkflow = {
       documentKind: "workflow-ir", schemaVersion: oneOf(root.fields.version, ["2.0.0-recovery.1"] as const, "version"),

@@ -103,6 +103,7 @@ def _finding(
         "CHECKPOINT_EVIDENCE_CORRECTION_UNAUTHORIZED": "Provide the exact approved two-scope V8 authority bundle.",
         "REV58_RAW_IDENTITY_REPAIR_INVALID": "Restore the exact authorized revision-58 raw-identity repair evidence or stop.",
         "F01B_ACTIVATION_CORRECTION_INVALID": "Restore the exact authorized three-claim TR-0070 correction or stop.",
+        "F02B_CHECKPOINT_CORRECTION_INVALID": "Restore the exact user-authorized four-claim TR-0095 correction or stop.",
         "F01B_LEASE_CHECKPOINT_CORRECTION_INVALID": "Restore the exact authorized revision-75 and TR-0074 three-claim correction or stop.",
     }.get(code, "Repair the smallest named invariant and rerun the validator.")
     return Finding(
@@ -836,6 +837,28 @@ F01B_ACTIVATION_CLAIMS = (
         "2412b3c4d62baf60f7ab1178589d5aa0392e699693040d1bac8b06c48814f8c6",
         "2aba5e62e807dad3d8646da841500204d89075d3d7c253a75330629670d3f3d1",
     ),
+)
+
+F02B_CHECKPOINT_CORRECTION_ID = "COR-EPP-F02B-TR0095-RAW-IDENTITY-001"
+F02B_CHECKPOINT_SOURCE = "a0c2c8e450953ff9fd7c6a2c8dc6852ea2a576b9"
+F02B_CHECKPOINT_SOURCE_TREE = "58ea5a63ef51ee9a1ed475bf74bafcfac5e3967f"
+F02B_CHECKPOINT_SOURCE_PROGRAM_TREE = "f5940fbeeee9cbe752b0119d4672e7ecc08c5545"
+F02B_CHECKPOINT_TRANSITION_SHA = "294e7ad86077568998f2d37c2cb42bded04cd2c5d6cbed341e994b35f353a0f8"
+F02B_CHECKPOINT_TRANSITION_BLOB = "a100c8a7324cd7e6197a1410697b9d084deedfbd"
+F02B_CHECKPOINT_DIGEST_TARGETS = frozenset(
+    {
+        (
+            "docs/programs/engineering-process-platform/evidence/transitions/TR-0095.json",
+            f"/outputs/{index}/sha256",
+        )
+        for index in (2, 3, 4, 5)
+    }
+)
+F02B_CHECKPOINT_CLAIMS = (
+    ("TR0095-ROADMAP-OUTPUT-DIGEST-001", "/outputs/2/sha256", "docs/programs/engineering-process-platform/roadmap.json", "1f89098375ce960f13f623e4fd773287878f76a5", "1af66e98f6b79057d2f42475863a389fca569bde703344ba933756175539b6e1", "c7ef2e218be25b820474be7866862d4ee97b77cb231b068b5b9145178b69e33f"),
+    ("TR0095-LIFECYCLE-POLICY-OUTPUT-DIGEST-001", "/outputs/3/sha256", "docs/programs/engineering-process-platform/lifecycle-policy.json", "229d95224720352b921b79cda5dbb32d03aa5bfe", "70e5118d572d0fb1eeebe4d83269dfae14b59dfdba127efe7e21a2dc7842d22a", "99387d66800ee95a5603c301ed19fdb1ae6320ca63aa3c6eada19a54338493d1"),
+    ("TR0095-VALIDATOR-OUTPUT-DIGEST-001", "/outputs/4/sha256", "scripts/program_control/validation.py", "2697f35c1c42a5771ae4d7fe983752256c38da1f", "750216729f348204015f955ad40be3d80e7046e768aaf47c162d676e7ae835ed", "01c98aaeffbb0f082a137c35ce48e44d2f60beb403fd708070a080560bb7003e"),
+    ("TR0095-ROADMAP-TEST-OUTPUT-DIGEST-001", "/outputs/5/sha256", "tests/program_control_plane/test_roadmap_approval_and_lease.py", "a87c1a38b3adb49745f136d6bce18855046d1678", "990c10b6de1b950eb9e4843f4e1c1054f8dd7617516357f0be0adc9632468e48", "84407259ac1a7d931ce9c5f7008474cb4b743bea6fafaacaf104c9185289b94b"),
 )
 
 F01B_LEASE_CHECKPOINT_SOURCE = "18635d6ba1d83cf68c80d1acf317497d95ec1c48"
@@ -3368,6 +3391,118 @@ def validate_f01b_activation_evidence_correction(
     ], frozenset()
 
 
+def validate_f02b_checkpoint_raw_identity_correction(
+    reader: GitReader,
+    current: str,
+    program_root: str,
+    profile: Mapping[str, Any],
+) -> tuple[list[Finding], frozenset[tuple[str, str]]]:
+    """Recognize only the user-authorized four TR-0095 Git-normalized digests."""
+
+    correction_path = f"{program_root}/evidence/corrections/{F02B_CHECKPOINT_CORRECTION_ID}.json"
+    transition_path = f"{program_root}/evidence/transitions/TR-0095.json"
+    valid = True
+    try:
+        current_commit = reader.resolve_commit(current)
+        source_identity = reader.resolve_identity(F02B_CHECKPOINT_SOURCE, program_root)
+        claims = list(profile.get("claims", []))
+        valid = valid and all(
+            (
+                profile.get("$schema") == "../../schemas/f02b-checkpoint-raw-identity-correction.schema.json",
+                profile.get("schema_version") == "1.0",
+                profile.get("correction_id") == F02B_CHECKPOINT_CORRECTION_ID,
+                profile.get("program_id") == "EPP-2026",
+                profile.get("feature_id") == "EPP-F02B",
+                profile.get("stable_cause_id") == "EPP-F02B-TR0095-CHECKOUT-BYTES-001",
+                profile.get("source_checkpoint") == {
+                    "git_commit": F02B_CHECKPOINT_SOURCE,
+                    "git_tree": F02B_CHECKPOINT_SOURCE_TREE,
+                    "program_tree": F02B_CHECKPOINT_SOURCE_PROGRAM_TREE,
+                },
+                profile.get("accept_new_records") is False,
+                profile.get("expected_claim_count") == 4,
+                len(claims) == 4,
+                source_identity.source_tree == F02B_CHECKPOINT_SOURCE_TREE,
+                source_identity.program_tree == F02B_CHECKPOINT_SOURCE_PROGRAM_TREE,
+                reader.is_ancestor(F02B_CHECKPOINT_SOURCE, current_commit),
+            )
+        )
+        transition_raw = reader.blob(F02B_CHECKPOINT_SOURCE, transition_path)
+        transition = strict_loads(transition_raw)
+        transition_blob = reader.object_ids([(F02B_CHECKPOINT_SOURCE, transition_path)])[(F02B_CHECKPOINT_SOURCE, transition_path)]
+        valid = valid and all(
+            (
+                sha256_bytes(transition_raw) == F02B_CHECKPOINT_TRANSITION_SHA,
+                transition_blob == F02B_CHECKPOINT_TRANSITION_BLOB,
+                reader.blob(current_commit, transition_path) == transition_raw,
+                reader.containing_commit(current_commit, transition_path) == F02B_CHECKPOINT_SOURCE,
+            )
+        )
+        observed_pointers: set[str] = set()
+        for claim, expected in zip(claims, F02B_CHECKPOINT_CLAIMS, strict=True):
+            claim_id, pointer, artifact_path, git_blob, recorded, authoritative = expected
+            observed_pointers.add(str(claim.get("json_pointer", "")))
+            artifact_raw = reader.blob(F02B_CHECKPOINT_SOURCE, artifact_path)
+            artifact_object = reader.object_ids([(F02B_CHECKPOINT_SOURCE, artifact_path)])[(F02B_CHECKPOINT_SOURCE, artifact_path)]
+            valid = valid and all(
+                (
+                    claim.get("claim_id") == claim_id,
+                    claim.get("classification") == "checkout_bytes_recorded_as_committed_digest",
+                    claim.get("transition_path") == transition_path,
+                    claim.get("transition_raw_sha256") == F02B_CHECKPOINT_TRANSITION_SHA,
+                    claim.get("transition_git_blob") == F02B_CHECKPOINT_TRANSITION_BLOB,
+                    claim.get("introducing_commit") == F02B_CHECKPOINT_SOURCE,
+                    claim.get("introducing_tree") == F02B_CHECKPOINT_SOURCE_TREE,
+                    claim.get("introducing_program_tree") == F02B_CHECKPOINT_SOURCE_PROGRAM_TREE,
+                    claim.get("json_pointer") == pointer,
+                    claim.get("artifact_path") == artifact_path,
+                    claim.get("artifact_git_blob") == git_blob,
+                    claim.get("recorded_value") == recorded,
+                    claim.get("authoritative_value") == authoritative,
+                    _pointer_value(transition, pointer) == recorded,
+                    recorded != authoritative,
+                    artifact_object == git_blob,
+                    sha256_bytes(artifact_raw) == authoritative,
+                )
+            )
+        valid = valid and observed_pointers == {row[1] for row in F02B_CHECKPOINT_CLAIMS}
+        valid = valid and profile.get("forbidden_target_classes") == [
+            "any TR-0095 path or pointer other than outputs 2 3 4 and 5 sha256",
+            "any transition other than TR-0095",
+            "frozen EPP-F02B Checkpoint D evidence or spec 079 task state",
+            "program lifecycle roadmap lease approval or product authority",
+            "readiness benchmark dependency candidate delivery publication or release",
+            "generic waiver wildcard future record or correction-of-correction target",
+        ]
+        valid = valid and profile.get("resolution_semantics") == {
+            "effect": "four_historical_TR0095_output_digest_findings_only",
+            "original_transition_immutable": True,
+            "validator_recomputes_git_normalized_blob_bytes": True,
+            "all_claims_required": True,
+            "checkpoint_state_and_frozen_tasks_unchanged": True,
+            "readiness_authority_benchmark_release_non_interference": True,
+        }
+        valid = valid and profile.get("authority") == {
+            "authorization_kind": "direct_user_instruction",
+            "authorized_at": "2026-08-31",
+            "request_reference": "current-thread:user-message:resume-blocked-wright-recovery-goal",
+            "scope": "append_only_TR0095_digest_correction_only",
+        }
+    except (ContractError, GitSubjectError, KeyError, TypeError, ValueError):
+        valid = False
+
+    if valid:
+        return [], F02B_CHECKPOINT_DIGEST_TARGETS
+    return [
+        _finding(
+            "F02B_CHECKPOINT_CORRECTION_INVALID",
+            "fatal",
+            correction_path,
+            "EXACT_FOUR_CLAIM_GIT_NORMALIZED_RECOMPUTATION",
+        )
+    ], frozenset()
+
+
 def validate_f01b_lease_checkpoint_correction(
     reader: GitReader,
     current: str,
@@ -5089,6 +5224,23 @@ def validate_program(
             {*corrected_digest_targets, *activation_digest_targets}
         )
         findings.extend(activation_findings)
+    f02b_checkpoint_correction_path = (
+        f"{root}/evidence/corrections/{F02B_CHECKPOINT_CORRECTION_ID}.json"
+    )
+    f02b_checkpoint_correction = documents.get(f02b_checkpoint_correction_path)
+    if isinstance(f02b_checkpoint_correction, Mapping):
+        checkpoint_findings, checkpoint_digest_targets = (
+            validate_f02b_checkpoint_raw_identity_correction(
+                reader,
+                identity.source_commit,
+                root,
+                f02b_checkpoint_correction,
+            )
+        )
+        corrected_digest_targets = frozenset(
+            {*corrected_digest_targets, *checkpoint_digest_targets}
+        )
+        findings.extend(checkpoint_findings)
     lease_checkpoint_transition = documents.get(
         f"{root}/evidence/transitions/TR-0075.json"
     )

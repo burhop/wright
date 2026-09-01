@@ -2,7 +2,9 @@
 
 **Recovery subject**: feature 080 on frozen EPP-F02B Checkpoint D baseline `b4a7e996f10ec95f7d24185a43fd1401843db66d`  
 **Machine trace**: [`capability-source-map.csv`](capability-source-map.csv)  
-**Coverage result**: 555/555 uniquely keyed source requirements mapped; 33/33 roll-up capabilities represented; unexplained omissions: 0.
+**Coverage result**: 859/859 uniquely keyed source requirements mapped; 33/33 roll-up capabilities represented; unexplained omissions: 0.
+
+**Prior visual evidence (superseded subject)**: [passing report](../../artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/report.html), [status](../../artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/status.json), and [manifest](../../artifacts/ui-walkthrough/workflow-recovery/20260901T012043Z-continuation-2/manifest.json) for historical subject `4c717e22c812f2d1dc3bb6618229371561ba5aaa`. It is retained as evidence history, not used for T046–T051; the final exact-subject walkthrough is pending.
 
 This register distinguishes durable product capabilities from any particular renderer, language, or prototype. “Concept” names the stable capability. “Canvas form” and “visual evidence” describe the recovery slice, not production approval. A deferred row remains required but is intentionally scheduled after the combined product/visual checkpoint.
 
@@ -48,5 +50,4 @@ This register distinguishes durable product capabilities from any particular ren
 - `EPP-US-001` through `EPP-US-100` are retained as outcome coverage, not implemented as case-specific branches.
 - Benchmark, commercial, program, packaging, scale, and broad lifecycle capabilities remain visible but deferred; “defer” never means passed or removed.
 - No legacy Rivet implementation is retained as an orchestration dependency. Its durable requirements map to provider-neutral capabilities; Rivet-specific implementation and authority are rejected.
-- Visual evidence cells are acceptance targets until the walkthrough directory is digest-bound. The completed report will replace those targets with exact artifact paths.
-
+- Visual evidence cells are now indexed by the digest-bound passing walkthrough and [frozen-versus-recovery comparison](evidence/prototype-side-by-side.md). Automated evidence is complete; human product/visual approval remains open and is not inferred from a green walkthrough.

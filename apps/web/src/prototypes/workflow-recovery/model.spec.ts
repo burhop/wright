@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import type { DraftCanvasIntent } from "../../components/workflow-composer/draft-intents";
+import type { DraftCanvasRenderer } from "../../components/workflow-composer/renderer-types";
 import { canonicalDefinitionBytes } from "./canonical-wire";
 import { aiDrawingProposal, applyRecoveryBatch } from "./command-system";
-import { cloneLayout, cloneWorkflow, initialLayout, initialWorkflow, toDraftProjection } from "./model";
+import { cloneLayout, cloneWorkflow, initialLayout, initialRunProjection, initialWorkflow, resolveRecoveryComponentScope, toDraftProjection, validateRecoveryRunProjection } from "./model";
 
 describe("recovery renderer projection", () => {
   it("matches the strict Python kernel's canonical digest bytes", async () => {
@@ -10,7 +12,7 @@ describe("recovery renderer projection", () => {
     const buffer = await crypto.subtle.digest("SHA-256", bytes);
     const digest = [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
-    expect(digest).toBe("e22d6a0c1f991e03107cfe53dc0c3fb3c4ccb0083ded6c1e114270c5a7a180d0");
+    expect(digest).toBe("57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889");
   });
 
   it("derives approval gates and feedback paths from canonical relationships", () => {
@@ -30,6 +32,27 @@ describe("recovery renderer projection", () => {
       to_block_id: "block.generate-geometry",
       label: "Revise geometry",
     })]);
+  });
+
+  it("resolves the golden review component to one stable diagnostic and run lineage scope", () => {
+    const instance = initialWorkflow.blocks.find((block) => block.id === "block.review-design");
+    expect(instance).toEqual(expect.objectContaining({
+      kind: "component",
+      componentRef: { componentId: "component.review-cell", versionRange: "^1.0.0" },
+    }));
+    const scope = resolveRecoveryComponentScope(
+      initialWorkflow,
+      "block.review-design",
+      "component.review-cell.block.evaluate",
+    );
+    expect(scope).toEqual({
+      componentInstanceId: "block.review-design",
+      componentId: "component.review-cell",
+      componentVersion: "1.0.0",
+      internalSemanticId: "component.review-cell.block.evaluate",
+    });
+    expect({ code: "WFR-REVIEW-INPUT", componentScope: scope }.componentScope).toBe(scope);
+    expect({ state: "queued", componentScope: scope }.componentScope).toBe(scope);
   });
 
   it("does not invent a gate for an approval block without decision and feedback relationships", () => {
@@ -114,12 +137,45 @@ describe("recovery renderer projection", () => {
       inputPortIds: [],
       outputPortIds: [],
       bindingId: null,
-      componentRef: { componentId: "component.fixture", versionRange: "^1.0.0" },
+      componentRef: { componentId: "component.review-cell", versionRange: "^1.0.0" },
     });
     layout.positions["block.reusable-fixture"] = { x: 50, y: 50 };
 
     const projection = toDraftProjection(workflow, layout);
     const components = projection.phases.find((phase) => phase.id === "phase.unassigned-component");
     expect(components?.blocks.map((block) => block.semanticId)).toEqual(["block.reusable-fixture"]);
+    const internalAddress = workflow.components[0]!.internalAddresses.find((address) => address.conceptKind === "relationship")!;
+    const scopedAddress = resolveRecoveryComponentScope(workflow, "block.reusable-fixture", internalAddress.semanticId);
+    expect(scopedAddress?.internalSemanticId).toBe(internalAddress.semanticId);
+    expect(internalAddress.relativePath).toBe("relationships/rel.accept");
+  });
+
+  it("replaces renderer implementations without changing projection facts or emitted host intents", () => {
+    const projection = toDraftProjection(initialWorkflow, initialLayout);
+    const before = canonicalDefinitionBytes(initialWorkflow);
+    const observed: string[][] = [];
+    const emitted: DraftCanvasIntent[][] = [];
+    const fake = (index: number): DraftCanvasRenderer => ({ projection: value, onIntent }) => {
+      observed[index] = value.phases.flatMap((phase) => phase.blocks.map((block) => block.semanticId));
+      const intent: DraftCanvasIntent = { type: "select", semanticId: "block.generate-geometry" };
+      emitted[index] = [intent];
+      onIntent(intent);
+      return null;
+    };
+    const hostIntents: DraftCanvasIntent[][] = [[], []];
+    fake(0)({ projection, selectedSemanticId: null, onIntent: (intent) => hostIntents[0]!.push(intent) });
+    fake(1)({ projection, selectedSemanticId: null, onIntent: (intent) => hostIntents[1]!.push(intent) });
+    expect(observed[0]).toEqual(observed[1]);
+    expect(emitted[0]).toEqual(emitted[1]);
+    expect(hostIntents[0]).toEqual(hostIntents[1]);
+    expect(canonicalDefinitionBytes(initialWorkflow)).toBe(before);
+  });
+
+  it("rejects an unknown run version without changing the immutable record", () => {
+    const run = initialRunProjection(initialWorkflow, "a".repeat(64), "2026-08-31T00:00:00Z");
+    const unknown = { ...run, schemaVersion: "99.0.0" } as unknown as typeof run;
+    const before = structuredClone(unknown);
+    expect(validateRecoveryRunProjection(unknown)[0]?.code).toBe("WFR-RUN-VERSION-UNSUPPORTED");
+    expect(unknown).toEqual(before);
   });
 });

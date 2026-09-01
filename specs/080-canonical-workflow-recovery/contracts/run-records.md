@@ -4,9 +4,29 @@
 
 Runs bind to an exact accepted workflow revision and semantic digest. They never modify workflow definitions, layout documents, proposals, or approvals.
 
+The recovery projection uses this explicit envelope:
+
+| Field | Recovery contract |
+|---|---|
+| `document_kind` | `workflow-run` |
+| `schema_version` | `1.0.0-recovery.1` |
+| Subject | `workflow_id`, `workflow_revision`, and `semantic_sha256` must match the accepted definition projected by the host. |
+| Unsupported version | Reject with `WFR-RUN-VERSION-UNSUPPORTED` before reading steps or overlays; preserve the unknown input unchanged. |
+| Subject mismatch | Reject with `WFR-RUN-SUBJECT-MISMATCH`; never project another revision's activity over the current definition. |
+
+Step, activity, and artifact records in the bounded concept inherit the run
+envelope version. A promoted durable event store may version those record kinds
+independently, but only through a superseding contract and migration evidence.
+
 ## Run lifecycle
 
-Allowed projected states are `queued`, `running`, `needs_input`, `succeeded`, `failed`, `blocked`, `cancelled`, and `stale`. The durable source is an append-only event sequence. A summary is a deterministic projection and may be rebuilt.
+The bounded recovery wire states are `idle`, `queued`, `running`,
+`needs-input`, `succeeded`, `failed`, `blocked`, and `stale`. The schema closes
+every root, step, activity, component-scope, and artifact-record object.
+Cancellation and a separate durable `needs_input` spelling remain promoted
+runtime design work; they are not accepted by this recovery version. A future
+durable source is an append-only event sequence, with summaries rebuilt as
+deterministic projections.
 
 Required run facts include run/workflow/revision/digest identity, execution mode, request identity, registered/connected/first-event/first-output/terminal/cleanup timestamps as applicable, and typed terminal cause.
 
@@ -34,4 +54,3 @@ Produced artifact records expose exact producer step/run, upstream lineage, type
 ## Recovery concept limitation
 
 Spec 080 uses deterministic simulated records to validate the interaction grammar. It does not claim live MCP/tool execution, executor integration, run persistence, cancellation, or reconnect implementation. Those remain production slices after product approval.
-

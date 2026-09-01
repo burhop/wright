@@ -75,6 +75,10 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(concept).toHaveAttribute("data-revision", "5");
   await expect(page.getByTestId("workflow-recovery-block-block.tolerance-1")).toHaveCount(0);
 
+  await expect(page.getByTestId("workflow-recovery-attachment-artifact.brief")).toContainText("No source attached");
+  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  await page.getByTestId("workflow-recovery-attachment-attach-artifact.brief").click();
+  await expect(page.getByTestId("workflow-recovery-attachment-artifact.brief")).toContainText("bracket-requirements-r3.pdf");
   await page.getByTestId("workflow-recovery-attachment-preview-artifact.brief").click();
   await expect(page.getByRole("heading", { name: "L-bracket mounting interface" })).toBeVisible();
   await page.getByRole("button", { name: "Close dialog" }).click();
@@ -122,7 +126,7 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await page.goto("/workflow-recovery");
   const concept = page.getByTestId("workflow-recovery-concept");
 
-  await expect(concept).toHaveAttribute("data-semantic-digest", "sha256:e22d6a0c1f991e03107cfe53dc0c3fb3c4ccb0083ded6c1e114270c5a7a180d0");
+  await expect(concept).toHaveAttribute("data-semantic-digest", "sha256:6afbdcecffce772a27e272f6d582ba227db8218f263ffa1a6e1bea128f121bbc");
   const semanticBeforeDrag = await concept.getAttribute("data-semantic-digest");
   const layoutBeforeDrag = await concept.getAttribute("data-layout-digest");
   const draggable = page.locator('.react-flow__node[data-id="block.generate-geometry"]');
@@ -257,6 +261,40 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
   await expect(page.getByTestId("workflow-recovery-output-artifact.step")).toHaveCount(0);
   await expect(page.getByTestId("workflow-recovery-block-block.release-package")).toHaveAttribute("data-run-state", "blocked");
   await expect(concept).toHaveAttribute("data-revision", "5");
+});
+
+test("keeps paired edits and the run overlay inside the local one-second feedback bound", async ({ page }) => {
+  await mockRecoveryShell(page);
+  await page.goto("/workflow-recovery");
+  await page.getByTestId("workflow-recovery-view-split").click();
+  const source = page.getByTestId("workflow-recovery-source-editor");
+
+  await page.getByTestId("workflow-recovery-block-block.generate-geometry").click();
+  await page.getByTestId("workflow-recovery-block-thickness-block.generate-geometry").fill("8");
+  const graphStarted = Date.now();
+  await page.getByTestId("workflow-recovery-config-apply").click();
+  await expect(source).toHaveValue(/"thickness_mm":8/, { timeout: 1000 });
+  const graphToTextMs = Date.now() - graphStarted;
+  expect(graphToTextMs).toBeLessThan(1000);
+
+  const current = await source.inputValue();
+  await source.fill(current.replace("Generate bracket geometry", "Generate bracket geometry paired"));
+  const textStarted = Date.now();
+  await page.getByTestId("workflow-recovery-source-apply").click();
+  await expect(page.getByTestId("workflow-recovery-block-block.generate-geometry")).toContainText("Generate bracket geometry paired", { timeout: 1000 });
+  const textToGraphMs = Date.now() - textStarted;
+  expect(textToGraphMs).toBeLessThan(1000);
+
+  await page.getByTestId("workflow-recovery-undo").click();
+  await page.getByTestId("workflow-recovery-undo").click();
+  await page.getByTestId("workflow-recovery-run-start").click();
+  const overlayStarted = Date.now();
+  await page.getByTestId("workflow-recovery-run-advance").click();
+  await expect(page.getByTestId("workflow-recovery-block-block.generate-geometry")).toHaveAttribute("data-active", "true", { timeout: 1000 });
+  const runOverlayMs = Date.now() - overlayStarted;
+  expect(runOverlayMs).toBeLessThan(1000);
+
+  test.info().annotations.push({ type: "latency", description: `graph→text=${graphToTextMs}ms; text→graph=${textToGraphMs}ms; run-overlay=${runOverlayMs}ms; bound<1000ms` });
 });
 
 test("keeps concept states accessible, reduced-motion legible, and mobile-contained", async ({ page }) => {

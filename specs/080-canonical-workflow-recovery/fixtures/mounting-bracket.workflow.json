@@ -79,7 +79,7 @@
     },
     {
       "id": "block.review-design",
-      "kind": "approval",
+      "kind": "component",
       "title": "Review bracket design",
       "purpose": "Approve the geometry and manufacturability findings or return them for revision.",
       "phase_id": "phase.verify",
@@ -89,7 +89,10 @@
       "input_port_ids": ["port.geometry-review-in", "port.report-in"],
       "output_port_ids": ["port.approved-geometry-out"],
       "binding_id": null,
-      "component_ref": null
+      "component_ref": {
+        "component_id": "component.review-cell",
+        "version_range": "^1.0.0"
+      }
     },
     {
       "id": "block.export-step",
@@ -224,5 +227,36 @@
       "capability_name": "Assemble local design review package"
     }
   ],
-  "components": []
+  "components": [
+    {
+      "id": "component.review-cell",
+      "version": "1.0.0",
+      "title": "Reusable design review cell",
+      "input_port_ids": ["port.geometry-review-in", "port.report-in"],
+      "output_port_ids": ["port.approved-geometry-out"],
+      "internal_definition_digest": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "internal_addresses": [
+        {
+          "semantic_id": "component.review-cell.block.evaluate",
+          "concept_kind": "block",
+          "relative_path": "blocks/block.evaluate"
+        },
+        {
+          "semantic_id": "component.review-cell.relationship.accept",
+          "concept_kind": "relationship",
+          "relative_path": "relationships/rel.accept"
+        },
+        {
+          "semantic_id": "component.review-cell.artifact.approved",
+          "concept_kind": "artifact_contract",
+          "relative_path": "artifact-contracts/artifact.approved"
+        },
+        {
+          "semantic_id": "component.review-cell.port.approved",
+          "concept_kind": "port",
+          "relative_path": "ports/port.approved"
+        }
+      ]
+    }
+  ]
 }

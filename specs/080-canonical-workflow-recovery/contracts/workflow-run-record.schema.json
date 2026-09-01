@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/recovery/workflow-run-record.schema.json",
+  "title": "Wright recovery workflow run projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["document_kind", "schema_version", "run_id", "workflow_id", "workflow_revision", "semantic_sha256", "created_at", "completed_at", "mode", "state", "active_block_id", "active_relationship_id", "steps", "activity", "artifact_records", "material_supplied", "outputs_ready"],
+  "properties": {
+    "document_kind": { "const": "workflow-run" },
+    "schema_version": { "const": "1.0.0-recovery.1" },
+    "run_id": { "type": "string", "minLength": 3 },
+    "workflow_id": { "type": "string", "minLength": 3 },
+    "workflow_revision": { "type": "integer", "minimum": 1 },
+    "semantic_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "mode": { "enum": ["simulated", "live"] },
+    "state": { "enum": ["idle", "queued", "running", "needs-input", "succeeded", "failed", "blocked", "stale"] },
+    "active_block_id": { "type": ["string", "null"] },
+    "active_relationship_id": { "type": ["string", "null"] },
+    "steps": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/step" }
+    },
+    "activity": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/activity_entry" }
+    },
+    "artifact_records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_record" }
+    },
+    "material_supplied": { "type": "boolean" },
+    "outputs_ready": { "type": "boolean" }
+  },
+  "$defs": {
+    "component_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component_instance_id", "component_id", "component_version", "internal_semantic_id"],
+      "properties": {
+        "component_instance_id": { "type": "string", "minLength": 1 },
+        "component_id": { "type": "string", "minLength": 1 },
+        "component_version": { "type": "string", "minLength": 1 },
+        "internal_semantic_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "label", "detail"],
+      "properties": {
+        "state": { "enum": ["idle", "queued", "running", "needs-input", "succeeded", "failed", "blocked", "stale"] },
+        "label": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" },
+        "component_scope": { "$ref": "#/$defs/component_scope" }
+      }
+    },
+    "activity_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["at", "label", "detail"],
+      "properties": {
+        "at": { "type": "string", "format": "date-time" },
+        "label": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" }
+      }
+    },
+    "artifact_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_id", "contract_id", "produced_by_block_id", "digest_sha256", "origin", "upstream_contract_ids"],
+      "properties": {
+        "record_id": { "type": "string", "minLength": 1 },
+        "contract_id": { "type": "string", "minLength": 1 },
+        "produced_by_block_id": { "type": "string", "minLength": 1 },
+        "digest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "origin": { "const": "static_fixture" },
+        "upstream_contract_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

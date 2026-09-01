@@ -81,19 +81,58 @@ All relationships have `id`, `kind`, endpoints, label, and optional condition. C
 | `argument_map` | Port/config semantic source → exact argument target. |
 | `result_map` | Exact result source → port/artifact semantic target. |
 | `approval_policy` | Required authority before invocation or external mutation. |
-| `capability_metadata` | Friendly catalog/search metadata that cannot replace exact binding identity. |
+| `capability_name` | Friendly catalog/search label that cannot replace exact binding identity. |
 
 ### Reusable component
 
-`id`, `version`, `title`, `input_interface`, `output_interface`, `internal_definition_digest`, and compatibility constraints. A component instance retains internal stable addresses for diagnostics and historical run lineage even when collapsed.
+`id`, `version`, `title`, `input_port_ids`, `output_port_ids`,
+`internal_definition_digest`, and a non-empty `internal_addresses` array. Each
+address has `semantic_id`, `concept_kind`, and `relative_path`. Semantic IDs and
+paths are unique within the component, the semantic ID is prefixed by the
+component ID, and the path begins with the matching definition collection
+(`blocks/`, `ports/`, `relationships/`, `artifact-contracts/`, `bindings/`, or
+`components/`) without `.` or `..` traversal. Run paths never appear in the
+definition address map.
+
+A collapsed instance resolves an internal identity using this scope tuple:
+
+```text
+(component_instance_id, component_id, component_version, internal_semantic_id)
+```
+
+Diagnostics and immutable run-step lineage may therefore refer to the same
+internal semantic concept without expanding the component or embedding runtime
+state in the canonical definition.
 
 ## Layout document
 
-`document_kind: workflow-layout`, independently versioned, with `workflow_id`, `semantic_revision`, `layout_revision`, `layout_sha256`, `items`, and optional viewport hints. Each item has `semantic_id`, integer `x/y`, bounded `width/height`, and `collapsed`. Unknown semantic IDs fail validation; missing new IDs receive deterministic default placement without changing definition bytes.
+The bounded recovery layout is `document_kind: workflow-layout` and
+`schema_version: 1.0.0-recovery.1`, with `workflow_id`,
+`semantic_revision`, `layout_revision`, a stable-ID-keyed `positions` map, and
+`viewport {x,y,zoom}`. The JSON schema uses snake_case wire names; the
+TypeScript adapter exposes equivalent camelCase properties. Unknown semantic
+IDs fail with `WFR-LAYOUT-IDENTITY-UNKNOWN`; workflow/revision mismatch fails
+with `WFR-LAYOUT-SUBJECT-MISMATCH`; an unsupported kind/version fails with
+`WFR-LAYOUT-VERSION-UNSUPPORTED` before projection. All three failures preserve
+the input document unchanged. Missing new block IDs receive deterministic
+default placement without changing definition bytes.
 
 ## Command batch
 
-`command_batch_id`, `workflow_id`, `base_revision`, `source` (`graph`, `form`, `text`, `ai_proposal`), and ordered closed commands. Commands cover add/remove/update/move-independent semantic concepts, connect/disconnect, component operations, configuration, and binding. Layout commands are a separate batch and cannot be mixed with semantic commands.
+The bounded portable recovery wire is `document_kind: workflow-command-batch`,
+`schema_version: 1.0.0-recovery.1`, `base_revision`, `origin` (`graph`, `form`,
+`text`, or `ai_proposal`), and ordered closed commands. The accepted
+workflow object supplied to `apply` is the batch subject. A future durable audit
+envelope may add `command_batch_id` and `workflow_id`; those are not fields in
+this closed recovery version.
+
+The portable subset covers block title/configuration scalar updates, selected
+port/binding updates, relationship-condition updates, connect, and disconnect.
+The TypeScript camelCase host adds local add/delete block,
+relabel/redirect-relationship, move, and history commands. A move-only batch
+advances `layout_revision` without changing semantic bytes; a semantic+move
+batch is rejected. A host history batch contains exactly one `restore_snapshot`
+command and validates the full restored definition and layout before acceptance.
 
 Application is all-or-none:
 
@@ -119,7 +158,16 @@ A diagnostic contains `code`, `severity`, `semantic_ids`, optional `{start_line,
 
 ### Run record
 
-`run_id`, `workflow_id`, `workflow_revision`, `semantic_sha256`, `mode`, `requested_by`, `created_at`, and terminal state facts. States are `queued`, `running`, `needs_input`, `succeeded`, `failed`, `blocked`, `cancelled`, or `stale`. State changes are append-only events; a projection may summarize them without rewriting definition data.
+The bounded projection is `document_kind: workflow-run`,
+`schema_version: 1.0.0-recovery.1`, `run_id`, `workflow_id`,
+`workflow_revision`, `semantic_sha256`, timestamps, mode, active identities,
+state, steps, activity, artifact records, and material/output flags. The strict
+schema closes root and nested records. Unknown versions fail with
+`WFR-RUN-VERSION-UNSUPPORTED`; a workflow/revision/digest mismatch fails with
+`WFR-RUN-SUBJECT-MISMATCH`. The bounded wire states are `idle`, `queued`,
+`running`, `needs-input`, `succeeded`, `failed`, `blocked`, or `stale`.
+Cancellation is future durable-runtime work, not a recovery-wire claim. State changes are append-only events; a
+projection may summarize them without rewriting definition data.
 
 ### Step record
 
@@ -134,6 +182,14 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 `artifact_id`, `run_id`, `step_id`, `contract_id`, `type_id`, media type, digest, size, producer, upstream artifact IDs, storage reference, preview state, allowed actions, lifetime/expiry, and cleanup state.
 
 ## Versioning and migration
+
+| Document/projection | Recovery kind/version | Unknown-version behavior |
+|---|---|---|
+| Canonical definition | `workflow-ir` / `2.0.0-recovery.1` | Schema rejection or DSL `WFR-TEXT-FIELD-ENUM:version`; preserve original bytes and last-valid definition. |
+| Layout | `workflow-layout` / `1.0.0-recovery.1` | `WFR-LAYOUT-VERSION-UNSUPPORTED`; do not project or rewrite. |
+| Command batch | `workflow-command-batch` / `1.0.0-recovery.1` | `WFR-COMMAND-VERSION-UNSUPPORTED`; do not execute or rewrite. |
+| Run projection | `workflow-run` / `1.0.0-recovery.1` | `WFR-RUN-VERSION-UNSUPPORTED`; do not render overlays or rewrite. |
+| Recovery DSL | Header `recovery treatment 0.1`; root workflow version `2.0.0-recovery.1` | Structured text diagnostic; retain the last-valid definition and source bytes. |
 
 - Every document kind owns its version independently.
 - Readers support an explicit version set; unknown versions are preserved byte-for-byte and never silently rewritten.
@@ -153,4 +209,5 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 8. Layout changes preserve semantic bytes and digest.
 9. Proposal reject preserves revision; proposal accept uses current base revision once.
 10. Run/activity/artifact changes preserve definition and layout bytes.
-
+11. Every reusable component exposes a valid non-empty internal semantic address map; diagnostics and run lineage retain the same scoped internal identity.
+12. Unsupported definition, layout, command, and run versions fail before mutation or projection and preserve their inputs unchanged.

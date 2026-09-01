@@ -6,6 +6,7 @@ import {
   aiDrawingProposal,
   applyRecoveryBatch,
   paletteBlock,
+  recoveryCommandBatch,
   textEditCommands,
   type RecoveryCommand,
   type RecoveryCommandBatch,
@@ -19,6 +20,7 @@ import {
   initialRunProjection,
   initialWorkflow,
   phaseName,
+  resolveRecoveryComponentScope,
   toDraftProjection,
   type RecoveryDiagnostic,
   type RecoveryLayout,
@@ -45,6 +47,21 @@ type PortTreatment = "dot" | "terminal" | "hybrid";
 interface Snapshot {
   workflow: RecoveryWorkflow;
   layout: RecoveryLayout;
+}
+
+export interface WorkflowRecoveryConceptProps {
+  readonly surfaceState?: "ready" | "loading" | "error";
+  readonly onRetry?: () => void;
+}
+
+export function WorkflowRecoveryConcept({ surfaceState = "ready", onRetry = () => undefined }: WorkflowRecoveryConceptProps = {}) {
+  if (surfaceState === "loading") {
+    return <section className="workflow-recovery recovery-boundary-state" data-testid="workflow-recovery-concept" data-surface-state="loading" aria-busy="true"><b>Loading canonical workflow recovery concept…</b><span>Accepted definition and renderer projection are not available yet.</span></section>;
+  }
+  if (surfaceState === "error") {
+    return <section className="workflow-recovery recovery-boundary-state" data-testid="workflow-recovery-concept" data-surface-state="error" role="alert"><b>Recovery concept could not be prepared.</b><span>The accepted workflow was not changed.</span><button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-boundary-retry" onClick={onRetry}>Retry concept load</button></section>;
+  }
+  return <WorkflowRecoveryReadyConcept />;
 }
 
 function contentIdentity(workflow: RecoveryWorkflow): string {
@@ -91,9 +108,21 @@ function simulationContractIssue(workflow: RecoveryWorkflow): string | null {
 function runProjection(stage: number, materialSupplied: boolean, subject: RecoveryWorkflow, semanticSha256: string, createdAt: string): RecoveryRunProjection {
   const projection = initialRunProjection(subject, semanticSha256, createdAt);
   const order = subject.blocks.map((block) => block.id);
-  projection.steps = Object.fromEntries(order.map((id) => [id, { state: "idle" as const, label: "Not started", detail: "Waiting for the simulated run." }]));
+  const reviewScope = resolveRecoveryComponentScope(subject, "block.review-design", "component.review-cell.block.evaluate");
+  projection.steps = Object.fromEntries(order.map((id) => [id, {
+    state: "idle" as const,
+    label: "Not started",
+    detail: "Waiting for the simulated run.",
+    ...(id === "block.review-design" ? { componentScope: reviewScope } : {}),
+  }]));
+  const scopedStep = (id: string, state: RecoveryRunState, label: string, detail: string) => ({
+    state,
+    label,
+    detail,
+    ...(id === "block.review-design" ? { componentScope: reviewScope } : {}),
+  });
   const setAll = (state: RecoveryRunState, label: string, detail: string) => {
-    projection.steps = Object.fromEntries(order.map((id) => [id, { state, label, detail }]));
+    projection.steps = Object.fromEntries(order.map((id) => [id, scopedStep(id, state, label, detail)]));
   };
   projection.materialSupplied = materialSupplied;
   if (stage === 0) return projection;
@@ -104,7 +133,7 @@ function runProjection(stage: number, materialSupplied: boolean, subject: Recove
     return projection;
   }
   setAll("queued", "Queued", "Waiting for upstream simulated work.");
-  const succeed = (id: string) => { projection.steps[id] = { state: "succeeded", label: "Succeeded", detail: "Simulated output captured with lineage." }; };
+  const succeed = (id: string) => { projection.steps[id] = scopedStep(id, "succeeded", "Succeeded", "Simulated output captured with lineage."); };
   succeed("block.capture-brief");
   if (stage === 2) {
     projection.state = "running";
@@ -120,7 +149,7 @@ function runProjection(stage: number, materialSupplied: boolean, subject: Recove
     projection.activeRelationshipId = "rel.geometry-to-check";
     projection.steps["block.check-manufacturability"] = { state: "needs-input", label: "Needs input", detail: "Material specification is required before bend and edge checks can run." };
     for (const id of ["block.review-design", "block.export-step", "block.release-package"]) {
-      projection.steps[id] = { state: "blocked", label: "Blocked", detail: "Waiting for the missing 6061-T6 material specification." };
+      projection.steps[id] = scopedStep(id, "blocked", "Blocked", "Waiting for the missing 6061-T6 material specification.");
     }
   }
   if (stage === 4) {
@@ -134,7 +163,7 @@ function runProjection(stage: number, materialSupplied: boolean, subject: Recove
     projection.state = "running";
     projection.activeBlockId = "block.review-design";
     projection.activeRelationshipId = "rel.report-to-review";
-    projection.steps["block.review-design"] = { state: "running", label: "Awaiting review", detail: "Reviewing exact geometry and report identities." };
+    projection.steps["block.review-design"] = scopedStep("block.review-design", "running", "Awaiting review", "Reviewing exact geometry and report identities.");
   }
   if (stage >= 6) succeed("block.review-design");
   if (stage === 6) {
@@ -184,18 +213,18 @@ function TreatmentCard({ treatment, selected, onSelect }: { readonly treatment: 
       <header><h3>{labels[treatment][0]}</h3>{selected && <span>SELECTED TREATMENT</span>}</header>
       <p>{labels[treatment][1]}</p>
       <div className={`port-treatment__demo port-treatment__demo--${treatment}`}>
-        <button type="button" className="port-treatment__socket" aria-label={`${treatment} connect socket`} onClick={() => setLabFeedback("Connection started from Approved geometry; choose a compatible typed input to complete it.")}>{treatment === "terminal" ? "▣" : "●"}</button>
+        <button type="button" className="port-treatment__socket" data-testid={`workflow-port-lab-${treatment}-connect`} aria-label={`${treatment} connect socket`} onClick={() => setLabFeedback("Connection started from Approved geometry; choose a compatible typed input to complete it.")}>{treatment === "terminal" ? "▣" : "●"}</button>
         <div><strong>Approved geometry</strong><small>geometry.approved · required · one</small></div>
-        <button type="button" className="port-treatment__artifact" aria-label={`${treatment} inspect artifact`} onClick={() => setLabFeedback("Artifact inspected separately: approved geometry, exact source revision, preview available.")}>▧ Inspect</button>
+        <button type="button" className="port-treatment__artifact" data-testid={`workflow-port-lab-${treatment}-artifact`} aria-label={`${treatment} inspect artifact`} onClick={() => setLabFeedback("Artifact inspected separately: approved geometry, exact source revision, preview available.")}>▧ Inspect</button>
       </div>
       <div className="port-treatment__feedback" role="status">{labFeedback}</div>
       <div className="port-treatment__states" aria-label="Port states"><span>○ missing</span><span>⊘ incompatible</span><span>◷ pending</span><span>✓ produced</span><span>× failed</span><span>↺ stale</span></div>
-      <button type="button" className="recovery-button recovery-button--secondary" onClick={onSelect}>{selected ? "Selected for concept" : "Select treatment"}</button>
+      <button type="button" className="recovery-button recovery-button--secondary" data-testid={`workflow-port-lab-${treatment}-select`} onClick={onSelect}>{selected ? "Selected for concept" : "Select treatment"}</button>
     </article>
   );
 }
 
-export function WorkflowRecoveryConcept() {
+function WorkflowRecoveryReadyConcept() {
   const [workflow, setWorkflow] = useState(() => cloneWorkflow(initialWorkflow));
   const [layout, setLayout] = useState(() => cloneLayout(initialLayout));
   const [selectedId, setSelectedId] = useState<string | null>("block.generate-geometry");
@@ -208,7 +237,7 @@ export function WorkflowRecoveryConcept() {
   const [undoStack, setUndoStack] = useState<Snapshot[]>([]);
   const [redoStack, setRedoStack] = useState<Snapshot[]>([]);
   const [paletteQuery, setPaletteQuery] = useState("");
-  const [briefName, setBriefName] = useState("bracket-requirements-r3.pdf");
+  const [briefName, setBriefName] = useState<string | null>(null);
   const [modal, setModal] = useState<"none" | "port-lab" | "brief" | "output">("none");
   const [portTreatment, setPortTreatment] = useState<PortTreatment>("hybrid");
   const [proposal, setProposal] = useState<RecoveryCommandBatch | null>(null);
@@ -296,26 +325,29 @@ export function WorkflowRecoveryConcept() {
       setDiagnostics(result.diagnostics);
       return false;
     }
-    const accepted = acceptRecoveryResult(workflow, result);
+    const accepted = acceptRecoveryResult(workflow, layout, result);
     if (!accepted) return false;
     const before = { workflow: cloneWorkflow(workflow), layout: cloneLayout(layout) };
     pushSnapshot(accepted.workflow, accepted.layout, before);
     return true;
   };
 
-  const applyCommands = (origin: RecoveryCommandBatch["origin"], commands: RecoveryCommand[]) => applyBatch({ baseRevision: workflow.revision, origin, commands });
+  const applyCommands = (origin: RecoveryCommandBatch["origin"], commands: RecoveryCommand[]) => applyBatch(recoveryCommandBatch(workflow.revision, origin, commands));
 
   const restore = (snapshot: Snapshot, direction: "undo" | "redo") => {
     const current = { workflow: cloneWorkflow(workflow), layout: cloneLayout(layout) };
-    const semanticChanged = contentIdentity(snapshot.workflow) !== contentIdentity(workflow);
-    const restored = cloneWorkflow(snapshot.workflow);
-    if (semanticChanged) {
-      restored.parentRevision = workflow.revision;
-      restored.revision = workflow.revision + 1;
-    } else {
-      restored.parentRevision = workflow.parentRevision;
-      restored.revision = workflow.revision;
+    const result = applyRecoveryBatch(workflow, layout, recoveryCommandBatch(workflow.revision, "history", [{
+      kind: "restore_snapshot",
+      direction,
+      workflow: cloneWorkflow(snapshot.workflow),
+      layout: cloneLayout(snapshot.layout),
+    }]));
+    if (!result.ok) {
+      setDiagnostics(result.diagnostics);
+      return;
     }
+    const restored = acceptRecoveryResult(workflow, layout, result);
+    if (restored === null) return;
     if (direction === "undo") {
       setUndoStack((stack) => stack.slice(0, -1));
       setRedoStack((stack) => [...stack, current]);
@@ -323,9 +355,9 @@ export function WorkflowRecoveryConcept() {
       setRedoStack((stack) => stack.slice(0, -1));
       setUndoStack((stack) => [...stack, current]);
     }
-    setWorkflow(restored);
-    setLayout(cloneLayout(snapshot.layout));
-    setSourceDraft(formatRecoveryDsl(restored).text);
+    setWorkflow(restored.workflow);
+    setLayout(restored.layout);
+    setSourceDraft(formatRecoveryDsl(restored.workflow).text);
     setSourceDirty(false);
     setDiagnostics([]);
   };
@@ -386,7 +418,7 @@ export function WorkflowRecoveryConcept() {
   };
 
   const selectedStep = selectedBlock ? run.steps[selectedBlock.id] : null;
-  const canRun = sourceValid && !sourceDirty && proposal === null && simulationIssue === null && /^sha256:[a-f0-9]{64}$/.test(semanticDigest);
+  const canRun = briefName !== null && sourceValid && !sourceDirty && proposal === null && simulationIssue === null && /^sha256:[a-f0-9]{64}$/.test(semanticDigest);
   const nextRun = () => {
     setRunOverride(null);
     setRunStage((stage) => stage === 0 ? 1 : stage === 1 ? 2 : stage === 2 ? 3 : stage === 4 ? 5 : stage === 5 ? 6 : stage === 6 ? 7 : stage === 7 ? 8 : stage);
@@ -429,10 +461,10 @@ export function WorkflowRecoveryConcept() {
         <div className="recovery-toolbar__actions">
           <button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-undo" disabled={undoStack.length === 0} onClick={() => restore(undoStack.at(-1)!, "undo")}>↶ Undo</button>
           <button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-redo" disabled={redoStack.length === 0} onClick={() => restore(redoStack.at(-1)!, "redo")}>↷ Redo</button>
-          <button type="button" className="recovery-button recovery-button--secondary" onClick={() => { const parsed = parseRecoveryDsl(sourceDraft); setDiagnostics(parsed.diagnostics); }}>✓ Validate</button>
-          <button type="button" className="recovery-button recovery-button--secondary" onClick={() => setModal("port-lab")}>Port lab</button>
+          <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-validate" onClick={() => { const parsed = parseRecoveryDsl(sourceDraft); setDiagnostics(parsed.diagnostics); }}>✓ Validate</button>
+          <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-port-lab-open" onClick={() => setModal("port-lab")}>Port lab</button>
           <button type="button" className="recovery-button recovery-button--ai" data-testid="workflow-recovery-ai-request" onClick={requestProposal}>✦ Propose with AI</button>
-          <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-run-start" disabled={!canRun} title={simulationIssue ?? undefined} onClick={runStage === 0 ? startRun : undefined}>{runStage === 0 ? "▶ Simulate run" : `SIMULATED · ${run.state}`}</button>
+          <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-run-start" disabled={!canRun} title={briefName === null ? "Attach the required bracket brief before simulation." : simulationIssue ?? undefined} onClick={runStage === 0 ? startRun : undefined}>{runStage === 0 ? "▶ Simulate run" : `SIMULATED · ${run.state}`}</button>
         </div>
       </div>
 
@@ -450,18 +482,17 @@ export function WorkflowRecoveryConcept() {
           </div>
           <section className="recovery-attachment" data-testid="workflow-recovery-attachment-artifact.brief">
             <div className="recovery-attachment__icon">PDF</div>
-            <div><b>Bracket brief</b><span>{briefName}</span><small>Attached · human source · artifact.brief</small></div>
-            <div className="recovery-attachment__actions">
+            {briefName === null ? <><div><b>Bracket brief</b><span>No source attached</span><small>Required human source · artifact.brief</small></div><div className="recovery-attachment__actions"><button type="button" data-testid="workflow-recovery-attachment-attach-artifact.brief" onClick={() => setBriefName("bracket-requirements-r3.pdf")}>Attach brief</button></div></> : <><div><b>Bracket brief</b><span>{briefName}</span><small>Attached · human source · artifact.brief</small></div><div className="recovery-attachment__actions">
               <button type="button" data-testid="workflow-recovery-attachment-preview-artifact.brief" onClick={() => setModal("brief")}>Preview</button>
-              <button type="button" data-testid="workflow-recovery-attachment-replace-artifact.brief" onClick={() => setBriefName((name) => name.includes("r4") ? "bracket-requirements-r3.pdf" : "bracket-requirements-r4.pdf")}>Replace</button>
-            </div>
+              <button type="button" data-testid="workflow-recovery-attachment-replace-artifact.brief" onClick={() => setBriefName((name) => name?.includes("r4") ? "bracket-requirements-r3.pdf" : "bracket-requirements-r4.pdf")}>Replace</button>
+            </div></>}
           </section>
           <section className="recovery-legend"><h3>Run state language</h3>{(["queued", "running", "needs-input", "succeeded", "failed", "blocked", "stale"] as RecoveryRunState[]).map((state) => <span key={state} className={`recovery-state recovery-state--${state}`}>{state === "running" ? "▶" : state === "succeeded" ? "✓" : state === "failed" ? "×" : state === "blocked" ? "⊘" : state === "stale" ? "↺" : state === "needs-input" ? "!" : "◷"} {state.replace("-", " ")}</span>)}</section>
         </aside>
 
         <div className={`recovery-stage recovery-stage--${view}`}>
           {(view === "diagram" || view === "split") && (
-            <RecoveryCanvasRuntimeProvider value={{ run, proposedBlockIds: new Set(proposalResult?.workflow?.blocks.filter((block) => !workflow.blocks.some((accepted) => accepted.id === block.id)).map((block) => block.id) ?? []), portArtifactIds: portArtifacts, relationshipLabels: Object.fromEntries(candidateWorkflow.relationships.map((relationship) => [relationship.id, relationship.label])), overlayRelationships: candidateWorkflow.relationships.filter((relationship) => relationship.kind === "control" || relationship.kind === "decision"), portTreatment, onArtifactInspect: (portId) => { setSelectedId(portId); setInspectorTab(findPort(candidateWorkflow, portId)?.direction === "input" ? "inputs" : "outputs"); } }}>
+            <RecoveryCanvasRuntimeProvider value={{ run, runSubject: runStage > 0 && runSubject !== null ? { workflowId: runSubject.workflowId, workflowRevision: runSubject.revision, semanticSha256: runSubjectDigest } : null, proposedBlockIds: new Set(proposalResult?.workflow?.blocks.filter((block) => !workflow.blocks.some((accepted) => accepted.id === block.id)).map((block) => block.id) ?? []), portArtifactIds: portArtifacts, relationshipLabels: Object.fromEntries(candidateWorkflow.relationships.map((relationship) => [relationship.id, relationship.label])), overlayRelationships: candidateWorkflow.relationships.filter((relationship) => relationship.kind === "control" || relationship.kind === "decision"), portTreatment, onArtifactInspect: (portId) => { setSelectedId(portId); setInspectorTab(findPort(candidateWorkflow, portId)?.direction === "input" ? "inputs" : "outputs"); } }}>
               <ReactFlowRecoveryCanvas key={`${candidateWorkflow.revision}-${candidateWorkflow.blocks.length}-${proposal === null ? "accepted" : "candidate"}`} projection={projection} selectedSemanticId={selectedId} onIntent={proposal === null ? handleIntent : (intent) => { if (intent.type === "select") handleIntent(intent); }} />
             </RecoveryCanvasRuntimeProvider>
           )}
@@ -475,8 +506,8 @@ export function WorkflowRecoveryConcept() {
             <div><b>SIMULATED RUN</b><span>{run.runId} · {run.workflowId} r{run.workflowRevision} · sha256:{run.semanticSha256.slice(0, 12)}… · {run.state}</span></div>
             {run.state === "needs-input" && <button type="button" data-testid="workflow-recovery-run-recover" onClick={() => { setMaterialSupplied(true); setRunStage(4); }}>Supply 6061-T6 material</button>}
             {runStage > 0 && runStage < 8 && run.state !== "needs-input" && <button type="button" data-testid="workflow-recovery-run-advance" onClick={nextRun}>Advance simulation</button>}
-            {runStage >= 6 && <button type="button" className="recovery-button--quiet" onClick={() => setRunOverride("failed")}>Project failure</button>}
-            {runStage >= 6 && <button type="button" className="recovery-button--quiet" onClick={() => setRunOverride("stale")}>Project stale output</button>}
+            {runStage >= 6 && <button type="button" className="recovery-button--quiet" data-testid="workflow-recovery-run-project-failed" onClick={() => setRunOverride("failed")}>Project failure</button>}
+            {runStage >= 6 && <button type="button" className="recovery-button--quiet" data-testid="workflow-recovery-run-project-stale" onClick={() => setRunOverride("stale")}>Project stale output</button>}
           </section>}
         </div>
 
@@ -492,22 +523,22 @@ export function WorkflowRecoveryConcept() {
             {inspectorTab === "inputs" && <PortInspector direction="input" workflow={inspectionWorkflow} blockId={selectedBlock?.id ?? selectedPort?.ownerBlockId ?? null} run={run} />}
             {inspectorTab === "outputs" && <PortInspector direction="output" workflow={inspectionWorkflow} blockId={selectedBlock?.id ?? selectedPort?.ownerBlockId ?? null} run={run} onOutput={() => setModal("output")} />}
             {inspectorTab === "activity" && <section>{run.activity.length === 0 ? <p>No simulated activity yet.</p> : run.activity.map((item) => <div className="recovery-activity" key={`${item.at}-${item.label}`}><time>{item.at}</time><div><b>{item.label}</b><span>{item.detail}</span></div></div>)}{selectedStep && <div className={`recovery-run-detail recovery-run-detail--${selectedStep.state}`} data-testid={`workflow-recovery-run-step-${selectedBlock?.id}`}><b>{selectedStep.label}</b><span>{selectedStep.detail}</span></div>}</section>}
-            {inspectorTab === "diagnosis" && <section><div className="recovery-diagnosis"><b>{run.state === "needs-input" ? "Material input is missing" : run.state === "failed" ? "Simulated export failed" : run.state === "stale" ? "Output revision is stale" : "No unresolved diagnosis"}</b><p>{run.state === "needs-input" ? "Manufacturability evidence cannot be trusted without material and temper. Review, export, and packaging remain blocked." : "This projection is isolated from the accepted definition."}</p></div><button type="button" onClick={() => setRunOverride("failed")}>Show failed projection</button><button type="button" onClick={() => setRunOverride("stale")}>Show stale projection</button></section>}
+            {inspectorTab === "diagnosis" && <section><div className="recovery-diagnosis"><b>{run.state === "needs-input" ? "Material input is missing" : run.state === "failed" ? "Simulated export failed" : run.state === "stale" ? "Output revision is stale" : "No unresolved diagnosis"}</b><p>{run.state === "needs-input" ? "Manufacturability evidence cannot be trusted without material and temper. Review, export, and packaging remain blocked." : "This projection is isolated from the accepted definition."}</p></div><button type="button" data-testid="workflow-recovery-diagnosis-show-failed" onClick={() => setRunOverride("failed")}>Show failed projection</button><button type="button" data-testid="workflow-recovery-diagnosis-show-stale" onClick={() => setRunOverride("stale")}>Show stale projection</button></section>}
           </div>
-          {selectedBlock?.bindingId && <details className="recovery-binding"><summary>Implementation binding · progressive disclosure</summary>{(() => { const binding = inspectionWorkflow.bindings.find((item) => item.id === selectedBlock.bindingId); return binding ? <div><code>{binding.id}</code><span>{binding.kind} · {binding.capabilityName}</span><span>{binding.serverId ?? "internal"} / {binding.toolId}</span><span>Schema {binding.schemaDigest}</span><span>Approval: {binding.approvalPolicy}</span><b>Exact argument map</b>{binding.argumentMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}<b>Exact result map</b>{binding.resultMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}</div> : null; })()}</details>}
+          {selectedBlock?.bindingId && <details className="recovery-binding"><summary data-testid="workflow-recovery-binding-disclosure">Implementation binding · progressive disclosure</summary>{(() => { const binding = inspectionWorkflow.bindings.find((item) => item.id === selectedBlock.bindingId); return binding ? <div><code>{binding.id}</code><span>{binding.kind} · {binding.capabilityName}</span><span>{binding.serverId ?? "internal"} / {binding.toolId}</span><span>Schema {binding.schemaDigest}</span><span>Approval: {binding.approvalPolicy}</span><b>Exact argument map</b>{binding.argumentMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}<b>Exact result map</b>{binding.resultMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}</div> : null; })()}</details>}
         </aside>
       </div>
 
       {proposal && proposalResult && <section className="recovery-proposal" data-testid="workflow-recovery-proposal" data-base-revision={proposal.baseRevision} data-validation={proposalResult.ok ? "valid" : "invalid"}>
         <header><div><span>AI CANDIDATE · REVIEW REQUIRED</span><h2>Add drawing creation and review</h2></div><b>{proposalResult.ok ? "✓ structurally valid" : "! invalid"}</b></header>
-        <div className="recovery-proposal__grid"><div><h3>Assumptions</h3><ul><li>Approved geometry is the authoritative drawing source.</li><li>ASME Y14.5 and A3 are reviewable defaults, not hidden commitments.</li></ul><h3>Warnings</h3><ul><li>No drawing-template binding is selected.</li><li>Acceptance does not execute or approve anything.</li></ul></div><div><h3>Semantic diff</h3>{proposalResult.diff.map((line) => <p key={line}>＋ {line}</p>)}</div><div className="recovery-proposal__preview" data-testid="workflow-recovery-proposal-preview"><h3>Graphical candidate</h3><span>The main canvas now projects the full candidate; added blocks are dashed and marked AI CANDIDATE.</span><b>Approved geometry ┄▷ Create inspection drawing</b><b>Inspection drawing ┄▷ Review inspection drawing</b><small>Candidate projection · not part of accepted definition</small><details><summary>Candidate Code projection</summary><pre>{proposalResult.workflow ? formatRecoveryDsl(proposalResult.workflow).text : "Invalid candidate"}</pre></details></div></div>
+        <div className="recovery-proposal__grid"><div><h3>Assumptions</h3><ul><li>Approved geometry is the authoritative drawing source.</li><li>ASME Y14.5 and A3 are reviewable defaults, not hidden commitments.</li></ul><h3>Warnings</h3><ul><li>No drawing-template binding is selected.</li><li>Acceptance does not execute or approve anything.</li></ul></div><div><h3>Semantic diff</h3>{proposalResult.diff.map((line) => <p key={line}>＋ {line}</p>)}</div><div className="recovery-proposal__preview" data-testid="workflow-recovery-proposal-preview"><h3>Graphical candidate</h3><span>The main canvas now projects the full candidate; added blocks are dashed and marked AI CANDIDATE.</span><b>Approved geometry ┄▷ Create inspection drawing</b><b>Inspection drawing ┄▷ Review inspection drawing</b><small>Candidate projection · not part of accepted definition</small><details><summary data-testid="workflow-recovery-proposal-code-disclosure">Candidate Code projection</summary><pre>{proposalResult.workflow ? formatRecoveryDsl(proposalResult.workflow).text : "Invalid candidate"}</pre></details></div></div>
         <footer><button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-proposal-reject" onClick={() => { setProposal(null); setProposalResult(null); }}>Reject · no definition change</button><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-proposal-accept" disabled={!proposalResult.ok} onClick={() => { if (applyBatch(proposal)) { setProposal(null); setProposalResult(null); } }}>Accept reviewed diff</button></footer>
       </section>}
 
-      {modal !== "none" && <div className="recovery-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal("none"); }} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); setModal("none"); return; } if (event.key === "Tab" && modalRef.current) { const focusable = [...modalRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]; if (focusable.length === 0) return; const first = focusable[0]!; const last = focusable.at(-1)!; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } }}><section ref={modalRef} className={`recovery-modal recovery-modal--${modal}`} role="dialog" aria-modal="true" aria-labelledby="recovery-modal-title">
-        <header><div><span>DISPOSABLE RESEARCH SURFACE</span><h2 id="recovery-modal-title">{modal === "port-lab" ? "Port interaction lab" : modal === "brief" ? "Bracket brief preview" : "Mounting bracket STEP output"}</h2></div><button type="button" aria-label="Close dialog" onClick={() => setModal("none")}>×</button></header>
+      {modal !== "none" && <div className="recovery-modal-backdrop" data-testid="workflow-recovery-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal("none"); }} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); setModal("none"); return; } if (event.key === "Tab" && modalRef.current) { const focusable = [...modalRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]; if (focusable.length === 0) return; const first = focusable[0]!; const last = focusable.at(-1)!; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } }}><section ref={modalRef} className={`recovery-modal recovery-modal--${modal}`} role="dialog" aria-modal="true" aria-labelledby="recovery-modal-title">
+        <header><div><span>DISPOSABLE RESEARCH SURFACE</span><h2 id="recovery-modal-title">{modal === "port-lab" ? "Port interaction lab" : modal === "brief" ? "Bracket brief preview" : "Mounting bracket STEP output"}</h2></div><button type="button" data-testid="workflow-recovery-modal-close" aria-label="Close dialog" onClick={() => setModal("none")}>×</button></header>
         {modal === "port-lab" && <div data-testid="workflow-port-lab"><p className="recovery-modal__lead">Compare how an engineer connects typed data and separately inspects the artifact. The chosen treatment must make both actions unmistakable.</p><div className="port-lab-grid"><TreatmentCard treatment="dot" selected={portTreatment === "dot"} onSelect={() => setPortTreatment("dot")} /><TreatmentCard treatment="terminal" selected={portTreatment === "terminal"} onSelect={() => setPortTreatment("terminal")} /><TreatmentCard treatment="hybrid" selected={portTreatment === "hybrid"} onSelect={() => setPortTreatment("hybrid")} /></div><div className="port-lab-result"><b>Current concept treatment: {portTreatment}</b><span>Human product approval remains required; selection here changes only the disposable visual treatment.</span></div></div>}
-        {modal === "brief" && <div className="brief-preview"><div className="brief-preview__sheet"><span>WRIGHT / REQUIREMENT BASIS</span><h3>L-bracket mounting interface</h3><div className="bracket-sketch">┌──────────── 120 mm ────────────┐<br />│ ○　　　　　　　　　　　　○ │<br />│　　　　　60 × 40　　　　　 │<br />└────────────┐<br />　　　　　　│　○　 slot 24 × 8<br />　　　　　　└──────── 80 mm</div><dl><dt>Material</dt><dd>6061-T6 aluminium</dd><dt>Thickness</dt><dd>6 mm</dd><dt>Design load</dt><dd>1.8 kN static</dd></dl></div><aside><b>{briefName}</b><span>application/pdf</span><span>Human-attached source</span><span>Used by Generate bracket geometry</span></aside></div>}
+        {modal === "brief" && briefName !== null && <div className="brief-preview"><div className="brief-preview__sheet"><span>WRIGHT / REQUIREMENT BASIS</span><h3>L-bracket mounting interface</h3><div className="bracket-sketch">┌──────────── 120 mm ────────────┐<br />│ ○　　　　　　　　　　　　○ │<br />│　　　　　60 × 40　　　　　 │<br />└────────────┐<br />　　　　　　│　○　 slot 24 × 8<br />　　　　　　└──────── 80 mm</div><dl><dt>Material</dt><dd>6061-T6 aluminium</dd><dt>Thickness</dt><dd>6 mm</dd><dt>Design load</dt><dd>1.8 kN static</dd></dl></div><aside><b>{briefName}</b><span>application/pdf</span><span>Human-attached source</span><span>Used by Generate bracket geometry</span></aside></div>}
         {modal === "output" && <div className="output-preview"><img src={`${import.meta.env.BASE_URL}recovery-concept/mounting-bracket.svg`} alt="Isometric L-shaped mounting bracket with four holes" /><aside><b>mounting-bracket-simulated-fixture.step</b><span>artifact.step · STEP AP242</span><span>Static illustrative fixture referenced by block.export-step; these bytes were not generated by the simulated run.</span><span>Run {run.runId} · immutable {run.workflowId} r{run.workflowRevision}</span><span>Definition sha256:{run.semanticSha256}</span>{stepArtifact && <><span>Fixture record {stepArtifact.recordId}</span><span>Fixture sha256:{stepArtifact.digestSha256}</span></>}<div className="recovery-lineage" data-testid="workflow-recovery-output-lineage"><b>Declared upstream lineage</b><span>artifact.step</span><span>← artifact.approved-geometry + review decision</span><span>← artifact.geometry + artifact.manufacturability-report</span><span>← artifact.brief + artifact.material (6061-T6)</span></div><div><a className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-output-open-artifact.step" href={`${import.meta.env.BASE_URL}recovery-concept/manufacturability-report.html`} target="_blank" rel="noreferrer">Open report fixture</a><a className="recovery-button recovery-button--primary" data-testid="workflow-recovery-output-download-artifact.step" href={`${import.meta.env.BASE_URL}recovery-concept/mounting-bracket.step`} download="mounting-bracket-simulated-fixture.step">Download STEP fixture</a></div></aside></div>}
       </section></div>}
     </section>
@@ -525,7 +556,7 @@ function RelationshipInspector({ relationshipId, workflow, readOnly, onApply, on
     setTargetId(relationship.targetId);
   }, [relationship.id, relationship.label, relationship.condition, relationship.targetId]);
   const blockRelationship = relationship.kind !== "data";
-  return <section><div className="recovery-fact"><span>Relationship</span><b>{relationship.kind}</b></div><div className="recovery-fact"><span>From</span><b>{relationship.sourceId}</b></div><label>Relationship label<input value={label} readOnly={readOnly} onChange={(event) => setLabel(event.target.value)} /></label>{blockRelationship ? <label>Outcome target<select value={targetId} disabled={readOnly} onChange={(event) => setTargetId(event.target.value)}>{workflow.blocks.map((block) => <option key={block.id} value={block.id}>{block.title} · {block.id}</option>)}</select></label> : <div className="recovery-fact"><span>To</span><b>{relationship.targetId}</b></div>}<label>Condition or reason<textarea value={condition} readOnly={readOnly} onChange={(event) => setCondition(event.target.value)} /></label>{readOnly ? <p className="recovery-inspector__hint">Candidate relationships are inspection-only until the reviewed diff is accepted.</p> : <><button type="button" className="recovery-button recovery-button--primary" data-testid={`workflow-recovery-relationship-apply-${relationship.id}`} onClick={() => { const patch: Partial<Pick<typeof relationship, "targetId" | "label" | "condition">> = {}; if (label.trim() !== relationship.label) patch.label = label.trim(); if ((condition.trim() || null) !== relationship.condition) patch.condition = condition.trim() || null; if (blockRelationship && targetId !== relationship.targetId) patch.targetId = targetId; if (Object.keys(patch).length > 0) onApply([{ kind: "update_relationship", relationshipId: relationship.id, patch }]); }}>Apply relationship change</button><button type="button" className="recovery-button recovery-button--danger" data-testid={`workflow-recovery-disconnect-${relationship.id}`} onClick={onDisconnect}>Disconnect relationship</button></>}</section>;
+  return <section><div className="recovery-fact"><span>Relationship</span><b>{relationship.kind}</b></div><div className="recovery-fact"><span>From</span><b>{relationship.sourceId}</b></div><label>Relationship label<input data-testid={`workflow-recovery-relationship-label-${relationship.id}`} value={label} readOnly={readOnly} onChange={(event) => setLabel(event.target.value)} /></label>{blockRelationship ? <label>Outcome target<select data-testid={`workflow-recovery-relationship-target-${relationship.id}`} value={targetId} disabled={readOnly} onChange={(event) => setTargetId(event.target.value)}>{workflow.blocks.map((block) => <option key={block.id} value={block.id}>{block.title} · {block.id}</option>)}</select></label> : <div className="recovery-fact"><span>To</span><b>{relationship.targetId}</b></div>}<label>Condition or reason<textarea data-testid={`workflow-recovery-relationship-condition-${relationship.id}`} value={condition} readOnly={readOnly} onChange={(event) => setCondition(event.target.value)} /></label>{readOnly ? <p className="recovery-inspector__hint">Candidate relationships are inspection-only until the reviewed diff is accepted.</p> : <><button type="button" className="recovery-button recovery-button--primary" data-testid={`workflow-recovery-relationship-apply-${relationship.id}`} onClick={() => { const patch: Partial<Pick<typeof relationship, "targetId" | "label" | "condition">> = {}; if (label.trim() !== relationship.label) patch.label = label.trim(); if ((condition.trim() || null) !== relationship.condition) patch.condition = condition.trim() || null; if (blockRelationship && targetId !== relationship.targetId) patch.targetId = targetId; if (Object.keys(patch).length > 0) onApply([{ kind: "update_relationship", relationshipId: relationship.id, patch }]); }}>Apply relationship change</button><button type="button" className="recovery-button recovery-button--danger" data-testid={`workflow-recovery-disconnect-${relationship.id}`} onClick={onDisconnect}>Disconnect relationship</button></>}</section>;
 }
 
 function DefinitionInspector({ blockId, workflow, readOnly, onApply, onDelete }: { readonly blockId: string; readonly workflow: RecoveryWorkflow; readonly readOnly: boolean; readonly onApply: (commands: RecoveryCommand[]) => void; readonly onDelete: () => void }) {
@@ -533,7 +564,7 @@ function DefinitionInspector({ blockId, workflow, readOnly, onApply, onDelete }:
   const [title, setTitle] = useState(block.title);
   const [thickness, setThickness] = useState(String(block.configuration.thickness_mm ?? ""));
   useEffect(() => { setTitle(block.title); setThickness(String(block.configuration.thickness_mm ?? "")); }, [block.id, block.title, block.configuration.thickness_mm]);
-  return <section><label>Friendly block name<input value={title} readOnly={readOnly} onChange={(event) => setTitle(event.target.value)} /></label><div className="recovery-fact"><span>Phase</span><b>{phaseName(workflow, block.phaseId)}</b></div><div className="recovery-fact"><span>Execution</span><b>{block.executionKind.replace("_", " ")}</b></div><label>Instructions<textarea value={block.instructions} readOnly /></label>{"thickness_mm" in block.configuration && <label>Thickness (mm)<input type="number" min="1" value={thickness} readOnly={readOnly} onChange={(event) => setThickness(event.target.value)} /></label>}{readOnly ? <p className="recovery-inspector__hint" data-testid="workflow-recovery-candidate-readonly">Review mode is read-only. Reject the candidate or accept its reviewed diff before editing the accepted definition.</p> : <><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-config-apply" onClick={() => { const commands: RecoveryCommand[] = []; if (title.trim() !== block.title) commands.push({ kind: "set_block_title", blockId: block.id, title }); if (thickness && Number(thickness) !== block.configuration.thickness_mm) commands.push({ kind: "set_block_configuration", blockId: block.id, key: "thickness_mm", value: Number(thickness) }); if (commands.length > 0) onApply(commands); }}>Apply definition change</button><button type="button" className="recovery-button recovery-button--danger" data-testid="workflow-recovery-delete" onClick={onDelete}>Delete selected block</button><p className="recovery-inspector__hint">One reviewed command batch → one accepted semantic revision. Connected blocks fail closed until dependencies are disconnected.</p></> }</section>;
+  return <section><label>Friendly block name<input data-testid={`workflow-recovery-block-title-${block.id}`} value={title} readOnly={readOnly} onChange={(event) => setTitle(event.target.value)} /></label><div className="recovery-fact"><span>Phase</span><b>{phaseName(workflow, block.phaseId)}</b></div><div className="recovery-fact"><span>Execution</span><b>{block.executionKind.replace("_", " ")}</b></div><label>Instructions<textarea data-testid={`workflow-recovery-block-instructions-${block.id}`} value={block.instructions} readOnly /></label>{"thickness_mm" in block.configuration && <label>Thickness (mm)<input data-testid={`workflow-recovery-block-thickness-${block.id}`} type="number" min="1" value={thickness} readOnly={readOnly} onChange={(event) => setThickness(event.target.value)} /></label>}{readOnly ? <p className="recovery-inspector__hint" data-testid="workflow-recovery-candidate-readonly">Review mode is read-only. Reject the candidate or accept its reviewed diff before editing the accepted definition.</p> : <><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-config-apply" onClick={() => { const commands: RecoveryCommand[] = []; if (title.trim() !== block.title) commands.push({ kind: "set_block_title", blockId: block.id, title }); if (thickness && Number(thickness) !== block.configuration.thickness_mm) commands.push({ kind: "set_block_configuration", blockId: block.id, key: "thickness_mm", value: Number(thickness) }); if (commands.length > 0) onApply(commands); }}>Apply definition change</button><button type="button" className="recovery-button recovery-button--danger" data-testid="workflow-recovery-delete" onClick={onDelete}>Delete selected block</button><p className="recovery-inspector__hint">One reviewed command batch → one accepted semantic revision. Connected blocks fail closed until dependencies are disconnected.</p></> }</section>;
 }
 
 function PortInspector({ direction, workflow, blockId, run, onOutput }: { readonly direction: "input" | "output"; readonly workflow: RecoveryWorkflow; readonly blockId: string | null; readonly run: RecoveryRunProjection; readonly onOutput?: () => void }) {

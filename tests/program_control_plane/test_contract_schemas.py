@@ -56,6 +56,26 @@ def test_f01b_activation_correction_is_closed_to_three_tr0070_digests(
     ]
 
 
+def test_f02b_checkpoint_correction_is_closed_to_four_tr0095_digests(
+    repository_root: Path,
+) -> None:
+    root = repository_root / "docs/programs/engineering-process-platform"
+    schema = load(root / "schemas/f02b-checkpoint-raw-identity-correction.schema.json")
+    profile = load(
+        root / "evidence/corrections/COR-EPP-F02B-TR0095-RAW-IDENTITY-001.json"
+    )
+
+    validator_for(schema).check_schema(schema)
+    validator_for(schema)(schema).validate(profile)
+    assert profile["expected_claim_count"] == 4
+    assert [claim["json_pointer"] for claim in profile["claims"]] == [
+        "/outputs/2/sha256",
+        "/outputs/3/sha256",
+        "/outputs/4/sha256",
+        "/outputs/5/sha256",
+    ]
+
+
 def test_v8_checkpoint_correction_is_closed_and_schema_valid(
     repository_root: Path,
 ) -> None:

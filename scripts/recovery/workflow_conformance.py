@@ -37,7 +37,23 @@ SCHEMA_PATH = (
 )
 SCHEMA = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
 SCHEMA_VALIDATOR = jsonschema.Draft202012Validator(SCHEMA)
+CONTRACTS_PATH = SCHEMA_PATH.parent
+COMMAND_SCHEMA_VALIDATOR = jsonschema.Draft202012Validator(
+    json.loads((CONTRACTS_PATH / "workflow-command-batch.schema.json").read_text(encoding="utf-8"))
+)
+LAYOUT_SCHEMA_VALIDATOR = jsonschema.Draft202012Validator(
+    json.loads((CONTRACTS_PATH / "workflow-layout.schema.json").read_text(encoding="utf-8"))
+)
+RUN_SCHEMA_VALIDATOR = jsonschema.Draft202012Validator(
+    json.loads((CONTRACTS_PATH / "workflow-run-record.schema.json").read_text(encoding="utf-8"))
+)
 Syntax = Literal["json", "yaml", "dsl"]
+COMMAND_DOCUMENT_KIND = "workflow-command-batch"
+COMMAND_SCHEMA_VERSION = "1.0.0-recovery.1"
+LAYOUT_DOCUMENT_KIND = "workflow-layout"
+LAYOUT_SCHEMA_VERSION = "1.0.0-recovery.1"
+RUN_DOCUMENT_KIND = "workflow-run"
+RUN_SCHEMA_VERSION = "1.0.0-recovery.1"
 
 
 @dataclass(frozen=True)
@@ -300,6 +316,21 @@ def _diag(
     )
 
 
+def _component_version_matches(version: str, version_range: str) -> bool:
+    if version_range == version:
+        return True
+    if not version_range.startswith("^"):
+        return False
+    try:
+        current = tuple(int(part) for part in version.split("."))
+        minimum = tuple(int(part) for part in version_range[1:].split("."))
+    except ValueError:
+        return False
+    if len(current) != 3 or len(minimum) != 3 or current[0] != minimum[0]:
+        return False
+    return current >= minimum
+
+
 def validate(
     ir: Mapping[str, Any], source_map: Mapping[str, SourceSpan] | None = None
 ) -> ValidationResult:
@@ -350,7 +381,8 @@ def validate(
     port_by_id = {str(row["id"]): row for row in ir["ports"]}
     artifact_ids = {str(row["id"]) for row in ir["artifact_contracts"]}
     binding_ids = {str(row["id"]) for row in ir["bindings"]}
-    component_ids = {str(row["id"]) for row in ir["components"]}
+    component_by_id = {str(row["id"]): row for row in ir["components"]}
+    component_ids = set(component_by_id)
     block_order: dict[str, int] = {}
     phase_memberships: dict[str, list[str]] = {}
     for phase in sorted(ir["phases"], key=lambda row: int(row["order"])):
@@ -394,8 +426,26 @@ def validate(
                 )
             )
         require_ref(owner, block["binding_id"], binding_ids, "binding_id")
-        if block["component_ref"] is not None:
-            require_ref(owner, block["component_ref"]["component_id"], component_ids, "component_ref.component_id")
+        if any(
+            not isinstance(value, (str, int, float, bool))
+            or (isinstance(value, float) and not math.isfinite(value))
+            for value in block["configuration"].values()
+        ):
+            diagnostics.append(_diag("WFR-CONFIGURATION-VALUE", f"{owner} contains a non-scalar configuration value.", "Use only finite string, number, or boolean configuration facts.", semantic_id=owner, source_map=source_map, path="configuration"))
+        component_ref = block["component_ref"]
+        if block["kind"] == "component" and component_ref is None:
+            diagnostics.append(_diag("WFR-COMPONENT-REFERENCE-REQUIRED", f"{owner} is a component instance without a component reference.", "Reference an existing component and compatible version range.", semantic_id=owner, source_map=source_map, path="component_ref"))
+        if block["kind"] != "component" and component_ref is not None:
+            diagnostics.append(_diag("WFR-COMPONENT-BLOCK-KIND", f"{owner} references a reusable component but is not kind component.", "Use kind component for reusable component instances.", semantic_id=owner, source_map=source_map, path="kind"))
+        if component_ref is not None:
+            component_id = str(component_ref["component_id"])
+            require_ref(owner, component_id, component_ids, "component_ref.component_id")
+            component = component_by_id.get(component_id)
+            if component is not None:
+                if not _component_version_matches(str(component["version"]), str(component_ref["version_range"])):
+                    diagnostics.append(_diag("WFR-COMPONENT-VERSION-INCOMPATIBLE", f"{owner} requests {component_ref['version_range']}, but {component_id} is {component['version']}.", "Select a compatible component version or update the reviewed range.", semantic_id=owner, source_map=source_map, path="component_ref.version_range"))
+                if list(block["input_port_ids"]) != list(component["input_port_ids"]) or list(block["output_port_ids"]) != list(component["output_port_ids"]):
+                    diagnostics.append(_diag("WFR-COMPONENT-INTERFACE-MISMATCH", f"{owner} does not expose the exact reviewed interface of {component_id}.", "Use the component's ordered input and output port identities.", semantic_id=owner, source_map=source_map, path="component_ref"))
         for field, direction in (("input_port_ids", "input"), ("output_port_ids", "output")):
             for port_id in block[field]:
                 require_ref(owner, port_id, set(port_by_id), field)
@@ -496,7 +546,13 @@ def validate(
                 source_block_id = source_id
                 target_block_id = target_id
             source_block = block_by_id.get(source_id)
-            if relation["kind"] in {"decision", "feedback"} and source_block and source_block["kind"] not in {"decision", "approval"}:
+            is_review_component = bool(
+                source_block
+                and source_block.get("kind") == "component"
+                and isinstance(source_block.get("component_ref"), Mapping)
+                and source_block["component_ref"].get("component_id") == "component.review-cell"
+            )
+            if relation["kind"] in {"decision", "feedback"} and source_block and source_block["kind"] not in {"decision", "approval"} and not is_review_component:
                 diagnostics.append(
                     _diag(
                         "WFR-RELATIONSHIP-SOURCE-KIND",
@@ -667,6 +723,41 @@ def validate(
                             path=field,
                         )
                     )
+        semantic_addresses: set[str] = set()
+        relative_paths: set[str] = set()
+        path_roots = {"block": "blocks/", "port": "ports/", "relationship": "relationships/", "artifact_contract": "artifact-contracts/", "binding": "bindings/", "component": "components/"}
+        if not component["internal_addresses"]:
+            diagnostics.append(_diag("WFR-COMPONENT-ADDRESS-EMPTY", f"{owner} has no stable internal semantic addresses.", "Address each internal concept required by diagnostics and historical run lineage.", semantic_id=owner, source_map=source_map, path="internal_addresses"))
+        for address in component["internal_addresses"]:
+            semantic_id = str(address["semantic_id"])
+            relative_path = str(address["relative_path"])
+            if not semantic_id.startswith(f"{owner}."):
+                diagnostics.append(
+                    _diag(
+                        "WFR-COMPONENT-ADDRESS-SCOPE",
+                        f"{semantic_id} is outside {owner}.",
+                        "Prefix every internal semantic address with the component identity.",
+                        semantic_id=owner,
+                        source_map=source_map,
+                        path="internal_addresses",
+                    )
+                )
+            if semantic_id in semantic_addresses or relative_path in relative_paths:
+                diagnostics.append(
+                    _diag(
+                        "WFR-COMPONENT-ADDRESS-DUPLICATE",
+                        f"{owner} repeats an internal semantic identity or relative path.",
+                        "Assign one stable identity and one relative path per internal concept.",
+                        semantic_id=owner,
+                        source_map=source_map,
+                        path="internal_addresses",
+                    )
+                )
+            expected_root = path_roots[str(address["concept_kind"])]
+            if not relative_path.startswith(expected_root) or any(part in {".", ".."} for part in relative_path.split("/")):
+                diagnostics.append(_diag("WFR-COMPONENT-ADDRESS-PATH", f"{relative_path} does not match {address['concept_kind']}.", "Use the matching collection root and no dot traversal segments.", semantic_id=owner, source_map=source_map, path="internal_addresses"))
+            semantic_addresses.add(semantic_id)
+            relative_paths.add(relative_path)
     return ValidationResult(not diagnostics, tuple(diagnostics))
 
 
@@ -759,14 +850,20 @@ def apply(
 ) -> ApplyResult:
     """Atomically apply a closed command batch to a clone."""
 
-    if set(command_batch) != {"base_revision", "origin", "commands"}:
-        diagnostic = _diag("WFR-COMMAND-BATCH-SHAPE", "Command batch fields are not the closed contract.", "Provide base_revision, origin, and commands only.")
+    if command_batch.get("document_kind") != COMMAND_DOCUMENT_KIND or command_batch.get("schema_version") != COMMAND_SCHEMA_VERSION:
+        diagnostic = _diag("WFR-COMMAND-VERSION-UNSUPPORTED", "The command document kind or schema version is unsupported.", "Preserve the original bytes and use an explicitly compatible reader; never silently rewrite an unknown version.")
+        return ApplyResult(False, None, (diagnostic,), ())
+    if set(command_batch) != {"document_kind", "schema_version", "base_revision", "origin", "commands"}:
+        diagnostic = _diag("WFR-COMMAND-BATCH-SHAPE", "Command batch fields are not the closed contract.", "Provide document_kind, schema_version, base_revision, origin, and commands only.")
         return ApplyResult(False, None, (diagnostic,), ())
     if command_batch["origin"] not in {"graph", "form", "text", "ai_proposal"}:
         diagnostic = _diag("WFR-COMMAND-ORIGIN", "Command origin is not supported.", "Use graph, form, text, or ai_proposal.")
         return ApplyResult(False, None, (diagnostic,), ())
     if command_batch["base_revision"] != current_revision or ir.get("revision") != current_revision:
         diagnostic = _diag("WFR-COMMAND-STALE-BASE", "The command base is not the current accepted revision.", "Refresh, rebase the proposal, and review the new diff.")
+        return ApplyResult(False, None, (diagnostic,), ())
+    if not COMMAND_SCHEMA_VALIDATOR.is_valid(command_batch):
+        diagnostic = _diag("WFR-COMMAND-BATCH-SHAPE", "The command batch does not satisfy the closed portable wire contract.", "Use only a supported command shape and remove unknown fields; the batch remains unapplied.")
         return ApplyResult(False, None, (diagnostic,), ())
     if not isinstance(command_batch["commands"], list) or not command_batch["commands"]:
         diagnostic = _diag("WFR-COMMAND-BATCH-EMPTY", "A command batch needs at least one command.", "Add a reviewed command or reject the change.")
@@ -797,7 +894,43 @@ def project(
     validation = validate(ir)
     if not validation.valid:
         raise ValueError(validation.diagnostics[0].code)
-    positions = layout.get("positions", {})
+    if layout.get("document_kind") != LAYOUT_DOCUMENT_KIND or layout.get("schema_version") != LAYOUT_SCHEMA_VERSION:
+        raise ValueError("WFR-LAYOUT-VERSION-UNSUPPORTED")
+    if not LAYOUT_SCHEMA_VALIDATOR.is_valid(layout):
+        raise ValueError("WFR-LAYOUT-SHAPE")
+    if layout.get("workflow_id") != ir["workflow_id"] or layout.get("semantic_revision") != ir["revision"]:
+        raise ValueError("WFR-LAYOUT-SUBJECT-MISMATCH")
+    if not isinstance(layout.get("layout_revision"), int) or int(layout["layout_revision"]) < 1:
+        raise ValueError("WFR-LAYOUT-REVISION-INVALID")
+    positions_value = layout.get("positions")
+    viewport_value = layout.get("viewport")
+    if not isinstance(positions_value, Mapping) or not isinstance(viewport_value, Mapping):
+        raise ValueError("WFR-LAYOUT-SHAPE")
+    layout_numbers = [viewport_value.get("x"), viewport_value.get("y"), viewport_value.get("zoom")]
+    for position in positions_value.values():
+        if not isinstance(position, Mapping):
+            raise ValueError("WFR-LAYOUT-SHAPE")
+        layout_numbers.extend([position.get("x"), position.get("y")])
+    if not all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) for value in layout_numbers):
+        raise ValueError("WFR-LAYOUT-NUMBER-NONFINITE")
+    if float(viewport_value["zoom"]) <= 0:
+        raise ValueError("WFR-LAYOUT-ZOOM-INVALID")
+    block_ids = {str(block["id"]) for block in ir["blocks"]}
+    unknown_layout_ids = set(positions_value) - block_ids
+    if unknown_layout_ids:
+        raise ValueError("WFR-LAYOUT-IDENTITY-UNKNOWN")
+    if run_projection is not None:
+        if run_projection.get("document_kind") != RUN_DOCUMENT_KIND or run_projection.get("schema_version") != RUN_SCHEMA_VERSION:
+            raise ValueError("WFR-RUN-VERSION-UNSUPPORTED")
+        if not RUN_SCHEMA_VALIDATOR.is_valid(run_projection):
+            raise ValueError("WFR-RUN-SHAPE")
+        if (
+            run_projection.get("workflow_id") != ir["workflow_id"]
+            or run_projection.get("workflow_revision") != ir["revision"]
+            or run_projection.get("semantic_sha256") != semantic_digest(ir)
+        ):
+            raise ValueError("WFR-RUN-SUBJECT-MISMATCH")
+    positions = positions_value
     run_steps = {} if run_projection is None else run_projection.get("steps", {})
     port_by_id = {row["id"]: row for row in ir["ports"]}
     nodes = []

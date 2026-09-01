@@ -1,6 +1,7 @@
 import {
   Background,
   BaseEdge,
+  ControlButton,
   Controls,
   EdgeLabelRenderer,
   Handle,
@@ -9,6 +10,7 @@ import {
   Position,
   ReactFlow,
   getBezierPath,
+  useReactFlow,
   type Connection,
   type Edge,
   type EdgeProps,
@@ -20,10 +22,11 @@ import "@xyflow/react/dist/style.css";
 
 import type { DraftBlockProjection, DraftPortProjection } from "../../components/workflow-composer/draft-projection";
 import type { DraftCanvasRenderer } from "../../components/workflow-composer/renderer-types";
-import type { RecoveryRelationship, RecoveryRunProjection, RecoveryRunState } from "./model";
+import { validateRecoveryRunProjection, type RecoveryRelationship, type RecoveryRunProjection, type RecoveryRunState, type RecoveryRunSubject } from "./model";
 
 interface RecoveryCanvasRuntime {
   readonly run: RecoveryRunProjection;
+  readonly runSubject: RecoveryRunSubject | null;
   readonly proposedBlockIds: ReadonlySet<string>;
   readonly portArtifactIds: Readonly<Record<string, string>>;
   readonly relationshipLabels: Readonly<Record<string, string>>;
@@ -33,6 +36,8 @@ interface RecoveryCanvasRuntime {
 }
 
 const emptyRun: RecoveryRunProjection = {
+  documentKind: "workflow-run",
+  schemaVersion: "1.0.0-recovery.1",
   runId: "run.none",
   workflowId: "workflow.none",
   workflowRevision: 0,
@@ -52,6 +57,7 @@ const emptyRun: RecoveryRunProjection = {
 
 const RuntimeContext = createContext<RecoveryCanvasRuntime>({
   run: emptyRun,
+  runSubject: null,
   proposedBlockIds: new Set(),
   portArtifactIds: {},
   relationshipLabels: {},
@@ -253,8 +259,21 @@ function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, 
 const nodeTypes = { recovery: RecoveryBlockNode };
 const edgeTypes = { recovery: RecoveryEdge };
 
+function RecoveryCanvasControls() {
+  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  return (
+    <Controls showZoom={false} showFitView={false} showInteractive={false} data-testid="workflow-recovery-canvas-controls">
+      <ControlButton data-testid="workflow-recovery-canvas-zoom-in" aria-label="Zoom in" title="Zoom in" onClick={() => void zoomIn()}>＋</ControlButton>
+      <ControlButton data-testid="workflow-recovery-canvas-zoom-out" aria-label="Zoom out" title="Zoom out" onClick={() => void zoomOut()}>−</ControlButton>
+      <ControlButton data-testid="workflow-recovery-canvas-fit" aria-label="Fit workflow to view" title="Fit workflow to view" onClick={() => void fitView({ padding: 0.12 })}>⌗</ControlButton>
+    </Controls>
+  );
+}
+
 export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selectedSemanticId, onIntent }) => {
   const runtime = useContext(RuntimeContext);
+  const runIssue = validateRecoveryRunProjection(runtime.run, runtime.runSubject)[0];
+  if (runIssue) throw new Error(runIssue.code);
   const [keyboardSource, setKeyboardSource] = useState<string | null>(null);
   const blocks = projection.phases.flatMap((phase) => phase.blocks);
   const gateOwners = useMemo(() => new Map(blocks.flatMap((block) => block.gates.map((gate) => [gate.semanticId, block.semanticId] as const))), [blocks]);
@@ -338,12 +357,14 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       <div className="recovery-phase-stripe recovery-phase-stripe--deliver"><b>03 · Deliver</b><span>Neutral output package</span></div>
       {keyboardSource && <div className="recovery-keyboard-connection" role="status">Connection started. Focus a compatible input and press Enter; Escape cancels.</div>}
       <ReactFlow
+        data-testid="workflow-recovery-reactflow-pane"
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         minZoom={0.35}
         maxZoom={1.4}
+        proOptions={{ hideAttribution: true }}
         fitView
         fitViewOptions={{ padding: 0.12 }}
         deleteKeyCode={["Backspace", "Delete"]}
@@ -373,8 +394,8 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         }}
       >
         <Background color="var(--recovery-grid)" gap={24} size={1} />
-        <MiniMap pannable zoomable nodeStrokeWidth={3} ariaLabel="Workflow overview map" />
-        <Controls showInteractive={false} />
+        <MiniMap nodeStrokeWidth={3} ariaLabel="Workflow overview map" data-testid="workflow-recovery-minimap" />
+        <RecoveryCanvasControls />
       </ReactFlow>
     </div>
   );

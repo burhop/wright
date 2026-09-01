@@ -1,6 +1,6 @@
 {
   "subject": "mounting-bracket.workflow",
-  "subject_sha256": "dadc3d6a2e274973a9fd16f6eecd95ac1c3dac2f6ebd38c5b83b4e6a2705acb6",
+  "subject_sha256": "57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889",
   "scope": "single-agent exploratory syntax evidence; not a benchmark or permanent selection",
   "edit_tasks": [
     "rename geometry block",
@@ -11,8 +11,8 @@
   ],
   "treatments": {
     "json": {
-      "bytes": 18858,
-      "lines": 622,
+      "bytes": 20116,
+      "lines": 661,
       "max_line": 110,
       "indent_depth": 5,
       "round_trip": true,
@@ -34,8 +34,8 @@
       "migration_cost": "low internal interchange; high user verbosity"
     },
     "yaml": {
-      "bytes": 13909,
-      "lines": 467,
+      "bytes": 14806,
+      "lines": 491,
       "max_line": 101,
       "indent_depth": 2,
       "round_trip": true,
@@ -57,9 +57,9 @@
       "migration_cost": "moderate scalar/implicit typing and CST policy"
     },
     "dsl": {
-      "bytes": 13077,
-      "lines": 468,
-      "max_line": 170,
+      "bytes": 13941,
+      "lines": 477,
+      "max_line": 527,
       "indent_depth": 1,
       "round_trip": true,
       "schema_valid": true,
@@ -78,7 +78,7 @@
       "source_map": "section spans implemented",
       "comments": "leading comments preserved; canonical formatting normalized",
       "migration_cost": "highest parser/grammar/version ownership",
-      "source_map_entries": 44,
+      "source_map_entries": 45,
       "comment_preservation_probe": true
     }
   }

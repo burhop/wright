@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/f02b-checkpoint-raw-identity-correction.schema.json",
+  "title": "Closed EPP-F02B Checkpoint D Raw Identity Correction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "correction_id", "program_id", "feature_id", "stable_cause_id", "source_checkpoint", "accept_new_records", "expected_claim_count", "claims", "forbidden_target_classes", "resolution_semantics", "authority"],
+  "properties": {
+    "$schema": {"const": "../../schemas/f02b-checkpoint-raw-identity-correction.schema.json"},
+    "schema_version": {"const": "1.0"},
+    "correction_id": {"const": "COR-EPP-F02B-TR0095-RAW-IDENTITY-001"},
+    "program_id": {"const": "EPP-2026"},
+    "feature_id": {"const": "EPP-F02B"},
+    "stable_cause_id": {"const": "EPP-F02B-TR0095-CHECKOUT-BYTES-001"},
+    "source_checkpoint": {"const": {"git_commit":"a0c2c8e450953ff9fd7c6a2c8dc6852ea2a576b9","git_tree":"58ea5a63ef51ee9a1ed475bf74bafcfac5e3967f","program_tree":"f5940fbeeee9cbe752b0119d4672e7ecc08c5545"}},
+    "accept_new_records": {"const": false},
+    "expected_claim_count": {"const": 4},
+    "claims": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0095-ROADMAP-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/2/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/roadmap.json"},"artifact_git_blob":{"const":"1f89098375ce960f13f623e4fd773287878f76a5"},"recorded_value":{"const":"1af66e98f6b79057d2f42475863a389fca569bde703344ba933756175539b6e1"},"authoritative_value":{"const":"c7ef2e218be25b820474be7866862d4ee97b77cb231b068b5b9145178b69e33f"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0095-LIFECYCLE-POLICY-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/3/sha256"},"artifact_path":{"const":"docs/programs/engineering-process-platform/lifecycle-policy.json"},"artifact_git_blob":{"const":"229d95224720352b921b79cda5dbb32d03aa5bfe"},"recorded_value":{"const":"70e5118d572d0fb1eeebe4d83269dfae14b59dfdba127efe7e21a2dc7842d22a"},"authoritative_value":{"const":"99387d66800ee95a5603c301ed19fdb1ae6320ca63aa3c6eada19a54338493d1"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0095-VALIDATOR-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/4/sha256"},"artifact_path":{"const":"scripts/program_control/validation.py"},"artifact_git_blob":{"const":"2697f35c1c42a5771ae4d7fe983752256c38da1f"},"recorded_value":{"const":"750216729f348204015f955ad40be3d80e7046e768aaf47c162d676e7ae835ed"},"authoritative_value":{"const":"01c98aaeffbb0f082a137c35ce48e44d2f60beb403fd708070a080560bb7003e"}}}]},
+        {"allOf": [{"$ref": "#/$defs/digestClaim"}, {"properties": {"claim_id":{"const":"TR0095-ROADMAP-TEST-OUTPUT-DIGEST-001"},"json_pointer":{"const":"/outputs/5/sha256"},"artifact_path":{"const":"tests/program_control_plane/test_roadmap_approval_and_lease.py"},"artifact_git_blob":{"const":"a87c1a38b3adb49745f136d6bce18855046d1678"},"recorded_value":{"const":"990c10b6de1b950eb9e4843f4e1c1054f8dd7617516357f0be0adc9632468e48"},"authoritative_value":{"const":"84407259ac1a7d931ce9c5f7008474cb4b743bea6fafaacaf104c9185289b94b"}}}]}
+      ],
+      "items": false
+    },
+    "forbidden_target_classes": {"const": ["any TR-0095 path or pointer other than outputs 2 3 4 and 5 sha256","any transition other than TR-0095","frozen EPP-F02B Checkpoint D evidence or spec 079 task state","program lifecycle roadmap lease approval or product authority","readiness benchmark dependency candidate delivery publication or release","generic waiver wildcard future record or correction-of-correction target"]},
+    "resolution_semantics": {"const": {"effect":"four_historical_TR0095_output_digest_findings_only","original_transition_immutable":true,"validator_recomputes_git_normalized_blob_bytes":true,"all_claims_required":true,"checkpoint_state_and_frozen_tasks_unchanged":true,"readiness_authority_benchmark_release_non_interference":true}},
+    "authority": {"const": {"authorization_kind":"direct_user_instruction","authorized_at":"2026-08-31","request_reference":"current-thread:user-message:resume-blocked-wright-recovery-goal","scope":"append_only_TR0095_digest_correction_only"}}
+  },
+  "$defs": {
+    "digestClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "classification", "transition_path", "transition_raw_sha256", "transition_git_blob", "introducing_commit", "introducing_tree", "introducing_program_tree", "json_pointer", "artifact_path", "artifact_git_blob", "recorded_value", "authoritative_value"],
+      "properties": {
+        "claim_id": {"type":"string"},
+        "classification": {"const":"checkout_bytes_recorded_as_committed_digest"},
+        "transition_path": {"const":"docs/programs/engineering-process-platform/evidence/transitions/TR-0095.json"},
+        "transition_raw_sha256": {"const":"294e7ad86077568998f2d37c2cb42bded04cd2c5d6cbed341e994b35f353a0f8"},
+        "transition_git_blob": {"const":"a100c8a7324cd7e6197a1410697b9d084deedfbd"},
+        "introducing_commit": {"const":"a0c2c8e450953ff9fd7c6a2c8dc6852ea2a576b9"},
+        "introducing_tree": {"const":"58ea5a63ef51ee9a1ed475bf74bafcfac5e3967f"},
+        "introducing_program_tree": {"const":"f5940fbeeee9cbe752b0119d4672e7ecc08c5545"},
+        "json_pointer": {"type":"string"},
+        "artifact_path": {"type":"string"},
+        "artifact_git_blob": {"pattern":"^[a-f0-9]{40}$"},
+        "recorded_value": {"pattern":"^[a-f0-9]{64}$"},
+        "authoritative_value": {"pattern":"^[a-f0-9]{64}$"}
+      }
+    }
+  }
+}
