@@ -169,6 +169,42 @@ describe("recovery command and source conformance", () => {
     expect(changed.workflow.blocks[1]?.title).toBe("Changed geometry");
   });
 
+  it("does not regress semantic identity when history restores layout only", () => {
+    const currentWorkflow = cloneWorkflow(initialWorkflow);
+    currentWorkflow.revision = 11;
+    currentWorkflow.parentRevision = 10;
+    currentWorkflow.semanticSha256 = "a".repeat(64);
+    const currentLayout = cloneLayout(initialLayout);
+    currentLayout.semanticRevision = 11;
+    currentLayout.layoutRevision = 7;
+    currentLayout.positions["block.generate-geometry"] = { x: 999, y: 444 };
+
+    const snapshotWorkflow = cloneWorkflow(initialWorkflow);
+    snapshotWorkflow.revision = 7;
+    snapshotWorkflow.parentRevision = 6;
+    snapshotWorkflow.semanticSha256 = null;
+    const snapshotLayout = cloneLayout(initialLayout);
+    snapshotLayout.semanticRevision = 7;
+    snapshotLayout.layoutRevision = 3;
+
+    const result = applyRecoveryBatch(currentWorkflow, currentLayout, recoveryCommandBatch(11, "history", [{
+      kind: "restore_snapshot",
+      direction: "undo",
+      workflow: snapshotWorkflow,
+      layout: snapshotLayout,
+    }]));
+    expect(result.ok).toBe(true);
+    expect(result.semanticChanged).toBe(false);
+
+    const restored = acceptRecoveryResult(currentWorkflow, currentLayout, result)!;
+    expect(restored.workflow.revision).toBe(11);
+    expect(restored.workflow.parentRevision).toBe(10);
+    expect(restored.workflow.semanticSha256).toBe("a".repeat(64));
+    expect(restored.layout.semanticRevision).toBe(11);
+    expect(restored.layout.layoutRevision).toBe(8);
+    expect(restored.layout.positions["block.generate-geometry"]).toEqual(initialLayout.positions["block.generate-geometry"]);
+  });
+
   it("keeps a local semantic edit and paired projection comfortably inside the one-second bound", () => {
     const durations: number[] = [];
     for (let index = 0; index < 25; index += 1) {

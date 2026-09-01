@@ -243,6 +243,10 @@ export function acceptRecoveryResult(current: RecoveryWorkflow, currentLayout: R
   if (result.semanticChanged) {
     workflow.parentRevision = current.revision;
     workflow.revision = current.revision + 1;
+  } else {
+    workflow.parentRevision = current.parentRevision;
+    workflow.revision = current.revision;
+    workflow.semanticSha256 = current.semanticSha256;
   }
   const layout = cloneLayout(result.layout);
   const layoutChanged = stableValue({ positions: currentLayout.positions, viewport: currentLayout.viewport }) !== stableValue({ positions: layout.positions, viewport: layout.viewport });
