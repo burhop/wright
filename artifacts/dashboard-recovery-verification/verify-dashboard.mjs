@@ -23,14 +23,56 @@ async function inspect(name, viewport, screenshot) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
+  const overflowingElements = await page.evaluate(() =>
+    [...document.querySelectorAll("body *")]
+      .map((node) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          tag: node.tagName.toLowerCase(),
+          className: typeof node.className === "string" ? node.className : "",
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+          text: (node.textContent ?? "").trim().slice(0, 120),
+        };
+      })
+      .filter((node) => node.right > document.documentElement.clientWidth + 1)
+      .slice(0, 12),
+  );
+  const internallyOverflowingElements = await page.evaluate(() =>
+    [...document.querySelectorAll("body *")]
+      .map((node) => ({
+        tag: node.tagName.toLowerCase(),
+        className: typeof node.className === "string" ? node.className : "",
+        clientWidth: node.clientWidth,
+        scrollWidth: node.scrollWidth,
+        overflowX: getComputedStyle(node).overflowX,
+        text: (node.textContent ?? "").trim().slice(0, 120),
+      }))
+      .filter((node) => node.scrollWidth > node.clientWidth + 1 && node.overflowX === "visible")
+      .slice(0, 20),
+  );
+  const layoutRoots = await page.evaluate(() =>
+    Object.fromEntries(
+      ["html", "body", ".shell", ".tabs"].map((selector) => {
+        const node = document.querySelector(selector);
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        return [selector, {
+          left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width),
+          clientWidth: node.clientWidth, scrollWidth: node.scrollWidth,
+          overflowX: style.overflowX, contain: style.contain,
+        }];
+      }),
+    ),
+  );
   checks[name] = {
     viewport: page.viewportSize(),
     subject: body.includes("f9237763"),
     tree: body.includes("aeca6ab8"),
     manifest: body.includes("f2b4964e"),
-    recoveryLedger: body.includes("56/60"),
+    recoveryLedger: body.includes("57/60"),
     productionBoundary: body.includes(
-      "T058 benchmark preflight is truthfully BLOCKED at 0/100",
+      "T059 local release-candidate hardening is complete",
     ),
     approval: body.includes("T051 exact-subject product/visual approval is complete"),
     readiness: body.includes("Customer readiness is incomplete"),
@@ -38,6 +80,9 @@ async function inspect(name, viewport, screenshot) {
     galleryCount: images.length,
     imagesLoaded: images.every((image) => image.complete && image.width > 0),
     horizontalOverflowPixels: overflow,
+    overflowingElements,
+    layoutRoots,
+    internallyOverflowingElements,
   };
   await page.screenshot({ path: fileURLToPath(new URL(screenshot, output)), fullPage: true });
   await page.close();
@@ -98,7 +143,7 @@ for (const name of ["desktop", "mobile"]) {
   if (result.galleryCount !== 8) failures.push(`${name}.galleryCount=${result.galleryCount}`);
   if (result.horizontalOverflowPixels !== 0) failures.push(`${name}.overflow=${result.horizontalOverflowPixels}`);
 }
-if (checks.api.status !== 200 || checks.api.completed !== 56 || checks.api.total !== 60 ||
+if (checks.api.status !== 200 || checks.api.completed !== 57 || checks.api.total !== 60 ||
     checks.api.approval !== "complete" || checks.api.decision !== "approved" || checks.api.customerReady !== false) {
   failures.push("api recovery ledger/approval/readiness mismatch");
 }

@@ -10,14 +10,14 @@
 - Analysis date: 2026-09-01 EDT
 
 The `speckit-analyze` skill was used as a strictly read-only consistency pass.
-Its required command was attempted for the original analysis and again for this
-T057 refresh:
+Its required command was attempted for the original analysis and later recovery
+refreshes through T058:
 
 ```text
 bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
 ```
 
-Both attempts returned `Access is denied` with
+Those attempts returned `Access is denied` with
 `Bash/Service/CreateInstance/E_ACCESSDENIED`. No WSL mutation or workaround was
 attempted. Because all four required artifacts were present, the same inventory,
 coverage, ordering, ambiguity, duplication, and constitution checks were then
@@ -36,7 +36,8 @@ No unresolved duplicate requirements, placeholders, core terminology conflicts,
 task-order contradictions, or constitution `MUST` violations remain in the
 recovery slice. The current message supplies the human phase and product-direction
 approval; work remains on a feature branch; the concept stays local/offline;
-component, integration, walkthrough, security, and zero-network restart tests
+component, integration, walkthrough, security, zero-network restart, packaging,
+native Windows lifecycle, rollback, and Docker smoke tests
 satisfy the applicable test-pyramid layers; and no push, merge, publication, or
 release occurred. T056 is intentionally still open because its real
 assistive-technology and moderated-engineer evidence cannot be produced by an
@@ -46,10 +47,10 @@ automated local run.
 
 | Requirement set | Count | Has task coverage | Notes |
 |---|---:|---:|---|
-| Functional requirements | 42 | 42 | T001–T055 cover recovery and first production promotion; T057 covers security/offline qualification; T056 and T058–T060 retain human, oracle, packaging, and release obligations. |
+| Functional requirements | 42 | 42 | T001–T055 cover recovery and first production promotion; T057 covers security/offline qualification; T059 covers local package/native/Docker hardening; T056, T058, and T060 retain human, oracle, and production-release obligations. |
 | Buildable success criteria | 14 | 14 | T046–T050 bind final validation/evidence; T051 binds the human decision. |
 | User stories | 5 | 5 | Each story has independent test language and dependency-ordered tasks. |
-| Tasks | 60 | n/a | 56 complete: T001–T055 and T057. Four remain open: T056 and T058–T060. |
+| Tasks | 60 | n/a | 57 complete: T001–T055, T057, and T059. Three remain open: T056, T058, and T060. |
 
 Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
 0 unresolved; duplication findings 0; critical findings 0; constitution issues
@@ -70,17 +71,23 @@ Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
 - T057 exact implementation commit `ba5ca8d03dcaf42fad832fbd2ed3f69b8a990f5b`
   (tree `17a0f5a0537f5ab6b713736e5e1996011a33e68d`) passes 10 focused
   and 88 broad security/RBAC/resource/offline tests with Ruff clean.
+- T059 exact final subject `fe6140d85f0598454394d7b7105d756c3794a7dd`
+  (tree `8df2b19c94926c8fe922870de4bbad92bb285720`) passes deterministic
+  wheel/sdist clean installs, Windows native lifecycle/update/rollback/purge,
+  exact Docker smoke, 275 release/package/native contracts, 18 Docker/OCI
+  contracts, and a zero-mutation dry-run rehearsal.
 - Capability coverage remains 859/859 source requirements and 33/33 roll-up
   capabilities with zero unexplained omissions.
 
 ## Conclusion
 
-The recovery evidence slice, T052–T055 production-promotion checkpoints, and
-T057 security/offline qualification are internally consistent. T056's automated
+The recovery evidence slice, T052–T055 production-promotion checkpoints, T057
+security/offline qualification, and local T059 release-candidate hardening are
+internally consistent. T056's automated
 portion passes while its human-only evidence remains open. T058's deterministic
 preflight compiles all three benchmark schemas and preserves `0/100`, but full
 qualification is blocked by four open human decisions, one decided record with
 no decision artifact, and four proposed roadmap dependencies. This is not a task
-ordering contradiction: T058 remains open and T059 may advance only its locally
-independent packaging/lifecycle checks. T060 remains prohibited because the
+ordering contradiction: T058 remains open while locally independent T059 is
+complete. T060 remains prohibited because the
 current authorization explicitly excludes push, merge, publication, and release.

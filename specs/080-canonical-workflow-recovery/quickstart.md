@@ -108,8 +108,8 @@ Open `http://127.0.0.1:8765/`. The server is launched against this recovery
 worktree and presents two deliberately separate ledgers:
 
 - governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
-- projected EPP-F02C recovery is `proposed`, unregistered, 56/60 through the
-  verified T057 security/offline checkpoint; T056 and T058–T060 remain open.
+- projected EPP-F02C recovery is `proposed`, unregistered, 57/60 through the
+  verified local T059 release-candidate checkpoint; T056, T058, and T060 remain open.
 
 The live recovery gallery serves only the exact frozen and passing recovery
 walkthrough roots. Report, status, manifest, frozen screenshot, and all seven
@@ -279,3 +279,48 @@ It lists `DEC-P0-007`, `009`, `010`, `011`, and `012` plus `EPP-F03`, `F05`,
 `F06`, and `B01` as blockers. Do not generate or count cases until the named
 human decisions and roadmap dependencies are satisfied. See
 `evidence/benchmark-preflight.md`.
+
+## Verify T059 local release-candidate hardening
+
+Run from a clean detached worktree at exact commit
+`fe6140d85f0598454394d7b7105d756c3794a7dd` (tree
+`8df2b19c94926c8fe922870de4bbad92bb285720`):
+
+```powershell
+python scripts/release-preflight.py --dry-run --tag v0.1.9 `
+  --source-commit fe6140d85f0598454394d7b7105d756c3794a7dd `
+  --output test-results/release-candidate/t059/preflight.json
+
+bash scripts/build-python-distributions.sh `
+  --dist-root test-results/release-candidate/t059/python .
+
+python scripts/test-native-hermes-install.py `
+  --wheel <exact-wheel> --previous-wheel <fixture-predecessor> `
+  --wheelhouse <platform-wheelhouse> --hermes-home <external-temp-home> `
+  --wright-home <external-temp-home> --plugin-source hermes-plugin-wright `
+  --hermes-command <hermes-0.19.0> --codex-command <codex-0.144.1> `
+  --evidence test-results/release-candidate/t059/native-lifecycle-windows.json
+
+$env:WRIGHT_DOCKER_IMAGE = "wright:t059-fe6140d8"
+bash scripts/docker-smoke-test.sh
+
+python scripts/release-rehearsal.py --dry-run --tag v0.1.9 `
+  --python-dist test-results/release-candidate/t059/python/wright-engineering `
+  --native-build-evidence <native-build-evidence.json> `
+  --native-lifecycle-evidence <native-lifecycle-windows.json> `
+  --output test-results/release-candidate/t059/rehearsal
+```
+
+Expected: the wheel/sdist clean-install and retain SHA-256
+`53a48234...a77d` / `988c95f8...b9a3`; Windows native lifecycle and direct
+Codex MCP profile pass; Docker smoke ends with `ALL SMOKE AND RECOVERY TESTS
+PASSED`; local OCI manifest is `sha256:666ed2de...ab76a`; and the rehearsal
+digest is `0130502a...3bf6` with zero external mutations. See
+`evidence/release-candidate-hardening.md` and
+`artifacts/t059-release-candidate/`.
+
+This completes only T059's authorized local scope. Do not interpret the
+rehearsal's simulated `release_ready` state as public or customer readiness.
+T060 still requires separate authorization for dev-push/merge/release gates,
+Linux/macOS and public-artifact verification, registry promotion, docs, tag,
+and GitHub Release.

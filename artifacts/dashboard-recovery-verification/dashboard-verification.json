@@ -1,6 +1,6 @@
 {
   "overall": "pass",
-  "checkedAt": "2026-09-01T05:15:03.908Z",
+  "checkedAt": "2026-09-01T06:09:36.766Z",
   "checks": {
     "desktop": {
       "viewport": {
@@ -17,7 +17,47 @@
       "governedFreeze": true,
       "galleryCount": 8,
       "imagesLoaded": true,
-      "horizontalOverflowPixels": 0
+      "horizontalOverflowPixels": 0,
+      "overflowingElements": [],
+      "layoutRoots": {
+        "html": {
+          "left": 0,
+          "right": 1440,
+          "width": 1440,
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        "body": {
+          "left": 0,
+          "right": 1440,
+          "width": 1440,
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".shell": {
+          "left": 18,
+          "right": 1422,
+          "width": 1404,
+          "clientWidth": 1404,
+          "scrollWidth": 1404,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".tabs": {
+          "left": 18,
+          "right": 744,
+          "width": 726,
+          "clientWidth": 724,
+          "scrollWidth": 724,
+          "overflowX": "auto",
+          "contain": "none"
+        }
+      },
+      "internallyOverflowingElements": []
     },
     "mobile": {
       "viewport": {
@@ -34,11 +74,73 @@
       "governedFreeze": true,
       "galleryCount": 8,
       "imagesLoaded": true,
-      "horizontalOverflowPixels": 0
+      "horizontalOverflowPixels": 0,
+      "overflowingElements": [
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 429,
+          "width": 127,
+          "text": "Delivery Lanes"
+        },
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 597,
+          "width": 161,
+          "text": "Engineering Health"
+        },
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 730,
+          "width": 125,
+          "text": "Agent Activity"
+        }
+      ],
+      "layoutRoots": {
+        "html": {
+          "left": 0,
+          "right": 390,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        "body": {
+          "left": 0,
+          "right": 390,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".shell": {
+          "left": 11,
+          "right": 379,
+          "width": 368,
+          "clientWidth": 368,
+          "scrollWidth": 368,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".tabs": {
+          "left": 11,
+          "right": 379,
+          "width": 368,
+          "clientWidth": 366,
+          "scrollWidth": 724,
+          "overflowX": "auto",
+          "contain": "inline-size"
+        }
+      },
+      "internallyOverflowingElements": []
     },
     "api": {
       "status": 200,
-      "completed": 56,
+      "completed": 57,
       "total": 60,
       "approval": "complete",
       "decision": "approved",
