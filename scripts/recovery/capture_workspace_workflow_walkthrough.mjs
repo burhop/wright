@@ -450,7 +450,14 @@ function instrumentPage(targetPage) {
   if (instrumentedPages.has(targetPage)) return;
   instrumentedPages.add(targetPage);
   targetPage.on("console", (message) => {
-    if (message.type() === "error") diagnostics.consoleErrors.push({ at: new Date().toISOString(), page: targetPage.url(), text: message.text() });
+    if (message.type() !== "error") return;
+    const text = message.text();
+    const expectedMissingResourceNoise = expectingMissingWorkflow404
+      && /Failed to load resource:.*404 \(Not Found\)/i.test(text);
+    const expectedConflictResourceNoise = expectingStaleWorkflow409
+      && /Failed to load resource:.*409 \(Conflict\)/i.test(text);
+    if (expectedMissingResourceNoise || expectedConflictResourceNoise) return;
+    diagnostics.consoleErrors.push({ at: new Date().toISOString(), page: targetPage.url(), text });
   });
   targetPage.on("pageerror", (error) => diagnostics.pageErrors.push({ at: new Date().toISOString(), page: targetPage.url(), text: error.message }));
   targetPage.on("requestfailed", (request) => {
