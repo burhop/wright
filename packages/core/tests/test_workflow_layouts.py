@@ -65,13 +65,13 @@ def test_layout_subject_validation_and_edits_preserve_definition_bytes() -> None
     before = canonical_definition_bytes(definition)
     payload = load_promotion().layout.model_dump(mode="json")
     payload["layout_revision"] = 2
-    payload["positions"]["block.capture-brief"] = {"x": 640, "y": 220}
+    payload["positions"]["block.design-intent"] = {"x": 640, "y": 220}
     changed = WorkflowLayout.model_validate(payload)
 
     validate_workflow_layout_subject(definition, changed)
 
     assert canonical_definition_bytes(definition) == before
-    assert changed.positions["block.capture-brief"].x == 640
+    assert changed.positions["block.design-intent"].x == 640
 
 
 def test_unknown_layout_version_is_preserved_without_rewrite() -> None:

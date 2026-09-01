@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -24,9 +24,26 @@ describe("WorkflowRecoveryConcept component states", () => {
   it("renders the default canonical projection and gives every visible interaction a stable test id", async () => {
     const { container } = render(<WorkflowRecoveryConcept />);
     expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
-    expect(screen.getByTestId("workflow-recovery-authority")).toHaveTextContent("Accepted definition r1");
+    expect(screen.getByTestId("workflow-recovery-authority")).toHaveTextContent("Current workflow version 2");
+    expect(screen.getByRole("heading", { name: "Three source inputs" })).toBeVisible();
+    expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("Engineer upload");
+    expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("JPG or PNG images");
+    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("Engineer input");
+    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("Typed text or common document");
+    expect(screen.getByTestId("workflow-recovery-input-source-company-context")).toHaveTextContent("Company knowledge library");
+    expect(screen.getByTestId("workflow-recovery-palette-context-hint")).toHaveTextContent("Tolerances come from the reviewed design specification, not this first input stage.");
+    expect(screen.queryByText(/PDF brief/i)).not.toBeInTheDocument();
     await waitFor(() => expect(screen.getByTestId("workflow-recovery-concept").dataset.semanticDigest).toMatch(/^sha256:/));
     expect(missingInteractiveTestIds(container)).toEqual([]);
+
+    expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("mounting-bracket-design-intent.docx");
+    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-preview-artifact.design-intent"));
+    const designIntentDialog = screen.getByRole("dialog", { name: "Design intent" });
+    expect(designIntentDialog).toBeVisible();
+    expect(within(designIntentDialog).getByText("Text or common document")).toBeVisible();
+    await userEvent.click(screen.getByTestId("workflow-recovery-modal-close"));
 
     await userEvent.click(screen.getByTestId("workflow-recovery-port-lab-open"));
     expect(screen.getByTestId("workflow-port-lab")).toBeVisible();
@@ -54,6 +71,6 @@ describe("WorkflowRecoveryConcept component states", () => {
     fireEvent.change(editor, { target: { value: "workflow malformed\nend\n" } });
     await userEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
     expect(await screen.findByTestId(/workflow-recovery-diagnostic-WFR-/)).toBeVisible();
-    expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute("data-revision", "1");
+    expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute("data-revision", "2");
   });
 });

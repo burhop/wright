@@ -2,8 +2,8 @@
 
 workflow workflow.mounting-bracket
   version: "2.0.0-recovery.1"
-  revision: 1
-  parent: null
+  revision: 2
+  parent: 1
   semantic_sha256: null
   title: "Mounting bracket development"
   purpose: "Turn bracket requirements into a reviewed manufacturable STEP package."
@@ -13,9 +13,9 @@ end
 
 phase phase.define
   name: Define
-  purpose: "Capture the design basis and create geometry."
+  purpose: "Combine design intent, reference images, and company context into a reviewed design specification, then create the CAD model."
   order: 0
-  blocks: ["block.capture-brief","block.generate-geometry"]
+  blocks: ["block.reference-images","block.design-intent","block.company-context","block.create-design-specification","block.generate-geometry"]
 end
 
 phase phase.verify
@@ -32,29 +32,71 @@ phase phase.deliver
   blocks: ["block.export-step","block.release-package"]
 end
 
-block block.capture-brief
+block block.reference-images
   kind: work
-  title: "Capture bracket brief"
-  purpose: "Attach the requirement package and record the material basis."
+  title: "Reference images"
+  purpose: "Add sketches, photographs, or marked-up images that show the intended bracket and interfaces."
   phase: phase.define
   execution: human
-  instructions: "Confirm dimensions, hole pattern, loads, material, and source revision."
-  config: {"material":"6061-T6","units":"mm"}
+  instructions: "Add one or more JPG or PNG images and identify any dimensions or interfaces that must be preserved."
+  config: {"accepted_formats":"JPG, PNG"}
   inputs: []
-  outputs: ["port.brief-out"]
+  outputs: ["port.reference-images-out"]
   binding: null
+  component: null
+end
+
+block block.design-intent
+  kind: work
+  title: "Design intent"
+  purpose: "Describe how the bracket will be used, its loads, interfaces, constraints, and success criteria in text or a common document."
+  phase: phase.define
+  execution: human
+  instructions: "Enter design intent as text or add a common document. Include use, loads, interfaces, constraints, units, and known material requirements."
+  config: {"input_mode":"text-or-document","units":"mm"}
+  inputs: []
+  outputs: ["port.design-intent-out"]
+  binding: null
+  component: null
+end
+
+block block.company-context
+  kind: work
+  title: "Company standards and context"
+  purpose: "Bring in approved standards, preferred materials and processes, and relevant past designs."
+  phase: phase.define
+  execution: deterministic
+  instructions: "Retrieve the company standards and prior-design guidance relevant to brackets, material selection, tolerancing, and manufacturing."
+  config: {"source":"approved-company-library"}
+  inputs: []
+  outputs: ["port.company-context-out"]
+  binding: binding.company-context
+  component: null
+end
+
+block block.create-design-specification
+  kind: approval
+  title: "Create and review design specification"
+  purpose: "Combine the three input sources into an editable, reviewable source of truth before CAD work begins."
+  phase: phase.define
+  execution: ai_capable
+  instructions: "Draft a concise engineering design specification from the design intent, reference images, and company context. Separate supplied facts from assumptions, flag conflicts and missing information, and require engineer review before release to CAD."
+  config: {"review_status":"needs-review"}
+  inputs: ["port.design-intent-in","port.reference-images-in","port.company-context-in"]
+  outputs: ["port.design-specification-out"]
+  binding: binding.create-design-specification
   component: null
 end
 
 block block.generate-geometry
   kind: work
-  title: "Generate bracket geometry"
-  purpose: "Create a parametric L-bracket from the approved brief."
+  title: "Create bracket CAD model"
+  purpose: "Create a parametric L-bracket from the reviewed design specification."
   phase: phase.define
   execution: deterministic
   instructions: "Create the bracket with two mounting holes and one slotted interface."
   config: {"inside_radius_mm":4,"thickness_mm":6}
-  inputs: ["port.brief-in"]
+  inputs: ["port.design-specification-in"]
   outputs: ["port.geometry-out"]
   binding: binding.generate-geometry
   component: null
@@ -62,13 +104,13 @@ end
 
 block block.check-manufacturability
   kind: work
-  title: "Check manufacturability"
-  purpose: "Evaluate bend radius, edge distance, thickness, and tool access."
+  title: "Run manufacturing checks"
+  purpose: "Check bend radius, edge distance, thickness, and tool access."
   phase: phase.verify
   execution: ai_capable
-  instructions: "Explain every warning and cite the geometry and material fact that caused it."
+  instructions: "Check bend radius, edge distance, thickness, and tool access. For each issue, cite the CAD feature and material property that triggered it."
   config: {"minimum_edge_ratio":1.5,"process":"machined-and-bent"}
-  inputs: ["port.geometry-check-in","port.material-in"]
+  inputs: ["port.geometry-check-in","port.design-specification-check-in"]
   outputs: ["port.report-out"]
   binding: binding.check-manufacturability
   component: null
@@ -76,13 +118,13 @@ end
 
 block block.review-design
   kind: component
-  title: "Review bracket design"
-  purpose: "Approve the geometry and manufacturability findings or return them for revision."
+  title: "Review CAD model for approval"
+  purpose: "Approve the CAD model and manufacturing report or return the design for revision."
   phase: phase.verify
   execution: human
-  instructions: "Approve only when all required inputs are present and every warning is dispositioned."
+  instructions: "Approve only when the reviewed design specification, CAD model, and manufacturing check report agree and every issue has a recorded resolution."
   config: {"required_role":"design-reviewer"}
-  inputs: ["port.geometry-review-in","port.report-in"]
+  inputs: ["port.design-specification-review-in","port.geometry-review-in","port.report-in"]
   outputs: ["port.approved-geometry-out"]
   binding: null
   component: {"component_id":"component.review-cell","version_range":"^1.0.0"}
@@ -90,11 +132,11 @@ end
 
 block block.export-step
   kind: work
-  title: "Export STEP"
-  purpose: "Export the approved bracket to a neutral STEP file."
+  title: "Export approved STEP file"
+  purpose: "Export the approved bracket CAD model as a neutral STEP file."
   phase: phase.deliver
   execution: deterministic
-  instructions: "Export AP242 with millimetre units and preserve the exact source revision."
+  instructions: "Export STEP AP242 in millimetres from the approved CAD model and record its source revision."
   config: {"format":"STEP AP242","overwrite":false}
   inputs: ["port.approved-geometry-in"]
   outputs: ["port.step-out"]
@@ -104,11 +146,11 @@ end
 
 block block.release-package
   kind: work
-  title: "Assemble review package"
-  purpose: "Package the STEP model and manufacturability report for downstream review."
+  title: "Create design handoff package"
+  purpose: "Place the STEP file and manufacturing report in one local handoff package."
   phase: phase.deliver
   execution: deterministic
-  instructions: "Create a local package only; do not publish or send it."
+  instructions: "Create a local ZIP containing the approved STEP file and manufacturing report. Do not publish or send it."
   config: {"classification":"internal","publish":false}
   inputs: ["port.step-in","port.report-package-in"]
   outputs: ["port.package-out"]
@@ -116,181 +158,298 @@ block block.release-package
   component: null
 end
 
-port port.brief-out
-  owner: block.capture-brief
+port port.reference-images-out
+  owner: block.reference-images
   direction: output
-  name: "Bracket brief"
-  type: type.requirements.bundle
+  name: "Reference images"
+  type: type.image.reference-set
   required: true
-  cardinality: one
-  artifact: artifact.brief
-  description: "The attached dimensions, loads, material, and reference images."
+  cardinality: many
+  artifact: artifact.reference-images
+  description: "Sketches, photographs, or marked-up JPG and PNG images supplied by the engineer."
 end
 
-port port.brief-in
-  owner: block.generate-geometry
-  direction: input
-  name: "Bracket brief"
-  type: type.requirements.bundle
+port port.design-intent-out
+  owner: block.design-intent
+  direction: output
+  name: "Design intent"
+  type: type.design.intent
   required: true
   cardinality: one
-  artifact: artifact.brief
-  description: "Approved bracket requirements."
+  artifact: artifact.design-intent
+  description: "Engineer-entered text or a common document describing use, loads, interfaces, constraints, units, and known material requirements."
+end
+
+port port.company-context-out
+  owner: block.company-context
+  direction: output
+  name: "Company standards and context"
+  type: type.context.company
+  required: true
+  cardinality: one
+  artifact: artifact.company-context
+  description: "Approved standards, preferred practices, and relevant prior-design guidance."
+end
+
+port port.design-intent-in
+  owner: block.create-design-specification
+  direction: input
+  name: "Design intent"
+  type: type.design.intent
+  required: true
+  cardinality: one
+  artifact: artifact.design-intent
+  description: "The engineer's text or document describing what the bracket must do."
+end
+
+port port.reference-images-in
+  owner: block.create-design-specification
+  direction: input
+  name: "Reference images"
+  type: type.image.reference-set
+  required: true
+  cardinality: many
+  artifact: artifact.reference-images
+  description: "Visual references used to clarify shape, interfaces, and constraints."
+end
+
+port port.company-context-in
+  owner: block.create-design-specification
+  direction: input
+  name: "Company standards and context"
+  type: type.context.company
+  required: true
+  cardinality: one
+  artifact: artifact.company-context
+  description: "Approved company rules and reusable design knowledge."
+end
+
+port port.design-specification-out
+  owner: block.create-design-specification
+  direction: output
+  name: "Reviewed design specification"
+  type: type.design.specification
+  required: true
+  cardinality: one
+  artifact: artifact.design-specification
+  description: "Editable source of truth that separates supplied facts, assumptions, decisions, and unresolved questions."
+end
+
+port port.design-specification-in
+  owner: block.generate-geometry
+  direction: input
+  name: "Reviewed design specification"
+  type: type.design.specification
+  required: true
+  cardinality: one
+  artifact: artifact.design-specification
+  description: "The reviewed source of truth used to create the bracket CAD model."
 end
 
 port port.geometry-out
   owner: block.generate-geometry
   direction: output
-  name: "Bracket geometry"
+  name: "Bracket CAD model"
   type: type.geometry.brep
   required: true
   cardinality: one
   artifact: artifact.geometry
-  description: "Parametric bracket geometry."
+  description: "Parametric bracket CAD model."
 end
 
 port port.geometry-check-in
   owner: block.check-manufacturability
   direction: input
-  name: Geometry
+  name: "Bracket CAD model"
   type: type.geometry.brep
   required: true
   cardinality: one
   artifact: artifact.geometry
-  description: "Geometry to evaluate."
+  description: "CAD model to check for manufacturing issues."
 end
 
-port port.material-in
+port port.design-specification-check-in
   owner: block.check-manufacturability
   direction: input
-  name: Material
-  type: type.material.spec
+  name: "Reviewed design specification"
+  type: type.design.specification
   required: true
   cardinality: one
-  artifact: artifact.material
-  description: "Material and temper needed for manufacturing rules."
+  artifact: artifact.design-specification
+  description: "Approved dimensions, material, process, tolerances, and acceptance criteria used by the manufacturing checks."
 end
 
 port port.report-out
   owner: block.check-manufacturability
   direction: output
-  name: "Manufacturability report"
+  name: "Manufacturing check report"
   type: type.report.manufacturability
   required: true
   cardinality: one
   artifact: artifact.manufacturability-report
-  description: "Findings, evidence, and recovery guidance."
+  description: "Manufacturing issues, supporting evidence, and recommended corrections."
+end
+
+port port.design-specification-review-in
+  owner: block.review-design
+  direction: input
+  name: "Reviewed design specification"
+  type: type.design.specification
+  required: true
+  cardinality: one
+  artifact: artifact.design-specification
+  description: "Accepted design criteria used to judge the CAD model and manufacturing report."
 end
 
 port port.geometry-review-in
   owner: block.review-design
   direction: input
-  name: Geometry
+  name: "Bracket CAD model"
   type: type.geometry.brep
   required: true
   cardinality: one
   artifact: artifact.geometry
-  description: "Geometry presented for approval."
+  description: "CAD model presented for design approval."
 end
 
 port port.report-in
   owner: block.review-design
   direction: input
-  name: Report
+  name: "Manufacturing check report"
   type: type.report.manufacturability
   required: true
   cardinality: one
   artifact: artifact.manufacturability-report
-  description: "Manufacturability evidence presented for approval."
+  description: "Manufacturing evidence presented for design approval."
 end
 
 port port.approved-geometry-out
   owner: block.review-design
   direction: output
-  name: "Approved geometry"
+  name: "Approved CAD model"
   type: type.geometry.approved
   required: true
   cardinality: one
   artifact: artifact.approved-geometry
-  description: "Exact approved geometry revision."
+  description: "Exact CAD model revision approved by design review."
 end
 
 port port.approved-geometry-in
   owner: block.export-step
   direction: input
-  name: "Approved geometry"
+  name: "Approved CAD model"
   type: type.geometry.approved
   required: true
   cardinality: one
   artifact: artifact.approved-geometry
-  description: "Approved source for export."
+  description: "Approved CAD model used for the STEP export."
 end
 
 port port.step-out
   owner: block.export-step
   direction: output
-  name: "STEP model"
+  name: "STEP AP242 file"
   type: type.file.step
   required: true
   cardinality: one
   artifact: artifact.step
-  description: "Neutral bracket model."
+  description: "Neutral bracket CAD file for downstream use."
 end
 
 port port.step-in
   owner: block.release-package
   direction: input
-  name: "STEP model"
+  name: "STEP AP242 file"
   type: type.file.step
   required: true
   cardinality: one
   artifact: artifact.step
-  description: "Approved exported model."
+  description: "Approved STEP file to include in the handoff package."
 end
 
 port port.report-package-in
   owner: block.release-package
   direction: input
-  name: Report
+  name: "Manufacturing check report"
   type: type.report.manufacturability
   required: true
   cardinality: one
   artifact: artifact.manufacturability-report
-  description: "Report to include in the package."
+  description: "Manufacturing report to include in the handoff package."
 end
 
 port port.package-out
   owner: block.release-package
   direction: output
-  name: "Review package"
+  name: "Design handoff package"
   type: type.package.review
   required: true
   cardinality: one
   artifact: artifact.release-package
-  description: "Local review package."
+  description: "Local ZIP containing the approved STEP file and manufacturing report."
 end
 
-relationship rel.brief-to-geometry
+relationship rel.design-intent-to-specification
   kind: data
-  source: port.brief-out
-  target: port.brief-in
-  label: requirements
+  source: port.design-intent-out
+  target: port.design-intent-in
+  label: "design intent"
   condition: null
+end
+
+relationship rel.reference-to-specification
+  kind: data
+  source: port.reference-images-out
+  target: port.reference-images-in
+  label: "reference images"
+  condition: null
+end
+
+relationship rel.context-to-specification
+  kind: data
+  source: port.company-context-out
+  target: port.company-context-in
+  label: "company context"
+  condition: null
+end
+
+relationship rel.specification-to-geometry
+  kind: data
+  source: port.design-specification-out
+  target: port.design-specification-in
+  label: "reviewed design specification"
+  condition: decision.specification-accepted
+end
+
+relationship rel.specification-to-check
+  kind: data
+  source: port.design-specification-out
+  target: port.design-specification-check-in
+  label: "design criteria"
+  condition: decision.specification-accepted
 end
 
 relationship rel.geometry-to-check
   kind: data
   source: port.geometry-out
   target: port.geometry-check-in
-  label: geometry
+  label: "CAD model"
   condition: null
+end
+
+relationship rel.specification-to-review
+  kind: data
+  source: port.design-specification-out
+  target: port.design-specification-review-in
+  label: "design criteria"
+  condition: decision.specification-accepted
 end
 
 relationship rel.geometry-to-review
   kind: data
   source: port.geometry-out
   target: port.geometry-review-in
-  label: geometry
+  label: "CAD model"
   condition: null
 end
 
@@ -298,7 +457,7 @@ relationship rel.report-to-review
   kind: data
   source: port.report-out
   target: port.report-in
-  label: findings
+  label: "manufacturing report"
   condition: null
 end
 
@@ -306,7 +465,7 @@ relationship rel.review-to-export
   kind: data
   source: port.approved-geometry-out
   target: port.approved-geometry-in
-  label: "approved geometry"
+  label: "approved CAD model"
   condition: decision.accepted
 end
 
@@ -314,7 +473,7 @@ relationship rel.step-to-package
   kind: data
   source: port.step-out
   target: port.step-in
-  label: STEP
+  label: "STEP file"
   condition: null
 end
 
@@ -322,8 +481,24 @@ relationship rel.report-to-package
   kind: data
   source: port.report-out
   target: port.report-package-in
-  label: report
+  label: "manufacturing report"
   condition: null
+end
+
+relationship rel.specification-accepted
+  kind: decision
+  source: block.create-design-specification
+  target: block.generate-geometry
+  label: "Specification reviewed"
+  condition: "An engineer accepted the design specification and resolved or explicitly recorded all open questions"
+end
+
+relationship rel.specification-revise
+  kind: feedback
+  source: block.create-design-specification
+  target: block.design-intent
+  label: "Revise design inputs"
+  condition: "The design specification contains a conflict, unsupported assumption, or missing decision"
 end
 
 relationship rel.review-accepted
@@ -338,37 +513,59 @@ relationship rel.review-revise
   kind: feedback
   source: block.review-design
   target: block.generate-geometry
-  label: "Revise geometry"
-  condition: "A requirement or manufacturability warning is unresolved"
+  label: "Revise CAD model"
+  condition: "A design requirement or manufacturing issue is unresolved"
 end
 
-artifact artifact.brief
-  name: "Bracket requirement package"
-  type: type.requirements.bundle
-  media: application/pdf
-  description: "Input dimensions, loads, material, and reference images."
+artifact artifact.reference-images
+  name: "Reference images"
+  type: type.image.reference-set
+  media: "image/*"
+  description: "Engineer-supplied sketches, photographs, and marked-up JPG or PNG images."
   producer: null
-  required_for: ["block.generate-geometry"]
+  required_for: ["block.create-design-specification"]
   preview: inline
   actions: ["inspect","preview","replace"]
 end
 
-artifact artifact.material
-  name: "Material specification"
-  type: type.material.spec
-  media: "application/vnd.wright.material+json"
-  description: "Material and temper properties used by the check."
+artifact artifact.design-intent
+  name: "Design intent"
+  type: type.design.intent
+  media: text/plain
+  description: "Typed text or text from a common document describing use, loads, interfaces, constraints, units, and known material requirements."
   producer: null
-  required_for: ["block.check-manufacturability"]
+  required_for: ["block.create-design-specification"]
+  preview: inline
+  actions: ["inspect","preview","replace"]
+end
+
+artifact artifact.company-context
+  name: "Company standards and context"
+  type: type.context.company
+  media: "application/vnd.wright.context+json"
+  description: "Approved company standards, preferred practices, and relevant prior-design guidance."
+  producer: block.company-context
+  required_for: ["block.create-design-specification"]
   preview: metadata
-  actions: ["inspect","replace"]
+  actions: ["inspect","preview"]
+end
+
+artifact artifact.design-specification
+  name: "Reviewed design specification"
+  type: type.design.specification
+  media: text/markdown
+  description: "Editable, reviewable source of truth for CAD and downstream engineering work."
+  producer: block.create-design-specification
+  required_for: ["block.generate-geometry","block.check-manufacturability","block.review-design"]
+  preview: inline
+  actions: ["inspect","preview","open","download"]
 end
 
 artifact artifact.geometry
-  name: "Bracket geometry"
+  name: "Bracket CAD model"
   type: type.geometry.brep
   media: model/vnd.wright.brep
-  description: "Parametric bracket model before approval."
+  description: "Parametric bracket CAD model before design approval."
   producer: block.generate-geometry
   required_for: ["block.check-manufacturability","block.review-design"]
   preview: inline
@@ -376,10 +573,10 @@ artifact artifact.geometry
 end
 
 artifact artifact.manufacturability-report
-  name: "Manufacturability report"
+  name: "Manufacturing check report"
   type: type.report.manufacturability
   media: text/html
-  description: "Findings and recovery guidance."
+  description: "Manufacturing issues, evidence, and recommended corrections."
   producer: block.check-manufacturability
   required_for: ["block.review-design","block.release-package"]
   preview: inline
@@ -387,10 +584,10 @@ artifact artifact.manufacturability-report
 end
 
 artifact artifact.approved-geometry
-  name: "Approved geometry"
+  name: "Approved CAD model"
   type: type.geometry.approved
   media: model/vnd.wright.brep
-  description: "Geometry plus review identity."
+  description: "CAD model plus its design-review decision."
   producer: block.review-design
   required_for: ["block.export-step"]
   preview: inline
@@ -398,10 +595,10 @@ artifact artifact.approved-geometry
 end
 
 artifact artifact.step
-  name: "Mounting bracket STEP"
+  name: "Mounting bracket STEP AP242 file"
   type: type.file.step
   media: model/step
-  description: "AP242 neutral geometry file."
+  description: "Neutral bracket CAD file for downstream use."
   producer: block.export-step
   required_for: ["block.release-package"]
   preview: inline
@@ -409,14 +606,38 @@ artifact artifact.step
 end
 
 artifact artifact.release-package
-  name: "Bracket review package"
+  name: "Design handoff package"
   type: type.package.review
   media: application/zip
-  description: "Local internal package containing the STEP model and report."
+  description: "Local ZIP containing the approved STEP file and manufacturing report."
   producer: block.release-package
   required_for: []
   preview: metadata
   actions: ["inspect","download"]
+end
+
+binding binding.company-context
+  kind: internal
+  provider: provider.wright-local
+  server: null
+  tool: knowledge.retrieve-company-context
+  schema: sha256:6666666666666666666666666666666666666666666666666666666666666666
+  arguments: []
+  results: [{"implementation_target":"result.company_context","semantic_source":"port.company-context-out"}]
+  approval: none
+  capability: "Retrieve approved company standards and context"
+end
+
+binding binding.create-design-specification
+  kind: internal
+  provider: provider.wright-local
+  server: null
+  tool: ai.create-design-specification
+  schema: sha256:7777777777777777777777777777777777777777777777777777777777777777
+  arguments: [{"implementation_target":"inputs.design_intent","semantic_source":"port.design-intent-in"},{"implementation_target":"inputs.reference_images","semantic_source":"port.reference-images-in"},{"implementation_target":"inputs.company_context","semantic_source":"port.company-context-in"}]
+  results: [{"implementation_target":"result.design_specification","semantic_source":"port.design-specification-out"}]
+  approval: review_before_run
+  capability: "Create a reviewable engineering design specification"
 end
 
 binding binding.generate-geometry
@@ -425,10 +646,10 @@ binding binding.generate-geometry
   server: server.solid-edge
   tool: tool.create-mounting-bracket
   schema: sha256:1111111111111111111111111111111111111111111111111111111111111111
-  arguments: [{"implementation_target":"arguments.requirements","semantic_source":"port.brief-in"}]
+  arguments: [{"implementation_target":"arguments.design_specification","semantic_source":"port.design-specification-in"}]
   results: [{"implementation_target":"result.geometry","semantic_source":"port.geometry-out"}]
   approval: review_before_run
-  capability: "Create mounting bracket geometry"
+  capability: "Create mounting bracket CAD model"
 end
 
 binding binding.check-manufacturability
@@ -437,10 +658,10 @@ binding binding.check-manufacturability
   server: null
   tool: check.bracket-manufacturability
   schema: sha256:2222222222222222222222222222222222222222222222222222222222222222
-  arguments: [{"implementation_target":"geometry","semantic_source":"port.geometry-check-in"},{"implementation_target":"material","semantic_source":"port.material-in"}]
+  arguments: [{"implementation_target":"geometry","semantic_source":"port.geometry-check-in"},{"implementation_target":"design_specification","semantic_source":"port.design-specification-check-in"}]
   results: [{"implementation_target":"report","semantic_source":"port.report-out"}]
   approval: none
-  capability: "Check bracket manufacturability"
+  capability: "Run bracket manufacturing checks"
 end
 
 binding binding.export-step
@@ -464,13 +685,13 @@ binding binding.release-package
   arguments: [{"implementation_target":"files.step","semantic_source":"port.step-in"},{"implementation_target":"files.report","semantic_source":"port.report-package-in"}]
   results: [{"implementation_target":"package","semantic_source":"port.package-out"}]
   approval: none
-  capability: "Assemble local design review package"
+  capability: "Create local design handoff package"
 end
 
 component component.review-cell
   version: "1.0.0"
-  title: "Reusable design review cell"
-  inputs: ["port.geometry-review-in","port.report-in"]
+  title: "Design review step group"
+  inputs: ["port.design-specification-review-in","port.geometry-review-in","port.report-in"]
   outputs: ["port.approved-geometry-out"]
   digest: sha256:5555555555555555555555555555555555555555555555555555555555555555
   addresses: [{"concept_kind":"block","relative_path":"blocks/block.evaluate","semantic_id":"component.review-cell.block.evaluate"},{"concept_kind":"relationship","relative_path":"relationships/rel.accept","semantic_id":"component.review-cell.relationship.accept"},{"concept_kind":"artifact_contract","relative_path":"artifact-contracts/artifact.approved","semantic_id":"component.review-cell.artifact.approved"},{"concept_kind":"port","relative_path":"ports/port.approved","semantic_id":"component.review-cell.port.approved"}]

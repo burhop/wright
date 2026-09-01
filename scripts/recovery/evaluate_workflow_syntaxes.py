@@ -343,8 +343,8 @@ def edit_thickness(value: dict[str, Any]) -> None:
     next(block for block in value["blocks"] if block["id"] == "block.generate-geometry")["configuration"]["thickness_mm"] = 8
 
 
-def edit_material_optional(value: dict[str, Any]) -> None:
-    port = next(port for port in value["ports"] if port["id"] == "port.material-in")
+def edit_design_specification_optional(value: dict[str, Any]) -> None:
+    port = next(port for port in value["ports"] if port["id"] == "port.design-specification-check-in")
     port["required"] = False
     port["cardinality"] = "optional"
 
@@ -361,7 +361,7 @@ def edit_feedback(value: dict[str, Any]) -> None:
 EDIT_TASKS: tuple[tuple[str, Callable[[dict[str, Any]], None]], ...] = (
     ("rename geometry block", edit_title),
     ("change bracket thickness", edit_thickness),
-    ("make material optional", edit_material_optional),
+    ("make manufacturing-check design specification optional", edit_design_specification_optional),
     ("change exact export tool", edit_binding),
     ("clarify feedback condition", edit_feedback),
 )

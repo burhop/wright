@@ -253,7 +253,7 @@ def test_immutable_activity_and_artifact_records_reject_secret_bearing_text() ->
 def test_atomic_command_batch_resource_limit_fails_closed() -> None:
     command = {
         "kind": "set_block_title",
-        "block_id": "block.capture-brief",
+        "block_id": "block.design-intent",
         "title": "Bounded title",
     }
     with pytest.raises(ValidationError, match="at most 1000 items"):
@@ -261,7 +261,7 @@ def test_atomic_command_batch_resource_limit_fails_closed() -> None:
             {
                 "document_kind": "workflow-command-batch",
                 "schema_version": "1.0.0",
-                "base_revision": 1,
+                "base_revision": 2,
                 "origin": "text",
                 "commands": [command] * 1001,
             }
@@ -277,7 +277,12 @@ def test_definition_repository_rejects_oversized_envelope_before_sidecar_write(
     blocks = list(definition.blocks)
     blocks[0] = blocks[0].model_copy(update={"instructions": "x" * (4 * 1024 * 1024)})
     oversized = definition.model_copy(
-        update={"blocks": tuple(blocks), "semantic_sha256": None}
+        update={
+            "revision": 1,
+            "parent_revision": None,
+            "blocks": tuple(blocks),
+            "semantic_sha256": None,
+        }
     )
     oversized = oversized.model_copy(
         update={"semantic_sha256": canonical_definition_sha256(oversized)}

@@ -28,6 +28,7 @@ test("supports representative authoring and component inspection with keyboard a
   await page.goto("/workflow-recovery");
   const concept = page.getByTestId("workflow-recovery-concept");
   await expect(concept).toBeVisible();
+  await page.getByTestId("workflow-recovery-block-block.generate-geometry").click();
 
   const ordered: string[] = [];
   await page.getByTestId("workflow-recovery-view-diagram").focus();
@@ -62,8 +63,8 @@ test("supports representative authoring and component inspection with keyboard a
   await find.focus();
   await page.keyboard.type("block.export-step");
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("status", { name: "" }).filter({ hasText: "Focused Export STEP" })).toBeVisible();
-  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("block.export-step");
+  await expect(page.getByRole("status", { name: "" }).filter({ hasText: "Focused Export approved STEP file" })).toBeVisible();
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Export approved STEP file");
 
   const edge = page.getByTestId("workflow-recovery-edge-select-rel.review-to-export");
   await edge.focus();
@@ -84,7 +85,7 @@ test("supports representative authoring and component inspection with keyboard a
   const portLab = page.getByTestId("workflow-recovery-port-lab-open");
   await portLab.focus();
   await page.keyboard.press("Enter");
-  const dialog = page.getByRole("dialog", { name: "Port interaction lab" });
+  const dialog = page.getByRole("dialog", { name: "Connection style preview" });
   await expect(dialog).toBeVisible();
   await expect(page.getByTestId("workflow-recovery-modal-close")).toBeFocused();
   await page.keyboard.press("Shift+Tab");
@@ -106,18 +107,18 @@ test("keeps the complete screen-reader contract available at a two-times page sc
   const concept = page.getByTestId("workflow-recovery-concept");
   await expect(page.getByRole("heading", { level: 1, name: "Mounting bracket workflow" })).toBeVisible();
   await expect(page.getByRole("tablist", { name: "Workflow view" })).toBeVisible();
-  await expect(page.getByRole("tablist", { name: "Inspector sections" })).toBeVisible();
+  await expect(page.getByRole("tablist", { name: "Step detail sections" })).toBeVisible();
   await expect(page.getByLabel("Mounting bracket workflow diagram")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Connect from Approved geometry output" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Inspect Approved geometry output artifact" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Connect from Approved CAD model output" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open Approved CAD model output" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Fit workflow to view" })).toBeVisible();
 
   const aria = await concept.ariaSnapshot();
   expect(aria).toContain('heading "Mounting bracket workflow" [level=1]');
   expect(aria).toContain('tablist "Workflow view"');
   expect(aria).toContain('button "Expand"');
-  expect(aria).toContain('button "Connect from Approved geometry output"');
-  expect(aria).toContain('button "Inspect Approved geometry output artifact"');
+  expect(aria).toContain('button "Connect from Approved CAD model output"');
+  expect(aria).toContain('button "Open Approved CAD model output"');
 
   const serious = (await new AxeBuilder({ page }).include('[data-testid="workflow-recovery-concept"]').analyze())
     .violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical")

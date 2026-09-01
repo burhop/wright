@@ -10,18 +10,18 @@
 | Validation/diagnostics | retained, tested | partial | strict kernel, stable `WFR-*` diagnostics | retain kernel behavior; expand source spans later |
 | Immutable revisions/CAS | retained production foundation | simulated | stable definition/layout CAS plus exact historical run subjects | T052–T054 production sidecars pass; recovery concept remains isolated |
 | Renderer adapter | retained | renderer-specific experiments | reused unchanged via `DraftCanvasRenderer` | retain |
-| Block/flow visual hierarchy | lane/form dominated | strong | strong, phase-secondary canvas | exact `f9237763` subject approved |
+| Block/flow visual hierarchy | lane/form dominated | strong | strong canvas without decorative phase lanes; phase remains canonical metadata | original exact `f9237763` direction approved; current mechanical-engineer correction requires fresh exact-subject evidence |
 | Direct block movement | bounded custom interaction | disabled | real React Flow drag → layout command | browser test and digest-bound walkthrough pass |
 | Direct connection | absent/indirect | disabled | real typed handle pointer and keyboard contracts | pointer and keyboard Chromium tests pass; approved direction retained |
 | Disconnect and identity | limited | visual only | accessible edge label, stable relationship ID, undo/redo | browser test passes |
-| Typed port language | weak | strong visual | name/type/required/cardinality plus state language | three-treatment evidence captured; hybrid direction approved |
-| Artifact vs handle | not applicable | ambiguous | separate labeled artifact action | automated distinction passes; exact subject approved |
+| Typed port language | weak | strong visual | file/model/report/design-document names and requiredness lead; exact type/cardinality moves behind disclosure | three-treatment evidence captured; hybrid direction retained |
+| Engineering item vs handle | not applicable | ambiguous | separate labeled Open action for the file, model, report, or record | automated distinction passes; current wording follows direct mechanical-engineer feedback |
 | Diagram/Code/Split | diagram + read-only text | experimental | lossless editable DSL projection | permanent syntax remains open |
 | Invalid-source containment | absent | conceptual | invalid draft retained; graph/revision unchanged | browser and kernel tests pass |
 | Selection sync | partial | prototype | semantic ID drives block, source range, inspector | browser and walkthrough evidence pass |
 | AI multi-block proposal | excluded | conceptual | assumptions, warnings, diff, ghost preview, reject/accept | simulated only; acceptance advances once |
 | Run overlay | excluded | strong visual fixtures | queued/running/needs-input/blocked/failed/stale/succeeded | UI remains simulated; T054 separately proves durable immutable production run records |
-| Recovery action | excluded | fixture | supply 6061-T6 with consequence text | exact subject approved; production wording hardening remains |
+| Recovery action | excluded | fixture | add the missing 6061-T6 decision to the reviewed design specification with explicit downstream consequence | bounded simulation only; current wording follows direct mechanical-engineer feedback |
 | Output recognition/lineage | excluded | visual concept | bracket preview, report, STEP download, producer/run/revision/type/digest | browser download passes; fixture is simulated |
 | Accessibility | later checkpoint | partial | stable controls, focus trap/return, keyboard handles/component disclosure, 2× scale, named accessibility tree, axe zero serious/critical, reduced motion | automated T056 portion passes; real assistive-technology and moderated engineer gates remain open |
 | Mobile containment | not target | unproven | 390×844 no document overflow | passing annotated walkthrough captured; representative usability open |

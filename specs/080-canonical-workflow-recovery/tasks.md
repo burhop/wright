@@ -185,6 +185,20 @@
 
 ---
 
+## Phase 10: Mechanical-Engineer Usability Correction
+
+**Goal**: Apply the requesting mechanical engineer's hands-on feedback without claiming completion of the wider moderated-usability or assistive-technology gates.
+
+- [x] T061 Preserve a failed-first raw/annotated walkthrough checkpoint for the seven reported usability issues in `artifacts/ui-walkthrough/workflow-recovery-usability/20260901T135322Z/`
+- [x] T062 Replace the fictional single PDF-brief input with three explicit sources—reference images, design intent as text/common document, and approved company context—feeding one reviewed design specification in the canonical model and UI
+- [x] T063 Repair live drag projection, give the minimap an explicit current-view frame, remove decorative phase backdrops, use contextual downstream additions, and move internal terminology behind progressive disclosure
+- [x] T064 Synchronize the revision-2 JSON, YAML, workflow-language, and layout fixtures and update browser, TypeScript, Python kernel, repository, security, and offline tests without rewriting historical revision-1 evidence
+- [ ] T065 Capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated report against the exact committed correction subject
+- [ ] T066 Bind the user's direction approval and correction feedback honestly to that exact subject; refresh capability, parity, quickstart, analysis, dashboard, and approval evidence without inventing reviewer facts
+- [ ] T067 Run focused and broad validation, record the current one-engineer result, and leave T056 open for representative moderated participants and real screen-reader evidence
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase dependencies

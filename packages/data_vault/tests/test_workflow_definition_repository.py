@@ -81,7 +81,12 @@ def test_recovery_promotion_persists_stable_definition_and_exact_source(
     assert stored == promotion.definition
     assert stored is not None
     assert stored.schema_version == "2.0.0"
-    assert repository.read_recovery_rollback(stored.workflow_id, 1) == source
+    assert stored.revision == 2
+    assert (
+        repository.read_recovery_rollback(stored.workflow_id, stored.revision)
+        == source
+    )
+    assert repository.read_recovery_rollback(stored.workflow_id, 1) is None
     assert repository.read_legacy_rollback(stored.workflow_id, 1) is None
 
 
@@ -171,6 +176,8 @@ def test_persisted_envelope_digest_mismatch_fails_closed(tmp_path) -> None:
 def test_corrupted_recovery_rollback_envelope_fails_closed(tmp_path) -> None:
     repository = WorkflowDefinitionRepository(tmp_path / "wright.sqlite3")
     promotion = promote_recovery_workflow_definition(RECOVERY_FIXTURE.read_bytes())
+    recovery_revision = promotion.definition.revision
+    assert recovery_revision == 2
     repository.create_from_recovery_promotion(promotion)
     with sqlite3.connect(repository.db_path) as connection:
         connection.execute("DROP TRIGGER workflow_definition_revisions_no_update")
@@ -180,4 +187,6 @@ def test_corrupted_recovery_rollback_envelope_fails_closed(tmp_path) -> None:
         )
 
     with pytest.raises(WorkflowDefinitionSchemaError):
-        repository.read_recovery_rollback(promotion.definition.workflow_id, 1)
+        repository.read_recovery_rollback(
+            promotion.definition.workflow_id, recovery_revision
+        )

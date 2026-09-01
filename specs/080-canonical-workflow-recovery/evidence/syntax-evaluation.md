@@ -1,6 +1,6 @@
 # Workflow Syntax Evaluation
 
-**Canonical subject**: `mounting-bracket.workflow` / `57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889`
+**Canonical subject**: `mounting-bracket.workflow` / `04cc79dad3b8177e52ab46d0c994d5d48b39f63d7483ccf504eb8d665b902b2d`
 
 **Evidence class**: single-agent exploratory generation/edit evidence. This is not an independent mechanical-engineer study, model benchmark, or permanent syntax approval.
 
@@ -8,9 +8,9 @@ All three files validate against the same IR schema, parse to byte-identical can
 
 | Treatment | Bytes | Lines | Max nesting | Readability /5* | Valid edits | Mean diff lines | Comments/format | Source maps | Parser cost |
 |---|---:|---:|---:|---:|---:|---:|---|---|---:|
-| JSON | 20116 | 661 | 5 | 2.5 | 5/5 | 2.4 | unsupported | custom parser required | 1 LOC |
-| YAML | 14806 | 491 | 2 | 4.0 | 5/5 | 2.4 | lost by evaluated safe parser | event parser or CST required | 2 LOC |
-| DSL | 13941 | 477 | 1 | 4.5 | 5/5 | 2.4 | leading comments preserved; canonical formatting normalized | section spans implemented | 96 LOC |
+| JSON | 31900 | 941 | 5 | 2.5 | 5/5 | 2.4 | unsupported | custom parser required | 1 LOC |
+| YAML | 24338 | 721 | 2 | 4.0 | 5/5 | 2.4 | lost by evaluated safe parser | event parser or CST required | 2 LOC |
+| DSL | 23171 | 698 | 1 | 4.5 | 5/5 | 2.4 | leading comments preserved; canonical formatting normalized | section spans implemented | 96 LOC |
 
 \* Readability is an explicit expert heuristic based on labels, nesting, noise, and direct correspondence to blocks/ports. It must not be treated as moderated-user evidence.
 
@@ -18,7 +18,7 @@ All three files validate against the same IR schema, parse to byte-identical can
 
 - rename geometry block
 - change bracket thickness
-- make material optional
+- make manufacturing-check design specification optional
 - change exact export tool
 - clarify feedback condition
 

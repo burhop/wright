@@ -48,7 +48,7 @@ def test_approved_definition_digest_and_projection_are_production_stable() -> No
     definition = promotion.definition
 
     assert promotion.source_definition_sha256 == (
-        "57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889"
+        "04cc79dad3b8177e52ab46d0c994d5d48b39f63d7483ccf504eb8d665b902b2d"
     )
     assert definition.schema_version == "2.0.0"
     assert canonical_definition_sha256(definition) == definition.semantic_sha256
@@ -61,10 +61,10 @@ def test_approved_definition_digest_and_projection_are_production_stable() -> No
     projection = project_workflow_definition(definition)
     assert projection.workflow_id == definition.workflow_id
     assert projection.revision == definition.revision
-    assert len(projection.nodes) == 6
-    assert len(projection.edges) == 9
-    assert projection.nodes[0].semantic_id == "block.capture-brief"
-    assert projection.edges[0].semantic_id == "rel.brief-to-geometry"
+    assert len(projection.nodes) == 9
+    assert len(projection.edges) == 16
+    assert projection.nodes[0].semantic_id == "block.check-manufacturability"
+    assert projection.edges[0].semantic_id == "rel.context-to-specification"
     assert "reactflow" not in projection.model_dump_json().lower()
 
 
@@ -98,7 +98,7 @@ def test_command_application_is_atomic_and_accepts_one_revision() -> None:
         {
             "document_kind": "workflow-command-batch",
             "schema_version": "1.0.0",
-            "base_revision": 1,
+            "base_revision": 2,
             "origin": "form",
             "commands": [
                 {
@@ -120,12 +120,12 @@ def test_command_application_is_atomic_and_accepts_one_revision() -> None:
 
     assert applied.ok is True
     assert applied.candidate is not None
-    assert current.revision == 1
-    assert current.blocks[1].title == "Generate bracket geometry"
+    assert current.revision == 2
+    assert next(block for block in current.blocks if block.id == "block.generate-geometry").title == "Create bracket CAD model"
     accepted = accept_workflow_candidate(current, applied.candidate)
-    assert accepted.revision == 2
-    assert accepted.parent_revision == 1
-    assert accepted.blocks[1].title == "Generate approved bracket geometry"
+    assert accepted.revision == 3
+    assert accepted.parent_revision == 2
+    assert next(block for block in accepted.blocks if block.id == "block.generate-geometry").title == "Generate approved bracket geometry"
     assert accepted.semantic_sha256 == canonical_definition_sha256(accepted)
 
     stale = apply_workflow_commands(accepted, batch)
@@ -141,7 +141,7 @@ def test_invalid_multi_command_batch_preserves_exact_current_definition() -> Non
         {
             "document_kind": "workflow-command-batch",
             "schema_version": "1.0.0",
-            "base_revision": 1,
+            "base_revision": 2,
             "origin": "graph",
             "commands": [
                 {
@@ -154,7 +154,7 @@ def test_invalid_multi_command_batch_preserves_exact_current_definition() -> Non
                     "relationship": {
                         "id": "rel.invalid",
                         "kind": "data",
-                        "source_id": "port.brief-in",
+                        "source_id": "port.design-specification-in",
                         "target_id": "port.geometry-out",
                         "label": "backwards",
                         "condition": None,

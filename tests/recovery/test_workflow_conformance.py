@@ -52,7 +52,7 @@ def test_committed_treatments_are_current_and_semantically_identical(workflow: d
         assert reparsed.ok
         assert canonical_bytes(reparsed.ir) == canonical_bytes(workflow)
         if syntax == "dsl":
-            assert len(source_map) == 45
+            assert len(source_map) == 66
 
 
 def invalid_treatments(workflow: dict, syntax: str) -> list[tuple[str, str]]:
@@ -67,8 +67,8 @@ def invalid_treatments(workflow: dict, syntax: str) -> list[tuple[str, str]]:
     unknown_text = treatment_text(unknown, syntax)
     if syntax == "dsl":
         unknown_text = DSL_FIXTURE.read_text(encoding="utf-8").replace(
-            "  title: \"Capture bracket brief\"",
-            "  title: \"Capture bracket brief\"\n  unknown_field: true",
+            "  title: \"Reference images\"",
+            "  title: \"Reference images\"\n  unknown_field: true",
             1,
         )
 
@@ -85,13 +85,13 @@ def invalid_treatments(workflow: dict, syntax: str) -> list[tuple[str, str]]:
 
     duplicate_key = {
         "json": JSON_FIXTURE.read_text(encoding="utf-8").replace(
-            '  "revision": 1,', '  "revision": 1,\n  "revision": 2,', 1
+            '  "revision": 2,', '  "revision": 2,\n  "revision": 3,', 1
         ),
         "yaml": YAML_FIXTURE.read_text(encoding="utf-8").replace(
-            "revision: 1", "revision: 1\nrevision: 2", 1
+            "revision: 2", "revision: 2\nrevision: 3", 1
         ),
         "dsl": DSL_FIXTURE.read_text(encoding="utf-8").replace(
-            "  revision: 1", "  revision: 1\n  revision: 2", 1
+            "  revision: 2", "  revision: 2\n  revision: 3", 1
         ),
     }[syntax]
     return [
@@ -128,7 +128,7 @@ def five_edit_batch(revision: int, origin: str = "graph") -> dict:
         "commands": [
             {"kind": "set_block_title", "block_id": "block.generate-geometry", "title": "Create parametric bracket"},
             {"kind": "set_block_configuration", "block_id": "block.generate-geometry", "key": "thickness_mm", "value": 8},
-            {"kind": "set_port_contract", "port_id": "port.material-in", "required": False, "cardinality": "optional"},
+            {"kind": "set_port_contract", "port_id": "port.design-specification-check-in", "required": False, "cardinality": "optional"},
             {"kind": "set_binding_tool", "binding_id": "binding.export-step", "tool_id": "tool.export-step-ap242-reviewed"},
             {"kind": "set_relationship_condition", "relationship_id": "rel.review-revise", "condition": "Any required input is missing or a warning remains unresolved"},
         ],
@@ -235,7 +235,7 @@ def test_graph_commands_round_trip_through_every_text_treatment(workflow: dict) 
 def test_valid_text_edit_updates_projection_and_invalid_text_preserves_last_valid(workflow: dict) -> None:
     baseline_text, _ = format(workflow, "dsl")
     valid_text = baseline_text.replace(
-        "  title: \"Generate bracket geometry\"",
+        "  title: \"Create bracket CAD model\"",
         "  title: \"Create parametric bracket\"",
         1,
     )
@@ -258,7 +258,7 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
         {
             "document_kind": "workflow-command-batch",
             "schema_version": "1.0.0-recovery.1",
-            "base_revision": 1,
+            "base_revision": workflow["revision"],
             "origin": "graph",
             "commands": [
                 {
@@ -266,7 +266,7 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
                     "relationship": {
                         "id": "rel.bad",
                         "kind": "data",
-                        "source_id": "port.brief-out",
+                        "source_id": "port.design-intent-out",
                         "target_id": "port.step-in",
                         "label": "bad types",
                         "condition": None,
@@ -274,12 +274,12 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
                 }
             ],
         },
-        1,
+        workflow["revision"],
     )
     assert not invalid.ok and invalid.candidate is None
     assert canonical_bytes(workflow) == canonical_bytes(before)
 
-    stale_ai = apply(workflow, five_edit_batch(0, "ai_proposal"), 1)
+    stale_ai = apply(workflow, five_edit_batch(0, "ai_proposal"), workflow["revision"])
     assert not stale_ai.ok and stale_ai.candidate is None
     assert stale_ai.diagnostics[0].code == "WFR-COMMAND-STALE-BASE"
     assert canonical_bytes(workflow) == canonical_bytes(before)
@@ -303,7 +303,7 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
                     "id": "rel.invalid-feedback-source",
                     "kind": "feedback",
                     "source_id": "block.generate-geometry",
-                    "target_id": "block.capture-brief",
+                    "target_id": "block.design-intent",
                     "label": "Invalid feedback",
                     "condition": "invalid source kind",
                 }
@@ -316,7 +316,7 @@ def test_invalid_graph_and_stale_ai_batches_are_atomic(workflow: dict) -> None:
                     "id": "rel.non-feedback-cycle",
                     "kind": "control",
                     "source_id": "block.release-package",
-                    "target_id": "block.capture-brief",
+                    "target_id": "block.design-intent",
                     "label": "Invalid loop",
                     "condition": None,
                 }
@@ -375,7 +375,7 @@ def test_single_cardinality_input_rejects_a_second_distinct_source(workflow: dic
             "WFR-PHASE-MEMBERSHIP",
         ),
         (
-            lambda value: next(block for block in value["blocks"] if block["id"] == "block.generate-geometry")["input_port_ids"].remove("port.brief-in"),
+            lambda value: next(block for block in value["blocks"] if block["id"] == "block.generate-geometry")["input_port_ids"].remove("port.design-specification-in"),
             "WFR-PORT-OWNERSHIP",
         ),
         (
@@ -383,7 +383,7 @@ def test_single_cardinality_input_rejects_a_second_distinct_source(workflow: dic
             "WFR-REFERENCE-DANGLING",
         ),
         (
-            lambda value: next(binding for binding in value["bindings"] if binding["id"] == "binding.generate-geometry")["result_map"].__setitem__(0, {"semantic_source": "port.brief-in", "implementation_target": "result.geometry"}),
+            lambda value: next(binding for binding in value["bindings"] if binding["id"] == "binding.generate-geometry")["result_map"].__setitem__(0, {"semantic_source": "port.design-specification-in", "implementation_target": "result.geometry"}),
             "WFR-BINDING-MAP-DIRECTION",
         ),
         (
@@ -391,7 +391,7 @@ def test_single_cardinality_input_rejects_a_second_distinct_source(workflow: dic
                 "id": "component.invalid-interface",
                 "version": "1.0.0",
                 "title": "Invalid interface",
-                "input_port_ids": ["port.brief-out"],
+                "input_port_ids": ["port.design-intent-out"],
                 "output_port_ids": [],
                 "internal_definition_digest": f"sha256:{'a' * 64}",
                 "internal_addresses": [{"semantic_id": "component.invalid-interface.block.inner", "concept_kind": "block", "relative_path": "blocks/block.inner"}],
@@ -408,8 +408,8 @@ def test_reciprocal_binding_and_component_invariants_fail_closed(workflow: dict,
     assert expected_code in {diagnostic.code for diagnostic in result.diagnostics}
 
 def test_ai_uses_the_same_command_protocol_and_deterministic_diff(workflow: dict) -> None:
-    graph = apply(workflow, five_edit_batch(1, "graph"), 1)
-    ai = apply(workflow, five_edit_batch(1, "ai_proposal"), 1)
+    graph = apply(workflow, five_edit_batch(workflow["revision"], "graph"), workflow["revision"])
+    ai = apply(workflow, five_edit_batch(workflow["revision"], "ai_proposal"), workflow["revision"])
     assert graph.ok and ai.ok
     assert canonical_bytes(graph.candidate) == canonical_bytes(ai.candidate)
     assert graph.semantic_diff == ai.semantic_diff
@@ -419,8 +419,8 @@ def test_ai_uses_the_same_command_protocol_and_deterministic_diff(workflow: dict
 def test_layout_and_run_projection_never_change_semantic_digest(workflow: dict) -> None:
     before = copy.deepcopy(workflow)
     digest = semantic_digest(workflow)
-    layout_a = layout_document(workflow, {"block.capture-brief": {"x": 80, "y": 80}})
-    layout_b = layout_document(workflow, {"block.capture-brief": {"x": 640, "y": 220}})
+    layout_a = layout_document(workflow, {"block.design-intent": {"x": 80, "y": 80}})
+    layout_b = layout_document(workflow, {"block.design-intent": {"x": 640, "y": 220}})
     run = run_document(workflow)
     projection_a = project(workflow, layout_a)
     projection_b = project(workflow, layout_b, run)

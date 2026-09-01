@@ -334,21 +334,23 @@ export function paletteBlock(
   const suffix = `${kind}-${index}`;
   const blockId = `block.${suffix}`;
   const inputId = `port.${suffix}-in`;
+  const specificationInputId = `port.${suffix}-specification-in`;
   const outputId = `port.${suffix}-out`;
   const drawing = kind === "drawing";
   return {
     kind: "add_block",
     block: {
-      id: blockId, kind: "work", title: drawing ? "Create inspection drawing" : "Inspect critical tolerances",
-      purpose: drawing ? "Create a reviewable drawing from approved geometry." : "Check critical dimensions against the bracket brief.",
+      id: blockId, kind: "work", title: drawing ? "Create manufacturing drawing" : "Check dimensions and tolerances",
+      purpose: drawing ? "Create a reviewable manufacturing drawing from the approved CAD model." : "Compare critical dimensions and tolerances with the design requirements.",
       phaseId: drawing ? "phase.deliver" : "phase.verify", executionKind: "deterministic",
-      instructions: drawing ? "Create an A3 drawing with dimensions and source revision." : "Report each tolerance with units and evidence.",
-      configuration: drawing ? { sheet: "A3", standard: "ASME Y14.5" } : { tolerance_mm: 0.2 },
-      inputPortIds: [inputId], outputPortIds: [outputId], bindingId: null, componentRef: null,
+      instructions: drawing ? "Create an A3 manufacturing drawing with dimensions and source revision." : "Report each checked dimension and tolerance with units and evidence.",
+      configuration: drawing ? { sheet: "A3", standard: "ASME Y14.5" } : { criteria_source: "reviewed-design-specification" },
+      inputPortIds: drawing ? [inputId] : [inputId, specificationInputId], outputPortIds: [outputId], bindingId: null, componentRef: null,
     },
     ports: [
-      { id: inputId, ownerBlockId: blockId, direction: "input", name: drawing ? "Approved geometry" : "Bracket geometry", typeId: drawing ? "type.geometry.approved" : "type.geometry.brep", required: true, cardinality: "one", artifactContractId: drawing ? "artifact.approved-geometry" : "artifact.geometry", description: "Selected source geometry." },
-      { id: outputId, ownerBlockId: blockId, direction: "output", name: drawing ? "Inspection drawing" : "Tolerance report", typeId: drawing ? "type.file.drawing" : "type.report.tolerance", required: true, cardinality: "one", artifactContractId: null, description: "Reviewable engineering output." },
+      { id: inputId, ownerBlockId: blockId, direction: "input", name: drawing ? "Approved CAD model" : "Bracket CAD model", typeId: drawing ? "type.geometry.approved" : "type.geometry.brep", required: true, cardinality: "one", artifactContractId: drawing ? "artifact.approved-geometry" : "artifact.geometry", description: "Selected source CAD model." },
+      ...(!drawing ? [{ id: specificationInputId, ownerBlockId: blockId, direction: "input" as const, name: "Reviewed design specification", typeId: "type.design.specification", required: true, cardinality: "one" as const, artifactContractId: "artifact.design-specification", description: "Approved dimensions and tolerances to compare with the CAD model." }] : []),
+      { id: outputId, ownerBlockId: blockId, direction: "output", name: drawing ? "Manufacturing drawing" : "Dimension and tolerance report", typeId: drawing ? "type.file.drawing" : "type.report.tolerance", required: true, cardinality: "one", artifactContractId: null, description: "Reviewable engineering output." },
     ],
     position: { x, y },
   };
@@ -356,27 +358,27 @@ export function paletteBlock(
 
 export function aiDrawingProposal(workflow: RecoveryWorkflow): RecoveryCommandBatch {
   const first: RecoveryBlock = {
-    id: "block.create-inspection-drawing", kind: "work", title: "Create inspection drawing",
-    purpose: "Create a dimensioned drawing from the approved bracket geometry.", phaseId: "phase.deliver", executionKind: "deterministic",
-    instructions: "Create an A3 drawing with critical dimensions, datums, tolerances, and exact source revision.",
+    id: "block.create-inspection-drawing", kind: "work", title: "Create manufacturing drawing",
+    purpose: "Create a dimensioned drawing from the approved bracket CAD model.", phaseId: "phase.deliver", executionKind: "deterministic",
+    instructions: "Create an A3 manufacturing drawing with critical dimensions, datums, tolerances, and exact source revision.",
     configuration: { sheet: "A3", standard: "ASME Y14.5" }, inputPortIds: ["port.drawing-geometry-in"], outputPortIds: ["port.drawing-out"], bindingId: null, componentRef: null,
   };
   const second: RecoveryBlock = {
-    id: "block.review-inspection-drawing", kind: "approval", title: "Review inspection drawing",
-    purpose: "Confirm drawing completeness before it enters the review package.", phaseId: "phase.deliver", executionKind: "human",
-    instructions: "Accept only when dimensions, tolerances, revision, and source geometry agree.",
+    id: "block.review-inspection-drawing", kind: "approval", title: "Review manufacturing drawing",
+    purpose: "Confirm drawing completeness before it enters the design handoff package.", phaseId: "phase.deliver", executionKind: "human",
+    instructions: "Accept only when dimensions, tolerances, revision, and the source CAD model agree.",
     configuration: { required_role: "drawing-checker" }, inputPortIds: ["port.drawing-review-in"], outputPortIds: ["port.drawing-approved-out"], bindingId: null, componentRef: null,
   };
   const ports: RecoveryPort[] = [
-    { id: "port.drawing-geometry-in", ownerBlockId: first.id, direction: "input", name: "Approved geometry", typeId: "type.geometry.approved", required: true, cardinality: "one", artifactContractId: "artifact.approved-geometry", description: "Approved bracket geometry." },
-    { id: "port.drawing-out", ownerBlockId: first.id, direction: "output", name: "Inspection drawing", typeId: "type.file.drawing", required: true, cardinality: "one", artifactContractId: null, description: "Dimensioned A3 drawing." },
-    { id: "port.drawing-review-in", ownerBlockId: second.id, direction: "input", name: "Inspection drawing", typeId: "type.file.drawing", required: true, cardinality: "one", artifactContractId: null, description: "Drawing presented for checking." },
-    { id: "port.drawing-approved-out", ownerBlockId: second.id, direction: "output", name: "Approved drawing", typeId: "type.file.drawing.approved", required: true, cardinality: "one", artifactContractId: null, description: "Drawing plus checker decision." },
+    { id: "port.drawing-geometry-in", ownerBlockId: first.id, direction: "input", name: "Approved CAD model", typeId: "type.geometry.approved", required: true, cardinality: "one", artifactContractId: "artifact.approved-geometry", description: "Approved bracket CAD model." },
+    { id: "port.drawing-out", ownerBlockId: first.id, direction: "output", name: "Manufacturing drawing", typeId: "type.file.drawing", required: true, cardinality: "one", artifactContractId: null, description: "Dimensioned A3 manufacturing drawing." },
+    { id: "port.drawing-review-in", ownerBlockId: second.id, direction: "input", name: "Manufacturing drawing", typeId: "type.file.drawing", required: true, cardinality: "one", artifactContractId: null, description: "Manufacturing drawing presented for checking." },
+    { id: "port.drawing-approved-out", ownerBlockId: second.id, direction: "output", name: "Approved manufacturing drawing", typeId: "type.file.drawing.approved", required: true, cardinality: "one", artifactContractId: null, description: "Drawing plus checker decision." },
   ];
   return recoveryCommandBatch(workflow.revision, "ai_proposal", [
       { kind: "add_block", block: first, ports: ports.slice(0, 2), position: { x: 1030, y: 400 } },
       { kind: "add_block", block: second, ports: ports.slice(2), position: { x: 1380, y: 410 } },
-      { kind: "connect", relationship: { id: "rel.approved-to-drawing", kind: "data", sourceId: "port.approved-geometry-out", targetId: "port.drawing-geometry-in", label: "approved geometry", condition: "decision.accepted" } },
-      { kind: "connect", relationship: { id: "rel.drawing-to-review", kind: "data", sourceId: "port.drawing-out", targetId: "port.drawing-review-in", label: "drawing", condition: null } },
+      { kind: "connect", relationship: { id: "rel.approved-to-drawing", kind: "data", sourceId: "port.approved-geometry-out", targetId: "port.drawing-geometry-in", label: "approved CAD model", condition: "decision.accepted" } },
+      { kind: "connect", relationship: { id: "rel.drawing-to-review", kind: "data", sourceId: "port.drawing-out", targetId: "port.drawing-review-in", label: "manufacturing drawing", condition: null } },
   ]);
 }

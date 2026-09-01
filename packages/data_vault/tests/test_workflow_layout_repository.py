@@ -56,7 +56,7 @@ def load_promotion():
 def next_layout(current: WorkflowLayout) -> WorkflowLayout:
     payload = current.model_dump(mode="json")
     payload["layout_revision"] += 1
-    payload["positions"]["block.capture-brief"] = {"x": 700, "y": 240}
+    payload["positions"]["block.design-intent"] = {"x": 700, "y": 240}
     return WorkflowLayout.model_validate(payload)
 
 

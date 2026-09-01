@@ -1,19 +1,19 @@
 {
   "subject": "mounting-bracket.workflow",
-  "subject_sha256": "57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889",
+  "subject_sha256": "04cc79dad3b8177e52ab46d0c994d5d48b39f63d7483ccf504eb8d665b902b2d",
   "scope": "single-agent exploratory syntax evidence; not a benchmark or permanent selection",
   "edit_tasks": [
     "rename geometry block",
     "change bracket thickness",
-    "make material optional",
+    "make manufacturing-check design specification optional",
     "change exact export tool",
     "clarify feedback condition"
   ],
   "treatments": {
     "json": {
-      "bytes": 20116,
-      "lines": 661,
-      "max_line": 110,
+      "bytes": 31900,
+      "lines": 941,
+      "max_line": 269,
       "indent_depth": 5,
       "round_trip": true,
       "schema_valid": true,
@@ -34,9 +34,9 @@
       "migration_cost": "low internal interchange; high user verbosity"
     },
     "yaml": {
-      "bytes": 14806,
-      "lines": 491,
-      "max_line": 101,
+      "bytes": 24338,
+      "lines": 721,
+      "max_line": 109,
       "indent_depth": 2,
       "round_trip": true,
       "schema_valid": true,
@@ -57,8 +57,8 @@
       "migration_cost": "moderate scalar/implicit typing and CST policy"
     },
     "dsl": {
-      "bytes": 13941,
-      "lines": 477,
+      "bytes": 23171,
+      "lines": 698,
       "max_line": 527,
       "indent_depth": 1,
       "round_trip": true,
@@ -78,7 +78,7 @@
       "source_map": "section spans implemented",
       "comments": "leading comments preserved; canonical formatting normalized",
       "migration_cost": "highest parser/grammar/version ownership",
-      "source_map_entries": 45,
+      "source_map_entries": 66,
       "comment_preservation_probe": true
     }
   }

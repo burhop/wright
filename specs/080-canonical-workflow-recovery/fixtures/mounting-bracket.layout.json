@@ -2,15 +2,18 @@
   "document_kind": "workflow-layout",
   "schema_version": "1.0.0-recovery.1",
   "workflow_id": "workflow.mounting-bracket",
-  "semantic_revision": 1,
+  "semantic_revision": 2,
   "layout_revision": 1,
   "positions": {
-    "block.capture-brief": { "x": 20, "y": 30 },
-    "block.generate-geometry": { "x": 365, "y": 55 },
-    "block.check-manufacturability": { "x": 365, "y": 390 },
-    "block.review-design": { "x": 720, "y": 360 },
-    "block.export-step": { "x": 720, "y": 30 },
-    "block.release-package": { "x": 1060, "y": 80 }
+    "block.reference-images": { "x": 20, "y": 20 },
+    "block.design-intent": { "x": 20, "y": 285 },
+    "block.company-context": { "x": 20, "y": 550 },
+    "block.create-design-specification": { "x": 390, "y": 280 },
+    "block.generate-geometry": { "x": 760, "y": 280 },
+    "block.check-manufacturability": { "x": 1110, "y": 500 },
+    "block.review-design": { "x": 1110, "y": 120 },
+    "block.export-step": { "x": 1460, "y": 120 },
+    "block.release-package": { "x": 1460, "y": 500 }
   },
   "viewport": { "x": 0, "y": 0, "zoom": 0.72 }
 }

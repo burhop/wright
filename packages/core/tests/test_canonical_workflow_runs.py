@@ -65,7 +65,7 @@ def test_run_subject_is_exact_and_state_does_not_change_definition() -> None:
 
     validate_run_subject(subject, current)
     running = current.model_copy(
-        update={"state": "running", "active_block_id": "block.capture-brief"}
+        update={"state": "running", "active_block_id": "block.design-intent"}
     )
     validate_run_subject(subject, running)
 
@@ -135,7 +135,7 @@ def test_artifact_contract_lineage_is_definition_bound() -> None:
 
     validate_artifact_subject(definition(), artifact)
 
-    invalid = artifact.model_copy(update={"producer_block_id": "block.capture-brief"})
+    invalid = artifact.model_copy(update={"producer_block_id": "block.design-intent"})
     with pytest.raises(ValueError, match="WFR-RUN-ARTIFACT-PRODUCER"):
         validate_artifact_subject(definition(), invalid)
 
@@ -175,4 +175,4 @@ def test_recovery_run_capture_preserves_original_historical_subject() -> None:
 
     assert captured.original == original
     assert captured.semantic_sha256 != definition().semantic_sha256
-    assert captured.workflow_revision == definition().revision
+    assert captured.workflow_revision == 1

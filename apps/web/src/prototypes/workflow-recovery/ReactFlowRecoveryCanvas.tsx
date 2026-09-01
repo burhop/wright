@@ -15,9 +15,10 @@ import {
   type Edge,
   type EdgeProps,
   type Node,
+  type NodeChange,
   type NodeProps,
 } from "@xyflow/react";
-import { createContext, memo, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, memo, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import "@xyflow/react/dist/style.css";
 
 import type { DraftBlockProjection, DraftPortProjection } from "../../components/workflow-composer/draft-projection";
@@ -109,9 +110,30 @@ const stateGlyph: Record<RecoveryRunState, string> = {
   stale: "↺",
 };
 
+const roleLabel: Record<DraftBlockProjection["role"], string> = {
+  input: "input source",
+  work: "step",
+  review: "design review",
+  release: "output",
+};
+
 function portQualifier(port: DraftPortProjection): string {
-  const required = port.required ? "required" : "optional";
-  return `${required} · ${port.cardinality}`;
+  const required = port.required ? "Required" : "Optional";
+  return port.cardinality === "many" ? `${required} · multiple allowed` : required;
+}
+
+function portValueLabel(typeId: string): string {
+  if (typeId === "type.design.intent" || typeId === "type.requirements.bundle") return "text or document";
+  if (typeId === "type.image.reference-set") return "JPG or PNG images";
+  if (typeId === "type.context.company") return "approved company knowledge";
+  if (typeId === "type.design.specification") return "editable design specification";
+  if (typeId === "type.geometry.brep") return "3D design model";
+  if (typeId === "type.geometry.approved") return "approved 3D model";
+  if (typeId === "type.material.spec") return "material specification";
+  if (typeId === "type.report.manufacturability") return "engineering report";
+  if (typeId === "type.file.step") return "STEP file";
+  if (typeId === "type.package.review") return "review ZIP file";
+  return "engineering input or output";
 }
 
 function PortRow({
@@ -156,7 +178,7 @@ function PortRow({
       {side === "input" && handle}
       <div className="recovery-port__copy">
         <strong>{port.name}</strong>
-        <span>{port.value_type_id.replace("type.", "")}</span>
+        <span>{portValueLabel(port.value_type_id)}</span>
         <small>{portQualifier(port)}</small>
       </div>
       {artifactId && (
@@ -164,13 +186,13 @@ function PortRow({
           type="button"
           className="recovery-port__artifact nodrag nopan"
           data-testid={`workflow-recovery-artifact-${port.semanticId}`}
-          aria-label={`Inspect ${port.name} ${side} artifact`}
+          aria-label={`Open ${port.name} ${side}`}
           onClick={(event) => {
             event.stopPropagation();
             runtime.onArtifactInspect(port.semanticId);
           }}
         >
-          ▧ <span>artifact</span>
+          ▧ <span>Open</span>
         </button>
       )}
       {side === "output" && handle}
@@ -191,9 +213,9 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       data-component-collapsed={data.componentState?.collapsed ?? undefined}
       data-detail-level={data.detailLevel}
       role="group"
-      aria-label={`${block.title} workflow block`}
+      aria-label={`${block.title} workflow step`}
       aria-expanded={data.componentState === null ? undefined : !data.componentState.collapsed}
-      aria-description={data.componentState === null ? undefined : "Use Right Arrow to expand this reusable component and Left Arrow to collapse it."}
+      aria-description={data.componentState === null ? undefined : "Use Right Arrow to show grouped review details and Left Arrow to hide them."}
       tabIndex={0}
       onClick={() => data.onSelect(block.semanticId)}
       onKeyDown={(event) => {
@@ -212,9 +234,9 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       }}
     >
       {data.active && <div className="recovery-block__active">▶ ACTIVE STEP</div>}
-      {data.proposed && <div className="recovery-block__proposal">AI CANDIDATE · NOT ACCEPTED</div>}
+      {data.proposed && <div className="recovery-block__proposal">AI SUGGESTION · REVIEW BEFORE ADDING</div>}
       <header>
-        <span className="recovery-block__kind">{block.role}</span>
+        <span className="recovery-block__kind">{roleLabel[block.role]}</span>
         <span className={`recovery-state recovery-state--${data.runState}`} aria-label={`Run state ${data.runState}`}>
           {stateGlyph[data.runState]} {data.runState.replace("-", " ")}
         </span>
@@ -222,9 +244,9 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       <h3>{block.title}</h3>
       {data.detailLevel === "detailed" && <p>{block.purpose}</p>}
       {data.componentState !== null && (
-        <section className="recovery-component" aria-label={`${data.componentState.component.title} reusable component`}>
+        <section className="recovery-component" aria-label={`${data.componentState.component.title} grouped review details`}>
           <header>
-            <strong>{data.componentState.component.title} · v{data.componentState.component.version}</strong>
+            <strong>{data.componentState.component.title}</strong>
             <button
               className="nodrag nopan"
               data-testid={`workflow-recovery-component-toggle-${block.semanticId}`}
@@ -246,10 +268,10 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
               {data.componentState.collapsed ? "Expand" : "Collapse"}
             </button>
           </header>
-          <small>{data.componentState.internalAddressCount} stable internal addresses</small>
+          <small>Grouped review step · {data.componentState.internalAddressCount} technical item{data.componentState.internalAddressCount === 1 ? "" : "s"}</small>
           {data.componentState.targetedInternalSemanticIds.length > 0 && (
             <div className="recovery-component__targets" role="note">
-              <b>{data.componentState.targetedInternalSemanticIds.length} internal target{data.componentState.targetedInternalSemanticIds.length === 1 ? "" : "s"}</b>
+              <b>{data.componentState.targetedInternalSemanticIds.length} review item{data.componentState.targetedInternalSemanticIds.length === 1 ? " needs" : "s need"} attention</b>
               {data.componentState.targetedInternalSemanticIds.map((id) => <code key={id}>{id}</code>)}
             </div>
           )}
@@ -271,7 +293,7 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       <div className="recovery-block__ports recovery-block__ports--outputs">
         {block.outputs.map((port) => <PortRow key={port.semanticId} port={port} side="output" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />)}
       </div>
-      {block.gates.length > 0 && <div className="recovery-block__gate">◇ Approval gate · explicit decision</div>}
+      {block.gates.length > 0 && <div className="recovery-block__gate">◇ Design approval required</div>}
     </article>
   );
 });
@@ -309,7 +331,7 @@ function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, 
           className="recovery-edge__label nodrag nopan"
           style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY + labelOffsetY}px)` }}
           data-testid={`workflow-recovery-edge-select-${data?.semanticId ?? id}`}
-          aria-label={`Select relationship ${String(label ?? data?.semanticId ?? id)}`}
+          aria-label={`Select connection ${String(label ?? data?.semanticId ?? id)}`}
           onClick={(event) => {
             event.stopPropagation();
             if (data) data.onSelect(data.semanticId);
@@ -353,7 +375,7 @@ function RecoveryCanvasNavigator({
   const focus = () => {
     const block = findBlockByIdentity(projection, query);
     if (block === null) {
-      setStatus(`No workflow block matches ${query.trim() || "the empty query"}.`);
+      setStatus(`No workflow step matches ${query.trim() || "the empty query"}.`);
       return;
     }
     onSelect(block.semanticId);
@@ -369,18 +391,18 @@ function RecoveryCanvasNavigator({
   };
   return (
     <form className="recovery-canvas__find nodrag nopan" onSubmit={(event) => { event.preventDefault(); focus(); }}>
-      <label htmlFor="workflow-recovery-find">Find block</label>
+      <label htmlFor="workflow-recovery-find">Find step</label>
       <input
         id="workflow-recovery-find"
         data-testid="workflow-recovery-find-input"
         value={query}
-        placeholder="Stable ID or title"
+        placeholder="Step name or technical ID"
         onChange={(event) => setQuery(event.currentTarget.value)}
       />
-      <button data-testid="workflow-recovery-find-submit" type="submit">Focus</button>
+      <button data-testid="workflow-recovery-find-submit" type="submit">Show</button>
       {status !== "" && <output role="status" aria-live="polite">{status}</output>}
       {componentStates.length > 0 && (
-        <div className="recovery-canvas__components" aria-label="Reusable component view controls">
+        <div className="recovery-canvas__components" aria-label="Grouped review step controls">
           {componentStates.map((state) => (
             <button
               data-testid={`workflow-recovery-component-keyboard-${state.instanceSemanticId}`}
@@ -389,7 +411,7 @@ function RecoveryCanvasNavigator({
               aria-expanded={!state.collapsed}
               onClick={() => onToggleComponent(state.instanceSemanticId)}
             >
-              {state.collapsed ? "Expand" : "Collapse"} {state.component.title}
+              {state.collapsed ? "Show" : "Hide"} {state.component.title} details
             </button>
           ))}
         </div>
@@ -404,6 +426,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   if (runIssue) throw new Error(runIssue.code);
   const [keyboardSource, setKeyboardSource] = useState<string | null>(null);
   const blocks = useMemo(() => projection.phases.flatMap((phase) => phase.blocks), [projection]);
+  const [previewPositions, setPreviewPositions] = useState<Readonly<Record<string, { x: number; y: number }>>>({});
   const [expandedComponentIds, setExpandedComponentIds] = useState<ReadonlySet<string>>(() => new Set());
   const detailLevel = graphDetailLevel(blocks.length);
   const componentTargets = useMemo(
@@ -428,6 +451,21 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   });
   const gateOwners = useMemo(() => new Map(blocks.flatMap((block) => block.gates.map((gate) => [gate.semanticId, block.semanticId] as const))), [blocks]);
 
+  useEffect(() => {
+    setPreviewPositions((current) => {
+      const next = { ...current };
+      let changed = false;
+      for (const [semanticId, position] of Object.entries(current)) {
+        const accepted = blocks.find((block) => block.semanticId === semanticId)?.position;
+        if (accepted === undefined || (accepted.x === position.x && accepted.y === position.y)) {
+          delete next[semanticId];
+          changed = true;
+        }
+      }
+      return changed ? next : current;
+    });
+  }, [blocks]);
+
   const portLookup = useMemo(() => new Map(blocks.flatMap((block) => [...block.inputs, ...block.outputs]).map((port) => [port.semanticId, port])), [blocks]);
   const onPortKey = (port: DraftPortProjection) => {
     if (port.direction === "output") {
@@ -443,7 +481,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   const nodes: RecoveryFlowNode[] = blocks.map((block) => ({
     id: block.semanticId,
     type: "recovery",
-    position: { x: block.position.x, y: block.position.y },
+    position: previewPositions[block.semanticId] ?? { x: block.position.x, y: block.position.y },
     selected: selectedSemanticId === block.semanticId,
     data: {
       block,
@@ -503,11 +541,20 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
     onIntent({ type: "create-connection", sourcePortId: source.semanticId, targetPortId: target.semanticId });
   };
 
+  const previewNodeChanges = (changes: NodeChange<RecoveryFlowNode>[]) => {
+    setPreviewPositions((current) => {
+      let next: Record<string, { x: number; y: number }> | null = null;
+      for (const change of changes) {
+        if (change.type !== "position" || change.position === undefined) continue;
+        next ??= { ...current };
+        next[change.id] = { x: change.position.x, y: change.position.y };
+      }
+      return next ?? current;
+    });
+  };
+
   return (
     <div className={`recovery-canvas recovery-canvas--${runtime.portTreatment}`} data-testid="workflow-recovery-canvas" data-port-treatment={runtime.portTreatment} data-detail-level={detailLevel} aria-label="Mounting bracket workflow diagram">
-      <div className="recovery-phase-stripe recovery-phase-stripe--define"><b>01 · Define</b><span>Requirements and geometry</span></div>
-      <div className="recovery-phase-stripe recovery-phase-stripe--verify"><b>02 · Verify</b><span>Evidence and approval</span></div>
-      <div className="recovery-phase-stripe recovery-phase-stripe--deliver"><b>03 · Deliver</b><span>Neutral output package</span></div>
       {keyboardSource && <div className="recovery-keyboard-connection" role="status">Connection started. Focus a compatible input and press Enter; Escape cancels.</div>}
       <ReactFlow
         data-testid="workflow-recovery-reactflow-pane"
@@ -524,10 +571,16 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         nodesConnectable
         nodesDraggable
         edgesReconnectable={false}
+        onNodesChange={previewNodeChanges}
         onPaneClick={() => onIntent({ type: "select", semanticId: null })}
         onNodeClick={(_, node) => onIntent({ type: "select", semanticId: node.id })}
         onEdgeClick={(_, edge) => onIntent({ type: "select", semanticId: edge.id })}
-        onNodeDragStop={(_, node) => onIntent({ type: "move-block", semanticId: node.id, x: Math.round(node.position.x), y: Math.round(node.position.y) })}
+        onNodeDragStop={(_, node) => {
+          const x = Math.round(node.position.x);
+          const y = Math.round(node.position.y);
+          setPreviewPositions((current) => ({ ...current, [node.id]: { x, y } }));
+          onIntent({ type: "move-block", semanticId: node.id, x, y });
+        }}
         onEdgesDelete={(deleted) => deleted.forEach((edge) => onIntent({ type: "delete-connection", semanticId: edge.id }))}
         onNodesDelete={(deleted) => deleted.forEach((node) => onIntent({ type: "delete-concept", semanticId: node.id }))}
         onConnect={connect}
@@ -562,7 +615,20 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         }}
       >
         <Background color="var(--recovery-grid)" gap={24} size={1} />
-        <MiniMap nodeStrokeWidth={3} ariaLabel="Workflow overview map" data-testid="workflow-recovery-minimap" />
+        <MiniMap
+          bgColor="#0b1628"
+          nodeColor="#1e3a5f"
+          nodeStrokeColor="#38bdf8"
+          nodeStrokeWidth={3}
+          maskColor="rgba(7, 17, 31, 0.48)"
+          maskStrokeColor="#38bdf8"
+          maskStrokeWidth={2}
+          pannable
+          zoomable
+          ariaLabel="Workflow overview; blue frame shows the visible area"
+          data-testid="workflow-recovery-minimap"
+        />
+        <div className="recovery-minimap-key nodrag nopan" aria-hidden="true">Blue frame = current view</div>
         <RecoveryCanvasNavigator
           projection={projection}
           onSelect={(semanticId) => onIntent({ type: "select", semanticId })}

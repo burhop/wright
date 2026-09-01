@@ -12,13 +12,21 @@ describe("recovery renderer projection", () => {
     const buffer = await crypto.subtle.digest("SHA-256", bytes);
     const digest = [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
-    expect(digest).toBe("57ed2b7caacc9b3a779d9e960a681a9b8fe6dc1cfc9c3d48fa6ddd5e184be889");
+    expect(digest).toBe("04cc79dad3b8177e52ab46d0c994d5d48b39f63d7483ccf504eb8d665b902b2d");
   });
 
   it("derives approval gates and feedback paths from canonical relationships", () => {
     const projection = toDraftProjection(initialWorkflow, initialLayout);
+    const specification = projection.phases.flatMap((phase) => phase.blocks).find((block) => block.semanticId === "block.create-design-specification");
     const review = projection.phases.flatMap((phase) => phase.blocks).find((block) => block.semanticId === "block.review-design");
 
+    expect(specification?.gates).toEqual([expect.objectContaining({
+      id: "gate.create-design-specification-decision",
+      semanticId: "gate.create-design-specification-decision",
+      proceed_target_block_id: "block.generate-geometry",
+      revise_target_block_id: "block.design-intent",
+      feedback_path_id: "rel.specification-revise",
+    })]);
     expect(review?.gates).toEqual([expect.objectContaining({
       id: "gate.review-decision",
       semanticId: "gate.review-decision",
@@ -26,12 +34,20 @@ describe("recovery renderer projection", () => {
       revise_target_block_id: "block.generate-geometry",
       feedback_path_id: "rel.review-revise",
     })]);
-    expect(projection.feedbackPaths).toEqual([expect.objectContaining({
-      id: "rel.review-revise",
-      from_gate_id: "gate.review-decision",
-      to_block_id: "block.generate-geometry",
-      label: "Revise geometry",
-    })]);
+    expect(projection.feedbackPaths).toEqual([
+      expect.objectContaining({
+        id: "rel.specification-revise",
+        from_gate_id: "gate.create-design-specification-decision",
+        to_block_id: "block.design-intent",
+        label: "Revise design inputs",
+      }),
+      expect.objectContaining({
+        id: "rel.review-revise",
+        from_gate_id: "gate.review-decision",
+        to_block_id: "block.generate-geometry",
+        label: "Revise CAD model",
+      }),
+    ]);
   });
 
   it("resolves the golden review component to one stable diagnostic and run lineage scope", () => {
@@ -62,7 +78,7 @@ describe("recovery renderer projection", () => {
     const drawingReview = projection.phases.flatMap((phase) => phase.blocks).find((block) => block.semanticId === "block.review-inspection-drawing");
 
     expect(drawingReview?.gates).toEqual([]);
-    expect(projection.feedbackPaths).toHaveLength(1);
+    expect(projection.feedbackPaths).toHaveLength(2);
   });
 
   it("projects every valid feedback outcome from one approval without collapsing identities", () => {
@@ -71,20 +87,21 @@ describe("recovery renderer projection", () => {
       id: "rel.review-restart",
       kind: "feedback",
       sourceId: "block.review-design",
-      targetId: "block.capture-brief",
-      label: "Restart from brief",
-      condition: "The design brief itself is incomplete",
+      targetId: "block.design-intent",
+      label: "Restart from design intent",
+      condition: "The design intent itself is incomplete",
     });
 
     const projection = toDraftProjection(workflow, initialLayout);
     expect(projection.feedbackPaths.map((feedback) => feedback.semanticId)).toEqual([
+      "rel.specification-revise",
       "rel.review-revise",
       "rel.review-restart",
     ]);
-    expect(projection.feedbackPaths[1]).toEqual(expect.objectContaining({
+    expect(projection.feedbackPaths[2]).toEqual(expect.objectContaining({
       from_gate_id: "gate.review-decision",
-      to_block_id: "block.capture-brief",
-      label: "Restart from brief",
+      to_block_id: "block.design-intent",
+      label: "Restart from design intent",
     }));
   });
 
@@ -95,10 +112,10 @@ describe("recovery renderer projection", () => {
       id: "block.route-rework",
       kind: "decision",
       title: "Route rework",
-      purpose: "Choose whether the brief needs revision.",
+      purpose: "Choose whether the design intent needs revision.",
       phaseId: "phase.verify",
       executionKind: "human",
-      instructions: "Return incomplete requirements to the brief.",
+      instructions: "Return incomplete requirements to the design intent.",
       configuration: {},
       inputPortIds: [],
       outputPortIds: [],
@@ -107,21 +124,21 @@ describe("recovery renderer projection", () => {
     });
     workflow.phases.find((phase) => phase.id === "phase.verify")!.blockIds.push("block.route-rework");
     workflow.relationships.push({
-      id: "rel.route-rework-to-brief",
+      id: "rel.route-rework-to-design-intent",
       kind: "feedback",
       sourceId: "block.route-rework",
-      targetId: "block.capture-brief",
-      label: "Revise brief",
+      targetId: "block.design-intent",
+      label: "Revise design intent",
       condition: "Requirements are incomplete",
     });
     layout.positions["block.route-rework"] = { x: 900, y: 640 };
 
     const projection = toDraftProjection(workflow, layout);
     expect(projection.feedbackPaths).toContainEqual(expect.objectContaining({
-      id: "rel.route-rework-to-brief",
+      id: "rel.route-rework-to-design-intent",
       from_gate_id: "block.route-rework",
-      to_block_id: "block.capture-brief",
-      semanticId: "rel.route-rework-to-brief",
+      to_block_id: "block.design-intent",
+      semanticId: "rel.route-rework-to-design-intent",
     }));
   });
 

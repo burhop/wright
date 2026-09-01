@@ -221,7 +221,7 @@ def test_complete_projection_transition_records_active_identity_and_output_facts
     candidate = run().model_copy(
         update={
             "state": "running",
-            "active_block_id": "block.capture-brief",
+            "active_block_id": "block.design-intent",
             "material_supplied": True,
             "outputs_ready": True,
         }
@@ -231,7 +231,7 @@ def test_complete_projection_transition_records_active_identity_and_output_facts
         candidate, definition(), expected_state="queued", at=105
     )
 
-    assert updated.active_block_id == "block.capture-brief"
+    assert updated.active_block_id == "block.design-intent"
     assert updated.material_supplied is True
     assert updated.outputs_ready is True
     assert repo.get(run().run_id) == updated

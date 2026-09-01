@@ -20,9 +20,10 @@ Every surface answers a different question about the same accepted definition:
 
 ## Interaction grammar
 
-- Friendly block names and purposes lead; IDs and bindings remain inspectable.
-- Inputs are on the left; outputs are on the right; type, requiredness, and cardinality are visible.
-- A connection socket and an artifact action are different controls with different shapes, labels, and behaviors.
+- Friendly step names and purposes lead; IDs and bindings remain inspectable behind technical disclosure.
+- Reference images, design intent, and company standards/context are three explicit sources with visible provenance; they feed one editable, engineer-reviewed design specification before CAD begins.
+- Inputs are on the left; outputs are on the right; friendly file/model/report names and requiredness lead while exact types and cardinality remain available.
+- A connection socket and an action that opens a file, model, report, or record are different controls with different shapes, labels, and behaviors.
 - Data, decision, and feedback relationships remain visually distinct without relying on color alone.
 - Semantic changes advance the accepted revision once. Layout, selection, previews, rejection, invalid source, and run activity do not.
 - Invalid candidates stay editable while the last-valid graph remains trustworthy.
@@ -35,7 +36,7 @@ Every surface answers a different question about the same accepted definition:
 1. Workflow title, provisional authority, revision, validity, and `SIMULATED` status.
 2. Block/flow story on the canvas.
 3. Selected block’s definition and run facts.
-4. Palette, attachment, and run-state language.
+4. Input-source provenance, contextual downstream step library, and run-state language.
 5. Exact provider/server/tool/schema bindings behind progressive disclosure.
 
 ## Non-negotiable trust boundaries

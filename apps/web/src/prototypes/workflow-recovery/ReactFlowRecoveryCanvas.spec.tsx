@@ -51,8 +51,9 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
 
     const node = screen.getByTestId("workflow-recovery-block-block.review-design");
     expect(node).toHaveAttribute("data-component-collapsed", "true");
-    expect(node).toHaveTextContent("Reusable design review cell · v1.0.0");
-    expect(node).toHaveTextContent("1 internal target");
+    expect(node).toHaveTextContent("Design review step group");
+    expect(node).toHaveTextContent("Grouped review step · 4 technical items");
+    expect(node).toHaveTextContent("1 review item needs attention");
     expect(node).toHaveTextContent("component.review-cell.block.evaluate");
     fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
     expect(node).toHaveAttribute("data-component-collapsed", "false");
@@ -73,6 +74,20 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     expect(screen.getByTestId("workflow-recovery-canvas-zoom-in")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-canvas-zoom-out")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-canvas-fit")).toBeVisible();
+    expect(screen.getByTestId("workflow-recovery-block-block.reference-images")).toHaveTextContent("JPG or PNG images");
+    expect(screen.getByTestId("workflow-recovery-block-block.design-intent")).toHaveTextContent("text or document");
+    expect(screen.getByTestId("workflow-recovery-block-block.company-context")).toHaveTextContent("approved company knowledge");
+    const minimap = screen.getByTestId("rf__minimap");
+    expect(screen.getByRole("img", { name: "Workflow overview; blue frame shows the visible area" })).toBeVisible();
+    expect(minimap).toHaveStyle({
+      "--xy-minimap-background-color-props": "#0b1628",
+      "--xy-minimap-node-background-color-props": "#1e3a5f",
+      "--xy-minimap-node-stroke-color-props": "#38bdf8",
+      "--xy-minimap-mask-background-color-props": "rgba(7, 17, 31, 0.48)",
+      "--xy-minimap-mask-stroke-color-props": "#38bdf8",
+    });
+    expect(container.querySelector(".react-flow__minimap-mask")).toBeInTheDocument();
+    expect(container.querySelector(".recovery-phase-stripe")).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId("workflow-recovery-block-block.generate-geometry"));
     expect(onIntent).toHaveBeenCalledWith({ type: "select", semanticId: "block.generate-geometry" });
     const missing = [...container.querySelectorAll<HTMLElement>('button, [role="button"], [tabindex]:not([tabindex="-1"])')]
@@ -86,7 +101,7 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     const run = initialRunProjection(initialWorkflow, "a".repeat(64), "2026-08-31T00:00:00Z");
     run.state = "running";
     run.activeBlockId = "block.generate-geometry";
-    run.activeRelationshipId = "rel.brief-to-geometry";
+    run.activeRelationshipId = "rel.specification-to-geometry";
     run.steps["block.generate-geometry"] = { state: "running", label: "Running", detail: "Projected test record." };
     const view = render(
       <RecoveryCanvasRuntimeProvider value={runtime(run)}>
