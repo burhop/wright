@@ -31,6 +31,7 @@ execution, merge, release, or customer authority.
 | Can AI mutate or execute? | AI is excluded. | Full dashed multi-block candidate, assumptions, warnings, diff, read-only inspection, explicit Reject/Accept. | Host authority remains explicit; automation is simulated. |
 | Can a run explain failure and recovery? | Run state is excluded. | Immutable simulated overlay reaches needs-input, blocks dependents, accepts one bounded 6061-T6 input, then succeeds. | Product grammar is reviewable; production runtime remains future. |
 | Are outputs recognizable and truthful? | No output experience. | Bracket preview, report, STEP download, producer/revision/digest/lineage, static-fixture disclosure. | Result-first treatment is ready for human review, not a correctness claim. |
+| Do promoted records preserve local authority boundaries? | Existing workspace/session and capability policies. | Stable definition/layout/run sidecars now reject secret material, enforce bounded inputs, and reopen with network APIs hard-failed. | T057 qualifies the local canonical slice without changing the approved visual subject or granting external authority. |
 
 ## Recovery gallery
 
@@ -61,6 +62,8 @@ rewritten and led to real product or proof-harness corrections.
 Automated behavior and visual evidence are green. The [approval record](product-approval.md)
 binds the requesting user's product/visual-direction approval to the exact
 commit, tree, and walkthrough manifest after material-equivalence verification.
-Representative mechanical-engineer usability, broad accessibility qualification,
-production persistence/runtime integration, and qualifying scale remain open;
-the approval is not a customer-readiness claim.
+Stable definition/layout/run persistence and T057 local security/offline
+qualification now pass independently of this visual subject. Representative
+mechanical-engineer usability, real assistive-technology evidence, external
+runtime integration, engineering-oracle qualification, and packaging/native
+lifecycle hardening remain open; the approval is not a customer-readiness claim.

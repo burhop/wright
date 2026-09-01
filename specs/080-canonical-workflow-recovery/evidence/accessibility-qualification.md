@@ -33,7 +33,9 @@ The automated accessibility-tree snapshot is not an NVDA, JAWS, Narrator, or Voi
 
 No representative mechanical engineers were recruited or observed. Therefore task T056 and CAP-025's moderated usability gate remain open. The ready-to-run protocol is [moderated-engineer-usability-protocol.md](moderated-engineer-usability-protocol.md). Closing this gate requires real participants, contemporaneous notes, exact subject identity, consent/privacy handling, and honest results—including failures—not an agent-authored simulation.
 
-This external dependency does not authorize skipping the gate and does not prevent locally independent T057 security qualification from proceeding.
+This external dependency does not authorize skipping the gate. The locally
+independent T057 security/offline qualification subsequently completed without
+claiming that these human T056 gates passed.
 
 The refreshed dashboard verifier passed at `2026-09-01T04:54:40.544Z` while
 keeping the ledger at 55/60, T056 visibly open on its human gates, eight

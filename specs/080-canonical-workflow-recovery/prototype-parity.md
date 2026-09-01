@@ -27,6 +27,8 @@
 | Mobile containment | not target | unproven | 390×844 no document overflow | passing annotated walkthrough captured; representative usability open |
 | Reusable component collapse | unproven | model-only | stable internal scopes, collapsed target summary, and expansion | T055 renderer and Chromium tests pass without semantic/revision mutation |
 | 100-node behavior | unproven | one non-qualifying run | deterministic compact mode, fit/minimap, stable identity search and selection | T055 automated behavior passes; representative production performance remains open |
+| Security and RBAC | retained workspace/session and capability policies | not qualified | exact workspace/session hiding, one-shot mutating scope, administrator-only attachment, secret rejection | T057 canonical local slice passes; no external runtime or release authority added |
+| Offline and store isolation | retained local-first foundation | not qualified | independent definition/layout/run sidecars and restart/reconnect with network hard-failed | T057 passes; packaging/native/update/uninstall lifecycle remains T059 |
 
 ## What is deliberately not copied
 
@@ -38,4 +40,4 @@
 
 ## Current conclusion
 
-The recovery concept reaches functional parity with the useful visual direction and surpasses the frozen prototype on direct manipulation, paired editing, proposal review, invalid containment, bounded run recovery, reusable-component inspection, and stable-identity navigation. The [digest-bound comparison](evidence/prototype-side-by-side.md), passing walkthrough, and [approval record](evidence/product-approval.md) close T051 for the exact materially equivalent subject. T052–T055 add separate stable definition/layout/execution boundaries and bounded component/large-graph behavior. Representative usability, broad accessibility qualification, and qualifying production performance remain downstream obligations.
+The recovery concept reaches functional parity with the useful visual direction and surpasses the frozen prototype on direct manipulation, paired editing, proposal review, invalid containment, bounded run recovery, reusable-component inspection, and stable-identity navigation. The [digest-bound comparison](evidence/prototype-side-by-side.md), passing walkthrough, and [approval record](evidence/product-approval.md) close T051 for the exact materially equivalent subject. T052–T055 add separate stable definition/layout/execution boundaries and bounded component/large-graph behavior; T057 qualifies their local security, RBAC, resource, isolation, and offline contracts. Representative usability, real assistive-technology evidence, qualifying engineering oracles, and packaging/native lifecycle hardening remain downstream obligations.

@@ -10,13 +10,14 @@
 - Analysis date: 2026-09-01 EDT
 
 The `speckit-analyze` skill was used as a strictly read-only consistency pass.
-Its required command was attempted exactly once:
+Its required command was attempted for the original analysis and again for this
+T057 refresh:
 
 ```text
 bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
 ```
 
-The Windows host returned
+Both attempts returned `Access is denied` with
 `Bash/Service/CreateInstance/E_ACCESSDENIED`. No WSL mutation or workaround was
 attempted. Because all four required artifacts were present, the same inventory,
 coverage, ordering, ambiguity, duplication, and constitution checks were then
@@ -35,17 +36,20 @@ No unresolved duplicate requirements, placeholders, core terminology conflicts,
 task-order contradictions, or constitution `MUST` violations remain in the
 recovery slice. The current message supplies the human phase and product-direction
 approval; work remains on a feature branch; the concept stays local/offline;
-component, integration, and walkthrough tests satisfy the applicable test-pyramid
-layers; and no push, merge, publication, or release occurred.
+component, integration, walkthrough, security, and zero-network restart tests
+satisfy the applicable test-pyramid layers; and no push, merge, publication, or
+release occurred. T056 is intentionally still open because its real
+assistive-technology and moderated-engineer evidence cannot be produced by an
+automated local run.
 
 ## Coverage summary
 
 | Requirement set | Count | Has task coverage | Notes |
 |---|---:|---:|---|
-| Functional requirements | 42 | 42 | T001–T055 cover the recovery and first production-promotion sequence; T056–T060 retain qualification/release obligations. |
+| Functional requirements | 42 | 42 | T001–T055 cover recovery and first production promotion; T057 covers security/offline qualification; T056 and T058–T060 retain human, oracle, packaging, and release obligations. |
 | Buildable success criteria | 14 | 14 | T046–T050 bind final validation/evidence; T051 binds the human decision. |
 | User stories | 5 | 5 | Each story has independent test language and dependency-ordered tasks. |
-| Tasks | 60 | n/a | T001–T055 complete after this checkpoint; T056–T060 remain open. |
+| Tasks | 60 | n/a | 56 complete: T001–T055 and T057. Four remain open: T056 and T058–T060. |
 
 Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
 0 unresolved; duplication findings 0; critical findings 0; constitution issues
@@ -63,11 +67,19 @@ Metrics: 56/56 explicit FR/SC requirements covered (100%); ambiguity findings
   those immutable digest facts; TR-0095 itself was not edited.
 - The Spec Kit agent-context updater completed and `AGENTS.md` points to
   `specs/080-canonical-workflow-recovery/plan.md`.
+- T057 exact implementation commit `ba5ca8d03dcaf42fad832fbd2ed3f69b8a990f5b`
+  (tree `17a0f5a0537f5ab6b713736e5e1996011a33e68d`) passes 10 focused
+  and 88 broad security/RBAC/resource/offline tests with Ruff clean.
+- Capability coverage remains 859/859 source requirements and 33/33 roll-up
+  capabilities with zero unexplained omissions.
 
 ## Conclusion
 
-The recovery evidence slice and T052–T055 production-promotion checkpoints are
-internally consistent. The next dependency-ordered local work is T056 automated
-accessibility qualification and its separately honest moderated-usability
-boundary. T060 remains prohibited because the current authorization explicitly
-excludes push, merge, publication, and release.
+The recovery evidence slice, T052–T055 production-promotion checkpoints, and
+T057 security/offline qualification are internally consistent. T056's automated
+portion passes while its human-only evidence remains open. The next independently
+local task is T058 engineering-oracle and benchmark qualification, which must
+retain the truthful `0/100` score until qualifying evidence passes. T059 may
+perform only local packaging/lifecycle hardening. T060 remains prohibited
+because the current authorization explicitly excludes push, merge, publication,
+and release.

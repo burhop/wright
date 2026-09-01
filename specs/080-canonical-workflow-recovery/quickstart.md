@@ -108,8 +108,8 @@ Open `http://127.0.0.1:8765/`. The server is launched against this recovery
 worktree and presents two deliberately separate ledgers:
 
 - governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
-- projected EPP-F02C recovery is `proposed`, unregistered, 55/60 through the
-  verified T055 component/large-graph checkpoint, with T056–T060 open.
+- projected EPP-F02C recovery is `proposed`, unregistered, 56/60 through the
+  verified T057 security/offline checkpoint; T056 and T058–T060 remain open.
 
 The live recovery gallery serves only the exact frozen and passing recovery
 walkthrough roots. Report, status, manifest, frozen screenshot, and all seven
@@ -222,3 +222,37 @@ T056 remains open: an accessibility-tree snapshot is not a real screen-reader
 session, and the representative-engineer study in
 `evidence/moderated-engineer-usability-protocol.md` has not been run. Do not
 mark either gate complete from automation or protocol preparation.
+
+## Verify T057 security and offline qualification
+
+```powershell
+uv run pytest -q `
+  tests/security/test_canonical_workflow_security.py `
+  tests/e2e/test_canonical_workflow_offline.py
+
+uv run --extra engineering-models pytest -q `
+  packages/core/tests/test_workflow_definitions.py `
+  packages/core/tests/test_canonical_workflow_runs.py `
+  packages/data_vault/tests/test_workflow_definition_repository.py `
+  packages/data_vault/tests/test_workflow_layout_repository.py `
+  packages/data_vault/tests/test_canonical_workflow_run_repository.py `
+  packages/workspace_service/tests/test_workflow_operations.py `
+  packages/workspace_service/tests/surfaces/test_capability_grants.py `
+  tests/security `
+  tests/e2e/test_engineering_program_offline.py `
+  tests/e2e/test_canonical_workflow_offline.py
+
+uv run ruff check `
+  packages/core/src/core/rivet_mcp.py `
+  packages/core/src/core/workflow_definitions.py `
+  packages/core/src/core/canonical_workflow_runs.py `
+  tests/security/test_canonical_workflow_security.py `
+  tests/e2e/test_canonical_workflow_offline.py
+```
+
+Expected: 10 focused tests pass, 88 broad regression tests pass, and Ruff
+passes. The tests prove exact workspace/session and one-shot capability scope,
+administrator-only authority, fail-closed secret handling before hashing or
+immutable storage, command/envelope resource limits, independent sidecars,
+cross-root isolation, and restart/reconnect with zero network calls. See
+`evidence/security-offline-qualification.md`.

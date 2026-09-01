@@ -6,7 +6,7 @@
 
 ## Summary
 
-Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; T052–T055 now promote stable definition, layout, execution, reusable-component identity, collapsed-graph interaction, and bounded large-graph navigation while preserving renderer-neutral authority. Dependency-ordered locally safe implementation may continue, while push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
+Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, text, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its current custom shell as technical evidence, and build a disposable but high-fidelity React Flow recovery concept over the existing renderer adapter. The slice includes measured JSON/YAML/DSL evidence, a tested parse/format/validate/apply/diff/project conformance kernel, a three-treatment block/port laboratory, a complete mechanical-engineering walkthrough, and revised dependency-ordered program artifacts. T051 is approved for exact subject `f9237763`; T052–T055 promote stable definition, layout, execution, reusable-component identity, collapsed-graph interaction, and bounded large-graph navigation. T057 now qualifies the canonical boundaries for exact RBAC scope, fail-closed secret handling, resource isolation, and offline restart. T056's real assistive-technology and moderated-engineer gates remain open. Dependency-ordered locally safe implementation may continue, while push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
 
 ## Technical Context
 
@@ -16,7 +16,7 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 
 **Storage**: Preserve existing draft and legacy run storage. T052 adds independent stable definition storage, T053 adds independent stable layout storage, and T054 adds an independent normalized execution sidecar for canonical runs, immutable steps/activities/artifact lineage, reconnect, cancellation, cleanup, and exact historical recovery envelopes.
 
-**Testing**: pytest for syntax evidence and retained Python invariants; Vitest for conformance, commands, projection, renderer, and component behavior; Playwright for human-repeatable direct manipulation, text correspondence, AI review, run visualization, screenshots, trace, and diagnostics
+**Testing**: pytest for syntax evidence, retained Python invariants, canonical security/RBAC/resource boundaries, and zero-network restart; Vitest for conformance, commands, projection, renderer, and component behavior; Playwright for human-repeatable direct manipulation, text correspondence, AI review, run visualization, screenshots, trace, diagnostics, and automated accessibility
 
 **Target Platform**: Wright web UI on Windows 11 for authoritative interaction evidence; current supported desktop browsers; optional GB10 Linux/aarch64 for bounded read-only and parallel verification
 
@@ -33,10 +33,10 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
 *GATE: Passed before research and rechecked after contracts.*
 
 - **Modular monorepo and thin routes — PASS**: no new route business logic is required for the recovery concept; retained API/service boundaries remain unchanged. Any future persistence expansion belongs in core/data-vault/workspace-service before transport.
-- **Offline-first — PASS**: fixtures, parsing, validation, graph editing, proposal review, and simulated run evidence operate locally without cloud or external MCP dependencies.
+- **Offline-first — PASS**: fixtures, parsing, validation, graph editing, proposal review, and simulated run evidence operate locally without cloud or external MCP dependencies. T057 additionally hard-fails network resolution/connection while promoting and reopening stable definition, layout, run, step, activity, and artifact records.
 - **Distribution and rollback — PASS**: no released artifact, installer, or main database version changes. The new definition sidecar is independent, its empty schema rolls back transactionally, populated history refuses destructive rollback, and exact promotion-source envelopes are retained for verified rollback.
 - **Embedded state — PASS**: retained stores remain untouched. Stable definitions, layouts, and canonical execution records now have separate SQLite authorities. The recovery UI's simulated runner remains disposable presentation evidence and gains no external execution authority.
-- **Security, RBAC, and authority — PASS**: no new external write or runtime authority. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
+- **Security, RBAC, and authority — PASS**: no new external write or runtime authority. T057 proves exact workspace/session lookup, exact one-shot mutating capability grants, administrator-only attachment authority, fail-closed secret rejection before canonical hashing/immutable persistence, and bounded command/envelope resources. AI proposals cannot mutate, run, or approve. Artifact actions remain local concept fixtures and are labeled.
 - **Engineering tooling protocol — PASS**: exact tool/MCP bindings are modeled and inspectable, but no GUI-only agent execution or tool invocation occurs.
 - **UI atomic design — PASS**: the recovery stylesheet has zero raw color
   literals, 184 references to shared Wright tokens, and no malformed token
@@ -49,8 +49,9 @@ Recover Wright around one versioned canonical workflow IR that is authoritative 
   renderer-component tests cover default interaction, run overlays, and
   unknown-version rejection; the page-level mocked Playwright journey covers
   the complete product path. Retained backend contract tests remain available.
-  Production system E2E is deferred because this slice uses a simulated run and
-  commits no production executor.
+  T057 adds a local system E2E for stable definition/layout/run persistence and
+  restart with network APIs hard-failed. A live production executor remains
+  deferred because this slice commits no external execution authority.
 - **Stable test identities — PASS**: every authored interactive concept control
   and every explicit renderer navigation control has a stable `data-testid`;
   the host-component regression enumerates rendered interactive elements and
@@ -261,6 +262,7 @@ artifacts/ui-walkthrough/workflow-recovery/<timestamp>/
   one-second recovery bound.
 - **Walkthrough**: progress/status/report remain current after every action; raw and annotated images are separate; browser diagnostics are captured; validator has zero missing evidence fields.
 - **Program**: dashboard names the recovery goal as in progress while EPP-F02C remains proposed and unregistered, keeps the governed F02B ledger separate from a recovery task projection, orders checkpoint history newest-first, and leaves customer readiness incomplete.
+- **Security/offline**: exact capability and workspace/session scopes fail closed; secret-shaped keys, bearer/assignment material, and credential-bearing URLs cannot enter canonical or immutable records; oversized batches/envelopes fail before write; definition/layout/run sidecars remain isolated and reopen with zero network calls.
 
 ## Resource Strategy
 

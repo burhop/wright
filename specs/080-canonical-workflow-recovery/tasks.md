@@ -178,7 +178,7 @@
 - [x] T054 [P] Implement durable run/step/activity/artifact records, cancellation, reconnect, and cleanup in `packages/core/src/core/`, `packages/data_vault/src/data_vault/`, and `tests/`
 - [x] T055 Implement approved component/collapsed-graph and large-graph behavior in `apps/web/src/components/workflow-composer/` and `tests/ui-integration/`
 - [ ] T056 Complete representative keyboard-only, 200% zoom, focus-order, screen-reader, and moderated engineer-usability gates in `tests/ui-integration/` and `specs/080-canonical-workflow-recovery/evidence/`
-- [ ] T057 Complete security, RBAC, secret-redaction, resource-isolation, and offline qualification in `tests/security/` and `tests/e2e/`
+- [x] T057 Complete security, RBAC, secret-redaction, resource-isolation, and offline qualification in `tests/security/` and `tests/e2e/`
 - [ ] T058 Complete independent engineering-oracle and benchmark qualification without changing the current `0/100` result until evidence passes in `benchmarks/` and `test-results/dataset-evaluation/`
 - [ ] T059 Run packaging, rollback, native lifecycle, Docker, and release-candidate hardening through the authoritative scripts in `scripts/` and `docs/release/release-runbook.md`
 - [ ] T060 Run dev-push/merge/release gates only under separate authorization; do not push, merge, publish, or release from this recovery checkpoint in `docs/contributing/dev-push-runbook.md` and `docs/release/release-runbook.md`
