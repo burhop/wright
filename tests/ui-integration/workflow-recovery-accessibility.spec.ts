@@ -1,19 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-async function mockRecoveryShell(page: Page): Promise<void> {
-  await page.route("**/api/**", async (route) => {
-    const path = new URL(route.request().url()).pathname;
-    if (path === "/api/auth/session/status") return route.fulfill({ json: { auth_required: false, authenticated: true } });
-    if (path === "/api/setup/status") return route.fulfill({ json: { is_configured: true, active_agent: "hermes", theme: "dark" } });
-    if (path === "/api/mcp/servers") return route.fulfill({ json: { servers: [] } });
-    if (path === "/api/mcp/tools") return route.fulfill({ json: { tools: [] } });
-    if (path === "/api/agent/sessions") return route.fulfill({ json: { sessions: [] } });
-    if (path === "/api/workspace/recent" || path === "/api/workspace/list") return route.fulfill({ json: { workspaces: [] } });
-    if (path.endsWith("/health")) return route.fulfill({ json: { state: "connected", latencyMs: 1 } });
-    return route.fulfill({ status: 404, json: { detail: "Unmocked recovery-shell API" } });
-  });
-}
+import {
+  mockRecoveryWorkspace,
+  openRecoveryEditor,
+} from "./fixtures/workflow-recovery";
 
 function focusIdentity(page: Page): Promise<string> {
   return page.evaluate(() => {
@@ -24,8 +15,8 @@ function focusIdentity(page: Page): Promise<string> {
 }
 
 test("supports representative authoring and component inspection with keyboard actions and ordered focus", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
   await expect(concept).toBeVisible();
   await page.getByTestId("workflow-recovery-block-block.generate-geometry").click();
@@ -44,7 +35,7 @@ test("supports representative authoring and component inspection with keyboard a
   expect(orderOf("workflow-recovery-validate")).toBeGreaterThan(orderOf("workflow-recovery-view-split"));
   expect(orderOf("workflow-recovery-port-lab-open")).toBeGreaterThan(orderOf("workflow-recovery-validate"));
   expect(orderOf("workflow-recovery-ai-request")).toBeGreaterThan(orderOf("workflow-recovery-port-lab-open"));
-  expect(orderOf("workflow-recovery-palette-search")).toBeGreaterThan(orderOf("workflow-recovery-ai-request"));
+  await expect(page.getByTestId("workflow-recovery-palette-search")).toHaveCount(0);
 
   const componentNode = page.getByTestId("workflow-recovery-block-block.review-design");
   const componentToggle = page.getByTestId("workflow-recovery-component-toggle-block.review-design");
@@ -57,13 +48,12 @@ test("supports representative authoring and component inspection with keyboard a
   await expect(componentToggle).toHaveAttribute("aria-expanded", "true");
   await expect(componentNode).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design"))
-    .toContainText("component.review-cell.relationship.accept");
+    .toContainText("Accept the reviewed design");
 
-  const find = page.getByTestId("workflow-recovery-find-input");
-  await find.focus();
-  await page.keyboard.type("block.export-step");
+  await expect(page.getByTestId("workflow-recovery-find-input")).toHaveCount(0);
+  const exportStep = page.getByTestId("workflow-recovery-block-block.export-step");
+  await exportStep.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("status", { name: "" }).filter({ hasText: "Focused Export approved STEP file" })).toBeVisible();
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Export approved STEP file");
 
   const edge = page.getByTestId("workflow-recovery-edge-select-rel.review-to-export");
@@ -77,7 +67,7 @@ test("supports representative authoring and component inspection with keyboard a
   const target = page.getByTestId("workflow-recovery-handle-port.approved-geometry-in");
   await source.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("status")).toContainText("Connection started");
+  await expect(page.getByRole("status").filter({ hasText: "Connection started" })).toContainText("Connection started");
   await target.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("workflow-recovery-edge-rel.review-to-export")).toBeVisible();
@@ -96,9 +86,10 @@ test("supports representative authoring and component inspection with keyboard a
 });
 
 test("keeps the complete screen-reader contract available at a two-times page scale", async ({ page, context }) => {
-  await mockRecoveryShell(page);
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   await page.setViewportSize({ width: 720, height: 550 });
-  await page.goto("/workflow-recovery");
+  await page.getByTestId("workspace-pane-surface").click();
 
   const chromiumSession = await context.newCDPSession(page);
   await chromiumSession.send("Emulation.setPageScaleFactor", { pageScaleFactor: 2 });

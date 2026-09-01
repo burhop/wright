@@ -14,6 +14,42 @@ export interface WorkspaceNode {
   children: WorkspaceNode[] | null;
 }
 
+export interface WorkspaceWorkflowSourceDocument {
+  workspace_id: string;
+  path: string;
+  storage_revision: number;
+  storage_digest: string;
+  definition_revision: number;
+  metadata_authority: "wright_host";
+  size_bytes: number;
+  source: string;
+}
+
+export class WorkspaceWorkflowSourceNotFoundError extends Error {
+  readonly code = "workflow_source_not_found";
+
+  constructor() {
+    super("This workflow file does not exist in the workspace.");
+    this.name = "WorkspaceWorkflowSourceNotFoundError";
+  }
+}
+
+export class WorkspaceWorkflowSourceConflictError extends Error {
+  readonly code = "workflow_source_conflict";
+  readonly currentStorageRevision: number | null;
+  readonly currentStorageDigest: string | null;
+
+  constructor(
+    currentStorageRevision: number | null,
+    currentStorageDigest: string | null,
+  ) {
+    super("The workspace file changed elsewhere. Your local edits were kept; reload or compare before saving again.");
+    this.name = "WorkspaceWorkflowSourceConflictError";
+    this.currentStorageRevision = currentStorageRevision;
+    this.currentStorageDigest = currentStorageDigest;
+  }
+}
+
 export interface RivetWorkflowOperation {
   workflow_id: string;
   slug: string;
@@ -596,7 +632,11 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
-  private workspaceActivationRequests = new Map<string, Promise<boolean>>();
+  private workspaceActivationTail: Promise<void> = Promise.resolve();
+  private latestWorkspaceActivation: {
+    sessionId: string;
+    request: Promise<boolean>;
+  } | null = null;
   private workspaceRequests = new Map<string, Promise<WorkspaceInfo>>();
   private workspaceFileRequests = new Map<string, Promise<WorkspaceNode>>();
   private workspaceMcpStatusRequests = new Map<
@@ -611,6 +651,107 @@ export class WorkspaceService {
       }>;
     }>
   >();
+
+  async getWorkspaceWorkflowSource(
+    sessionId: string,
+    path: string,
+  ): Promise<WorkspaceWorkflowSourceDocument> {
+    const query = new URLSearchParams({ session_id: sessionId, path });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources?${query.toString()}`,
+      { cache: "no-store" },
+    );
+    if (response.status === 404) {
+      throw new WorkspaceWorkflowSourceNotFoundError();
+    }
+    if (!response.ok) {
+      throw new Error("Unable to load this workflow file from the workspace.");
+    }
+    return response.json();
+  }
+
+  async createWorkspaceWorkflowSource(
+    sessionId: string,
+    path: string,
+    source: string,
+  ): Promise<WorkspaceWorkflowSourceDocument> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path,
+          source,
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Unable to create this workflow file in the workspace.");
+    }
+    return response.json();
+  }
+
+  async updateWorkspaceWorkflowSource(
+    sessionId: string,
+    path: string,
+    source: string,
+    expectedStorageRevision: number,
+    expectedStorageDigest: string,
+    semanticChangeValidated: boolean,
+  ): Promise<WorkspaceWorkflowSourceDocument> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path,
+          source,
+          expected_storage_revision: expectedStorageRevision,
+          expected_storage_digest: expectedStorageDigest,
+          semantic_change_validated: semanticChangeValidated,
+        }),
+      },
+    );
+    if (response.status === 409) {
+      let currentRevision: number | null = null;
+      let currentDigest: string | null = null;
+      try {
+        const conflict = (await response.json()) as {
+          error_code?: unknown;
+          details?: {
+            current_storage_revision?: unknown;
+            current_storage_digest?: unknown;
+          };
+          detail?: {
+            code?: unknown;
+            current_storage_revision?: unknown;
+            current_storage_digest?: unknown;
+          };
+        };
+        const code = conflict.error_code ?? conflict.detail?.code;
+        const details = conflict.details ?? conflict.detail;
+        if (code === "workflow_source_conflict") {
+          currentRevision = typeof details?.current_storage_revision === "number"
+            ? details.current_storage_revision
+            : null;
+          currentDigest = typeof details?.current_storage_digest === "string"
+            ? details.current_storage_digest
+            : null;
+        }
+      } catch {
+        // Keep the local edit and expose only the stable conflict message.
+      }
+      throw new WorkspaceWorkflowSourceConflictError(currentRevision, currentDigest);
+    }
+    if (!response.ok) {
+      throw new Error("Unable to save this workflow file. Your local edits were kept.");
+    }
+    return response.json();
+  }
   async openBrepPanel(sessionId: string): Promise<BrepPanelSession> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/brep/panel`,
@@ -2028,10 +2169,10 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(sessionId: string): Promise<boolean> {
-    const existing = this.workspaceActivationRequests.get(sessionId);
-    if (existing) return existing;
-    workspaceLogger.info("Activating workspace", { sessionId });
-    const request = (async () => {
+    const existing = this.latestWorkspaceActivation;
+    if (existing?.sessionId === sessionId) return existing.request;
+    const request = this.workspaceActivationTail.then(async () => {
+      workspaceLogger.info("Activating workspace", { sessionId });
       const response = await hostAdapter.fetch(
         `${API_BASE}/api/workspace/activate`,
         {
@@ -2055,12 +2196,21 @@ export class WorkspaceService {
       }
       const data = await response.json();
       return Boolean(data.success);
-    })();
-    this.workspaceActivationRequests.set(sessionId, request);
+    });
+    const settled = request.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.workspaceActivationTail = settled;
+    const entry = { sessionId, request };
+    this.latestWorkspaceActivation = entry;
     try {
       return await request;
     } finally {
-      this.workspaceActivationRequests.delete(sessionId);
+      await settled;
+      if (this.latestWorkspaceActivation === entry) {
+        this.latestWorkspaceActivation = null;
+      }
     }
   }
 

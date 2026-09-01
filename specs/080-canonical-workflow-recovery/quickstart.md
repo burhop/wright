@@ -12,10 +12,10 @@ python -m pytest tests/recovery/test_workflow_conformance.py -q --basetemp .test
 
 Expected evidence:
 
-- 859/859 source rows mapped into 33/33 capabilities;
+- 879/879 source rows mapped into 33/33 capabilities using the generated CAP labels;
 - 11/11 product gates, 100/100 stories, and 25/25 lessons covered;
-- JSON, YAML, and DSL parse to one canonical semantic identity;
-- 23/23 conformance tests pass and every treatment rejects 8/8 invalid controls,
+- strict JSON, YAML, internal IR, and friendly engineer source rehydrate one accepted semantic identity;
+- 36/36 conformance tests pass and every internal treatment rejects its complete invalid-control matrix,
   including graph cycles, feedback ownership/order, duplicate endpoints,
   cardinality, reciprocal phase/port ownership, binding-map, and component
   interface violations.
@@ -26,15 +26,32 @@ Expected evidence:
 npm run test --workspace=apps/web -- --run `
   src/config/workflow-recovery.spec.ts `
   src/prototypes/workflow-recovery/model.spec.ts `
+  src/prototypes/workflow-recovery/recovery-authoring.spec.ts `
   src/prototypes/workflow-recovery/command-system.spec.ts `
+  src/prototypes/workflow-recovery/ReactFlowRecoveryCanvas.spec.tsx `
+  src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx `
+  src/components/pages/WorkflowRecoveryPage.spec.tsx `
+  src/services/workspace-service.spec.ts `
+  tests/WorkspacePanelSessions.spec.tsx `
   src/__tests__/App.test.tsx
+
+uv run pytest -q `
+  packages/workspace_service/tests/test_workflow_sources.py `
+  apps/api/tests/test_workflow_sources_api.py
 
 npm run build --workspace=apps/web
 ```
 
-Expected: 35/35 focused recovery/config/routing tests pass and the
-recovery page builds into a lazy route chunk. Existing Vite chunk-size and
-config-loader warnings are not introduced by this feature.
+Expected: all focused source, command, canvas, workspace routing, persistence,
+conflict, and absence-of-global-route tests pass, followed by a production web
+build. Existing Vite chunk-size and config-loader warnings are not introduced
+by this feature.
+
+The final combined workspace-owned tree passed 116/116 Vitest files and
+585/585 tests, followed by TypeScript and production Vite build. The bounded
+workflow-source/API/security/trace slice passed 90 tests with three retained
+Windows symlink-privilege skips; the broader service/API/security compatibility
+regression passed 286 tests with seven skips for the same host limitation.
 
 ## Run the real-browser journey
 
@@ -46,37 +63,90 @@ npx playwright test tests/ui-integration/workflow-recovery.spec.ts `
   --project=chromium --workers=1
 ```
 
-The managed server enables `VITE_WRIGHT_WORKFLOW_RECOVERY=1` only for the test. The journey mocks shell APIs but does not mock React Flow or concept behavior.
+The managed server enables `VITE_WRIGHT_WORKFLOW_RECOVERY=1` only for the test. The journey supplies a stateful mock workspace and workflow-source API but does not mock React Flow or concept behavior.
 
 ## Inspect manually
 
+Use an explicit database path in the recovery worktree. Do not let a relative
+API launch silently select an empty database from another branch, and do not
+point this review at the user's real Wright database.
+
+In API terminal 1:
+
+```powershell
+$reviewRoot = Join-Path (Get-Location) ".local-run/workflow-recovery-review"
+New-Item -ItemType Directory -Force $reviewRoot | Out-Null
+New-Item -ItemType Directory -Force (Join-Path $reviewRoot "workspace") | Out-Null
+$env:DATABASE_PATH = Join-Path $reviewRoot "state.db"
+$env:WRIGHT_API_MCP_AUTOSTART = "0"
+uv run --extra runtime uvicorn api.main:app --host 127.0.0.1 --port 8000
+```
+
+In web terminal 2:
+
 ```powershell
 $env:VITE_WRIGHT_WORKFLOW_RECOVERY = "1"
+$env:WRIGHT_WEB_API_PROXY_TARGET = "http://127.0.0.1:8000"
 npm run dev --workspace=apps/web -- --host 127.0.0.1 --port 5195
 ```
 
-Open `http://127.0.0.1:5195/workflow-recovery` and verify:
+Open `http://127.0.0.1:5195/`. If the isolated review database is new, create
+one workspace using the existing directory above; `Wright workflow review` is
+an example local-review name, not a production workspace. The dashboard must
+list it. Select the workspace and confirm the ordinary workspace URL contains
+the actual ID returned by the API (`/workspace/<real-id>`). Then choose
+**Workflows** inside that workspace; only that explicit action adds
+`?workflow=canonical`. If the default workflow file is missing, this action is
+explicit creation intent: Wright must idempotently create the validated default
+inside that workspace and open the editor immediately, with no missing-file
+confirmation screen. Re-entering **Workflows** must open the existing source
+without replacing its bytes or advancing its identity. Merely selecting the
+workspace creates no workflow. This setup neither copies nor claims to modify
+the user's real database.
 
-1. the provisional/`SIMULATED` authority strip;
-2. the three-treatment port lab;
-3. palette add/delete/undo/redo and attachment preview/replace;
-4. direct handle connection and accessible edge disconnect;
-5. Diagram/Code/Split correspondence and invalid-source containment;
-6. AI proposal assumptions, warnings, diff, preview, reject, and accept;
-7. queued → running → needs-input → recovered → succeeded simulation;
-8. STEP preview, report, download name, and lineage.
+Then verify:
 
-Stop on the first ambiguity. The exact subject below has product/visual-direction
-approval, but it is still not production authority and MUST NOT be merged or
-released under the current authorization.
+1. first Workflows entry bootstraps and immediately opens the compact
+   `mounting-bracket.workflow.wflow` file/status bar, including version,
+   validation, `PROVISIONAL`, and `SIMULATION` state; leave and re-enter once to
+   verify that the existing source and identity are preserved;
+2. reference images, design intent as text/common document, and approved
+   company context feeding one reviewed design specification;
+3. tolerance inspection appearing only after CAD or downstream work is selected;
+4. live drag before mouse-up and layout-only commit on release;
+5. concrete file/model/report names, mixed AI-draft plus engineer-review
+   provenance, and technical IDs only behind disclosure;
+6. Diagram/Source/Side by side correspondence and invalid-source containment;
+7. AI proposal assumptions, warnings, diff, preview, reject, and accept;
+8. queued → running → needs-input → recovered → succeeded simulation;
+9. STEP preview, report, download name, and full three-source lineage.
 
-## Recorded exact-subject gate — 2026-08-31 EDT
+Diagram, Source, and the inspector are synchronized views of one visible
+`workflows/mounting-bracket.workflow.wflow` file. Groups are optional, and the
+short example does not require phases. Host-managed revision, digest,
+compare-and-swap, and integrity records stay outside engineer-authored source
+and appear only as technical details. Referenced engineering files remain
+separate workspace items; layout and immutable workflow-test/run records are
+also separate. The current Add/View/Replace input control, simulation state,
+demo report, and demo STEP download are not persisted by saving the workflow
+source.
+
+At 1070×791, verify no document/page scrolling. The bounded source list or
+inspector may scroll internally. The nine-step workflow has no Find control;
+search appears only for graphs with 26 or more steps.
+
+Stop on the first ambiguity. Historical approval remains bound only to its exact
+subject below; the workspace-owned correction needs a fresh committed
+walkthrough before any new exact-subject claim. Neither subject is production
+authority, and neither authorizes merge or release.
+
+## Historical recorded exact-subject gate — 2026-08-31 EDT
 
 | Gate | Result |
 |---|---|
-| Strict JSON/YAML/DSL and graph conformance | **PASS · 23/23** |
-| Focused model, command, config, and route tests | **PASS · 35/35** |
-| Production TypeScript/Vite build | **PASS** · recovery remains a lazy route chunk |
+| Strict JSON/YAML/internal DSL and graph conformance | **PASS · 23/23** on the historical subject |
+| Focused model, command, renderer, and host tests | **PASS · 36/36** on the prior correction |
+| Production TypeScript/Vite build | **PASS** on the prior correction |
 | Chromium recovery journey | **PASS · 5/5** · includes pointer/keyboard handles, axe, reduced motion, 390×844 containment, run recovery, output popup, and download |
 | `npm ci --dry-run` | **PASS** · lockfile is reproducible; the existing `jsdom` Node-engine warning remains visible under local Node 25.2.0 |
 
@@ -84,23 +154,38 @@ The Vite native-config-loader and existing large-chunk warnings are recorded,
 not introduced or hidden by this recovery concept. No push, merge, release,
 external execution, or customer action occurred.
 
-## Inspect the digest-bound walkthrough
+## Inspect the digest-bound walkthroughs
 
-- Passing report: `artifacts/ui-walkthrough/workflow-recovery/20260901T031913Z-continuation-1/report.html`
-- Passing manifest SHA-256: `f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347`
-- Exact subject: `f9237763d6fa6e9748dfb7b713e753a7fc4b4d17`
-- Exact tree: `aeca6ab8294dd54112d3e9ac10148537af32b0f0`
-- Result: 50/50 steps, 99 raw and 99 annotated screenshots, 204
-  manifest-bound files, a 94,777,058-byte trace, and zero browser diagnostics.
+The original direction-approval baseline remains immutable at commit
+`f9237763d6fa6e9748dfb7b713e753a7fc4b4d17`, tree
+`aeca6ab8294dd54112d3e9ac10148537af32b0f0`, and manifest
+`f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347`.
+Its 50/50-step package remains historical approval evidence.
+
+The prior mechanical-engineer correction is bound separately:
+
+- Passing report: `artifacts/ui-walkthrough/workflow-recovery-usability/20260901T151651Z-continuation-5/report.html`
+- Passing manifest SHA-256: `e661bf45ff1449abc87399b928156fc336f367f260368a2966645a0026afd96e`
+- Exact subject: `c5fb7d8e4a722f84956ebe22085e7fdf38b1b1d5`
+- Exact tree: `148a935edd38e9abe91b9ed284cd04882acf59c6`
+- Result: 12/12 steps at 1070×791, 12 raw and 12 annotated
+  screenshots, 30 manifest-bound files, a 16,542,037-byte trace, and zero
+  browser diagnostics. The compact workflow-file/status bar measured 65 px.
 
 ```powershell
 python C:\Users\markb\.codex\skills\playwright-ui-walkthrough\scripts\validate_walkthrough.py `
-  artifacts\ui-walkthrough\workflow-recovery\20260901T031913Z-continuation-1
+  artifacts\ui-walkthrough\workflow-recovery-usability\20260901T151651Z-continuation-5
 ```
 
 Expected: `Walkthrough artifact structure is valid.` Earlier stopped roots are
-intentionally retained as failure-and-repair evidence. The linked passing
-continuation is the exact approved product/visual-direction subject.
+intentionally retained as failure-and-repair evidence. The prior package
+verifies material equivalence to the approved direction after the requesting
+engineer's corrections; it does not invent a second human approval.
+
+The workspace-owned engineer-source correction has no exact commit, tree,
+walkthrough, manifest, or approval claim yet. Generate and validate a fresh raw
+and annotated walkthrough only after the implementation is committed; do not
+reuse continuation 5 as current evidence.
 
 ## Verify the recovery dashboard
 
@@ -108,12 +193,16 @@ Open `http://127.0.0.1:8765/`. The server is launched against this recovery
 worktree and presents two deliberately separate ledgers:
 
 - governed EPP-F02B remains `BLOCKED`, 27/38, with T028–T038 open;
-- projected EPP-F02C recovery is `proposed`, unregistered, 57/60 through the
-  verified local T059 release-candidate checkpoint; T056, T058, and T060 remain open.
+- projected EPP-F02C recovery remains `proposed` and unregistered; consult the
+  refreshed task ledger for its current numerator/denominator because the
+  workspace-owned correction adds new dependency-ordered work after
+  continuation 5.
 
-The live recovery gallery serves only the exact frozen and passing recovery
-walkthrough roots. Report, status, manifest, frozen screenshot, and all seven
-recovery thumbnails return HTTP 200; raw encoded and plain `..` evidence-mount
+The live recovery gallery separates the frozen checkpoint, original approval
+baseline, and prior continuation-5 correction walkthrough. The workspace-owned
+correction remains pending and must not be shown as an exact walkthrough yet.
+Existing report, status, manifest, and selected screenshots return HTTP 200;
+raw encoded and plain `..` evidence-mount
 traversal attempts return HTTP 403. Headless Chromium verifies the recovery
 ledger, governed-truth warning, approved exact subject, incomplete customer readiness,
 eight loaded gallery images, no console/page errors, and no horizontal overflow at
@@ -198,7 +287,8 @@ npm run build --workspace=apps/web
 Expected: component projection rejects invalid internal scopes/paths, collapsed
 instances retain scoped run-lineage targets, expansion does not change revision
 or semantic digest, and the 100-block renderer switches to compact presentation
-while fit, minimap, stable-ID search, and selection remain available. The final
+with no search through 25 steps, then enables fit, minimap, stable-ID search,
+and selection at 26 or more. The final
 Chromium suite reports 6 passed. See
 `evidence/component-large-graph-promotion.md`; its 100-block result is bounded
 behavior evidence, not a production performance benchmark.
@@ -213,7 +303,7 @@ npx playwright test `
   --project=chromium
 ```
 
-Expected: 8/8 pass. The focused accessibility file proves keyboard activation
+Expected: 14/14 pass across the complete workflow and accessibility files. The focused accessibility file proves keyboard activation
 and focus order, modal focus containment/return, a two-times Chromium page
 scale, accessibility-tree names/roles, zero serious/critical Axe findings, and
 zero document overflow. See `evidence/accessibility-qualification.md`.
@@ -335,8 +425,10 @@ python -m pytest -q -p no:cacheprovider `
   tests/recovery/test_recovery_completion_audit.py
 ```
 
-Expected: audit status `PASS`, seven locally provable objective requirements
-passed, exact walkthrough manifest integrity intact, recovery ledger `57/60`,
-goal status `blocked_external`, open tasks exactly T056/T058/T060, prohibited
-actions empty, and customer readiness false. A passing audit deliberately does
-not convert the three external gates into completed work.
+Expected: audit status `PASS`, locally provable objective requirements passed,
+historical approval and prior continuation-5 integrity intact, the current task
+ledger reproduced exactly, prohibited actions empty, and customer readiness
+false. Until the workspace-owned exact walkthrough exists, the audit must show
+that evidence as pending rather than silently treating continuation 5 as the
+new subject. A passing audit does not convert external gates into completed
+work.

@@ -4,8 +4,10 @@ import { acceptRecoveryResult, aiDrawingProposal, applyRecoveryBatch, recoveryCo
 import { fromCanonicalWire, toCanonicalWire, type CanonicalWorkflowWire } from "./canonical-wire";
 import { cloneLayout, cloneWorkflow, initialLayout, initialWorkflow } from "./model";
 import { formatRecoveryDsl, parseRecoveryDsl } from "./recovery-dsl";
+import { formatRecoveryAuthoringSource, parseRecoveryAuthoringSource } from "./recovery-authoring";
 import goldenWire from "../../../../../specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json";
-import goldenDsl from "../../../../../specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.wflow?raw";
+import goldenAuthoringSource from "../../../../../specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.wflow?raw";
+import goldenInternalDsl from "../../../../../specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.internal-ir.wflow?raw";
 
 describe("recovery command and source conformance", () => {
   it("is a lossless ergonomic view of the committed canonical wire document", () => {
@@ -14,10 +16,20 @@ describe("recovery command and source conformance", () => {
     expect(toCanonicalWire(fromCanonicalWire(goldenWire as unknown as CanonicalWorkflowWire))).toEqual(goldenWire);
   });
 
-  it("uses the exact committed DSL grammar and golden source", () => {
+  it("keeps the exact full-IR projection as an internal conformance treatment", () => {
     const formatted = formatRecoveryDsl(initialWorkflow);
-    expect(formatted.text).toBe(goldenDsl);
-    expect(toCanonicalWire(parseRecoveryDsl(goldenDsl).workflow!)).toEqual(goldenWire);
+    expect(formatted.text).toBe(goldenInternalDsl);
+    expect(toCanonicalWire(parseRecoveryDsl(goldenInternalDsl).workflow!)).toEqual(goldenWire);
+  });
+
+  it("uses the exact committed engineering source without exposing host authority fields", () => {
+    const formatted = formatRecoveryAuthoringSource(initialWorkflow);
+    expect(formatted.text).toBe(goldenAuthoringSource);
+    const parsed = parseRecoveryAuthoringSource(goldenAuthoringSource, initialWorkflow);
+    expect(parsed.ok).toBe(true);
+    expect(toCanonicalWire(parsed.workflow!)).toEqual(goldenWire);
+    expect(formatted.text).not.toMatch(/^\s*(revision|parent|semantic_sha256):/m);
+    expect(formatted.text).not.toContain("block.");
   });
 
   it("round-trips every canonical identity through the disposable DSL", () => {
@@ -65,6 +77,21 @@ describe("recovery command and source conformance", () => {
     expect(initialLayout).toEqual(beforeLayout);
   });
 
+  it("rejects a valid canonical candidate when the public source cannot reconstruct it", () => {
+    const snapshot = cloneWorkflow(initialWorkflow);
+    snapshot.artifactContracts.find((item) => item.id === "artifact.design-specification")!.mediaType = "application/octet-stream";
+    const result = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(initialWorkflow.revision, "history", [{
+      kind: "restore_snapshot",
+      direction: "undo",
+      workflow: snapshot,
+      layout: cloneLayout(initialLayout),
+    }]));
+    expect(result.ok).toBe(false);
+    expect(result.workflow).toBeNull();
+    expect(result.diagnostics.map((item) => item.code)).toContain("WFR-SOURCE-TYPE-CHANGE-UNSUPPORTED");
+    expect(initialWorkflow.artifactContracts.find((item) => item.id === "artifact.design-specification")?.mediaType).toBe("text/markdown");
+  });
+
   it("fails a stale or invalid batch without a partial mutation", () => {
     const stale = applyRecoveryBatch(initialWorkflow, initialLayout, recoveryCommandBatch(initialWorkflow.revision - 1, "ai_proposal", [
       { kind: "set_block_title", blockId: "block.generate-geometry", title: "Changed" },
@@ -94,8 +121,8 @@ describe("recovery command and source conformance", () => {
   });
 
   it("translates valid text edits into the same command protocol", () => {
-    const editedSource = formatRecoveryDsl(initialWorkflow).text.replace("Create bracket CAD model", "Create production bracket CAD model");
-    const edited = parseRecoveryDsl(editedSource);
+    const editedSource = formatRecoveryAuthoringSource(initialWorkflow).text.replace("Create bracket CAD model", "Create production bracket CAD model");
+    const edited = parseRecoveryAuthoringSource(editedSource, initialWorkflow);
     expect(edited.ok).toBe(true);
     const commands = textEditCommands(initialWorkflow, edited.workflow!);
     expect(commands).toEqual([{ kind: "set_block_title", blockId: "block.generate-geometry", title: "Create production bracket CAD model" }]);

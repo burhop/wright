@@ -22,32 +22,50 @@ export function WorkspacePage() {
       return;
     }
 
+    let current = true;
+    setWorkspace(null);
+    setIsLoading(true);
+    setError(null);
+
     const loadWorkspace = async () => {
-      setIsLoading(true);
-      setError(null);
       try {
         const ws = await workspaceService.getWorkspace(workspaceId);
+        if (!current) return;
+        if (ws.workspace_id !== workspaceId) {
+          throw new Error("Wright returned a different workspace than the one requested.");
+        }
         // Activate the workspace session to ensure it is registered on the backend
-        await workspaceService.activateWorkspace(ws.session_id);
+        const activated = await workspaceService.activateWorkspace(ws.session_id);
+        if (!current) return;
+        if (!activated) {
+          throw new Error("Wright could not activate this workspace session.");
+        }
         setWorkspace(ws);
         logger.info("Workspace loaded and activated", {
           workspaceId,
           path: ws.local_path,
         });
       } catch (err) {
+        if (!current) return;
         logger.error("Failed to load workspace", { workspaceId, err });
         setError(
           err instanceof Error ? err.message : "Unable to open this workspace.",
         );
       } finally {
-        setIsLoading(false);
+        if (current) setIsLoading(false);
       }
     };
 
-    loadWorkspace();
+    void loadWorkspace();
+    return () => {
+      current = false;
+    };
   }, [workspaceId, navigate, logger]);
 
-  if (isLoading) {
+  const currentWorkspace = workspace?.workspace_id === workspaceId ? workspace : null;
+  const workspaceRouteIsChanging = workspace !== null && currentWorkspace === null;
+
+  if (isLoading || workspaceRouteIsChanging) {
     return (
       <div
         data-testid="page-workspace-loading"
@@ -68,7 +86,7 @@ export function WorkspacePage() {
     );
   }
 
-  if (error || !workspace) {
+  if (error || !currentWorkspace) {
     const blocked = error?.toLowerCase().includes("access blocked") ?? false;
     return (
       <div
@@ -145,9 +163,9 @@ export function WorkspacePage() {
     >
       <div data-testid="page-workspace" style={{ height: "100%" }}>
         <WorkspacePanel
-          workspaceId={workspace.workspace_id}
-          sessionId={workspace.session_id}
-          workspace={workspace}
+          workspaceId={currentWorkspace.workspace_id}
+          sessionId={currentWorkspace.session_id}
+          workspace={currentWorkspace}
           onSessionChange={handleSessionChange}
         />
       </div>

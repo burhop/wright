@@ -1,44 +1,158 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-async function mockRecoveryShell(page: Page): Promise<void> {
-  await page.route("**/api/**", async (route) => {
-    const path = new URL(route.request().url()).pathname;
-    if (path === "/api/auth/session/status") {
-      await route.fulfill({ json: { auth_required: false, authenticated: true } });
-      return;
-    }
-    if (path === "/api/setup/status") {
-      await route.fulfill({ json: { is_configured: true, active_agent: "hermes", theme: "dark" } });
-      return;
-    }
-    if (path === "/api/mcp/servers") {
-      await route.fulfill({ json: { servers: [] } });
-      return;
-    }
-    if (path === "/api/mcp/tools") {
-      await route.fulfill({ json: { tools: [] } });
-      return;
-    }
-    if (path === "/api/agent/sessions") {
-      await route.fulfill({ json: { sessions: [] } });
-      return;
-    }
-    if (path === "/api/workspace/recent" || path === "/api/workspace/list") {
-      await route.fulfill({ json: { workspaces: [] } });
-      return;
-    }
-    if (path.endsWith("/health")) {
-      await route.fulfill({ json: { state: "connected", latencyMs: 1 } });
-      return;
-    }
-    await route.fulfill({ status: 404, json: { detail: "Unmocked recovery-shell API" } });
-  });
-}
+import {
+  mockRecoveryWorkspace,
+  openRecoveryEditor,
+  publicWorkflowSource,
+} from "./fixtures/workflow-recovery";
 
-test("expands a reusable component and focuses stable identities without changing the accepted subject", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+test("automatically creates the default workflow when Workflows is opened", async ({ page }) => {
+  const state = await mockRecoveryWorkspace(page, { source: null });
+  await openRecoveryEditor(page);
+
+  await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
+  await expect(page.getByTestId("workflow-recovery-filebar")).toContainText("mounting-bracket.workflow.wflow · Saved in workspace");
+  await expect(page.getByTestId("workflow-source-missing")).toHaveCount(0);
+  await expect(page.getByTestId("workflow-source-create")).toHaveCount(0);
+  expect(state.missingReadCount()).toBe(1);
+  expect(state.createCount()).toBe(1);
+  expect(state.current()?.source).toBe(publicWorkflowSource);
+});
+
+test("loads and saves the workspace workflow with its current CAS identity", async ({ page }) => {
+  const state = await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
+
+  await page.getByTestId("workflow-recovery-block-block.generate-geometry").click();
+  await page.getByLabel("Thickness (mm)").fill("8");
+  await page.getByTestId("workflow-recovery-config-apply").click();
+  await expect(page.getByTestId("workflow-recovery-filebar")).toContainText("Unsaved changes");
+  await page.getByTestId("workflow-recovery-save").click();
+
+  await expect(page.getByTestId("workflow-recovery-save-status")).toContainText("Saved in workspace");
+  expect(state.updateCount()).toBe(1);
+  expect(state.current()?.storage_revision).toBe(2);
+  expect(state.current()?.definition_revision).toBe(3);
+  expect(state.current()?.source).toContain('settings: {"inside_radius_mm":4,"thickness_mm":8}');
+});
+
+test("binds decision and revision edges to explicit typed routing handles", async ({ page }) => {
+  const missingHandleDiagnostics: string[] = [];
+  page.on("console", (message) => {
+    if (message.text().includes("Couldn't create edge for") && message.text().includes("handle id")) {
+      missingHandleDiagnostics.push(message.text());
+    }
+  });
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
+
+  const revisionEdge = page.getByTestId("workflow-recovery-edge-rel.specification-revise");
+  await expect(revisionEdge).toBeVisible();
+  await expect(revisionEdge).toHaveAttribute(
+    "data-source-handle",
+    "routing.feedback.source.block.create-design-specification",
+  );
+  await expect(revisionEdge).toHaveAttribute(
+    "data-target-handle",
+    "routing.feedback.target.block.design-intent",
+  );
+  await expect(page.getByTestId("workflow-recovery-routing-handle-feedback-source-block.create-design-specification"))
+    .toHaveAttribute("data-handleid", "routing.feedback.source.block.create-design-specification");
+  await expect(page.getByTestId("workflow-recovery-routing-handle-feedback-target-block.design-intent"))
+    .toHaveAttribute("data-handleid", "routing.feedback.target.block.design-intent");
+
+  const decisionEdge = page.getByTestId("workflow-recovery-edge-rel.specification-accepted");
+  await expect(decisionEdge).toBeVisible();
+  await expect(decisionEdge).toHaveAttribute(
+    "data-source-handle",
+    "routing.flow.source.block.create-design-specification",
+  );
+  await expect(decisionEdge).toHaveAttribute(
+    "data-target-handle",
+    "routing.flow.target.block.generate-geometry",
+  );
+  expect(missingHandleDiagnostics).toEqual([]);
+});
+
+test("keeps the engineer's local edit visible when a CAS save conflicts", async ({ page }) => {
+  const state = await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
+
+  await page.getByTestId("workflow-recovery-view-code").click();
+  const editor = page.getByTestId("workflow-recovery-source-editor");
+  await editor.fill((await editor.inputValue()).replace("Create bracket CAD model", "Create bracket CAD model locally"));
+  await page.getByTestId("workflow-recovery-source-apply").click();
+  state.conflictNextUpdate();
+  await page.getByTestId("workflow-recovery-save").click();
+
+  await expect(page.getByTestId("workflow-recovery-save-status")).toContainText("changed elsewhere");
+  await expect(page.getByTestId("workflow-recovery-save-status")).toContainText("local edits are still here");
+  await expect(page.getByTestId("workflow-recovery-filebar")).toContainText("Unsaved changes");
+  await expect(editor).toHaveValue(/Create bracket CAD model locally/);
+  expect(state.updateCount()).toBe(1);
+  expect(state.current()?.source).toBe(publicWorkflowSource);
+});
+
+test("keeps the recovery editor bounded and three-column at 1070 by 791", async ({ page }) => {
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
+  await page.setViewportSize({ width: 1070, height: 791 });
+  const surfacePane = page.getByTestId("workspace-pane-surface");
+  if (await surfacePane.isVisible()) await surfacePane.click();
+
+  await expect(page.locator(".app-sidebar")).toHaveCount(0);
+
+  const palette = page.getByTestId("workflow-recovery-palette");
+  const canvas = page.getByTestId("workflow-recovery-canvas");
+  const inspector = page.getByTestId("workflow-recovery-inspector");
+  const [paletteBox, canvasBox, inspectorBox] = await Promise.all([
+    palette.boundingBox(),
+    canvas.boundingBox(),
+    inspector.boundingBox(),
+  ]);
+
+  expect(paletteBox).not.toBeNull();
+  expect(canvasBox).not.toBeNull();
+  expect(inspectorBox).not.toBeNull();
+  expect(paletteBox!.y).toBe(inspectorBox!.y);
+  expect(paletteBox!.x + paletteBox!.width).toBeLessThanOrEqual(canvasBox!.x + 1);
+  expect(canvasBox!.x + canvasBox!.width).toBeLessThanOrEqual(inspectorBox!.x + 1);
+  expect(canvasBox!.width).toBeGreaterThanOrEqual(500);
+  expect(inspectorBox!.y + inspectorBox!.height).toBeLessThanOrEqual(791);
+
+  const overflow = await page.evaluate(() => {
+    const select = (selector: string) => document.querySelector<HTMLElement>(selector)!;
+    const metric = (element: HTMLElement) => ({
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+      overflowY: getComputedStyle(element).overflowY,
+    });
+    return {
+      document: metric(document.documentElement),
+      body: metric(document.body),
+      main: metric(select(".app-shell__main")),
+      workspace: metric(select('[data-testid="workspace-panel"]')),
+      page: metric(select('[data-testid="page-workflow-recovery"]')),
+      concept: metric(select('[data-testid="workflow-recovery-concept"]')),
+      workbench: metric(select(".recovery-workbench")),
+      palette: metric(select('[data-testid="workflow-recovery-palette"]')),
+      inspector: metric(select('[data-testid="workflow-recovery-inspector"]')),
+    };
+  });
+
+  for (const container of [overflow.document, overflow.body, overflow.main, overflow.workspace, overflow.page, overflow.concept, overflow.workbench]) {
+    expect(container.scrollHeight).toBeLessThanOrEqual(container.clientHeight);
+  }
+  expect(overflow.workspace.overflowY).toBe("hidden");
+  expect(overflow.palette.overflowY).toBe("auto");
+  expect(overflow.inspector.overflowY).toBe("auto");
+  expect(overflow.palette.scrollHeight).toBeGreaterThan(overflow.palette.clientHeight);
+});
+
+test("expands a reusable component without adding search clutter to a small graph", async ({ page }) => {
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
 
   const concept = page.getByTestId("workflow-recovery-concept");
   const revision = await concept.getAttribute("data-revision");
@@ -52,19 +166,18 @@ test("expands a reusable component and focuses stable identities without changin
   await page.getByTestId("workflow-recovery-component-toggle-block.review-design").click();
   await expect(component).toHaveAttribute("data-component-collapsed", "false");
   await expect(page.getByTestId("workflow-recovery-component-addresses-block.review-design"))
-    .toContainText("component.review-cell.relationship.accept");
+    .toContainText("Accept the reviewed design");
 
-  await page.getByTestId("workflow-recovery-find-input").fill("block.export-step");
-  await page.getByTestId("workflow-recovery-find-submit").click();
-  await expect(page.getByRole("status").filter({ hasText: "Focused Export approved STEP file" })).toBeVisible();
+  await expect(page.getByTestId("workflow-recovery-find-input")).toHaveCount(0);
+  await page.getByTestId("workflow-recovery-block-block.export-step").click();
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Export approved STEP file");
   await expect(concept).toHaveAttribute("data-revision", revision ?? "2");
   await expect(concept).toHaveAttribute("data-semantic-digest", digest ?? "");
 });
 
 test("keeps overlapping edge labels behind blocks without losing keyboard edge selection", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
 
   const edgeLabel = page.getByTestId("workflow-recovery-edge-select-rel.report-to-review");
   await edgeLabel.focus();
@@ -78,8 +191,8 @@ test("keeps overlapping edge labels behind blocks without losing keyboard edge s
 });
 
 test("keeps one accepted definition across canvas, source, AI review, and simulation", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
 
   const concept = page.getByTestId("workflow-recovery-concept");
   await expect(concept).toBeVisible();
@@ -88,7 +201,7 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(page.getByText("PROVISIONAL · NOT PRODUCTION")).toBeVisible();
   await expect(page.getByText("SIMULATION", { exact: true })).toBeVisible();
   const filebar = page.getByTestId("workflow-recovery-filebar");
-  await expect(filebar).toContainText("mounting-bracket.workflow.wflow · one workflow file · all views synchronized");
+  await expect(filebar).toContainText("mounting-bracket.workflow.wflow · Saved in workspace");
   expect((await filebar.boundingBox())?.height).toBeLessThanOrEqual(72);
   await expect(page.getByText(/Build and review the work as a diagram/)).toHaveCount(0);
   await expect(page.locator(".react-flow__node")).toHaveCount(9);
@@ -99,10 +212,13 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(page.getByTestId("workflow-recovery-palette-context-hint")).toContainText("Tolerances come from the reviewed design specification");
   await expect(page.getByTestId("workflow-recovery-palette-search")).toHaveCount(0);
 
-  await page.getByTestId("workflow-recovery-block-block.create-design-specification").click();
+  const designSpecification = page.getByTestId("workflow-recovery-block-block.create-design-specification");
+  await designSpecification.focus();
+  await designSpecification.press("Enter");
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("AI drafts; engineer reviews");
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("AI prompt");
-  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Engineer checklist");
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Engineer approval checklist");
+  await page.getByTestId("workflow-recovery-block-review-toggle-block.create-design-specification").click();
   await expect(page.getByTestId("workflow-recovery-block-review-block.create-design-specification")).toHaveValue(/Accept when: An engineer accepted the design specification/);
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("These criteria come from this step's accept and revise paths");
 
@@ -119,8 +235,7 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await page.getByRole("button", { name: "Close dialog" }).click();
 
   await page.getByTestId("workflow-recovery-block-block.generate-geometry").click();
-  await expect(page.getByTestId("workflow-recovery-palette-search")).toBeVisible();
-  await page.getByTestId("workflow-recovery-palette-search").fill("tolerance");
+  await expect(page.getByTestId("workflow-recovery-palette-search")).toHaveCount(0);
   await page.getByTestId("workflow-recovery-palette-item-tolerance").click();
   await expect(concept).toHaveAttribute("data-revision", "3");
   await expect(page.getByTestId("workflow-recovery-block-block.tolerance-1")).toBeVisible();
@@ -163,10 +278,10 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
     const editor = element as HTMLTextAreaElement;
     return editor.value.slice(editor.selectionStart, editor.selectionEnd);
   });
-  expect(graphSelection).toContain("block block.generate-geometry");
+  expect(graphSelection).toContain("task generate_geometry");
   await synchronizedSource.evaluate((element) => {
     const editor = element as HTMLTextAreaElement;
-    const offset = editor.value.indexOf("block block.export-step") + 8;
+    const offset = editor.value.indexOf("task export_step") + 8;
     editor.focus();
     editor.setSelectionRange(offset, offset);
   });
@@ -174,16 +289,28 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Export approved STEP file");
   const revisionBeforeInvalid = await concept.getAttribute("data-revision");
   const source = synchronizedSource;
-  await source.fill("workflow workflow.mounting-bracket\n  schemaVersion: \"2.0.0-recovery.1\"\n");
+  await source.fill("workflow mounting_bracket\n  revision: 99\nend\n");
   await page.getByTestId("workflow-recovery-source-apply").click();
-  await expect(page.locator('[data-testid^="workflow-recovery-diagnostic-"]')).toBeVisible();
+  await expect(page.getByTestId("workflow-recovery-diagnostic-WFR-SOURCE-FIELD-MANAGED")).toBeVisible();
   await expect(concept).toHaveAttribute("data-revision", revisionBeforeInvalid ?? "8");
   await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
 });
 
 test("uses real typed handles and preserves revision during a simulated run", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  const canvasDiagnostics: string[] = [];
+  const recordCanvasDiagnostic = (text: string) => {
+    if (
+      text.includes("trying to drag a node that is not initialized")
+      || text.includes("Couldn't create edge for")
+      || text.includes("ResizeObserver loop")
+    ) {
+      canvasDiagnostics.push(text);
+    }
+  };
+  page.on("console", (message) => recordCanvasDiagnostic(`console ${message.type()}: ${message.text()}`));
+  page.on("pageerror", (error) => recordCanvasDiagnostic(`pageerror: ${error.message}`));
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
 
   await expect(concept).toHaveAttribute("data-semantic-digest", /^sha256:[a-f0-9]{64}$/);
@@ -205,6 +332,8 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await expect(concept).toHaveAttribute("data-revision", "2");
   await expect(concept).toHaveAttribute("data-semantic-digest", semanticBeforeDrag!);
   await expect.poll(() => concept.getAttribute("data-layout-digest")).not.toBe(layoutBeforeDrag);
+  await page.waitForTimeout(100);
+  expect(canvasDiagnostics).toEqual([]);
 
   const revision = await concept.getAttribute("data-revision");
   await page.getByTestId("workflow-recovery-run-start").click();
@@ -228,6 +357,10 @@ test("uses real typed handles and preserves revision during a simulated run", as
 
   const sourceHandle = page.getByTestId("workflow-recovery-handle-port.approved-geometry-out");
   const targetHandle = page.getByTestId("workflow-recovery-handle-port.approved-geometry-in");
+  // Move the non-semantic overview out of pointer hit-testing so this case targets the typed sockets.
+  await page.locator(".react-flow__minimap").evaluate((element) => {
+    (element as HTMLElement).style.pointerEvents = "none";
+  });
   await sourceHandle.dragTo(targetHandle);
   await expect(page.getByTestId("workflow-recovery-edge-rel.review-to-export")).toBeVisible();
   await expect(concept).toHaveAttribute("data-revision", "4");
@@ -237,7 +370,7 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await expect(concept).toHaveAttribute("data-revision", "5");
   await sourceHandle.focus();
   await sourceHandle.press("Enter");
-  await expect(page.getByRole("status")).toContainText("Connection started");
+  await expect(page.getByRole("status").filter({ hasText: "Connection started" })).toContainText("Connection started");
   await targetHandle.focus();
   await targetHandle.press("Enter");
   await expect(page.getByTestId("workflow-recovery-edge-rel.review-to-export")).toBeVisible();
@@ -245,8 +378,8 @@ test("uses real typed handles and preserves revision during a simulated run", as
 });
 
 test("promotes valid source and reviewed AI commands, recovers a run, and exposes lineage", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
   await page.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent").click();
 
@@ -285,17 +418,17 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
   await expect(page.getByTestId("workflow-recovery-block-block.generate-geometry")).toContainText("Create bracket CAD model");
 
   await page.getByTestId("workflow-recovery-run-start").click();
-  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 6 · waiting");
+  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 2 · waiting");
   await page.getByTestId("workflow-recovery-run-advance").click();
   await page.getByTestId("workflow-recovery-run-advance").click();
-  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 6 · needs input");
+  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 2 · needs input");
   await expect(page.getByTestId("workflow-recovery-block-block.review-design")).toHaveAttribute("data-run-state", "blocked");
   await page.getByTestId("workflow-recovery-run-recover").click();
   await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("running");
   for (let index = 0; index < 6; index += 1) {
     await page.getByTestId("workflow-recovery-run-advance").click();
   }
-  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 6 · complete");
+  await expect(page.getByTestId("workflow-recovery-run-mode")).toContainText("Workflow version 2 · complete");
   await expect(concept).toHaveAttribute("data-revision", "6");
 
   await page.getByTestId("workflow-recovery-block-block.export-step").click();
@@ -326,8 +459,8 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
 });
 
 test("keeps paired edits and the run overlay inside the local one-second feedback bound", async ({ page }) => {
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   await page.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent").click();
   await page.getByTestId("workflow-recovery-view-split").click();
   const source = page.getByTestId("workflow-recovery-source-editor");
@@ -362,8 +495,8 @@ test("keeps paired edits and the run overlay inside the local one-second feedbac
 
 test("keeps concept states accessible, reduced-motion legible, and mobile-contained", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await mockRecoveryShell(page);
-  await page.goto("/workflow-recovery");
+  await mockRecoveryWorkspace(page);
+  await openRecoveryEditor(page);
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
   await page.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent").click();
 
@@ -389,6 +522,7 @@ test("keeps concept states accessible, reduced-motion legible, and mobile-contai
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
+  await page.getByTestId("workspace-pane-surface").click();
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
   const overflow = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth }));
   expect(overflow.width).toBeLessThanOrEqual(overflow.viewport);

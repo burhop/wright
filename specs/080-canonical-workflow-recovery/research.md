@@ -1,14 +1,15 @@
 # Recovery Research and Decisions
 
-**Feature**: 080 Canonical Workflow Recovery  
-**Evidence cutoff**: 2026-08-31  
-**Decision posture**: sufficient for a disposable product concept; insufficient for production promotion
+**Feature**: 080 Canonical Workflow Recovery
+
+**Evidence cutoff**: 2026-09-01
+**Decision posture**: historical product direction approved; current workspace-owned correction awaits a fresh exact-subject walkthrough and remains insufficient for production promotion
 
 ## Research questions
 
 1. Which existing work is a production foundation, which is only evidence, and which product direction must stop?
 2. Can one complete IR represent the workflow without giving diagram, source, layout, AI, or run state competing authority?
-3. Which textual treatment best exposes block/port correspondence without prematurely closing `DEC-P0-002`?
+3. Which engineer-facing source treatment reads like an engineering script without exposing host revision/storage machinery or prematurely closing `DEC-P0-002`?
 4. Can React Flow supply direct manipulation and run overlays through the retained renderer seam?
 5. Which port treatment makes connection and artifact inspection separately discoverable?
 
@@ -28,13 +29,15 @@ Its direct manipulation was disabled, its five-person study did not run, and its
 
 ## Capability disposition
 
-The source audit extracts 859/859 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, the frozen prototype, and every named adjacent feature/spec source through 080 (including 055, 064, and 068–074). Wrapped requirements are classified from their complete statement rather than only their first physical line. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
+The source audit extracts 879/879 governed rows and maps them into 33/33 capability groups with no unexplained omission: 11/11 product gates, 100/100 engineering-process stories, 25/25 lessons, 20 priority decisions, the frozen prototype, and every named adjacent feature/spec source through 080 (including 055, 064, and 068–075 plus 078–079). Wrapped requirements are classified from their complete statement rather than only their first physical line. The full matrix is in [capability-inventory.md](capability-inventory.md); the deterministic check is in [evidence/capability-coverage.md](evidence/capability-coverage.md).
 
 The principal disposition is:
 
 - retain the model, validation, revision/CAS, service/API/browser, and renderer-adapter boundaries;
-- revise the canonical definition to cover phases, blocks, typed ports, all relationship kinds, artifacts, bindings, conditions, instructions, configuration, execution capability, and reusable components;
+- revise the canonical definition to cover stable tasks, optional groups, typed ports, all relationship kinds, artifacts, bindings, conditions, instructions, configuration, execution capability, and reusable components;
 - replace the current shell’s primary product grammar with a canvas-first block/flow treatment;
+- admit workflow authoring only from a real workspace and store one visible `.workflow.wflow` file there;
+- give engineers Diagram, Source, and Side by side while keeping host revisions, digests, compare-and-swap, and integrity records outside authored source;
 - keep exact binding details progressively disclosed;
 - keep AI as reviewed commands and runs as immutable projections;
 - defer production migration, release hardening, benchmark qualification, and permanent syntax/renderer commitments.
@@ -66,11 +69,23 @@ All treatments use the same 44-section mounting-bracket model and the same five 
 
 The original failures are preserved rather than hidden. Strict duplicate-key/non-finite handling plus global identity/reference/ownership/direction/type validation repaired the recovery boundary. The focused Python conformance suite passes 23/23, including duplicate-endpoint, feedback-source/order, cycle-policy, cardinality, reciprocal phase/port ownership, binding-map, component-interface controls, and exact semantic/layout history authority.
 
-Decision: strict JSON remains the internal interchange baseline; the compact DSL is only the disposable Code treatment because it exposes the clearest one-section-per-identity correspondence. YAML remains viable if a concrete-syntax-tree and comment/source-map policy is justified. No permanent user-facing syntax is selected.
+Historical decision: strict JSON remains the internal interchange baseline; the compact DSL was a disposable Code experiment because it exposed one-section-per-identity correspondence. YAML remains viable if a concrete-syntax-tree and comment/source-map policy is justified. No permanent user-facing syntax is selected by that experiment.
+
+**2026-09-01 correction after hands-on engineer review:** the measured compact DSL above is preserved only as `fixtures/mounting-bracket.workflow.internal-ir.wflow` historical/internal evidence. The visible `.wflow` is a contextual engineering authoring projection using `workflow`, `item`/file, `input`, `task`, `prompt`/instructions, settings, and review-gate vocabulary. It omits revisions, digests, canonical `type.*`/`block.*`/`port.*`/`artifact.*` identities, layout, and run state. Connection points use stable lower-snake names plus closed engineering kinds such as `design_intent`, `cad_model`, and `step_file`; Wright maps those friendly kinds to exact internal contracts. `group` is optional and the nine-step subject omits its low-value default groups; an explicitly grouped or large workflow can project them. The current friendly fixture is 15,071 bytes / 328 lines, supports the same five direct edits, and provides 62 source spans. Strict JSON/YAML remain internal canonical treatments; accepted source edits bind to an exact accepted base and lower through the command/validation boundary. Current measurements are in `evidence/syntax-evaluation.md`.
+
+## Workspace ownership and storage decision
+
+Workflow authoring has no global `/workflow-recovery` destination. A user first enters an existing workspace at `/workspace/<real-id>`, then chooses **Workflows**, which adds `?workflow=canonical`. That choice is explicit workspace-scoped creation intent. Wright performs a side-effect-free read and, when the default path is absent, an atomic create-if-absent bootstrap with the validated default, then opens the editor immediately. A concurrent or later entry returns the existing file unchanged; ordinary workspace entry creates nothing, and no bootstrap may overwrite source. The workspace stores one visible semantic file such as `workflows/mounting-bracket.workflow.wflow`. Compare-and-swap conflict handling protects later saves; host-managed storage revision, storage digest, semantic revision, and integrity history remain outside the engineer-authored source and may be disclosed as technical detail.
+
+This resolves the usability tradeoff in favor of a ready-to-use engineering tool rather than a missing-file setup screen. The rejected alternatives were global or ordinary-workspace auto-creation, which would create unowned or surprising state, and a second Create workflow confirmation, which adds no useful decision after the engineer has already chosen Workflows. Idempotent create-if-absent preserves the rigorous storage boundary without making that mechanism part of the engineer's task.
+
+This boundary deliberately does not claim that the source save persists selected attachments, canvas layout, simulation state, run records, the demo report, or the demo STEP download. Those remain separate records or fixtures until independently implemented and verified.
+
+Manual review must launch the recovery branch API with an explicit branch-compatible `DATABASE_PATH`. An isolated workspace named `Wright workflow review` is only an example of a local review setup using a disposable review database and directory. It is not evidence that the user's real Wright database or production workspace was changed.
 
 ## Renderer experiment
 
-`@xyflow/react` 12.11.3 is loaded only by the default-off recovery route. The recovery host projects vNext through the retained `DraftCanvasRenderer` seam. React Flow owns viewport, path rendering, drag mechanics, connection gestures, minimap, and controls. The host owns IDs, commands, validation, revisions, selection, source, proposals, and run projections.
+`@xyflow/react` 12.11.3 is loaded only by the feature-gated workspace workflow surface. The recovery host projects vNext through the retained `DraftCanvasRenderer` seam. React Flow owns viewport, path rendering, drag mechanics, connection gestures, minimap, and controls. The host owns IDs, commands, validation, revisions, selection, source, proposals, persistence, and run projections.
 
 New local browser evidence closes the prototype’s most important gap:
 
@@ -78,13 +93,15 @@ New local browser evidence closes the prototype’s most important gap:
 - pointer handle-to-handle connection using bounding-box coordinates;
 - separate artifact inspection buttons;
 - accessible relationship selection and disconnect;
-- graph/form/text/AI changes through the same batch protocol;
+- graph/form/source/AI changes through the same batch protocol;
 - non-color active block and edge cues;
 - keyboard-operable handle contract;
 - reduced-motion static directional treatment;
-- default-off route isolation and lazy loading.
+- workspace-only route isolation and lazy loading;
+- no step-search control through 25 steps, with search available at 26 or more;
+- fixed-height 1070×791 application containment with no document/page scrolling.
 
-The six-to-eight-block product journey is proven. The prior single-run 100-node prototype observation is retained only as non-qualifying evidence; production scale remains open.
+The nine-step product journey is proven on the prior `c5fb7d8e` correction subject, but the workspace-owned correction still needs a fresh exact committed walkthrough. The prior single-run 100-node prototype observation is retained only as non-qualifying evidence; bounded automated 25/26/100-step navigation does not close production scale.
 
 ## Port treatment laboratory
 
@@ -100,7 +117,7 @@ The concept uses the hybrid treatment. This is an expert comparative choice, not
 
 ## Risks carried beyond approval
 
-- The DSL owns a new grammar and only section-level source spans.
+- The engineer source owns a small grammar and 19 contextual source spans; comment preservation and a permanent syntax decision remain open.
 - React Flow dependency/scale and desktop embedding remain provisional.
 - The simulated AI and run paths prove grammar, not production integration.
 - The mounting-bracket fixture proves one coherent mechanical workflow, not domain breadth.
@@ -109,4 +126,4 @@ The concept uses the hybrid treatment. This is an expert comparative choice, not
 
 ## Decision summary
 
-The recovery direction is internally coherent and the exact `f9237763` subject is product/visual-direction approved: one complete typed model, one mutation protocol, separate layout/run records, lossless paired projections, real direct manipulation, reviewable AI, and a recognizable simulated output. The current authorization permits dependency-ordered locally safe implementation, but no mutating production lease, push, merge, publication, release, customer action, or readiness claim.
+The recovery direction is internally coherent and the exact `f9237763` subject remains product/visual-direction approved. The `c5fb7d8e` / continuation-5 package is prior automated correction evidence. The current workspace-owned correction adds one idempotently bootstrapped and compare-and-swap-saved engineer source file, optional groups, Diagram/Source/Side by side, bounded search, fixed-height containment, and workspace-only entry; its exact commit and walkthrough are pending. The current authorization permits dependency-ordered locally safe implementation, but no mutating production lease, push, merge, publication, release, customer action, or readiness claim.

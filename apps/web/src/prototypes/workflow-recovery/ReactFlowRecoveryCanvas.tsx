@@ -11,6 +11,7 @@ import {
   ReactFlow,
   getBezierPath,
   useReactFlow,
+  useNodesState,
   type Connection,
   type Edge,
   type EdgeProps,
@@ -18,7 +19,7 @@ import {
   type NodeChange,
   type NodeProps,
 } from "@xyflow/react";
-import { createContext, memo, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, memo, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import "@xyflow/react/dist/style.css";
 
 import type { DraftBlockProjection, DraftPortProjection } from "../../components/workflow-composer/draft-projection";
@@ -117,6 +118,14 @@ const roleLabel: Record<DraftBlockProjection["role"], string> = {
   release: "output",
 };
 
+function componentAddressLabel(semanticId: string, conceptKind: string): string {
+  if (semanticId.endsWith(".block.evaluate")) return "Evaluate the design review";
+  if (semanticId.endsWith(".relationship.accept")) return "Accept the reviewed design";
+  if (semanticId.endsWith(".artifact.approved")) return "Approved design record";
+  if (semanticId.endsWith(".port.approved")) return "Approved CAD model output";
+  return conceptKind.replace("_", " ");
+}
+
 function portQualifier(port: DraftPortProjection): string {
   const required = port.required ? "Required" : "Optional";
   return port.cardinality === "many" ? `${required} · multiple allowed` : required;
@@ -134,6 +143,52 @@ function portValueLabel(typeId: string): string {
   if (typeId === "type.file.step") return "STEP file";
   if (typeId === "type.package.review") return "review ZIP file";
   return "engineering input or output";
+}
+
+type RecoveryRoutingKind = "flow" | "feedback";
+type RecoveryRoutingDirection = "source" | "target";
+
+export function recoveryRelationshipHandleId(
+  blockId: string,
+  kind: RecoveryRoutingKind,
+  direction: RecoveryRoutingDirection,
+): string {
+  return `routing.${kind}.${direction}.${blockId}`;
+}
+
+export function recoveryRelationshipHandleBinding(
+  kind: RecoveryRoutingKind,
+  sourceBlockId: string,
+  targetBlockId: string,
+): { readonly sourceHandle: string; readonly targetHandle: string } {
+  return {
+    sourceHandle: recoveryRelationshipHandleId(sourceBlockId, kind, "source"),
+    targetHandle: recoveryRelationshipHandleId(targetBlockId, kind, "target"),
+  };
+}
+
+function RelationshipRoutingHandles({ blockId }: { readonly blockId: string }) {
+  return <>
+    {(["flow", "feedback"] as const).flatMap((kind) => (["source", "target"] as const).map((direction) => {
+      const id = recoveryRelationshipHandleId(blockId, kind, direction);
+      const isFeedback = kind === "feedback";
+      return (
+        <Handle
+          key={id}
+          id={id}
+          type={direction}
+          position={isFeedback ? Position.Bottom : direction === "source" ? Position.Right : Position.Left}
+          className={`recovery-routing-handle recovery-routing-handle--${kind}-${direction}`}
+          data-testid={`workflow-recovery-routing-handle-${kind}-${direction}-${blockId}`}
+          data-routing-kind={kind}
+          data-routing-direction={direction}
+          aria-hidden="true"
+          tabIndex={-1}
+          isConnectable={false}
+        />
+      );
+    }))}
+  </>;
 }
 
 function PortRow({
@@ -233,6 +288,7 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
         }
       }}
     >
+      <RelationshipRoutingHandles blockId={block.semanticId} />
       {data.active && <div className="recovery-block__active">▶ ACTIVE STEP</div>}
       {data.proposed && <div className="recovery-block__proposal">AI SUGGESTION · REVIEW BEFORE ADDING</div>}
       <header>
@@ -272,15 +328,18 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
           {data.componentState.targetedInternalSemanticIds.length > 0 && (
             <div className="recovery-component__targets" role="note">
               <b>{data.componentState.targetedInternalSemanticIds.length} review item{data.componentState.targetedInternalSemanticIds.length === 1 ? " needs" : "s need"} attention</b>
-              {data.componentState.targetedInternalSemanticIds.map((id) => <code key={id}>{id}</code>)}
+              {data.componentState.targetedInternalSemanticIds.map((id) => {
+                const address = data.componentState?.component.internalAddresses.find((item) => item.semanticId === id);
+                return <span key={id}>{componentAddressLabel(id, address?.conceptKind ?? "review item")}</span>;
+              })}
             </div>
           )}
           {!data.componentState.collapsed && (
             <ul data-testid={`workflow-recovery-component-addresses-${block.semanticId}`}>
               {data.componentState.component.internalAddresses.map((address) => (
                 <li data-semantic-id={address.semanticId} key={address.semanticId}>
-                  <span>{address.conceptKind.replace("_", " ")}</span>
-                  <code>{address.semanticId}</code>
+                  <span>{componentAddressLabel(address.semanticId, address.conceptKind)}</span>
+                  <small>{address.conceptKind.replace("_", " ")}</small>
                 </li>
               ))}
             </ul>
@@ -307,7 +366,7 @@ interface RecoveryEdgeData extends Record<string, unknown> {
 
 type RecoveryFlowEdge = Edge<RecoveryEdgeData, "recovery">;
 
-function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd, label, data, selected }: EdgeProps<RecoveryFlowEdge>) {
+function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, sourceHandleId, targetHandleId, markerEnd, label, data, selected }: EdgeProps<RecoveryFlowEdge>) {
   const [path, labelX, labelY] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, curvature: data?.kind === "feedback" ? 0.5 : 0.24 });
   const active = Boolean(data?.active);
   const stableLabelLane = [...id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 5 - 2;
@@ -319,6 +378,8 @@ function RecoveryEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, 
       data-semantic-id={data?.semanticId ?? id}
       data-kind={data?.kind ?? "data"}
       data-active={active}
+      data-source-handle={sourceHandleId ?? ""}
+      data-target-handle={targetHandleId ?? ""}
       onClick={(event) => {
         event.stopPropagation();
         data?.onSelect(data.semanticId);
@@ -363,11 +424,13 @@ function RecoveryCanvasNavigator({
   onSelect,
   componentStates,
   onToggleComponent,
+  showSearch,
 }: {
   readonly projection: Parameters<typeof findBlockByIdentity>[0];
   readonly onSelect: (semanticId: string) => void;
   readonly componentStates: readonly DraftComponentState[];
   readonly onToggleComponent: (semanticId: string) => void;
+  readonly showSearch: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
@@ -387,37 +450,39 @@ function RecoveryCanvasNavigator({
         { zoom: 1, duration: 250 },
       );
     }
-    setStatus(`Focused ${block.title} (${block.semanticId}).`);
+    setStatus(`Focused ${block.title}.`);
   };
-  return (
-    <form className="recovery-canvas__find nodrag nopan" onSubmit={(event) => { event.preventDefault(); focus(); }}>
-      <label htmlFor="workflow-recovery-find">Find step</label>
-      <input
-        id="workflow-recovery-find"
-        data-testid="workflow-recovery-find-input"
-        value={query}
-        placeholder="Step name or technical ID"
-        onChange={(event) => setQuery(event.currentTarget.value)}
-      />
-      <button data-testid="workflow-recovery-find-submit" type="submit">Show</button>
-      {status !== "" && <output role="status" aria-live="polite">{status}</output>}
-      {componentStates.length > 0 && (
-        <div className="recovery-canvas__components" aria-label="Grouped review step controls">
-          {componentStates.map((state) => (
-            <button
-              data-testid={`workflow-recovery-component-keyboard-${state.instanceSemanticId}`}
-              key={state.instanceSemanticId}
-              type="button"
-              aria-expanded={!state.collapsed}
-              onClick={() => onToggleComponent(state.instanceSemanticId)}
-            >
-              {state.collapsed ? "Show" : "Hide"} {state.component.title} details
-            </button>
-          ))}
-        </div>
-      )}
-    </form>
-  );
+  return <>
+    {showSearch && (
+      <form className="recovery-canvas__find nodrag nopan" onSubmit={(event) => { event.preventDefault(); focus(); }}>
+        <label htmlFor="workflow-recovery-find">Find step</label>
+        <input
+          id="workflow-recovery-find"
+          data-testid="workflow-recovery-find-input"
+          value={query}
+          placeholder="Step name"
+          onChange={(event) => setQuery(event.currentTarget.value)}
+        />
+        <button data-testid="workflow-recovery-find-submit" type="submit">Show</button>
+        {status !== "" && <output role="status" aria-live="polite">{status}</output>}
+      </form>
+    )}
+    {componentStates.length > 0 && (
+      <div className="recovery-canvas__components nodrag nopan" aria-label="Grouped review step controls">
+        {componentStates.map((state) => (
+          <button
+            data-testid={`workflow-recovery-component-keyboard-${state.instanceSemanticId}`}
+            key={state.instanceSemanticId}
+            type="button"
+            aria-expanded={!state.collapsed}
+            onClick={() => onToggleComponent(state.instanceSemanticId)}
+          >
+            {state.collapsed ? "Show" : "Hide"} {state.component.title} details
+          </button>
+        ))}
+      </div>
+    )}
+  </>;
 }
 
 export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selectedSemanticId, onIntent }) => {
@@ -426,7 +491,6 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   if (runIssue) throw new Error(runIssue.code);
   const [keyboardSource, setKeyboardSource] = useState<string | null>(null);
   const blocks = useMemo(() => projection.phases.flatMap((phase) => phase.blocks), [projection]);
-  const [previewPositions, setPreviewPositions] = useState<Readonly<Record<string, { x: number; y: number }>>>({});
   const [expandedComponentIds, setExpandedComponentIds] = useState<ReadonlySet<string>>(() => new Set());
   const detailLevel = graphDetailLevel(blocks.length);
   const componentTargets = useMemo(
@@ -443,31 +507,21 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
     () => new Map(projectComponentStates(projection, collapsedComponentIds, componentTargets).map((state) => [state.instanceSemanticId, state])),
     [projection, collapsedComponentIds, componentTargets],
   );
-  const toggleComponent = (semanticId: string) => setExpandedComponentIds((current) => {
+  const toggleComponent = useCallback((semanticId: string) => setExpandedComponentIds((current) => {
     const next = new Set(current);
     if (next.has(semanticId)) next.delete(semanticId);
     else next.add(semanticId);
     return next;
-  });
+  }), []);
   const gateOwners = useMemo(() => new Map(blocks.flatMap((block) => block.gates.map((gate) => [gate.semanticId, block.semanticId] as const))), [blocks]);
 
-  useEffect(() => {
-    setPreviewPositions((current) => {
-      const next = { ...current };
-      let changed = false;
-      for (const [semanticId, position] of Object.entries(current)) {
-        const accepted = blocks.find((block) => block.semanticId === semanticId)?.position;
-        if (accepted === undefined || (accepted.x === position.x && accepted.y === position.y)) {
-          delete next[semanticId];
-          changed = true;
-        }
-      }
-      return changed ? next : current;
-    });
-  }, [blocks]);
-
   const portLookup = useMemo(() => new Map(blocks.flatMap((block) => [...block.inputs, ...block.outputs]).map((port) => [port.semanticId, port])), [blocks]);
-  const onPortKey = (port: DraftPortProjection) => {
+  const blockIds = useMemo(() => new Set(blocks.map((block) => block.semanticId)), [blocks]);
+  const requireBlockEndpoint = (semanticId: string, relationshipId: string, endpoint: "source" | "target") => {
+    if (!blockIds.has(semanticId)) throw new Error(`RECOVERY_EDGE_${endpoint.toUpperCase()}_BLOCK_MISSING:${relationshipId}:${semanticId}`);
+    return semanticId;
+  };
+  const onPortKey = useCallback((port: DraftPortProjection) => {
     if (port.direction === "output") {
       setKeyboardSource((current) => current === port.semanticId ? null : port.semanticId);
       return;
@@ -476,27 +530,62 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       onIntent({ type: "create-connection", sourcePortId: keyboardSource, targetPortId: port.semanticId });
       setKeyboardSource(null);
     }
-  };
+  }, [keyboardSource, onIntent]);
 
-  const nodes: RecoveryFlowNode[] = blocks.map((block) => ({
-    id: block.semanticId,
-    type: "recovery",
-    position: previewPositions[block.semanticId] ?? { x: block.position.x, y: block.position.y },
-    selected: selectedSemanticId === block.semanticId,
-    data: {
-      block,
+  const projectedNodes = useMemo<RecoveryFlowNode[]>(() => blocks.map((block) => ({
+      id: block.semanticId,
+      type: "recovery",
+      position: { x: block.position.x, y: block.position.y },
       selected: selectedSemanticId === block.semanticId,
-      runState: runtime.run.steps[block.semanticId]?.state ?? "idle",
-      active: runtime.run.activeBlockId === block.semanticId,
-      proposed: runtime.proposedBlockIds.has(block.semanticId),
-      componentState: componentStates.get(block.semanticId) ?? null,
+      data: {
+        block,
+        selected: selectedSemanticId === block.semanticId,
+        runState: runtime.run.steps[block.semanticId]?.state ?? "idle",
+        active: runtime.run.activeBlockId === block.semanticId,
+        proposed: runtime.proposedBlockIds.has(block.semanticId),
+        componentState: componentStates.get(block.semanticId) ?? null,
+        detailLevel,
+        keyboardSource,
+        onSelect: (semanticId) => onIntent({ type: "select", semanticId }),
+        onPortKey,
+        onToggleComponent: toggleComponent,
+      },
+    })), [
+      blocks,
+      componentStates,
       detailLevel,
       keyboardSource,
-      onSelect: (semanticId) => onIntent({ type: "select", semanticId }),
+      onIntent,
       onPortKey,
-      onToggleComponent: toggleComponent,
-    },
-  }));
+      runtime.proposedBlockIds,
+      runtime.run.activeBlockId,
+      runtime.run.steps,
+      selectedSemanticId,
+      toggleComponent,
+    ]);
+  const [nodes, setNodes, applyPreviewNodeChanges] = useNodesState<RecoveryFlowNode>(projectedNodes);
+
+  useEffect(() => {
+    setNodes((current) => {
+      const currentById = new Map(current.map((node) => [node.id, node]));
+      return projectedNodes.map((projected) => {
+        const existing = currentById.get(projected.id);
+        if (existing === undefined) return projected;
+        return {
+          ...projected,
+          measured: existing.measured,
+          width: existing.width,
+          height: existing.height,
+          position: existing.dragging ? existing.position : projected.position,
+          dragging: existing.dragging,
+        };
+      });
+    });
+  }, [projectedNodes, setNodes]);
+
+  const previewNodeChanges = useCallback((changes: NodeChange<RecoveryFlowNode>[]) => {
+    applyPreviewNodeChanges(changes.filter((change) => change.type === "position" || change.type === "dimensions"));
+  }, [applyPreviewNodeChanges]);
 
   const edges: RecoveryFlowEdge[] = [
     ...projection.connections.map((connection) => ({
@@ -511,26 +600,36 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
       data: { semanticId: connection.semanticId, kind: "data" as const, active: runtime.run.activeRelationshipId === connection.semanticId, onSelect: (semanticId: string) => onIntent({ type: "select", semanticId }) },
     })),
-    ...projection.feedbackPaths.map((feedback) => ({
-      id: feedback.semanticId,
-      type: "recovery" as const,
-      source: gateOwners.get(feedback.from_gate_id) ?? feedback.from_gate_id,
-      target: feedback.to_block_id,
-      label: feedback.label,
-      selected: selectedSemanticId === feedback.semanticId,
-      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
-      data: { semanticId: feedback.semanticId, kind: "feedback" as const, active: runtime.run.activeRelationshipId === feedback.semanticId, onSelect: (semanticId: string) => onIntent({ type: "select", semanticId }) },
-    })),
-    ...runtime.overlayRelationships.map((relationship) => ({
-      id: relationship.id,
-      type: "recovery" as const,
-      source: relationship.sourceId,
-      target: relationship.targetId,
-      label: relationship.label,
-      selected: selectedSemanticId === relationship.id,
-      markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
-      data: { semanticId: relationship.id, kind: relationship.kind as "control" | "decision", active: runtime.run.activeRelationshipId === relationship.id, onSelect: (semanticId: string) => onIntent({ type: "select", semanticId }) },
-    })),
+    ...projection.feedbackPaths.map((feedback) => {
+      const source = requireBlockEndpoint(gateOwners.get(feedback.from_gate_id) ?? feedback.from_gate_id, feedback.semanticId, "source");
+      const target = requireBlockEndpoint(feedback.to_block_id, feedback.semanticId, "target");
+      return {
+        id: feedback.semanticId,
+        type: "recovery" as const,
+        source,
+        target,
+        ...recoveryRelationshipHandleBinding("feedback", source, target),
+        label: feedback.label,
+        selected: selectedSemanticId === feedback.semanticId,
+        markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
+        data: { semanticId: feedback.semanticId, kind: "feedback" as const, active: runtime.run.activeRelationshipId === feedback.semanticId, onSelect: (semanticId: string) => onIntent({ type: "select", semanticId }) },
+      };
+    }),
+    ...runtime.overlayRelationships.map((relationship) => {
+      const source = requireBlockEndpoint(relationship.sourceId, relationship.id, "source");
+      const target = requireBlockEndpoint(relationship.targetId, relationship.id, "target");
+      return {
+        id: relationship.id,
+        type: "recovery" as const,
+        source,
+        target,
+        ...recoveryRelationshipHandleBinding("flow", source, target),
+        label: relationship.label,
+        selected: selectedSemanticId === relationship.id,
+        markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
+        data: { semanticId: relationship.id, kind: relationship.kind as "control" | "decision", active: runtime.run.activeRelationshipId === relationship.id, onSelect: (semanticId: string) => onIntent({ type: "select", semanticId }) },
+      };
+    }),
   ];
 
   const connect = (connection: Connection) => {
@@ -539,18 +638,6 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
     const target = portLookup.get(connection.targetHandle);
     if (source?.direction !== "output" || target?.direction !== "input") return;
     onIntent({ type: "create-connection", sourcePortId: source.semanticId, targetPortId: target.semanticId });
-  };
-
-  const previewNodeChanges = (changes: NodeChange<RecoveryFlowNode>[]) => {
-    setPreviewPositions((current) => {
-      let next: Record<string, { x: number; y: number }> | null = null;
-      for (const change of changes) {
-        if (change.type !== "position" || change.position === undefined) continue;
-        next ??= { ...current };
-        next[change.id] = { x: change.position.x, y: change.position.y };
-      }
-      return next ?? current;
-    });
   };
 
   return (
@@ -578,7 +665,9 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         onNodeDragStop={(_, node) => {
           const x = Math.round(node.position.x);
           const y = Math.round(node.position.y);
-          setPreviewPositions((current) => ({ ...current, [node.id]: { x, y } }));
+          setNodes((current) => current.map((item) => item.id === node.id
+            ? { ...item, position: { x, y }, dragging: false }
+            : item));
           onIntent({ type: "move-block", semanticId: node.id, x, y });
         }}
         onEdgesDelete={(deleted) => deleted.forEach((edge) => onIntent({ type: "delete-connection", semanticId: edge.id }))}
@@ -634,6 +723,7 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
           onSelect={(semanticId) => onIntent({ type: "select", semanticId })}
           componentStates={[...componentStates.values()]}
           onToggleComponent={toggleComponent}
+          showSearch={detailLevel === "compact"}
         />
         <RecoveryCanvasControls />
       </ReactFlow>

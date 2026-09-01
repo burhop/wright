@@ -2,7 +2,7 @@
 
 **Result**: PASS
 
-- 859 unique source requirements mapped.
+- 879 unique source requirements mapped.
 - 33 of 33 canonical capabilities represented.
 - 11/11 product gates, 100/100 customer stories, and 25/25 prototype lessons present.
 - Every relevant legacy/frozen `FR-*` and `SC-*` is keyed by source path, so repeated local IDs cannot collide.
@@ -38,6 +38,6 @@
 | `specs/075-rivet-run-inspector/spec.md` | 32 |
 | `specs/078-process-definition-view/spec.md` | 23 |
 | `specs/079-visual-workflow-composition/spec.md` | 30 |
-| `specs/080-canonical-workflow-recovery/spec.md` | 56 |
+| `specs/080-canonical-workflow-recovery/spec.md` | 76 |
 
 The CSV is the exhaustive machine trace. `capability-inventory.md` is the review-oriented roll-up; neither changes the authority or passing status of its sources.

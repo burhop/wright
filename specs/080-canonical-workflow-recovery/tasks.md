@@ -4,7 +4,7 @@
 
 **Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
 
-**Scope rule**: Tasks T001–T050 form the recovery evidence slice. T051 is the mandatory product/visual approval stop. T052–T060 are explicitly deferred and MUST NOT start until T051 records an approved exact subject.
+**Scope rule**: Tasks T001–T050 form the original recovery evidence slice. T051 is the mandatory product/visual approval stop. T052–T060 were dependency-ordered post-approval work. T061–T067 record the first mechanical-engineer correction. T068–T079 supersede the remaining obsolete global-route/source and missing-file treatments with the approved workspace-owned engineer-authoring correction; a fresh exact subject is required before the approval/evidence loop may close.
 
 **Tests**: The specification requires conformance, component, browser, accessibility, responsive, and human-repeatable evidence, so test tasks are included in each user-story phase.
 
@@ -22,7 +22,7 @@
 - [x] T002 Record feature 080 metadata and branch authority in `.specify/feature.json` and `specs/080-canonical-workflow-recovery/spec.md`
 - [x] T003 [P] Add the default-off recovery feature flag in `apps/web/src/config/workflow-recovery.ts`
 - [x] T004 [P] Add exact provisional `@xyflow/react` 12.11.3 dependency metadata in `apps/web/package.json` and `package-lock.json`
-- [x] T005 Add the lazy guarded `/workflow-recovery` route and navigation in `apps/web/src/App.tsx`, `apps/web/src/components/layout/Sidebar.tsx`, and `apps/web/src/components/pages/WorkflowRecoveryPage.tsx`
+- [x] T005 Add the original lazy guarded `/workflow-recovery` route and navigation in `apps/web/src/App.tsx`, `apps/web/src/components/layout/Sidebar.tsx`, and `apps/web/src/components/pages/WorkflowRecoveryPage.tsx` (historical implementation, superseded and removed by T069)
 
 ---
 
@@ -32,7 +32,7 @@
 
 **Critical gate**: No user-story claim is valid unless the canonical fixture round-trips through every adapter without semantic loss.
 
-- [x] T006 [P] Inventory all 859 uniquely keyed requirement, gate, story, lesson, and prior-spec sources—including adjacent specs 055, 064, and 068–074—in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/capability-source-map.csv`
+- [x] T006 [P] Inventory all 879 uniquely keyed requirement, gate, story, lesson, and prior-spec sources—including adjacent specs 055, 064, and 068–074—in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/capability-source-map.csv`
 - [x] T007 [P] Define the canvas-first product authority and supersession boundary in `specs/080-canonical-workflow-recovery/north-star.md`
 - [x] T008 Define canonical IR, layout, proposal, renderer, and run decisions in `specs/080-canonical-workflow-recovery/decisions/0001-canonical-workflow-ir-vnext.md` and `specs/080-canonical-workflow-recovery/data-model.md`
 - [x] T009 [P] Publish strict canonical-definition, command-batch, layout, and run-projection schemas plus explicit supported-version and unknown-version contracts in `specs/080-canonical-workflow-recovery/contracts/`
@@ -71,9 +71,9 @@
 
 ---
 
-## Phase 4: User Story 2 — Edit One Workflow in Diagram and Code (Priority: P1)
+## Phase 4: User Story 2 — Edit One Workflow in Diagram and Source (Priority: P1)
 
-**Goal**: Make Diagram, Code, Split, and Inspector lossless views of one accepted definition.
+**Goal**: Make Diagram, Source, Side by side, and Inspector lossless views of one accepted definition.
 
 **Independent Test**: Move a block without changing semantic digest, apply a valid Code title change, select concepts in both directions, then apply invalid source and confirm the last-valid graph/revision remains authoritative.
 
@@ -84,9 +84,9 @@
 
 ### Implementation for User Story 2
 
-- [x] T026 [US2] Implement deterministic format/parse/source-map behavior for the disposable Code treatment in `apps/web/src/prototypes/workflow-recovery/recovery-dsl.ts`
+- [x] T026 [US2] Implement deterministic format/parse/source-map behavior for the original full-IR Code treatment in `apps/web/src/prototypes/workflow-recovery/recovery-dsl.ts` (retained as an internal projection and superseded publicly by T070)
 - [x] T027 [US2] Canonicalize semantic equality and digest input with stable snake_case wire keys in `apps/web/src/prototypes/workflow-recovery/command-system.ts` and `WorkflowRecoveryConcept.tsx`
-- [x] T028 [US2] Implement Diagram, Code, Split, last-valid source containment, and shared selection in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx`
+- [x] T028 [US2] Implement Diagram, Code, Split, last-valid source containment, and shared selection in `apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx` (public labels superseded by T070)
 - [x] T029 [US2] Bind diagnostics to stable semantic IDs and current source spans in `apps/web/src/prototypes/workflow-recovery/recovery-dsl.ts` and `WorkflowRecoveryConcept.tsx`
 
 **Checkpoint**: User Story 2 proves one accepted definition; source text, renderer state, and layout never become independent authority.
@@ -148,7 +148,7 @@
 ### Tests and Evidence for User Story 5
 
 - [x] T044 [P] [US5] Document retained foundations, provisional choices, limitations, and frozen-prototype parity in `specs/080-canonical-workflow-recovery/research.md`, `prototype-parity.md`, and `evidence/react-flow-recovery.md`
-- [x] T045 [P] [US5] Verify capability coverage remains 859/859 with current recovery completion gates retained in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/evidence/capability-coverage.json`
+- [x] T045 [P] [US5] Verify capability coverage remains 879/879 with current recovery completion gates retained in `scripts/recovery/audit_capability_coverage.py` and `specs/080-canonical-workflow-recovery/evidence/capability-coverage.json`
 - [x] T046 [US5] Run and record conformance, focused Vitest, web build, full recovery Chromium, accessibility, responsive, schema, capability, program, freeze, and package-lock dry-run gates against the final source in `specs/080-canonical-workflow-recovery/quickstart.md`
 - [x] T047 [US5] Capture the complete raw/annotated Playwright walkthrough, trace, browser diagnostics, manifest, status, and traffic-light report against the exact committed review subject in `artifacts/ui-walkthrough/workflow-recovery/<timestamp>/`
 - [x] T048 [US5] Bind the final exact walkthrough paths into `specs/080-canonical-workflow-recovery/capability-inventory.md` and update frozen-versus-recovery evidence in `specs/080-canonical-workflow-recovery/evidence/prototype-side-by-side.md`
@@ -191,11 +191,32 @@
 
 - [x] T061 Preserve a failed-first raw/annotated walkthrough checkpoint for the seven reported usability issues in `artifacts/ui-walkthrough/workflow-recovery-usability/20260901T135322Z/`
 - [x] T062 Replace the fictional single PDF-brief input with three explicit sources—reference images, design intent as text/common document, and approved company context—feeding one reviewed design specification in the canonical model and UI
-- [x] T063 Repair live drag projection, give the minimap an explicit current-view frame, remove decorative phase backdrops, use contextual downstream additions, and move internal terminology behind progressive disclosure
+- [x] T063 Repair live drag projection, give the minimap an explicit current-view frame, remove decorative phase backdrops, use contextual downstream additions, move internal terminology behind progressive disclosure, and replace the oversized hero with a compact single-workflow-file/status bar
 - [x] T064 Synchronize the revision-2 JSON, YAML, workflow-language, and layout fixtures and update browser, TypeScript, Python kernel, repository, security, and offline tests without rewriting historical revision-1 evidence
 - [ ] T065 Capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated report against the exact committed correction subject
 - [ ] T066 Bind the user's direction approval and correction feedback honestly to that exact subject; refresh capability, parity, quickstart, analysis, dashboard, and approval evidence without inventing reviewer facts
 - [ ] T067 Run focused and broad validation, record the current one-engineer result, and leave T056 open for representative moderated participants and real screen-reader evidence
+
+---
+
+## Phase 11: Workspace-Owned Engineer Authoring Correction
+
+**Purpose**: Apply the requesting mechanical engineer's workspace-ownership, single-page, and code-literate vocabulary direction without weakening the canonical model, typed commands, atomic persistence, or evidence gates.
+
+**Independent Test**: Enter the canonical editor only by choosing Workflows from a real workspace; verify that a missing friendly `.workflow.wflow` file is idempotently bootstrapped and opened immediately, that repeated entry opens existing source unchanged, then edit the same definition in Diagram and Source, save and reopen it, preserve local edits across a stale compare-and-set failure, verify that the nine-step graph has no low-value search or phase backdrop, and complete the exact 1070×791 journey without document scrolling.
+
+- [x] T068 Update `spec.md`, `plan.md`, `tasks.md`, and the requirements checklist so engineer-facing source vocabulary, optional groups, workspace ownership, host-managed metadata, atomic CAS persistence, fixed-height layout, and compatibility are explicit without weakening internal software-development terminology
+- [x] T069 Remove global recovery/composer routes and navigation; expose canonical workflows only through an active workspace while preserving ordinary Rivet behavior in `apps/web/src/App.tsx`, `apps/web/src/components/layout/Sidebar.tsx`, `apps/web/src/components/chat/WorkspacePanel.tsx`, and their tests
+- [x] T070 Split the friendly contextual public source from the full internal IR projection; lower valid source edits through the closed canonical command set, reject host-managed fields and unresolved structural edits, and synchronize exact TypeScript/Python fixtures and conformance evidence in `recovery-authoring.ts`, `command-system.ts`, and `specs/080-canonical-workflow-recovery/fixtures/`
+- [x] T071 Implement path-confined, size-bounded, atomic compare-and-set storage for one visible workspace `.workflow.wflow` file with hidden host metadata and no creation from plain read or ordinary workspace entry in `packages/workspace_service/`, `apps/api/`, and focused tests
+- [x] T072 Integrate typed load, the original explicit-create boundary, semantic save, saved/unsaved state, ordinary failure, stale-conflict containment, and read-only technical details in `workspace-service.ts`, `WorkflowRecoveryPage.tsx`, `WorkflowRecoveryConcept.tsx`, and focused tests (missing-file interaction superseded by T079)
+- [x] T073 Remove low-value search from the nine-step graph, retain bounded search at 26 or more tasks, keep optional groups non-decorative, compact the file/status bar, and enforce the no-document-scroll 1070×791 workbench in the canvas, concept, and CSS component tests
+- [x] T074 Update the workspace-entered Playwright journey and accessibility checks for the original missing-file create interaction, existing-file load, Diagram/Source correspondence, save, conflict containment, proposal/run/output behavior, exact viewport containment, and browser diagnostics in `tests/ui-integration/workflow-recovery*.spec.ts` (missing-file interaction superseded by T079)
+- [x] T075 Run focused and broad API/service, Python conformance, Vitest, production build, mocked Playwright, accessibility, responsive, capability, freeze, and completion-audit gates; repair failures without changing the approved direction
+- [ ] T076 Create a coherent local implementation commit, then capture a fresh complete raw/annotated Playwright walkthrough, trace, diagnostics, status, manifest, and validated clickable report against that exact committed subject
+- [ ] T077 Bind the requesting user's recorded direction approval and subsequent workspace/vocabulary feedback honestly to the exact subject; refresh capability, parity, quickstart, Spec Kit analysis, dashboard, and approval evidence without inventing reviewer facts
+- [ ] T078 Record the current one-mechanical-engineer result and internal-versus-visible vocabulary boundary, keep T056 and T058 open, and leave push/merge/publication/release/customer actions unperformed
+- [x] T079 Replace the missing-file confirmation state with workspace-scoped idempotent default bootstrap: entering Workflows creates and immediately opens the validated default only when absent, re-entry and first-entry races preserve existing source without identity advance, ordinary workspace/global entry creates nothing, and focused service/API/component/browser tests prove the boundary in `packages/workspace_service/`, `apps/api/`, `apps/web/src/components/pages/WorkflowRecoveryPage.tsx`, `apps/web/src/services/workspace-service.ts`, and their tests
 
 ---
 
@@ -211,7 +232,8 @@
 - **US5** consumes completed US1–US4 evidence and must close before product review.
 - **T051** depends on T046–T050.
 - **T052–T060** depend on an approved T051 exact subject and separate implementation authorization.
-- **T061–T067** form a bounded correction loop triggered by the requesting mechanical engineer's hands-on feedback; T065 must bind the corrected exact subject before T066 or T067 may close.
+- **T061–T067** form the first bounded correction loop triggered by the requesting mechanical engineer's hands-on feedback; their remaining evidence work is superseded by the more complete T068–T079 loop.
+- **T068–T073** implement the workspace/source correction and may proceed in dependency-safe parallel slices; T074 follows their integrated interfaces, T075 validates the whole subject, and T079 applies the latest hands-on first-entry correction. T076 may commit and capture the exact subject only after the T079 implementation and rerun gates pass; only then may T077–T078 close.
 
 ### User-story completion order
 
@@ -219,7 +241,9 @@
 Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 approval STOP
                                                                    |
                                                                    ├─ approved + separately authorized → T052–T060
-                                                                   └─ hands-on correction → T061–T067 → refreshed exact subject
+                                                                   └─ hands-on correction → T061–T067
+                                                                                              ↓
+                                                               workspace/source correction → T068–T075 → T079 → T076–T078 → refreshed exact subject
 ```
 
 ### Parallel opportunities
@@ -231,7 +255,7 @@ Setup → Canonical foundation → {US1, US2} → {US3, US4} → US5 → T051 ap
 - US4 fixture verification and run-projection tests can proceed in parallel.
 - T044 and T045 can run in parallel; T047 walkthrough capture must use the fully verified subject from T046.
 - Post-approval T053/T054 may run in parallel only after T052 fixes the promoted version/migration boundary.
-- T065 exact-subject capture follows T061–T064; the documentation/dashboard refresh in T066 and broad validation record in T067 may proceed only against that captured subject.
+- T074 can run after T069–T073 stabilize; T075 validation may overlap independent stacks. T079's first-entry correction and its focused tests must pass before T076 exact-subject capture. Documentation/dashboard/approval work in T077–T078 may proceed only against the captured exact subject.
 
 ## Parallel examples
 
@@ -249,8 +273,9 @@ US5: T044 parity documentation || T045 capability audit
 2. Treat Phase 2 plus US1/US2 as the minimum product-recovery foundation.
 3. Add AI review and simulated run evidence without granting either authority.
 4. Complete T046–T050 against one exact worktree subject.
-5. Bind the final exact subject to the user's recorded product-direction approval at T051 only when it remains materially equivalent to the reviewed experience.
-6. After an approved T051, continue only dependency-ordered locally safe work explicitly covered by the user's authorization; push, merge, publication, release, destructive external actions, and materially different product direction remain prohibited.
+5. Bind an exact subject to the user's recorded product-direction approval at T051 only when it remains materially equivalent to the reviewed experience.
+6. Apply the user's subsequent hands-on corrections through T061–T079, preserving failed-first evidence and producing a new exact-subject walkthrough rather than treating the earlier approval as proof of the changed implementation.
+7. Continue only dependency-ordered locally safe work explicitly covered by the user's authorization; push, merge, publication, release, destructive external actions, and materially different product direction remain prohibited.
 
 ## Notes
 

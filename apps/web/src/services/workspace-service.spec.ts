@@ -10,6 +10,8 @@ import {
   workspaceService,
   type EngineeringScenarioPreflight,
   type SupportDiagnosticPreview,
+  WorkspaceWorkflowSourceConflictError,
+  WorkspaceWorkflowSourceNotFoundError,
 } from "./workspace-service";
 
 const digest = "d".repeat(64);
@@ -20,6 +22,47 @@ function response(value: unknown, status = 200): Response {
     headers: { "Content-Type": "application/json" },
   });
 }
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((promiseResolve, promiseReject) => {
+    resolve = promiseResolve;
+    reject = promiseReject;
+  });
+  return { promise, resolve, reject };
+}
+
+describe("workspace activation client", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    mocks.fetch.mockReset();
+  });
+
+  it("serializes different workspace activations so the latest request completes last", async () => {
+    const first = deferred<Response>();
+    const second = deferred<Response>();
+    const requestedSessions: string[] = [];
+    mocks.fetch.mockImplementation(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const sessionId = JSON.parse(String(init?.body)).session_id as string;
+      requestedSessions.push(sessionId);
+      return sessionId === "session-a" ? first.promise : second.promise;
+    });
+
+    const activationA = workspaceService.activateWorkspace("session-a");
+    await vi.waitFor(() => expect(requestedSessions).toEqual(["session-a"]));
+    const activationB = workspaceService.activateWorkspace("session-b");
+    await Promise.resolve();
+    expect(requestedSessions).toEqual(["session-a"]);
+
+    first.resolve(response({ success: true }));
+    await expect(activationA).resolves.toBe(true);
+    await vi.waitFor(() => expect(requestedSessions).toEqual(["session-a", "session-b"]));
+
+    second.resolve(response({ success: true }));
+    await expect(activationB).resolves.toBe(true);
+  });
+});
 
 describe("engineering scenario workspace client", () => {
   beforeEach(() => {
@@ -335,5 +378,107 @@ describe("Rivet run inspection workspace client", () => {
       ),
       { cache: "no-store" },
     );
+  });
+});
+
+describe("workspace workflow source client", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    mocks.fetch.mockReset();
+  });
+
+  const workflowDocument = {
+    workspace_id: "workspace-1",
+    path: "workflows/mounting-bracket.workflow.wflow",
+    storage_revision: 3,
+    storage_digest: "a".repeat(64),
+    definition_revision: 2,
+    metadata_authority: "wright_host" as const,
+    size_bytes: 128,
+    source: "workflow mounting_bracket\nend\n",
+  };
+
+  it("loads an exact workspace path without creating it", async () => {
+    mocks.fetch.mockResolvedValue(response(workflowDocument));
+
+    await expect(workspaceService.getWorkspaceWorkflowSource(
+      "session 1",
+      "workflows/mounting bracket.workflow.wflow",
+    )).resolves.toEqual(workflowDocument);
+
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/workspace/workflow-sources?session_id=session+1&path=workflows%2Fmounting+bracket.workflow.wflow"),
+      { cache: "no-store" },
+    );
+    expect(mocks.fetch.mock.calls[0]?.[1]).not.toHaveProperty("method", "POST");
+  });
+
+  it("reports a missing workflow file as an explicit non-creating state", async () => {
+    mocks.fetch.mockResolvedValue(response({ message: "missing" }, 404));
+    await expect(workspaceService.getWorkspaceWorkflowSource("session", workflowDocument.path))
+      .rejects.toBeInstanceOf(WorkspaceWorkflowSourceNotFoundError);
+  });
+
+  it("creates only after an explicit call and leaves definition revision assignment to the host", async () => {
+    mocks.fetch.mockResolvedValue(response(workflowDocument, 201));
+    await expect(workspaceService.createWorkspaceWorkflowSource(
+      "session",
+      workflowDocument.path,
+      workflowDocument.source,
+    )).resolves.toEqual(workflowDocument);
+    expect(JSON.parse(String(mocks.fetch.mock.calls[0]?.[1]?.body))).toEqual({
+      session_id: "session",
+      path: workflowDocument.path,
+      source: workflowDocument.source,
+    });
+  });
+
+  it("saves with compare-and-swap storage identity", async () => {
+    mocks.fetch.mockResolvedValue(response({ ...workflowDocument, storage_revision: 4 }));
+    await workspaceService.updateWorkspaceWorkflowSource(
+      "session",
+      workflowDocument.path,
+      "updated source",
+      3,
+      workflowDocument.storage_digest,
+      true,
+    );
+    expect(JSON.parse(String(mocks.fetch.mock.calls[0]?.[1]?.body))).toEqual({
+      session_id: "session",
+      path: workflowDocument.path,
+      source: "updated source",
+      expected_storage_revision: 3,
+      expected_storage_digest: workflowDocument.storage_digest,
+      semantic_change_validated: true,
+    });
+  });
+
+  it("projects a stale compare-and-swap response without exposing server text", async () => {
+    mocks.fetch.mockResolvedValue(response({
+      error_code: "workflow_source_conflict",
+      message: "server text",
+      trace_id: "trace-private",
+      details: {
+        current_storage_revision: 9,
+        current_storage_digest: "b".repeat(64),
+      },
+    }, 409));
+
+    const failure = await workspaceService.updateWorkspaceWorkflowSource(
+      "session",
+      workflowDocument.path,
+      "local edits",
+      3,
+      workflowDocument.storage_digest,
+      true,
+    ).catch((error: unknown) => error);
+    expect(failure).toBeInstanceOf(WorkspaceWorkflowSourceConflictError);
+    expect(failure).toMatchObject({
+      code: "workflow_source_conflict",
+      currentStorageRevision: 9,
+      currentStorageDigest: "b".repeat(64),
+    });
+    expect((failure as Error).message).toContain("local edits were kept");
+    expect((failure as Error).message).not.toContain("server text");
   });
 });

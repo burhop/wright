@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FileTree from "../common/FileTree";
 import DiffViewer from "../common/DiffViewer";
 import EditorTabs from "./EditorTabs";
@@ -32,10 +32,14 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
-import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
-import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
+import {
+  rivetWorkflowsTabEnabled,
+  workspaceSurfacesEnabled,
+} from "../../services/surfaces/feature-flags";
+import { workflowRecoveryEnabled } from "../../config/workflow-recovery";
 import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
 import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
+import { WorkflowRecoveryPage } from "../pages/WorkflowRecoveryPage";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -51,6 +55,11 @@ import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
 const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
+const WORKSPACE_WORKFLOW_FILE_PATH = "/workflows/mounting-bracket.workflow.wflow";
+
+function isWorkspaceWorkflowTab(path: string | null): boolean {
+  return normalizeEditorTabPath(path ?? "") === WORKSPACE_WORKFLOW_FILE_PATH;
+}
 
 function directRivetTabPath(slug: string): string {
   return `${DIRECT_RIVET_TAB_PREFIX}/${slug}/workflow.rivet-project`;
@@ -161,8 +170,14 @@ export function WorkspacePanel({
     cancelActiveStream,
   } = useChat();
   const navigate = useNavigate();
+  const location = useLocation();
   const surfacesEnabled = workspaceSurfacesEnabled();
-  const workflowsTabEnabled = rivetWorkflowsTabEnabled();
+  const recoveryWorkflowEnabled = workflowRecoveryEnabled();
+  const rivetWorkflowEnabled = rivetWorkflowsTabEnabled();
+  const canonicalWorkflowRequested =
+    new URLSearchParams(location.search).get("workflow") === "canonical";
+  const canonicalWorkflowAvailable =
+    recoveryWorkflowEnabled && canonicalWorkflowRequested;
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -695,6 +710,16 @@ export function WorkspacePanel({
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
           const tabPath = normalizeEditorTabPath(tab.path);
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
+          if (isWorkspaceWorkflowTab(tabPath) || tab.type === "workflow") {
+            if (canonicalWorkflowAvailable) {
+              openTransientTab({
+                name: "mounting-bracket.workflow.wflow",
+                path: WORKSPACE_WORKFLOW_FILE_PATH,
+                type: "workflow",
+              });
+            }
+            continue;
+          }
           if (
             isDirectRivetTab(tabPath) ||
             tab.type === "rivet" ||
@@ -746,13 +771,22 @@ export function WorkspacePanel({
           await openTab(file, "preview", workspaceFileSessionId || undefined);
         }
         if (savedLayout.activeTabPath) {
+          const normalizedActiveTab = normalizeEditorTabPath(
+            savedLayout.activeTabPath,
+          );
+          if (
+            isWorkspaceWorkflowTab(normalizedActiveTab) &&
+            !canonicalWorkflowAvailable
+          ) {
+            return;
+          }
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(
             savedLayout.activeTabPath,
           );
           setActiveTabPath(
             savedWorkflowSlug
               ? directRivetTabPath(savedWorkflowSlug)
-              : normalizeEditorTabPath(savedLayout.activeTabPath),
+              : normalizedActiveTab,
           );
         }
       };
@@ -760,6 +794,7 @@ export function WorkspacePanel({
     }
   }, [
     savedLayout,
+    canonicalWorkflowAvailable,
     workspaceFileSessionId,
     openTab,
     openTransientTab,
@@ -769,7 +804,11 @@ export function WorkspacePanel({
   // Pluggable resolution of active tab viewer
   useEffect(() => {
     if (!activeTabPath || !viewerContainerRef.current) return;
-    if (isDirectRivetTab(activeTabPath) || isDirectBrepTab(activeTabPath)) {
+    if (
+      isWorkspaceWorkflowTab(activeTabPath) ||
+      isDirectRivetTab(activeTabPath) ||
+      isDirectBrepTab(activeTabPath)
+    ) {
       viewerContainerRef.current.replaceChildren();
       return;
     }
@@ -1413,6 +1452,34 @@ export function WorkspacePanel({
     }
   };
 
+  const openWorkspaceWorkflowTab = useCallback(() => {
+    if (!_workspaceId || !workspaceFileSessionId) return;
+    setIsSidebarCollapsed(true);
+    openTransientTab({
+      name: "mounting-bracket.workflow.wflow",
+      path: WORKSPACE_WORKFLOW_FILE_PATH,
+      type: "workflow",
+    });
+    if (surfaceLayout.mode === "narrow") {
+      surfaceLayoutDispatch({
+        type: "select_narrow_pane",
+        pane: "surface",
+      });
+    }
+  }, [
+    _workspaceId,
+    openTransientTab,
+    surfaceLayout.mode,
+    surfaceLayoutDispatch,
+    workspaceFileSessionId,
+  ]);
+
+  useEffect(() => {
+    if (canonicalWorkflowAvailable) {
+      openWorkspaceWorkflowTab();
+    }
+  }, [canonicalWorkflowAvailable, openWorkspaceWorkflowTab]);
+
   const openRivetWorkflowTab = useCallback(
     (slug?: string) => {
       if (!workspaceFileSessionId) return;
@@ -1486,6 +1553,22 @@ export function WorkspacePanel({
     openBrepPanelTab();
   }, [activeSessionStreamActivity, openBrepPanelTab]);
 
+  const workspaceWorkflowTabs = canonicalWorkflowAvailable
+    ? openTabs.filter(
+        (tab) => isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow",
+      )
+    : [];
+  const activeWorkspaceWorkflow =
+    canonicalWorkflowAvailable && isWorkspaceWorkflowTab(activeTabPath);
+
+  useEffect(() => {
+    if (canonicalWorkflowAvailable) return;
+    for (const tab of openTabs) {
+      if (isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow") {
+        closeTab(tab.path);
+      }
+    }
+  }, [canonicalWorkflowAvailable, closeTab, openTabs]);
   const directRivetTabs = openTabs.filter(
     (tab) => isDirectRivetTab(tab.path) || tab.type === "rivet",
   );
@@ -1519,10 +1602,10 @@ export function WorkspacePanel({
   const activeDirectBrep = isDirectBrepTab(activeTabPath);
 
   useEffect(() => {
-    if (activeDirectRivet || activeDirectBrep) {
+    if (activeWorkspaceWorkflow || activeDirectRivet || activeDirectBrep) {
       setIsSidebarCollapsed(true);
     }
-  }, [activeDirectBrep, activeDirectRivet]);
+  }, [activeDirectBrep, activeDirectRivet, activeWorkspaceWorkflow]);
 
   if (isThin) {
     return (
@@ -1818,11 +1901,27 @@ export function WorkspacePanel({
           isSidebarCollapsed={isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
-          onOpenRivetEditor={() => {
-            void openRivetWorkflowTab();
+          onOpenWorkflows={() => {
+            if (recoveryWorkflowEnabled) {
+              if (canonicalWorkflowRequested) {
+                openWorkspaceWorkflowTab();
+              } else {
+                const query = new URLSearchParams(location.search);
+                query.set("workflow", "canonical");
+                navigate(
+                  {
+                    pathname: location.pathname,
+                    search: `?${query.toString()}`,
+                  },
+                  { replace: true },
+                );
+              }
+            } else if (rivetWorkflowEnabled) {
+              void openRivetWorkflowTab();
+            }
           }}
           onOpenBrepPanel={openBrepPanelTab}
-          workflowsEnabled={workflowsTabEnabled}
+          workflowsEnabled={recoveryWorkflowEnabled || rivetWorkflowEnabled}
         />
       )}
 
@@ -2794,7 +2893,10 @@ export function WorkspacePanel({
                 )}
               </button>
             )}
-            {activeTabPath && !activeDirectRivet && !activeDirectBrep && (
+            {activeTabPath &&
+              !activeWorkspaceWorkflow &&
+              !activeDirectRivet &&
+              !activeDirectBrep && (
               <button
                 data-testid="viewer-inspector-toggle"
                 onClick={() => setIsInspectorOpen(!isInspectorOpen)}
@@ -2828,6 +2930,37 @@ export function WorkspacePanel({
             position: "relative",
           }}
         >
+          {workspaceWorkflowTabs.map((tab) => {
+            if (!_workspaceId || !workspaceFileSessionId) return null;
+            const isActive = activeTabPath === tab.path;
+            return (
+              <div
+                key={tab.path}
+                data-testid="retained-workspace-workflow-panel"
+                aria-hidden={!isActive}
+                style={{
+                  position: isActive ? "relative" : "absolute",
+                  inset: isActive ? undefined : 0,
+                  zIndex: isActive ? 1 : 0,
+                  display: isActive ? "flex" : "none",
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 0,
+                  visibility: isActive ? "visible" : "hidden",
+                  pointerEvents: isActive ? "auto" : "none",
+                }}
+              >
+                <WorkflowRecoveryPage
+                  workspaceId={_workspaceId}
+                  sessionId={workspaceFileSessionId}
+                  workspaceName={
+                    workspaceInfo?.workspace_name || workspacePath || _workspaceId
+                  }
+                  workflowFilePath={tab.path}
+                />
+              </div>
+            );
+          })}
           {directRivetTabs.map((tab) => {
             const slug = rivetSlugFromTabPath(tab.path) || "rivet";
             if (!_workspaceId || !workspaceFileSessionId) return null;
@@ -2888,7 +3021,10 @@ export function WorkspacePanel({
               </div>
             );
           })}
-          {!activeDirectRivet && !activeDirectBrep && activeTabPath ? (
+          {!activeWorkspaceWorkflow &&
+          !activeDirectRivet &&
+          !activeDirectBrep &&
+          activeTabPath ? (
             <>
               <div
                 ref={viewerContainerRef}
@@ -3037,7 +3173,7 @@ export function WorkspacePanel({
                 </div>
               )}
             </>
-          ) : !activeDirectRivet && !activeDirectBrep ? (
+          ) : !activeWorkspaceWorkflow && !activeDirectRivet && !activeDirectBrep ? (
             /* Welcome / landing screen when no tabs are open */
             <div
               data-testid="workspace-empty-state"

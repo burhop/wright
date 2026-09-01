@@ -9,6 +9,7 @@ external-authority gates instead of treating a locally green tree as complete.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import re
@@ -20,22 +21,33 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 FEATURE = ROOT / "specs" / "080-canonical-workflow-recovery"
-WALKTHROUGH = (
+APPROVED_WALKTHROUGH = (
     ROOT
     / "artifacts"
     / "ui-walkthrough"
     / "workflow-recovery"
     / "20260901T031913Z-continuation-1"
 )
+CORRECTION_WALKTHROUGH = (
+    ROOT
+    / "artifacts"
+    / "ui-walkthrough"
+    / "workflow-recovery-usability"
+    / "20260901T151651Z-continuation-5"
+)
 FROZEN_COMMIT = "b4a7e996f10ec95f7d24185a43fd1401843db66d"
 APPROVED_COMMIT = "f9237763d6fa6e9748dfb7b713e753a7fc4b4d17"
 APPROVED_TREE = "aeca6ab8294dd54112d3e9ac10148537af32b0f0"
 APPROVED_MANIFEST = "f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347"
+CORRECTION_COMMIT = "c5fb7d8e4a722f84956ebe22085e7fdf38b1b1d5"
+CORRECTION_TREE = "148a935edd38e9abe91b9ed284cd04882acf59c6"
+CORRECTION_MANIFEST = "e661bf45ff1449abc87399b928156fc336f367f260368a2966645a0026afd96e"
 T059_SOURCE = "fe6140d85f0598454394d7b7105d756c3794a7dd"
 T059_TREE = "8df2b19c94926c8fe922870de4bbad92bb285720"
-FROZEN_TASK_FILES = (
-    "specs/079-visual-workflow-composition/tasks.md",
-)
+FROZEN_TASK_FILES = ("specs/079-visual-workflow-composition/tasks.md",)
+ALLOWED_OPEN_TASKS = frozenset({"T056", "T058", "T060"})
+EXPECTED_SYNTAX_TREATMENTS = frozenset({"json", "yaml", "engineering_source"})
+TASK_PATTERN = re.compile(r"^- \[([ xX])\].*?\b(T\d{3})\b", re.MULTILINE)
 
 
 def _git(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -62,13 +74,95 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _task_state(path: Path) -> tuple[set[str], set[str]]:
+def _walkthrough_evidence(
+    root: Path,
+    *,
+    commit: str,
+    tree: str,
+    manifest_sha256: str,
+    steps: int,
+    screenshots: int,
+    files: int,
+) -> dict[str, Any]:
+    status = _json(root / "status.json")
+    manifest = _json(root / "manifest.json")
+    diagnostics = _json(root / "trace" / "browser-diagnostics.json")
+    missing: list[str] = []
+    mismatched: list[str] = []
+    for item in manifest.get("files", []):
+        target = root / item["path"]
+        if not target.is_file():
+            missing.append(item["path"])
+        elif _sha256(target) != item["sha256"]:
+            mismatched.append(item["path"])
+    raw_count = len(list((root / "screenshots" / "raw").glob("*.png")))
+    annotated_count = len(list((root / "screenshots" / "annotated").glob("*.png")))
+    diagnostic_count = len(diagnostics.get("diagnostics", [])) + sum(
+        len(diagnostics.get(key, []))
+        for key in ("consoleErrors", "pageErrors", "failedResponses")
+    )
+    passed_steps = sum(step.get("state") == "pass" for step in status.get("steps", []))
+    ok = (
+        status.get("overall") == "pass"
+        and len(status.get("steps", [])) == steps
+        and passed_steps == steps
+        and manifest.get("overall") == "pass"
+        and manifest.get("subject_commit") == commit
+        and manifest.get("subject_tree") == tree
+        and _sha256(root / "manifest.json") == manifest_sha256
+        and len(manifest.get("files", [])) == files
+        and raw_count == screenshots
+        and annotated_count == screenshots
+        and diagnostic_count == 0
+        and not missing
+        and not mismatched
+    )
+    return {
+        "ok": ok,
+        "commit": manifest.get("subject_commit"),
+        "tree": manifest.get("subject_tree"),
+        "manifest_sha256": _sha256(root / "manifest.json"),
+        "steps_passed": passed_steps,
+        "steps_total": len(status.get("steps", [])),
+        "raw_screenshots": raw_count,
+        "annotated_screenshots": annotated_count,
+        "manifest_files": len(manifest.get("files", [])),
+        "browser_diagnostics": diagnostic_count,
+        "missing_files": missing,
+        "digest_mismatches": mismatched,
+    }
+
+
+def _task_ledger(path: Path) -> dict[str, Any]:
     completed: set[str] = set()
     open_tasks: set[str] = set()
-    pattern = re.compile(r"^- \[([ xX])\].*?\b(T\d{3})\b", re.MULTILINE)
-    for mark, task_id in pattern.findall(path.read_text(encoding="utf-8")):
+    matches = TASK_PATTERN.findall(path.read_text(encoding="utf-8"))
+    for mark, task_id in matches:
         (completed if mark.lower() == "x" else open_tasks).add(task_id)
-    return completed, open_tasks
+    task_ids = completed | open_tasks
+    ordinals = sorted(int(task_id.removeprefix("T")) for task_id in task_ids)
+    contiguous = bool(ordinals) and ordinals == list(range(1, ordinals[-1] + 1))
+    return {
+        "completed": completed,
+        "open_tasks": open_tasks,
+        "total": len(task_ids),
+        "well_formed": contiguous and len(matches) == len(task_ids),
+    }
+
+
+def _task_state(path: Path) -> tuple[set[str], set[str]]:
+    ledger = _task_ledger(path)
+    return ledger["completed"], ledger["open_tasks"]
+
+
+def _capability_map_summary(path: Path) -> dict[str, int]:
+    with path.open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    return {
+        "row_count": len(rows),
+        "unique_source_key_count": len({row["source_key"] for row in rows}),
+        "capabilities_represented": len({row["capability_id"] for row in rows}),
+    }
 
 
 def _requirement(
@@ -102,7 +196,9 @@ def collect() -> dict[str, Any]:
         if line.startswith("?? ")
     ]
 
-    frozen_diff = _git("diff", "--quiet", FROZEN_COMMIT, "--", *FROZEN_TASK_FILES, check=False)
+    frozen_diff = _git(
+        "diff", "--quiet", FROZEN_COMMIT, "--", *FROZEN_TASK_FILES, check=False
+    )
     frozen_open: dict[str, list[str]] = {}
     frozen_ids_ok = True
     for relative in FROZEN_TASK_FILES:
@@ -113,84 +209,117 @@ def collect() -> dict[str, Any]:
         frozen_ids_ok = frozen_ids_ok and set(present) == expected
     frozen_ok = frozen_diff.returncode == 0 and frozen_ids_ok
 
-    completed, open_tasks = _task_state(FEATURE / "tasks.md")
-    ledger_ok = len(completed) == 57 and len(completed | open_tasks) == 60
-    remaining_ok = open_tasks == {"T056", "T058", "T060"}
+    ledger = _task_ledger(FEATURE / "tasks.md")
+    completed = ledger["completed"]
+    open_tasks = ledger["open_tasks"]
+    ledger_ok = ledger["well_formed"]
+    remaining_ok = open_tasks == ALLOWED_OPEN_TASKS
 
     capability = _json(FEATURE / "evidence" / "capability-coverage.json")
+    capability_map = _capability_map_summary(FEATURE / "capability-source-map.csv")
     capability_ok = (
         capability.get("status") == "PASS"
-        and capability.get("row_count") == 859
-        and capability.get("unique_source_key_count") == 859
-        and capability.get("capabilities_represented") == 33
+        and capability.get("row_count") == capability_map["row_count"]
+        and capability.get("unique_source_key_count")
+        == capability_map["unique_source_key_count"]
+        and capability_map["row_count"] == capability_map["unique_source_key_count"]
+        and capability.get("capabilities_represented")
+        == capability_map["capabilities_represented"]
+        and capability.get("capability_count")
+        == capability_map["capabilities_represented"]
+        and capability.get("core_actual") == capability.get("core_expected")
         and capability.get("unexplained_omissions") == []
     )
 
     syntax = _json(FEATURE / "evidence" / "syntax-evaluation.json")
-    syntax_ok = len(syntax.get("edit_tasks", [])) >= 5 and all(
-        treatment.get("round_trip")
-        and treatment.get("schema_valid")
-        and treatment.get("edit_candidates_valid") == treatment.get("edit_candidates_total")
-        for treatment in syntax.get("treatments", {}).values()
-    ) and set(syntax.get("treatments", {})) == {"json", "yaml", "dsl"}
-
-    status = _json(WALKTHROUGH / "status.json")
-    manifest = _json(WALKTHROUGH / "manifest.json")
-    diagnostics = _json(WALKTHROUGH / "trace" / "browser-diagnostics.json")
-    missing_manifest_files: list[str] = []
-    mismatched_manifest_files: list[str] = []
-    for item in manifest.get("files", []):
-        target = WALKTHROUGH / item["path"]
-        if not target.is_file():
-            missing_manifest_files.append(item["path"])
-        elif _sha256(target) != item["sha256"]:
-            mismatched_manifest_files.append(item["path"])
-    raw_count = len(list((WALKTHROUGH / "screenshots" / "raw").glob("*.png")))
-    annotated_count = len(list((WALKTHROUGH / "screenshots" / "annotated").glob("*.png")))
-    walkthrough_ok = (
-        status.get("overall") == "pass"
-        and len(status.get("steps", [])) == 50
-        and all(step.get("state") == "pass" for step in status.get("steps", []))
-        and manifest.get("overall") == "pass"
-        and manifest.get("subject_commit") == APPROVED_COMMIT
-        and manifest.get("subject_tree") == APPROVED_TREE
-        and _sha256(WALKTHROUGH / "manifest.json") == APPROVED_MANIFEST
-        and len(manifest.get("files", [])) == 204
-        and raw_count == 99
-        and annotated_count == 99
-        and diagnostics.get("diagnostics") == []
-        and not missing_manifest_files
-        and not mismatched_manifest_files
+    syntax_ok = (
+        len(syntax.get("edit_tasks", [])) >= 5
+        and all(
+            treatment.get("round_trip")
+            and treatment.get("schema_valid")
+            and treatment.get("edit_candidates_valid")
+            == treatment.get("edit_candidates_total")
+            for treatment in syntax.get("treatments", {}).values()
+        )
+        and set(syntax.get("treatments", {})) == EXPECTED_SYNTAX_TREATMENTS
     )
 
-    approval_text = (FEATURE / "evidence" / "product-approval.md").read_text(encoding="utf-8")
+    approved_walkthrough = _walkthrough_evidence(
+        APPROVED_WALKTHROUGH,
+        commit=APPROVED_COMMIT,
+        tree=APPROVED_TREE,
+        manifest_sha256=APPROVED_MANIFEST,
+        steps=50,
+        screenshots=99,
+        files=204,
+    )
+    correction_walkthrough = _walkthrough_evidence(
+        CORRECTION_WALKTHROUGH,
+        commit=CORRECTION_COMMIT,
+        tree=CORRECTION_TREE,
+        manifest_sha256=CORRECTION_MANIFEST,
+        steps=12,
+        screenshots=12,
+        files=30,
+    )
+    walkthrough_ok = approved_walkthrough["ok"] and correction_walkthrough["ok"]
+
+    approval_text = (FEATURE / "evidence" / "product-approval.md").read_text(
+        encoding="utf-8"
+    )
     approval_ok = all(
         value in approval_text
-        for value in (APPROVED_COMMIT, APPROVED_TREE, APPROVED_MANIFEST, "name not supplied")
+        for value in (
+            APPROVED_COMMIT,
+            APPROVED_TREE,
+            APPROVED_MANIFEST,
+            CORRECTION_COMMIT,
+            CORRECTION_TREE,
+            CORRECTION_MANIFEST,
+            "name not supplied",
+            "mechanical engineer",
+        )
     )
 
-    dashboard = _json(ROOT / "artifacts" / "dashboard-recovery-verification" / "dashboard-verification.json")
+    dashboard = _json(
+        ROOT
+        / "artifacts"
+        / "dashboard-recovery-verification"
+        / "dashboard-verification.json"
+    )
     dashboard_ok = (
         dashboard.get("overall") == "pass"
         and dashboard.get("diagnostics") == []
-        and dashboard.get("checks", {}).get("desktop", {}).get("horizontalOverflowPixels") == 0
-        and dashboard.get("checks", {}).get("mobile", {}).get("horizontalOverflowPixels") == 0
-        and dashboard.get("checks", {}).get("api", {}).get("completed") == 57
-        and dashboard.get("checks", {}).get("api", {}).get("total") == 60
+        and dashboard.get("checks", {})
+        .get("desktop", {})
+        .get("horizontalOverflowPixels")
+        == 0
+        and dashboard.get("checks", {})
+        .get("mobile", {})
+        .get("horizontalOverflowPixels")
+        == 0
+        and dashboard.get("checks", {}).get("api", {}).get("completed")
+        == len(completed)
+        and dashboard.get("checks", {}).get("api", {}).get("total") == ledger["total"]
         and dashboard.get("checks", {}).get("api", {}).get("customerReady") is False
     )
 
     preflight = _json(ROOT / "artifacts" / "t059-release-candidate" / "preflight.json")
-    native_build = _json(ROOT / "artifacts" / "t059-release-candidate" / "native-build-evidence.json")
+    native_build = _json(
+        ROOT / "artifacts" / "t059-release-candidate" / "native-build-evidence.json"
+    )
     native_lifecycle = _json(
         ROOT / "artifacts" / "t059-release-candidate" / "native-lifecycle-windows.json"
     )
-    release = _json(ROOT / "artifacts" / "t059-release-candidate" / "release-evidence.json")
+    release = _json(
+        ROOT / "artifacts" / "t059-release-candidate" / "release-evidence.json"
+    )
     release_text = (FEATURE / "evidence" / "release-candidate-hardening.md").read_text(
         encoding="utf-8"
     )
     all_stages_non_mutating = all(
-        stage.get("external_mutation") is False for stage in release.get("stage_results", [])
+        stage.get("external_mutation") is False
+        for stage in release.get("stage_results", [])
     )
     t059_ok = (
         preflight.get("release_identity", {}).get("source_commit") == T059_SOURCE
@@ -223,7 +352,10 @@ def collect() -> dict[str, Any]:
             "OBJ-001",
             "Frozen EPP-F02B checkpoint is unchanged",
             frozen_ok,
-            [*FROZEN_TASK_FILES, "specs/080-canonical-workflow-recovery/evidence/checkpoint-d-freeze.md"],
+            [
+                *FROZEN_TASK_FILES,
+                "specs/080-canonical-workflow-recovery/evidence/checkpoint-d-freeze.md",
+            ],
             "Git diff is empty against b4a7e996 and T028-T038 remain unchecked in the frozen task file.",
         ),
         _requirement(
@@ -235,7 +367,7 @@ def collect() -> dict[str, Any]:
                 "specs/080-canonical-workflow-recovery/evidence/syntax-evaluation.json",
                 "specs/080-canonical-workflow-recovery/tasks.md",
             ],
-            "All local contract tasks through T055 are complete and JSON/YAML/DSL share five valid edit probes.",
+            "All local contract tasks through T055 are complete and JSON, YAML, and the public engineering source share at least five valid edit probes.",
         ),
         _requirement(
             "OBJ-003",
@@ -252,15 +384,18 @@ def collect() -> dict[str, Any]:
             "OBJ-004",
             "Canvas-first high-fidelity workflow experience has exact walkthrough evidence",
             walkthrough_ok,
-            [str(WALKTHROUGH.relative_to(ROOT)).replace("\\", "/")],
-            "50/50 steps, 99 raw plus 99 annotated screenshots, 204 manifest-bound files, exact subject/tree, and zero diagnostics verify the reviewed experience.",
+            [
+                str(APPROVED_WALKTHROUGH.relative_to(ROOT)).replace("\\", "/"),
+                str(CORRECTION_WALKTHROUGH.relative_to(ROOT)).replace("\\", "/"),
+            ],
+            "The immutable approval baseline and the current 12/12 mechanical-engineer correction walkthrough both have exact subject/tree binding, complete manifest integrity, paired screenshots, and zero diagnostics.",
         ),
         _requirement(
             "OBJ-005",
             "Human direction approval is recorded without invented reviewer facts",
             approval_ok,
             ["specs/080-canonical-workflow-recovery/evidence/product-approval.md"],
-            "The record cites the requesting user's message, exact approved subject, and explicitly states that reviewer name and timestamp were not supplied.",
+            "The record preserves the original direction approval, binds the corrected exact subject by evidence, identifies the requesting user only as a self-described mechanical engineer, and states that name and timestamp were not supplied.",
         ),
         _requirement(
             "OBJ-006",
@@ -271,7 +406,12 @@ def collect() -> dict[str, Any]:
                 "artifacts/dashboard-recovery-verification/dashboard-verification.json",
                 "specs/080-canonical-workflow-recovery/tasks.md",
             ],
-            "Coverage is 859/859 and 33/33; dashboard is 57/60 with customer readiness false and zero desktop/mobile overflow or browser diagnostics.",
+            (
+                f"Coverage is {capability_map['row_count']}/{capability_map['unique_source_key_count']} "
+                f"and {capability_map['capabilities_represented']}/{capability_map['capabilities_represented']}; "
+                f"dashboard must match the current {len(completed)}/{ledger['total']} ledger with "
+                "customer readiness false and zero desktop/mobile overflow or browser diagnostics."
+            ),
         ),
         _requirement(
             "OBJ-007",
@@ -290,10 +430,18 @@ def collect() -> dict[str, Any]:
     for requirement in requirements:
         if requirement["status"] != "passed":
             findings.append(f"{requirement['id']}: {requirement['label']}")
-    if missing_manifest_files:
-        findings.append(f"Missing walkthrough files: {missing_manifest_files}")
-    if mismatched_manifest_files:
-        findings.append(f"Walkthrough digest mismatches: {mismatched_manifest_files}")
+    for label, evidence in (
+        ("approval", approved_walkthrough),
+        ("correction", correction_walkthrough),
+    ):
+        if evidence["missing_files"]:
+            findings.append(
+                f"Missing {label} walkthrough files: {evidence['missing_files']}"
+            )
+        if evidence["digest_mismatches"]:
+            findings.append(
+                f"{label.title()} walkthrough digest mismatches: {evidence['digest_mismatches']}"
+            )
 
     blockers = [
         {
@@ -321,14 +469,16 @@ def collect() -> dict[str, Any]:
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "audit_subject": {"commit": head, "tree": tree},
         "audit_status": "PASS" if not findings else "FAIL",
-        "goal_status": "blocked_external" if not findings and remaining_ok else "incomplete",
+        "goal_status": "blocked_external"
+        if not findings and remaining_ok
+        else "incomplete",
         "goal_complete": False,
         "tracked_worktree_clean_before_output": tracked_clean,
         "untracked_paths": untracked,
         "untracked_paths_note": "Untracked paths are disclosed, not treated as committed evidence.",
         "recovery_ledger": {
             "completed": len(completed),
-            "total": len(completed | open_tasks),
+            "total": ledger["total"],
             "open_tasks": sorted(open_tasks),
         },
         "frozen_checkpoint": {
@@ -337,17 +487,10 @@ def collect() -> dict[str, Any]:
             "open_tasks_by_file": frozen_open,
         },
         "approved_walkthrough": {
-            "commit": manifest.get("subject_commit"),
-            "tree": manifest.get("subject_tree"),
-            "manifest_sha256": _sha256(WALKTHROUGH / "manifest.json"),
-            "steps_passed": sum(step.get("state") == "pass" for step in status.get("steps", [])),
-            "steps_total": len(status.get("steps", [])),
-            "raw_screenshots": raw_count,
-            "annotated_screenshots": annotated_count,
-            "manifest_files": len(manifest.get("files", [])),
-            "browser_diagnostics": len(diagnostics.get("diagnostics", [])),
-            "missing_files": missing_manifest_files,
-            "digest_mismatches": mismatched_manifest_files,
+            key: value for key, value in approved_walkthrough.items() if key != "ok"
+        },
+        "usability_correction_walkthrough": {
+            key: value for key, value in correction_walkthrough.items() if key != "ok"
         },
         "capability_coverage": {
             "status": capability.get("status"),

@@ -66,7 +66,7 @@ function section(lines: string[], kind: SectionKind, id: string, fields: readonl
 
 export function formatRecoveryDsl(workflow: RecoveryWorkflow): { text: string; sourceMap: Record<string, RecoverySourceMapEntry> } {
   const lines = [
-    "# Wright workflow language — recovery treatment 0.1",
+    "# Wright internal workflow IR projection — legacy recovery treatment 0.1",
     "",
   ];
   section(lines, "workflow", workflow.workflowId, [

@@ -41,16 +41,16 @@ RELEVANT_SPECS = (
 
 CAPABILITIES = {
     "CAP-001": "Canonical definition and immutable revision authority",
-    "CAP-002": "Stable phase and block semantics",
+    "CAP-002": "Stable tasks and optional group semantics",
     "CAP-003": "Typed ports and artifact contracts",
     "CAP-004": "Data, control, decision, gate, and feedback relationships",
     "CAP-005": "Exact governed implementation and MCP bindings",
     "CAP-006": "Reusable components and collapsed graphs",
     "CAP-007": "Separate stable layout metadata",
-    "CAP-008": "Lossless Diagram, Code, and Split projections",
+    "CAP-008": "Lossless Diagram, Source, and Side by side projections",
     "CAP-009": "Canvas readability and renderer-neutral projection",
     "CAP-010": "Direct manipulation, command batches, undo, and redo",
-    "CAP-011": "Searchable engineering capability palette",
+    "CAP-011": "Contextual engineering step library with bounded search",
     "CAP-012": "Progressive inspector and synchronized selection",
     "CAP-013": "Structured validation, diagnostics, and compatibility",
     "CAP-014": "Input attachment, preview, replacement, and provenance",
@@ -170,8 +170,8 @@ def choose_capability(source: Source) -> str:
     rules: tuple[tuple[str, tuple[str, ...]], ...] = (
         ("CAP-031", ("dashboard", "release", "packag", "supply chain", "program control", "control plane", "roadmap", "commercial", "repository")),
         ("CAP-030", ("benchmark", "oracle", "holdout", "sampling", "qualif", "engineering correctness")),
-        ("CAP-025", ("usability", "accessible", "accessibility", "keyboard", "zoom", "responsive", "engineer-readable", "comprehension")),
-        ("CAP-026", ("large graph", "scale", "performance", "100-block", "200%")),
+        ("CAP-025", ("usability", "accessible", "accessibility", "keyboard", "zoom", "responsive", "engineer-readable", "comprehension", "fixed-height", "document scrolling", "1070 by 791")),
+        ("CAP-026", ("large graph", "scale", "performance", "100-block", "200%", "26-step", "26 or more", "25 or fewer")),
         ("CAP-024", ("security", "privacy", "secret", "egress", "telemetry", "resource limit", "no-tools", "isolation")),
         ("CAP-022", ("approval", "approve", "authority", "revocation", "physical", "external action", "send", "start a job")),
         ("CAP-020", ("failure", "recovery", "needs-input", "blocked", "cleanup", "diagnos", "error")),
@@ -188,9 +188,9 @@ def choose_capability(source: Source) -> str:
         ("CAP-023", ("headless", "cli", "host adapter", "desktop", "browser", "ui-independent")),
         ("CAP-028", ("persist", "migration", "offline", "rollback", "uninstall", "restart", "workspace", "cas", "storage")),
         ("CAP-013", ("validat", "diagnostic", "invalid", "compatib", "unknown version", "source span", "correction")),
-        ("CAP-008", ("diagram", "code", "text", "projection", "parse", "format", "language", "syntax")),
+        ("CAP-008", ("diagram", "source", "code", "text", "projection", "parse", "format", "language", "syntax", "engineering-script")),
         ("CAP-010", ("connect", "disconnect", "undo", "redo", "move", "delete", "command", "direct manipulation", "gesture")),
-        ("CAP-011", ("palette", "catalog", "friendly", "searchable", "capability library")),
+        ("CAP-011", ("palette", "catalog", "friendly", "searchable", "capability library", "step library", "engineering names")),
         ("CAP-012", ("inspector", "selection", "progressive disclosure", "properties")),
         ("CAP-009", ("canvas", "renderer", "react flow", "visual", "lane", "block")),
         ("CAP-007", ("layout", "position", "viewport")),
@@ -208,6 +208,11 @@ def choose_capability(source: Source) -> str:
 
 
 def disposition_for(source: Source, capability_id: str) -> tuple[str, str]:
+    if source.source == "specs/080-canonical-workflow-recovery/spec.md" and source.source_id in {
+        *(f"FR-{number:03d}" for number in range(43, 57)),
+        *(f"SC-{number:03d}" for number in range(15, 21)),
+    }:
+        return "revise", "Current workspace-owned engineer-authoring correction; implemented and evidence-bound in T068-T078 rather than deferred."
     if source.source == "specs/080-canonical-workflow-recovery/spec.md" and source.source_id in {
         "FR-038",
         "FR-039",

@@ -12,6 +12,13 @@ parse(text, syntaxVersion)
 format(ir, syntaxVersion, formattingPolicy)
   -> { text, sourceMap }
 
+parseAuthoring(text, acceptedBase)
+  -> { ok: true, reboundCandidate, sourceMap }
+  |  { ok: false, diagnostics }
+
+formatAuthoring(ir)
+  -> { text, sourceMap }
+
 validate(ir)
   -> { valid, diagnostics }
 
@@ -31,7 +38,8 @@ project(ir, layout, optionalRunProjection)
 - A parse succeeds only for one complete supported document version.
 - Duplicate identities/keys, malformed Unicode, unsupported numeric values, unknown required fields, and trailing unparsed input fail closed.
 - Diagnostics include stable code, severity, semantic IDs when known, source span, explanation, and correction.
-- The recovery DSL canonical formatter preserves leading standalone comments and semantic IDs but normalizes indentation/order. JSON has no comments. The evaluated YAML parser preserves semantic content but not arbitrary comments or formatting; this limitation must remain visible.
+- The exhaustive recovery DSL is retained as an explicitly named legacy/internal IR fixture; its formatter preserves leading standalone comments and semantic IDs but normalizes indentation/order. JSON has no comments. The evaluated YAML parser preserves semantic content but not arbitrary comments or formatting; these limitations remain visible as historical conformance evidence.
+- The engineer-facing source is not a portable second authority. It must be parsed with the exact accepted canonical base, omits host-managed revisions/digests/ports/bindings/layout, and uses `workflow`, `item`, `input`, and `task` sections. Groups are optional and omitted by the mounting-bracket fixture.
 - Source maps bind semantic IDs and significant fields to current formatted spans. A diagnostic retains semantic identity even when a later format changes the span.
 
 ## Apply rules
@@ -45,7 +53,7 @@ project(ir, layout, optionalRunProjection)
 
 ## Required invariants
 
-1. `parse(format(ir)).ir` is semantically equal to `ir`.
+1. `parse(format(ir)).ir` is semantically equal to `ir` for canonical JSON/YAML and the legacy internal IR treatment; `parseAuthoring(formatAuthoring(ir), ir)` rehydrates the same canonical semantics against its exact accepted base.
 2. Text edit → parse → project preserves every semantic fact.
 3. Graph commands → format → parse preserves every semantic fact.
 4. Invalid text returns diagnostics and does not provide a replacement IR.
@@ -63,4 +71,3 @@ Semantic equality compares canonical definition bytes after excluding digest fie
 ## Error stability
 
 Codes are contract values. Explanations may improve without changing the code. Recovery concept codes use the prefix `WFR-`; production promotion must version any incompatible code change.
-

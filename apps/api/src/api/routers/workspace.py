@@ -9,6 +9,7 @@ All handlers are decorated with @traced for OTel span creation.
 import asyncio
 import json
 import time
+from dataclasses import dataclass
 
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
@@ -92,6 +93,9 @@ from api.schemas.workspace import (
     WorkflowCreateRequest,
     WorkflowResponse,
     WorkflowDocumentResponse,
+    WorkflowSourceCreateRequest,
+    WorkflowSourceUpdateRequest,
+    WorkflowSourceResponse,
     WorkflowTemplateInstantiateRequest,
     WorkflowTemplateListResponse,
     WorkflowTemplateResponse,
@@ -148,6 +152,10 @@ from workspace_service.workflows import (
     WorkflowPersistenceError,
     WorkflowRevisionConflict,
     WorkspaceWorkflowStore,
+)
+from workspace_service.workflow_sources import (
+    WorkflowSourceConflictError,
+    WorkflowSourceStorageError,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
@@ -280,6 +288,57 @@ def _workflow_response(document) -> WorkflowResponse:
         revision=document.revision,
         etag=document.digest,
     )
+
+
+def _workflow_source_response(
+    workspace_id: str, document
+) -> WorkflowSourceResponse:
+    return WorkflowSourceResponse(
+        workspace_id=workspace_id,
+        path=document.path,
+        storage_revision=document.storage_revision,
+        storage_digest=document.storage_digest,
+        definition_revision=document.definition_revision,
+        size_bytes=document.size_bytes,
+        source=document.source,
+    )
+
+
+def _workflow_source_http_error(error: WorkflowSourceStorageError) -> HTTPException:
+    if isinstance(error, WorkflowSourceConflictError):
+        return HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": error.code,
+                "message": str(error),
+                "current_storage_revision": error.storage_revision,
+                "current_storage_digest": error.storage_digest,
+            },
+        )
+    if error.code in {"workflow_source_integrity", "workflow_source_unavailable"}:
+        error_status = status.HTTP_503_SERVICE_UNAVAILABLE
+        message = "Workflow source storage is temporarily unavailable"
+    elif error.code == "workflow_source_exists":
+        error_status = status.HTTP_409_CONFLICT
+        message = str(error)
+    elif error.code == "workflow_source_too_large":
+        error_status = status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+        message = str(error)
+    else:
+        error_status = status.HTTP_400_BAD_REQUEST
+        message = str(error)
+    return HTTPException(
+        status_code=error_status,
+        detail={"code": error.code, "message": message},
+    )
+
+
+def _workflow_source_unavailable(_error: OSError) -> HTTPException:
+    unavailable = WorkflowSourceStorageError(
+        "workflow_source_unavailable",
+        "Workflow source storage is unavailable",
+    )
+    return _workflow_source_http_error(unavailable)
 
 
 def _workflow_template_response(template) -> WorkflowTemplateResponse:
@@ -448,6 +507,36 @@ async def _workflow_scope(
     return workspace["workspace_id"], await service.resolve_workspace_dir(
         session_id, engine
     )
+
+
+@dataclass(frozen=True, slots=True)
+class _WorkflowSourceScope:
+    workspace_id: str
+    workspace_dir: str
+
+
+def _workflow_source_scope(
+    session_id: str, service: WorkspaceService
+) -> _WorkflowSourceScope:
+    """Snapshot one exact persisted binding without fallback or a second lookup."""
+
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    try:
+        workspace_id = str(workspace["workspace_id"])
+        workspace_dir = service.ensure_workspace_path_safe(
+            str(workspace["local_path"])
+        )
+    except (KeyError, TypeError, ValueError, WorkspaceServiceError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        ) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+    return _WorkflowSourceScope(workspace_id, workspace_dir)
 
 
 def _scenario_entry_response(entry) -> EngineeringScenarioCatalogEntryResponse:
@@ -750,6 +839,98 @@ async def compare_engineering_scenario_runs_endpoint(
         )
     except EngineeringScenarioError as error:
         raise _scenario_error(error) from error
+
+
+@router.get("/workflow-sources", response_model=WorkflowSourceResponse)
+@traced("workspace.workflow_sources.read")
+async def read_workflow_source_endpoint(
+    response: Response,
+    session_id: str = Query(..., min_length=1, max_length=256),
+    path: str = Query(..., min_length=1, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Read one workspace-owned engineering workflow definition.
+
+    Storage validation is deliberately syntax-neutral.  Semantic parsing and
+    canonical command acceptance occur in the workflow application layer.
+    """
+
+    scope = _workflow_source_scope(session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        document = await service.workflow_sources.read(scope.workspace_dir, path)
+        return _workflow_source_response(scope.workspace_id, document)
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "workflow_source_not_found",
+                "message": "Workflow source not found",
+            },
+        ) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
+@router.post(
+    "/workflow-sources",
+    response_model=WorkflowSourceResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_sources.create")
+async def create_workflow_source_endpoint(
+    body: WorkflowSourceCreateRequest,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        document = await service.workflow_sources.create(
+            scope.workspace_dir,
+            body.path,
+            body.source,
+        )
+        return _workflow_source_response(scope.workspace_id, document)
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
+@router.put("/workflow-sources", response_model=WorkflowSourceResponse)
+@traced("workspace.workflow_sources.update")
+async def update_workflow_source_endpoint(
+    body: WorkflowSourceUpdateRequest,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        document = await service.workflow_sources.update(
+            scope.workspace_dir,
+            body.path,
+            expected_storage_revision=body.expected_storage_revision,
+            expected_storage_digest=body.expected_storage_digest,
+            semantic_change_validated=body.semantic_change_validated,
+            source=body.source,
+        )
+        return _workflow_source_response(scope.workspace_id, document)
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "workflow_source_not_found",
+                "message": "Workflow source not found",
+            },
+        ) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
 
 
 @router.get("/workflow-templates", response_model=WorkflowTemplateListResponse)

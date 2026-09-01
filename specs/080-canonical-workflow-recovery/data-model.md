@@ -4,12 +4,64 @@
 
 | Record | Owns | Must never own |
 |---|---|---|
+| Engineer workflow source | One visible workspace-owned `.workflow.wflow` file using contextual engineering-script vocabulary | Host revisions/digests, absolute paths, opaque canonical IDs, layout, proposal state, run state |
 | Canonical workflow definition | Semantic engineering intent, stable identities, contracts, conditions, configuration, bindings | Position, viewport, selection, proposal state, execution state, produced files |
+| Workflow source metadata | Workspace identity, safe relative path, storage revision/digest, accepted definition revision, byte size | Engineer-authored source semantics, layout, run state, second visible definition |
 | Layout document | Stable-ID-keyed positions, sizes, collapsed state, optional grouping and viewport hints | Semantic order, conditions, bindings, run state |
 | Candidate/proposal | Unaccepted commands, diagnostics, assumptions, warnings, semantic diff, preview | Accepted revision or execution authority |
 | Immutable run record | Exact accepted definition revision, execution mode, timestamps, terminal state | Definition mutation or current editor layout |
 | Step/activity record | Per-block inputs, outputs, activity, diagnosis, timing, causal evidence | Workflow definition or inferred causal claims without run evidence |
 | Artifact record | Actual file/value identity, producer, lineage, lifetime, allowed actions | Intended artifact contract or connection handle |
+
+## Engineer workflow source
+
+The workspace exposes one visible UTF-8 file at
+`workflows/<safe-slug>.workflow.wflow`. It is the engineer-owned authoring
+artifact and uses contextual `workflow`, `input`, `task`, and optional `group`
+constructs. It names prompts, files, design documents, engineering tasks,
+tools, and outputs. It does not contain storage or definition revisions,
+parents, semantic hashes, absolute paths, opaque `block.*`/`port.*`/`artifact.*`
+identities, renderer nodes, or run records.
+
+Entering **Workflows** in an active workspace is explicit intent to ensure this
+default artifact exists. The default is a complete, prevalidated canonical
+workflow source, not an empty placeholder. Create-if-absent is idempotent: the
+first successful entry creates it, concurrent or later entries return the
+existing source unchanged, and ordinary workspace entry creates nothing.
+
+The source parser resolves contextual names against the exact accepted
+canonical base and emits source spans plus a closed atomic command batch. A
+supported edit is accepted only after the complete canonical candidate passes
+validation. An unresolved structural addition, host-managed field, ambiguous
+name, syntax error, or invalid candidate leaves the accepted canonical model
+and stored file unchanged.
+
+Groups are optional authoring organization. A task does not require a group
+and a group does not constrain where its task may be reused or executed. The
+nine-step acceptance fixture intentionally has no author-authored group.
+
+## Workflow source metadata
+
+The host keeps one hidden metadata record beside the workspace source history:
+
+| Field | Rule |
+|---|---|
+| `workspace_id` | Resolved from the active workspace session; never supplied as a filesystem path by the author. |
+| `path` | Exact safe workspace-relative `workflows/<safe-slug>.workflow.wflow` path. |
+| `storage_revision` | Positive host-owned compare-and-set revision; advances once for changed stored bytes. |
+| `storage_digest` | SHA-256 of the exact visible UTF-8 source bytes. |
+| `definition_revision` | Positive host-owned accepted semantic revision; starts at 1 and advances once only when the trusted canonical application layer attests a validated semantic change. |
+| `metadata_authority` | Constant `wright_host`; never author-editable. |
+| `size_bytes` | Exact UTF-8 byte count, bounded to 1 MiB. |
+
+State transitions are `missing -> Workflows bootstrap -> saved revision 1` and
+`saved revision N -> changed local candidate -> saved revision N+1`. A plain
+read never creates. A bootstrap against an existing path and a no-op save both
+return the current bytes and identity without advancing them. A stale revision
+or digest returns conflict with the current stored identity while preserving
+both the stored bytes and the caller's local candidate. Path,
+symlink/reparse, extension, encoding, size, or atomic-replace failures occur
+before the visible file is committed.
 
 ## Canonical workflow definition
 
@@ -32,9 +84,12 @@ The recovery contract is `document_kind: workflow-ir` and `schema_version: 2.0.0
 | `bindings` | Exact implementation/tool identities and argument/result mappings. |
 | `components` | Reusable subgraph definitions and version constraints. |
 
-### Phase
+### Optional internal group (`phase` on the canonical wire)
 
-`id`, `name`, `purpose`, `order`, and `block_ids`. A phase is optional presentation-supporting semantics; it cannot be the only way to navigate or understand flow.
+`id`, `name`, `purpose`, `order`, and `block_ids`. This is optional
+organization in the canonical model. It cannot be the only way to navigate or
+understand flow, does not have to appear in the authoring source, and does not
+restrict a block to one engineering context.
 
 ### Block
 
@@ -43,7 +98,7 @@ The recovery contract is `document_kind: workflow-ir` and `schema_version: 2.0.0
 | `id` | Stable semantic identity. |
 | `kind` | `work`, `decision`, `approval`, or `component`. |
 | `title`, `purpose` | Friendly engineering language. |
-| `phase_id` | Optional group identity. |
+| `phase_id` | Optional internal group identity; absent for ungrouped tasks. |
 | `execution_kind` | `deterministic`, `ai_capable`, or `human`. |
 | `instructions` | Bounded intent/instructions independent of a vendor renderer. |
 | `configuration` | Closed JSON-compatible values governed by the block contract. |
@@ -189,7 +244,8 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 | Layout | `workflow-layout` / `1.0.0-recovery.1` | `WFR-LAYOUT-VERSION-UNSUPPORTED`; do not project or rewrite. |
 | Command batch | `workflow-command-batch` / `1.0.0-recovery.1` | `WFR-COMMAND-VERSION-UNSUPPORTED`; do not execute or rewrite. |
 | Run projection | `workflow-run` / `1.0.0-recovery.1` | `WFR-RUN-VERSION-UNSUPPORTED`; do not render overlays or rewrite. |
-| Recovery DSL | Header `recovery treatment 0.1`; root workflow version `2.0.0-recovery.1` | Structured text diagnostic; retain the last-valid definition and source bytes. |
+| Engineer workflow source | Contextual authoring grammar treatment `0.2`; version is host-managed | Structured source diagnostic; retain the last-valid definition, stored bytes, and local draft. |
+| Internal IR projection | Header `legacy recovery treatment 0.1`; root workflow version `2.0.0-recovery.1` | Developer/evidence diagnostic; never silently rewrite the engineer source. |
 
 - Every document kind owns its version independently.
 - Readers support an explicit version set; unknown versions are preserved byte-for-byte and never silently rewritten.
@@ -223,3 +279,6 @@ Append-only timestamped `registered`, `connected`, `first_event`, `first_output`
 10. Run/activity/artifact changes preserve definition and layout bytes.
 11. Every reusable component exposes a valid non-empty internal semantic address map; diagnostics and run lineage retain the same scoped internal identity.
 12. Unsupported definition, layout, command, and run versions fail before mutation or projection and preserve their inputs unchanged.
+13. Engineer source contains no host-managed revision/digest or opaque canonical identity. Stable lower-snake connection names and closed engineering kinds such as `design_intent`, `cad_model`, and `step_file` map losslessly to internal port/type contracts, and accepted source and diagram edits lower to the same canonical command semantics.
+14. A workspace exposes one visible workflow definition file; hidden metadata, layout, proposals, runs, and outputs cannot become competing definition files.
+15. Plain read and ordinary workspace entry never create; Workflows bootstrap creates the validated default only while absent and otherwise returns the existing bytes and identity unchanged; stale or failed saves preserve stored source and local unsaved source; a changed successful save advances storage and definition identity exactly once.

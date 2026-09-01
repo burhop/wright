@@ -3,6 +3,7 @@ import type { DraftProjection } from "../../components/workflow-composer/draft-p
 export type RecoveryExecutionKind = "human" | "deterministic" | "ai_capable";
 export type RecoveryBlockKind = "work" | "approval" | "decision" | "component";
 export type RecoveryRelationshipKind = "data" | "control" | "decision" | "feedback";
+export const RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY = "__wright_authoring_section";
 export type RecoveryRunState =
   | "idle"
   | "queued"
@@ -393,8 +394,15 @@ export function phaseName(workflow: RecoveryWorkflow, id: string | null): string
   return workflow.phases.find((phase) => phase.id === id)?.name ?? id ?? "Reusable component";
 }
 
+const LEGACY_INPUT_BLOCK_IDS = new Set(["block.reference-images", "block.design-intent", "block.company-context"]);
+
+export function recoveryAuthoringSectionKind(block: RecoveryBlock): "input" | "task" {
+  if (block.configuration[RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY] === "input") return "input";
+  return LEGACY_INPUT_BLOCK_IDS.has(block.id) ? "input" : "task";
+}
+
 function roleFor(block: RecoveryBlock): "input" | "work" | "review" | "release" {
-  if (["block.reference-images", "block.design-intent", "block.company-context"].includes(block.id)) return "input";
+  if (recoveryAuthoringSectionKind(block) === "input") return "input";
   if (block.kind === "approval" || block.componentRef?.componentId === "component.review-cell") return "review";
   if (block.id.includes("release") || block.id.includes("export")) return "release";
   return "work";

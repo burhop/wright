@@ -3,7 +3,11 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import type { DraftProjection } from "../../components/workflow-composer/draft-projection";
 import { cloneLayout, initialLayout, initialRunProjection, initialWorkflow, toDraftProjection } from "./model";
-import { ReactFlowRecoveryCanvas, RecoveryCanvasRuntimeProvider } from "./ReactFlowRecoveryCanvas";
+import {
+  ReactFlowRecoveryCanvas,
+  RecoveryCanvasRuntimeProvider,
+  recoveryRelationshipHandleBinding,
+} from "./ReactFlowRecoveryCanvas";
 
 class MockResizeObserver {
   observe = vi.fn();
@@ -54,10 +58,13 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
     expect(node).toHaveTextContent("Design review step group");
     expect(node).toHaveTextContent("Grouped review step · 4 technical items");
     expect(node).toHaveTextContent("1 review item needs attention");
-    expect(node).toHaveTextContent("component.review-cell.block.evaluate");
+    expect(node).toHaveTextContent("Evaluate the design review");
+    expect(screen.queryByTestId("workflow-recovery-find-input")).not.toBeInTheDocument();
+    expect(screen.getByTestId("workflow-recovery-component-keyboard-block.review-design")).toBeVisible();
     fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
     expect(node).toHaveAttribute("data-component-collapsed", "false");
-    expect(node).toHaveTextContent("component.review-cell.relationship.accept");
+    expect(node).toHaveTextContent("Accept the reviewed design");
+    expect(node).not.toHaveTextContent("component.review-cell.relationship.accept");
     fireEvent.click(screen.getByTestId("workflow-recovery-component-toggle-block.review-design"));
     expect(node).toHaveAttribute("data-component-collapsed", "true");
   });
@@ -94,6 +101,45 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
       .filter((element) => !element.dataset.testid)
       .map((element) => element.outerHTML.slice(0, 100));
     expect(missing).toEqual([]);
+  });
+
+  it("provides explicit typed handles for decision and revision relationships", () => {
+    const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
+    render(
+      <RecoveryCanvasRuntimeProvider value={runtime()}>
+        <ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={() => undefined} />
+      </RecoveryCanvasRuntimeProvider>,
+    );
+
+    const relationships = [
+      {
+        kind: "feedback" as const,
+        source: "block.create-design-specification",
+        target: "block.design-intent",
+      },
+      {
+        kind: "flow" as const,
+        source: "block.create-design-specification",
+        target: "block.generate-geometry",
+      },
+    ];
+    for (const relationship of relationships) {
+      const binding = recoveryRelationshipHandleBinding(relationship.kind, relationship.source, relationship.target);
+      expect(binding.sourceHandle).not.toBe("");
+      expect(binding.targetHandle).not.toBe("");
+      const sourceHandle = screen.getByTestId(
+        `workflow-recovery-routing-handle-${relationship.kind}-source-${relationship.source}`,
+      );
+      const targetHandle = screen.getByTestId(
+        `workflow-recovery-routing-handle-${relationship.kind}-target-${relationship.target}`,
+      );
+      expect(sourceHandle).toHaveAttribute("data-handleid", binding.sourceHandle);
+      expect(sourceHandle).toHaveAttribute("data-nodeid", relationship.source);
+      expect(sourceHandle).toHaveClass("source");
+      expect(targetHandle).toHaveAttribute("data-handleid", binding.targetHandle);
+      expect(targetHandle).toHaveAttribute("data-nodeid", relationship.target);
+      expect(targetHandle).toHaveClass("target");
+    }
   });
 
   it("projects running and failed records without changing canonical or layout authority", () => {
@@ -182,9 +228,11 @@ describe("ReactFlowRecoveryCanvas component contract", () => {
       feedbackPaths: [],
     };
     const onIntent = vi.fn();
+    const largeGraphRuntime = runtime();
+    largeGraphRuntime.overlayRelationships = [];
     const started = performance.now();
     render(
-      <RecoveryCanvasRuntimeProvider value={runtime()}>
+      <RecoveryCanvasRuntimeProvider value={largeGraphRuntime}>
         <ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={onIntent} />
       </RecoveryCanvasRuntimeProvider>,
     );

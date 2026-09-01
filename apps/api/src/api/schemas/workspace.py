@@ -6,8 +6,10 @@ All models used by workspace endpoints are defined here.
 """
 
 import json
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from typing import Any, Dict, List, Literal, Optional
+
+from workspace_service.workflow_sources import WORKFLOW_SOURCE_MAX_BYTES
 
 
 #  File Operations
@@ -77,6 +79,49 @@ class WorkflowResponse(BaseModel):
 class WorkflowDocumentResponse(WorkflowResponse):
     project: str
     datasets: Dict[str, str]
+
+
+class _WorkflowSourceContentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    source: str = Field(max_length=WORKFLOW_SOURCE_MAX_BYTES)
+
+    @field_validator("source")
+    @classmethod
+    def validate_source_utf8_bytes(cls, source: str) -> str:
+        try:
+            size_bytes = len(source.encode("utf-8"))
+        except UnicodeEncodeError as error:
+            raise ValueError("Workflow source must be valid UTF-8 text") from error
+        if size_bytes > WORKFLOW_SOURCE_MAX_BYTES:
+            raise ValueError(
+                f"Workflow source exceeds the {WORKFLOW_SOURCE_MAX_BYTES}-byte limit"
+            )
+        return source
+
+
+class WorkflowSourceCreateRequest(_WorkflowSourceContentRequest):
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+
+
+class WorkflowSourceUpdateRequest(_WorkflowSourceContentRequest):
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+    expected_storage_revision: int = Field(ge=1)
+    expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    semantic_change_validated: StrictBool
+
+
+class WorkflowSourceResponse(BaseModel):
+    workspace_id: str
+    path: str
+    storage_revision: int
+    storage_digest: str
+    definition_revision: int
+    metadata_authority: Literal["wright_host"] = "wright_host"
+    size_bytes: int
+    source: str
 
 
 class WorkflowTemplateResponse(BaseModel):

@@ -9,6 +9,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 from agent_adapters import create_agent_engine
@@ -65,13 +66,92 @@ from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import get_logger
 from api.logging_config import configure_logging
 from tool_registry import McpEngine
-from workspace_service import AgentSyncManager
+from workspace_service import AgentSyncManager, WORKFLOW_SOURCE_MAX_BYTES
 from data_vault import install_default_secret_provider
 
 # Configure structured JSON logging globally (Constitution Section 7)
 configure_logging()
 install_default_secret_provider()
 logger = get_logger("api.main")
+
+_WORKFLOW_SOURCE_TRANSPORT_MAX_BYTES = WORKFLOW_SOURCE_MAX_BYTES * 8 + 16_384
+
+
+class WorkflowSourceBodyLimitMiddleware:
+    """Bound workflow-source request bytes before JSON is materialized."""
+
+    def __init__(self, app: ASGIApp, *, max_body_bytes: int) -> None:
+        self._app = app
+        self._max_body_bytes = max_body_bytes
+
+    @staticmethod
+    def _targets(scope: Scope) -> bool:
+        return (
+            scope.get("type") == "http"
+            and str(scope.get("path", "")).rstrip("/")
+            == "/api/workspace/workflow-sources"
+            and scope.get("method") in {"POST", "PUT"}
+        )
+
+    async def _reject(self, scope: Scope, receive: Receive, send: Send) -> None:
+        state = scope.get("state")
+        trace_id = (
+            str(state.get("trace_id", "unknown"))
+            if isinstance(state, dict)
+            else "unknown"
+        )
+        response = JSONResponse(
+            status_code=413,
+            content=ErrorResponse(
+                error_code="workflow_source_request_too_large",
+                message="Workflow source request exceeds the transport limit",
+                trace_id=trace_id,
+            ).model_dump(),
+            headers={"Cache-Control": "no-store", "X-Trace-Id": trace_id},
+        )
+        await response(scope, receive, send)
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if not self._targets(scope):
+            await self._app(scope, receive, send)
+            return
+
+        headers = {key.lower(): value for key, value in scope.get("headers", [])}
+        content_length = headers.get(b"content-length")
+        if content_length is not None:
+            try:
+                if int(content_length) > self._max_body_bytes:
+                    await self._reject(scope, receive, send)
+                    return
+            except ValueError:
+                pass
+
+        body = bytearray()
+        disconnected = False
+        while True:
+            message = await receive()
+            if message.get("type") == "http.disconnect":
+                disconnected = True
+                break
+            if message.get("type") != "http.request":
+                continue
+            body.extend(message.get("body", b""))
+            if len(body) > self._max_body_bytes:
+                await self._reject(scope, receive, send)
+                return
+            if not message.get("more_body", False):
+                break
+
+        delivered = False
+
+        async def replay_receive():
+            nonlocal delivered
+            if disconnected or delivered:
+                return {"type": "http.disconnect"}
+            delivered = True
+            return {"type": "http.request", "body": bytes(body), "more_body": False}
+
+        await self._app(scope, replay_receive, send)
 
 
 @asynccontextmanager
@@ -190,6 +270,11 @@ app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 app.state.security_settings = SecuritySettings.from_env()
 app.state.workspace_surface_settings = get_workspace_surface_settings()
 
+app.add_middleware(
+    WorkflowSourceBodyLimitMiddleware,
+    max_body_bytes=_WORKFLOW_SOURCE_TRANSPORT_MAX_BYTES,
+)
+
 # Allow only explicitly configured frontend origins.
 app.add_middleware(
     CORSMiddleware,
@@ -221,6 +306,52 @@ app.add_middleware(TracingMiddleware)
 
 def _get_trace_id(request: Request) -> str:
     return getattr(request.state, "trace_id", "unknown")
+
+
+def _error_response_headers(request: Request, trace_id: str) -> dict[str, str]:
+    headers = {"X-Trace-Id": trace_id}
+    if request.url.path.rstrip("/") == "/api/workspace/workflow-sources":
+        headers["Cache-Control"] = "no-store"
+    return headers
+
+
+def _serializable_validation_errors(
+    exc: RequestValidationError,
+) -> list[dict[str, object]]:
+    """Return bounded, JSON-safe validation details without echoing request data."""
+
+    error_limit = 16
+
+    def bounded_text(value: object, limit: int) -> str:
+        text = str(value)
+        return text if len(text) <= limit else f"{text[:limit]}…"
+
+    serialized: list[dict[str, object]] = []
+    errors = exc.errors()
+    for error in errors[:error_limit]:
+        location = error.get("loc")
+        location_parts = location if isinstance(location, (tuple, list)) else ()
+        item: dict[str, object] = {
+            "type": bounded_text(error.get("type", "validation_error"), 128),
+            "loc": [bounded_text(part, 128) for part in location_parts[:16]],
+            "msg": bounded_text(error.get("msg", "Invalid request"), 256),
+        }
+        context = error.get("ctx")
+        if isinstance(context, dict):
+            item["ctx"] = {
+                bounded_text(key, 64): bounded_text(value, 256)
+                for key, value in list(context.items())[:8]
+            }
+        serialized.append(item)
+    if len(errors) > error_limit:
+        serialized.append(
+            {
+                "type": "additional_validation_errors",
+                "loc": [],
+                "msg": f"{len(errors) - error_limit} additional errors omitted",
+            }
+        )
+    return serialized
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -260,22 +391,27 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
             trace_id=trace_id,
             details=details or None,
         ).model_dump(),
-        headers={"X-Trace-Id": trace_id},
+        headers=_error_response_headers(request, trace_id),
     )
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     trace_id = _get_trace_id(request)
+    validation_errors = (
+        _serializable_validation_errors(exc)
+        if request.url.path.rstrip("/") == "/api/workspace/workflow-sources"
+        else exc.errors()
+    )
     return JSONResponse(
         status_code=422,
         content=ErrorResponse(
             error_code=ErrorCodes.VALIDATION_ERROR,
             message="Request validation failed",
             trace_id=trace_id,
-            details={"errors": exc.errors()},
+            details={"errors": validation_errors},
         ).model_dump(),
-        headers={"X-Trace-Id": trace_id},
+        headers=_error_response_headers(request, trace_id),
     )
 
 

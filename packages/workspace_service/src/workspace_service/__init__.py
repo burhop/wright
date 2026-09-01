@@ -23,6 +23,14 @@ from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
+from .workflow_sources import (
+    WORKFLOW_SOURCE_MAX_BYTES,
+    WorkflowSourceConflictError,
+    WorkflowSourceDocument,
+    WorkflowSourceStorageError,
+    WorkspaceWorkflowSourceStore,
+    WorkspaceWorkflowSourceUseCases,
+)
 from .workflow_runner import (
     RunnerArtifactManifest,
     RunnerAssetCatalog,
@@ -136,6 +144,12 @@ __all__ = [
     "WorkflowPersistenceError",
     "WorkflowRevisionConflict",
     "WorkspaceWorkflowStore",
+    "WORKFLOW_SOURCE_MAX_BYTES",
+    "WorkflowSourceConflictError",
+    "WorkflowSourceDocument",
+    "WorkflowSourceStorageError",
+    "WorkspaceWorkflowSourceStore",
+    "WorkspaceWorkflowSourceUseCases",
     "RunnerSettings",
     "RunnerStatus",
     "RunnerArtifactManifest",

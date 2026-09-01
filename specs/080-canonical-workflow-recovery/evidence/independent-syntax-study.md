@@ -1,5 +1,7 @@
 # Independent Direct-Source Syntax Study
 
+> **Historical scope (2026-09-01):** this study evaluated the exhaustive recovery DSL now preserved as `fixtures/mounting-bracket.workflow.internal-ir.wflow`. It does not evaluate the current engineer-facing `mounting-bracket.workflow.wflow`, which is a contextual authoring projection using `workflow`, `item`, `input`, and `task` sections. See `syntax-evaluation.md` for the current projection evidence. The measurements below remain unchanged historical evidence.
+
 **Evaluator**: independent read-only Codex agent  
 **Method**: in-memory harness; evaluator imported without invoking its evidence-writing path  
 **Canonical semantic SHA-256**: `dadc3d6a2e274973a9fd16f6eecd95ac1c3dac2f6ebd38c5b83b4e6a2705acb6`

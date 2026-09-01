@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import {
   BrowserRouter,
   HashRouter,
@@ -18,7 +18,6 @@ import ModelSetupPage from "./components/pages/ModelSetupPage";
 import EngineeringModelLibraryPage from "./components/pages/EngineeringModelLibraryPage";
 import ProgramStatusPage from "./components/pages/ProgramStatusPage";
 import ProcessDefinitionPage from "./components/pages/ProcessDefinitionPage";
-import WorkflowComposerPage from "./components/pages/WorkflowComposerPage";
 import { AuthGate } from "./components/common/AuthGate";
 
 import { ToolsProvider } from "./store/tools";
@@ -31,12 +30,6 @@ import {
   workspaceSurfacesEnabled,
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
-import { workflowComposerEnabled } from "./config/workflow-composer";
-import { workflowRecoveryEnabled } from "./config/workflow-recovery";
-
-const WorkflowRecoveryPage = lazy(
-  () => import("./components/pages/WorkflowRecoveryPage"),
-);
 
 function App() {
   useDesktopIntegration();
@@ -57,8 +50,6 @@ function App() {
   const Router =
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
   const processDefinitionEnabled = processDefinitionViewEnabled();
-  const composerEnabled = workflowComposerEnabled();
-  const recoveryEnabled = workflowRecoveryEnabled();
 
   const content = (
     <ViewerPanelProvider>
@@ -84,22 +75,6 @@ function App() {
                 <Route
                   path="/processes/product-definition-v1"
                   element={<ProcessDefinitionPage />}
-                />
-              )}
-              {composerEnabled && (
-                <Route
-                  path="/workflow-composer"
-                  element={<WorkflowComposerPage />}
-                />
-              )}
-              {recoveryEnabled && (
-                <Route
-                  path="/workflow-recovery"
-                  element={
-                    <Suspense fallback={<div role="status">Loading recovery concept…</div>}>
-                      <WorkflowRecoveryPage />
-                    </Suspense>
-                  }
                 />
               )}
               <Route path="/settings" element={<SettingsPage />} />

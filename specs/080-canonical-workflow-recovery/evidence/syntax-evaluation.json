@@ -1,12 +1,14 @@
 {
   "subject": "mounting-bracket.workflow",
   "subject_sha256": "04cc79dad3b8177e52ab46d0c994d5d48b39f63d7483ccf504eb8d665b902b2d",
-  "scope": "single-agent exploratory syntax evidence; not a benchmark or permanent selection",
+  "scope": "single-agent lossless engineering-source evidence; not a benchmark or permanent syntax selection",
+  "authority": "strict JSON/YAML canonical IR; engineering source exactly reconstructs the accepted definition against trusted installed contracts, while host-managed version, ancestry, integrity, layout, and run records remain outside authoring source",
+  "legacy_internal_fixture": "specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.internal-ir.wflow",
   "edit_tasks": [
     "rename geometry block",
     "change bracket thickness",
-    "make manufacturing-check design specification optional",
-    "change exact export tool",
+    "clarify design-specification purpose",
+    "clarify manufacturing-check prompt",
     "clarify feedback condition"
   ],
   "treatments": {
@@ -19,11 +21,11 @@
       "schema_valid": true,
       "edit_candidates_valid": 5,
       "edit_candidates_total": 5,
-      "mean_changed_lines": 2.4,
+      "mean_changed_lines": 2.0,
       "changed_lines_by_task": [
         2,
         2,
-        4,
+        2,
         2,
         2
       ],
@@ -46,8 +48,8 @@
       "changed_lines_by_task": [
         2,
         2,
-        4,
-        2,
+        3,
+        3,
         2
       ],
       "parser_complexity_loc": 2,
@@ -56,10 +58,10 @@
       "comments": "lost by evaluated safe parser",
       "migration_cost": "moderate scalar/implicit typing and CST policy"
     },
-    "dsl": {
-      "bytes": 23171,
-      "lines": 698,
-      "max_line": 527,
+    "engineering_source": {
+      "bytes": 15071,
+      "lines": 328,
+      "max_line": 685,
       "indent_depth": 1,
       "round_trip": true,
       "schema_valid": true,
@@ -69,17 +71,36 @@
       "changed_lines_by_task": [
         2,
         2,
-        4,
         2,
-        2
+        2,
+        4
       ],
-      "parser_complexity_loc": 96,
+      "parser_complexity_loc": 427,
       "mechanical_readability_5": 4.5,
-      "source_map": "section spans implemented",
-      "comments": "leading comments preserved; canonical formatting normalized",
-      "migration_cost": "highest parser/grammar/version ownership",
-      "source_map_entries": 66,
-      "comment_preservation_probe": true
+      "source_map": "friendly section spans implemented",
+      "comments": "generated guidance retained; arbitrary comments normalize away",
+      "migration_cost": "reconstructive parser plus trusted installed-contract resolution",
+      "source_map_entries": 62,
+      "base_bound": true,
+      "lossless_round_trip_against_trusted_base": true,
+      "reconstruction_requires": "trusted installed item, tool, and reusable-step contracts",
+      "explicit_engineering_contracts": [
+        "items",
+        "steps",
+        "connection points",
+        "connections",
+        "tool assignments",
+        "reusable steps",
+        "optional groups"
+      ],
+      "host_managed_fields_omitted": [
+        "schema version",
+        "accepted revision",
+        "parent revision",
+        "semantic digest",
+        "layout",
+        "run state"
+      ]
     }
   }
 }

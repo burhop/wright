@@ -36,12 +36,18 @@ relabel/redirect relationship, layout-only move, and validated undo/redo
 snapshot restoration. Those host-only commands are not represented as if they
 were proven portable wire commands.
 
-The JSON, YAML, and DSL projections still round-trip every phase, block, port,
-relationship, artifact contract, binding, and component instance losslessly.
-Code edits outside the implemented command subset are rejected as unsupported
-and preserve the last-valid definition. Adding/removing ports, phases, artifact
-contracts, bindings, or component instances remains a post-approval promotion
-task; no UI path is allowed to mutate those structures by bypassing commands.
+Strict JSON/YAML and the explicitly named legacy internal-IR DSL still
+round-trip every phase, block, port, relationship, artifact contract, binding,
+and component instance losslessly. The engineer-facing `.wflow` is different:
+it is a contextual projection bound to an accepted canonical base. It exposes
+workflow metadata, engineering items/files, inputs, tasks, prompts/instructions,
+settings, friendly connection-point kinds, tool assignments, optional groups,
+and review gates. The host supplies revisions, digests, exact installed
+contracts, canonical identities, and layout; it resolves the friendly names
+against that trusted accepted base. Accepted source edits lower to the same
+atomic command boundary. Unsupported structural edits fail closed and preserve
+the last-valid definition. No source or UI path may mutate hidden structures by
+bypassing commands.
 
 The host-only block move updates the separately versioned layout document.
 A batch containing both a move and a semantic command fails with

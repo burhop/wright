@@ -2,12 +2,19 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from pathlib import Path
 
 import pytest
 from jsonschema import Draft202012Validator
 
-from scripts.recovery.evaluate_workflow_syntaxes import dsl_text, json_text, yaml_text
+from scripts.recovery.evaluate_workflow_syntaxes import (
+    authoring_text,
+    dsl_text,
+    json_text,
+    parse_authoring,
+    yaml_text,
+)
 from scripts.recovery.workflow_conformance import (
     apply,
     canonical_bytes,
@@ -23,7 +30,8 @@ from scripts.recovery.workflow_conformance import (
 FEATURE = Path("specs/080-canonical-workflow-recovery")
 JSON_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.json"
 YAML_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.yaml"
-DSL_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.wflow"
+AUTHORING_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.wflow"
+DSL_FIXTURE = FEATURE / "fixtures/mounting-bracket.workflow.internal-ir.wflow"
 CONTRACTS = FEATURE / "contracts"
 
 
@@ -53,6 +61,133 @@ def test_committed_treatments_are_current_and_semantically_identical(workflow: d
         assert canonical_bytes(reparsed.ir) == canonical_bytes(workflow)
         if syntax == "dsl":
             assert len(source_map) == 66
+
+
+def test_committed_engineering_source_is_current_lossless_and_engineer_facing(
+    workflow: dict,
+) -> None:
+    text = AUTHORING_FIXTURE.read_text(encoding="utf-8")
+    assert text == authoring_text(workflow)
+    assert "workflow mounting_bracket" in text
+    assert "item design_specification" in text
+    assert "input design_intent" in text
+    assert "task create_design_specification" in text
+    assert "prompt:" in text
+    assert "design_document" in text
+    assert "step_file" in text
+    assert "\ngroup " not in text
+    assert "  group: null" in text
+    assert "connection design_intent_to_specification" in text
+    assert '"key":"design_specification_in"' in text
+    assert '"assignment":"generate_geometry"' in text
+    assert '"key":"review_cell"' in text
+    for managed_field in (
+        "version:",
+        "schema_version:",
+        "revision:",
+        "parent_revision:",
+        "semantic_sha256:",
+        "digest:",
+        "authorship:",
+    ):
+        assert managed_field not in text
+    assert re.search(r"\bblock\.", text) is None
+    assert re.search(r"\bport\.", text) is None
+    assert re.search(r"\bartifact\.", text) is None
+    assert re.search(r"\btype\.", text) is None
+    assert '"kind":"design_intent"' in text
+    assert '"kind":"cad_model"' in text
+    assert "phase " not in text
+
+    rebound = parse_authoring(text, workflow)
+    assert canonical_bytes(rebound.ir) == canonical_bytes(workflow)
+    assert validate(rebound.ir).valid
+    assert len(rebound.source_map) == 62
+
+
+def test_engineering_source_edits_rehydrate_without_exposing_host_authority(workflow: dict) -> None:
+    text = AUTHORING_FIXTURE.read_text(encoding="utf-8")
+    edited = text.replace('  name: "Create bracket CAD model"', '  name: "Create parametric bracket"', 1)
+    edited = edited.replace('"thickness_mm":6', '"thickness_mm":8', 1)
+    edited = edited.replace(
+        '"item":"design_specification","key":"design_specification_check_in","kind":"design_specification","name":"Reviewed design specification","quantity":"one","required":true',
+        '"item":"design_specification","key":"design_specification_check_in","kind":"design_specification","name":"Reviewed design specification","quantity":"optional","required":false',
+        1,
+    )
+    edited = edited.replace(
+        '"action":"tool.export-step-ap242","assignment":"export_step"',
+        '"action":"tool.export-step-ap242-reviewed","assignment":"export_step"',
+        1,
+    )
+    edited = edited.replace(
+        '  when: "A design requirement or manufacturing issue is unresolved"',
+        '  when: "Any required input is missing or a warning remains unresolved"',
+        1,
+    )
+    rebound = parse_authoring(edited, workflow).ir
+    geometry = next(block for block in rebound["blocks"] if block["id"] == "block.generate-geometry")
+    assert geometry["title"] == "Create parametric bracket"
+    assert geometry["configuration"]["thickness_mm"] == 8
+    criteria_port = next(
+        port
+        for port in rebound["ports"]
+        if port["id"] == "port.design-specification-check-in"
+    )
+    assert criteria_port["required"] is False
+    assert criteria_port["cardinality"] == "optional"
+    export_binding = next(
+        binding
+        for binding in rebound["bindings"]
+        if binding["id"] == "binding.export-step"
+    )
+    assert export_binding["tool_id"] == "tool.export-step-ap242-reviewed"
+    feedback = next(
+        relationship
+        for relationship in rebound["relationships"]
+        if relationship["id"] == "rel.review-revise"
+    )
+    assert feedback["condition"] == (
+        "Any required input is missing or a warning remains unresolved"
+    )
+    assert rebound["revision"] == workflow["revision"]
+    assert rebound["parent_revision"] == workflow["parent_revision"]
+    assert rebound["semantic_sha256"] is None
+    assert validate(rebound).valid
+
+    with pytest.raises(ValueError, match="WFR-SOURCE-FIELD-MANAGED"):
+        parse_authoring(
+            text.replace('  name: "Mounting bracket development"', '  revision: 99\n  name: "Mounting bracket development"', 1),
+            workflow,
+        )
+
+
+@pytest.mark.parametrize(
+    "mutate,code",
+    [
+        (lambda text: text.replace("  name:", "  name", 1), "WFR-SOURCE-FIELD-INVALID"),
+        (lambda text: text.replace("  purpose:", "  unknown_field: true\n  purpose:", 1), "WFR-SOURCE-FIELD-UNKNOWN"),
+        (lambda text: text.replace("  name:", "  name: duplicate\n  name:", 1), "WFR-SOURCE-FIELD-DUPLICATE"),
+        (lambda text: text.replace("item geometry", "item unexpected_geometry", 1), "WFR-SOURCE-ITEM-MISSING"),
+        (lambda text: text.replace("  type: cad_model", "  type: executable", 1), "WFR-SOURCE-TYPE-CHANGE"),
+        (lambda text: text.replace("  performed_by: configured_tool", "  performed_by: untrusted_robot", 1), "WFR-SOURCE-ACTOR"),
+        (lambda text: text.replace('"quantity":"many"', '"quantity":"sometimes"', 1), "WFR-SOURCE-PORT-INVALID"),
+        (lambda text: text.replace("  to: generate_geometry", "  to: missing_step", 1), "WFR-SOURCE-ENDPOINT-UNKNOWN"),
+        (lambda text: text.replace("  group: null", "  group: undocumented_group", 1), "WFR-SOURCE-GROUP-UNKNOWN"),
+        (lambda text: text.replace("  type: item", "  type: stream", 1), "WFR-SOURCE-CONNECTION-TYPE"),
+        (
+            lambda text: text.replace(
+                '"assignment":"generate_geometry"',
+                '"assignment":"missing_assignment"',
+                1,
+            ),
+            "WFR-SOURCE-TOOL-UNKNOWN",
+        ),
+    ],
+)
+def test_engineering_source_invalid_controls_fail_closed(workflow: dict, mutate, code: str) -> None:
+    text = AUTHORING_FIXTURE.read_text(encoding="utf-8")
+    with pytest.raises(ValueError, match=code):
+        parse_authoring(mutate(text), workflow)
 
 
 def invalid_treatments(workflow: dict, syntax: str) -> list[tuple[str, str]]:

@@ -11,7 +11,6 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isWorkspaceView = location.pathname.startsWith("/workspace/");
-  const isRecoveryView = location.pathname.startsWith("/workflow-recovery");
 
   const desktop = isDesktop();
 
@@ -33,7 +32,7 @@ export function AppShell({ children }: AppShellProps) {
       <Header />
 
       <div
-        className={`app-shell__body${isWorkspaceView ? " app-shell__body--workspace" : ""}${isRecoveryView ? " app-shell__body--recovery" : ""}`}
+        className={`app-shell__body${isWorkspaceView ? " app-shell__body--workspace" : ""}`}
       >
         {!isWorkspaceView && <Sidebar />}
 

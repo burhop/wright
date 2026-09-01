@@ -5,7 +5,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import WorkspacePanel from "../src/components/chat/WorkspacePanel";
 import { ViewerPanelProvider } from "../src/store/viewer";
@@ -21,6 +21,11 @@ const mockGetWorkspaceTools = vi.fn();
 const mockGetWorkspaceToolsById = vi.fn();
 const mockListHermesModels = vi.fn();
 const mockEnsureDefaultRivetWorkflow = vi.fn();
+
+function LocationProbe() {
+  const location = useLocation();
+  return <output data-testid="location-probe">{`${location.pathname}${location.search}`}</output>;
+}
 
 vi.mock("../src/store/sessions", () => ({
   useChat: () => mockUseChat(),
@@ -94,10 +99,28 @@ vi.mock("../src/components/surfaces/DirectBrepSurface", () => ({
   DirectBrepSurface: () => <div data-testid="direct-brep-fixture" />,
 }));
 
+vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
+  WorkflowRecoveryPage: (props: {
+    workspaceId: string;
+    sessionId: string;
+    workspaceName: string;
+    workflowFilePath: string;
+  }) => (
+    <div
+      data-testid="workspace-workflow-fixture"
+      data-workspace-id={props.workspaceId}
+      data-session-id={props.sessionId}
+      data-workspace-name={props.workspaceName}
+      data-workflow-file={props.workflowFilePath}
+    />
+  ),
+}));
+
 describe("WorkspacePanel session selection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.unstubAllEnvs();
+    localStorage.clear();
     mockSendMessage.mockResolvedValue(undefined);
     mockUpdateWorkspaceSession.mockResolvedValue("new-session");
     mockSelectSession.mockResolvedValue(undefined);
@@ -293,8 +316,67 @@ describe("WorkspacePanel session selection", () => {
     vi.unstubAllGlobals();
   });
 
-  it("opens a Rivet tab immediately while its workflow is prepared", async () => {
-    mockEnsureDefaultRivetWorkflow.mockReturnValue(new Promise(() => {}));
+  it("opens the workspace-owned workflow file from Workflows", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1?workflow=canonical"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+
+    expect(
+      await screen.findByText("mounting-bracket.workflow.wflow"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-workspace-id",
+      "workspace-1",
+    );
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-session-id",
+      "new-session",
+    );
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-workspace-name",
+      "Demo",
+    );
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-workflow-file",
+      "/workflows/mounting-bracket.workflow.wflow",
+    );
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+  });
+
+  it("opens the canonical workflow from the explicit Workflows action in an ordinary workspace", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+
+    expect(
+      await screen.findByTestId("workspace-workflow-fixture"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("location-probe")).toHaveTextContent(
+      "/workspace/workspace-1?workflow=canonical",
+    );
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+  });
+
+  it("hides Workflows only when both workspace editors are disabled", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "false");
+    vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "false");
 
     render(
       <MemoryRouter>
@@ -304,11 +386,65 @@ describe("WorkspacePanel session selection", () => {
       </MemoryRouter>,
     );
 
-    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+    await screen.findByTestId("workspace-panel");
+    expect(
+      screen.queryByTestId("activity-bar-workflows-btn"),
+    ).not.toBeInTheDocument();
+  });
 
+  it("does not expose the canonical editor without both its flag and workspace query", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "false");
+    localStorage.setItem(
+      "wright-workspace-layout-workspace-1",
+      JSON.stringify({
+        openTabs: [
+          {
+            name: "mounting-bracket.workflow.wflow",
+            path: "/workflows/mounting-bracket.workflow.wflow",
+            type: "workflow",
+          },
+        ],
+        activeTabPath: "/workflows/mounting-bracket.workflow.wflow",
+      }),
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByTestId("workspace-panel");
+    expect(screen.getByTestId("activity-bar-workflows-btn")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("mounting-bracket.workflow.wflow"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses Rivet when the canonical query is present but its flag is off", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "false");
+    vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "true");
+    mockEnsureDefaultRivetWorkflow.mockReturnValue(new Promise(() => {}));
+
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1?workflow=canonical"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
     expect(await screen.findByText("rivet.rivet-project")).toBeInTheDocument();
-    expect(screen.getByTestId("managed-rivet-fixture")).toBeInTheDocument();
-    expect(mockEnsureDefaultRivetWorkflow).toHaveBeenCalledWith("new-session");
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps the agent pane live while maximizing the active surface", async () => {

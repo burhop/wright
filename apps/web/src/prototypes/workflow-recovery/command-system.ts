@@ -11,11 +11,16 @@ import {
 } from "./model";
 import { toCanonicalWire } from "./canonical-wire";
 import { formatRecoveryDsl, parseRecoveryDsl } from "./recovery-dsl";
+import { validateRecoveryAuthoringRoundTrip } from "./recovery-authoring";
 
 export type RecoveryCommand =
   | { kind: "move_block"; blockId: string; x: number; y: number }
+  | { kind: "set_workflow_metadata"; patch: Partial<Pick<RecoveryWorkflow["metadata"], "title" | "purpose" | "engineeringDomain">> }
+  | { kind: "set_phase_name"; phaseId: string; name: string }
   | { kind: "set_block_title"; blockId: string; title: string }
+  | { kind: "set_block_definition"; blockId: string; patch: Partial<Pick<RecoveryBlock, "purpose" | "instructions">> }
   | { kind: "set_block_configuration"; blockId: string; key: string; value: string | number | boolean }
+  | { kind: "set_artifact_definition"; artifactId: string; patch: { name?: string; description?: string } }
   | { kind: "set_port_contract"; portId: string; required: boolean; cardinality: RecoveryPort["cardinality"] }
   | { kind: "set_binding_tool"; bindingId: string; toolId: string | null }
   | { kind: "update_relationship"; relationshipId: string; patch: Partial<Pick<RecoveryRelationship, "kind" | "sourceId" | "targetId" | "label" | "condition">> }
@@ -73,9 +78,29 @@ function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, comman
     layout.positions[command.blockId] = { x: Math.round(command.x), y: Math.round(command.y) };
     return;
   }
+  if (command.kind === "set_workflow_metadata") {
+    if (Object.keys(command.patch).length === 0 || Object.values(command.patch).some((value) => typeof value !== "string" || value.trim() === "")) {
+      throw new Error("WFR-COMMAND-WORKFLOW-METADATA-INVALID");
+    }
+    Object.assign(workflow.metadata, Object.fromEntries(Object.entries(command.patch).map(([key, value]) => [key, value!.trim()])));
+    return;
+  }
+  if (command.kind === "set_phase_name") {
+    const phase = workflow.phases.find((item) => item.id === command.phaseId);
+    if (!phase || !command.name.trim()) throw new Error(`WFR-COMMAND-TARGET-MISSING:${command.phaseId}`);
+    phase.name = command.name.trim();
+    return;
+  }
   if (command.kind === "set_block_title") {
     if (!command.title.trim()) throw new Error(`WFR-COMMAND-TITLE-INVALID:${command.blockId}`);
     block(workflow, command.blockId).title = command.title.trim();
+    return;
+  }
+  if (command.kind === "set_block_definition") {
+    if (Object.keys(command.patch).length === 0 || Object.values(command.patch).some((value) => typeof value !== "string" || value.trim() === "")) {
+      throw new Error(`WFR-COMMAND-DEFINITION-INVALID:${command.blockId}`);
+    }
+    Object.assign(block(workflow, command.blockId), Object.fromEntries(Object.entries(command.patch).map(([key, value]) => [key, value!.trim()])));
     return;
   }
   if (command.kind === "set_block_configuration") {
@@ -87,6 +112,14 @@ function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, comman
     if (!port) throw new Error(`WFR-COMMAND-TARGET-MISSING:${command.portId}`);
     port.required = command.required;
     port.cardinality = command.cardinality;
+    return;
+  }
+  if (command.kind === "set_artifact_definition") {
+    const artifact = workflow.artifactContracts.find((item) => item.id === command.artifactId);
+    if (!artifact || Object.keys(command.patch).length === 0 || Object.values(command.patch).some((value) => typeof value !== "string" || value.trim() === "")) {
+      throw new Error(`WFR-COMMAND-TARGET-MISSING:${command.artifactId}`);
+    }
+    Object.assign(artifact, Object.fromEntries(Object.entries(command.patch).map(([key, value]) => [key, value!.trim()])));
     return;
   }
   if (command.kind === "set_binding_tool") {
@@ -105,11 +138,13 @@ function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, comman
     if (workflow.blocks.some((item) => item.id === command.block.id) || workflow.ports.some((item) => command.ports.some((port) => port.id === item.id))) {
       throw new Error(`WFR-ID-DUPLICATE:${command.block.id}`);
     }
-    const phase = workflow.phases.find((item) => item.id === command.block.phaseId);
-    if (!phase) throw new Error(`WFR-REFERENCE-DANGLING:${command.block.phaseId}`);
+    const phase = command.block.phaseId === null
+      ? null
+      : workflow.phases.find((item) => item.id === command.block.phaseId);
+    if (command.block.phaseId !== null && !phase) throw new Error(`WFR-REFERENCE-DANGLING:${command.block.phaseId}`);
     workflow.blocks.push(structuredClone(command.block));
     workflow.ports.push(...structuredClone(command.ports));
-    phase.blockIds.push(command.block.id);
+    phase?.blockIds.push(command.block.id);
     layout.positions[command.block.id] = { ...command.position };
     return;
   }
@@ -232,6 +267,8 @@ export function applyRecoveryBatch(
   if (!parsed.ok || parsed.workflow === null) return { ok: false, workflow: null, layout: null, diagnostics: parsed.diagnostics, diff: [], semanticChanged: false };
   const candidateLayoutIssue = validateRecoveryLayoutDocument(parsed.workflow, layout)[0];
   if (candidateLayoutIssue) return failure(candidateLayoutIssue.code, candidateLayoutIssue.explanation, candidateLayoutIssue.correction, candidateLayoutIssue.semanticId);
+  const sourceContainment = validateRecoveryAuthoringRoundTrip(parsed.workflow);
+  if (!sourceContainment.ok) return { ok: false, workflow: null, layout: null, diagnostics: sourceContainment.diagnostics, diff: [], semanticChanged: false };
   const diff = modelDiff(workflowValue, parsed.workflow);
   const semanticChanged = diff.length > 0;
   return { ok: true, workflow: parsed.workflow, layout, diagnostics: [], diff, semanticChanged };
@@ -243,6 +280,7 @@ export function acceptRecoveryResult(current: RecoveryWorkflow, currentLayout: R
   if (result.semanticChanged) {
     workflow.parentRevision = current.revision;
     workflow.revision = current.revision + 1;
+    workflow.semanticSha256 = null;
   } else {
     workflow.parentRevision = current.parentRevision;
     workflow.revision = current.revision;
@@ -271,42 +309,98 @@ function normalized(workflow: RecoveryWorkflow): string {
 }
 
 export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkflow): RecoveryCommand[] | RecoveryDiagnostic[] {
-  const commands: RecoveryCommand[] = [];
+  const edits: RecoveryCommand[] = [];
+  const disconnects: RecoveryCommand[] = [];
+  const relationshipUpdates: RecoveryCommand[] = [];
+  const deletedBlocks: RecoveryCommand[] = [];
+  const addedBlocks: RecoveryCommand[] = [];
+  const connections: RecoveryCommand[] = [];
+  const metadataPatch: Partial<Pick<RecoveryWorkflow["metadata"], "title" | "purpose" | "engineeringDomain">> = {};
+  if (before.metadata.title !== after.metadata.title) metadataPatch.title = after.metadata.title;
+  if (before.metadata.purpose !== after.metadata.purpose) metadataPatch.purpose = after.metadata.purpose;
+  if (before.metadata.engineeringDomain !== after.metadata.engineeringDomain) metadataPatch.engineeringDomain = after.metadata.engineeringDomain;
+  if (Object.keys(metadataPatch).length > 0) edits.push({ kind: "set_workflow_metadata", patch: metadataPatch });
+  const afterPhases = new Map(after.phases.map((item) => [item.id, item]));
+  for (const current of before.phases) {
+    const edited = afterPhases.get(current.id);
+    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "Engineering source cannot remove an accepted optional group in this concept.", correction: "Omit group sections from the authoring view or regroup with a reviewed structural command." }];
+    if (current.name !== edited.name) edits.push({ kind: "set_phase_name", phaseId: current.id, name: edited.name });
+  }
   const afterById = new Map(after.blocks.map((item) => [item.id, item]));
+  const beforeById = new Map(before.blocks.map((item) => [item.id, item]));
   for (const current of before.blocks) {
     const edited = afterById.get(current.id);
-    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "This recovery Code treatment only promotes reviewed block title/config edits.", correction: "Use the canvas for structural edits or restore the last-valid source." }];
-    if (current.title !== edited.title) commands.push({ kind: "set_block_title", blockId: current.id, title: edited.title });
+    if (!edited) {
+      deletedBlocks.push({ kind: "delete_block", blockId: current.id });
+      continue;
+    }
+    if (current.title !== edited.title) edits.push({ kind: "set_block_title", blockId: current.id, title: edited.title });
+    const definitionPatch: Partial<Pick<RecoveryBlock, "purpose" | "instructions">> = {};
+    if (current.purpose !== edited.purpose) definitionPatch.purpose = edited.purpose;
+    if (current.instructions !== edited.instructions) definitionPatch.instructions = edited.instructions;
+    if (Object.keys(definitionPatch).length > 0) edits.push({ kind: "set_block_definition", blockId: current.id, patch: definitionPatch });
     const keys = new Set([...Object.keys(current.configuration), ...Object.keys(edited.configuration)]);
     for (const key of keys) {
       if (edited.configuration[key] === undefined) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "Configuration key deletion is not promoted by this recovery parser.", correction: "Restore the key or configure the block in the inspector." }];
-      if (current.configuration[key] !== edited.configuration[key]) commands.push({ kind: "set_block_configuration", blockId: current.id, key, value: edited.configuration[key] as string | number | boolean });
+      if (current.configuration[key] !== edited.configuration[key]) edits.push({ kind: "set_block_configuration", blockId: current.id, key, value: edited.configuration[key] as string | number | boolean });
     }
   }
+  let addedIndex = 0;
+  for (const block of after.blocks) {
+    if (beforeById.has(block.id)) continue;
+    const portIds = new Set([...block.inputPortIds, ...block.outputPortIds]);
+    const ports = after.ports.filter((port) => portIds.has(port.id));
+    if (ports.length !== portIds.size) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: block.id, line: null, explanation: "A new workflow step has an incomplete connection-point definition.", correction: "Declare every input and output connection point in the new task section." }];
+    addedBlocks.push({ kind: "add_block", block: structuredClone(block), ports: structuredClone(ports), position: { x: 580 + addedIndex * 40, y: 650 + addedIndex * 40 } });
+    addedIndex += 1;
+  }
+  const afterArtifacts = new Map(after.artifactContracts.map((item) => [item.id, item]));
+  for (const current of before.artifactContracts) {
+    const edited = afterArtifacts.get(current.id);
+    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "Engineering source cannot remove an accepted engineering item in this concept.", correction: "Restore the item or change structure through a reviewed canvas command." }];
+    const patch: { name?: string; description?: string } = {};
+    if (current.name !== edited.name) patch.name = edited.name;
+    if (current.description !== edited.description) patch.description = edited.description;
+    if (Object.keys(patch).length > 0) edits.push({ kind: "set_artifact_definition", artifactId: current.id, patch });
+  }
   const afterPorts = new Map(after.ports.map((item) => [item.id, item]));
+  const deletedBlockIds = new Set(deletedBlocks.map((command) => command.kind === "delete_block" ? command.blockId : ""));
+  const addedPortIds = new Set(addedBlocks.flatMap((command) => command.kind === "add_block" ? command.ports.map((port) => port.id) : []));
   for (const current of before.ports) {
     const edited = afterPorts.get(current.id);
-    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "This recovery Code treatment cannot add or remove ports.", correction: "Restore the canonical port or use a later approved structural editor." }];
-    if (current.required !== edited.required || current.cardinality !== edited.cardinality) commands.push({ kind: "set_port_contract", portId: current.id, required: edited.required, cardinality: edited.cardinality });
+    if (!edited) {
+      if (deletedBlockIds.has(current.ownerBlockId)) continue;
+      return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "Engineering source cannot remove one connection point from an existing step.", correction: "Restore the connection point or remove the complete step." }];
+    }
+    if (current.required !== edited.required || current.cardinality !== edited.cardinality) edits.push({ kind: "set_port_contract", portId: current.id, required: edited.required, cardinality: edited.cardinality });
   }
+  const beforePortIds = new Set(before.ports.map((port) => port.id));
+  const unsupportedPort = after.ports.find((port) => !beforePortIds.has(port.id) && !addedPortIds.has(port.id));
+  if (unsupportedPort) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: unsupportedPort.id, line: null, explanation: "Engineering source cannot add one connection point to an existing step.", correction: "Add a complete new step or restore the accepted connection points." }];
   const afterRelationships = new Map(after.relationships.map((item) => [item.id, item]));
+  const beforeRelationshipIds = new Set(before.relationships.map((item) => item.id));
   for (const current of before.relationships) {
     const edited = afterRelationships.get(current.id);
-    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "This recovery Code treatment cannot add or remove relationships.", correction: "Use the canvas for connection structure or restore the relationship." }];
+    if (!edited) {
+      disconnects.push({ kind: "disconnect", relationshipId: current.id });
+      continue;
+    }
     const patch: Partial<Pick<RecoveryRelationship, "kind" | "sourceId" | "targetId" | "label" | "condition">> = {};
     if (current.kind !== edited.kind) patch.kind = edited.kind;
     if (current.sourceId !== edited.sourceId) patch.sourceId = edited.sourceId;
     if (current.targetId !== edited.targetId) patch.targetId = edited.targetId;
     if (current.label !== edited.label) patch.label = edited.label;
     if (current.condition !== edited.condition) patch.condition = edited.condition;
-    if (Object.keys(patch).length > 0) commands.push({ kind: "update_relationship", relationshipId: current.id, patch });
+    if (Object.keys(patch).length > 0) relationshipUpdates.push({ kind: "update_relationship", relationshipId: current.id, patch });
   }
+  for (const relationship of after.relationships) if (!beforeRelationshipIds.has(relationship.id)) connections.push({ kind: "connect", relationship: structuredClone(relationship) });
   const afterBindings = new Map(after.bindings.map((item) => [item.id, item]));
   for (const current of before.bindings) {
     const edited = afterBindings.get(current.id);
-    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "This recovery Code treatment cannot add or remove bindings.", correction: "Restore the canonical binding or use a later approved binding editor." }];
-    if (current.toolId !== edited.toolId) commands.push({ kind: "set_binding_tool", bindingId: current.id, toolId: edited.toolId });
+    if (!edited) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: current.id, line: null, explanation: "Engineering source cannot add or remove configured tool assignments in this editor.", correction: "Restore the assignment or change the configured tool in Technical details." }];
+    if (current.toolId !== edited.toolId) edits.push({ kind: "set_binding_tool", bindingId: current.id, toolId: edited.toolId });
   }
+  const commands = [...disconnects, ...relationshipUpdates, ...deletedBlocks, ...addedBlocks, ...edits, ...connections];
   const candidate = cloneWorkflow(before);
   for (const command of commands) applyCommand(candidate, {
     documentKind: "workflow-layout",
@@ -318,7 +412,7 @@ export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkfl
     viewport: { x: 0, y: 0, zoom: 1 },
   }, command);
   if (normalized(candidate) !== normalized(after)) {
-    return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: null, line: null, explanation: "The text contains a structural or authority change outside this disposable Code treatment.", correction: "Restore the last-valid source or make the structural change on the canvas." }];
+    return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: null, line: null, explanation: "The source contains a structural or managed-authority change that this editor cannot apply.", correction: "Restore the last accepted source or make the structural change on the canvas." }];
   }
   return commands;
 }
@@ -342,7 +436,7 @@ export function paletteBlock(
     block: {
       id: blockId, kind: "work", title: drawing ? "Create manufacturing drawing" : "Check dimensions and tolerances",
       purpose: drawing ? "Create a reviewable manufacturing drawing from the approved CAD model." : "Compare critical dimensions and tolerances with the design requirements.",
-      phaseId: drawing ? "phase.deliver" : "phase.verify", executionKind: "deterministic",
+      phaseId: null, executionKind: "deterministic",
       instructions: drawing ? "Create an A3 manufacturing drawing with dimensions and source revision." : "Report each checked dimension and tolerance with units and evidence.",
       configuration: drawing ? { sheet: "A3", standard: "ASME Y14.5" } : { criteria_source: "reviewed-design-specification" },
       inputPortIds: drawing ? [inputId] : [inputId, specificationInputId], outputPortIds: [outputId], bindingId: null, componentRef: null,
@@ -359,13 +453,13 @@ export function paletteBlock(
 export function aiDrawingProposal(workflow: RecoveryWorkflow): RecoveryCommandBatch {
   const first: RecoveryBlock = {
     id: "block.create-inspection-drawing", kind: "work", title: "Create manufacturing drawing",
-    purpose: "Create a dimensioned drawing from the approved bracket CAD model.", phaseId: "phase.deliver", executionKind: "deterministic",
+    purpose: "Create a dimensioned drawing from the approved bracket CAD model.", phaseId: null, executionKind: "deterministic",
     instructions: "Create an A3 manufacturing drawing with critical dimensions, datums, tolerances, and exact source revision.",
     configuration: { sheet: "A3", standard: "ASME Y14.5" }, inputPortIds: ["port.drawing-geometry-in"], outputPortIds: ["port.drawing-out"], bindingId: null, componentRef: null,
   };
   const second: RecoveryBlock = {
     id: "block.review-inspection-drawing", kind: "approval", title: "Review manufacturing drawing",
-    purpose: "Confirm drawing completeness before it enters the design handoff package.", phaseId: "phase.deliver", executionKind: "human",
+    purpose: "Confirm drawing completeness before it enters the design handoff package.", phaseId: null, executionKind: "human",
     instructions: "Accept only when dimensions, tolerances, revision, and the source CAD model agree.",
     configuration: { required_role: "drawing-checker" }, inputPortIds: ["port.drawing-review-in"], outputPortIds: ["port.drawing-approved-out"], bindingId: null, componentRef: null,
   };
