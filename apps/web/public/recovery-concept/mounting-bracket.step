@@ -1,0 +1,12 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('WRIGHT DISPOSABLE RECOVERY CONCEPT','SIMULATED MOUNTING BRACKET'),'2;1');
+FILE_NAME('mounting-bracket.step','2026-08-31T00:00:00',('Wright recovery concept'),('OpenAI'),'Wright','Wright','SIMULATED - NOT PRODUCTION');
+FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF'));
+ENDSEC;
+DATA;
+#1=PRODUCT('MOUNTING-BRACKET','SIMULATED','Disposable concept output',());
+#2=PRODUCT_DEFINITION_FORMATION('R1','Accepted definition revision placeholder',#1);
+#3=DESCRIPTIVE_REPRESENTATION_ITEM('NOTICE','This small text fixture demonstrates a recognizable downloadable STEP contract; it is not production geometry.');
+ENDSEC;
+END-ISO-10303-21;

@@ -3,6 +3,7 @@ import type { NavigationSection } from "../../store/types";
 import { useTools } from "../../store/tools";
 import { processDefinitionViewEnabled } from "../../services/surfaces/feature-flags";
 import { workflowComposerEnabled } from "../../config/workflow-composer";
+import { workflowRecoveryEnabled } from "../../config/workflow-recovery";
 
 export function Sidebar() {
   let servers = [];
@@ -82,6 +83,17 @@ export function Sidebar() {
             path: "/workflow-composer",
             icon: "layout-dashboard",
             order: 9,
+          },
+        ]
+      : []),
+    ...(workflowRecoveryEnabled()
+      ? [
+          {
+            id: "workflow-recovery",
+            label: "Workflow Recovery",
+            path: "/workflow-recovery",
+            icon: "layout-dashboard",
+            order: 10,
           },
         ]
       : []),

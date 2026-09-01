@@ -138,7 +138,7 @@
       "outcome": "Deterministic runs produce immutable run and step records, truthful mode and provenance, boundary-level activity, inspectable inputs and outputs, distinct failure layers, blocked-dependent explanations, cancellation/reconnect semantics, and recovery guidance.",
       "status": "proposed",
       "depends_on": [
-        "EPP-F02"
+        "EPP-F02C"
       ],
       "blocking_decisions": [
         "DEC-P0-005",

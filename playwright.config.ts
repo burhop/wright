@@ -51,6 +51,8 @@ export default defineConfig({
             process.env.VITE_WRIGHT_PROCESS_DEFINITION_VIEW ?? "1",
           VITE_WRIGHT_WORKFLOW_COMPOSER:
             process.env.VITE_WRIGHT_WORKFLOW_COMPOSER ?? "1",
+          VITE_WRIGHT_WORKFLOW_RECOVERY:
+            process.env.VITE_WRIGHT_WORKFLOW_RECOVERY ?? "1",
         },
       },
 });

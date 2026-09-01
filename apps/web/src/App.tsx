@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   HashRouter,
@@ -32,6 +32,11 @@ import {
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 import { workflowComposerEnabled } from "./config/workflow-composer";
+import { workflowRecoveryEnabled } from "./config/workflow-recovery";
+
+const WorkflowRecoveryPage = lazy(
+  () => import("./components/pages/WorkflowRecoveryPage"),
+);
 
 function App() {
   useDesktopIntegration();
@@ -53,6 +58,7 @@ function App() {
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
   const processDefinitionEnabled = processDefinitionViewEnabled();
   const composerEnabled = workflowComposerEnabled();
+  const recoveryEnabled = workflowRecoveryEnabled();
 
   const content = (
     <ViewerPanelProvider>
@@ -84,6 +90,16 @@ function App() {
                 <Route
                   path="/workflow-composer"
                   element={<WorkflowComposerPage />}
+                />
+              )}
+              {recoveryEnabled && (
+                <Route
+                  path="/workflow-recovery"
+                  element={
+                    <Suspense fallback={<div role="status">Loading recovery concept…</div>}>
+                      <WorkflowRecoveryPage />
+                    </Suspense>
+                  }
                 />
               )}
               <Route path="/settings" element={<SettingsPage />} />

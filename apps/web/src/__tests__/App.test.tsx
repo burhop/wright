@@ -6,7 +6,7 @@ import Sidebar from "../components/layout/Sidebar";
 import appSource from "../App.tsx?raw";
 
 const { featureFlags, logger, workspaceService } = vi.hoisted(() => ({
-  featureFlags: { processDefinitionEnabled: false, workflowComposerEnabled: false },
+  featureFlags: { processDefinitionEnabled: false, workflowComposerEnabled: false, workflowRecoveryEnabled: false },
   logger: { info: vi.fn(), error: vi.fn() },
   workspaceService: {
     getRecentWorkspaces: vi.fn().mockResolvedValue([]),
@@ -35,11 +35,15 @@ vi.mock("../services/surfaces/feature-flags", async (importOriginal) => {
 vi.mock("../config/workflow-composer", () => ({
   workflowComposerEnabled: () => featureFlags.workflowComposerEnabled,
 }));
+vi.mock("../config/workflow-recovery", () => ({
+  workflowRecoveryEnabled: () => featureFlags.workflowRecoveryEnabled,
+}));
 
 describe("App route compatibility", () => {
   beforeEach(() => {
     featureFlags.processDefinitionEnabled = false;
     featureFlags.workflowComposerEnabled = false;
+    featureFlags.workflowRecoveryEnabled = false;
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -115,6 +119,17 @@ describe("App route compatibility", () => {
     expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(wildcard));
   });
 
+  it("guards the disposable recovery route with its own default-off flag", () => {
+    const guard = "{recoveryEnabled && (";
+    const route = 'path="/workflow-recovery"';
+    const wildcard = 'path="*"';
+
+    expect(appSource).toContain("const recoveryEnabled = workflowRecoveryEnabled();");
+    expect(appSource.indexOf(guard)).toBeGreaterThan(-1);
+    expect(appSource.indexOf(route)).toBeGreaterThan(appSource.indexOf(guard));
+    expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(wildcard));
+  });
+
   it("shows the process navigation entry only while the flag is enabled", () => {
     const { rerender } = render(
       <MemoryRouter>
@@ -156,5 +171,24 @@ describe("App route compatibility", () => {
 
     expect(screen.getByTestId("nav-workflow-composer")).toHaveAttribute("href", "/workflow-composer");
     expect(screen.queryByTestId("nav-process-definition")).not.toBeInTheDocument();
+  });
+
+  it("shows recovery navigation only while its independent flag is enabled", () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByTestId("nav-workflow-recovery")).not.toBeInTheDocument();
+
+    featureFlags.workflowRecoveryEnabled = true;
+    rerender(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("nav-workflow-recovery")).toHaveAttribute("href", "/workflow-recovery");
+    expect(screen.queryByTestId("nav-workflow-composer")).not.toBeInTheDocument();
   });
 });

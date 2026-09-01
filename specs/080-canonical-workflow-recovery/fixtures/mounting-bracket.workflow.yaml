@@ -1,0 +1,467 @@
+# Wright recovery syntax treatment: comments are not round-trip preserved by this parser.
+document_kind: workflow-ir
+schema_version: 2.0.0-recovery.1
+workflow_id: workflow.mounting-bracket
+revision: 1
+parent_revision: null
+semantic_sha256: null
+metadata:
+  title: Mounting bracket development
+  purpose: Turn bracket requirements into a reviewed manufacturable STEP package.
+  engineering_domain: mechanical.design
+  authorship: human_with_ai_proposal
+phases:
+- id: phase.define
+  name: Define
+  purpose: Capture the design basis and create geometry.
+  order: 0
+  block_ids:
+  - block.capture-brief
+  - block.generate-geometry
+- id: phase.verify
+  name: Verify
+  purpose: Check manufacturability and approve the design.
+  order: 1
+  block_ids:
+  - block.check-manufacturability
+  - block.review-design
+- id: phase.deliver
+  name: Deliver
+  purpose: Export and package the approved design.
+  order: 2
+  block_ids:
+  - block.export-step
+  - block.release-package
+blocks:
+- id: block.capture-brief
+  kind: work
+  title: Capture bracket brief
+  purpose: Attach the requirement package and record the material basis.
+  phase_id: phase.define
+  execution_kind: human
+  instructions: Confirm dimensions, hole pattern, loads, material, and source revision.
+  configuration:
+    material: 6061-T6
+    units: mm
+  input_port_ids: []
+  output_port_ids:
+  - port.brief-out
+  binding_id: null
+  component_ref: null
+- id: block.generate-geometry
+  kind: work
+  title: Generate bracket geometry
+  purpose: Create a parametric L-bracket from the approved brief.
+  phase_id: phase.define
+  execution_kind: deterministic
+  instructions: Create the bracket with two mounting holes and one slotted interface.
+  configuration:
+    thickness_mm: 6
+    inside_radius_mm: 4
+  input_port_ids:
+  - port.brief-in
+  output_port_ids:
+  - port.geometry-out
+  binding_id: binding.generate-geometry
+  component_ref: null
+- id: block.check-manufacturability
+  kind: work
+  title: Check manufacturability
+  purpose: Evaluate bend radius, edge distance, thickness, and tool access.
+  phase_id: phase.verify
+  execution_kind: ai_capable
+  instructions: Explain every warning and cite the geometry and material fact that caused it.
+  configuration:
+    process: machined-and-bent
+    minimum_edge_ratio: 1.5
+  input_port_ids:
+  - port.geometry-check-in
+  - port.material-in
+  output_port_ids:
+  - port.report-out
+  binding_id: binding.check-manufacturability
+  component_ref: null
+- id: block.review-design
+  kind: approval
+  title: Review bracket design
+  purpose: Approve the geometry and manufacturability findings or return them for revision.
+  phase_id: phase.verify
+  execution_kind: human
+  instructions: Approve only when all required inputs are present and every warning is dispositioned.
+  configuration:
+    required_role: design-reviewer
+  input_port_ids:
+  - port.geometry-review-in
+  - port.report-in
+  output_port_ids:
+  - port.approved-geometry-out
+  binding_id: null
+  component_ref: null
+- id: block.export-step
+  kind: work
+  title: Export STEP
+  purpose: Export the approved bracket to a neutral STEP file.
+  phase_id: phase.deliver
+  execution_kind: deterministic
+  instructions: Export AP242 with millimetre units and preserve the exact source revision.
+  configuration:
+    format: STEP AP242
+    overwrite: false
+  input_port_ids:
+  - port.approved-geometry-in
+  output_port_ids:
+  - port.step-out
+  binding_id: binding.export-step
+  component_ref: null
+- id: block.release-package
+  kind: work
+  title: Assemble review package
+  purpose: Package the STEP model and manufacturability report for downstream review.
+  phase_id: phase.deliver
+  execution_kind: deterministic
+  instructions: Create a local package only; do not publish or send it.
+  configuration:
+    classification: internal
+    publish: false
+  input_port_ids:
+  - port.step-in
+  - port.report-package-in
+  output_port_ids:
+  - port.package-out
+  binding_id: binding.release-package
+  component_ref: null
+ports:
+- id: port.brief-out
+  owner_block_id: block.capture-brief
+  direction: output
+  name: Bracket brief
+  type_id: type.requirements.bundle
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.brief
+  description: The attached dimensions, loads, material, and reference images.
+- id: port.brief-in
+  owner_block_id: block.generate-geometry
+  direction: input
+  name: Bracket brief
+  type_id: type.requirements.bundle
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.brief
+  description: Approved bracket requirements.
+- id: port.geometry-out
+  owner_block_id: block.generate-geometry
+  direction: output
+  name: Bracket geometry
+  type_id: type.geometry.brep
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.geometry
+  description: Parametric bracket geometry.
+- id: port.geometry-check-in
+  owner_block_id: block.check-manufacturability
+  direction: input
+  name: Geometry
+  type_id: type.geometry.brep
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.geometry
+  description: Geometry to evaluate.
+- id: port.material-in
+  owner_block_id: block.check-manufacturability
+  direction: input
+  name: Material
+  type_id: type.material.spec
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.material
+  description: Material and temper needed for manufacturing rules.
+- id: port.report-out
+  owner_block_id: block.check-manufacturability
+  direction: output
+  name: Manufacturability report
+  type_id: type.report.manufacturability
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.manufacturability-report
+  description: Findings, evidence, and recovery guidance.
+- id: port.geometry-review-in
+  owner_block_id: block.review-design
+  direction: input
+  name: Geometry
+  type_id: type.geometry.brep
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.geometry
+  description: Geometry presented for approval.
+- id: port.report-in
+  owner_block_id: block.review-design
+  direction: input
+  name: Report
+  type_id: type.report.manufacturability
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.manufacturability-report
+  description: Manufacturability evidence presented for approval.
+- id: port.approved-geometry-out
+  owner_block_id: block.review-design
+  direction: output
+  name: Approved geometry
+  type_id: type.geometry.approved
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.approved-geometry
+  description: Exact approved geometry revision.
+- id: port.approved-geometry-in
+  owner_block_id: block.export-step
+  direction: input
+  name: Approved geometry
+  type_id: type.geometry.approved
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.approved-geometry
+  description: Approved source for export.
+- id: port.step-out
+  owner_block_id: block.export-step
+  direction: output
+  name: STEP model
+  type_id: type.file.step
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.step
+  description: Neutral bracket model.
+- id: port.step-in
+  owner_block_id: block.release-package
+  direction: input
+  name: STEP model
+  type_id: type.file.step
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.step
+  description: Approved exported model.
+- id: port.report-package-in
+  owner_block_id: block.release-package
+  direction: input
+  name: Report
+  type_id: type.report.manufacturability
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.manufacturability-report
+  description: Report to include in the package.
+- id: port.package-out
+  owner_block_id: block.release-package
+  direction: output
+  name: Review package
+  type_id: type.package.review
+  required: true
+  cardinality: one
+  artifact_contract_id: artifact.release-package
+  description: Local review package.
+relationships:
+- id: rel.brief-to-geometry
+  kind: data
+  source_id: port.brief-out
+  target_id: port.brief-in
+  label: requirements
+  condition: null
+- id: rel.geometry-to-check
+  kind: data
+  source_id: port.geometry-out
+  target_id: port.geometry-check-in
+  label: geometry
+  condition: null
+- id: rel.geometry-to-review
+  kind: data
+  source_id: port.geometry-out
+  target_id: port.geometry-review-in
+  label: geometry
+  condition: null
+- id: rel.report-to-review
+  kind: data
+  source_id: port.report-out
+  target_id: port.report-in
+  label: findings
+  condition: null
+- id: rel.review-to-export
+  kind: data
+  source_id: port.approved-geometry-out
+  target_id: port.approved-geometry-in
+  label: approved geometry
+  condition: decision.accepted
+- id: rel.step-to-package
+  kind: data
+  source_id: port.step-out
+  target_id: port.step-in
+  label: STEP
+  condition: null
+- id: rel.report-to-package
+  kind: data
+  source_id: port.report-out
+  target_id: port.report-package-in
+  label: report
+  condition: null
+- id: rel.review-accepted
+  kind: decision
+  source_id: block.review-design
+  target_id: block.export-step
+  label: Accepted
+  condition: All required inputs present and warnings dispositioned
+- id: rel.review-revise
+  kind: feedback
+  source_id: block.review-design
+  target_id: block.generate-geometry
+  label: Revise geometry
+  condition: A requirement or manufacturability warning is unresolved
+artifact_contracts:
+- id: artifact.brief
+  name: Bracket requirement package
+  type_id: type.requirements.bundle
+  media_type: application/pdf
+  description: Input dimensions, loads, material, and reference images.
+  producer_block_id: null
+  required_for_block_ids:
+  - block.generate-geometry
+  preview_policy: inline
+  allowed_actions:
+  - inspect
+  - preview
+  - replace
+- id: artifact.material
+  name: Material specification
+  type_id: type.material.spec
+  media_type: application/vnd.wright.material+json
+  description: Material and temper properties used by the check.
+  producer_block_id: null
+  required_for_block_ids:
+  - block.check-manufacturability
+  preview_policy: metadata
+  allowed_actions:
+  - inspect
+  - replace
+- id: artifact.geometry
+  name: Bracket geometry
+  type_id: type.geometry.brep
+  media_type: model/vnd.wright.brep
+  description: Parametric bracket model before approval.
+  producer_block_id: block.generate-geometry
+  required_for_block_ids:
+  - block.check-manufacturability
+  - block.review-design
+  preview_policy: inline
+  allowed_actions:
+  - inspect
+  - preview
+- id: artifact.manufacturability-report
+  name: Manufacturability report
+  type_id: type.report.manufacturability
+  media_type: text/html
+  description: Findings and recovery guidance.
+  producer_block_id: block.check-manufacturability
+  required_for_block_ids:
+  - block.review-design
+  - block.release-package
+  preview_policy: inline
+  allowed_actions:
+  - inspect
+  - preview
+  - open
+  - download
+- id: artifact.approved-geometry
+  name: Approved geometry
+  type_id: type.geometry.approved
+  media_type: model/vnd.wright.brep
+  description: Geometry plus review identity.
+  producer_block_id: block.review-design
+  required_for_block_ids:
+  - block.export-step
+  preview_policy: inline
+  allowed_actions:
+  - inspect
+  - preview
+- id: artifact.step
+  name: Mounting bracket STEP
+  type_id: type.file.step
+  media_type: model/step
+  description: AP242 neutral geometry file.
+  producer_block_id: block.export-step
+  required_for_block_ids:
+  - block.release-package
+  preview_policy: inline
+  allowed_actions:
+  - inspect
+  - preview
+  - open
+  - download
+- id: artifact.release-package
+  name: Bracket review package
+  type_id: type.package.review
+  media_type: application/zip
+  description: Local internal package containing the STEP model and report.
+  producer_block_id: block.release-package
+  required_for_block_ids: []
+  preview_policy: metadata
+  allowed_actions:
+  - inspect
+  - download
+bindings:
+- id: binding.generate-geometry
+  kind: mcp_tool
+  provider_id: provider.wright-local
+  server_id: server.solid-edge
+  tool_id: tool.create-mounting-bracket
+  schema_digest: sha256:1111111111111111111111111111111111111111111111111111111111111111
+  argument_map:
+  - semantic_source: port.brief-in
+    implementation_target: arguments.requirements
+  result_map:
+  - semantic_source: port.geometry-out
+    implementation_target: result.geometry
+  approval_policy: review_before_run
+  capability_name: Create mounting bracket geometry
+- id: binding.check-manufacturability
+  kind: internal
+  provider_id: provider.wright-local
+  server_id: null
+  tool_id: check.bracket-manufacturability
+  schema_digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+  argument_map:
+  - semantic_source: port.geometry-check-in
+    implementation_target: geometry
+  - semantic_source: port.material-in
+    implementation_target: material
+  result_map:
+  - semantic_source: port.report-out
+    implementation_target: report
+  approval_policy: none
+  capability_name: Check bracket manufacturability
+- id: binding.export-step
+  kind: mcp_tool
+  provider_id: provider.wright-local
+  server_id: server.solid-edge
+  tool_id: tool.export-step-ap242
+  schema_digest: sha256:3333333333333333333333333333333333333333333333333333333333333333
+  argument_map:
+  - semantic_source: port.approved-geometry-in
+    implementation_target: arguments.model
+  result_map:
+  - semantic_source: port.step-out
+    implementation_target: result.step_file
+  approval_policy: review_before_run
+  capability_name: Export approved model as STEP AP242
+- id: binding.release-package
+  kind: internal
+  provider_id: provider.wright-local
+  server_id: null
+  tool_id: package.local-review-bundle
+  schema_digest: sha256:4444444444444444444444444444444444444444444444444444444444444444
+  argument_map:
+  - semantic_source: port.step-in
+    implementation_target: files.step
+  - semantic_source: port.report-package-in
+    implementation_target: files.report
+  result_map:
+  - semantic_source: port.package-out
+    implementation_target: package
+  approval_policy: none
+  capability_name: Assemble local design review package
+components: []
