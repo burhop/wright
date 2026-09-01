@@ -51,7 +51,7 @@
 
 **Goal**: Let an engineer understand and manipulate a typed mounting-bracket workflow on the canvas without opening Code.
 
-**Independent Test**: Search and add a block, move it, connect and disconnect typed ports, preview/replace the brief, inspect a gate and feedback path, delete a safe block, and undo/redo while stable identities remain visible.
+**Independent Test**: Search and add a downstream block, move it, connect and disconnect typed ports, add/view/replace the design-intent text or document, inspect a gate and feedback path, delete a safe block, and undo/redo while stable identities remain visible.
 
 ### Tests for User Story 1
 
@@ -119,7 +119,7 @@
 
 **Goal**: Project truthful simulated run facts, recovery, and recognizable local fixture outputs without changing the definition.
 
-**Independent Test**: Capture an immutable six-block run subject, advance through queued/running/needs-input/recovered/succeeded, inspect active flow and tabs, open/download the static STEP/report fixtures, then project failure and confirm downstream/output invalidation.
+**Independent Test**: Capture an immutable canonical run subject, advance through queued/running/needs-input/recovered/succeeded, inspect active flow and tabs, open/download the static STEP/report fixtures, then project failure and confirm downstream/output invalidation.
 
 ### Tests for User Story 4
 

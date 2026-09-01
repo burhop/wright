@@ -45,6 +45,13 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(within(designIntentDialog).getByText("Text or common document")).toBeVisible();
     await userEvent.click(screen.getByTestId("workflow-recovery-modal-close"));
 
+    fireEvent.click(screen.getByTestId("workflow-recovery-block-block.create-design-specification"));
+    expect(screen.getByText("AI drafts; engineer reviews")).toBeVisible();
+    expect(screen.getByText("AI prompt")).toBeVisible();
+    expect(screen.getByText("Engineer checklist")).toBeVisible();
+    expect(screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-block-review-block.create-design-specification").value).toContain("Accept when: An engineer accepted the design specification");
+    expect(screen.getByText(/These criteria come from this step's accept and revise paths/)).toBeVisible();
+
     await userEvent.click(screen.getByTestId("workflow-recovery-port-lab-open"));
     expect(screen.getByTestId("workflow-port-lab")).toBeVisible();
     expect(missingInteractiveTestIds(container)).toEqual([]);

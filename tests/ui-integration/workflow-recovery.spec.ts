@@ -95,6 +95,13 @@ test("keeps one accepted definition across canvas, source, AI review, and simula
   await expect(page.getByTestId("workflow-recovery-palette-context-hint")).toContainText("Tolerances come from the reviewed design specification");
   await expect(page.getByTestId("workflow-recovery-palette-search")).toHaveCount(0);
 
+  await page.getByTestId("workflow-recovery-block-block.create-design-specification").click();
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("AI drafts; engineer reviews");
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("AI prompt");
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("Engineer checklist");
+  await expect(page.getByTestId("workflow-recovery-block-review-block.create-design-specification")).toHaveValue(/Accept when: An engineer accepted the design specification/);
+  await expect(page.getByTestId("workflow-recovery-inspector")).toContainText("These criteria come from this step's accept and revise paths");
+
   await page.getByRole("button", { name: "Connection style preview" }).click();
   await expect(page.getByTestId("workflow-port-lab-dot")).toBeVisible();
   await expect(page.getByTestId("workflow-port-lab-terminal")).toBeVisible();
