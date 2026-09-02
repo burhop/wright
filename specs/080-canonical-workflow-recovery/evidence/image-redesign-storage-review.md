@@ -2,6 +2,25 @@
 
 Recorded 2026-09-02T22:40:34Z, Windows native development host.
 
+## Later final checkpoint
+
+After the review below, the complete source/layout/API/operator-helper suite
+passed **123 tests with 5 genuine platform skips** (22.90s, 143 existing
+deprecation warnings), using `--basetemp .test-tmp/image-redesign-storage-final-all`.
+This includes 25 pure helper provenance/ownership tests. The skips and
+power-loss/junction/native-POSIX limits below are unchanged.
+
+The controlled live restart subsequently recorded exact commit `4cfab9ba8091b766805e00157739204675385c0c`
+and tree `93bc29cabb266f454efa5f6157e31fd302789ce1` in
+`.local-run/image-redesign-committed-api-4cfab9ba/verification.json`. Listener
+49328 was replaced by verified listener36544 from the same checkout/venv,
+with exact backend module origins/hashes and five existing workflow source
+files unchanged. This later operation is separate from the earlier review,
+which performed no process control. Operational stdout/stderr are not asserted
+to be secret-free publication artifacts.
+
+## Original bounded review
+
 This is working-tree evidence against base commit `7e95b0c748975df247effb4bc70f1f67f92a8e81`, not final committed-subject acceptance. The reviewer implemented the storage seam earlier in this task: this is a fresh implementer review and follow-up, **not author-independent verification**. The separate prior `code_gap` review and its findings are not attributed to this reviewer.
 
 ## Scope and result

@@ -1,10 +1,35 @@
 # Image-redesign implementation validation
 
-Status: candidate validation in progress; final committed-subject results pending.
+Status: exact-subject authoring assertions passed; independent visual review requires one output-preview repair and fresh capture before final acceptance.
 
 Integration worktree: `D:/repos/wright/.local-run/epp-f02b-writer/wright`.
 Branch: `codex/080-canonical-workflow-recovery`. Baseline: `7e95b0c7`.
-Commands below were run against the changing candidate, not a final commit.
+Working-tree commands and exact-commit observations are distinguished below.
+
+## First committed-subject authoring checks (visual follow-up required)
+
+Commit `4cfab9ba8091b766805e00157739204675385c0c`, tree
+`93bc29cabb266f454efa5f6157e31fd302789ce1`: walkthrough
+`20260902T225850Z-committed-acceptance-4cfab9ba-continuation-2` passes **32/32**.
+All 184 manifest hashes verify; 83 raw/83 annotated images and a 115,639,279-byte
+trace are retained. Report image loading, Escape and Close controls pass.
+Frontend served-source provenance covers 14 unique modules with no missing or
+mismatched normalized source; raw hashes remain separately recorded. Controlled
+API restart provenance binds the same commit, source paths and hashes. No
+unexpected console, page, failed-request or HTTP diagnostic remains; the
+intentional conflict 409/resource error is recorded, not suppressed globally.
+
+The first exact-subject continuation stopped at the unchanged five-second
+second-tab save deadline. A later read verified that the write committed; its
+response completion is unavailable in that stopped trace. The next unchanged
+continuation passed. No product fix or increased timeout was claimed.
+
+The committed-source program validator reports `verdict: passed` for this
+subject; program tree stays `047a330be53cd7565895dbc6eb7a4fadc012f2dd`. It reports
+the preserved untracked scratch/note as not globally clean, while all tracked
+implementation files were clean for the walkthrough. Historical approval and
+correction manifests were rehashed: 204 and 59 files respectively, no omissions
+or mismatches. Frozen historical 079 tasks are unchanged from `b4a7e996`.
 
 | Check | Command / scope | Observed result |
 |---|---|---|
@@ -26,11 +51,48 @@ Commands below were run against the changing candidate, not a final commit.
 - Early screenshots passed basic assertions but failed visual acceptance; see
   `image-redesign-review.md`. Passing a screenshot harness is not visual approval.
 
-## Remaining checks
+## Remaining checks after first exact capture
 
-Full authoring browser journey, actual 200% zoom, final independent visual review,
-storage/source regressions, scoped security/path checks, broad suite completion,
-freeze identity check, Spec Kit consistency and validated exact-subject evidence.
+The full authoring journey, actual zoom, storage/source/security regressions,
+broad web/build, freeze and Spec Kit consistency checks now have evidence below.
+The independent reviewer found long-text clipping in the output-preview sidebar
+that the first passing browser journey did not detect. The new range/hit-target
+regression failed before the scoped wrapping fix and passed afterward (20.7s).
+The narrow screenshots then exposed host chrome painting above the modal;
+a portal/stacking repair and header-occlusion assertion are in progress.
+Fresh exact-subject capture and dashboard handoff remain.
+
+The final modal repair now passes **18/18 Concept tests**, including body portal,
+focus cycle/return, Escape, backdrop dismissal and unmount cleanup. The full web
+suite was rerun after that repair: **118 files / 643 tests passed** (122.10s).
+TypeScript and Vite production build also pass (858 modules). A Chromium rerun
+retained a 30-second context-teardown failure while writing passing-test traces;
+its product assertions had completed. A fresh run uses the previously successful
+retain-on-failure trace mode with unchanged assertions and timeouts. The full
+final walkthrough still records a continuous trace.
+
+That browser pass also exposed an actual backdrop-click focus return failure:
+the mousedown handler restored focus, then the browser's default focus action
+cleared it. The handler now prevents that default only for a click on the bare
+backdrop. The strengthened unit test covers both the cancelable event and a
+complete user click; **18/18 Concept tests passed** again (12.56s). Final full
+web and 13-journey Chromium reruns follow this last handler change. Red traces
+and the preceding passing-but-incomplete visual states remain preserved.
+
+Final Chromium rerun `output-preview-final-green-20260902`: **13/13 passed**
+(2.1m), with unchanged assertions/timeouts and retain-on-failure tracing.
+Current TypeScript/Vite build passed again (858 modules, 8.84s Vite). A parallel
+full web run reported 642 passes and one default-five-second active-run-test
+timeout, not an assertion mismatch. That test does not open a modal and passes
+unchanged in isolation (3.03s). The complete suite is being rerun with four
+workers and the same five-second timeout to bound concurrent host pressure.
+
+The complete `tests/recovery` suite passed **56/56** in 7.10s with
+`--basetemp .test-tmp/image-redesign-audit-final`. This includes safe selection
+of new dashboard evidence (17 focused audit tests) without overwriting historical
+dashboard artifacts or treating the three external gates as completed. The
+capability audit was rerun: **890/890 rows, 33/33 capabilities, no omissions**.
+Frozen historical T028–T038 remain unchanged through Git comparison.
 
 ### Later working-tree checkpoints (supersede the earlier pending observations)
 

@@ -119,6 +119,47 @@ async function connect(from, to, relationship) {
   await tid(`workflow-recovery-handle-${to}`).focus(); await page.keyboard.press("Enter"); logAction(`Focus ${to} and press Enter`);
   await expect(tid(`workflow-recovery-edge-${relationship}`)).toHaveCount(1);
 }
+async function verifyOutputPreviewLayout(label, browserTabZoomFactor = 1) {
+  const backdrop = tid("workflow-recovery-modal-backdrop");
+  const overlay = await backdrop.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    const samples = [
+      { label: "top-left workspace chrome", x: 4, y: 4 }, { label: "global header", x: innerWidth / 2, y: 20 }, { label: "top-right header", x: innerWidth - 4, y: 20 },
+      { label: "left activity bar", x: 20, y: innerHeight / 2 }, { label: "small-window surface/chat switcher", x: innerWidth / 2, y: 60 },
+      { label: "bottom-left chrome", x: 4, y: innerHeight - 4 }, { label: "bottom-right chrome", x: innerWidth - 4, y: innerHeight - 4 },
+    ].map((point) => { const hit = document.elementFromPoint(point.x, point.y); return { ...point, hitInsideOverlay: hit === element || element.contains(hit), hitTag: hit?.tagName, hitTestId: hit?.getAttribute("data-testid") }; });
+    const header = element.querySelector(".recovery-modal > header"); const headerBounds = header?.getBoundingClientRect();
+    const headerCenter = headerBounds ? document.elementFromPoint(headerBounds.x + headerBounds.width / 2, headerBounds.y + headerBounds.height / 2) : null;
+    return { parentIsBody: element.parentElement === document.body, bounds: bounds.toJSON(), viewport: { width: innerWidth, height: innerHeight }, samples, headerBounds: headerBounds?.toJSON(), headerCenterInsideHeader: Boolean(header && (header === headerCenter || header.contains(headerCenter))) };
+  });
+  writeFileSync(path.join(root, `24-output-overlay-${label}.json`), JSON.stringify(overlay, null, 2));
+  expect(overlay.parentIsBody, "Modal must escape the retained-tab stacking context").toBe(true); expect(overlay.bounds.x).toBe(0); expect(overlay.bounds.y).toBe(0);
+  // Real 200% zoom can produce a half-CSS-pixel viewport while innerWidth and
+  // innerHeight report integers. Allow only that browser rounding difference.
+  expect(Math.abs(overlay.bounds.width - overlay.viewport.width)).toBeLessThanOrEqual(1); expect(Math.abs(overlay.bounds.height - overlay.viewport.height)).toBeLessThanOrEqual(1);
+  expect(overlay.samples.filter((point) => !point.hitInsideOverlay), `Workspace chrome must not paint above the modal at ${label}`).toEqual([]); expect(overlay.headerCenterInsideHeader, `Modal header must not be occluded at ${label}`).toBe(true);
+  const closeTarget = await tid("workflow-recovery-modal-close").evaluate((element) => { const box = element.getBoundingClientRect(); const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2); return { box: box.toJSON(), hitIsControl: hit === element || element.contains(hit) }; });
+  overlay.closeTarget = closeTarget; writeFileSync(path.join(root, `24-output-overlay-${label}.json`), JSON.stringify(overlay, null, 2)); expect(closeTarget.hitIsControl, `Close control must not be occluded at ${label}`).toBe(true);
+  const panel = page.locator(".output-preview > aside").filter({ visible: true }); await expect(panel).toBeVisible();
+  const measurements = await panel.evaluate((element) => {
+    const bounds = element.getBoundingClientRect(); const modal = element.closest('[role="dialog"]')?.getBoundingClientRect();
+    const lines = [...element.querySelectorAll("b, span, a")].flatMap((child) => { const range = document.createRange(); range.selectNodeContents(child); return [...range.getClientRects()].map((line) => ({ text: child.textContent, x: line.x, right: line.right, y: line.y, height: line.height })); });
+    return { viewport: { width: innerWidth, height: innerHeight, dpr: devicePixelRatio }, panel: bounds.toJSON(), modal: modal?.toJSON(), panelScrollWidth: element.scrollWidth, panelClientWidth: element.clientWidth, lines, escapedLines: lines.filter((line) => line.x < bounds.x - 1 || line.right > bounds.right + 1) };
+  });
+  measurements.browserTabZoomFactor = browserTabZoomFactor; measurements.zoomMethod = browserTabZoomFactor === 2 ? "chrome.tabs.setZoom/getZoom; actual browser zoom" : "Ordinary viewport resize at 100% browser zoom";
+  writeFileSync(path.join(root, `24-output-layout-${label}.json`), JSON.stringify(measurements, null, 2));
+  expect(measurements.panelScrollWidth, `Output panel horizontal overflow at ${label}`).toBeLessThanOrEqual(measurements.panelClientWidth + 1);
+  expect(measurements.escapedLines, `Filename, checksum, lineage or action text clips outside output panel at ${label}`).toEqual([]);
+  expect(measurements.panel.x).toBeGreaterThanOrEqual((measurements.modal?.x ?? 0) - 1); expect(measurements.panel.x + measurements.panel.width).toBeLessThanOrEqual((measurements.modal?.x ?? 0) + (measurements.modal?.width ?? measurements.viewport.width) + 1);
+  measurements.controls = [];
+  for (const id of ["workflow-recovery-output-open-artifact.step", "workflow-recovery-output-download-artifact.step"]) {
+    await tid(id).scrollIntoViewIfNeeded(); logAction(`Scroll output preview to ${id}`, "Inspect only; no external report opened or file downloaded");
+    const target = await tid(id).evaluate((element) => { const box = element.getBoundingClientRect(); const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2); return { box: box.toJSON(), scrollWidth: element.scrollWidth, clientWidth: element.clientWidth, hitIsControl: hit === element || element.contains(hit) }; });
+    measurements.controls.push({ id, ...target }); writeFileSync(path.join(root, `24-output-layout-${label}.json`), JSON.stringify(measurements, null, 2));
+    expect(target.hitIsControl, `Output action must be hittable at ${label}`).toBe(true); expect(target.scrollWidth).toBeLessThanOrEqual(target.clientWidth + 1); expect(target.box.y).toBeGreaterThanOrEqual(0); expect(target.box.y + target.box.height).toBeLessThanOrEqual(measurements.viewport.height + 1);
+  }
+  await capture(`24-output-preview-${label}`, [{ testId: "workflow-recovery-output-open-artifact.step", label: "Fully visible demo report action" }, { testId: "workflow-recovery-output-download-artifact.step", label: "Fully visible demo download action; not pressed" }]);
+}
 const textOne = "Support a 400 N pump load. Use stainless steel. Review the mounting interface before releasing drawings.";
 const textTwo = "Company practice: retain accessible fasteners and record assumptions separately from supplied requirements.";
 let savedSource = "", savedLayoutDigest = "", chosenFile = "", stalePage, referenceSource = "", functionalUrl = "", semanticBeforeMismatch;
@@ -234,9 +275,13 @@ if (full) {
   add("23-example-suggestion", "Open the original workflow and review an example suggestion", "Click Open workflow and choose mounting-bracket.workflow.wflow. Open Example suggestion, inspect the preview and its no-live-AI label, then discard it.", "Open workflow selects the actual saved original. The reviewed proposal remains bounded and never changes that file.", async () => {
     await page.getByRole("button", { name: "Open workflow", exact: true }).click(); logAction("Click Open workflow"); await page.getByRole("button", { name: "mounting-bracket.workflow.wflow", exact: true }).click(); logAction("Open actual saved original", "mounting-bracket.workflow.wflow"); await expect(tid("workflow-recovery-filebar")).toContainText("mounting-bracket.workflow.wflow"); expect(await sourceText()).toBe(referenceSource); await click("workflow-recovery-ai-request"); await expect(tid("workflow-recovery-proposal")).toContainText("NO LIVE AI CALL"); await expect(tid("workflow-recovery-proposal-preview")).toContainText("Preview only"); await capture("23-proposal-open", [{ testId: "workflow-recovery-proposal-reject", label: "Discard example suggestion" }, { testId: "workflow-recovery-proposal-accept", label: "Apply reviewed suggestion" }]); await click("workflow-recovery-proposal-reject"); expect(await sourceText()).toBe(referenceSource);
   });
-  add("24-simulation", "Run the fixed example honestly", "Click Simulate and advance the fixed example. At its missing-input state simulate supplying material; continue to the demo output.", "The bottom drawer says Simulation and no external tools. The completed output is explicitly a demo fixture, not generated CAD evidence.", async () => {
+  add("24-simulation", "Run the fixed example honestly", "Click Simulate and advance the fixed example. At its missing-input state simulate supplying material; continue to the demo output. Inspect its filename, checksum and actions at 1537, 1070 and 830 pixel widths and actual 200% browser zoom without downloading.", "The bottom drawer says Simulation and no external tools. The completed output is explicitly a demo fixture, not generated CAD evidence. Long metadata and report/download action text wrap inside the preview and remain reachable.", async () => {
     await expect(tid("workflow-recovery-run-start")).toBeEnabled(); await click("workflow-recovery-run-start"); await expect(tid("workflow-recovery-run-mode")).toContainText("NO EXTERNAL TOOLS");
-    for (let i = 0; i < 2; i++) await click("workflow-recovery-run-advance"); await expect(tid("workflow-recovery-run-recover")).toBeVisible(); await capture("24-simulation-needs-input", [{ testId: "workflow-recovery-run-recover", label: "Simulate supplying material" }]); await click("workflow-recovery-run-recover"); for (let i = 0; i < 6; i++) await click("workflow-recovery-run-advance"); await click("workflow-recovery-run-output"); await expect(page.getByRole("dialog", { name: "Mounting bracket STEP file" })).toContainText("This simulated workflow did not create this file"); await capture("24-output-demo", [{ testId: "workflow-recovery-output-download-artifact.step", label: "Download a labeled demo fixture" }]); await click("workflow-recovery-modal-close"); await click("workflow-recovery-run-end"); await click("workflow-recovery-run-details-toggle");
+    for (let i = 0; i < 2; i++) await click("workflow-recovery-run-advance"); await expect(tid("workflow-recovery-run-recover")).toBeVisible(); await capture("24-simulation-needs-input", [{ testId: "workflow-recovery-run-recover", label: "Simulate supplying material" }]); await click("workflow-recovery-run-recover"); for (let i = 0; i < 6; i++) await click("workflow-recovery-run-advance"); await click("workflow-recovery-run-output"); await expect(page.getByRole("dialog", { name: "Mounting bracket STEP file" })).toContainText("This simulated workflow did not create this file");
+    for (const width of [1537, 1070, 830]) { await page.setViewportSize({ width, height: 791 }); logAction("Resize output preview", `${width}×791`); await verifyOutputPreviewLayout(String(width)); }
+    await page.setViewportSize({ width: 1537, height: 791 }); const baselineDpr = await page.evaluate(() => devicePixelRatio);
+    const outputZoom = await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); if (!tab?.id) throw new Error("Could not identify output-preview evidence tab"); await chrome.tabs.setZoom(tab.id, 2); return chrome.tabs.getZoom(tab.id); }, page.url()); expect(outputZoom).toBe(2); await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBeGreaterThan(baselineDpr * 1.8); logAction("Set actual output-preview browser zoom", "200% using chrome.tabs.setZoom; not viewport emulation"); await verifyOutputPreviewLayout("actual-200pct", outputZoom);
+    await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); await chrome.tabs.setZoom(tab.id, 1); }, page.url()); await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBe(baselineDpr); logAction("Restore browser zoom", "100%"); await capture("24-output-demo", [{ testId: "workflow-recovery-output-open-artifact.step", label: "Readable report action" }, { testId: "workflow-recovery-output-download-artifact.step", label: "Download a labeled demo fixture" }]); await click("workflow-recovery-modal-close"); await click("workflow-recovery-run-end"); await click("workflow-recovery-run-details-toggle");
   });
 }
 

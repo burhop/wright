@@ -1,13 +1,21 @@
 {
-  "status": "in_progress",
+  "status": "in_review",
   "title": "Image-led native authoring catch-up",
-  "subjectCommit": null,
-  "subjectTree": null,
-  "reportRoot": null,
-  "reportUrl": null,
+  "subjectCommit": "4cfab9ba8091b766805e00157739204675385c0c",
+  "subjectTree": "93bc29cabb266f454efa5f6157e31fd302789ce1",
+  "reportRoot": "artifacts/ui-walkthrough/image-redesign/20260902T225850Z-committed-acceptance-4cfab9ba-continuation-2",
+  "reportUrl": "http://127.0.0.1:8765/evidence/image-redesign/report.html",
+  "manifestSha256": "14a581fc0259daa335482bc8062e028dbc71f5b9b5a0ed41a1d94723d8e67e91",
+  "walkthrough": { "passed": 32, "total": 32, "rawScreenshots": 83, "annotatedScreenshots": 83, "manifestFiles": 184, "traceBytes": 115639279, "unexpectedDiagnostics": 0 },
+  "frontendProvenance": "14 actual browser-loaded module sources match the committed subject after CRLF-to-LF normalization; raw hashes are retained separately.",
+  "backendProvenancePath": ".local-run/image-redesign-committed-api-4cfab9ba/verification.json",
   "applicationUrl": "http://127.0.0.1:5227/workspace/85cbd6b3-e9d1-474d-add2-36f6e95a7b51?workflow=canonical",
-  "summary": "The full 30-step working-tree authoring walkthrough passed. Final polish, committed-subject evidence and delivery verification are in progress.",
-  "screenshots": [],
+  "summary": "The image-led editor passes its 32-step authoring walkthrough. Independent visual review found clipped output-preview text; a scoped repair and fresh exact-subject continuation are required before completion.",
+  "screenshots": [
+    { "label": "Image-aligned native canvas", "url": "/evidence/image-redesign/screenshots/raw/image-reference-match.png" },
+    { "label": "Real text input and contextual Inspector", "url": "/evidence/image-redesign/screenshots/raw/05-text-input.png" },
+    { "label": "Explicit typed connections", "url": "/evidence/image-redesign/screenshots/raw/11-connections.png" }
+  ],
   "outsideGoal": ["T056 representative human study", "T058 benchmark qualification", "T060 production release"],
   "executionLimit": "New templates are unbound drafts. Proposal and run are fixed local simulations, not live AI or engineering execution."
 }

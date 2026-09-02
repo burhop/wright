@@ -170,6 +170,39 @@ def _capability_map_summary(path: Path) -> dict[str, int]:
     }
 
 
+def _dashboard_verification_path() -> Path:
+    """Select explicit current evidence without traversing outside this repo.
+
+    The original dashboard artifact remains an immutable historical fallback.
+    An explicit but invalid current path is an error, never permission to fall
+    back silently and make the current delivery appear verified by old data.
+    """
+    fallback = (
+        ROOT / "artifacts/dashboard-recovery-verification/dashboard-verification.json"
+    )
+    delivery_path = FEATURE / "evidence/image-redesign-delivery.json"
+    if not delivery_path.exists():
+        return fallback
+    delivery = _json(delivery_path)
+    if not isinstance(delivery, dict):
+        raise ValueError("Current image-led delivery must be a JSON object")
+    if "dashboardVerificationPath" not in delivery:
+        return fallback
+    relative = delivery["dashboardVerificationPath"]
+    if (
+        not isinstance(relative, str)
+        or not relative
+        or len(relative) > 1024
+        or any(ord(char) < 32 or char in ":\\" for char in relative)
+        or any(part in {"", ".", ".."} for part in relative.split("/"))
+    ):
+        raise ValueError("Dashboard verification path must be repository-contained")
+    candidate = (ROOT / relative).resolve()
+    if not candidate.is_relative_to(ROOT.resolve()):
+        raise ValueError("Dashboard verification path must be repository-contained")
+    return candidate
+
+
 def _requirement(
     requirement_id: str,
     label: str,
@@ -286,11 +319,20 @@ def collect() -> dict[str, Any]:
         )
     )
 
-    dashboard = _json(
-        ROOT
-        / "artifacts"
-        / "dashboard-recovery-verification"
-        / "dashboard-verification.json"
+    dashboard_path: Path | None = None
+    dashboard_error: str | None = None
+    try:
+        dashboard_path = _dashboard_verification_path()
+        dashboard = _json(dashboard_path)
+        if not isinstance(dashboard, dict):
+            raise ValueError("Dashboard verification must be a JSON object")
+    except (OSError, ValueError) as error:
+        dashboard = {}
+        dashboard_error = str(error)
+    dashboard_relative = (
+        dashboard_path.relative_to(ROOT).as_posix()
+        if dashboard_path is not None
+        else None
     )
     dashboard_ok = (
         dashboard.get("overall") == "pass"
@@ -408,7 +450,8 @@ def collect() -> dict[str, Any]:
             capability_ok and dashboard_ok and ledger_ok and remaining_ok,
             [
                 "specs/080-canonical-workflow-recovery/evidence/capability-coverage.json",
-                "artifacts/dashboard-recovery-verification/dashboard-verification.json",
+                *([dashboard_relative] if dashboard_relative else []),
+                "specs/080-canonical-workflow-recovery/evidence/image-redesign-delivery.json",
                 "specs/080-canonical-workflow-recovery/tasks.md",
             ],
             (
@@ -416,6 +459,11 @@ def collect() -> dict[str, Any]:
                 f"and {capability_map['capabilities_represented']}/{capability_map['capabilities_represented']}; "
                 f"dashboard must match the current {len(completed)}/{ledger['total']} ledger with "
                 "customer readiness false and zero desktop/mobile overflow or browser diagnostics."
+                + (
+                    f" Dashboard evidence error: {dashboard_error}"
+                    if dashboard_error
+                    else ""
+                )
             ),
         ),
         _requirement(
@@ -503,6 +551,11 @@ def collect() -> dict[str, Any]:
             "unique": capability.get("unique_source_key_count"),
             "capabilities": capability.get("capabilities_represented"),
             "unexplained_omissions": capability.get("unexplained_omissions"),
+        },
+        "dashboard_verification": {
+            "path": dashboard_relative,
+            "ok": dashboard_ok,
+            "error": dashboard_error,
         },
         "requirements": requirements,
         "findings": findings,

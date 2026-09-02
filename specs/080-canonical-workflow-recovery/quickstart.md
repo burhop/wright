@@ -2,11 +2,17 @@
 
 Run commands from the repository root on the recovery branch.
 
-## Image-led native authoring (current candidate)
+## Image-led native authoring
 
 Use the integration checkout `D:/repos/wright/.local-run/epp-f02b-writer/wright`
 on `codex/080-canonical-workflow-recovery`. The separate root checkout contains
 reference images/planning; it is not the served implementation.
+
+Running editor: `http://127.0.0.1:5227/workspace/85cbd6b3-e9d1-474d-add2-36f6e95a7b51?workflow=canonical`.
+This opens **Wright workflow evidence** with the preserved original example.
+The separate acceptance document records authored objects and connections without
+overwriting that example. The current subject and report are recorded in
+`evidence/image-redesign-delivery.json`.
 
 1. Open a real engineering workspace and choose **Workflows**. Its first entry
    creates the default only if missing; existing source is preserved.
@@ -33,10 +39,11 @@ for an overview; hide the Inspector/minimap when more canvas space is useful.
 Run details expand below the canvas, never over it. The Create rail and details
 scroll internally on short windows; the document stays inside the viewport.
 
-Current candidate tests, failed continuations and review findings are recorded
-under `evidence/image-redesign-*`. The earlier counts and reports below are
-historical, not final proof of this redesign. The final exact URL/commit/report
-will be recorded there after acceptance.
+Tests, failed continuations and review findings are recorded under
+`evidence/image-redesign-*`. The 32-step committed authoring journey passed;
+one output-preview wrapping refinement is being checked before final acceptance.
+The older web/correction counts and reports below are historical, not evidence
+that the new redesign is complete.
 
 ## Verify the capability and syntax evidence
 
@@ -48,7 +55,7 @@ python -m pytest tests/recovery/test_workflow_conformance.py -q --basetemp .test
 
 Expected evidence:
 
-- 881/881 source rows mapped into 33/33 capabilities using the generated CAP labels;
+- 890/890 source rows mapped into 33/33 capabilities using the generated CAP labels;
 - 11/11 product gates, 100/100 stories, and 25/25 lessons covered;
 - strict JSON, YAML, internal IR, and friendly engineer source rehydrate one accepted semantic identity;
 - 36/36 conformance tests pass and every internal treatment rejects its complete invalid-control matrix,

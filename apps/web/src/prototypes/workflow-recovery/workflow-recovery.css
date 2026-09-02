@@ -3,7 +3,8 @@
 }
 
 .workflow-recovery-page,
-.workflow-recovery {
+.workflow-recovery,
+.workflow-recovery-modal-theme {
   /* Recovery semantic aliases consume the shared token layer. One-off geometry
      dimensions are centralized here; large canvas dimensions and breakpoints remain
      structural layout constants because CSS custom properties are invalid in media queries. */
@@ -129,8 +130,13 @@
 .workflow-recovery button,
 .workflow-recovery input,
 .workflow-recovery textarea,
-.workflow-recovery a { font: inherit; }
-.workflow-recovery button { color: inherit; }
+.workflow-recovery a,
+.workflow-recovery-modal-theme button,
+.workflow-recovery-modal-theme input,
+.workflow-recovery-modal-theme textarea,
+.workflow-recovery-modal-theme a { font: inherit; }
+.workflow-recovery button,
+.workflow-recovery-modal-theme button { color: inherit; }
 .recovery-boundary-state { display: grid; gap: var(--space-sm); min-height: 230px; place-content: center; padding: var(--space-xl); border: var(--recovery-size-1) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); text-align: center; box-shadow: var(--shadow-md); }
 .recovery-boundary-state span { color: var(--color-text-muted); }
 .recovery-boundary-state button { justify-self: center; }
@@ -443,6 +449,11 @@
 .design-intent-preview aside span, .output-preview aside span { color: var(--recovery-muted); font-size: var(--recovery-size-10); }
 .output-preview img { width: 100%; min-height: 430px; padding: var(--recovery-size-28); border-radius: var(--recovery-radius-md); background: radial-gradient(circle, var(--color-surface) 0%, var(--color-surface-subtle) 70%); object-fit: contain; }
 .output-preview aside div { display: grid; gap: var(--recovery-size-7); margin-top: var(--recovery-size-12); }
+.output-preview aside,
+.output-preview aside div { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.output-preview aside > *,
+.output-preview aside div > * { min-width: 0; overflow-wrap: anywhere; }
+.output-preview aside .recovery-button { max-width: 100%; white-space: normal; text-align: center; }
 .recovery-lineage { padding: var(--recovery-size-9); border: var(--recovery-size-1) solid var(--color-border); border-radius: var(--recovery-radius-md); background: var(--color-surface-subtle); }
 
 @media (max-width: 1280px) {

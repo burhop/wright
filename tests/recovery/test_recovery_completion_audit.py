@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,6 +54,93 @@ def test_capability_map_summary_uses_the_current_source_map(tmp_path: Path) -> N
     }
 
 
+@pytest.mark.parametrize("delivery", [None, {"status": "verified"}])
+def test_dashboard_verification_falls_back_only_when_no_current_path_is_supplied(
+    tmp_path: Path, monkeypatch, delivery
+) -> None:
+    feature = tmp_path / "specs/080-canonical-workflow-recovery"
+    (feature / "evidence").mkdir(parents=True)
+    monkeypatch.setattr(AUDIT, "ROOT", tmp_path)
+    monkeypatch.setattr(AUDIT, "FEATURE", feature)
+    if delivery is not None:
+        (feature / "evidence/image-redesign-delivery.json").write_text(
+            json.dumps(delivery)
+        )
+    assert (
+        AUDIT._dashboard_verification_path()
+        == tmp_path
+        / "artifacts/dashboard-recovery-verification/dashboard-verification.json"
+    )
+
+
+def test_dashboard_verification_uses_current_repo_contained_evidence(
+    tmp_path: Path, monkeypatch
+) -> None:
+    feature = tmp_path / "specs/080-canonical-workflow-recovery"
+    (feature / "evidence").mkdir(parents=True)
+    relative = "artifacts/dashboard-image-redesign-verification/fresh/dashboard-verification.json"
+    (feature / "evidence/image-redesign-delivery.json").write_text(
+        json.dumps({"dashboardVerificationPath": relative})
+    )
+    monkeypatch.setattr(AUDIT, "ROOT", tmp_path)
+    monkeypatch.setattr(AUDIT, "FEATURE", feature)
+    assert AUDIT._dashboard_verification_path() == tmp_path / relative
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "../outside.json",
+        "/outside.json",
+        "C:/outside.json",
+        "\\\\server\\outside.json",
+        "artifacts/../outside.json",
+        "artifacts\\outside.json",
+        "https://example.com/evidence.json",
+        "",
+        None,
+        42,
+    ],
+)
+def test_current_dashboard_path_must_be_safe_and_never_silently_falls_back(
+    tmp_path: Path, monkeypatch, relative
+) -> None:
+    feature = tmp_path / "specs/080-canonical-workflow-recovery"
+    (feature / "evidence").mkdir(parents=True)
+    (feature / "evidence/image-redesign-delivery.json").write_text(
+        json.dumps({"dashboardVerificationPath": relative})
+    )
+    monkeypatch.setattr(AUDIT, "ROOT", tmp_path)
+    monkeypatch.setattr(AUDIT, "FEATURE", feature)
+    with pytest.raises(ValueError, match="repository-contained"):
+        AUDIT._dashboard_verification_path()
+
+
+def test_dashboard_path_checks_resolved_containment_before_reading(
+    tmp_path: Path, monkeypatch
+) -> None:
+    feature = tmp_path / "specs/080-canonical-workflow-recovery"
+    (feature / "evidence").mkdir(parents=True)
+    relative = "artifacts/linked/dashboard-verification.json"
+    (feature / "evidence/image-redesign-delivery.json").write_text(
+        json.dumps({"dashboardVerificationPath": relative})
+    )
+    monkeypatch.setattr(AUDIT, "ROOT", tmp_path)
+    monkeypatch.setattr(AUDIT, "FEATURE", feature)
+    original_resolve = Path.resolve
+
+    def resolve(path, *args, **kwargs):
+        if path == tmp_path / relative:
+            return tmp_path.parent / "outside/dashboard-verification.json"
+        return original_resolve(path, *args, **kwargs)
+
+    # Exercise the resolved-path guard without requiring Windows symlink
+    # privilege; this is not evidence of native symlink creation or a race test.
+    monkeypatch.setattr(Path, "resolve", resolve)
+    with pytest.raises(ValueError, match="repository-contained"):
+        AUDIT._dashboard_verification_path()
+
+
 def test_recovery_completion_audit_reports_current_evidence_truthfully() -> None:
     result = AUDIT.collect()
     task_ledger = AUDIT._task_ledger(AUDIT.FEATURE / "tasks.md")
@@ -86,7 +176,9 @@ def test_recovery_completion_audit_reports_current_evidence_truthfully() -> None
     assert result["usability_correction_walkthrough"]["annotated_screenshots"] == 26
     assert result["usability_correction_walkthrough"]["manifest_files"] == 59
     assert result["usability_correction_walkthrough"]["browser_diagnostics"] == 0
-    assert result["capability_coverage"]["mapped"] == capability_map["row_count"] == 881
+    # The current image-led authoring mapping adds nine rows to the historical
+    # 881-row correction map; require the live ledger and coverage to agree.
+    assert result["capability_coverage"]["mapped"] == capability_map["row_count"] == 890
     assert (
         result["capability_coverage"]["unique"]
         == capability_map["unique_source_key_count"]

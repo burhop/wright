@@ -446,7 +446,7 @@ test("uses real typed handles and preserves revision during a simulated run", as
   await expect(concept).toHaveAttribute("data-revision", "6");
 });
 
-test("promotes valid source and reviewed AI commands, recovers a run, and exposes lineage", async ({ page }) => {
+test("promotes valid source and reviewed AI commands, recovers a run, and exposes lineage", async ({ page }, testInfo) => {
   await mockRecoveryWorkspace(page);
   await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
@@ -508,6 +508,72 @@ test("promotes valid source and reviewed AI commands, recovers a run, and expose
   await expect(page.getByText(/^Demo STEP file\./)).toBeVisible();
   await expect(page.getByText(/File sha256:bf316fa511f5e6a3312f03cb5b36184d91109185730defc41542b8805884be83/)).toBeVisible();
   await expect(page.getByTestId("workflow-recovery-output-lineage")).toContainText("Design intent + reference images + company standards and context");
+  const closePreview = page.getByRole("button", { name: "Close dialog" });
+  await expect(closePreview).toBeFocused();
+  await closePreview.press("Shift+Tab");
+  await expect(page.getByTestId("workflow-recovery-output-download-artifact.step")).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(closePreview).toBeFocused();
+  const originalViewport = page.viewportSize();
+  // Text visibility alone passes for clipped content. Check real text-line bounds,
+  // including the unbroken digest, and action hit targets inside the scrollable modal.
+  // The final small size covers a short viewport; actual tab zoom has separate evidence.
+  for (const viewport of [{ width: 1537, height: 791 }, { width: 1070, height: 791 }, { width: 830, height: 791 }, { width: 768, height: 395 }]) {
+    await page.setViewportSize(viewport);
+    await expect.poll(() => page.locator(".recovery-modal > header").evaluate((header) => {
+      const obscured: string[] = [];
+      for (const element of header.querySelectorAll("span, h2, button")) {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const rectangles = element.matches("button") ? [element.getBoundingClientRect()] : [...range.getClientRects()];
+        for (const bounds of rectangles) {
+          for (const fraction of [0.25, 0.5, 0.75]) {
+            const hit = document.elementFromPoint(bounds.left + bounds.width * fraction, bounds.top + bounds.height * fraction);
+            if (!hit || (hit !== element && !element.contains(hit))) obscured.push(`Obscured ${element.textContent?.trim()} by ${hit?.className ?? "viewport"}`);
+          }
+        }
+      }
+      return obscured;
+    }), { message: `The complete preview header and Close target must be above workspace chrome at ${viewport.width}×${viewport.height}` }).toEqual([]);
+    const details = page.locator(".output-preview > aside");
+    await expect.poll(() => details.evaluate((element) => {
+      const aside = element as HTMLElement;
+      const dialog = aside.closest(".recovery-modal") as HTMLElement;
+      const bounds = aside.getBoundingClientRect();
+      const violations: string[] = [];
+      if (aside.scrollWidth > aside.clientWidth + 1) violations.push("output details overflow horizontally");
+      if (dialog.scrollWidth > dialog.clientWidth + 1) violations.push("output dialog overflows horizontally");
+      for (const text of aside.querySelectorAll("b, span, a")) {
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        if (Array.from(range.getClientRects()).some((rect) => rect.left < bounds.left - 1 || rect.right > bounds.right + 1)) {
+          violations.push(`clipped text: ${text.textContent}`);
+        }
+      }
+      return violations;
+    }), { message: `Output details must wrap within the dialog at ${viewport.width}×${viewport.height}` }).toEqual([]);
+    for (const action of ["workflow-recovery-output-open-artifact.step", "workflow-recovery-output-download-artifact.step"]) {
+      const link = page.getByTestId(action);
+      await link.scrollIntoViewIfNeeded();
+      await expect(link).toBeVisible();
+      expect(await link.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const target = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+        return !!target && (element === target || element.contains(target));
+      }), `${action} must have an unobscured target at ${viewport.width}×${viewport.height}`).toBe(true);
+    }
+    await page.screenshot({ path: testInfo.outputPath(`output-preview-${viewport.width}x${viewport.height}.png`) });
+  }
+  if (originalViewport) await page.setViewportSize(originalViewport);
+  await closePreview.focus();
+  await closePreview.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByTestId("workflow-recovery-output-artifact.step")).toBeFocused();
+  await page.getByTestId("workflow-recovery-output-artifact.step").click();
+  await page.getByTestId("workflow-recovery-modal-backdrop").click({ position: { x: 4, y: 4 } });
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByTestId("workflow-recovery-output-artifact.step")).toBeFocused();
+  await page.getByTestId("workflow-recovery-output-artifact.step").click();
   const reportPromise = page.waitForEvent("popup");
   await page.getByTestId("workflow-recovery-output-open-artifact.step").click();
   const report = await reportPromise;

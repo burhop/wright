@@ -27,6 +27,42 @@ async function openDesignIntentSettings() {
 }
 
 describe("WorkflowRecoveryConcept component states", () => {
+  it("portals dialogs above retained workspace tabs while trapping and restoring keyboard focus", async () => {
+    const { container, unmount } = render(<div style={{ position: "relative", zIndex: 1 }}><WorkflowRecoveryConcept /></div>);
+    await userEvent.click(screen.getByTestId("workflow-recovery-file-technical-details"));
+    const opener = screen.getByTestId("workflow-recovery-port-lab-open");
+    await userEvent.click(opener);
+    const backdrop = screen.getByTestId("workflow-recovery-modal-backdrop");
+    const dialog = screen.getByRole("dialog", { name: "Connection style preview" });
+    expect(backdrop.parentElement).toBe(document.body);
+    expect(container).not.toContainElement(backdrop);
+    expect(backdrop).toHaveClass("workflow-recovery-modal-theme");
+    expect(backdrop).not.toHaveClass("workflow-recovery");
+    const close = screen.getByTestId("workflow-recovery-modal-close");
+    expect(close).toHaveFocus();
+    const buttons = [...dialog.querySelectorAll<HTMLButtonElement>("button:not([disabled])")];
+    fireEvent.keyDown(close, { key: "Tab", shiftKey: true });
+    expect(buttons.at(-1)).toHaveFocus();
+    fireEvent.keyDown(buttons.at(-1)!, { key: "Tab" });
+    expect(close).toHaveFocus();
+    fireEvent.keyDown(close, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+    await userEvent.click(opener);
+    const backdropPress = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+    fireEvent(screen.getByTestId("workflow-recovery-modal-backdrop"), backdropPress);
+    expect(backdropPress.defaultPrevented).toBe(true);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+    await userEvent.click(opener);
+    await userEvent.click(screen.getByTestId("workflow-recovery-modal-backdrop"));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+    await userEvent.click(opener);
+    unmount();
+    expect(screen.queryByTestId("workflow-recovery-modal-backdrop")).not.toBeInTheDocument();
+  });
+
   it("opens an independently identified workflow file but rejects identity changes during contextual editing", async () => {
     const independent = savedWorkflowSource.replace(/^workflow mounting_bracket$/m, "workflow authored_inspection_plan");
     render(<WorkflowRecoveryConcept workflowSource={independent} definitionRevision={1} />);
