@@ -1,5 +1,55 @@
 # Specification Analysis Report
 
+## Current image-led amendment — 2026-09-02
+
+Scope: the approved native object-palette implementation, not production release
+or a representative human study. The following analysis supersedes the old
+77/80 completion interpretation for this new goal; historical evidence below
+remains bound to its original subjects.
+
+The current `spec.md`, `plan.md`, `tasks.md` and constitution were inspected
+read-only using the Spec Kit analysis procedure. Updating this evidence record
+is separately authorized by the user's explicit goal. The prerequisite command
+`bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks
+--include-tasks` now succeeds through the permitted WSL process and returns the
+correct feature directory and artifacts. Its Windows-worktree Git detection was
+unavailable; native Git separately confirms the required existing branch. The
+historical access-denied attempts below remain truthful historical records.
+
+| Requirement | Current task coverage |
+|---|---|
+| FR-058: seven Create groups, independent objects | T082–T084, T086 |
+| FR-059: temporary Inputs navigator, one editor | T083, T089 |
+| FR-060: real text/permitted files and persistence | T085–T086, T090–T091 |
+| FR-061: dominant fixed-height canvas/optional panes | T083–T085, T088–T089 |
+| FR-062: compact, distinct, inspectable interfaces | T084, T086, T089 |
+| FR-063: unbound versus simulated/executed | T082, T086–T088 |
+| FR-064: meaningful controls and atomic editing | T083, T086–T088, T090–T091 |
+| FR-065: matched image/responsive/actual zoom | T089–T091 |
+| FR-066: actual served subject and independent review | T089, T091–T092 |
+
+Inventory: 66 functional requirements, 21 success criteria, five user stories
+and 92 consecutively numbered tasks. The 57 earlier functional requirements and
+21 success criteria retain coverage in T001–T080, with the nine new requirements
+covered above. Capability inventory regeneration accounts for 890 source rows
+and all 33 roll-up capabilities without an unexplained omission.
+
+| Finding | Severity | Resolution |
+|---|---|---|
+| Old SC-021 could imply shrinking all nine nodes into every viewport | Medium | Updated to the user's explicit readability-over-fit direction: readable nodes, pan/focus/minimap access; no tiny-text workaround. |
+| Old SC-020 could imply only one workflow per workspace | Medium | Clarified one visible definition per independent workflow, preserving existing documents. |
+| Old completion/report counts predate this redesign | High | New T081–T092 checklist and exact-subject evidence required; historical totals are not proof of completion. |
+| Older Rivet/database-only/read-only-Source proposal conflicts with authorization | High | Explicitly rejected in the amendment; native canonical contracts and editable workspace source retained. |
+| External study/benchmark/release gates could block local UI work | Medium | T056/T058/T060 remain honestly open but outside this explicitly bounded goal. |
+
+No unresolved requirement duplication, missing new-task coverage or
+constitution conflict was identified in this bounded analysis. Implementation
+and visual acceptance are still evidence gates, not consequences of this
+analysis. Their current results are recorded in `image-redesign-validation.md`,
+`image-redesign-review.md` and `image-redesign-checklist.md`.
+
+## Historical workspace correction analysis (preserved)
+
 ## Scope and subject
 
 - Spec: `specs/080-canonical-workflow-recovery/spec.md`

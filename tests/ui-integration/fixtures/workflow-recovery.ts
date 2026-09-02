@@ -25,6 +25,9 @@ interface WorkflowSourceDocument {
   metadata_authority: "wright_host";
   size_bytes: number;
   source: string;
+  layout: Record<string, unknown> | null;
+  layout_revision: number;
+  layout_status: "missing" | "current" | "stale";
 }
 
 export interface RecoveryWorkspaceMock {
@@ -49,6 +52,9 @@ function workflowDocument(
     metadata_authority: "wright_host",
     size_bytes: Buffer.byteLength(source, "utf8"),
     source,
+    layout: null,
+    layout_revision: 0,
+    layout_status: "missing",
   };
 }
 
@@ -168,6 +174,18 @@ export async function mockRecoveryWorkspace(
     if (path === "/api/workspace/surfaces") {
       return route.fulfill({ json: { items: [] } });
     }
+    if (path === "/api/workspace/workflow-sources/input-files" && method === "GET") {
+      if (url.searchParams.get("session_id") !== SESSION_ID) {
+        return route.fulfill({ status: 404, json: { message: "Workspace not found" } });
+      }
+      return route.fulfill({ headers: { "Cache-Control": "no-store" }, json: {
+        workspace_id: WORKSPACE_ID,
+        files: [
+          { path: "design/requirements.md", name: "requirements.md" },
+          { path: "references/bracket.png", name: "bracket.png" },
+        ],
+      } });
+    }
     if (path === "/api/workspace/workflow-sources" && method === "GET") {
       if (url.searchParams.get("session_id") !== SESSION_ID || url.searchParams.get("path") !== WORKFLOW_PATH) {
         return route.fulfill({ status: 400, json: { message: "Unexpected workflow source identity" } });
@@ -199,6 +217,8 @@ export async function mockRecoveryWorkspace(
         expected_storage_revision: number;
         expected_storage_digest: string;
         semantic_change_validated: boolean;
+        layout?: Record<string, unknown>;
+        expected_layout_revision?: number;
       };
       updates += 1;
       const stale = document === null
@@ -206,16 +226,28 @@ export async function mockRecoveryWorkspace(
         || body.path !== WORKFLOW_PATH
         || body.expected_storage_revision !== document.storage_revision
         || body.expected_storage_digest !== document.storage_digest
-        || typeof body.semantic_change_validated !== "boolean";
+        || typeof body.semantic_change_validated !== "boolean"
+        || (body.layout !== undefined && body.expected_layout_revision !== document.layout_revision);
       if (rejectNextUpdate || stale) {
         rejectNextUpdate = false;
         return route.fulfill({ status: 409, json: conflictEnvelope(document) });
       }
+      const previous = document;
+      const sourceChanged = body.source !== previous.source;
       document = workflowDocument(
         body.source,
-        document.storage_revision + 1,
-        document.definition_revision + Number(body.semantic_change_validated),
+        previous.storage_revision + Number(sourceChanged),
+        previous.definition_revision + Number(sourceChanged && body.semantic_change_validated),
       );
+      if (body.layout !== undefined) {
+        document.layout_revision = previous.layout_revision + 1;
+        document.layout = { ...body.layout, semanticRevision: document.definition_revision, layoutRevision: document.layout_revision };
+        document.layout_status = "current";
+      } else {
+        document.layout_revision = previous.layout_revision;
+        document.layout = sourceChanged ? null : previous.layout;
+        document.layout_status = sourceChanged && previous.layout_revision > 0 ? "stale" : previous.layout_status;
+      }
       return route.fulfill({ headers: { "Cache-Control": "no-store" }, json: document });
     }
     if (path === "/api/workspace/recent" || path === "/api/workspace/list") {
@@ -249,9 +281,6 @@ export async function openRecoveryEditor(page: Page): Promise<void> {
   await workflows.click();
   await expect(page).toHaveURL(new RegExp(`/workspace/${WORKSPACE_ID}\\?workflow=canonical$`));
   await expect(page.getByTestId("workflow-workspace-context")).toContainText("Bracket development");
-  const maximize = page.getByRole("button", { name: "Maximize active tab" });
-  await expect(maximize).toBeVisible();
-  await maximize.click();
   const collapseAgent = page.getByTitle("Collapse Agent Console");
   if (await collapseAgent.isVisible()) await collapseAgent.click();
 }

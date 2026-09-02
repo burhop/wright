@@ -349,6 +349,21 @@ describe("WorkspacePanel session selection", () => {
       "/workflows/mounting-bracket.workflow.wflow",
     );
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "none" });
+    const maximize = screen.getByTestId("workspace-tab-focus");
+    const openAgent = screen.getByTestId("agent-sidebar-toggle");
+    expect(openAgent.parentElement).toBe(maximize.parentElement);
+    expect(openAgent.parentElement).toHaveStyle({ display: "flex" });
+    expect(openAgent.style.position).not.toBe("absolute");
+    expect(maximize.style.position).not.toBe("absolute");
+    fireEvent.click(maximize);
+    expect(screen.getByTestId("workspace-tab-focus")).toHaveAccessibleName("Restore workspace layout");
+    fireEvent.click(screen.getByTestId("workspace-tab-focus"));
+    expect(screen.getByTestId("workspace-tab-focus")).toHaveAccessibleName("Maximize active tab");
+    fireEvent.click(screen.getByTitle("Open Agent Console"));
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "flex" });
+    fireEvent.click(screen.getByTitle("Collapse Agent Console"));
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "none" });
   });
 
   it("opens the canonical workflow from the explicit Workflows action in an ordinary workspace", async () => {
@@ -363,7 +378,9 @@ describe("WorkspacePanel session selection", () => {
       </MemoryRouter>,
     );
 
-    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
+    await screen.findByTestId("activity-bar-workflows-btn");
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "flex" });
+    fireEvent.click(screen.getByTestId("activity-bar-workflows-btn"));
 
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),
@@ -372,6 +389,46 @@ describe("WorkspacePanel session selection", () => {
       "/workspace/workspace-1?workflow=canonical",
     );
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "none" });
+  });
+
+  it("keeps an explicit workflow agent-pane preference separate from ordinary workspace layout", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    localStorage.setItem("wright-workspace-layout-workspace-1", JSON.stringify({
+      isAgentCollapsed: true,
+      workflowAgentCollapsed: false,
+    }));
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1?workflow=canonical"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    await screen.findByTestId("workspace-workflow-fixture");
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "flex" });
+  });
+
+  it("opens an explicitly named workspace workflow without replacing the default path", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Finspection.workflow.wflow"]}>
+        <ViewerPanelProvider><WorkspacePanel workspaceId="workspace-1" sessionId="new-session" /></ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByTestId("workspace-workflow-fixture")).toHaveAttribute("data-workflow-file", "/workflows/inspection.workflow.wflow");
+    expect(screen.queryByText("mounting-bracket.workflow.wflow")).not.toBeInTheDocument();
+  });
+
+  it.each(["../outside.workflow.wflow", "workflows/../outside.workflow.wflow", "workflows/con.workflow.wflow", "C:/outside.workflow.wflow"])("fails closed for invalid workflow path %s", async (path) => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter initialEntries={[`/workspace/workspace-1?workflow=canonical&workflowPath=${encodeURIComponent(path)}`]}>
+        <ViewerPanelProvider><WorkspacePanel workspaceId="workspace-1" sessionId="new-session" /></ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByTestId("workspace-workflow-path-error")).toHaveTextContent("valid workspace workflow");
+    expect(screen.queryByTestId("workspace-workflow-fixture")).not.toBeInTheDocument();
   });
 
   it("hides Workflows only when both workspace editors are disabled", async () => {

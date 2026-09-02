@@ -1,5 +1,26 @@
 # Product / Visual Direction Approval
 
+## Image-led implementation authorization — 2026-09-02
+
+The user's explicit goal in attachment
+`690b7c98-cea6-44cc-bb49-9e5c4b726a85/pasted-text.txt` approves implementing the
+recovered object-palette redesign in the existing native editor. The selected
+image is `wright-workflow-editor-object-palette-v2.png`; the recovered design
+task is **Redesign crowded Wright UI** (`01a05edc-f82b-7990-b49e-12b93b24d146`).
+
+This is actual implementation and direction authority, not a new request for
+the engineer to perform a formal review. Internal screenshot/code review and
+automated exact-subject acceptance are recorded separately in
+`image-redesign-review.md` and `image-redesign-delivery.json`. They do not
+constitute a new human study or a claim that the user personally reviewed the
+final implementation. The historical T051 subjects below remain unchanged.
+
+No reviewer identity, formal title, reviewer timestamp, execution result or
+production-readiness approval is inferred. Push/merge/release and material
+direction changes remain outside this authorization.
+
+## Historical T051 decision (preserved)
+
 ## Decision
 
 - **Decision**: APPROVED for the exact workspace-owned correction subject below.

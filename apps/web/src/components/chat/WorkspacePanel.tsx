@@ -58,7 +58,8 @@ const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
 const WORKSPACE_WORKFLOW_FILE_PATH = "/workflows/mounting-bracket.workflow.wflow";
 
 function isWorkspaceWorkflowTab(path: string | null): boolean {
-  return normalizeEditorTabPath(path ?? "") === WORKSPACE_WORKFLOW_FILE_PATH;
+  const match = /^\/?workflows\/([a-z0-9][a-z0-9-]{0,62})\.workflow\.wflow$/.exec(path ?? "");
+  return !!match && !/^(aux|con|nul|prn|com[1-9]|lpt[1-9])$/.test(match[1]);
 }
 
 function directRivetTabPath(slug: string): string {
@@ -178,6 +179,12 @@ export function WorkspacePanel({
     new URLSearchParams(location.search).get("workflow") === "canonical";
   const canonicalWorkflowAvailable =
     recoveryWorkflowEnabled && canonicalWorkflowRequested;
+  const workflowPathQuery = new URLSearchParams(location.search).get("workflowPath");
+  const requestedWorkflowPath = workflowPathQuery === null
+    ? WORKSPACE_WORKFLOW_FILE_PATH
+    : isWorkspaceWorkflowTab(workflowPathQuery)
+      ? normalizeEditorTabPath(workflowPathQuery)
+      : null;
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -411,9 +418,20 @@ export function WorkspacePanel({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
-  const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
+  const [ordinaryAgentCollapsed, setOrdinaryAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
+  const [workflowAgentCollapsed, setWorkflowAgentCollapsed] = useState<boolean>(
+    savedLayout?.workflowAgentCollapsed ?? true,
+  );
+  // Workflow authoring owns the canvas by default. Keep this preference
+  // separate so entering/leaving Workflows does not change ordinary chat.
+  const isAgentCollapsed = canonicalWorkflowAvailable
+    ? workflowAgentCollapsed
+    : ordinaryAgentCollapsed;
+  const setIsAgentCollapsed = canonicalWorkflowAvailable
+    ? setWorkflowAgentCollapsed
+    : setOrdinaryAgentCollapsed;
   const {
     openTabs,
     activeTabPath,
@@ -562,7 +580,8 @@ export function WorkspacePanel({
       const state = {
         activeSidebar,
         isSidebarCollapsed,
-        isAgentCollapsed,
+        isAgentCollapsed: ordinaryAgentCollapsed,
+        workflowAgentCollapsed,
         openTabs: dedupeEditorTabs(openTabs),
         activeTabPath: activeTabPath
           ? normalizeEditorTabPath(activeTabPath)
@@ -584,7 +603,8 @@ export function WorkspacePanel({
     layoutKey,
     activeSidebar,
     isSidebarCollapsed,
-    isAgentCollapsed,
+    ordinaryAgentCollapsed,
+    workflowAgentCollapsed,
     openTabs,
     activeTabPath,
     leftSidebarWidth,
@@ -711,10 +731,10 @@ export function WorkspacePanel({
           const tabPath = normalizeEditorTabPath(tab.path);
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
           if (isWorkspaceWorkflowTab(tabPath) || tab.type === "workflow") {
-            if (canonicalWorkflowAvailable) {
+            if (canonicalWorkflowAvailable && requestedWorkflowPath && isWorkspaceWorkflowTab(tab.path)) {
               openTransientTab({
-                name: "mounting-bracket.workflow.wflow",
-                path: WORKSPACE_WORKFLOW_FILE_PATH,
+                name: tabPath.split("/").at(-1)!,
+                path: tabPath,
                 type: "workflow",
               });
             }
@@ -795,6 +815,7 @@ export function WorkspacePanel({
   }, [
     savedLayout,
     canonicalWorkflowAvailable,
+    requestedWorkflowPath,
     workspaceFileSessionId,
     openTab,
     openTransientTab,
@@ -1160,6 +1181,16 @@ export function WorkspacePanel({
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
 
+    if (recoveryWorkflowEnabled && isWorkspaceWorkflowTab(path) && workspaceFileSessionId) {
+      const query = new URLSearchParams(location.search);
+      query.set("workflow", "canonical");
+      query.set("workflowPath", path.replace(/^\//, ""));
+      navigate({ pathname: location.pathname, search: `?${query.toString()}` }, { replace: true });
+      openTransientTab({ name: path.split("/").at(-1)!, path: normalizeEditorTabPath(path), type: "workflow" });
+      setIsSidebarCollapsed(true);
+      return;
+    }
+
     const savedWorkflowSlug = workspaceRivetWorkflowSlug(path);
     if (savedWorkflowSlug && workspaceFileSessionId) {
       const workflow = await workspaceService.readRivetWorkflow(
@@ -1306,6 +1337,11 @@ export function WorkspacePanel({
 
   const handleSelectTab = (path: string) => {
     setActiveTabPath(path);
+    if (canonicalWorkflowAvailable && isWorkspaceWorkflowTab(path)) {
+      const query = new URLSearchParams(location.search);
+      query.set("workflowPath", path.replace(/^\//, ""));
+      navigate({ pathname: location.pathname, search: `?${query.toString()}` }, { replace: true });
+    }
   };
 
   // Resize listeners
@@ -1453,11 +1489,11 @@ export function WorkspacePanel({
   };
 
   const openWorkspaceWorkflowTab = useCallback(() => {
-    if (!_workspaceId || !workspaceFileSessionId) return;
+    if (!_workspaceId || !workspaceFileSessionId || !requestedWorkflowPath) return;
     setIsSidebarCollapsed(true);
     openTransientTab({
-      name: "mounting-bracket.workflow.wflow",
-      path: WORKSPACE_WORKFLOW_FILE_PATH,
+      name: requestedWorkflowPath.split("/").at(-1)!,
+      path: requestedWorkflowPath,
       type: "workflow",
     });
     if (surfaceLayout.mode === "narrow") {
@@ -1472,7 +1508,17 @@ export function WorkspacePanel({
     surfaceLayout.mode,
     surfaceLayoutDispatch,
     workspaceFileSessionId,
+    requestedWorkflowPath,
   ]);
+
+  const selectWorkspaceWorkflow = useCallback((path: string) => {
+    if (!isWorkspaceWorkflowTab(path)) throw new Error("Choose a valid workspace workflow file.");
+    const query = new URLSearchParams(location.search);
+    query.set("workflow", "canonical");
+    query.set("workflowPath", path.replace(/^\//, ""));
+    navigate({ pathname: location.pathname, search: `?${query.toString()}` }, { replace: true });
+    openTransientTab({ name: path.split("/").at(-1)!, path: normalizeEditorTabPath(path), type: "workflow" });
+  }, [location.pathname, location.search, navigate, openTransientTab]);
 
   useEffect(() => {
     if (canonicalWorkflowAvailable) {
@@ -1553,9 +1599,9 @@ export function WorkspacePanel({
     openBrepPanelTab();
   }, [activeSessionStreamActivity, openBrepPanelTab]);
 
-  const workspaceWorkflowTabs = canonicalWorkflowAvailable
+  const workspaceWorkflowTabs = canonicalWorkflowAvailable && requestedWorkflowPath
     ? openTabs.filter(
-        (tab) => isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow",
+        (tab) => isWorkspaceWorkflowTab(tab.path),
       )
     : [];
   const activeWorkspaceWorkflow =
@@ -2867,6 +2913,7 @@ export function WorkspacePanel({
                 style={{
                   width: 32,
                   height: 32,
+                  flexShrink: 0,
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -2893,6 +2940,33 @@ export function WorkspacePanel({
                 )}
               </button>
             )}
+            {activeWorkspaceWorkflow &&
+              isAgentCollapsed &&
+              (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
+              (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
+                <button
+                  data-testid="agent-sidebar-toggle"
+                  aria-label="Open Agent Console"
+                  onClick={() => setIsAgentCollapsed(false)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    flexShrink: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    border: "1px solid transparent",
+                    borderRadius: "var(--radius-sm, 4px)",
+                    color: "var(--color-primary, #ffffff)",
+                    opacity: 0.75,
+                    cursor: "pointer",
+                  }}
+                  title="Open Agent Console"
+                >
+                  ◀
+                </button>
+              )}
             {activeTabPath &&
               !activeWorkspaceWorkflow &&
               !activeDirectRivet &&
@@ -2930,6 +3004,7 @@ export function WorkspacePanel({
             position: "relative",
           }}
         >
+          {canonicalWorkflowAvailable && !requestedWorkflowPath && <section role="alert" data-testid="workspace-workflow-path-error" style={{ padding: 24 }}>Choose a valid workspace workflow path such as workflows/design-checks.workflow.wflow. No workflow was created or opened.</section>}
           {workspaceWorkflowTabs.map((tab) => {
             if (!_workspaceId || !workspaceFileSessionId) return null;
             const isActive = activeTabPath === tab.path;
@@ -2957,6 +3032,7 @@ export function WorkspacePanel({
                     workspaceInfo?.workspace_name || workspacePath || _workspaceId
                   }
                   workflowFilePath={tab.path}
+                  onOpenWorkflow={selectWorkspaceWorkflow}
                 />
               </div>
             );
@@ -3597,7 +3673,8 @@ export function WorkspacePanel({
       </div>
 
       {/* Floating Expand button for Right Agent Drawer if collapsed */}
-      {isAgentCollapsed &&
+      {!activeWorkspaceWorkflow &&
+        isAgentCollapsed &&
         (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
         (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
           <button

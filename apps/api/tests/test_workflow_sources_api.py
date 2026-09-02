@@ -60,6 +60,8 @@ class _WorkflowSources:
         expected_storage_digest: str,
         semantic_change_validated: bool,
         source: str,
+        layout=None,
+        expected_layout_revision=None,
     ):
         assert (workspace_dir, path) == ("/tmp/workspace-1", SOURCE_PATH)
         if (
@@ -76,7 +78,16 @@ class _WorkflowSources:
             self.current.storage_revision + 1,
             self.current.definition_revision + int(semantic_change_validated),
         )
+        if layout is not None:
+            assert expected_layout_revision == 0
+            self.current.layout = layout
+            self.current.layout_revision = 1
+            self.current.layout_status = "current"
         return self.current
+
+    async def list_input_files(self, workspace_dir: str):
+        assert workspace_dir == "/tmp/workspace-1"
+        return [{"path": "design/requirements.md", "name": "requirements.md"}]
 
 
 class _Service:
@@ -96,9 +107,7 @@ class _Service:
                 else None
             )
 
-        self.lifecycle = SimpleNamespace(
-            get_by_session=get_by_session
-        )
+        self.lifecycle = SimpleNamespace(get_by_session=get_by_session)
 
     async def resolve_workspace_dir(self, session_id: str, engine) -> str:
         raise AssertionError("workflow-source routes must not perform fallback lookup")
@@ -155,6 +164,79 @@ def test_workflow_source_create_read_and_cas_update_api(sync_client):
     assert updated.json()["source"].startswith("workflow bracket")
     assert updated.json()["size_bytes"] == len(updated.json()["source"].encode("utf-8"))
     assert service.session_lookups == 3
+
+
+def test_workflow_input_file_list_uses_exact_scope_and_returns_only_relative_references(
+    sync_client,
+):
+    service = _Service()
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        response = sync_client.get(
+            "/api/workspace/workflow-sources/input-files",
+            params={"session_id": "session-1"},
+        )
+        denied = sync_client.get(
+            "/api/workspace/workflow-sources/input-files",
+            params={"session_id": "foreign-session"},
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json() == {
+        "workspace_id": "workspace-1",
+        "files": [{"path": "design/requirements.md", "name": "requirements.md"}],
+    }
+    assert denied.status_code == 404
+    assert service.session_lookups == 2
+
+
+def test_workflow_source_save_accepts_bounded_separate_layout_and_requires_its_cas(
+    sync_client,
+):
+    service = _Service()
+    service.workflow_sources.current = _document("before", 1, 1)
+    value = {
+        "documentKind": "workflow-layout",
+        "schemaVersion": "1.0.0-recovery.1",
+        "workflowId": "workflow.bracket",
+        "semanticRevision": 1,
+        "layoutRevision": 1,
+        "positions": {"block.input": {"x": 5, "y": 20}},
+        "viewport": {"x": 0, "y": 0, "zoom": 1},
+    }
+    body = {
+        "session_id": "session-1",
+        "path": SOURCE_PATH,
+        "source": "after",
+        "expected_storage_revision": 1,
+        "expected_storage_digest": service.workflow_sources.current.storage_digest,
+        "semantic_change_validated": True,
+        "layout": value,
+    }
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        rejected = sync_client.put("/api/workspace/workflow-sources", json=body)
+        accepted = sync_client.put(
+            "/api/workspace/workflow-sources",
+            json={**body, "expected_layout_revision": 0},
+        )
+        invalid = sync_client.put(
+            "/api/workspace/workflow-sources",
+            json={
+                **body,
+                "expected_layout_revision": 1,
+                "layout": {**value, "positions": {"block.input": {"x": True, "y": 0}}},
+            },
+        )
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+    assert rejected.status_code == 422
+    assert accepted.status_code == 200
+    assert accepted.json()["layout"] == value
+    assert accepted.json()["layout_revision"] == 1
+    assert invalid.status_code == 422
 
 
 def test_workflow_source_scope_snapshots_one_exact_binding_without_fallback(
@@ -431,11 +513,15 @@ async def test_workflow_source_transport_caps_chunked_body_before_downstream():
     await middleware(scope, receive, send)
 
     assert not downstream_called
-    start = next(message for message in sent if message["type"] == "http.response.start")
+    start = next(
+        message for message in sent if message["type"] == "http.response.start"
+    )
     assert start["status"] == 413
     headers = dict(start["headers"])
     assert headers[b"cache-control"] == b"no-store"
-    body = next(message["body"] for message in sent if message["type"] == "http.response.body")
+    body = next(
+        message["body"] for message in sent if message["type"] == "http.response.body"
+    )
     assert json.loads(body)["error_code"] == "workflow_source_request_too_large"
 
 
@@ -519,7 +605,10 @@ class _FailingWorkflowSources(_WorkflowSources):
             ),
             "workflow_source_integrity",
         ),
-        (OSError(r"access denied C:\sensitive\workflow"), "workflow_source_unavailable"),
+        (
+            OSError(r"access denied C:\sensitive\workflow"),
+            "workflow_source_unavailable",
+        ),
     ],
 )
 def test_workflow_source_storage_failures_use_safe_typed_503_envelope(

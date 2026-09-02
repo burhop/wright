@@ -1,4 +1,5 @@
 import { canonicalDefinitionBytes } from "./canonical-wire";
+import { validateAuthoringConfiguration, validateAuthoringConnections } from "./authoring-objects";
 import {
   RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY,
   cloneWorkflow,
@@ -59,7 +60,13 @@ type PublicPortKind =
   | "handoff_package"
   | "drawing_file"
   | "approved_drawing"
-  | "tolerance_report";
+  | "tolerance_report"
+  | "text"
+  | "workspace_file"
+  | "engineering_document"
+  | "structured_result"
+  | "check_report"
+  | "check_result";
 
 const PUBLIC_PORT_KIND_BY_TYPE_ID = new Map<string, PublicPortKind>([
   ["type.image.reference-set", "reference_images"],
@@ -74,6 +81,12 @@ const PUBLIC_PORT_KIND_BY_TYPE_ID = new Map<string, PublicPortKind>([
   ["type.file.drawing", "drawing_file"],
   ["type.file.drawing.approved", "approved_drawing"],
   ["type.report.tolerance", "tolerance_report"],
+  ["type.value.text", "text"],
+  ["type.file.workspace", "workspace_file"],
+  ["type.document.engineering", "engineering_document"],
+  ["type.result.structured", "structured_result"],
+  ["type.report.check", "check_report"],
+  ["type.verdict.check", "check_result"],
 ]);
 
 const TYPE_ID_BY_PUBLIC_PORT_KIND = new Map<PublicPortKind, string>(
@@ -519,7 +532,7 @@ function parsePortList(
     }
     const mappedTypeId = TYPE_ID_BY_PUBLIC_PORT_KIND.get(kind as PublicPortKind);
     if (!mappedTypeId) {
-      diagnostics.push(diagnostic("WFR-SOURCE-PORT-KIND", `Connection point '${key}' uses unknown engineering kind '${kind}'.`, "Use reference_images, design_intent, company_context, design_specification, cad_model, manufacturing_report, approved_cad_model, step_file, handoff_package, drawing_file, approved_drawing, or tolerance_report.", ownerBlockId, section.startLine));
+      diagnostics.push(diagnostic("WFR-SOURCE-PORT-KIND", `Connection point '${key}' uses unknown engineering kind '${kind}'.`, `Use a supported kind: ${[...TYPE_ID_BY_PUBLIC_PORT_KIND.keys()].join(", ")}.`, ownerBlockId, section.startLine));
       continue;
     }
     if (seen.has(key)) {
@@ -706,6 +719,7 @@ export function parseRecoveryAuthoringSource(text: string, base: RecoveryWorkflo
       bindingId,
       componentRef,
     };
+    diagnostics.push(...validateAuthoringConfiguration(block).map((item) => ({ ...item, line: section.startLine })));
     nextBlocks.push(block);
     nextPorts.push(...inputs, ...outputs);
     sourceMapForResolved(section, [block.id, ...block.inputPortIds, ...block.outputPortIds, ...(bindingId ? [bindingId] : [])], sourceMap);
@@ -743,6 +757,7 @@ export function parseRecoveryAuthoringSource(text: string, base: RecoveryWorkflo
     sourceMapForResolved(section, [relationshipId], sourceMap);
   }
   candidate.relationships = nextRelationships;
+  diagnostics.push(...validateAuthoringConnections(candidate));
 
   if (diagnostics.length > 0) return { ok: false, workflow: null, diagnostics, sourceMap };
   const validated = parseRecoveryDsl(formatRecoveryDsl(candidate).text);
@@ -756,6 +771,9 @@ export function validateRecoveryAuthoringRoundTrip(
 ): RecoveryParseResult {
   const formatted = formatRecoveryAuthoringSource(workflow);
   const base = cloneWorkflow(reconstructionBase);
+  // The reconstruction seed supplies retained schema/binding vocabulary, not a
+  // different document identity. The public workflow declaration carries this.
+  base.workflowId = workflow.workflowId;
   base.revision = workflow.revision;
   base.parentRevision = workflow.parentRevision;
   base.semanticSha256 = workflow.semanticSha256;

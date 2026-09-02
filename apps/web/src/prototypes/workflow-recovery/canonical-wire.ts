@@ -1,4 +1,4 @@
-import type { RecoveryWorkflow } from "./model";
+import type { RecoveryLayout, RecoveryWorkflow } from "./model";
 
 export interface CanonicalWorkflowWire {
   document_kind: "workflow-ir";
@@ -86,6 +86,15 @@ function stableValue(value: unknown): unknown {
       .map(([key, child]) => [key, stableValue(child)]));
   }
   return value;
+}
+
+/** Object insertion order is not part of saved layout identity. */
+export function canonicalLayoutBytes(layout: RecoveryLayout): string {
+  return JSON.stringify(stableValue(layout));
+}
+
+export function canonicalLayoutPositionBytes(layout: RecoveryLayout): string {
+  return JSON.stringify(stableValue(layout.positions));
 }
 
 export function canonicalDefinitionBytes(workflow: RecoveryWorkflow, excludeAuthority = false): string {

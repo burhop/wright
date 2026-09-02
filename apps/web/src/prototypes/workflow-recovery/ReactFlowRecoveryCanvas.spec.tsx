@@ -1,8 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import type { DraftProjection } from "../../components/workflow-composer/draft-projection";
-import { cloneLayout, initialLayout, initialRunProjection, initialWorkflow, toDraftProjection } from "./model";
+import { cloneLayout, cloneWorkflow, initialLayout, initialRunProjection, initialWorkflow, toDraftProjection } from "./model";
+import { createAuthoringObject } from "./authoring-objects";
+import { recoveryBlockIconKinds, WorkflowObjectIcon } from "./WorkflowObjectIcon";
 import {
   ReactFlowRecoveryCanvas,
   RecoveryCanvasRuntimeProvider,
@@ -33,6 +35,124 @@ function runtime(run = initialRunProjection(initialWorkflow, "a".repeat(64), "20
 }
 
 describe("ReactFlowRecoveryCanvas component contract", () => {
+  it("distinguishes authored tools from document writers without using their names or identities", () => {
+    const workflow = cloneWorkflow(initialWorkflow);
+    const layout = cloneLayout(initialLayout);
+    const examples = [
+      ["mcp-tool", "block.independent-a", "mcp-tools"],
+      ["document", "block.independent-b", "llm-document"],
+      ["file-input", "block.independent-c", "file"],
+      ["fdm-check", "block.independent-d", "fdm"],
+      ["manual-review", "block.independent-e", "review"],
+      ["engineering-step", "block.independent-f", "more"],
+    ] as const;
+    for (const [template, id] of examples) {
+      const added = createAuthoringObject(template, workflow, layout);
+      added.block.id = id;
+      added.block.title = "Same engineer-supplied title";
+      for (const port of added.ports) port.ownerBlockId = id;
+      workflow.blocks.push(added.block);
+      workflow.ports.push(...added.ports);
+      layout.positions[id] = added.position;
+    }
+    const semanticBefore = JSON.stringify(workflow);
+    const layoutBefore = JSON.stringify(layout);
+    const icons = recoveryBlockIconKinds(workflow);
+    for (const [, id, icon] of examples) expect(icons[id]).toBe(icon);
+    expect(icons["block.reference-images"]).toBe("image");
+    expect(icons["block.company-context"]).toBe("context");
+    expect(icons["block.generate-geometry"]).toBe("model");
+    expect(icons["block.check-manufacturability"]).toBe("3d-check");
+    expect(icons["block.review-design"]).toBe("review");
+    const projection = toDraftProjection(workflow, layout);
+    render(<RecoveryCanvasRuntimeProvider value={{ ...runtime(), blockIcons: icons }}><ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={() => undefined} /></RecoveryCanvasRuntimeProvider>);
+    expect(screen.getByTestId("workflow-recovery-block-block.independent-a").querySelector("svg[data-icon-kind]"))
+      .toHaveAttribute("data-icon-kind", "mcp-tools");
+    expect(screen.getByTestId("workflow-recovery-block-block.independent-b").querySelector("svg[data-icon-kind]"))
+      .toHaveAttribute("data-icon-kind", "llm-document");
+    expect(screen.getByTestId("workflow-recovery-block-block.independent-c").querySelector("svg[data-icon-kind]"))
+      .toHaveAttribute("data-icon-kind", "context");
+    expect(JSON.stringify(workflow)).toBe(semanticBefore);
+    expect(JSON.stringify(layout)).toBe(layoutBefore);
+  });
+
+  it("uses current execution and input mode when no matching template supplies the presentation kind", () => {
+    const workflow = cloneWorkflow(initialWorkflow);
+    const layout = cloneLayout(initialLayout);
+    const added = createAuthoringObject("document", workflow, layout);
+    added.block.executionKind = "deterministic";
+    workflow.blocks.push(added.block);
+    workflow.ports.push(...added.ports);
+    workflow.blocks.find((block) => block.id === "block.design-intent")!.configuration.input_mode = "workspace-file";
+    const icons = recoveryBlockIconKinds(workflow);
+    expect(icons[added.block.id]).toBe("mcp-tools");
+    expect(icons["block.design-intent"]).toBe("file");
+  });
+
+  it("gives the file kind an explicit decorative document alias", () => {
+    const { container } = render(<WorkflowObjectIcon kind="file" />);
+    expect(container.querySelector("svg")).toHaveAttribute("data-icon-kind", "context");
+    expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("svg")).toHaveAttribute("focusable", "false");
+  });
+
+  it.each([false, true])("collapses the minimap in a short viewport and permits explicitly reopening it (initially short: %s)", (initiallyShort) => {
+    let short = initiallyShort;
+    const listeners = new Set<(event: MediaQueryListEvent) => void>();
+    const media = {
+      get matches() { return short; },
+      media: "(max-height: 550px)",
+      addEventListener: vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener)),
+      removeEventListener: vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener)),
+    } as unknown as MediaQueryList;
+    const original = window.matchMedia;
+    window.matchMedia = (query) => query === media.media ? media : original(query);
+    const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
+    const view = render(<RecoveryCanvasRuntimeProvider value={runtime()}><ReactFlowRecoveryCanvas projection={projection} selectedSemanticId={null} onIntent={() => undefined} /></RecoveryCanvasRuntimeProvider>);
+    try {
+      const toggle = screen.getByTestId("workflow-recovery-minimap-toggle");
+      expect(toggle).toHaveAttribute("aria-expanded", String(!initiallyShort));
+      if (!initiallyShort) act(() => { short = true; listeners.forEach((listener) => listener({ matches: true } as MediaQueryListEvent)); });
+      expect(screen.queryByTestId("rf__minimap")).not.toBeInTheDocument();
+      expect(toggle).toHaveAttribute("aria-label", "Show minimap");
+      fireEvent.click(toggle);
+      expect(screen.getByTestId("rf__minimap")).toBeInTheDocument();
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+      act(() => { short = false; listeners.forEach((listener) => listener({ matches: false } as MediaQueryListEvent)); });
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+      act(() => { short = true; listeners.forEach((listener) => listener({ matches: true } as MediaQueryListEvent)); });
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    } finally {
+      view.unmount();
+      window.matchMedia = original;
+    }
+    expect(listeners.size).toBe(0);
+  });
+
+  it("keeps every selected input endpoint named and independently keyboard-connectable", () => {
+    const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
+    const onIntent = vi.fn();
+    render(<RecoveryCanvasRuntimeProvider value={runtime()}><ReactFlowRecoveryCanvas projection={projection} selectedSemanticId="block.create-design-specification" onIntent={onIntent} /></RecoveryCanvasRuntimeProvider>);
+    const selected = screen.getByTestId("workflow-recovery-block-block.create-design-specification");
+    expect(selected).toHaveAttribute("data-endpoints-visible", "true");
+    for (const id of ["port.design-intent-in", "port.reference-images-in", "port.company-context-in"]) {
+      expect(screen.getByTestId(`workflow-recovery-handle-${id}`)).toHaveAttribute("tabindex", "0");
+      expect(screen.getByTestId(`workflow-recovery-handle-${id}`)).toHaveAttribute("data-port-direction", "input");
+    }
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-handle-port.design-intent-out"), { key: "Enter" });
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-handle-port.design-intent-in"), { key: "Enter" });
+    expect(onIntent).toHaveBeenCalledWith({ type: "create-connection", sourcePortId: "port.design-intent-out", targetPortId: "port.design-intent-in" });
+  });
+
+  it("traces selected dependencies without deleting other graph identities", () => {
+    const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
+    const base = runtime();
+    render(<RecoveryCanvasRuntimeProvider value={{ ...base, focusPath: true }}><ReactFlowRecoveryCanvas projection={projection} selectedSemanticId="block.export-step" onIntent={() => undefined} /></RecoveryCanvasRuntimeProvider>);
+    expect(screen.getByTestId("workflow-recovery-canvas")).toHaveAttribute("data-focus-path", "true");
+    expect(screen.getAllByTestId(/^workflow-recovery-block-block\./)).toHaveLength(initialWorkflow.blocks.length);
+    expect(screen.getByTestId("workflow-recovery-block-block.export-step")).not.toHaveClass("is-muted");
+  });
+
   it("collapses reusable components without losing internal run-lineage addresses", () => {
     const projection = toDraftProjection(initialWorkflow, cloneLayout(initialLayout));
     const run = initialRunProjection(initialWorkflow, "a".repeat(64), "2026-08-31T00:00:00Z");

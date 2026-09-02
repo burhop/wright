@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -21,44 +21,154 @@ function missingInteractiveTestIds(root: HTMLElement): string[] {
     .map((element) => `${element.tagName.toLowerCase()}:${element.getAttribute("aria-label") ?? element.textContent?.trim().slice(0, 40) ?? ""}`);
 }
 
+async function openDesignIntentSettings() {
+  fireEvent.click(screen.getByTestId("workflow-recovery-block-block.design-intent"));
+  await userEvent.click(screen.getByTestId("workflow-recovery-inspector-tab-definition"));
+}
+
 describe("WorkflowRecoveryConcept component states", () => {
-  it("renders the default canonical projection and gives every visible interaction a stable test id", async () => {
+  it("opens an independently identified workflow file but rejects identity changes during contextual editing", async () => {
+    const independent = savedWorkflowSource.replace(/^workflow mounting_bracket$/m, "workflow authored_inspection_plan");
+    render(<WorkflowRecoveryConcept workflowSource={independent} definitionRevision={1} />);
+    expect(screen.getByTestId("workflow-recovery-canvas")).toBeInTheDocument();
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+    const source = screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor");
+    expect(source.value).toContain("workflow authored_inspection_plan");
+    fireEvent.change(source, { target: { value: independent.replace("workflow authored_inspection_plan", "workflow another_document") } });
+    await userEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
+    expect(screen.getByTestId("workflow-recovery-diagnostic-WFR-SOURCE-IDENTITY-UNKNOWN")).toBeInTheDocument();
+    expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute("data-revision", "1");
+  });
+
+  it("adds and saves objects in a newly identified workflow without reverting to the example identity", async () => {
+    const independent = savedWorkflowSource.replace(/^workflow mounting_bracket$/m, "workflow authored_new_document");
+    const onSave = vi.fn(async (source: string) => ({ source, definition_revision: 2, storage_digest: "a".repeat(64) }));
+    render(<WorkflowRecoveryConcept workflowSource={independent} definitionRevision={1} storageDigest={"b".repeat(64)} onSave={onSave} />);
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-template-text-input"));
+    expect(screen.getByTestId("workflow-recovery-block-block.text-input-1")).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId("workflow-recovery-input-text-block.text-input-1"), { target: { value: "Test the new document's independent design intent." } });
+    await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-save"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledOnce());
+    expect(onSave.mock.calls[0]![0]).toContain("workflow authored_new_document");
+    expect(onSave.mock.calls[0]![0]).toContain("independent design intent");
+    expect(screen.queryByTestId("workflow-recovery-diagnostic-WFR-SOURCE-IDENTITY-UNKNOWN")).not.toBeInTheDocument();
+  });
+
+  it("offers editable text and file input for company context despite its deterministic implementation binding", async () => {
+    render(<WorkflowRecoveryConcept />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-block-block.company-context"));
+    expect(screen.getByTestId("workflow-recovery-overview-block.company-context")).toHaveTextContent("Engineer input");
+    await userEvent.click(screen.getByTestId("workflow-recovery-inspector-tab-definition"));
+    fireEvent.change(screen.getByTestId("workflow-recovery-input-text-block.company-context"), { target: { value: "Use company drawing standard ME-104. Prefer stock aluminum plate." } });
+    await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
+    expect(screen.getByTestId("workflow-recovery-inputs-toggle")).toHaveTextContent("1/3 configured");
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+    expect(screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor").value).toContain("company drawing standard ME-104");
+  });
+
+  it("creates independent text inputs by keyboard, persists real text, and cold-reopens authored input", async () => {
+    let savedSource = "";
+    const onSave = vi.fn(async (source: string) => { savedSource = source; return { source, definition_revision: 8, storage_digest: "a".repeat(64) }; });
+    const first = render(<WorkflowRecoveryConcept onSave={onSave} />);
+    screen.getByTestId("workflow-recovery-create-group-input").focus();
+    await userEvent.keyboard("{Enter}");
+    screen.getByTestId("workflow-recovery-create-template-text-input").focus();
+    await userEvent.keyboard("{Enter}");
+    expect(screen.getByTestId("workflow-recovery-block-block.text-input-1")).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId("workflow-recovery-input-text-block.text-input-1"), { target: { value: "Support a 400 N load. Use stainless steel. Review the mounting interface." } });
+    fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.text-input-1"), { target: { value: "Pump support requirements" } });
+    await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
+    expect(screen.getByTestId("workflow-recovery-inputs-toggle")).toHaveTextContent("1/4 configured");
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-template-text-input"));
+    expect(screen.getByTestId("workflow-recovery-block-block.text-input-2")).toBeInTheDocument();
+    expect(screen.getByTestId("workflow-recovery-block-block.text-input-1")).toHaveTextContent("Pump support requirements");
+    await userEvent.click(screen.getByTestId("workflow-recovery-save"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledOnce());
+    expect(savedSource).toContain("Support a 400 N load");
+    first.unmount();
+    render(<WorkflowRecoveryConcept workflowSource={savedSource} definitionRevision={8} storageDigest={"a".repeat(64)} onSave={onSave} />);
+    expect(screen.getByTestId("workflow-recovery-block-block.text-input-1")).toHaveTextContent("Pump support requirements");
+    fireEvent.click(screen.getByTestId("workflow-recovery-block-block.text-input-1"));
+    expect(screen.getByTestId("workflow-recovery-overview-block.text-input-1")).toHaveTextContent("Support a 400 N load");
+  });
+
+  it("selects only actual listed workspace files, retains the reference, and reports a failed refresh", async () => {
+    const onListWorkspaceFiles = vi.fn().mockResolvedValueOnce([{ path: "design/requirements.docx", name: "requirements.docx" }]).mockRejectedValueOnce(new Error("offline"));
+    render(<WorkflowRecoveryConcept onListWorkspaceFiles={onListWorkspaceFiles} />);
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-template-file-input"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-input-files-refresh-block.file-input-1"));
+    await userEvent.selectOptions(screen.getByTestId("workflow-recovery-input-file-block.file-input-1"), "design/requirements.docx");
+    await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
+    expect(screen.getByTestId("workflow-recovery-inputs-toggle")).toHaveTextContent("1/4 configured");
+    await userEvent.click(screen.getByTestId("workflow-recovery-input-files-refresh-block.file-input-1"));
+    expect(await screen.findByTestId("workflow-recovery-settings-feedback")).toHaveTextContent("could not be read");
+    expect(screen.getByTestId("workflow-recovery-input-file-block.file-input-1")).toHaveValue("design/requirements.docx");
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+    expect(screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor").value).toContain("design/requirements.docx");
+    expect(screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor").value).not.toContain("mounting-bracket-design-intent.docx");
+  });
+
+  it("edits unbound prompts and parameters, confirms deletion, and restores the full object with undo", async () => {
+    render(<WorkflowRecoveryConcept />);
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-group-document"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-create-template-document"));
+    const id = "block.document-1";
+    fireEvent.change(screen.getByTestId(`workflow-recovery-block-instructions-${id}`), { target: { value: "Draft a design note. Keep assumptions separate and list questions for review." } });
+    await userEvent.click(screen.getByTestId(`workflow-recovery-settings-advanced-${id}`));
+    fireEvent.change(screen.getByTestId(`workflow-recovery-parameter-name-${id}`), { target: { value: "document_format" } });
+    await userEvent.click(screen.getByTestId(`workflow-recovery-parameter-add-${id}`));
+    fireEvent.change(screen.getByTestId(`workflow-recovery-block-parameter-${id}-document_format`), { target: { value: "Markdown" } });
+    await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-delete"));
+    expect(screen.getByRole("dialog", { name: "Delete workflow step" })).toHaveTextContent("0 connection(s)");
+    await userEvent.click(screen.getByTestId("workflow-recovery-delete-cancel"));
+    expect(screen.getByTestId(`workflow-recovery-block-${id}`)).toBeInTheDocument();
+    await userEvent.click(screen.getByTestId("workflow-recovery-delete"));
+    await userEvent.click(screen.getByTestId("workflow-recovery-delete-confirm"));
+    expect(screen.queryByTestId(`workflow-recovery-block-${id}`)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByTestId("workflow-recovery-undo"));
+    fireEvent.click(screen.getByTestId(`workflow-recovery-block-${id}`));
+    expect(screen.getByTestId(`workflow-recovery-overview-${id}`)).toHaveTextContent("Unbound draft");
+    await userEvent.click(screen.getByTestId("workflow-recovery-inspector-tab-definition"));
+    expect(screen.getByTestId(`workflow-recovery-block-instructions-${id}`)).toHaveValue("Draft a design note. Keep assumptions separate and list questions for review.");
+    await userEvent.click(screen.getByTestId(`workflow-recovery-settings-advanced-${id}`));
+    expect(screen.getByTestId(`workflow-recovery-block-parameter-${id}-document_format`)).toHaveValue("Markdown");
+  });
+
+  it("renders the compact Create rail, transient Inputs and contextual Inspector with stable controls", async () => {
     const { container } = render(<WorkflowRecoveryConcept />);
     expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-authority")).toHaveAttribute("data-revision", "2");
     expect(screen.getByTestId("workflow-recovery-filebar")).toHaveTextContent("mounting-bracket.workflow.wflow · Local preview · not saved");
-    expect(screen.queryByText(/Build and review the work as a diagram/)).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Three source inputs" })).toBeVisible();
-    expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("Engineer upload");
-    expect(screen.getByTestId("workflow-recovery-input-source-reference-images")).toHaveTextContent("JPG or PNG images");
-    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("Engineer input");
-    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("Typed text or common document");
-    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("Demo input for this session · not saved by this concept");
-    expect(screen.getByTestId("workflow-recovery-input-source-company-context")).toHaveTextContent("Company knowledge library");
-    expect(screen.getByTestId("workflow-recovery-palette-context-hint")).toHaveTextContent("Tolerances come from the reviewed design specification, not this first input stage.");
+    expect(screen.queryByRole("heading", { name: "Three source inputs" })).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/workflow-recovery-create-group-/)).toHaveLength(7);
+    expect(screen.getByTestId("workflow-recovery-inputs-toggle")).toHaveTextContent("0/3 configured");
+    expect(screen.queryByTestId("workflow-recovery-inputs-navigator")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByTestId("workflow-recovery-inputs-toggle"));
+    expect(screen.getByTestId("workflow-recovery-inputs-navigator")).toHaveTextContent("Needs input");
+    await userEvent.click(screen.getByTestId("workflow-recovery-input-navigate-block.design-intent"));
+    expect(screen.queryByTestId("workflow-recovery-inputs-navigator")).not.toBeInTheDocument();
+    expect(screen.getByTestId("workflow-recovery-overview-block.design-intent")).toHaveTextContent("Engineer input");
     expect(screen.queryByText(/PDF brief/i)).not.toBeInTheDocument();
     await waitFor(() => expect(screen.getByTestId("workflow-recovery-concept").dataset.semanticDigest).toMatch(/^sha256:/));
     expect(missingInteractiveTestIds(container)).toEqual([]);
-
-    expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
-    expect(screen.getByTestId("workflow-recovery-attachment-artifact.design-intent")).toHaveTextContent("mounting-bracket-design-intent.docx");
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-preview-artifact.design-intent"));
-    const designIntentDialog = screen.getByRole("dialog", { name: "Design intent" });
-    expect(designIntentDialog).toBeVisible();
-    expect(within(designIntentDialog).getByText("Text or common document")).toBeVisible();
-    await userEvent.click(screen.getByTestId("workflow-recovery-modal-close"));
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
     expect(screen.getByTestId("workflow-recovery-run-start")).toHaveAttribute("title", expect.stringContaining("confirmed by the workspace host"));
-
+    await userEvent.click(screen.getByTestId("workflow-recovery-inspector-close"));
+    expect(screen.queryByTestId("workflow-recovery-inspector")).not.toBeInTheDocument();
+    expect(container.querySelector(".recovery-workbench")).not.toHaveClass("recovery-workbench--inspecting");
+    await userEvent.click(screen.getByTestId("workflow-recovery-inspector-open"));
     fireEvent.click(screen.getByTestId("workflow-recovery-block-block.create-design-specification"));
-    expect(screen.getByText("AI drafts; engineer reviews")).toBeVisible();
+    await userEvent.click(screen.getByTestId("workflow-recovery-inspector-tab-definition"));
     expect(screen.getByText("AI prompt")).toBeVisible();
-    expect(screen.getByText("Engineer approval checklist")).toBeVisible();
     await userEvent.click(screen.getByTestId("workflow-recovery-block-review-toggle-block.create-design-specification"));
     expect(screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-block-review-block.create-design-specification").value).toContain("Accept when: An engineer accepted the design specification");
     expect(screen.getByText(/These criteria come from this step's accept and revise paths/)).toBeVisible();
-
+    await userEvent.click(screen.getByTestId("workflow-recovery-file-technical-details"));
     await userEvent.click(screen.getByTestId("workflow-recovery-port-lab-open"));
     expect(screen.getByTestId("workflow-port-lab")).toBeVisible();
     expect(missingInteractiveTestIds(container)).toEqual([]);
@@ -107,7 +217,7 @@ describe("WorkflowRecoveryConcept component states", () => {
 
     expect(screen.getByTestId("workflow-recovery-filebar")).toHaveTextContent("bracket.workflow.wflow · Saved in workspace");
     expect(screen.getByTestId("workflow-recovery-save")).toBeDisabled();
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    await openDesignIntentSettings();
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeEnabled();
     fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.design-intent"), { target: { value: "Design intent and loads" } });
     await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
@@ -135,7 +245,7 @@ describe("WorkflowRecoveryConcept component states", () => {
     await waitFor(() => expect(screen.getByTestId("workflow-recovery-concept").dataset.semanticDigest).toMatch(/^sha256:[a-f0-9]{64}$/));
     const semanticSha256 = screen.getByTestId("workflow-recovery-concept").dataset.semanticDigest!.replace("sha256:", "");
     expect(semanticSha256).not.toBe(storageDigest);
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    await openDesignIntentSettings();
     await waitFor(() => expect(screen.getByTestId("workflow-recovery-run-start")).toBeEnabled());
 
     fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.design-intent"), { target: { value: "Temporary local title" } });
@@ -156,7 +266,7 @@ describe("WorkflowRecoveryConcept component states", () => {
 
   it("locks semantic edits and candidate previews to an active run subject while leaving layout interaction available", async () => {
     render(<WorkflowRecoveryConcept workflowSource={savedWorkflowSource} definitionRevision={2} storageDigest={"b".repeat(64)} onSave={vi.fn()} />);
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    await openDesignIntentSettings();
     await waitFor(() => expect(screen.getByTestId("workflow-recovery-run-start")).toBeEnabled());
 
     fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.design-intent"), { target: { value: "Temporary design intent" } });
@@ -193,9 +303,9 @@ describe("WorkflowRecoveryConcept component states", () => {
     await userEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
     expect(screen.getByTestId("workflow-recovery-authority")).toHaveAttribute("data-revision", revision);
 
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-diagram"));
     await userEvent.click(screen.getByTestId("workflow-recovery-ai-request"));
     expect(screen.queryByTestId("workflow-recovery-proposal")).not.toBeInTheDocument();
-    await userEvent.click(screen.getByTestId("workflow-recovery-view-diagram"));
     const flowNode = screen.getByTestId("workflow-recovery-block-block.design-intent").closest(".react-flow__node");
     expect(flowNode).toHaveClass("draggable");
 
@@ -233,7 +343,7 @@ describe("WorkflowRecoveryConcept component states", () => {
   it("retains local semantic edits when an ordinary save fails", async () => {
     const onSave = vi.fn().mockRejectedValue(new Error("Unable to save this workflow file. Your local edits were kept."));
     render(<WorkflowRecoveryConcept workflowSource={savedWorkflowSource} storageDigest={"a".repeat(64)} onSave={onSave} />);
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    await openDesignIntentSettings();
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeEnabled();
     fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.design-intent"), { target: { value: "Unsaved load definition" } });
     await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));
@@ -256,7 +366,7 @@ describe("WorkflowRecoveryConcept component states", () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     render(<WorkflowRecoveryConcept workflowSource={savedWorkflowSource} storageDigest={"a".repeat(64)} onSave={onSave} onReadStoredSource={onReadStoredSource} onReloadStoredSource={onReloadStoredSource} />);
-    await userEvent.click(screen.getByTestId("workflow-recovery-attachment-attach-artifact.design-intent"));
+    await openDesignIntentSettings();
     expect(screen.getByTestId("workflow-recovery-run-start")).toBeEnabled();
     fireEvent.change(screen.getByTestId("workflow-recovery-block-title-block.design-intent"), { target: { value: "Local design requirements" } });
     await userEvent.click(screen.getByTestId("workflow-recovery-config-apply"));

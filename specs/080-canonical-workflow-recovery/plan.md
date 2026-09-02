@@ -8,7 +8,49 @@
 
 Recover Wright around one versioned canonical workflow IR that is authoritative for diagram, engineer-facing source, forms, and reviewed AI proposals while keeping layout and immutable run records separate. Preserve the model/validation/revision/CAS/API/browser/renderer seams completed at Checkpoint D, freeze its custom shell as technical evidence, and finish a high-fidelity React Flow editor entered only from an active engineering workspace. Choosing **Workflows** is explicit workspace-scoped creation intent: Wright idempotently bootstraps one default visible `workflows/<safe-slug>.workflow.wflow` when absent and opens it immediately, while re-entry returns existing source unchanged. That file uses contextual engineering-script vocabulary; the host retains canonical IDs, revisions, digests, typed commands, atomic replace, conflict detection, tracing, and evidence as rigorous internal machinery. The nine-step acceptance workflow makes reference images, design intent as text/common document, and approved company context explicit before CAD and downstream tolerance work, omits low-value groups and search, fits a fixed-height desktop workbench, and treats the graph as a compact overview whose complete typed details remain available through focus, selection, disclosure, and the inspector. T051 records the requesting user's approval of the canvas-first direction; their subsequent hands-on corrections are the authority for T061–T080. The exact correction subject is commit `38b409bf149a1241cc87cdedd48f83fed16b5050`, tree `452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6`, with a validated 24/24 workspace walkthrough. T056's representative-participant and real assistive-technology gates and T058's independent-oracle qualification remain open. Push, merge, publication, release, customer action, and material product-direction changes remain prohibited.
 
-## Technical Context
+## Authorized image-led catch-up — 2026-09-02
+
+The active goal now implements the selected object-palette redesign, not merely
+the earlier nine-step decluttering pass. User authorization is the full pasted
+goal in attachment `690b7c98-cea6-44cc-bb49-9e5c4b726a85/pasted-text.txt`.
+The bounded amendment is recorded in `spec.md` FR-058–FR-066 and
+`evidence/image-redesign-checklist.md`; implementation tasks are T081–T092.
+Historical passing counts and approval records remain unchanged evidence for
+their own subjects. They cannot close these new tasks.
+
+The integration writer remains this `codex/080-canonical-workflow-recovery`
+worktree. The root checkout's images and proposed `079-wright-native-authoring`
+package are references, not implementation sources to merge wholesale. Preserve
+the canonical wire model, command seam, contextual editable source, visible
+workspace file and CAS service. No Rivet work, schema restart, or database-only
+storage replacement is planned. Generic source values fit scalar configuration;
+new native object templates use existing atomic block/port commands. Any parser
+extension must be narrow, explicit, tested and fail closed.
+
+The source service's optional layout envelope is a bounded extension of the
+existing file/CAS boundary, not a second semantic model. Immutable hidden layout
+generations use their own revision and bind to source digest plus definition
+revision. Source-only legacy writes preserve those generations but never apply
+stale positions. An exact-session metadata-only file picker supplies permitted
+relative input choices. Named New/Open workflow actions use the same safe file
+shape and exclusive-create authority, with a fresh workflow identity per file.
+
+Implementation sequence: append requirements/checklist/tasks → early integrated
+shell → inspect actual browser → complete object/input and exact-port editing →
+focused tests and visual iteration → independent review → broader candidate
+checks → exact committed walkthrough and refreshed dashboard. Authorized repair
+continuations preserve failures. No waiting for optional hooks, repeated visual
+approval, external human participants, benchmark decisions or release authority.
+Those external gates remain open, not waived.
+
+Ownership: the integration writer owns CSS, canvas rendering, integration and
+evidence; bounded agents may own the host component, new pure authoring helpers,
+or workspace input adapters in disjoint files. No concurrent shared-file edits
+or duplicate broad test suites. An agent context reference already points to
+this plan, so no generated replacement or branch hook is required for the
+existing-feature amendment.
+
+## Technical Context (retained foundations)
 
 **Language/Version**: Python 3.11–3.14 for evidence generation and retained domain foundations; TypeScript 6 and React 19 for the conformance slice and interactive concept
 

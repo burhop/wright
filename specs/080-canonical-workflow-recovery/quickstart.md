@@ -2,6 +2,42 @@
 
 Run commands from the repository root on the recovery branch.
 
+## Image-led native authoring (current candidate)
+
+Use the integration checkout `D:/repos/wright/.local-run/epp-f02b-writer/wright`
+on `codex/080-canonical-workflow-recovery`. The separate root checkout contains
+reference images/planning; it is not the served implementation.
+
+1. Open a real engineering workspace and choose **Workflows**. Its first entry
+   creates the default only if missing; existing source is preserved.
+2. Use **New workflow** for a separate named document, or **Open workflow** for
+   an existing one. Creating an existing name never overwrites it.
+3. Choose a group in **Create**, then an object template. Nothing executes.
+4. Select an input, open **Settings**, enter text or choose a permitted workspace
+   file, and **Apply settings**. **Inputs** is a temporary navigator, not another
+   value editor. Configured means configured, not approved or executed.
+5. Select a step to edit its prompt/instructions and parameters. Generic tool,
+   checker, and document templates remain clearly labeled unbound drafts.
+6. Connect exact output/input sockets. Keyboard users focus an output and press
+   Enter, then focus the intended input and press Enter; Escape cancels. Selection
+   reveals each named endpoint. **Focus path** emphasizes dependencies.
+7. Edit **Source** and apply valid edits. Invalid candidates retain the last
+   accepted diagram. Use **Undo**/**Redo** and **Save**, then reopen to verify both
+   authored configuration and positions.
+8. **Example suggestion** is a reviewed fixture, not live AI. **Simulate** only
+   replays the unchanged supported example. Authored/new topologies are not
+   executable here; disabled simulation is an honest limitation.
+
+The canvas starts at a readable scale. Use zoom/pan or **Fit workflow to view**
+for an overview; hide the Inspector/minimap when more canvas space is useful.
+Run details expand below the canvas, never over it. The Create rail and details
+scroll internally on short windows; the document stays inside the viewport.
+
+Current candidate tests, failed continuations and review findings are recorded
+under `evidence/image-redesign-*`. The earlier counts and reports below are
+historical, not final proof of this redesign. The final exact URL/commit/report
+will be recorded there after acceptance.
+
 ## Verify the capability and syntax evidence
 
 ```powershell

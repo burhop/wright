@@ -310,7 +310,10 @@ def _get_trace_id(request: Request) -> str:
 
 def _error_response_headers(request: Request, trace_id: str) -> dict[str, str]:
     headers = {"X-Trace-Id": trace_id}
-    if request.url.path.rstrip("/") == "/api/workspace/workflow-sources":
+    if request.url.path.rstrip("/") in {
+        "/api/workspace/workflow-sources",
+        "/api/workspace/workflow-sources/input-files",
+    }:
         headers["Cache-Control"] = "no-store"
     return headers
 

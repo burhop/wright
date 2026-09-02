@@ -1,5 +1,26 @@
 # Prototype and Recovery Parity
 
+## Current image-led catch-up — 2026-09-02
+
+The historical subjects below do **not** prove completion of the selected
+object-palette image. The active amendment is FR-058–FR-066 / T081–T092.
+
+| Approved decision | Current implementation | Acceptance state |
+|---|---|---|
+| Compact Create rail; seven curated groups | Seventeen configurable native templates, independent IDs, keyboard creation | Focused tests pass; complete browser journey pending |
+| Temporary Inputs navigator; one editor | Source-classified readiness, real text/file editing in contextual Inspector | Early browser reviewed; full persistence proof pending |
+| Canvas dominates workspace | Agent pane closed by default, full-width page, readable initial zoom, collapsible Inspector/run details/minimap | Two early screenshot iterations reviewed; exact final comparison pending |
+| Small distinct interfaces and traceable flow | Named endpoint disclosure, independent exact handles, optional focus-path dimming | Component tests pass; browser connection/drag proof pending |
+| Editable engineering Source and one file per workflow | Existing parser/commands retained; named files, scalar input configuration, separate versioned positions | Source/helper/storage tests pass; final cross-surface walkthrough pending |
+| Truthful proposal/run states | Example suggestion and fixed local simulation; unbound templates do not execute | Existing guards retained and tested; final walkthrough pending |
+
+Independent findings, repairs and current evidence are tracked in
+`evidence/image-redesign-checklist.md`, `evidence/image-redesign-review.md`, and
+`evidence/image-redesign-validation.md`. No frozen evidence is rewritten. No
+Rivet code or quarantined implementation was imported.
+
+## Historical recovery evidence (unchanged subjects)
+
 **Frozen production checkpoint**: `b4a7e996` after T027
 
 **Frozen visual prototype**: `e7bb75c1` (read-only evidence)

@@ -96,6 +96,7 @@ from api.schemas.workspace import (
     WorkflowSourceCreateRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
+    WorkflowInputFilesResponse,
     WorkflowTemplateInstantiateRequest,
     WorkflowTemplateListResponse,
     WorkflowTemplateResponse,
@@ -290,9 +291,7 @@ def _workflow_response(document) -> WorkflowResponse:
     )
 
 
-def _workflow_source_response(
-    workspace_id: str, document
-) -> WorkflowSourceResponse:
+def _workflow_source_response(workspace_id: str, document) -> WorkflowSourceResponse:
     return WorkflowSourceResponse(
         workspace_id=workspace_id,
         path=document.path,
@@ -301,6 +300,9 @@ def _workflow_source_response(
         definition_revision=document.definition_revision,
         size_bytes=document.size_bytes,
         source=document.source,
+        layout=getattr(document, "layout", None),
+        layout_revision=getattr(document, "layout_revision", 0),
+        layout_status=getattr(document, "layout_status", "missing"),
     )
 
 
@@ -318,7 +320,7 @@ def _workflow_source_http_error(error: WorkflowSourceStorageError) -> HTTPExcept
     if error.code in {"workflow_source_integrity", "workflow_source_unavailable"}:
         error_status = status.HTTP_503_SERVICE_UNAVAILABLE
         message = "Workflow source storage is temporarily unavailable"
-    elif error.code == "workflow_source_exists":
+    elif error.code in {"workflow_source_exists", "workflow_layout_conflict"}:
         error_status = status.HTTP_409_CONFLICT
         message = str(error)
     elif error.code == "workflow_source_too_large":
@@ -527,9 +529,7 @@ def _workflow_source_scope(
         )
     try:
         workspace_id = str(workspace["workspace_id"])
-        workspace_dir = service.ensure_workspace_path_safe(
-            str(workspace["local_path"])
-        )
+        workspace_dir = service.ensure_workspace_path_safe(str(workspace["local_path"]))
     except (KeyError, TypeError, ValueError, WorkspaceServiceError) as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -841,6 +841,24 @@ async def compare_engineering_scenario_runs_endpoint(
         raise _scenario_error(error) from error
 
 
+@router.get("/workflow-sources/input-files", response_model=WorkflowInputFilesResponse)
+@traced("workspace.workflow_sources.input_files")
+async def list_workflow_input_files_endpoint(
+    response: Response,
+    session_id: str = Query(..., min_length=1, max_length=256),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        files = await service.workflow_sources.list_input_files(scope.workspace_dir)
+        return WorkflowInputFilesResponse(workspace_id=scope.workspace_id, files=files)
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
 @router.get("/workflow-sources", response_model=WorkflowSourceResponse)
 @traced("workspace.workflow_sources.read")
 async def read_workflow_source_endpoint(
@@ -917,6 +935,14 @@ async def update_workflow_source_endpoint(
             expected_storage_digest=body.expected_storage_digest,
             semantic_change_validated=body.semantic_change_validated,
             source=body.source,
+            **(
+                {
+                    "layout": body.layout,
+                    "expected_layout_revision": body.expected_layout_revision,
+                }
+                if body.layout is not None
+                else {}
+            ),
         )
         return _workflow_source_response(scope.workspace_id, document)
     except FileNotFoundError as error:

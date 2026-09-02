@@ -221,7 +221,32 @@
 
 ---
 
-## Dependencies & Execution Order
+## Phase 12: Approved Image-led UI and Functional Catch-up
+
+**Authority**: Full user goal of 2026-09-02, attachment `690b7c98-cea6-44cc-bb49-9e5c4b726a85/pasted-text.txt`. This is implementation approval for the selected image and existing native foundation; it does not reopen T056/T058/T060 or rewrite their evidence.
+
+**Independent acceptance**: Real input/object creation, exact connection, source/graph editing, invalid containment, undo/redo and save/reopen in the image-aligned workspace shell; truthful separate proposal/run simulation; matched-viewport visual review and fresh exact-subject walkthrough.
+
+- [x] T081 Reconcile recovered image decisions and approval into `spec.md`, `plan.md`, `tasks.md`, and `evidence/image-redesign-checklist.md`; record a new baseline without claiming prior recovery counts prove the redesign
+- [x] T082 [P] [US1] Add tested native object-template, deterministic placement, input-configuration/readiness and removal-impact helpers in `apps/web/src/prototypes/workflow-recovery/authoring-objects.ts` and `authoring-objects.spec.ts`
+- [x] T083 [US1] Replace the permanent Inputs panel with Create rail, temporary input navigator, contextual collapsible Inspector, compact toolbar and bottom run panel in `WorkflowRecoveryConcept.tsx` and its focused tests
+- [x] T084 [P] [US1] Implement image-aligned tokens, fixed-height responsive shell, compact icon-led nodes, distinct named connection disclosure, focus paths and minimap in `workflow-recovery.css`, `ReactFlowRecoveryCanvas.tsx` and focused renderer tests
+- [x] T085 [P] [US1] Supply authorized workspace-file choices to input editing and default canonical editing to a collapsed agent pane in `WorkflowRecoveryPage.tsx`, `WorkspacePanel.tsx`, dedicated input adapter components and focused page/workspace tests
+- [x] T086 [US2] Complete real persistent text/file configuration, generic draft template creation, safe deletion and graph/source round-trip of new objects through `authoring-objects.ts`, `recovery-authoring.ts`, `command-system.ts` and focused tests without a second model
+- [x] T087 [US3] Preserve review-only proposal acceptance/rejection and explicit unbound/simulated limitations in `WorkflowRecoveryConcept.tsx` and focused tests; remove misleading control labels and fabricated status claims
+- [x] T088 [US4] Preserve supported simulated run/recovery/output lineage and implement non-overlay bottom details in `WorkflowRecoveryConcept.tsx` and browser tests
+- [ ] T089 [US5] Capture early shell and final matched-image/1537×791/1070×791/narrow/200%-zoom visual states, repair legibility and interaction failures, and obtain independent internal review in `artifacts/ui-walkthrough/image-redesign/` and `evidence/image-redesign-review.md`
+- [ ] T090 Run focused and proportionate broader conformance/API/service/web/build/browser/accessibility/freeze checks; record exact commands and outcomes in `evidence/image-redesign-validation.md`
+- [ ] T091 Create coherent local implementation commit and fresh exact-subject raw/annotated walkthrough, trace, diagnostics, manifest and validated report with the served-code/workspace identity verified in `scripts/recovery/` and `artifacts/ui-walkthrough/image-redesign/`
+- [ ] T092 Refresh capability/parity/quickstart/Spec Kit analysis and live dashboard for the actual redesign; leave the verified application running and record exact URL, screenshots, remaining limitations and delivery state in `evidence/image-redesign-checklist.md`
+
+T081 precedes product changes. T082/T083/T084/T085 use disjoint files and may
+proceed in parallel; an early integrated T083/T084 shell is inspected before
+broad validation. T086 integrates helper/source/storage behavior; T087/T088
+preserve the existing bounded simulations. T089–T092 consume the integrated
+candidate, with failed evidence kept and final claims bound to its exact subject.
+
+## Dependencies & Execution Order (historical phases)
 
 ### Phase dependencies
 

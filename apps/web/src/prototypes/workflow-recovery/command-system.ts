@@ -12,6 +12,8 @@ import {
 import { toCanonicalWire } from "./canonical-wire";
 import { formatRecoveryDsl, parseRecoveryDsl } from "./recovery-dsl";
 import { validateRecoveryAuthoringRoundTrip } from "./recovery-authoring";
+import { validateAuthoringConfiguration, validateAuthoringConnections } from "./authoring-objects";
+import { findAuthoringPosition, hydrateAuthoringLayout } from "./authoring-positioning";
 
 export type RecoveryCommand =
   | { kind: "move_block"; blockId: string; x: number; y: number }
@@ -262,6 +264,8 @@ export function applyRecoveryBatch(
     const [code, identity] = message.split(":");
     return failure(code?.startsWith("WFR-") ? code : "WFR-COMMAND-UNKNOWN", message, "Correct or remove the invalid command; no change was applied.", identity ?? null);
   }
+  const inputDiagnostics = [...workflow.blocks.flatMap(validateAuthoringConfiguration), ...validateAuthoringConnections(workflow)];
+  if (inputDiagnostics.length) return { ok: false, workflow: null, layout: null, diagnostics: inputDiagnostics, diff: [], semanticChanged: false };
   const candidateText = formatRecoveryDsl(workflow).text;
   const parsed = parseRecoveryDsl(candidateText);
   if (!parsed.ok || parsed.workflow === null) return { ok: false, workflow: null, layout: null, diagnostics: parsed.diagnostics, diff: [], semanticChanged: false };
@@ -308,7 +312,7 @@ function normalized(workflow: RecoveryWorkflow): string {
   return stableValue(value);
 }
 
-export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkflow): RecoveryCommand[] | RecoveryDiagnostic[] {
+export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkflow, currentLayout?: RecoveryLayout): RecoveryCommand[] | RecoveryDiagnostic[] {
   const edits: RecoveryCommand[] = [];
   const disconnects: RecoveryCommand[] = [];
   const relationshipUpdates: RecoveryCommand[] = [];
@@ -345,14 +349,17 @@ export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkfl
       if (current.configuration[key] !== edited.configuration[key]) edits.push({ kind: "set_block_configuration", blockId: current.id, key, value: edited.configuration[key] as string | number | boolean });
     }
   }
-  let addedIndex = 0;
+  const additionLayout = hydrateAuthoringLayout(before, currentLayout);
+  const placementWorkflow = cloneWorkflow(before);
   for (const block of after.blocks) {
     if (beforeById.has(block.id)) continue;
     const portIds = new Set([...block.inputPortIds, ...block.outputPortIds]);
     const ports = after.ports.filter((port) => portIds.has(port.id));
     if (ports.length !== portIds.size) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: block.id, line: null, explanation: "A new workflow step has an incomplete connection-point definition.", correction: "Declare every input and output connection point in the new task section." }];
-    addedBlocks.push({ kind: "add_block", block: structuredClone(block), ports: structuredClone(ports), position: { x: 580 + addedIndex * 40, y: 650 + addedIndex * 40 } });
-    addedIndex += 1;
+    const position = findAuthoringPosition(placementWorkflow, additionLayout);
+    addedBlocks.push({ kind: "add_block", block: structuredClone(block), ports: structuredClone(ports), position });
+    placementWorkflow.blocks.push(block);
+    additionLayout.positions[block.id] = position;
   }
   const afterArtifacts = new Map(after.artifactContracts.map((item) => [item.id, item]));
   for (const current of before.artifactContracts) {

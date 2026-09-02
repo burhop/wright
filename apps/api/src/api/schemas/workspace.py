@@ -6,10 +6,22 @@ All models used by workspace endpoints are defined here.
 """
 
 import json
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictInt,
+    field_validator,
+    model_validator,
+)
 from typing import Any, Dict, List, Literal, Optional
 
-from workspace_service.workflow_sources import WORKFLOW_SOURCE_MAX_BYTES
+from workspace_service.workflow_sources import (
+    WORKFLOW_SOURCE_MAX_BYTES,
+    WorkflowSourceStorageError,
+    validate_source_layout,
+)
 
 
 #  File Operations
@@ -111,6 +123,24 @@ class WorkflowSourceUpdateRequest(_WorkflowSourceContentRequest):
     expected_storage_revision: int = Field(ge=1)
     expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
     semantic_change_validated: StrictBool
+    layout: dict[str, Any] | None = None
+    expected_layout_revision: StrictInt | None = Field(default=None, ge=0, lt=100_000)
+
+    @field_validator("layout")
+    @classmethod
+    def validate_layout(cls, layout):
+        if layout is None:
+            return None
+        try:
+            return validate_source_layout(layout)
+        except WorkflowSourceStorageError as error:
+            raise ValueError(str(error)) from error
+
+    @model_validator(mode="after")
+    def require_layout_base(self):
+        if self.layout is not None and self.expected_layout_revision is None:
+            raise ValueError("A layout base revision is required when saving layout")
+        return self
 
 
 class WorkflowSourceResponse(BaseModel):
@@ -122,6 +152,19 @@ class WorkflowSourceResponse(BaseModel):
     metadata_authority: Literal["wright_host"] = "wright_host"
     size_bytes: int
     source: str
+    layout: dict[str, Any] | None = None
+    layout_revision: int = 0
+    layout_status: Literal["missing", "current", "stale"] = "missing"
+
+
+class WorkflowInputFileResponse(BaseModel):
+    path: str
+    name: str
+
+
+class WorkflowInputFilesResponse(BaseModel):
+    workspace_id: str
+    files: list[WorkflowInputFileResponse]
 
 
 class WorkflowTemplateResponse(BaseModel):

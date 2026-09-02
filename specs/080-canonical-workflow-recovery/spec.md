@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-31
 
-**Status**: Approved canvas direction; workspace-scoped engineer-authoring correction in progress
+**Status**: Approved image-led redesign implementation in progress (2026-09-02); prior recovery evidence is historical, not redesign acceptance
 
 **Input**: User description: "Regroup Wright around one complete canonical workflow model and recover the intended canvas-first visual engineering experience before hardening or merging the current EPP-F02B UI."
 
@@ -186,7 +186,35 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **FR-056**: Workspace context MUST be the ownership boundary for the workflow definition and any attached inputs or produced outputs; the concept MUST NOT imply that simulated inputs or outputs are durably stored when they are not.
 - **FR-057**: The default canvas MUST be an overview rather than a complete technical report: each visible block MUST lead with its engineering role, name, run state, and compact input/output count; connection points MUST remain small but keyboard-operable; port names, exact types, requiredness, cardinality, artifact actions, connection labels, and reusable-component internals MUST appear on focus, selection, explicit disclosure, or in the inspector instead of remaining persistently rendered across the graph.
 
-### Key Entities
+### Image-led redesign amendment — 2026-09-02
+
+The requesting engineer explicitly authorized the full goal in attachment
+`690b7c98-cea6-44cc-bb49-9e5c4b726a85/pasted-text.txt`. The selected visual target
+is `D:/repos/wright/artifacts/ui-redesign/wright-workflow-editor-object-palette-v2.png`,
+with decisions recovered from **Redesign crowded Wright UI**. This extends the
+existing native canonical editor; it does not authorize the rejected Rivet
+implementation, a new competing document model, read-only Source, or database-only
+replacement of the visible workspace file. T056/T058/T060 remain outside this
+local catch-up goal; their missing external evidence is not a prerequisite for it.
+
+- **FR-058**: The editor MUST replace the permanent input-card column with a compact Create rail containing Input, LLM document, MCP tools, 3D check, Drawing, FDM, and More; each chooser MUST support click and keyboard insertion of independently identified, non-overlapping, undoable objects.
+- **FR-059**: An Inputs summary MUST open a temporary navigator that focuses source nodes. Input values MUST be edited in one contextual Inspector, not duplicated across persistent panels.
+- **FR-060**: Text inputs and permitted existing workspace-file references MUST be real authored values, persist through source/save/reopen, and expose missing, invalid, or unavailable states without fictional filenames or availability.
+- **FR-061**: The canvas MUST dominate the workspace with compact document controls, an on-demand collapsible Inspector, unobtrusive navigation, and a collapsible bottom run-details region that does not cover the graph. The agent pane MUST NOT reserve primary space by default during canonical workflow editing.
+- **FR-062**: Nodes MUST prioritize an icon, readable name, concise role and truthful state. Ports remain distinct; selection/focus/connect mode MUST expose named endpoints and exact producer/consumer navigation without returning to persistent technical clutter.
+- **FR-063**: New document/tool/checker templates MUST be editable unbound draft intentions, not execution claims. Creating them MUST NOT invoke a model/tool. Saved, valid, configured, bound, simulated and executed states MUST remain distinct.
+- **FR-064**: Every visible primary control MUST have a meaningful working behavior or an explicit unavailable reason. Authored inputs, settings, graph/source edits, history and conflict recovery MUST use the existing atomic boundaries.
+- **FR-065**: Visual acceptance MUST compare actual running screenshots with the selected image at matching dimensions and at 1537×791, 1070×791, a narrower viewport and 200% zoom. No tiny-text, clipping, overlay or fit-to-screen workaround may substitute for readability and reachable controls.
+- **FR-066**: The final application URL MUST be verified against the exact implementation subject, workspace and served code. Fresh walkthrough evidence and a separate internal review MUST substantiate completion; prior test counts and generated mockup status badges are not evidence.
+
+The new independent journey adds three inputs and two draft work/document steps,
+configures real text and a workspace file reference, connects exact compatible
+ports, changes source and graph, rejects an invalid change, undoes/redoes, saves,
+reloads and verifies persisted values and identity. It separately reviews a
+simulated proposal/run on its supported fixture without attributing execution
+to newly added unbound objects. No representative-human-study claim is made.
+
+### Key Entities (unchanged canonical authority)
 
 - **Canonical Workflow Definition**: The versioned semantic authority containing stable engineering workflow concepts, contracts, conditions, configuration, and implementation bindings.
 - **Workflow Revision**: An immutable accepted definition revision with parent/base identity and semantic digest.
@@ -229,8 +257,8 @@ As an engineer and product owner, I can distinguish workflow definition, layout,
 - **SC-017**: The committed public workflow fixture contains no authored revision, digest, parent, opaque `block.*`/`port.*`/`artifact.*` identity, or mandatory group, while round-trip tests prove that it lowers to the exact accepted canonical semantics and stable source spans.
 - **SC-018**: At exactly 1070 by 791 pixels, automated browser evidence reports no document overflow, no overlapping editor columns, and no unreachable save or inspector action.
 - **SC-019**: The nine-step acceptance workflow exposes no graph search control, while a 26-step fixture exposes a usable search control; both retain keyboard navigation and the minimap's explicit current-view frame.
-- **SC-020**: One workspace has exactly one visible `.workflow.wflow` definition after explicit creation and save; host-managed metadata remains non-authorable, and layout/run changes do not alter the saved semantic source bytes.
-- **SC-021**: At 1537 by 791 and 1070 by 791 pixels, all nine workflow step titles and the primary left-to-right topology remain readable without persistent edge-label or per-port metadata clutter; the default nodes use compact connection points and summaries, while keyboard focus or inspector selection exposes the complete accessible port and artifact contracts.
+- **SC-020**: Each workflow has exactly one visible `.workflow.wflow` definition after explicit creation and save. A workspace may hold multiple independently named workflows; creating another never overwrites an existing document. Host-managed metadata remains non-authorable, and layout/run changes do not alter the saved semantic source bytes.
+- **SC-021**: At 1537 by 791 and 1070 by 791 pixels, workflow step titles and the primary left-to-right topology remain readable without persistent edge-label or per-port metadata clutter. When the graph exceeds the available canvas, pan, focus and the minimap provide access to every step instead of automatically shrinking all nine titles below readable size. Default nodes use compact connection points and summaries; keyboard focus or Inspector selection exposes the complete accessible port and artifact contracts. This incorporates the 2026-09-02 explicit readability-over-fit direction.
 
 ## Assumptions
 

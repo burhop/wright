@@ -12,6 +12,9 @@ canonical workflow layer's responsibility.
 
 - Exact shape: `workflows/<safe-slug>.workflow.wflow`
 - One workflow has exactly one visible definition file.
+- A workspace may contain several named workflows. **New workflow** performs an
+  exclusive create with a fresh workflow identity; **Open workflow** selects an
+  existing safe path. A filename collision never replaces the earlier file.
 - A plain read never creates the file, a workspace, or a default workflow.
 - Entering **Workflows** within an active workspace is the explicit product-level
   intent to ensure the default file exists and open it immediately. Ordinary
@@ -33,7 +36,10 @@ canonical workflow layer's responsibility.
   "definition_revision": 4,
   "metadata_authority": "wright_host",
   "size_bytes": 6810,
-  "source": "workflow mounting_bracket\n  ...\nend\n"
+  "source": "workflow mounting_bracket\n  ...\nend\n",
+  "layout": null,
+  "layout_revision": 0,
+  "layout_status": "missing"
 }
 ```
 
@@ -103,7 +109,48 @@ the engineer source.
   application layer attests `semantic_change_validated: true`; formatting-only
   writes may attest `false` and retain the definition revision.
 - A no-op source returns the current document without advancing identity.
-- Layout-only or run-only activity never calls this operation.
+- Run-only activity never calls this operation. The 2026-09-02 authoring extension
+  may send an independently versioned layout with unchanged source; that leaves
+  source storage/definition identities untouched.
+
+### Optional, separately versioned layout
+
+`PUT` may include `layout` (the closed `RecoveryLayout` shape) and
+`expected_layout_revision`. Supplying layout without its expected base fails
+validation. This does not insert presentation data into the visible source or
+change canonical semantics.
+
+- The same source transaction lock checks both source CAS and layout CAS before
+  any publication. A stale layout save returns the existing conflict envelope;
+  the editor retains unsaved source and positions.
+- Layout records are immutable hidden generations with a checked head pointer,
+  finite/bounded coordinates, bounded object counts/size, and explicit source
+  digest plus semantic-revision binding. Layout-only saves advance only their
+  own revision. Source-plus-layout saves rebase layout to the committed subject.
+- Legacy callers that omit layout leave its bytes and revision untouched. A
+  well-formed layout belonging to another source digest **or definition revision**
+  returns `layout_status: stale`, no applied layout, and the current readable
+  source. Returning to previously used source bytes does not revive an obsolete
+  layout from an earlier definition revision.
+- Malformed layout metadata, a head/record mismatch, or invalid bounds fail
+  closed. Synchronous publication failures roll back the transaction; injected
+  exception tests are not proof of recovery from every process/power-loss point.
+- The client hydrates only current canonical object positions. It removes
+  deleted-object positions and deterministically places new/missing objects.
+
+### Input-file choices
+
+`GET /api/workspace/workflow-sources/input-files?session_id=<session>` returns the
+registered workspace identity and bounded `{path, name}` choices. Resolution
+uses the exact registered session without legacy fallback to another root.
+Hidden/managed directories and unsafe link/reparse-point paths are excluded.
+This is metadata listing only: it neither reads document content nor executes,
+uploads, approves, or installs anything.
+
+The Inspector stores real typed text or a relative file reference in canonical
+scalar configuration. A configured reference is not evidence of execution or
+current file contents. Any future opening/reading operation must re-resolve and
+re-authorize the workspace/path; earlier listing is not a lasting access grant.
 
 ## Conflict contract
 

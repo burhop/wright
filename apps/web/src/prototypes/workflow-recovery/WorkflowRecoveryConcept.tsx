@@ -5,7 +5,6 @@ import {
   acceptRecoveryResult,
   aiDrawingProposal,
   applyRecoveryBatch,
-  paletteBlock,
   recoveryCommandBatch,
   textEditCommands,
   type RecoveryCommand,
@@ -16,10 +15,8 @@ import {
   cloneWorkflow,
   findBlock,
   findPort,
-  initialLayout,
   initialRunProjection,
   initialWorkflow,
-  phaseName,
   resolveRecoveryComponentScope,
   toDraftProjection,
   type RecoveryDiagnostic,
@@ -39,15 +36,19 @@ import {
   ReactFlowRecoveryCanvas,
   RecoveryCanvasRuntimeProvider,
 } from "./ReactFlowRecoveryCanvas";
-import { canonicalDefinitionBytes } from "./canonical-wire";
+import { canonicalDefinitionBytes, canonicalLayoutBytes, canonicalLayoutPositionBytes } from "./canonical-wire";
+import { AuthoringCreateRail, AuthoringInputsNavigator, AuthoringOverview, AuthoringSettings, AuthoringPortConnections, type AuthoringWorkspaceFile } from "./AuthoringControls";
+import { authoringDeletionImpact, buildDeletionCommands, createAuthoringObject, hydrateAuthoringLayout } from "./authoring-objects";
+import { recoveryBlockIconKinds } from "./WorkflowObjectIcon";
 import "./workflow-recovery.css";
 
 type ViewMode = "diagram" | "code" | "split";
-type InspectorTab = "definition" | "inputs" | "outputs" | "activity" | "diagnosis";
+type InspectorTab = "overview" | "definition" | "inputs" | "outputs" | "activity" | "diagnosis";
 type PortTreatment = "dot" | "terminal" | "hybrid";
 
 const inspectorTabLabel: Record<InspectorTab, string> = {
-  definition: "Setup",
+  overview: "Overview",
+  definition: "Settings",
   inputs: "Uses",
   outputs: "Creates",
   activity: "Run log",
@@ -83,6 +84,7 @@ export interface WorkflowRecoveryPersistedSource {
   readonly source: string;
   readonly definition_revision: number;
   readonly storage_digest: string;
+  readonly layout?: RecoveryLayout | null;
 }
 
 export interface WorkflowRecoveryConceptProps {
@@ -92,7 +94,9 @@ export interface WorkflowRecoveryConceptProps {
   readonly definitionRevision?: number;
   readonly storageDigest?: string;
   readonly workflowFilePath?: string;
-  readonly onSave?: (source: string) => Promise<WorkflowRecoveryPersistedSource>;
+  readonly workflowLayout?: RecoveryLayout;
+  readonly onSave?: (source: string, layout: RecoveryLayout) => Promise<WorkflowRecoveryPersistedSource>;
+  readonly onListWorkspaceFiles?: () => Promise<AuthoringWorkspaceFile[]>;
   readonly onReadStoredSource?: () => Promise<WorkflowRecoveryStoredSource>;
   readonly onReloadStoredSource?: () => Promise<void>;
 }
@@ -102,6 +106,7 @@ export interface WorkflowRecoveryStoredSource {
   readonly definition_revision: number;
   readonly storage_revision?: number;
   readonly storage_digest?: string;
+  readonly layout?: RecoveryLayout | null;
 }
 
 export function WorkflowRecoveryConcept({
@@ -111,7 +116,9 @@ export function WorkflowRecoveryConcept({
   definitionRevision = initialWorkflow.revision,
   storageDigest,
   workflowFilePath = "workflows/mounting-bracket.workflow.wflow",
+  workflowLayout,
   onSave,
+  onListWorkspaceFiles,
   onReadStoredSource,
   onReloadStoredSource,
 }: WorkflowRecoveryConceptProps = {}) {
@@ -126,7 +133,7 @@ export function WorkflowRecoveryConcept({
     const issue = loaded.diagnostics[0];
     return <section className="workflow-recovery recovery-boundary-state" data-testid="workflow-recovery-concept" data-surface-state="invalid-source" role="alert"><b>Workflow file needs correction.</b><span>{issue?.explanation ?? "The saved engineering source is invalid."}</span><small>{issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not replaced with fallback content.</small></section>;
   }
-  return <WorkflowRecoveryReadyConcept loadedWorkflow={loaded.workflow} workflowSource={workflowSource} definitionRevision={definitionRevision} storageDigest={storageDigest} workflowFilePath={workflowFilePath} onSave={onSave} onReadStoredSource={onReadStoredSource} onReloadStoredSource={onReloadStoredSource} />;
+  return <WorkflowRecoveryReadyConcept loadedWorkflow={loaded.workflow} workflowSource={workflowSource} definitionRevision={definitionRevision} storageDigest={storageDigest} workflowFilePath={workflowFilePath} workflowLayout={workflowLayout} onSave={onSave} onListWorkspaceFiles={onListWorkspaceFiles} onReadStoredSource={onReadStoredSource} onReloadStoredSource={onReloadStoredSource} />;
 }
 
 function contentIdentity(workflow: RecoveryWorkflow): string {
@@ -326,6 +333,11 @@ function TreatmentCard({ treatment, selected, onSelect }: { readonly treatment: 
 
 function workflowFromSource(source: string, definitionRevision: number): ReturnType<typeof parseRecoveryAuthoringSource> {
   const base = cloneWorkflow(initialWorkflow);
+  // At the file-open boundary the public workflow declaration establishes this
+  // document's identity. Subsequent Source edits still parse against its accepted
+  // base and cannot silently rename that identity. File name is not identity.
+  const declarations = [...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm)];
+  if (declarations.length === 1) base.workflowId = `workflow.${declarations[0]![1]!.replaceAll("_", "-")}`;
   base.revision = definitionRevision;
   base.parentRevision = definitionRevision > 1 ? definitionRevision - 1 : null;
   return parseRecoveryAuthoringSource(source, base);
@@ -352,22 +364,25 @@ interface WorkflowRecoveryReadyConceptProps {
   readonly definitionRevision: number;
   readonly storageDigest?: string;
   readonly workflowFilePath: string;
-  readonly onSave?: (source: string) => Promise<WorkflowRecoveryPersistedSource>;
+  readonly workflowLayout?: RecoveryLayout;
+  readonly onSave?: (source: string, layout: RecoveryLayout) => Promise<WorkflowRecoveryPersistedSource>;
+  readonly onListWorkspaceFiles?: () => Promise<AuthoringWorkspaceFile[]>;
   readonly onReadStoredSource?: () => Promise<WorkflowRecoveryStoredSource>;
   readonly onReloadStoredSource?: () => Promise<void>;
 }
 
-function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definitionRevision, storageDigest, workflowFilePath, onSave, onReadStoredSource, onReloadStoredSource }: WorkflowRecoveryReadyConceptProps) {
+function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definitionRevision, storageDigest, workflowFilePath, workflowLayout, onSave, onListWorkspaceFiles, onReadStoredSource, onReloadStoredSource }: WorkflowRecoveryReadyConceptProps) {
   const loadedDocumentKeyRef = useRef(`${definitionRevision}\u0000${storageDigest ?? ""}\u0000${workflowSource}`);
   const [workflow, setWorkflow] = useState(() => loadedWorkflow);
-  const [layout, setLayout] = useState(() => {
-    const value = cloneLayout(initialLayout);
-    value.semanticRevision = loadedWorkflow.revision;
-    return value;
-  });
-  const [selectedId, setSelectedId] = useState<string | null>("block.design-intent");
+  const [layout, setLayout] = useState(() => hydrateAuthoringLayout(loadedWorkflow, workflowLayout));
+  const [savedLayoutIdentity, setSavedLayoutIdentity] = useState(() => canonicalLayoutPositionBytes(hydrateAuthoringLayout(loadedWorkflow, workflowLayout)));
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>("diagram");
-  const [inspectorTab, setInspectorTab] = useState<InspectorTab>("definition");
+  const [inspectorTab, setInspectorTab] = useState<InspectorTab>("overview");
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [runDetailsOpen, setRunDetailsOpen] = useState(false);
+  const [focusPath, setFocusPath] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [diagnostics, setDiagnostics] = useState<RecoveryDiagnostic[]>([]);
   const [sourceDraft, setSourceDraft] = useState(workflowSource);
   const [sourceDirty, setSourceDirty] = useState(false);
@@ -382,8 +397,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   const [conflictActionMessage, setConflictActionMessage] = useState("");
   const [undoStack, setUndoStack] = useState<Snapshot[]>([]);
   const [redoStack, setRedoStack] = useState<Snapshot[]>([]);
-  const [designIntentName, setDesignIntentName] = useState<string | null>(null);
-  const [modal, setModal] = useState<"none" | "port-lab" | "design-intent" | "output" | "source-compare" | "reload-stored">("none");
+  const [modal, setModal] = useState<"none" | "port-lab" | "delete" | "output" | "source-compare" | "reload-stored">("none");
   const [portTreatment, setPortTreatment] = useState<PortTreatment>("dot");
   const [proposal, setProposal] = useState<RecoveryCommandBatch | null>(null);
   const [proposalResult, setProposalResult] = useState<ReturnType<typeof applyRecoveryBatch> | null>(null);
@@ -397,6 +411,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   const modalReturnFocusRef = useRef<HTMLElement | null>(null);
 
   const candidateWorkflow = runStage === 0 && proposalResult?.ok && proposalResult.workflow ? proposalResult.workflow : workflow;
+  const blockIcons = useMemo(() => recoveryBlockIconKinds(candidateWorkflow), [candidateWorkflow]);
   const candidateLayout = runStage === 0 && proposalResult?.ok && proposalResult.layout ? proposalResult.layout : layout;
   const projection = useMemo(() => toDraftProjection(candidateWorkflow, candidateLayout), [candidateWorkflow, candidateLayout]);
   const portArtifacts = useMemo(() => Object.fromEntries(candidateWorkflow.ports.filter((port) => port.artifactContractId).map((port) => [port.id, port.artifactContractId as string])), [candidateWorkflow]);
@@ -404,14 +419,15 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   const parsedSource = useMemo(() => parseRecoveryAuthoringSource(sourceDraft, workflow), [sourceDraft, workflow]);
   const sourceValid = parsedSource.ok;
   const semanticDirty = contentIdentity(workflow) !== savedSemanticIdentity;
+  const layoutDirty = canonicalLayoutPositionBytes(layout) !== savedLayoutIdentity;
   const visibleFileName = workflowFilePath.replace(/\\/g, "/").split("/").at(-1) ?? workflowFilePath;
   const visibleFileStatus = onSave
-    ? (semanticDirty || sourceDirty ? "Unsaved changes" : "Saved in workspace")
+    ? (semanticDirty || sourceDirty || layoutDirty ? "Unsaved changes" : "Saved in workspace")
     : "Local preview · not saved";
   const visibleSaveState = saveConflict ? "conflict" : saveState;
   const visibleSaveMessage = saveConflict
     ? "The workspace file changed elsewhere. Your local edits are still here and protected until you explicitly compare or reload."
-    : saveMessage || (semanticDirty || sourceDirty ? "Unsaved workflow changes" : "Saved in workspace");
+    : saveMessage || (semanticDirty || sourceDirty || layoutDirty ? "Unsaved workflow changes" : "Saved in workspace");
   const run = useMemo(() => {
     const value = runProjection(
       runStage,
@@ -447,7 +463,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     persistedSubject === null ? "" : canonicalDefinitionBytes(persistedSubject.workflow),
   );
   const persistedSemanticSha256 = /^sha256:([a-f0-9]{64})$/.exec(persistedSemanticDigest)?.[1] ?? null;
-  const layoutDigest = useSha256(JSON.stringify(layout));
+  const layoutDigest = useSha256(canonicalLayoutBytes(layout));
   const inspectionWorkflow = proposal !== null ? candidateWorkflow : workflow;
   const selectedBlock = findBlock(inspectionWorkflow, selectedId);
   const selectedRelationship = inspectionWorkflow.relationships.find((item) => item.id === selectedId) ?? null;
@@ -455,6 +471,11 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   const candidateSelection = proposal !== null && selectedId !== null && !workflow.blocks.some((item) => item.id === selectedId) && !workflow.ports.some((item) => item.id === selectedId) && !workflow.relationships.some((item) => item.id === selectedId);
   const stepArtifact = run.artifactRecords.find((record) => record.contractId === "artifact.step") ?? null;
   const simulationIssue = simulationContractIssue(workflow);
+  const selectedOwner = selectedBlock ?? findBlock(inspectionWorkflow, selectedPort?.ownerBlockId ?? null);
+  const hasInspection = inspectorOpen && (selectedBlock !== null || selectedPort !== null || selectedRelationship !== null);
+  const selectObject = (id: string | null, tab: InspectorTab = "overview") => { setSelectedId(id); setInspectorOpen(id !== null); setInspectorTab(tab); };
+  const requestDelete = (id: string) => { setDeleteTargetId(id); setModal("delete"); };
+  const deleteImpact = deleteTargetId ? authoringDeletionImpact(workflow, deleteTargetId) : null;
 
   useEffect(() => {
     const range = recoveryAuthoringSourceSelection(formatted.sourceMap, selectedId);
@@ -465,7 +486,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   useEffect(() => {
     const incomingKey = `${definitionRevision}\u0000${storageDigest ?? ""}\u0000${workflowSource}`;
     if (incomingKey === loadedDocumentKeyRef.current) return;
-    if (semanticDirty || sourceDirty) return;
+    if (semanticDirty || sourceDirty || layoutDirty) return;
     const incomingResult = workflowFromSource(workflowSource, definitionRevision);
     if (!incomingResult.ok || incomingResult.workflow === null) {
       setDiagnostics(incomingResult.diagnostics);
@@ -476,7 +497,9 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     const incoming = incomingResult.workflow;
     loadedDocumentKeyRef.current = incomingKey;
     setWorkflow(incoming);
-    setLayout((current) => ({ ...current, semanticRevision: incoming.revision }));
+    const incomingLayout = hydrateAuthoringLayout(incoming, workflowLayout);
+    setLayout(incomingLayout);
+    setSavedLayoutIdentity(canonicalLayoutPositionBytes(incomingLayout));
     setSourceDraft(workflowSource);
     setSourceDirty(false);
     setSavedSemanticIdentity(contentIdentity(incoming));
@@ -491,7 +514,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     setStoredComparison(null);
     setConflictAction("idle");
     setConflictActionMessage("");
-  }, [definitionRevision, semanticDirty, sourceDirty, storageDigest, workflowSource]);
+  }, [definitionRevision, semanticDirty, sourceDirty, layoutDirty, storageDigest, workflowSource, workflowLayout]);
 
   useEffect(() => {
     if (modal !== "none") {
@@ -583,7 +606,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
 
   const handleIntent = (intent: DraftCanvasIntent) => {
     if (intent.type === "select") {
-      setSelectedId(intent.semanticId);
+      selectObject(intent.semanticId, inspectorTab === "activity" || inspectorTab === "diagnosis" ? inspectorTab : "overview");
       return;
     }
     if (intent.type === "move-block") {
@@ -606,7 +629,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
       return;
     }
     if (intent.type === "delete-concept") {
-      if (applyCommands("graph", [{ kind: "delete_block", blockId: intent.semanticId }])) setSelectedId(null);
+      requestDelete(intent.semanticId);
     }
   };
 
@@ -616,7 +639,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
       setDiagnostics(parsed.diagnostics);
       return;
     }
-    const commands = textEditCommands(workflow, parsed.workflow);
+    const commands = textEditCommands(workflow, parsed.workflow, layout);
     if (commands.length > 0 && "code" in commands[0]!) {
       setDiagnostics(commands as RecoveryDiagnostic[]);
       return;
@@ -631,6 +654,10 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   };
 
   const requestProposal = () => {
+    if (sourceDirty) {
+      setDiagnostics([{ code: "WFR-SOURCE-DRAFT-CONFLICT", semanticId: null, line: null, explanation: "The Source view has an unapplied edit. An example suggestion would be based on a different workflow.", correction: "Apply the checked source edit or restore the current source before requesting a suggestion." }]);
+      return;
+    }
     const batch = aiDrawingProposal(workflow);
     const result = applyRecoveryBatch(workflow, layout, batch);
     if (!result.ok) {
@@ -643,11 +670,9 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   };
 
   const selectedStep = selectedBlock ? run.steps[selectedBlock.id] : null;
-  const downstreamLibraryAvailable = selectedBlock !== null && !["block.reference-images", "block.design-intent", "block.company-context", "block.create-design-specification"].includes(selectedBlock.id);
   const currentMatchesPersistedSubject = persistedSubject !== null
     && contentIdentity(persistedSubject.workflow) === contentIdentity(workflow);
-  const canRun = designIntentName !== null
-    && sourceValid
+  const canRun = sourceValid
     && !sourceDirty
     && !semanticDirty
     && !saveConflict
@@ -656,9 +681,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     && proposal === null
     && simulationIssue === null
     && persistedSemanticSha256 !== null;
-  const runDisabledReason = designIntentName === null
-    ? "Add design intent as text or a document before testing the workflow."
-    : sourceDirty || !sourceValid
+  const runDisabledReason = sourceDirty || !sourceValid
       ? "Apply a valid source edit before testing the workflow."
       : semanticDirty
         ? "Save workflow changes successfully before testing the workflow."
@@ -689,6 +712,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     setRunCreatedAt(new Date().toISOString());
     setRunOverride(null);
     setRunStage(1);
+    setRunDetailsOpen(true);
   };
   const endRun = () => {
     setRunStage(0);
@@ -700,7 +724,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
   };
 
   const saveWorkflow = async () => {
-    if (!onSave || sourceDirty || !sourceValid || !semanticDirty || saveState === "saving" || saveConflict) return;
+    if (!onSave || sourceDirty || !sourceValid || (!semanticDirty && !layoutDirty) || saveState === "saving" || saveConflict) return;
     const containment = validateRecoveryAuthoringRoundTrip(workflow);
     if (!containment.ok) {
       setDiagnostics(containment.diagnostics);
@@ -711,7 +735,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
     setSaveState("saving");
     setSaveMessage("");
     try {
-      const saved = await onSave(formatted.text);
+      const saved = await onSave(formatted.text, cloneLayout(layout));
       if (typeof saved?.source !== "string"
         || !Number.isInteger(saved.definition_revision)
         || saved.definition_revision < 1
@@ -724,10 +748,11 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
         throw new Error("Wright returned a stored workflow that does not match these edits. Your local edits were kept.");
       }
       const rebasedWorkflow = storedResult.workflow;
-      const rebasedLayout = cloneLayout(layout);
+      const rebasedLayout = saved.layout ? hydrateAuthoringLayout(rebasedWorkflow, saved.layout) : cloneLayout(layout);
       rebasedLayout.semanticRevision = saved.definition_revision;
       setWorkflow(rebasedWorkflow);
       setLayout(rebasedLayout);
+      setSavedLayoutIdentity(canonicalLayoutPositionBytes(rebasedLayout));
       setHostDefinitionRevision(saved.definition_revision);
       setPersistedSubject(persistedRunSubject(rebasedWorkflow, saved.storage_digest));
       setSavedSemanticIdentity(contentIdentity(rebasedWorkflow));
@@ -791,7 +816,7 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
 
   return (
     <section
-      className="workflow-recovery"
+      className="workflow-recovery workflow-recovery--redesign"
       data-testid="workflow-recovery-concept"
       data-revision={workflow.revision}
       data-semantic-digest={semanticDigest}
@@ -801,19 +826,14 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
         <div className="recovery-filebar__identity">
           <span className="recovery-filebar__icon" aria-hidden="true">WF</span>
           <div>
-            <h1>Mounting bracket workflow</h1>
-            <small title="Diagram, Source, and the inspector read this workspace workflow file. Layout and workflow-test state are outside this file; this concept does not claim to persist them.">{visibleFileName} · {visibleFileStatus}</small>
+            <h1>{workflow.metadata.title}</h1>
+            <small title="Diagram, Source, and the Inspector read one workflow file. Canvas positions are saved separately in this workspace; simulated runs are not persisted.">{visibleFileName} · {visibleFileStatus}</small>
           </div>
         </div>
         <div className="recovery-authority" data-testid="workflow-recovery-authority" data-revision={hostDefinitionRevision} data-semantic-digest={semanticDigest} data-layout-digest={layoutDigest}>
-          <b>PROVISIONAL · NOT PRODUCTION</b>
-          <span>{sourceValid && !sourceDirty ? "✓ workflow checks pass" : "! source edit has issues · current diagram retained"}</span>
-          <span>Test mode: <strong>SIMULATION</strong></span>
-          <details className="recovery-technical-details"><summary data-testid="workflow-recovery-file-technical-details">Technical details</summary><span>Definition revision {hostDefinitionRevision}</span><span>Integrity {semanticDigest}</span></details>
-          {simulationIssue && <span data-testid="workflow-recovery-simulation-issue">! {simulationIssue}</span>}
+          <b>Provisional</b>
+          <details className="recovery-technical-details"><summary data-testid="workflow-recovery-file-technical-details">Details</summary><span>Not production · Simulation only</span><span>{sourceValid && !sourceDirty ? "Workflow checks pass" : "Source edit has issues · current diagram retained"}</span><span>Definition revision {hostDefinitionRevision}</span><span>Integrity {semanticDigest}</span>{simulationIssue && <span data-testid="workflow-recovery-simulation-issue">{simulationIssue}</span>}<button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-port-lab-open" onClick={() => setModal("port-lab")}>Connection style preview</button></details>
         </div>
-      </header>
-
       <div className="recovery-toolbar">
         <div className="recovery-tabs" role="tablist" aria-label="Workflow view">
           {(["diagram", "code", "split"] as const).map((mode) => <button key={mode} type="button" role="tab" aria-selected={view === mode} data-testid={`workflow-recovery-view-${mode}`} onClick={() => setView(mode)}>{mode === "diagram" ? "Diagram" : mode === "code" ? "Source" : "Side by side"}</button>)}
@@ -822,62 +842,27 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
           {onSave && <span className={`recovery-save-status recovery-save-status--${visibleSaveState}`} data-testid="workflow-recovery-save-status" role={visibleSaveState === "error" || visibleSaveState === "conflict" ? "alert" : "status"}>{visibleSaveState === "saving" ? "Saving workflow file…" : visibleSaveMessage}</span>}
           <button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-undo" disabled={undoStack.length === 0} onClick={() => restore(undoStack.at(-1)!, "undo")}>↶ Undo</button>
           <button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-redo" disabled={redoStack.length === 0} onClick={() => restore(redoStack.at(-1)!, "redo")}>↷ Redo</button>
-          {onSave && <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-save" disabled={!semanticDirty || sourceDirty || !sourceValid || saveState === "saving" || saveConflict} onClick={() => void saveWorkflow()}>{saveState === "saving" ? "Saving…" : "Save workflow"}</button>}
+          {onSave && <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-save" disabled={(!semanticDirty && !layoutDirty) || sourceDirty || !sourceValid || saveState === "saving" || saveConflict} onClick={() => void saveWorkflow()}>{saveState === "saving" ? "Saving…" : "Save"}</button>}
           {saveConflict && <section className="recovery-conflict-actions" role="group" aria-label="Resolve stored workflow conflict" data-testid="workflow-recovery-conflict-actions">
             <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-conflict-copy-local" disabled={conflictAction !== "idle"} onClick={() => void copyLocalWorkflowSource()}>{conflictAction === "copying" ? "Copying…" : "Copy local source"}</button>
             <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-conflict-compare" disabled={conflictAction !== "idle" || !onReadStoredSource} onClick={() => void compareStoredWorkflowSource()}>{conflictAction === "comparing" ? "Reading stored file…" : "Compare stored file"}</button>
             <button type="button" className="recovery-button recovery-button--danger" data-testid="workflow-recovery-conflict-reload" disabled={conflictAction !== "idle" || !onReloadStoredSource} onClick={() => { setConflictActionMessage(""); setModal("reload-stored"); }}>Discard local edits and reload…</button>
             {conflictActionMessage && <span className="recovery-conflict-actions__message" data-testid="workflow-recovery-conflict-action-message" role="status">{conflictActionMessage}</span>}
           </section>}
-          <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-validate" onClick={() => { const parsed = parseRecoveryAuthoringSource(sourceDraft, workflow); setDiagnostics(parsed.diagnostics); }}>✓ Check workflow</button>
-          <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-port-lab-open" onClick={() => setModal("port-lab")}>Connection style preview</button>
-          <button type="button" className="recovery-button recovery-button--ai" data-testid="workflow-recovery-ai-request" onClick={requestProposal}>✦ Ask AI to add drawing steps</button>
-          <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-run-start" disabled={!canRun} title={canRun ? undefined : runDisabledReason} onClick={runStage === 0 ? startRun : undefined}>{runStage === 0 ? "▶ Test workflow" : `SIMULATION · ${runStateLabel[run.state]}`}</button>
+          <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-validate" onClick={() => { const parsed = parseRecoveryAuthoringSource(sourceDraft, workflow); setDiagnostics(parsed.diagnostics); }}>✓ Check</button>
+          <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-run-start" disabled={!canRun} title={canRun ? "Run the fixed local example. No AI, CAD, or external tool is executed." : runDisabledReason} onClick={runStage === 0 ? startRun : undefined}>{runStage === 0 ? "▶ Simulate" : `Simulation · ${runStateLabel[run.state]}`}</button>
         </div>
       </div>
+      </header>
 
-      <div className="recovery-workbench">
-        <aside className="recovery-palette" data-testid="workflow-recovery-palette">
-          <div className="recovery-panel-heading"><span>WORKFLOW INPUTS</span><h2>Three source inputs</h2><p>Each source is explicit about what it contains and where it comes from. Together they create the reviewed design specification.</p></div>
-          <div className="recovery-source-list">
-            <section className={`recovery-source-card ${selectedId === "block.reference-images" ? "is-selected" : ""}`} data-testid="workflow-recovery-input-source-reference-images">
-              <header><div className="recovery-source-card__icon">IMG</div><div><b>Reference images</b><span>2 example images ready</span></div></header>
-              <dl><div><dt>Comes from</dt><dd>Engineer upload</dd></div><div><dt>Contains</dt><dd>JPG or PNG images</dd></div></dl>
-              <button type="button" data-testid="workflow-recovery-input-source-show-reference-images" onClick={() => { setSelectedId("block.reference-images"); setInspectorTab("definition"); }}>Show on diagram</button>
-            </section>
-            <section className={`recovery-source-card ${selectedId === "block.design-intent" ? "is-selected" : ""}`} data-testid="workflow-recovery-attachment-artifact.design-intent">
-              <header><div className="recovery-source-card__icon recovery-source-card__icon--text">TEXT</div><div><b>Design intent</b><span>{designIntentName ?? "Not added yet"}</span></div></header>
-              <dl><div><dt>Comes from</dt><dd>Engineer input</dd></div><div><dt>Contains</dt><dd>Typed text or common document</dd></div></dl>
-              <small>Demo input for this session · not saved by this concept</small>
-              <div className="recovery-attachment__actions">
-                {designIntentName === null ? <button type="button" data-testid="workflow-recovery-attachment-attach-artifact.design-intent" onClick={() => setDesignIntentName("mounting-bracket-design-intent.docx")}>Add text or document</button> : <><button type="button" data-testid="workflow-recovery-attachment-preview-artifact.design-intent" onClick={() => setModal("design-intent")}>View input</button><button type="button" data-testid="workflow-recovery-attachment-replace-artifact.design-intent" onClick={() => setDesignIntentName((name) => name?.endsWith(".txt") ? "mounting-bracket-design-intent.docx" : "mounting-bracket-design-intent.txt")}>Replace input</button></>}
-                <button type="button" data-testid="workflow-recovery-input-source-show-design-intent" onClick={() => { setSelectedId("block.design-intent"); setInspectorTab("definition"); }}>Show on diagram</button>
-              </div>
-            </section>
-            <section className={`recovery-source-card ${selectedId === "block.company-context" ? "is-selected" : ""}`} data-testid="workflow-recovery-input-source-company-context">
-              <header><div className="recovery-source-card__icon recovery-source-card__icon--context">LIB</div><div><b>Company standards and context</b><span>Approved source ready</span></div></header>
-              <dl><div><dt>Comes from</dt><dd>Company knowledge library</dd></div><div><dt>Contains</dt><dd>Standards and past designs</dd></div></dl>
-              <button type="button" data-testid="workflow-recovery-input-source-show-company-context" onClick={() => { setSelectedId("block.company-context"); setInspectorTab("definition"); }}>Show on diagram</button>
-            </section>
-          </div>
-          <div className="recovery-palette__section-label">Add downstream work</div>
-          {downstreamLibraryAvailable ? <>
-            <div className="recovery-palette__items">
-              {[{ id: "tolerance", label: "Check dimensions and tolerances", detail: "Uses the CAD model and reviewed design specification" }, { id: "drawing", label: "Create manufacturing drawing", detail: "Creates a drawing from the approved CAD model" }].map((item) => (
-                <button key={item.id} type="button" data-testid={`workflow-recovery-palette-item-${item.id}`} onClick={() => {
-                  const command = paletteBlock(item.id as "tolerance" | "drawing", 580, 650, new Set(workflow.blocks.map((block) => block.id)));
-                  if (applyCommands("graph", [command])) setSelectedId(command.kind === "add_block" ? command.block.id : null);
-                }}><b>＋ {item.label}</b><span>{item.detail}</span></button>
-              ))}
-            </div>
-          </> : <p className="recovery-palette__context-hint" data-testid="workflow-recovery-palette-context-hint">Select the CAD model or a later workflow step before adding checks or deliverables. Tolerances come from the reviewed design specification, not this first input stage.</p>}
-          <section className="recovery-legend"><h3>Status key</h3>{(["queued", "running", "needs-input", "succeeded", "failed", "blocked", "stale"] as RecoveryRunState[]).map((state) => <span key={state} className={`recovery-state recovery-state--${state}`}>{state === "running" ? "▶" : state === "succeeded" ? "✓" : state === "failed" ? "×" : state === "blocked" ? "⊘" : state === "stale" ? "↺" : state === "needs-input" ? "!" : "◷"} {runStateLabel[state]}</span>)}</section>
-        </aside>
+      <div className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}`}>
+        <AuthoringCreateRail disabled={proposal !== null || runStage > 0 || sourceDirty} onCreate={(templateId) => { const command = createAuthoringObject(templateId, workflow, layout, { selectedBlockId: selectedOwner?.id }); if (applyCommands("graph", [command])) selectObject(command.block.id, "definition"); }} />
 
         <div className={`recovery-stage recovery-stage--${view}`}>
+          {view !== "code" && <div className="recovery-canvas-tools"><AuthoringInputsNavigator workflow={workflow} onSelect={(id) => selectObject(id)} /><button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-focus-path" aria-pressed={focusPath} disabled={!selectedId} onClick={() => setFocusPath(!focusPath)}>Focus path</button><button type="button" className="recovery-button recovery-button--ai" data-testid="workflow-recovery-ai-request" onClick={requestProposal}>✦ Example suggestion</button>{!inspectorOpen && selectedId && <button type="button" className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-inspector-open" onClick={() => setInspectorOpen(true)}>Inspector</button>}</div>}
           {(view === "diagram" || view === "split") && (
-            <RecoveryCanvasRuntimeProvider value={{ run, runSubject: runStage > 0 && runSubject !== null ? { workflowId: runSubject.workflow.workflowId, workflowRevision: runSubject.workflow.revision, semanticSha256: runSubject.semanticSha256 } : null, proposedBlockIds: new Set(proposalResult?.workflow?.blocks.filter((block) => !workflow.blocks.some((accepted) => accepted.id === block.id)).map((block) => block.id) ?? []), portArtifactIds: portArtifacts, relationshipLabels: Object.fromEntries(candidateWorkflow.relationships.map((relationship) => [relationship.id, relationship.label])), overlayRelationships: candidateWorkflow.relationships.filter((relationship) => relationship.kind === "control" || relationship.kind === "decision"), portTreatment, onArtifactInspect: (portId) => { setSelectedId(portId); setInspectorTab(findPort(candidateWorkflow, portId)?.direction === "input" ? "inputs" : "outputs"); } }}>
-              <ReactFlowRecoveryCanvas key={`${candidateWorkflow.revision}-${candidateWorkflow.blocks.length}-${proposal === null ? "accepted" : "candidate"}`} projection={projection} selectedSemanticId={selectedId} onIntent={proposal === null ? handleIntent : (intent) => { if (intent.type === "select") handleIntent(intent); }} />
+            <RecoveryCanvasRuntimeProvider value={{ run, blockIcons, focusPath, runSubject: runStage > 0 && runSubject !== null ? { workflowId: runSubject.workflow.workflowId, workflowRevision: runSubject.workflow.revision, semanticSha256: runSubject.semanticSha256 } : null, proposedBlockIds: new Set(proposalResult?.workflow?.blocks.filter((block) => !workflow.blocks.some((accepted) => accepted.id === block.id)).map((block) => block.id) ?? []), portArtifactIds: portArtifacts, relationshipLabels: Object.fromEntries(candidateWorkflow.relationships.map((relationship) => [relationship.id, relationship.label])), overlayRelationships: candidateWorkflow.relationships.filter((relationship) => relationship.kind === "control" || relationship.kind === "decision"), portTreatment, onArtifactInspect: (portId) => selectObject(portId, findPort(candidateWorkflow, portId)?.direction === "input" ? "inputs" : "outputs") }}>
+              <ReactFlowRecoveryCanvas key={proposal === null ? "accepted" : "candidate"} projection={projection} selectedSemanticId={selectedId} onIntent={proposal === null ? handleIntent : (intent) => { if (intent.type === "select") handleIntent(intent); }} />
             </RecoveryCanvasRuntimeProvider>
           )}
           {(view === "code" || view === "split") && <section className="recovery-code">
@@ -886,46 +871,49 @@ function WorkflowRecoveryReadyConcept({ loadedWorkflow, workflowSource, definiti
             <footer><span>{sourceDirty ? "Unapplied source edit" : semanticDirty ? "Applied locally · not saved" : "Matches the saved workflow"}</span><details className="recovery-code__managed"><summary data-testid="workflow-recovery-source-managed-details">Managed by Wright</summary><span>Definition revision {hostDefinitionRevision} · integrity {semanticDigest}</span></details><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-source-apply" onClick={applySource}>Apply checked edit</button></footer>
           </section>}
           {diagnostics.length > 0 && <div className="recovery-diagnostics" role="alert">{diagnostics.map((item, index) => <article key={`${item.code}-${index}`} role={item.semanticId ? "button" : undefined} tabIndex={item.semanticId ? 0 : undefined} onClick={() => { if (item.semanticId) { setSelectedId(item.semanticId); const range = parsedSource.sourceMap[item.semanticId]; if (range && sourceRef.current) { sourceRef.current.focus(); sourceRef.current.setSelectionRange(range.startOffset, range.endOffset); } } }} onKeyDown={(event) => { if (item.semanticId && (event.key === "Enter" || event.key === " ")) event.currentTarget.click(); }} data-testid={`workflow-recovery-diagnostic-${item.code}`} data-semantic-id={item.semanticId ?? ""} data-source-line={item.line ?? ""}><b>{item.code}</b><span>{item.explanation}</span><small>Correction: {item.correction}</small></article>)}</div>}
-          {runStage > 0 && <section className="recovery-runbar" data-testid="workflow-recovery-run-mode" data-subject-revision={run.workflowRevision} data-subject-semantic-digest={run.semanticSha256} data-subject-storage-digest={runSubject?.storageDigest ?? ""}>
-            <div><b>WORKFLOW TEST · NO EXTERNAL TOOLS</b><span>Workflow version {run.workflowRevision} · {runStateLabel[run.state]}</span></div>
-            <details className="recovery-technical-details"><summary data-testid="workflow-recovery-run-subject-details">Run subject</summary><span>Definition semantic SHA-256 {run.semanticSha256}</span><span>Stored file SHA-256 {runSubject?.storageDigest}</span></details>
-            <span data-testid="workflow-recovery-run-definition-lock">End this test before changing the workflow definition. Canvas layout moves remain available.</span>
-            {run.state === "needs-input" && <button type="button" data-testid="workflow-recovery-run-recover" onClick={() => { setMaterialSupplied(true); setRunStage(4); }}>Add 6061-T6 to design specification</button>}
-            {runStage > 0 && runStage < 10 && run.state !== "needs-input" && <button type="button" data-testid="workflow-recovery-run-advance" onClick={nextRun}>Advance simulation</button>}
-            {runStage >= 7 && <button type="button" className="recovery-button--quiet" data-testid="workflow-recovery-run-project-failed" onClick={() => setRunOverride("failed")}>Preview failed run</button>}
-            {runStage >= 7 && <button type="button" className="recovery-button--quiet" data-testid="workflow-recovery-run-project-stale" onClick={() => setRunOverride("stale")}>Preview out-of-date result</button>}
-            <button type="button" className="recovery-button--quiet" data-testid="workflow-recovery-run-end" onClick={endRun}>End test</button>
-          </section>}
         </div>
 
-        <aside className="recovery-inspector" data-testid="workflow-recovery-inspector">
-          <div className="recovery-panel-heading"><span>{candidateSelection ? "STEP DETAILS · AI SUGGESTION (READ-ONLY)" : proposal !== null ? "STEP DETAILS · REVIEW MODE (READ-ONLY)" : "STEP DETAILS"}</span><h2>{selectedBlock?.title ?? selectedPort?.name ?? selectedRelationship?.label ?? "Select a step"}</h2><small>{selectedBlock ? "Workflow step" : selectedPort ? "Required or created item" : selectedRelationship ? "Connection between steps" : "Nothing selected"}</small></div>
+        {hasInspection && <aside className="recovery-inspector" data-testid="workflow-recovery-inspector">
+          <div className="recovery-inspector__titlebar"><b>Inspector</b><button type="button" data-testid="workflow-recovery-inspector-close" aria-label="Collapse Inspector" onClick={() => setInspectorOpen(false)}>⌄</button></div>
+          <div className="recovery-panel-heading"><span>{candidateSelection ? "EXAMPLE SUGGESTION · READ-ONLY" : proposal !== null ? "REVIEW MODE · READ-ONLY" : selectedPort ? "CONNECTION ENDPOINT" : ""}</span><h2>{selectedBlock?.title ?? selectedPort?.name ?? selectedRelationship?.label}</h2><small>{selectedBlock ? "Workflow object" : selectedPort ? selectedOwner?.title : "Connection between steps"}</small></div>
           <div className="recovery-inspector__tabs" role="tablist" aria-label="Step detail sections">
-            {(["definition", "inputs", "outputs", "activity", "diagnosis"] as const).map((tab) => <button key={tab} type="button" role="tab" aria-selected={inspectorTab === tab} data-testid={`workflow-recovery-inspector-tab-${tab}`} onClick={() => setInspectorTab(tab)}>{inspectorTabLabel[tab]}</button>)}
+            {(["overview", "definition", "inputs", "outputs"] as const).map((tab) => <button key={tab} type="button" role="tab" aria-selected={inspectorTab === tab} data-testid={`workflow-recovery-inspector-tab-${tab}`} onClick={() => setInspectorTab(tab)}>{inspectorTabLabel[tab]}</button>)}
           </div>
           <div className="recovery-inspector__body">
-            {inspectorTab === "definition" && selectedBlock && <DefinitionInspector blockId={selectedBlock.id} workflow={inspectionWorkflow} readOnly={proposal !== null} onApply={(commands) => applyCommands("form", commands)} onDelete={() => { if (applyCommands("graph", [{ kind: "delete_block", blockId: selectedBlock.id }])) setSelectedId(null); }} />}
-            {inspectorTab === "definition" && selectedRelationship && <RelationshipInspector relationshipId={selectedRelationship.id} workflow={inspectionWorkflow} readOnly={proposal !== null} onApply={(commands) => applyCommands("form", commands)} onDisconnect={() => handleIntent({ type: "delete-connection", semanticId: selectedRelationship.id })} />}
+            {inspectorTab === "overview" && selectedBlock && <AuthoringOverview block={selectedBlock} workflow={inspectionWorkflow} onSettings={() => setInspectorTab("definition")} onSelect={(id) => selectObject(id, "definition")} />}
+            {inspectorTab === "definition" && selectedBlock && <AuthoringSettings block={selectedBlock} workflow={inspectionWorkflow} readOnly={proposal !== null} onApply={(commands) => applyCommands("form", commands)} onDelete={() => requestDelete(selectedBlock.id)} onListWorkspaceFiles={onListWorkspaceFiles} />}
+            {(inspectorTab === "definition" || inspectorTab === "overview") && selectedRelationship && <RelationshipInspector relationshipId={selectedRelationship.id} workflow={inspectionWorkflow} readOnly={proposal !== null} onApply={(commands) => applyCommands("form", commands)} onDisconnect={() => handleIntent({ type: "delete-connection", semanticId: selectedRelationship.id })} />}
+            {inspectorTab === "overview" && selectedPort && <AuthoringPortConnections workflow={inspectionWorkflow} portId={selectedPort.id} onSelect={(id) => selectObject(id)} />}
             {inspectorTab === "definition" && selectedPort && <section><div className="recovery-fact"><span>Item</span><b>{selectedPort.name}</b></div><div className="recovery-fact"><span>How it is used</span><b>{selectedPort.direction === "input" ? "Used by this step" : "Created by this step"}</b></div><div className="recovery-fact"><span>Requirement</span><b>{selectedPort.required ? "Required" : "Optional"}</b></div><p>{selectedPort.description}</p><details className="recovery-technical-details"><summary data-testid={`workflow-recovery-port-technical-${selectedPort.id}`}>Technical details</summary><code>{selectedPort.typeId}</code><code>{selectedPort.id}</code></details></section>}
-            {inspectorTab === "inputs" && <PortInspector direction="input" workflow={inspectionWorkflow} blockId={selectedBlock?.id ?? selectedPort?.ownerBlockId ?? null} run={run} />}
-            {inspectorTab === "outputs" && <PortInspector direction="output" workflow={inspectionWorkflow} blockId={selectedBlock?.id ?? selectedPort?.ownerBlockId ?? null} run={run} onOutput={() => setModal("output")} />}
+            {inspectorTab === "inputs" && <PortInspector direction="input" workflow={inspectionWorkflow} blockId={selectedOwner?.id ?? null} run={run} onSelect={(id) => selectObject(id)} />}
+            {inspectorTab === "outputs" && <PortInspector direction="output" workflow={inspectionWorkflow} blockId={selectedOwner?.id ?? null} run={run} onSelect={(id) => selectObject(id)} onOutput={() => setModal("output")} />}
             {inspectorTab === "activity" && <section>{run.activity.length === 0 ? <p>No simulated activity yet.</p> : run.activity.map((item) => <div className="recovery-activity" key={`${item.at}-${item.label}`}><time>{item.at}</time><div><b>{item.label}</b><span>{item.detail}</span></div></div>)}{selectedStep && <div className={`recovery-run-detail recovery-run-detail--${selectedStep.state}`} data-testid={`workflow-recovery-run-step-${selectedBlock?.id}`}><b>{selectedStep.label}</b><span>{selectedStep.detail}</span></div>}</section>}
             {inspectorTab === "diagnosis" && <section><div className="recovery-diagnosis"><b>{run.state === "needs-input" ? "Design decision is missing" : run.state === "failed" ? "Simulated export failed" : run.state === "stale" ? "Output revision is stale" : "No unresolved diagnosis"}</b><p>{run.state === "needs-input" ? "Material and temper are not stated in the design intent. The design specification cannot be accepted, so CAD and downstream work remain blocked." : "This projection is isolated from the accepted definition."}</p></div><button type="button" data-testid="workflow-recovery-diagnosis-show-failed" onClick={() => setRunOverride("failed")}>Show failed projection</button><button type="button" data-testid="workflow-recovery-diagnosis-show-stale" onClick={() => setRunOverride("stale")}>Show stale projection</button></section>}
           </div>
           {selectedBlock?.bindingId && <details className="recovery-binding"><summary data-testid="workflow-recovery-binding-disclosure">Automation details</summary>{(() => { const binding = inspectionWorkflow.bindings.find((item) => item.id === selectedBlock.bindingId); return binding ? <div><code>{binding.id}</code><span>{binding.kind} · {binding.capabilityName}</span><span>{binding.serverId ?? "internal"} / {binding.toolId}</span><span>Schema {binding.schemaDigest}</span><span>Approval: {binding.approvalPolicy}</span><b>Exact argument map</b>{binding.argumentMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}<b>Exact result map</b>{binding.resultMap.map((item) => <code key={`${item.semanticSource}-${item.implementationTarget}`}>{item.semanticSource} → {item.implementationTarget}</code>)}</div> : null; })()}</details>}
-        </aside>
+        </aside>}
       </div>
 
+      <section className={`recovery-run-drawer ${runDetailsOpen ? "is-open" : ""}`} data-testid="workflow-recovery-run-drawer"><button type="button" className="recovery-run-drawer__toggle" data-testid="workflow-recovery-run-details-toggle" aria-expanded={runDetailsOpen} onClick={() => setRunDetailsOpen(!runDetailsOpen)}><b>▷ Run details</b><span>{runStage > 0 ? `Simulation · ${runStateLabel[run.state]}` : "No run · local simulation available for the unchanged example"}</span><span aria-hidden="true">{runDetailsOpen ? "⌄" : "⌃"}</span></button>
+        {runDetailsOpen && <div className="recovery-run-drawer__body">{runStage === 0 ? <p>No engineering tool has run. Simulation replays a fixed example and never creates engineering evidence.{simulationIssue && ` ${simulationIssue}`}</p> : <section className="recovery-runbar" data-testid="workflow-recovery-run-mode" data-subject-revision={run.workflowRevision} data-subject-semantic-digest={run.semanticSha256} data-subject-storage-digest={runSubject?.storageDigest ?? ""}>
+          <div><b>SIMULATION · NO EXTERNAL TOOLS</b><span>Workflow version {run.workflowRevision} · {runStateLabel[run.state]}</span></div>
+          <details className="recovery-technical-details"><summary data-testid="workflow-recovery-run-subject-details">Run subject</summary><span>Definition semantic SHA-256 {run.semanticSha256}</span><span>Stored file SHA-256 {runSubject?.storageDigest}</span></details>
+          <span data-testid="workflow-recovery-run-definition-lock">End this test before changing the workflow definition. Canvas layout moves remain available.</span>
+          <div className="recovery-runbar__actions">{run.state === "needs-input" && <button type="button" data-testid="workflow-recovery-run-recover" onClick={() => { setMaterialSupplied(true); setRunStage(4); }}>Simulate supplying 6061-T6</button>}{runStage < 10 && run.state !== "needs-input" && <button type="button" data-testid="workflow-recovery-run-advance" onClick={nextRun}>Advance simulation</button>}{runStage >= 7 && <><button type="button" data-testid="workflow-recovery-run-project-failed" onClick={() => setRunOverride("failed")}>Preview failed run</button><button type="button" data-testid="workflow-recovery-run-project-stale" onClick={() => setRunOverride("stale")}>Preview out-of-date result</button></>}<button type="button" data-testid="workflow-recovery-run-end" onClick={endRun}>End test</button></div>
+          <div className="recovery-runbar__navigation"><button type="button" data-testid="workflow-recovery-inspector-tab-activity" onClick={() => { selectObject(run.activeBlockId ?? selectedOwner?.id ?? "block.export-step", "activity"); }}>Run log</button><button type="button" data-testid="workflow-recovery-inspector-tab-diagnosis" onClick={() => { selectObject(run.activeBlockId ?? selectedOwner?.id ?? "block.export-step", "diagnosis"); }}>Issues</button>{run.outputsReady && <button type="button" data-testid="workflow-recovery-run-output" onClick={() => setModal("output")}>Open demo output</button>}</div>
+        </section>}</div>}
+      </section>
+
       {proposal && proposalResult && <section className="recovery-proposal" data-testid="workflow-recovery-proposal" data-base-revision={proposal.baseRevision} data-validation={proposalResult.ok ? "valid" : "invalid"}>
-        <header><div><span>AI SUGGESTION · REVIEW BEFORE ADDING</span><h2>Add drawing creation and review</h2></div><b>{proposalResult.ok ? "✓ workflow checks pass" : "! suggestion has issues"}</b></header>
+        <header><div><span>EXAMPLE SUGGESTION · NO LIVE AI CALL</span><h2>Add drawing creation and review</h2></div><b>{proposalResult.ok ? "✓ workflow checks pass" : "! suggestion has issues"}</b></header>
         <div className="recovery-proposal__grid"><div><h3>Assumptions</h3><ul><li>The approved CAD model is the drawing source.</li><li>ASME Y14.5 and A3 are suggested review defaults, not hidden commitments.</li></ul><h3>Warnings</h3><ul><li>No drawing template or automation is selected.</li><li>Adding these steps does not run or approve them.</li></ul></div><div data-testid="workflow-recovery-proposal-change-list"><h3>Changes</h3>{proposalChangeSummaries(proposal, candidateWorkflow).map((line) => <p key={line}>＋ {line}</p>)}<details className="recovery-technical-details"><summary data-testid="workflow-recovery-proposal-technical-diff">Technical details</summary><pre>{proposalResult.diff.join("\n")}</pre></details></div><div className="recovery-proposal__preview" data-testid="workflow-recovery-proposal-preview"><h3>Suggested workflow steps</h3><span>The diagram previews the full suggestion. New steps are dashed and clearly marked until you add them.</span><b>Approved CAD model ┄▷ Create manufacturing drawing</b><b>Manufacturing drawing ┄▷ Review manufacturing drawing</b><small>Preview only · not part of the current workflow</small><details><summary data-testid="workflow-recovery-proposal-code-disclosure">View suggested source</summary><pre>{proposalResult.workflow ? formatRecoveryAuthoringSource(proposalResult.workflow).text : "Suggestion has issues"}</pre></details></div></div>
-        <footer><button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-proposal-reject" onClick={() => { setProposal(null); setProposalResult(null); }}>Discard suggestion</button><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-proposal-accept" disabled={!proposalResult.ok} onClick={() => { if (applyBatch(proposal)) { setProposal(null); setProposalResult(null); } }}>Add suggested steps</button></footer>
+        <footer><button type="button" className="recovery-button recovery-button--quiet" data-testid="workflow-recovery-proposal-reject" onClick={() => { setProposal(null); setProposalResult(null); }}>Discard suggestion</button><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-proposal-accept" disabled={!proposalResult.ok || sourceDirty} onClick={() => { if (!sourceDirty && applyBatch(proposal)) { setProposal(null); setProposalResult(null); } }}>Add suggested steps</button></footer>
       </section>}
 
       {modal !== "none" && <div className="recovery-modal-backdrop" data-testid="workflow-recovery-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal("none"); }} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); setModal("none"); return; } if (event.key === "Tab" && modalRef.current) { const focusable = [...modalRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]; if (focusable.length === 0) return; const first = focusable[0]!; const last = focusable.at(-1)!; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } }}><section ref={modalRef} className={`recovery-modal recovery-modal--${modal}`} role="dialog" aria-modal="true" aria-labelledby="recovery-modal-title">
-        <header><div><span>{modal === "source-compare" || modal === "reload-stored" ? "WORKSPACE FILE CONFLICT" : "LOCAL CONCEPT PREVIEW"}</span><h2 id="recovery-modal-title">{modal === "port-lab" ? "Connection style preview" : modal === "design-intent" ? "Design intent" : modal === "output" ? "Mounting bracket STEP file" : modal === "source-compare" ? "Compare workflow sources" : "Reload stored workflow?"}</h2></div><button type="button" data-testid="workflow-recovery-modal-close" aria-label="Close dialog" onClick={() => setModal("none")}>×</button></header>
+        <header><div><span>{modal === "source-compare" || modal === "reload-stored" ? "WORKSPACE FILE CONFLICT" : "LOCAL CONCEPT PREVIEW"}</span><h2 id="recovery-modal-title">{modal === "port-lab" ? "Connection style preview" : modal === "delete" ? "Delete workflow step" : modal === "output" ? "Mounting bracket STEP file" : modal === "source-compare" ? "Compare workflow sources" : "Reload stored workflow?"}</h2></div><button type="button" data-testid="workflow-recovery-modal-close" aria-label="Close dialog" onClick={() => setModal("none")}>×</button></header>
         {modal === "port-lab" && <div data-testid="workflow-port-lab"><p className="recovery-modal__lead">Compare how an engineer connects required items between steps and separately opens the related file, CAD model, or report.</p><div className="port-lab-grid"><TreatmentCard treatment="dot" selected={portTreatment === "dot"} onSelect={() => setPortTreatment("dot")} /><TreatmentCard treatment="terminal" selected={portTreatment === "terminal"} onSelect={() => setPortTreatment("terminal")} /><TreatmentCard treatment="hybrid" selected={portTreatment === "hybrid"} onSelect={() => setPortTreatment("hybrid")} /></div><div className="port-lab-result"><b>Current connection style: {portTreatment}</b><span>This changes only the local concept preview.</span></div></div>}
-        {modal === "design-intent" && designIntentName !== null && <div className="design-intent-preview"><div className="design-intent-preview__sheet"><span>ENGINEER INPUT / DESIGN INTENT</span><h3>Wall-mounted equipment bracket</h3><p>Support a small control enclosure on a vertical frame. Use two mounting holes on the frame side and a slotted interface on the enclosure side so assembly can be adjusted.</p><dl><dt>Design load</dt><dd>1.8 kN static</dd><dt>Envelope</dt><dd>120 × 80 × 60 mm maximum</dd><dt>Interfaces</dt><dd>Two frame holes; one adjustable slot</dd><dt>Material</dt><dd>Not yet decided</dd></dl></div><aside><b>{designIntentName}</b><span>Text or common document</span><span>Added by an engineer</span><span>Used by Create and review design specification</span></aside></div>}
+        {modal === "delete" && deleteTargetId && <div className="recovery-delete-confirmation"><p>Delete <b>{findBlock(workflow, deleteTargetId)?.title}</b>?</p><p>{deleteImpact?.relationships.length ?? 0} connection(s) will be removed with this object in one change. You can undo the complete change.</p>{deleteImpact?.blockedReason && <p role="alert">{deleteImpact.blockedReason}</p>}<div><button type="button" data-testid="workflow-recovery-delete-cancel" onClick={() => setModal("none")}>Keep step</button><button type="button" className="recovery-button recovery-button--danger" data-testid="workflow-recovery-delete-confirm" disabled={Boolean(deleteImpact?.blockedReason)} onClick={() => { try { if (applyCommands("graph", buildDeletionCommands(workflow, deleteTargetId))) { setModal("none"); selectObject(null); } } catch (error) { setDiagnostics([{ code: "WFR-DELETE-BLOCKED", semanticId: deleteTargetId, line: null, explanation: error instanceof Error ? error.message : "This object cannot be deleted safely.", correction: "Review its dependencies before retrying." }]); } }}>Delete step and connections</button></div></div>}
         {modal === "output" && <div className="output-preview"><img src={`${import.meta.env.BASE_URL}recovery-concept/mounting-bracket.svg`} alt="Isometric L-shaped mounting bracket with four holes" /><aside><b>mounting-bracket-simulated-fixture.step</b><span>STEP AP242 file</span><span>Demo STEP file. This simulated workflow did not create this file.</span><span>Workflow test version {run.workflowRevision}</span>{stepArtifact && <><span>Recorded demo output</span><span>File sha256:{stepArtifact.digestSha256}</span></>}<div className="recovery-lineage" data-testid="workflow-recovery-output-lineage"><b>Created from</b><span>Approved CAD model and design-review decision</span><span>Bracket CAD model and manufacturing check report</span><span>Reviewed design specification</span><span>Design intent + reference images + company standards and context</span></div><div><a className="recovery-button recovery-button--secondary" data-testid="workflow-recovery-output-open-artifact.step" href={`${import.meta.env.BASE_URL}recovery-concept/manufacturability-report.html`} target="_blank" rel="noreferrer">Open demo manufacturing report</a><a className="recovery-button recovery-button--primary" data-testid="workflow-recovery-output-download-artifact.step" href={`${import.meta.env.BASE_URL}recovery-concept/mounting-bracket.step`} download="mounting-bracket-simulated-fixture.step">Download demo STEP file</a></div></aside></div>}
         {modal === "source-compare" && storedComparison && <div className="recovery-source-compare" data-testid="workflow-recovery-source-comparison">
           <p>The local source on the left is unchanged. The workspace file on the right was read again for this comparison; neither version has been applied or saved.</p>
@@ -968,27 +956,6 @@ function RelationshipInspector({ relationshipId, workflow, readOnly, onApply, on
   return <section><div className="recovery-fact"><span>Connection type</span><b>{relationshipKind}</b></div><div className="recovery-fact"><span>From</span><b>{endpointName(relationship.sourceId)}</b></div><label>Connection label<input data-testid={`workflow-recovery-relationship-label-${relationship.id}`} value={label} readOnly={readOnly} onChange={(event) => setLabel(event.target.value)} /></label>{blockRelationship ? <label>Outcome goes to<select data-testid={`workflow-recovery-relationship-target-${relationship.id}`} value={targetId} disabled={readOnly} onChange={(event) => setTargetId(event.target.value)}>{workflow.blocks.map((block) => <option key={block.id} value={block.id}>{block.title}</option>)}</select></label> : <div className="recovery-fact"><span>To</span><b>{endpointName(relationship.targetId)}</b></div>}<label>Condition or reason<textarea data-testid={`workflow-recovery-relationship-condition-${relationship.id}`} value={condition} readOnly={readOnly} onChange={(event) => setCondition(event.target.value)} /></label><details className="recovery-technical-details"><summary data-testid={`workflow-recovery-relationship-technical-${relationship.id}`}>Technical details</summary><code>{relationship.id}</code><code>{relationship.sourceId} → {relationship.targetId}</code></details>{readOnly ? <p className="recovery-inspector__hint">Suggested connections stay read-only until you add the reviewed changes.</p> : <><button type="button" className="recovery-button recovery-button--primary" data-testid={`workflow-recovery-relationship-apply-${relationship.id}`} onClick={() => { const patch: Partial<Pick<typeof relationship, "targetId" | "label" | "condition">> = {}; if (label.trim() !== relationship.label) patch.label = label.trim(); if ((condition.trim() || null) !== relationship.condition) patch.condition = condition.trim() || null; if (blockRelationship && targetId !== relationship.targetId) patch.targetId = targetId; if (Object.keys(patch).length > 0) onApply([{ kind: "update_relationship", relationshipId: relationship.id, patch }]); }}>Save connection changes</button><button type="button" className="recovery-button recovery-button--danger" data-testid={`workflow-recovery-disconnect-${relationship.id}`} onClick={onDisconnect}>Disconnect steps</button></>}</section>;
 }
 
-function instructionField(executionKind: RecoveryWorkflow["blocks"][number]["executionKind"]): { label: string; performedBy: string; source: string } {
-  if (executionKind === "human") {
-    return {
-      label: "Engineer checklist",
-      performedBy: "Engineer",
-      source: "Source: current workflow version. This checklist tells the engineer what to confirm; it is not copied from an input document.",
-    };
-  }
-  if (executionKind === "ai_capable") {
-    return {
-      label: "AI prompt",
-      performedBy: "AI-assisted check",
-      source: "Source: current workflow version. This prompt is supplied to the configured AI-assisted check when the step runs.",
-    };
-  }
-  return {
-    label: "Automation instructions",
-    performedBy: "Configured tool",
-    source: "Source: current workflow version. These instructions are used by the configured tool when the step runs.",
-  };
-}
 
 function mediaLabel(mediaType: string): string {
   if (mediaType === "text/plain") return "Text or common document";
@@ -1002,42 +969,12 @@ function mediaLabel(mediaType: string): string {
   return "Engineering file or record";
 }
 
-function DefinitionInspector({ blockId, workflow, readOnly, onApply, onDelete }: { readonly blockId: string; readonly workflow: RecoveryWorkflow; readonly readOnly: boolean; readonly onApply: (commands: RecoveryCommand[]) => void; readonly onDelete: () => void }) {
-  const block = findBlock(workflow, blockId)!;
-  const [title, setTitle] = useState(block.title);
-  const [thickness, setThickness] = useState(String(block.configuration.thickness_mm ?? ""));
-  useEffect(() => { setTitle(block.title); setThickness(String(block.configuration.thickness_mm ?? "")); }, [block.id, block.title, block.configuration.thickness_mm]);
-  const instruction = instructionField(block.executionKind);
-  const reviewedAiDraft = block.kind === "approval" && block.executionKind === "ai_capable";
-  const reviewCriteria = reviewedAiDraft
-    ? workflow.relationships
-      .filter((relationship) => relationship.sourceId === block.id && (relationship.kind === "decision" || relationship.kind === "feedback"))
-      .map((relationship) => `${relationship.kind === "decision" ? "Accept" : "Revise"} when: ${relationship.condition ?? relationship.label}`)
-      .join("\n")
-    : "";
-  const performedBy = reviewedAiDraft ? "AI drafts; engineer reviews" : instruction.performedBy;
-  return <section>
-    <label>Step name<input data-testid={`workflow-recovery-block-title-${block.id}`} value={title} readOnly={readOnly} onChange={(event) => setTitle(event.target.value)} /></label>
-    <div className="recovery-fact"><span>Optional group</span><b>{phaseName(workflow, block.phaseId)}</b></div>
-    <div className="recovery-fact"><span>Performed by</span><b>{performedBy}</b></div>
-    <details className="recovery-inspector__field">
-      <summary data-testid={`workflow-recovery-block-instructions-toggle-${block.id}`}><b>{instruction.label}</b><span>{reviewedAiDraft ? "Prompt supplied when this step runs" : "Instructions stored with this step"}</span></summary>
-      <label><textarea data-testid={`workflow-recovery-block-instructions-${block.id}`} value={block.instructions} readOnly /><small className="recovery-field-help">{instruction.source}</small></label>
-    </details>
-    {reviewedAiDraft && <details className="recovery-inspector__field">
-      <summary data-testid={`workflow-recovery-block-review-toggle-${block.id}`}><b>Engineer approval checklist</b><span>Derived from Continue and Return paths</span></summary>
-      <label><textarea data-testid={`workflow-recovery-block-review-${block.id}`} value={reviewCriteria} readOnly /><small className="recovery-field-help">Source: current workflow version. These criteria come from this step&apos;s accept and revise paths; they are not copied from an input document.</small></label>
-    </details>}
-    {"thickness_mm" in block.configuration && <label>Thickness (mm)<input data-testid={`workflow-recovery-block-thickness-${block.id}`} type="number" min="1" value={thickness} readOnly={readOnly} onChange={(event) => setThickness(event.target.value)} /></label>}
-    {readOnly ? <p className="recovery-inspector__hint" data-testid="workflow-recovery-candidate-readonly">The AI suggestion is read-only. Discard it or add the reviewed steps before editing the current workflow.</p> : <div className="recovery-inspector__actions"><button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-config-apply" onClick={() => { const commands: RecoveryCommand[] = []; if (title.trim() !== block.title) commands.push({ kind: "set_block_title", blockId: block.id, title }); if (thickness && Number(thickness) !== block.configuration.thickness_mm) commands.push({ kind: "set_block_configuration", blockId: block.id, key: "thickness_mm", value: Number(thickness) }); if (commands.length > 0) onApply(commands); }}>Save step changes</button><button type="button" className="recovery-button recovery-button--danger" data-testid="workflow-recovery-delete" onClick={onDelete}>Delete step</button><p className="recovery-inspector__hint">Saving creates a new workflow version. Disconnect dependent steps before deleting this step.</p></div>}
-  </section>;
-}
 
-function PortInspector({ direction, workflow, blockId, run, onOutput }: { readonly direction: "input" | "output"; readonly workflow: RecoveryWorkflow; readonly blockId: string | null; readonly run: RecoveryRunProjection; readonly onOutput?: () => void }) {
+function PortInspector({ direction, workflow, blockId, run, onOutput, onSelect }: { readonly direction: "input" | "output"; readonly workflow: RecoveryWorkflow; readonly blockId: string | null; readonly run: RecoveryRunProjection; readonly onOutput?: () => void; readonly onSelect: (id: string) => void }) {
   const block = findBlock(workflow, blockId);
   if (!block) return <p>Select a step to see what it {direction === "input" ? "uses" : "creates"}.</p>;
   const ids = direction === "input" ? block.inputPortIds : block.outputPortIds;
-  return <section>{ids.length === 0 ? <p>This step {direction === "input" ? "does not require an input" : "does not create an output"}.</p> : ids.map((id) => { const port = findPort(workflow, id)!; const artifact = workflow.artifactContracts.find((item) => item.id === port.artifactContractId); const outputReady = direction === "output" && run.outputsReady && port.id === "port.step-out"; return <article className="recovery-port-card" key={id}><header><b>{port.name}</b><span>{port.required ? "Required" : "Optional"}</span></header><p>{port.description}</p>{artifact && <small>{mediaLabel(artifact.mediaType)} · {direction === "input" ? "Used by this step" : "Created by this step"}</small>}<details className="recovery-technical-details"><summary data-testid={`workflow-recovery-port-details-${port.id}`}>Technical details</summary><code>{port.typeId}</code><code>{port.artifactContractId ?? "No stored item contract"}</code>{artifact && <code>{artifact.mediaType}</code>}</details>{outputReady && <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-output-artifact.step" onClick={onOutput}>Open STEP file</button>}{port.id === "port.design-intent-in" && run.state === "needs-input" && <div className="recovery-port-card__missing">! Material and temper are not stated in the design intent. Add the decision before the design specification can be accepted.</div>}</article>; })}</section>;
+  return <section>{ids.length === 0 ? <p>This step {direction === "input" ? "does not require an input" : "does not create an output"}.</p> : ids.map((id) => { const port = findPort(workflow, id)!; const artifact = workflow.artifactContracts.find((item) => item.id === port.artifactContractId); const outputReady = direction === "output" && run.outputsReady && port.id === "port.step-out"; return <article className="recovery-port-card" key={id}><header><b>{port.name}</b><span>{port.required ? "Required" : "Optional"}</span></header><p>{port.description}</p><AuthoringPortConnections workflow={workflow} portId={port.id} onSelect={onSelect} />{artifact && <small>{mediaLabel(artifact.mediaType)} · {direction === "input" ? "Used by this step" : "Created by this step"}</small>}<details className="recovery-technical-details"><summary data-testid={`workflow-recovery-port-details-${port.id}`}>Technical details</summary><code>{port.typeId}</code><code>{port.artifactContractId ?? "No stored item contract"}</code>{artifact && <code>{artifact.mediaType}</code>}</details>{outputReady && <button type="button" className="recovery-button recovery-button--primary" data-testid="workflow-recovery-output-artifact.step" onClick={onOutput}>Open STEP file</button>}{port.id === "port.design-intent-in" && run.state === "needs-input" && <div className="recovery-port-card__missing">! Material and temper are not stated in the design intent. Add the decision before the design specification can be accepted.</div>}</article>; })}</section>;
 }
 
 export default WorkflowRecoveryConcept;

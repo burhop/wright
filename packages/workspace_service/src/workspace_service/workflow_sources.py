@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import errno
 import json
+import math
 import os
 import re
 import secrets
@@ -26,7 +27,7 @@ import threading
 import time
 from collections.abc import Callable, Iterator
 from contextlib import ExitStack, contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import BinaryIO
 
@@ -38,12 +39,15 @@ WORKFLOW_SOURCE_MAX_BYTES = 1024 * 1024
 WORKFLOW_SOURCE_METADATA_MAX_BYTES = 16 * 1024
 WORKFLOW_SOURCE_MAX_REVISIONS = 100_000
 WORKFLOW_SOURCE_LOCK_TIMEOUT_SECONDS = 5.0
+WORKFLOW_LAYOUT_MAX_BYTES = 256 * 1024
 
 _SOURCE_FILE = re.compile(
     r"^workflows/(?P<slug>[a-z0-9][a-z0-9-]{0,62})\.workflow\.wflow$"
 )
 _REVISION_FILE = re.compile(r"^(?P<revision>[0-9]{20})\.json$")
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
+_LAYOUT_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{2,159}$")
+_LAYOUT_RECORD = re.compile(r"^[0-9]{20}-[0-9a-f]{16}\.json$")
 _WINDOWS_RESERVED_SLUGS = {
     "aux",
     "con",
@@ -102,6 +106,9 @@ class WorkflowSourceDocument:
     definition_revision: int
     source: str
     size_bytes: int
+    layout: dict[str, object] | None = None
+    layout_revision: int = 0
+    layout_status: str = "missing"
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,6 +141,73 @@ def _positive_int(value: object) -> int | None:
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         return None
     return value
+
+
+def validate_source_layout(value: object) -> dict[str, object]:
+    """Bound presentation data without parsing or taking authority over source.
+
+    Canonical block membership is validated by the caller's command layer;
+    this storage boundary validates only the closed layout shape and limits.
+    """
+
+    def invalid() -> None:
+        raise WorkflowSourceStorageError(
+            "workflow_layout_invalid", "Workflow layout has an invalid shape or value"
+        )
+
+    def number(item: object, minimum: float, maximum: float) -> bool:
+        return (
+            not isinstance(item, bool)
+            and isinstance(item, (int, float))
+            and minimum <= item <= maximum
+            and math.isfinite(item)
+        )
+
+    if not isinstance(value, dict) or set(value) != {
+        "documentKind",
+        "schemaVersion",
+        "workflowId",
+        "semanticRevision",
+        "layoutRevision",
+        "positions",
+        "viewport",
+    }:
+        invalid()
+    if (
+        value["documentKind"] != "workflow-layout"
+        or value["schemaVersion"] != "1.0.0-recovery.1"
+        or not isinstance(value["workflowId"], str)
+        or not _LAYOUT_ID.fullmatch(value["workflowId"])
+        or _positive_int(value["semanticRevision"]) is None
+        or _positive_int(value["layoutRevision"]) is None
+    ):
+        invalid()
+    positions = value["positions"]
+    if not isinstance(positions, dict) or len(positions) > 4000:
+        invalid()
+    for identity, point in positions.items():
+        if (
+            not isinstance(identity, str)
+            or not _LAYOUT_ID.fullmatch(identity)
+            or not isinstance(point, dict)
+            or set(point) != {"x", "y"}
+            or not all(
+                number(point[key], -10_000_000, 10_000_000) for key in ("x", "y")
+            )
+        ):
+            invalid()
+    viewport = value["viewport"]
+    if (
+        not isinstance(viewport, dict)
+        or set(viewport) != {"x", "y", "zoom"}
+        or not all(number(viewport[key], -10_000_000, 10_000_000) for key in ("x", "y"))
+        or not number(viewport["zoom"], 0.000001, 64)
+    ):
+        invalid()
+    encoded = json.dumps(value, allow_nan=False, separators=(",", ":"))
+    if len(encoded.encode("utf-8")) > WORKFLOW_LAYOUT_MAX_BYTES:
+        invalid()
+    return json.loads(encoded)
 
 
 if os.name == "nt":
@@ -215,8 +289,7 @@ if os.name == "nt":
             )
         identity = (
             int(information.dwVolumeSerialNumber),
-            (int(information.nFileIndexHigh) << 32)
-            | int(information.nFileIndexLow),
+            (int(information.nFileIndexHigh) << 32) | int(information.nFileIndexLow),
         )
         return int(handle), identity
 
@@ -354,9 +427,9 @@ class WorkspaceWorkflowSourceStore:
             raise ValueError("lock_timeout_seconds must be positive")
         self._paths = WorkspacePath(workspace_dir)
         self._lock_timeout_seconds = lock_timeout_seconds
-        self._active_directory_capabilities: dict[
-            str, _DirectoryCapability
-        ] | None = None
+        self._active_directory_capabilities: dict[str, _DirectoryCapability] | None = (
+            None
+        )
 
     @staticmethod
     def _directory_key(path: Path) -> str:
@@ -389,7 +462,9 @@ class WorkspaceWorkflowSourceStore:
         return parts
 
     @staticmethod
-    def _pin_directory(path: Path, *, parent: _DirectoryCapability | None = None) -> _DirectoryCapability:
+    def _pin_directory(
+        path: Path, *, parent: _DirectoryCapability | None = None
+    ) -> _DirectoryCapability:
         try:
             if os.name == "nt":
                 handle, identity = _open_windows_directory(path)
@@ -545,9 +620,7 @@ class WorkspaceWorkflowSourceStore:
                 descriptor = -1
                 temporary_leaf = ""
                 for _attempt in range(16):
-                    temporary_leaf = (
-                        f".wright-workflow-source-{secrets.token_hex(12)}"
-                    )
+                    temporary_leaf = f".wright-workflow-source-{secrets.token_hex(12)}"
                     try:
                         descriptor = directory.open_file(
                             temporary_leaf,
@@ -765,18 +838,14 @@ class WorkspaceWorkflowSourceStore:
                 locked = False
                 try:
                     handle = self._open_lock_file(metadata_capability, lock_path)
-                    self._validate_open_lock(
-                        metadata_capability, lock_path, handle
-                    )
+                    self._validate_open_lock(metadata_capability, lock_path, handle)
                     if os.fstat(handle.fileno()).st_size == 0:
                         self._before_filesystem_mutation(lock_path)
                         metadata_capability.assert_current()
                         handle.write(b"\0")
                         handle.flush()
                         os.fsync(handle.fileno())
-                        self._validate_open_lock(
-                            metadata_capability, lock_path, handle
-                        )
+                        self._validate_open_lock(metadata_capability, lock_path, handle)
                     while not _try_acquire_file_lock(handle):
                         if time.monotonic() >= deadline:
                             raise WorkflowSourceStorageError(
@@ -785,9 +854,7 @@ class WorkspaceWorkflowSourceStore:
                             )
                         time.sleep(min(0.02, max(0.0, deadline - time.monotonic())))
                     locked = True
-                    self._validate_open_lock(
-                        metadata_capability, lock_path, handle
-                    )
+                    self._validate_open_lock(metadata_capability, lock_path, handle)
                     yield
                 finally:
                     self._active_directory_capabilities = previous_capabilities
@@ -830,9 +897,7 @@ class WorkspaceWorkflowSourceStore:
                     invalid_code=invalid_code,
                 )
                 if path_stat.st_size > max_bytes:
-                    raise WorkflowSourceStorageError(
-                        too_large_code, too_large_message
-                    )
+                    raise WorkflowSourceStorageError(too_large_code, too_large_message)
 
                 descriptor = directory.open_file(
                     path.name,
@@ -862,18 +927,14 @@ class WorkspaceWorkflowSourceStore:
                         f"Workflow source {label} changed while it was opened",
                     )
                 if opened_stat.st_size > max_bytes:
-                    raise WorkflowSourceStorageError(
-                        too_large_code, too_large_message
-                    )
+                    raise WorkflowSourceStorageError(too_large_code, too_large_message)
 
                 with os.fdopen(descriptor, "rb") as stream:
                     descriptor = None
                     content = stream.read(max_bytes + 1)
                     final_stat = os.fstat(stream.fileno())
                 if len(content) > max_bytes:
-                    raise WorkflowSourceStorageError(
-                        too_large_code, too_large_message
-                    )
+                    raise WorkflowSourceStorageError(too_large_code, too_large_message)
                 if final_stat.st_size != len(content):
                     raise WorkflowSourceStorageError(
                         invalid_code,
@@ -902,18 +963,23 @@ class WorkspaceWorkflowSourceStore:
         if (
             not stat.S_ISREG(file_stat.st_mode)
             or stat.S_ISLNK(file_stat.st_mode)
-            or file_attributes
-            & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+            or file_attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
         ):
             raise WorkflowSourceStorageError(
                 invalid_code,
                 f"Workflow source {label} is invalid",
             )
 
-    def _decode_json(self, path: Path, *, label: str) -> tuple[dict[str, object], bytes]:
+    def _decode_json(
+        self,
+        path: Path,
+        *,
+        label: str,
+        max_bytes: int = WORKFLOW_SOURCE_METADATA_MAX_BYTES,
+    ) -> tuple[dict[str, object], bytes]:
         content = self._read_bounded_file(
             path,
-            max_bytes=WORKFLOW_SOURCE_METADATA_MAX_BYTES,
+            max_bytes=max_bytes,
             label=label,
             invalid_code="workflow_source_integrity",
             too_large_code="workflow_source_integrity",
@@ -1165,10 +1231,9 @@ class WorkspaceWorkflowSourceStore:
                 "Workflow source must be valid UTF-8 text",
             ) from error
         storage_digest = _digest(content)
-        if (
-            storage_digest != head.get("storage_digest")
-            or len(content) != latest_record.get("size_bytes")
-        ):
+        if storage_digest != head.get("storage_digest") or len(
+            content
+        ) != latest_record.get("size_bytes"):
             raise WorkflowSourceStorageError(
                 "workflow_source_integrity",
                 "Workflow source bytes do not match the committed head",
@@ -1204,7 +1269,9 @@ class WorkspaceWorkflowSourceStore:
             if not path.exists() and not self._metadata_directory(slug).exists():
                 raise FileNotFoundError(normalized)
             with self._transaction(slug, path):
-                return self._read_state_unlocked(normalized, slug, path).document
+                return self._with_layout(
+                    slug, self._read_state_unlocked(normalized, slug, path).document
+                )
         except (FileNotFoundError, WorkflowSourceStorageError):
             raise
         except OSError as error:
@@ -1212,6 +1279,187 @@ class WorkspaceWorkflowSourceStore:
                 "workflow_source_unavailable",
                 "Workflow source storage is unavailable",
             ) from error
+
+    def _layout_head_bytes(self, slug: str) -> bytes | None:
+        path = self._metadata_directory(slug) / "layout-head.json"
+        if not path.exists() and not path.is_symlink():
+            return None
+        return self._decode_json(path, label="layout head")[1]
+
+    def list_input_files(self) -> list[dict[str, str]]:
+        """List bounded, visible workspace references; never read their contents.
+
+        A reference is not a capability. A later read/execution must resolve the
+        registered workspace again and enforce its current path policy.
+        """
+        choices: list[dict[str, str]] = []
+        visited = 0
+        pending = [self._paths.root]
+        while pending:
+            current = pending.pop()
+            with self._directory_capability(current, create=False) as capability:
+                capability.assert_current()
+                # POSIX pathnames can be renamed and swapped back around a
+                # scan. Enumerate the pinned descriptor instead; Windows
+                # directory handles already deny rename while held here.
+                scan_target = (
+                    capability.descriptor
+                    if capability.descriptor is not None
+                    else current
+                )
+                with os.scandir(scan_target) as entries:
+                    for entry in entries:
+                        visited += 1
+                        if visited > 20_000:
+                            raise WorkflowSourceStorageError(
+                                "workflow_input_files_limit",
+                                "This workspace has too many files to list safely",
+                            )
+                        if (
+                            entry.name.startswith(".")
+                            or entry.name in {"node_modules", "__pycache__"}
+                            or any(
+                                ord(char) < 32 or char in ":\\" for char in entry.name
+                            )
+                        ):
+                            continue
+                        entry_stat = entry.stat(follow_symlinks=False)
+                        if entry.is_symlink() or getattr(
+                            entry_stat, "st_file_attributes", 0
+                        ) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0):
+                            continue
+                        target = current / entry.name
+                        if stat.S_ISDIR(entry_stat.st_mode):
+                            pending.append(target)
+                        elif stat.S_ISREG(entry_stat.st_mode):
+                            relative = target.relative_to(self._paths.root).as_posix()
+                            if len(relative) <= 1024:
+                                choices.append({"path": relative, "name": entry.name})
+                capability.assert_current()
+        return sorted(choices, key=lambda value: value["path"].casefold())
+
+    def _with_layout(
+        self, slug: str, document: WorkflowSourceDocument
+    ) -> WorkflowSourceDocument:
+        head_bytes = self._layout_head_bytes(slug)
+        if head_bytes is None:
+            return document
+        head = json.loads(head_bytes)
+        if (
+            set(head)
+            != {
+                "schema_version",
+                "record",
+                "record_digest",
+                "layout_revision",
+                "source_digest",
+            }
+            or head["schema_version"] != 1
+            or isinstance(head["schema_version"], bool)
+            or not isinstance(head["record"], str)
+            or not _LAYOUT_RECORD.fullmatch(head["record"])
+            or not isinstance(head["record_digest"], str)
+            or not _DIGEST.fullmatch(head["record_digest"])
+            or not isinstance(head["source_digest"], str)
+            or not _DIGEST.fullmatch(head["source_digest"])
+            or _positive_int(head["layout_revision"]) is None
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity", "Workflow layout head is invalid"
+            )
+        record, content = self._decode_json(
+            self._metadata_directory(slug) / "layouts" / head["record"],
+            label="layout record",
+            max_bytes=WORKFLOW_LAYOUT_MAX_BYTES + 1024,
+        )
+        if (
+            _digest(content) != head["record_digest"]
+            or set(record)
+            != {"schema_version", "source_digest", "layout_revision", "layout"}
+            or record["schema_version"] != 1
+            or isinstance(record["schema_version"], bool)
+            or record["source_digest"] != head["source_digest"]
+            or record["layout_revision"] != head["layout_revision"]
+            or _positive_int(record["layout_revision"]) is None
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity",
+                "Workflow layout record does not match its head",
+            )
+        try:
+            layout = validate_source_layout(record["layout"])
+        except WorkflowSourceStorageError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity", "Stored workflow layout is invalid"
+            ) from error
+        if layout["layoutRevision"] != head["layout_revision"]:
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity",
+                "Stored workflow layout revision is invalid",
+            )
+        # A legacy source-only client may return to earlier text (A -> B -> A)
+        # at a later semantic revision. Its well-formed old layout remains
+        # recoverable evidence, not an integrity failure after the source saves.
+        current = (
+            record["source_digest"] == document.storage_digest
+            and layout["semanticRevision"] == document.definition_revision
+        )
+        return replace(
+            document,
+            layout=layout if current else None,
+            layout_revision=head["layout_revision"],
+            layout_status="current" if current else "stale",
+        )
+
+    def _publish_layout(
+        self,
+        slug: str,
+        document: WorkflowSourceDocument,
+        layout: dict[str, object],
+        revision: int,
+    ) -> WorkflowSourceDocument:
+        # Generations are immutable; switching the small pointer never destroys
+        # the preceding layout. Orphans after a crash are not applied on reopen.
+        value = {
+            **layout,
+            "semanticRevision": document.definition_revision,
+            "layoutRevision": revision,
+        }
+        record = json.dumps(
+            {
+                "schema_version": 1,
+                "source_digest": document.storage_digest,
+                "layout_revision": revision,
+                "layout": value,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
+        name = f"{revision:020d}-{secrets.token_hex(8)}.json"
+        self._write_once(self._metadata_directory(slug) / "layouts" / name, record)
+        head = json.dumps(
+            {
+                "schema_version": 1,
+                "record": name,
+                "record_digest": _digest(record),
+                "layout_revision": revision,
+                "source_digest": document.storage_digest,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        self._atomic_write(self._metadata_directory(slug) / "layout-head.json", head)
+        return replace(
+            document, layout=value, layout_revision=revision, layout_status="current"
+        )
+
+    def _restore_layout_head(self, slug: str, previous: bytes | None) -> None:
+        path = self._metadata_directory(slug) / "layout-head.json"
+        if previous is None:
+            self._unlink(path, missing_ok=True)
+        else:
+            self._atomic_write(path, previous)
 
     def _commit(
         self,
@@ -1224,6 +1472,8 @@ class WorkspaceWorkflowSourceStore:
         definition_revision: int,
         semantic_change_validated: bool,
         source: str,
+        layout: dict[str, object] | None = None,
+        layout_revision: int = 0,
     ) -> WorkflowSourceDocument:
         if not 1 <= storage_revision <= WORKFLOW_SOURCE_MAX_REVISIONS:
             raise WorkflowSourceStorageError(
@@ -1271,12 +1521,13 @@ class WorkspaceWorkflowSourceStore:
             sort_keys=True,
             separators=(",", ":"),
         ).encode("utf-8")
-        revision_path = (
-            self._revision_directory(slug) / f"{storage_revision:020d}.json"
-        )
+        revision_path = self._revision_directory(slug) / f"{storage_revision:020d}.json"
         head_path = self._head_path(slug)
         previous_content = (
             previous.document.source.encode("utf-8") if previous is not None else None
+        )
+        previous_layout_head = (
+            self._layout_head_bytes(slug) if layout is not None else None
         )
 
         # The visible replace, immutable journal publication, and committed-head
@@ -1287,6 +1538,8 @@ class WorkspaceWorkflowSourceStore:
         try:
             self._write_once(revision_path, revision_record)
             journal_created = True
+            if layout is not None:
+                document = self._publish_layout(slug, document, layout, layout_revision)
             self._atomic_write(head_path, head_record)
         except BaseException as error:
             rollback_error: BaseException | None = None
@@ -1302,13 +1555,18 @@ class WorkspaceWorkflowSourceStore:
                     self._unlink(revision_path)
                 except BaseException as caught:
                     rollback_error = rollback_error or caught
+            if layout is not None:
+                try:
+                    self._restore_layout_head(slug, previous_layout_head)
+                except BaseException as caught:
+                    rollback_error = rollback_error or caught
             if rollback_error is not None:
                 raise WorkflowSourceStorageError(
                     "workflow_source_integrity",
                     "Workflow source commit failed and could not restore prior state",
                 ) from rollback_error
             raise error
-        return document
+        return document if layout is not None else self._with_layout(slug, document)
 
     def create(self, user_path: str, source: str) -> WorkflowSourceDocument:
         try:
@@ -1350,6 +1608,8 @@ class WorkspaceWorkflowSourceStore:
         expected_storage_digest: str,
         semantic_change_validated: bool,
         source: str,
+        layout: dict[str, object] | None = None,
+        expected_layout_revision: int | None = None,
     ) -> WorkflowSourceDocument:
         try:
             if not isinstance(semantic_change_validated, bool):
@@ -1359,8 +1619,22 @@ class WorkspaceWorkflowSourceStore:
                 )
             normalized, slug, path = self._source_path(user_path)
             content = _source_bytes(source)
+            if layout is not None:
+                layout = validate_source_layout(layout)
+                if (
+                    isinstance(expected_layout_revision, bool)
+                    or not isinstance(expected_layout_revision, int)
+                    or not 0 <= expected_layout_revision < WORKFLOW_SOURCE_MAX_REVISIONS
+                ):
+                    raise WorkflowSourceStorageError(
+                        "workflow_layout_invalid",
+                        "A valid layout base revision is required",
+                    )
             with self._transaction(slug, path):
                 current = self._read_state_unlocked(normalized, slug, path)
+                current = replace(
+                    current, document=self._with_layout(slug, current.document)
+                )
                 if (
                     current.document.storage_revision != expected_storage_revision
                     or current.document.storage_digest != expected_storage_digest
@@ -1369,7 +1643,33 @@ class WorkspaceWorkflowSourceStore:
                         current.document.storage_revision,
                         current.document.storage_digest,
                     )
+                if (
+                    layout is not None
+                    and current.document.layout_revision != expected_layout_revision
+                ):
+                    raise WorkflowSourceStorageError(
+                        "workflow_layout_conflict",
+                        "The workflow layout changed after it was read; reload or compare before saving",
+                    )
                 if _digest(content) == current.document.storage_digest:
+                    if layout is not None:
+                        normalized_layout = {
+                            **layout,
+                            "semanticRevision": current.document.definition_revision,
+                            "layoutRevision": current.document.layout_revision,
+                        }
+                        if normalized_layout != current.document.layout:
+                            previous_head = self._layout_head_bytes(slug)
+                            try:
+                                return self._publish_layout(
+                                    slug,
+                                    current.document,
+                                    layout,
+                                    current.document.layout_revision + 1,
+                                )
+                            except BaseException:
+                                self._restore_layout_head(slug, previous_head)
+                                raise
                     return current.document
                 return self._commit(
                     normalized=normalized,
@@ -1383,6 +1683,8 @@ class WorkspaceWorkflowSourceStore:
                     ),
                     semantic_change_validated=semantic_change_validated,
                     source=source,
+                    layout=layout,
+                    layout_revision=current.document.layout_revision + 1,
                 )
         except (FileNotFoundError, WorkflowSourceStorageError):
             raise
@@ -1438,6 +1740,18 @@ class WorkspaceWorkflowSourceUseCases:
                 "Workflow source read did not finish before its deadline",
             ) from error
 
+    async def list_input_files(self, workspace_dir: str) -> list[dict[str, str]]:
+        try:
+            return await self._executor.run(
+                "workspace.workflow_sources.input_files",
+                lambda: self._store_factory(workspace_dir).list_input_files(),
+                timeout_seconds=30.0,
+            )
+        except (WorkspaceTimeoutError, OSError) as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_unavailable", "Workspace input files are unavailable"
+            ) from error
+
     async def update(
         self,
         workspace_dir: str,
@@ -1447,6 +1761,8 @@ class WorkspaceWorkflowSourceUseCases:
         expected_storage_digest: str,
         semantic_change_validated: bool,
         source: str,
+        layout: dict[str, object] | None = None,
+        expected_layout_revision: int | None = None,
     ) -> WorkflowSourceDocument:
         try:
             return await self._executor.run_to_completion(
@@ -1457,6 +1773,14 @@ class WorkspaceWorkflowSourceUseCases:
                     expected_storage_digest=expected_storage_digest,
                     semantic_change_validated=semantic_change_validated,
                     source=source,
+                    **(
+                        {
+                            "layout": layout,
+                            "expected_layout_revision": expected_layout_revision,
+                        }
+                        if layout is not None
+                        else {}
+                    ),
                 ),
             )
         except WorkflowSourceStorageError:

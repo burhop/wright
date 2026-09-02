@@ -2,6 +2,7 @@
   min-width: 0;
 }
 
+.workflow-recovery-page,
 .workflow-recovery {
   /* Recovery semantic aliases consume the shared token layer. One-off geometry
      dimensions are centralized here; large canvas dimensions and breakpoints remain
@@ -43,6 +44,7 @@
   --recovery-size-28: 28px;
   --recovery-size-29: 29px;
   --recovery-size-30: 30px;
+  --recovery-size-32: 32px;
   --recovery-size-34: 34px;
   --recovery-size-35: 35px;
   --recovery-size-36: 36px;
@@ -51,8 +53,10 @@
   --recovery-size-40: 40px;
   --recovery-size-42: 42px;
   --recovery-size-45: 45px;
+  --recovery-size-47: 47px;
   --recovery-size-48: 48px;
   --recovery-size-50: 50px;
+  --recovery-size-58: 58px;
   --recovery-size-60: 60px;
   --recovery-size-66: 66px;
   --recovery-size-70: 70px;
@@ -392,6 +396,9 @@
 .recovery-modal > header h2 { margin-top: var(--recovery-size-2); font-size: var(--recovery-size-21); }
 .recovery-modal > header button { min-width: var(--recovery-size-38); font-size: var(--recovery-size-22); }
 .recovery-modal > div { padding: var(--recovery-size-18); }
+.recovery-delete-confirmation { display: grid; gap: var(--recovery-size-12); }
+.recovery-delete-confirmation > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--recovery-size-12); }
+.recovery-delete-confirmation > div > button:first-child { padding: var(--recovery-size-8) var(--recovery-size-12); border: 1px solid var(--recovery-line); border-radius: var(--recovery-size-6); background: var(--recovery-panel); color: var(--recovery-ink); }
 .recovery-modal__lead { max-width: 780px; margin-bottom: var(--recovery-size-15); color: var(--recovery-muted); }
 .recovery-source-compare { display: grid; gap: var(--recovery-size-12); min-height: 0; }
 .recovery-source-compare > p,
@@ -480,4 +487,205 @@
   .recovery-edge path.react-flow__edge-path { stroke: CanvasText; }
   .recovery-edge.is-active path.react-flow__edge-path { stroke-width: 5; stroke-dasharray: 12 5; }
   .recovery-block.is-active { outline: var(--recovery-size-4) double Highlight; }
+}
+
+/* Image-led native authoring shell. The document owns the viewport; temporary
+   creation and input navigators never reserve a second permanent editor column. */
+.workflow-recovery-page { height: 100%; min-height: 0; overflow: hidden; }
+.workflow-recovery--redesign {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  font-size: 13px;
+}
+.workflow-recovery--redesign .recovery-filebar { flex: 0 0 auto; flex-wrap: wrap; padding: 9px 14px; gap: 10px 18px; border-radius: 0; align-items: center; flex-direction: row; }
+.workflow-recovery--redesign .recovery-filebar__identity { flex: 1 1 220px; }
+.workflow-recovery--redesign .recovery-filebar__identity h1 { font-size: 15px; line-height: 1.35; }
+.workflow-recovery--redesign .recovery-filebar__identity small { max-width: 310px; font-size: 10px; }
+.workflow-recovery--redesign .recovery-filebar__icon { width: 28px; height: 28px; flex-basis: 28px; }
+.workflow-recovery--redesign .recovery-toolbar { display: flex; flex: 1 1 auto; flex-wrap: wrap; flex-direction: row; justify-content: flex-end; gap: 7px 14px; padding: 0; border: 0; align-items: center; }
+.workflow-recovery--redesign .recovery-tabs { padding: 2px; border: 1px solid var(--recovery-line); }
+.workflow-recovery--redesign .recovery-tabs button { min-width: 58px; min-height: 30px; padding: 5px 9px; font-size: 12px; border-radius: 4px; }
+.workflow-recovery--redesign .recovery-toolbar__actions { align-items: center; gap: 6px; }
+.workflow-recovery--redesign .recovery-toolbar__actions button { min-height: 32px; padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+.workflow-recovery--redesign .recovery-save-status { max-width: 180px; font-size: 11px; }
+.workflow-recovery--redesign .recovery-authority { font-size: 10px; }
+.workflow-recovery--redesign .recovery-workbench { position: relative; display: grid; flex: 1 1 0; min-height: 0; grid-template-columns: 78px minmax(0, 1fr); overflow: hidden; }
+.workflow-recovery--redesign .recovery-workbench--inspecting { grid-template-columns: 78px minmax(0, 1fr) 300px; }
+.workflow-recovery--redesign .recovery-stage { min-height: 0; height: 100%; }
+.workflow-recovery--redesign .recovery-stage--split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.workflow-recovery--redesign .recovery-canvas { height: 100%; min-height: 0; background: radial-gradient(ellipse at 40% 5%, color-mix(in srgb, var(--recovery-teal) 4%, transparent), transparent 70%), var(--color-neutral); }
+.workflow-recovery--redesign .recovery-create-rail { position: static; z-index: 16; min-height: 0; border-right: 1px solid var(--recovery-line); background: var(--color-surface-subtle); overflow: visible; }
+.recovery-create-buttons { display: flex; flex-direction: column; align-items: stretch; gap: 7px; height: 100%; min-height: 0; padding: 12px 8px; overflow-y: auto; overscroll-behavior: contain; }
+.recovery-create-buttons > h2 { margin: 0 0 3px; color: var(--color-primary); text-align: center; font-size: 11px; font-weight: 600; }
+.recovery-create-buttons { scrollbar-width: thin; scrollbar-color: var(--color-border-hover, var(--recovery-muted)) var(--color-surface-subtle); }
+.recovery-create-buttons::after { content: "Scroll ↕"; display: none; color: var(--recovery-muted); font-size: 10px; text-align: center; padding: 5px 0; background: var(--color-surface-subtle); }
+.recovery-inputs-summary { position: relative; }
+.recovery-create-rail > h2, .recovery-create-rail > header { margin: 0 0 3px; color: var(--color-primary); text-align: center; font-size: 11px; font-weight: 600; }
+.recovery-create-group { display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 64px; flex-shrink: 0; padding: 8px 3px; border: 1px solid var(--recovery-line); border-radius: 7px; background: transparent; cursor: pointer; font-size: 10px !important; line-height: 1.2; }
+.recovery-create-group:hover, .recovery-create-group[aria-expanded="true"] { border-color: var(--recovery-teal); background: color-mix(in srgb, var(--recovery-teal) 9%, var(--color-surface-subtle)); }
+.recovery-object-icon { flex-shrink: 0; }
+.recovery-create-group .recovery-object-icon { width: 24px; height: 24px; color: var(--color-primary); }
+.recovery-create-popover, .recovery-input-navigator { position: absolute; z-index: 25; top: 12px; left: 90px; width: min(310px, calc(100% - 102px)); max-height: calc(100% - 24px); overflow-y: auto; padding: 14px; border: 1px solid var(--color-border-hover, var(--recovery-line)); border-radius: 10px; background: var(--color-surface-subtle); box-shadow: var(--shadow-xl); }
+.recovery-create-popover > header, .recovery-input-navigator > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.recovery-create-popover h2, .recovery-create-popover h3, .recovery-input-navigator h2, .recovery-input-navigator h3 { margin: 0; font-size: 15px; }
+.recovery-create-popover p, .recovery-input-navigator p { color: var(--recovery-muted); font-size: 12px; line-height: 1.5; }
+.recovery-create-popover button, .recovery-input-navigator button { min-height: 32px; border: 1px solid var(--recovery-line); border-radius: 6px; background: var(--color-surface); padding: 8px; cursor: pointer; }
+.recovery-create-popover > button, .recovery-create-popover li > button, .recovery-input-navigator > button, .recovery-input-navigator li > button { display: grid; width: 100%; gap: 5px; margin-top: 8px; padding: 12px; text-align: left; }
+.recovery-create-popover small, .recovery-input-navigator small { color: var(--recovery-muted); font-size: 11px; line-height: 1.4; }
+.recovery-create-popover ul, .recovery-input-navigator ul { padding: 0; list-style: none; }
+.recovery-canvas-tools { position: absolute; z-index: 12; display: flex; gap: 7px; top: 12px; left: 14px; right: 12px; flex-wrap: wrap; pointer-events: none; }
+.recovery-canvas-tools > * { pointer-events: auto; }
+.recovery-canvas-tools button { display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 7px 11px; border: 1px solid var(--recovery-line); border-radius: 6px; background: var(--recovery-floating-surface); font-size: 12px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.recovery-canvas-tools button[aria-pressed="true"], .recovery-canvas-tools button[aria-expanded="true"] { border-color: var(--recovery-teal); color: var(--recovery-teal); }
+.recovery-canvas-tools .recovery-input-navigator { top: 42px; left: 0; width: min(320px, calc(100vw - 150px)); max-height: min(480px, 60vh); }
+.recovery-canvas-tools .recovery-input-navigator > button { display: grid; grid-template-columns: minmax(0, 1fr); white-space: normal; }
+.recovery-input-navigator > button span, .recovery-input-navigator > button small { display: block; overflow-wrap: anywhere; }
+.workflow-recovery--redesign .recovery-inspector { display: flex; flex-direction: column; overflow: hidden; max-height: 100%; border-left: 1px solid var(--recovery-line); background: var(--color-surface-subtle); }
+.recovery-inspector__titlebar { display: flex; align-items: start; justify-content: space-between; gap: 10px; padding: 14px; border-bottom: 1px solid var(--recovery-line); }
+.recovery-inspector__titlebar h2 { margin: 5px 0; font-size: 16px; line-height: 1.35; }
+.recovery-inspector__titlebar small, .recovery-inspector__titlebar p { color: var(--recovery-muted); font-size: 11px; }
+.recovery-inspector__titlebar button { flex-shrink: 0; width: 30px; min-height: 30px; border: 1px solid var(--recovery-line); border-radius: 5px; background: transparent; cursor: pointer; }
+.workflow-recovery--redesign .recovery-inspector__tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; }
+.workflow-recovery--redesign .recovery-inspector__tabs button { padding: 10px 2px; font-size: 11px; }
+.workflow-recovery--redesign .recovery-inspector__body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; overscroll-behavior: contain; }
+.workflow-recovery--redesign .recovery-inspector__body section { gap: 13px; }
+.workflow-recovery--redesign .recovery-inspector__body label { gap: 7px; font-size: 12px; }
+.workflow-recovery--redesign .recovery-inspector__body input, .workflow-recovery--redesign .recovery-inspector__body textarea, .workflow-recovery--redesign .recovery-inspector__body select { font: 13px/1.5 var(--font-body); }
+.workflow-recovery--redesign .recovery-inspector__body select { width: 100%; padding: 8px; border: 1px solid var(--recovery-line); border-radius: 6px; background: var(--color-neutral); color: var(--color-primary); }
+.workflow-recovery--redesign .recovery-inspector__body button { font-size: 12px; }
+.workflow-recovery--redesign .recovery-inspector__hint, .workflow-recovery--redesign .recovery-inspector__body small, .workflow-recovery--redesign .recovery-port-card p { font-size: 11px; line-height: 1.5; }
+.workflow-recovery--redesign .recovery-inspector__field summary b { font-size: 12px; }
+.workflow-recovery--redesign .recovery-inspector__field summary span { font-size: 10px; }
+.recovery-run-drawer { flex: 0 0 auto; min-height: 38px; max-height: 30%; border: 1px solid var(--recovery-line); border-top: 0; background: var(--color-surface-subtle); overflow-y: auto; }
+.recovery-run-drawer > summary, .recovery-run-drawer > header { display: flex; align-items: center; gap: 14px; min-height: 38px; padding: 8px 16px; font-size: 12px; cursor: pointer; }
+.recovery-run-drawer summary small, .recovery-run-drawer header small { color: var(--recovery-muted); }
+.workflow-recovery--redesign .recovery-runbar { position: static; display: flex; flex-direction: row; flex-wrap: wrap; margin: 0; border: 0; border-top: 1px solid var(--recovery-line); border-radius: 0; box-shadow: none; padding: 12px 16px; }
+.workflow-recovery--redesign .recovery-runbar b, .workflow-recovery--redesign .recovery-runbar span { font-size: 12px; letter-spacing: 0; }
+.workflow-recovery--redesign .recovery-code { height: 100%; min-height: 0; }
+.workflow-recovery--redesign .recovery-code textarea { min-height: 0; padding: 18px; font-size: 13px; }
+.workflow-recovery--redesign .recovery-code footer { flex-wrap: wrap; font-size: 11px; }
+.workflow-recovery--redesign .recovery-proposal { position: relative; z-index: 16; inset: auto; flex: 0 1 auto; display: flex; flex-direction: column; min-height: 150px; max-height: 40%; width: 100%; margin: 0; overflow: hidden; border-radius: 0; box-shadow: none; }
+.workflow-recovery--redesign .recovery-proposal > header, .workflow-recovery--redesign .recovery-proposal > footer { position: static; flex: 0 0 auto; padding: 8px 14px; flex-direction: row; align-items: center; }
+.workflow-recovery--redesign .recovery-proposal h2 { font-size: 14px; }
+.workflow-recovery--redesign .recovery-proposal__grid { flex: 1 1 auto; min-height: 0; overflow: auto; grid-template-columns: 1fr 1fr 1.2fr; padding: 12px 14px; gap: 14px; }
+.workflow-recovery--redesign .recovery-proposal__grid ul, .workflow-recovery--redesign .recovery-proposal__grid p, .workflow-recovery--redesign .recovery-proposal__preview b { font-size: 12px; }
+.workflow-recovery--redesign .recovery-diagnostics { z-index: 20; max-height: 45%; overflow-y: auto; }
+
+/* Compact nodes reserve one real endpoint per port. Named rows are disclosed
+   when inspecting/connecting; they never merge different typed interfaces. */
+.recovery-canvas .react-flow__node { width: 220px; }
+.recovery-block { min-height: 88px; border-radius: 8px; background: color-mix(in srgb, var(--color-surface-subtle) 96%, var(--recovery-teal)); box-shadow: 0 4px 12px var(--recovery-shadow-color); transition: opacity .15s, border-color .15s; }
+.recovery-block > .recovery-block__heading { display: flex; align-items: center; justify-content: flex-start; gap: 9px; padding: 14px 12px 10px; }
+.recovery-block__icon { display: grid; place-items: center; width: 30px; height: 34px; flex-shrink: 0; border: 1px solid var(--recovery-line); border-radius: 5px; color: var(--recovery-muted); background: var(--color-neutral); }
+.recovery-block--review .recovery-block__icon { color: var(--recovery-violet); }
+.recovery-block__identity { min-width: 0; flex: 1; }
+.recovery-block__kind { font-size: 9px; letter-spacing: .08em; font-weight: 700; }
+.recovery-block h3 { margin: 3px 0 0; padding: 0; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.recovery-block > header .recovery-state { align-self: flex-start; min-width: 12px; padding: 0; border: 0; background: transparent; font-size: 10px; }
+.recovery-block__io-summary { padding: 0 12px 10px 51px; font-size: 10px; }
+.recovery-block__ports { top: 28px; bottom: 16px; }
+.recovery-block .recovery-component { margin: 0 10px 8px; padding: 0; border: 0; background: transparent; }
+.recovery-block .recovery-component header { padding: 0; }
+.recovery-block .recovery-component header strong { font-size: 10px; font-weight: 500; color: var(--recovery-muted); }
+.recovery-block .recovery-component button { padding: 3px 6px; font-size: 10px; }
+.recovery-block .recovery-component__targets { font-size: 10px; margin: 4px 0; padding: 0; }
+.recovery-block .recovery-block__gate { padding: 5px 12px; border-top: 1px solid var(--recovery-line); font-size: 10px; font-weight: 500; background: transparent; }
+.recovery-block.is-muted, .recovery-edge.is-muted { opacity: .23; }
+.recovery-edge.is-traced path.react-flow__edge-path { stroke-width: 3; }
+.recovery-edge[data-kind="decision"] path.react-flow__edge-path { stroke-width: 1.5; }
+.recovery-edge.is-feedback path.react-flow__edge-path { opacity: .6; stroke-width: 1.5; }
+.recovery-edge.is-selected path.react-flow__edge-path { opacity: 1; stroke-width: 3; }
+.recovery-port__tooltip { font-size: 12px; }
+.recovery-block[data-endpoints-visible="true"] .recovery-block__ports { position: relative; top: auto; bottom: auto; width: auto; padding: 0 12px; }
+.recovery-block[data-endpoints-visible="true"] .recovery-port { width: 100%; height: auto; min-height: 28px; display: flex; align-items: center; }
+.recovery-block[data-endpoints-visible="true"] .recovery-port__tooltip { position: static; display: block; max-width: 100%; padding: 5px 0; border: 0; background: transparent; transform: none; font-size: 11px; }
+.recovery-block[data-endpoints-visible="true"] .recovery-port--output { justify-content: flex-end; text-align: right; }
+.recovery-block[data-endpoints-visible="true"] .recovery-port--input .recovery-port__handle { left: -13px; }
+.recovery-block[data-endpoints-visible="true"] .recovery-port--output .recovery-port__handle { right: -13px; }
+.recovery-block[data-endpoints-visible="true"] .recovery-block__ports--inputs { border-top: 1px solid var(--recovery-line); }
+.recovery-block[data-endpoints-visible="true"] .recovery-block__ports--outputs { padding-bottom: 4px; }
+.recovery-block .recovery-port__handle { width: 9px !important; height: 9px !important; border-radius: 50% !important; border: 1px solid var(--color-neutral) !important; outline: 1px solid var(--recovery-teal); }
+.recovery-block .recovery-port__handle:hover, .recovery-block .recovery-port__handle:focus-visible { width: 12px !important; height: 12px !important; }
+.recovery-canvas .react-flow__controls { display: flex; flex-direction: row; bottom: 8px; left: 4px; }
+.recovery-canvas .react-flow__controls button { width: 32px; height: 32px; border-bottom: 0; border-right: 1px solid var(--recovery-line); font-size: 18px; }
+.recovery-canvas .react-flow__minimap { width: 156px; height: 98px; bottom: 0; right: 0; opacity: .9; }
+.recovery-canvas .react-flow__minimap svg { width: 100%; height: 100%; }
+.recovery-minimap-key { display: none; }
+.recovery-minimap-toggle { position: absolute; z-index: 8; right: 15px; bottom: 15px; min-width: 28px; min-height: 24px; padding: 3px 8px; border: 1px solid var(--recovery-line); border-radius: 4px; background: var(--color-surface-subtle); color: var(--recovery-muted); font-size: 11px !important; cursor: pointer; }
+.recovery-minimap-toggle.is-open { bottom: 88px; padding: 1px 6px; }
+.recovery-canvas__find { top: 54px; }
+
+@media (max-width: 1100px) {
+  .workflow-recovery--redesign .recovery-filebar { gap: 7px; padding: 7px 10px; }
+  .workflow-recovery--redesign .recovery-filebar__identity { flex-basis: 100%; }
+  .workflow-recovery--redesign .recovery-toolbar { justify-content: space-between; }
+  .workflow-recovery--redesign .recovery-workbench { grid-template-columns: 68px minmax(0, 1fr); }
+  .workflow-recovery--redesign .recovery-workbench--inspecting { grid-template-columns: 68px minmax(0, 1fr) 278px; }
+  .workflow-recovery--redesign .recovery-create-buttons { padding: 10px 6px; }
+  .recovery-create-group { min-height: 56px; }
+  .workflow-recovery--redesign .recovery-stage--split { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .workflow-recovery--redesign .recovery-workbench--inspecting { grid-template-columns: 58px minmax(0, 1fr); }
+  .workflow-recovery--redesign .recovery-workbench { grid-template-columns: 58px minmax(0, 1fr); }
+  .workflow-recovery--redesign .recovery-workbench--inspecting .recovery-inspector { position: absolute; z-index: 22; inset: 0 0 0 auto; width: min(300px, calc(100% - 58px)); box-shadow: var(--shadow-xl); }
+  .workflow-recovery--redesign .recovery-create-buttons { padding: 8px 4px; }
+  .recovery-create-group { min-height: 52px; font-size: 9px !important; }
+  .recovery-create-popover { left: 64px; width: calc(100% - 72px); }
+  .workflow-recovery--redesign .recovery-toolbar__actions { gap: 3px; }
+  .workflow-recovery--redesign .recovery-toolbar__actions button { min-height: 30px; padding: 5px 7px; }
+  .workflow-recovery--redesign .recovery-save-status { max-width: 130px; }
+  .recovery-canvas .react-flow__minimap { width: 110px; height: 74px; }
+  .recovery-minimap-toggle.is-open { bottom: 64px; }
+  .recovery-canvas-tools { top: 8px; left: 8px; gap: 5px; }
+  .recovery-canvas-tools button { font-size: 11px; padding: 6px 8px; }
+  .workflow-recovery--redesign .recovery-proposal__grid { grid-template-columns: 1fr; }
+  .workflow-recovery--redesign .recovery-proposal > footer button { width: auto; }
+}
+@media (max-height: 700px) { .recovery-create-buttons::after { display: block; position: sticky; bottom: 0; } }
+@media (prefers-reduced-motion: reduce) { .recovery-block { transition: none; } }
+
+.recovery-run-drawer__toggle { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 38px; padding: 8px 16px; border: 0; background: transparent; cursor: pointer; text-align: left; font-size: 12px !important; }
+.recovery-run-drawer__toggle b { flex-shrink: 0; font-weight: 600; }
+.recovery-run-drawer__toggle span { color: var(--recovery-muted); font-size: 11px; }
+.recovery-run-drawer__toggle span:last-child { margin-left: auto; }
+.recovery-run-drawer__body > p { margin: 0; padding: 8px 16px 16px; color: var(--recovery-muted); font-size: 12px; }
+.recovery-overview > p { font-size: 13px; line-height: 1.6; }
+.workflow-recovery--redesign .recovery-fact { gap: 14px; font-size: 12px; }
+.recovery-input-preview { padding: 12px; border: 1px solid var(--recovery-line); border-radius: 6px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.recovery-input-preview small { display: block; margin-top: 6px; color: var(--recovery-muted); }
+.recovery-input-editor { display: grid; min-width: 0; gap: 14px; padding: 12px; border: 1px solid var(--recovery-line); border-radius: 6px; }
+.recovery-input-editor legend { padding: 0 6px; font-size: 12px; }
+.recovery-parameter-add { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 6px; margin-top: 8px; }
+.recovery-port-connections { display: grid; gap: 7px; }
+.workflow-recovery--redesign .recovery-inspector .recovery-panel-heading { padding: 12px 14px; }
+.workflow-recovery--redesign .recovery-inspector .recovery-panel-heading h2 { font-size: 16px; line-height: 1.4; }
+.workflow-recovery--redesign .recovery-inspector .recovery-panel-heading small { font-size: 11px; }
+.recovery-create-template > span { font-size: 12px; color: var(--recovery-muted); line-height: 1.5; }
+@media (max-width: 760px) {
+  .recovery-run-drawer__toggle { gap: 8px; padding: 8px; }
+  .recovery-run-drawer__toggle > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+/* At real browser zoom, spend the reduced height on the editor rather than
+   repeated document metadata. Controls and Inspector content remain reachable. */
+@media (max-height: 550px) {
+  .workflow-recovery--redesign .recovery-filebar { gap: 5px 10px; padding: 5px 10px; }
+  .workflow-recovery--redesign .recovery-filebar__identity { flex: 1 1 180px; }
+  .workflow-recovery--redesign .recovery-filebar__identity h1 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .workflow-recovery--redesign .recovery-filebar__identity small { display: none; }
+  .workflow-recovery--redesign .recovery-toolbar { flex-basis: 100%; gap: 5px; }
+  .workflow-recovery--redesign .recovery-save-status { max-width: 110px; }
+  .workflow-recovery--redesign .recovery-inspector__titlebar { padding: 4px 10px; align-items: center; }
+  .workflow-recovery--redesign .recovery-inspector .recovery-panel-heading { padding: 4px 10px; }
+  .workflow-recovery--redesign .recovery-inspector .recovery-panel-heading h2 { font-size: 14px; margin: 0; }
+  .workflow-recovery--redesign .recovery-inspector .recovery-panel-heading small { display: none; }
+  .workflow-recovery--redesign .recovery-inspector__tabs button { padding: 6px 2px; }
+  .workflow-recovery--redesign .recovery-inspector__body { padding: 8px 10px; }
+  .recovery-create-buttons { padding-top: 5px; }
+  .recovery-run-drawer__toggle { min-height: 30px; padding-top: 4px; padding-bottom: 4px; }
 }

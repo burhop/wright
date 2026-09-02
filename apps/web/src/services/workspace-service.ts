@@ -1,6 +1,7 @@
 import { logger } from "./logger";
 import { hostAdapter } from "./host-adapter";
 import type { SelectOptions } from "./host-adapter/wright-desktop";
+import type { RecoveryLayout } from "../prototypes/workflow-recovery/model";
 
 const workspaceLogger = logger.child("WorkspaceService");
 
@@ -23,6 +24,9 @@ export interface WorkspaceWorkflowSourceDocument {
   metadata_authority: "wright_host";
   size_bytes: number;
   source: string;
+  layout?: RecoveryLayout | null;
+  layout_revision?: number;
+  layout_status?: "missing" | "current" | "stale";
 }
 
 export class WorkspaceWorkflowSourceNotFoundError extends Error {
@@ -670,6 +674,35 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async getWorkspaceWorkflowInputFiles(
+    sessionId: string,
+    workspaceId: string,
+  ): Promise<Array<{ path: string; name: string }>> {
+    // Deliberately do not use the desktop adapter's global workspace root.
+    // Listing grants no read or execution authority over these references.
+    const query = new URLSearchParams({ session_id: sessionId });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/input-files?${query.toString()}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Unable to list files in this workspace. Retry after checking workspace access.");
+    const result = await response.json() as { workspace_id?: unknown; files?: unknown };
+    if (result.workspace_id !== workspaceId) throw new Error("Wright returned files for a different workspace.");
+    if (!Array.isArray(result.files) || result.files.length > 20_000) throw new Error("Wright returned an invalid file list.");
+    const seen = new Set<string>();
+    return result.files.map((entry: unknown) => {
+      const file = entry as { path?: unknown; name?: unknown } | null;
+      if (!file || typeof file.path !== "string" || typeof file.name !== "string"
+        || file.path.length > 1024 || /[\\:\u0000-\u001f]/.test(file.path)
+        || file.path.split("/").some((part) => !part || part.startsWith("."))
+        || file.path.split("/").at(-1) !== file.name || seen.has(file.path)) {
+        throw new Error("Wright returned an invalid file reference.");
+      }
+      seen.add(file.path);
+      return { path: file.path, name: file.name };
+    });
+  }
+
   async createWorkspaceWorkflowSource(
     sessionId: string,
     path: string,
@@ -687,6 +720,9 @@ export class WorkspaceService {
         }),
       },
     );
+    if (response.status === 409) {
+      throw new Error("A workflow already exists with that name. Open it or choose another name.");
+    }
     if (!response.ok) {
       throw new Error("Unable to create this workflow file in the workspace.");
     }
@@ -700,6 +736,8 @@ export class WorkspaceService {
     expectedStorageRevision: number,
     expectedStorageDigest: string,
     semanticChangeValidated: boolean,
+    layout?: RecoveryLayout,
+    expectedLayoutRevision?: number,
   ): Promise<WorkspaceWorkflowSourceDocument> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflow-sources`,
@@ -713,6 +751,7 @@ export class WorkspaceService {
           expected_storage_revision: expectedStorageRevision,
           expected_storage_digest: expectedStorageDigest,
           semantic_change_validated: semanticChangeValidated,
+          ...(layout ? { layout, expected_layout_revision: expectedLayoutRevision ?? 0 } : {}),
         }),
       },
     );

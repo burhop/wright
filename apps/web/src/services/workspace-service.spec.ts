@@ -16,6 +16,27 @@ import {
 
 const digest = "d".repeat(64);
 
+describe("workflow input file choices", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+
+  it("uses the exact-session endpoint and returns scope-safe relative choices", async () => {
+    const files = [{ path: "design/requirements.md", name: "requirements.md" }];
+    mocks.fetch.mockResolvedValue(response({ workspace_id: "workspace-1", files }));
+    await expect(workspaceService.getWorkspaceWorkflowInputFiles("session 1", "workspace-1")).resolves.toEqual(files);
+    expect(mocks.fetch).toHaveBeenCalledWith(expect.stringContaining("/workflow-sources/input-files?session_id=session+1"), { cache: "no-store" });
+  });
+
+  it.each(["../outside.txt", "/outside.txt", "C:/secret.txt", ".env", "design/../../outside.txt", "design\\outside.txt"])("rejects unsafe returned path %s", async (path) => {
+    mocks.fetch.mockResolvedValue(response({ workspace_id: "workspace-1", files: [{ path, name: "outside.txt" }] }));
+    await expect(workspaceService.getWorkspaceWorkflowInputFiles("session-1", "workspace-1")).rejects.toThrow("invalid file");
+  });
+
+  it("rejects a response from another workspace", async () => {
+    mocks.fetch.mockResolvedValue(response({ workspace_id: "different", files: [] }));
+    await expect(workspaceService.getWorkspaceWorkflowInputFiles("session-1", "workspace-1")).rejects.toThrow("different workspace");
+  });
+});
+
 function response(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), {
     status,

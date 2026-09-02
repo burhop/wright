@@ -1,0 +1,13 @@
+{
+  "status": "in_progress",
+  "title": "Image-led native authoring catch-up",
+  "subjectCommit": null,
+  "subjectTree": null,
+  "reportRoot": null,
+  "reportUrl": null,
+  "applicationUrl": "http://127.0.0.1:5227/workspace/85cbd6b3-e9d1-474d-add2-36f6e95a7b51?workflow=canonical",
+  "summary": "The full 30-step working-tree authoring walkthrough passed. Final polish, committed-subject evidence and delivery verification are in progress.",
+  "screenshots": [],
+  "outsideGoal": ["T056 representative human study", "T058 benchmark qualification", "T060 production release"],
+  "executionLimit": "New templates are unbound drafts. Proposal and run are fixed local simulations, not live AI or engineering execution."
+}
