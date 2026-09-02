@@ -1,12 +1,108 @@
 import asyncio
 import io
 import json
+import threading
 
 import pytest
 from httpx import AsyncClient
 import sqlite3
 from api.config import DATABASE_PATH
 from agent_adapters.health_probe import HealthProbeResult
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "boundary", ["_settings_rows", "_hermes_profile_paths", "read_llm_summary"]
+)
+async def test_setup_discovery_does_not_block_api_health(client, monkeypatch, boundary):
+    from api.routers import setup
+
+    loop = asyncio.get_running_loop()
+    loop_thread = threading.get_ident()
+    entered = asyncio.Event()
+    release = threading.Event()
+    values = {
+        "_settings_rows": {},
+        "_hermes_profile_paths": (None, None),
+        "read_llm_summary": {},
+    }
+    for name, value in values.items():
+        monkeypatch.setattr(setup, name, lambda *args, result=value, **kwargs: result)
+
+    def blocked_discovery(*args, **kwargs):
+        loop.call_soon_threadsafe(entered.set)
+        assert threading.get_ident() != loop_thread, "discovery ran on request loop"
+        assert release.wait(3), "test did not release discovery"
+        return values[boundary]
+
+    monkeypatch.setattr(setup, boundary, blocked_discovery)
+    pending = asyncio.create_task(client.get("/api/setup/status"))
+    try:
+        await asyncio.wait_for(entered.wait(), 1)
+        health = await asyncio.wait_for(client.get("/api/health"), 1)
+        assert health.status_code == 200
+        assert not release.is_set()
+        assert not pending.done(), "setup completed before discovery was released"
+    finally:
+        release.set()
+        response = await pending
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("selection_path", "selection_body"),
+    [
+        ("/api/agent/active", {"agent": "openclaw"}),
+        (
+            "/api/setup/configure",
+            {"active_agent": "openclaw", "llm_api_url": "http://llm.local/v1"},
+        ),
+    ],
+)
+async def test_slow_setup_status_cannot_revert_newer_agent_selection(
+    client, monkeypatch, selection_path, selection_body
+):
+    from api.main import app
+    from api.routers import setup
+
+    app.state.agent_sync_manager.active_agent = "hermes"
+    loop = asyncio.get_running_loop()
+    entered = asyncio.Event()
+    release = threading.Event()
+
+    def blocked_profile_discovery():
+        # _read_setup_status has already read the old persisted selection.
+        loop.call_soon_threadsafe(entered.set)
+        assert release.wait(3), "test did not release discovery"
+        return None, None
+
+    monkeypatch.setattr(setup, "_hermes_profile_paths", blocked_profile_discovery)
+    monkeypatch.setattr(setup, "read_llm_summary", lambda *args, **kwargs: {})
+    pending = asyncio.create_task(client.get("/api/setup/status"))
+    try:
+        await asyncio.wait_for(entered.wait(), 1)
+        selected = await asyncio.wait_for(
+            client.post(selection_path, json=selection_body), 1
+        )
+        assert selected.status_code == 200
+        selected_engine = app.state.agent_engine
+        assert app.state.agent_sync_manager.active_agent == "openclaw"
+    finally:
+        release.set()
+        old_snapshot = await pending
+
+    assert old_snapshot.status_code == 200
+    assert old_snapshot.json()["active_agent"] == "hermes"
+    assert app.state.agent_sync_manager.active_agent == "openclaw"
+    assert app.state.agent_engine is selected_engine
+    with sqlite3.connect(DATABASE_PATH) as connection:
+        persisted = connection.execute(
+            "SELECT value FROM system_settings WHERE key = 'active_agent'"
+        ).fetchone()[0]
+    assert persisted == "openclaw"
+    fresh_snapshot = await client.get("/api/setup/status")
+    assert fresh_snapshot.json()["active_agent"] == "openclaw"
 
 
 def clear_setup_settings():

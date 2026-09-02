@@ -549,7 +549,9 @@ async def _hermes_json_request(
     # the gateway process Wright is connected to. Resolve authentication for
     # the running gateway independently. Otherwise a stale profile-local
     # API_SERVER_KEY can make model calls fail even while gateway health is OK.
-    settings = resolve_agent_api_settings("hermes")
+    # Discovery can synchronously invoke the Hermes CLI. Keep it off the HTTP
+    # loop while preserving a fresh read of gateway credentials on every call.
+    settings = await asyncio.to_thread(resolve_agent_api_settings, "hermes")
     headers = {"Accept": "application/json"}
     if settings.api_key:
         headers["Authorization"] = f"Bearer {settings.api_key}"

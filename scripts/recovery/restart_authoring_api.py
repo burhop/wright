@@ -20,17 +20,26 @@ import psutil
 
 BACKEND_SOURCE_FILES = (
     "apps/api/src/api/main.py",
+    "apps/api/src/api/routers/setup.py",
+    "apps/api/src/api/routers/agent.py",
     "apps/api/src/api/routers/workspace.py",
     "apps/api/src/api/schemas/workspace.py",
+    "packages/agent_adapters/src/agent_adapters/hermes.py",
+    "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "packages/workspace_service/src/workspace_service/workflow_sources.py",
 )
 OPERATOR_SOURCE_FILE = "scripts/recovery/restart_authoring_api.py"
 MODULE_SOURCE_FILES = {
     "api.main": "apps/api/src/api/main.py",
+    "api.routers.setup": "apps/api/src/api/routers/setup.py",
+    "api.routers.agent": "apps/api/src/api/routers/agent.py",
+    "agent_adapters.hermes": "packages/agent_adapters/src/agent_adapters/hermes.py",
+    "agent_adapters.hermes_config": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
     "workspace_service.workflow_sources": "packages/workspace_service/src/workspace_service/workflow_sources.py",
 }
 
-# Resolve the two leaf modules without importing either application package.
+# Resolve leaf modules without importing any application package, including
+# intermediate packages such as api.routers.
 # Python's normal site initialization is retained to match the API environment.
 MODULE_ORIGIN_PROBE = """
 import importlib.machinery
@@ -39,17 +48,20 @@ import json
 from pathlib import Path
 
 origins = {}
-for name in ("api.main", "workspace_service.workflow_sources"):
-    package = name.rsplit(".", 1)[0]
-    parent = importlib.util.find_spec(package)
-    if parent is None or parent.submodule_search_locations is None:
-        raise RuntimeError("Expected application package is unavailable")
-    leaf = importlib.machinery.PathFinder.find_spec(name, parent.submodule_search_locations)
+for name in __MODULE_NAMES__:
+    parts = name.split(".")
+    leaf = importlib.util.find_spec(parts[0])
+    for index in range(1, len(parts)):
+        if leaf is None or leaf.submodule_search_locations is None:
+            raise RuntimeError("Expected application package is unavailable")
+        leaf = importlib.machinery.PathFinder.find_spec(
+            ".".join(parts[:index + 1]), leaf.submodule_search_locations
+        )
     if leaf is None or leaf.origin is None:
         raise RuntimeError("Expected application source is unavailable")
     origins[name] = str(Path(leaf.origin).resolve())
 print(json.dumps(origins))
-"""
+""".replace("__MODULE_NAMES__", repr(tuple(MODULE_SOURCE_FILES)))
 
 
 def git_output(repo: Path, *args: str) -> str:
@@ -74,6 +86,7 @@ def snapshot_code_identity(repo: Path) -> dict[str, object]:
         "--exclude-standard",
         "--",
         "apps/api/src",
+        "packages/agent_adapters/src",
         "packages/workspace_service/src",
     ):
         raise RuntimeError("Restart provenance requires clean committed source")

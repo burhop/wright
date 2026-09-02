@@ -1,10 +1,56 @@
 import httpx
+import asyncio
 import json
+import threading
 import pytest
 import respx
 
 from agent_adapters.hermes import HermesAdapter
 from agent_adapters.base import AgentChatRequest
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("boundary", ["settings", "auth"])
+async def test_inference_discovery_keeps_event_loop_responsive(monkeypatch, boundary):
+    from agent_adapters import hermes
+
+    adapter = HermesAdapter("http://127.0.0.1:8642", "")
+    loop = asyncio.get_running_loop()
+    loop_thread = threading.get_ident()
+    entered = asyncio.Event()
+    release = threading.Event()
+    settings = {
+        "base_url": "https://chatgpt.com/backend-api/codex",
+        "health_url": "",
+        "api_key": "",
+        "provider": "openai-codex",
+        "config_path": "test-config.yaml",
+    }
+    monkeypatch.setattr(adapter, "_llm_settings_from_config", lambda: settings)
+    monkeypatch.setattr(hermes, "_openai_codex_auth_status", lambda path: (True, None))
+
+    def blocked_discovery(*args):
+        loop.call_soon_threadsafe(entered.set)
+        assert threading.get_ident() != loop_thread, "discovery ran on request loop"
+        assert release.wait(3), "test did not release discovery"
+        return settings if boundary == "settings" else (True, None)
+
+    if boundary == "settings":
+        monkeypatch.setattr(adapter, "_llm_settings_from_config", blocked_discovery)
+    else:
+        monkeypatch.setattr(hermes, "_openai_codex_auth_status", blocked_discovery)
+    pending = asyncio.create_task(adapter.check_llm_backend_health())
+    try:
+        await asyncio.wait_for(entered.wait(), 1)
+        # This continuation runs on the same loop before the blocking read is
+        # released; it cannot run if configuration discovery occupies the loop.
+        await asyncio.wait_for(asyncio.sleep(0), 1)
+        assert not release.is_set()
+        assert not pending.done(), "health completed before discovery release"
+    finally:
+        release.set()
+        result = await pending
+    assert result["state"] == "connected"
 
 
 @pytest.fixture(autouse=True)

@@ -1,6 +1,91 @@
 # Image-redesign implementation validation
 
-Status: exact-subject authoring assertions passed; independent visual review requires one output-preview repair and fresh capture before final acceptance.
+Status: image-led UI and modal repairs verified; a confirmed shared API event-loop stall is being repaired before fresh final acceptance.
+
+## Latest checkpoint: repeated multi-tab save delay under investigation
+
+Commit `629de4f2dd4d7eb33f295f3fd6771d329c5b2373`, tree
+`db4f6fde60f22f3cc4f1791404fe9b6fe8cd572f`, contains the preview wrapping,
+body-portal and backdrop-focus repairs. All **643 web tests pass** with
+`npm run test -- --maxWorkers=4` (177.42s), preserving every five-second test
+timeout; all **13 Chromium journeys**, current TypeScript/Vite build and the
+exact committed program validator pass. The controlled API restart preserved
+all seven workflow files and verified new listener57804 and the same subject.
+
+The fresh full walkthrough
+`20260902T232911Z-committed-acceptance-629de4f2-continuation-1` stopped at the
+second-tab save in step21 after 21 preceding grouped checks passed. It retained
+the unchanged five-second deadline and all stopped evidence. The save click was
+23:30:51.664Z; the browser stopped at23:30:57.205Z; journal/head publication
+occurred at23:30:57.896–57.931Z. The later stored revision is correct, but the
+response was not captured as successful in the stopped walkthrough.
+
+The publication span was about36ms; the unexplained delay preceded it. Other
+unrelated API requests also waited multiple seconds. A read-only frontend audit
+found no SSE connection leak and confirmed existing in-flight polling guards.
+The next check compares direct API versus browser/proxy timing to distinguish
+request queuing from server-side waiting. No timeout increase, dropped conflict
+assertion, fabricated success or blind acceptance rerun is authorized by this
+record. Final UI acceptance remains open until this recurring delay is resolved.
+
+### Confirmed shared event-loop cause
+
+The read-only two-tab timing probe recorded simultaneous independent direct
+API8018 and proxy5227 health requests taking 7.408/7.413s, versus earlier
+48–78ms reads. Explicit tab activation did not remove the delay. This rules out
+browser connection slots or the proxy as a sufficient explanation. It made no
+workflow changes and retained its trace and four raw/annotated diagnostic states.
+
+An isolated py-spy0.4.2 installation under `.local-run/api-profiler` then sampled
+API listener57804 for60s at25Hz, including idle threads, nonblocking and without
+local variables. Raw evidence: `.local-run/api-shared-stall-20260902.raw`.
+There are9,336 samples and7 nonblocking stack-read errors. The API MainThread
+was sampled128 times in `check_llm_backend_health` → `_llm_settings_from_config`
+→ `hermes_config_path` → `_hermes_config_command` → `subprocess.run` →
+`communicate`/`join`, plus5 samples during subprocess creation. This establishes
+real synchronous command discovery on the request event loop. It is not a
+precise continuous-duration measurement. The second diagnostic probe actually
+started after the profiler; no overlap between those runs is claimed.
+
+Code inspection finds the same synchronous discovery family called from async
+setup/status and model-option paths. The authorized repair preserves the public
+synchronous library APIs and all explicit-path/profile/environment/auth rules,
+but offloads discovery at async callers. No cache, credentials override, timeout
+increase, or fabricated health state is introduced. Event-controlled concurrency
+tests must prove health/ticker progress while discovery is still blocked.
+
+### Repair and startup-identity checks
+
+The initial offload implementation passed 55 focused compatibility/concurrency
+tests after six new cases failed before the repair. Independent code review
+then found a stale-write race: the offloaded setup status snapshot could write
+an older active-agent selection back to the runtime and database. Two actual
+endpoint regressions reproduced that race. The read-only status endpoint no
+longer writes selection state; startup and explicit configuration/selection
+retain that authority. Final regression and live timing outcomes follow below.
+
+The final five-file setup/model/health/config compatibility suite passed
+**57/57** (29.23s; 142 existing deprecation warnings), including both selection
+race cases. Independent read-only review reports no remaining actionable
+findings. Command: `.venv/Scripts/python.exe -m pytest
+apps/api/tests/test_setup_api.py apps/api/tests/test_agent_model_gateway_auth.py
+apps/api/tests/test_agent_health.py
+packages/agent_adapters/tests/test_hermes_gateway_adapter.py
+packages/agent_adapters/tests/test_hermes_config.py -q --basetemp
+.test-tmp/image-redesign-config-offload-race-green-20260902`.
+
+The separate source/layout/API/operator suite passed **125 tests, 5 explicit
+platform skips** (17.80s; 143 existing warnings), using the same four-file
+command recorded in `image-redesign-storage-review.md` and basetemp
+`.test-tmp/image-redesign-storage-offload-final-20260902`. No frontend code
+changed after the 643-test/13-browser/build checkpoint.
+
+The restart helper now fingerprints setup/model routes and Hermes configuration
+modules, and rejects untracked adapter source. Its module-origin probe resolves
+nested packages without importing application code. All **27 provenance tests**
+passed (0.42s), and Ruff/diff checks passed. A process-sandbox denial happened
+before the first test launch; the permitted identical local command passed.
+No API restart or repaired live-service success is claimed by these tests.
 
 Integration worktree: `D:/repos/wright/.local-run/epp-f02b-writer/wright`.
 Branch: `codex/080-canonical-workflow-recovery`. Baseline: `7e95b0c7`.

@@ -98,11 +98,10 @@ def test_code_identity_records_commit_tree_and_exact_source_hashes(
 
 def test_module_origin_validation_rejects_another_checkout(tmp_path):
     origins = {
-        "api.main": str(tmp_path / "elsewhere/api/main.py"),
-        "workspace_service.workflow_sources": str(
-            tmp_path / "elsewhere/workflow_sources.py"
-        ),
+        name: str(tmp_path / relative)
+        for name, relative in helper.MODULE_SOURCE_FILES.items()
     }
+    origins["api.main"] = str(tmp_path / "elsewhere/api/main.py")
     with pytest.raises(RuntimeError, match="expected checkout"):
         helper.validate_module_origins(tmp_path, origins)
 
@@ -153,6 +152,59 @@ def test_origin_probe_uses_same_runtime_environment_and_cwd_without_app_imports(
     assert "import workspace_service" not in args[3]
     assert "PathFinder.find_spec" in args[3]
     assert "PRIVATE_VALUE" not in str(result)
+
+
+def test_nested_module_origin_probe_never_imports_application_packages(
+    tmp_path, monkeypatch, capsys
+):
+    from importlib.machinery import ModuleSpec
+    import importlib.machinery
+    import importlib.util
+    import json
+
+    top_level_calls = []
+    nested_calls = []
+
+    def package_spec(name):
+        spec = ModuleSpec(name, None, is_package=True)
+        spec.submodule_search_locations = [str(tmp_path / name.replace(".", "/"))]
+        return spec
+
+    def top_level(name):
+        assert "." not in name, "Dotted util.find_spec would import the parent"
+        top_level_calls.append(name)
+        return package_spec(name)
+
+    def nested(name, parent_paths):
+        parent = name.rsplit(".", 1)[0]
+        assert parent_paths == [str(tmp_path / parent.replace(".", "/"))]
+        nested_calls.append(name)
+        if name in helper.MODULE_SOURCE_FILES:
+            return ModuleSpec(name, None, origin=str(tmp_path / helper.MODULE_SOURCE_FILES[name]))
+        return package_spec(name)
+
+    monkeypatch.setattr(importlib.util, "find_spec", top_level)
+    monkeypatch.setattr(importlib.machinery.PathFinder, "find_spec", nested)
+    exec(helper.MODULE_ORIGIN_PROBE, {})
+    origins = json.loads(capsys.readouterr().out)
+    assert origins == {
+        name: str((tmp_path / relative).resolve())
+        for name, relative in helper.MODULE_SOURCE_FILES.items()
+    }
+    assert set(top_level_calls) == {"api", "agent_adapters", "workspace_service"}
+    assert "api.routers" in nested_calls
+
+
+def test_untracked_adapter_source_prevents_provenance(tmp_path, monkeypatch):
+    def git(_repo, *args):
+        if "--others" in args:
+            assert "packages/agent_adapters/src" in args
+            return "packages/agent_adapters/src/shadow.py"
+        return ""
+
+    monkeypatch.setattr(helper, "git_output", git)
+    with pytest.raises(RuntimeError, match="clean committed"):
+        helper.snapshot_code_identity(tmp_path)
 
 
 def test_code_change_during_origin_probe_is_rejected(tmp_path, monkeypatch):

@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 import os
 import re
@@ -268,8 +269,12 @@ def _start_codex_login_job() -> _CodexLoginJob:
     return job
 
 
-@router.get("/status", response_model=SetupStatusResponse)
-async def get_setup_status(request: Request):
+def _read_setup_status() -> SetupStatusResponse:
+    """Read the current configuration without occupying the HTTP event loop.
+
+    Hermes path discovery may invoke its CLI. Keep discovery and configuration
+    reads together on a worker; do not cache credentials or profile selection.
+    """
     llm_api_url = None
     active_agent = "hermes"
     registry = default_agent_registry()
@@ -305,13 +310,6 @@ async def get_setup_status(request: Request):
     except UnsupportedAgentRuntimeError:
         active_agent = registry.default_provider().name
 
-    # If active_agent in app state is different, sync it
-    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if sync_manager:
-        # Sync active_agent back and forth
-        if active_agent != sync_manager.active_agent:
-            sync_manager.active_agent = active_agent
-
     launched_by_hermes = os.getenv("WRIGHT_LAUNCHED_BY_HERMES", "").strip().lower() in {
         "1",
         "true",
@@ -338,6 +336,14 @@ async def get_setup_status(request: Request):
         llm_configured=llm_configured,
         llm_auth_configured=bool(llm_summary.get("auth_configured")),
     )
+
+
+@router.get("/status", response_model=SetupStatusResponse)
+async def get_setup_status():
+    # This is a read-only snapshot. Startup and explicit configuration/agent
+    # selection own runtime updates; a delayed read must not restore an older
+    # selection (the sync manager setter also writes that selection to SQLite).
+    return await asyncio.to_thread(_read_setup_status)
 
 
 @router.post("/configure", response_model=ConfigureResponse)
