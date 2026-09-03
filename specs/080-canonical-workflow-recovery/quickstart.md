@@ -40,8 +40,10 @@ Run details expand below the canvas, never over it. The Create rail and details
 scroll internally on short windows; the document stays inside the viewport.
 
 Tests, failed continuations and review findings are recorded under
-`evidence/image-redesign-*`. The 32-step committed authoring journey passed;
-one output-preview wrapping refinement is being checked before final acceptance.
+`evidence/image-redesign-*`. The final32-step committed authoring journey passes
+on `af069122`, including repaired previews, actual200% zoom and multi-tab saves.
+The local API responsiveness repair preserves configuration/authentication
+semantics; it does not make unbound templates executable.
 The older web/correction counts and reports below are historical, not evidence
 that the new redesign is complete.
 

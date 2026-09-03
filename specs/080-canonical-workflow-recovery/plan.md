@@ -43,6 +43,14 @@ continuations preserve failures. No waiting for optional hooks, repeated visual
 approval, external human participants, benchmark decisions or release authority.
 Those external gates remain open, not waived.
 
+Implemented candidate: `af0691229e39a8b1b80db0ed7eaa44caaf765f31`, verified
+by a fresh32-step real-API authoring/responsive walkthrough. The final repair
+offloads blocking Hermes configuration discovery from async request/health
+paths; read-only status never rewrites a newer agent selection. Configuration
+precedence and authentication remain unchanged. Exact-source evidence and final
+delivery are recorded in `evidence/image-redesign-delivery.json`; failed
+continuations remain intact and historical gates remain outside this local goal.
+
 Ownership: the integration writer owns CSS, canvas rendering, integration and
 evidence; bounded agents may own the host component, new pure authoring helpers,
 or workspace input adapters in disjoint files. No concurrent shared-file edits

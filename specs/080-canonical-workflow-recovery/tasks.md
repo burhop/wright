@@ -235,10 +235,10 @@
 - [x] T086 [US2] Complete real persistent text/file configuration, generic draft template creation, safe deletion and graph/source round-trip of new objects through `authoring-objects.ts`, `recovery-authoring.ts`, `command-system.ts` and focused tests without a second model
 - [x] T087 [US3] Preserve review-only proposal acceptance/rejection and explicit unbound/simulated limitations in `WorkflowRecoveryConcept.tsx` and focused tests; remove misleading control labels and fabricated status claims
 - [x] T088 [US4] Preserve supported simulated run/recovery/output lineage and implement non-overlay bottom details in `WorkflowRecoveryConcept.tsx` and browser tests
-- [ ] T089 [US5] Capture early shell and final matched-image/1537×791/1070×791/narrow/200%-zoom visual states, repair legibility and interaction failures, and obtain independent internal review in `artifacts/ui-walkthrough/image-redesign/` and `evidence/image-redesign-review.md`
-- [ ] T090 Run focused and proportionate broader conformance/API/service/web/build/browser/accessibility/freeze checks; record exact commands and outcomes in `evidence/image-redesign-validation.md`
-- [ ] T091 Create coherent local implementation commit and fresh exact-subject raw/annotated walkthrough, trace, diagnostics, manifest and validated report with the served-code/workspace identity verified in `scripts/recovery/` and `artifacts/ui-walkthrough/image-redesign/`
-- [ ] T092 Refresh capability/parity/quickstart/Spec Kit analysis and live dashboard for the actual redesign; leave the verified application running and record exact URL, screenshots, remaining limitations and delivery state in `evidence/image-redesign-checklist.md`
+- [x] T089 [US5] Capture early shell and final matched-image/1537×791/1070×791/narrow/200%-zoom visual states, repair legibility and interaction failures, and obtain independent internal review in `artifacts/ui-walkthrough/image-redesign/` and `evidence/image-redesign-review.md`
+- [x] T090 Run focused and proportionate broader conformance/API/service/web/build/browser/accessibility/freeze checks; record exact commands and outcomes in `evidence/image-redesign-validation.md`
+- [x] T091 Create coherent local implementation commit and fresh exact-subject raw/annotated walkthrough, trace, diagnostics, manifest and validated report with the served-code/workspace identity verified in `scripts/recovery/` and `artifacts/ui-walkthrough/image-redesign/`
+- [x] T092 Refresh capability/parity/quickstart/Spec Kit analysis and live dashboard for the actual redesign; leave the verified application running and record exact URL, screenshots, remaining limitations and delivery state in `evidence/image-redesign-checklist.md`
 
 T081 precedes product changes. T082/T083/T084/T085 use disjoint files and may
 proceed in parallel; an early integrated T083/T084 shell is inspected before

@@ -1,10 +1,43 @@
 # Image-led native authoring: internal review
 
-Status: two independent visual passes completed; the exact-subject pass found one final output-preview overflow to repair.
+Status: final independent internal visual acceptance passed; no remaining material P1/P2 findings in the reviewed scope.
 
-This is an independent AI-agent screenshot/code review, not a human usability
+This records separately delegated internal AI-agent screenshot/code reviews, not a human usability
 study, benchmark, engineering validation, or product-owner signoff on a final
 subject. Authorization comes from the user's 2026-09-02 goal, not this review.
+
+## Final repaired subject
+
+Commit `af0691229e39a8b1b80db0ed7eaa44caaf765f31` passes32/32 in
+`20260903T000131Z-committed-acceptance-af069122-continuation-1`.
+The integration writer inspected its matched-image canvas and actual200% modal
+and Settings images. The preview is above host chrome, both complete action
+labels are readable and reachable, and the Inspector Apply control is available
+through its own scrolling. The modal/header/label regression checks pass at
+1537/1070/830px and actual200% tab zoom. Previous failed screenshots are retained.
+The separately delegated review agent then personally inspected the matched image,
+1537/1070/830 Inspector states, delete dialog, all four output-modal sizes, and
+actual200% Settings/Apply/collapsed-canvas states. It confirmed the approved v2
+hierarchy, readable full filenames/checksums/provenance/actions, unobscured modal
+header/Close and real zoom metadata. It reported no remaining material P1/P2
+findings. This final review was read-only and made no product changes. That agent
+had authored the earlier modal CSS and browser-regression repair, so this pass
+is not wholly implementation-independent for those files. The integration writer
+and separate walkthrough owner also inspected the repaired modal, as recorded
+below. It is internal visual acceptance, not a new human study or production
+qualification.
+
+A further reviewer independently opened the approved image and final matched
+canvas,830px preview, actual200% preview and200% Settings/Apply screenshot,
+without relying on the earlier review text. It found no material visual gap and
+verified the four final PNG hashes against this subject's manifest. It noted that
+the real graph is denser than the illustration because its exact connections and
+approval paths remain visible; the approved hierarchy and direction are retained.
+The200% Settings image proves the internally scrolled Apply state, not simultaneous
+visibility of all fields. This reviewer authored workspace chrome/adapters,
+storage and API changes, but not the renderer, workflow/modal CSS, portal or focus
+repair. Its review is independent of those implementations, not of the entire
+project. No files were changed by either final review.
 
 ## Early browser checkpoint
 

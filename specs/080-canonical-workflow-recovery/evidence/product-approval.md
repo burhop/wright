@@ -19,6 +19,13 @@ No reviewer identity, formal title, reviewer timestamp, execution result or
 production-readiness approval is inferred. Push/merge/release and material
 direction changes remain outside this authorization.
 
+The final image-led implementation subject is
+`af0691229e39a8b1b80db0ed7eaa44caaf765f31` / tree
+`bd308b0bb73c810caead38435944a1314d19a866`. Its32-step exact-subject walkthrough
+and independent internal visual review verify consistency with that approved
+direction. The user's original message remains the human authorization; this
+does not invent a new personal review of the final code or amend frozen T051.
+
 ## Historical T051 decision (preserved)
 
 ## Decision

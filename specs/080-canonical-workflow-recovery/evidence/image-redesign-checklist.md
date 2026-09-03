@@ -1,6 +1,6 @@
 # Image-led catch-up: design-to-implementation checklist
 
-Status: 32-step authoring checks passed; final visual-review repair and dashboard handoff remain. Created 2026-09-02.
+Status: local image-led UI/authoring catch-up complete; all T081–T092 passed. Created 2026-09-02; final capture UTC2026-09-03 (2026-09-02 EDT).
 
 The exact user goal is attachment `690b7c98-cea6-44cc-bb49-9e5c4b726a85/pasted-text.txt`.
 Selected image: `D:/repos/wright/artifacts/ui-redesign/wright-workflow-editor-object-palette-v2.png`.
@@ -14,11 +14,11 @@ Prior code/evidence checkpoint: `7e95b0c748975df247effb4bc70f1f67f92a8e81`.
 | Dominant canvas | Two fixed side columns plus agent pane | CSS + workspace + renderer | Primary image at 1536×1024; 1537/1070/830 widths; actual browser zoom 2.0 | Passed |
 | Contextual Inspector | Fixed five-tab detail column | Host input/settings/port UI | Collapse/reopen, real text/files/settings, visible error buffers, Apply reachable at 200% | Passed |
 | Clear compact nodes/ports | Partial decluttering only | Renderer + CSS | Readable names, small targets, exact multi-I/O/fan-out/rejection and path focus | Passed |
-| Compact toolbar/bottom details | Separate bars and floating run overlay | Host + CSS | Reachable actions and bottom details pass; output-preview long-text clipping repair pending | Follow-up |
+| Compact toolbar/bottom details | Separate bars and floating run overlay | Host + CSS | Reachable actions, contained text, overlay/focus and actual200% preview checks pass | Passed |
 | Real authored input | Filename substitution and ephemeral demo state | Helpers + page file adapter + source | Typed text/permitted file references persist after exact source/layout save and reload | Passed |
 | Complete native authoring | Generic additions/reopen not proven | Helpers + source + commands | Add/configure/connect/delete/undo/source/CAS conflict/compare/reload pass | Passed |
 | Truthful proposal/run | Existing bounded simulations | Host + tests | Original preserved; unsupported topology blocked; fixture proposal/run explicitly labeled | Passed |
-| Actual delivery | Old tests/dashboard imply catch-up | Capture + docs/dashboard | New exact subject, served code, validated report, working URL | Pending |
+| Actual delivery | Old tests/dashboard imply catch-up | Capture + docs/dashboard | Exact subject/served code, validated report and live desktop/mobile dashboard links verified | Passed |
 
 ## Authority and safeguards
 
@@ -46,31 +46,49 @@ Prior code/evidence checkpoint: `7e95b0c748975df247effb4bc70f1f67f92a8e81`.
 
 ## Reviewed subject / application / report
 
-Implementation: `4cfab9ba8091b766805e00157739204675385c0c`, tree
-`93bc29cabb266f454efa5f6157e31fd302789ce1`.
+Implementation: `af0691229e39a8b1b80db0ed7eaa44caaf765f31`, tree
+`bd308b0bb73c810caead38435944a1314d19a866`.
 
 Application: `http://127.0.0.1:5227/workspace/85cbd6b3-e9d1-474d-add2-36f6e95a7b51?workflow=canonical`.
 This is **Wright workflow evidence**, with the original example preserved. The
 acceptance journey created a separate named document;
-`workflows/image-redesign-acceptance-20260902t225850z.workflow.wflow` retains the
+`workflows/image-redesign-acceptance-20260903t000131z.workflow.wflow` retains the
 authored configuration and connections.
 
 Report: `http://127.0.0.1:8765/evidence/image-redesign/report.html`.
-Artifact root: `artifacts/ui-walkthrough/image-redesign/20260902T225850Z-committed-acceptance-4cfab9ba-continuation-2/`.
-Manifest SHA-256: `14a581fc0259daa335482bc8062e028dbc71f5b9b5a0ed41a1d94723d8e67e91`.
-Result: 32/32 checks; 83 raw + 83 annotated screenshots; 184 verified manifest
-files; 115,639,279-byte trace; no unexpected browser diagnostics. The deliberately
+Artifact root: `artifacts/ui-walkthrough/image-redesign/20260903T000131Z-committed-acceptance-af069122-continuation-1/`.
+Manifest SHA-256: `c51638c26a431c0f195027825a69b1fc774bc127b6978200e3070b6366ed65e7`.
+Result: 32/32 checks; 87 raw + 87 annotated screenshots; 200 manifest-bound
+files; 112,515,138-byte trace; no unexpected browser diagnostics. The deliberately
 induced stale-save 409 and its browser resource error remain explicitly recorded.
 
 All 14 required browser-loaded frontend module sources match the commit after
-CRLF-to-LF normalization only. API listener 36544 was restarted from the same
-commit with verified module origins/backend hashes and five existing workflow
+CRLF-to-LF normalization only. API listener60044 was restarted from the same
+commit with six verified module origins/backend hashes and eight existing workflow
 files unchanged. Backend evidence:
-`.local-run/image-redesign-committed-api-4cfab9ba/verification.json`.
+`.local-run/image-redesign-committed-api-af069122/verification.json`.
 
-The earlier final continuation's five-second second-tab save cutoff is preserved.
-The write was subsequently verified on disk; response completion was not captured.
-The fresh continuation passed unchanged, without relaxing its timeout.
+The earlier five-second second-tab save failures are preserved. Their later
+writes do not retroactively count as captured successes. Direct/proxy timing and
+stack evidence identified synchronous CLI discovery blocking the API event loop;
+offloading and a read-only status endpoint repaired it. The final continuation
+passes the unchanged deadline; no timeout increase or false health was introduced.
+
+Dashboard preflight `20260903T001049230Z-preflight` verified the exact implementation,
+fresh report/images/app link, zero desktop/mobile overflow, and the honest88/92
+pre-closure ledger. Its independent report-control record
+`artifacts/dashboard-image-redesign-report-checks/20260903T001137864Z-preflight/`
+verified all15 hashes and8 image controls, Close/Escape and zero diagnostics.
+Only after that evidence was T092 closed. The post-closure strict89/92 record
+`artifacts/dashboard-image-redesign-verification/20260903T001532131Z-complete/`
+also passes: zero desktop/mobile overflow or diagnostics; exact subject,
+report/images/application links; frozen27/38 and customerReady=false. It is linked
+in `image-redesign-delivery.json` without rewriting historical dashboard evidence.
+
+T056/T058/T060 remain open outside this local goal. New templates are configurable
+unbound drafts; proposals/runs/output downloads remain explicitly fixed examples.
+Five platform-specific storage tests remain skipped, not passed. No push, merge,
+release, customer action, new human-study claim or live engineering result occurred.
 
 ## Implementation checkpoint — 2026-09-02
 

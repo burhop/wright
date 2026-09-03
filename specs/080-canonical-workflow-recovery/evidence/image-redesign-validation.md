@@ -1,8 +1,81 @@
 # Image-redesign implementation validation
 
-Status: image-led UI and modal repairs verified; a confirmed shared API event-loop stall is being repaired before fresh final acceptance.
+Status: local implementation, exact-subject authoring, responsive acceptance and strict final dashboard verification passed.
 
-## Latest checkpoint: repeated multi-tab save delay under investigation
+## Final implementation acceptance
+
+Implementation commit `af0691229e39a8b1b80db0ed7eaa44caaf765f31`, tree
+`bd308b0bb73c810caead38435944a1314d19a866`, passes all **32/32** real-browser
+checks in `20260903T000131Z-committed-acceptance-af069122-continuation-1`.
+The unchanged five-second stale-tab save/conflict gate passes. Real text and
+workspace file references, independent objects, configuration, exact typed
+connections/fan-out, rejected mismatch, live drag, atomic Source/history,
+delete/cancel/undo and source/layout save/reopen are exercised without mocks.
+
+The API restart bound this commit/tree and six module origins to listener60044,
+preserving all eight existing workflow documents. Original source SHA remains
+`48ced69b2fc0530f5b39bd349bb8c32a2507ca5513ae173a20c88534c529b411`.
+The identical two-tab read-only diagnostic completed **82 requests** across
+direct and proxied routes, all
+HTTP200 and no errors, with direct/proxy maxima **77/131ms**, versus the earlier
+7.408/7.413s stalls. This is a bounded local responsiveness check, not a benchmark.
+Artifact: `20260903T000000Z-two-tab-postfix-af069122`.
+
+Output-preview full text, header, Close and action hit targets pass at1537,
+1070 and830px and actual tab zoom2.0. The effective768×395 viewport at DPR2 has
+no document overflow; Inspector Apply is reachable by internal scrolling.
+The matched1536×1024 image and1537×791/1070×791/830×791 states retain the selected
+design's hierarchy without collapsing distinct port identities.
+
+Evidence contains87 raw and87 annotated screenshots, a112,515,138-byte trace,
+200 manifest-bound files and14 served frontend source modules. Manifest SHA:
+`c51638c26a431c0f195027825a69b1fc774bc127b6978200e3070b6366ed65e7`.
+Only the intentional stale-save409 and its browser resource diagnostic are
+expected. Program validation passes for this commit; program tree remains
+`047a330be53cd7565895dbc6eb7a4fadc012f2dd`. The correct frozen
+`specs/079-visual-workflow-composition/tasks.md` is unchanged from `b4a7e996`.
+
+The skill's report validator passes. Separate read-only audit
+`.local-run/image-redesign-report-audit-af069122/verification.json` verifies
+all200 manifest hashes and opens/decodes all174 raw/annotated report images;
+Escape/Close work and no audit browser errors occur. The post-fix diagnostic
+report's19 hashes and8 image controls also pass. Final trace records successful
+save responses at79.216ms and61.957ms, then the intended stale409 at123.633ms.
+These are actual captured responses, unlike the earlier post-stop observations.
+
+Final product suites:643 web tests,13 Chromium journeys, TypeScript/Vite build,
+125 storage/API/operator tests with5 platform skips,57 config/health/concurrency
+tests, and56 recovery tests. Exact commands, prior failures and skip reasons
+remain below and in `image-redesign-storage-review.md`. No frontend code changed
+after its broad checkpoint. The API repair adds bounded read-only offloading,
+not cache/credential changes or a raised test deadline.
+
+Final evidence-refresh checks: recovery suite56/56 (10.12s), capability
+audit890/890 source rows and33/33 capabilities, no omissions. Desktop1440×1100
+and mobile390×844 dashboard preflight passes with zero overflow/diagnostics,
+current commit/tree/report/images/app route and88/92 before T092 closure.
+The15-file/8-image report audit and both skill validators pass. A sandbox-only
+Chromium spawn denial occurred before the first preflight navigated; its failed
+directory is preserved and the unchanged authorized continuation passed.
+
+Strict post-closure dashboard verification
+`artifacts/dashboard-image-redesign-verification/20260903T001532131Z-complete/`
+passes89/92 with only T056/T058/T060 open, frozen27/38, customerReady=false,
+correct af069122 identity, fresh32-step/200-file report and app links, and zero
+desktop/mobile overflow or diagnostics. Separate
+`artifacts/dashboard-image-redesign-report-checks/20260903T001600456Z-complete/`
+verifies all15 hashes and8 raw/annotated image controls, Close/Escape and both
+report validators without altering originals.
+
+`image-redesign-recovery-audit.json` passes all seven legacy recovery audit
+objectives, with no findings and the new dashboard evidence pointer. Its
+`goal_complete:false` / `blocked_external` fields describe the broader historical
+recovery/release scope, not this explicitly bounded local image-led authoring
+goal. T056/T058/T060 are preserved, not silently completed. The audit records
+that documentation was still dirty and local artifact directories untracked at
+generation; it does not claim all evidence bytes were committed.
+
+## Preserved failed checkpoint: repeated multi-tab save delay
 
 Commit `629de4f2dd4d7eb33f295f3fd6771d329c5b2373`, tree
 `db4f6fde60f22f3cc4f1791404fe9b6fe8cd572f`, contains the preview wrapping,

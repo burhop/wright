@@ -12,7 +12,13 @@ object-palette image. The active amendment is FR-058–FR-066 / T081–T092.
 | Canvas dominates workspace | Agent pane closed by default, full-width page, readable initial zoom, collapsible Inspector/run details/minimap | Independent matched-image review and 1537/1070/830 widths plus actual 200% passed |
 | Small distinct interfaces and traceable flow | Named endpoint disclosure, independent exact handles, optional focus-path dimming | Browser exact connections/fan-out/rejection and held-pointer live drag passed |
 | Editable engineering Source and one file per workflow | Existing parser/commands retained; named files, scalar input configuration, separate versioned positions | Graph/Source invalid containment/history/source+layout reopen/conflict passed |
-| Truthful proposal/run states | Example suggestion and fixed local simulation; unbound templates do not execute | Functional simulation/proposal passed; output-preview text wrapping follow-up remains |
+| Truthful proposal/run states | Example suggestion and fixed local simulation; unbound templates do not execute | Proposal/simulation and repaired preview text/overlay/focus pass, including actual200% zoom |
+
+Final implementation `af0691229e39a8b1b80db0ed7eaa44caaf765f31` passes all32
+checks in `20260903T000131Z-committed-acceptance-af069122-continuation-1`.
+The separately diagnosed API event-loop stall is repaired; multi-tab save/conflict
+passes its original deadline. No renderer model or engineering execution scope
+was changed by that repair.
 
 Independent findings, repairs and current evidence are tracked in
 `evidence/image-redesign-checklist.md`, `evidence/image-redesign-review.md`, and
