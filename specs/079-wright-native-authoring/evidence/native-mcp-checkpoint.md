@@ -16,7 +16,7 @@ descriptor. Neither starts a server or invokes a tool.
 Every check revalidates the managed session, current enabled catalog identity,
 exact input/output schema digests, and gateway policy. Native code supplies no
 approval grants. Tools requiring an unresolved approval are unavailable to this
-milestone. An opt-in `GatewayService.before_dispatch` callback repeats the
+milestone. An opt-in `GatewayService.dispatch_guard` callback repeats the
 checks after lazy startup refreshes the catalog, immediately before gateway
 forwarding. Existing callers without that callback preserve their behavior.
 The real engine still applies its existing credential and safety policy gates.

@@ -7,6 +7,7 @@ native integration evidence, not clean-container catalog qualification.
 from __future__ import annotations
 
 import hashlib
+import asyncio
 import json
 import os
 import sys
@@ -15,6 +16,9 @@ from pathlib import Path
 
 import pytest
 from core.redaction import redact_mapping
+from core.native_process import language_contract, validate_definition
+from data_vault.native_process_runs import NativeRunRepository, TERMINAL_STATES
+from data_vault.native_process_artifacts import NativeArtifactStore
 from data_vault import GatewayRepository, upgrade_database
 from data_vault.secret_provider import FileSecretProvider
 from data_vault.workspace_repository import WorkspaceRepository
@@ -31,7 +35,9 @@ from tool_registry.manager import McpEngine
 from tool_registry.models import McpServer, McpTool
 from tool_registry.runners.stdio import StdioRunner
 from workspace_service.native_process_mcp import NativeMcpAdapter
+from workspace_service.native_process_runtime import NativeRuntime
 from workspace_service.service import WorkspaceService
+from workspace_service.workspace_path import WorkspacePath
 
 
 pytestmark = [
@@ -44,7 +50,10 @@ pytestmark = [
 
 
 @pytest.mark.asyncio
-async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "via_process", [False, True], ids=["adapter", "native-process-artifact"]
+)
+async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch, via_process):
     monkeypatch.delenv("WRIGHT_TESTING", raising=False)
     database = str(tmp_path / "state.db")
     workspace = tmp_path / "workspace"
@@ -121,6 +130,8 @@ async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
     )
     adapter = NativeMcpAdapter(gateway, workspaces.require_safe_session_workspace)
     process = None
+    runtime = None
+    run_evidence = None
     try:
         descriptor = adapter.discover("native-proof-session")["bindings"][0]
         binding = {
@@ -135,13 +146,72 @@ async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
         adapter.preflight("native-proof-session", binding)
         assert engine.lifecycle.runner_for("native-proof") is None
         assert not transcript.exists()
-        result = await adapter.call(
-            "native-proof-session",
-            binding,
-            {"value": 0.5},
-            3,
-            "native-local-protocol-trace",
-        )
+        if via_process:
+            run_repository = NativeRunRepository(database)
+
+            def scope(session_id):
+                current = workspaces.require_safe_session_workspace(session_id)
+                return current["workspace_id"], WorkspacePath(current["local_path"])
+
+            runtime = NativeRuntime(run_repository, scope, mcp=adapter)
+            runtime.ensure_owner()
+            definition = _native_tool_definition()
+            saved = run_repository.save(
+                "native-proof-workspace",
+                validate_definition(definition),
+                {},
+                request_id="save-proof",
+                expected_token=None,
+                trace_id="native-save-proof",
+            )
+            queued = run_repository.create_run(
+                "native-proof-workspace",
+                definition["id"],
+                session_id="native-proof-session",
+                expected_token=saved["token"],
+                request_id="run-proof",
+                bindings={"step-1": binding},
+                timeout_seconds=15,
+                derived_from_run_id=None,
+                actor="engineer",
+                trace_id="native-local-protocol-trace",
+            )
+            runtime.enqueue(
+                "native-proof-workspace", "native-proof-session", queued["run_id"]
+            )
+            async with asyncio.timeout(20):
+                while (
+                    run_repository.summary("native-proof-workspace", queued["run_id"])[
+                        "state"
+                    ]
+                    not in TERMINAL_STATES
+                ):
+                    await asyncio.sleep(0.02)
+            run_evidence = run_repository.inspect(
+                "native-proof-workspace", queued["run_id"]
+            )
+            assert run_evidence["state"] == "succeeded", run_evidence["reason"]
+            artifact = run_repository.artifact(
+                "native-proof-workspace",
+                queued["run_id"],
+                run_evidence["artifacts"][0]["artifact_id"],
+            )
+            content = NativeArtifactStore(WorkspacePath(workspace)).read(artifact)
+            assert content == b'{"value":1.25}'
+            assert artifact["provenance"]["semantic_digest"] == saved["semantic_digest"]
+            assert artifact["provenance"]["run_id"] == queued["run_id"]
+            assert run_evidence["steps"][-1]["outputs"] == {
+                "step-3-text": '{"value":1.25}'
+            }
+            result = content.decode("utf-8")
+        else:
+            result = await adapter.call(
+                "native-proof-session",
+                binding,
+                {"value": 0.5},
+                3,
+                "native-local-protocol-trace",
+            )
         assert result == '{"value":1.25}'
         runner = engine.lifecycle.runner_for("native-proof")
         assert isinstance(runner, StdioRunner)
@@ -194,6 +264,7 @@ async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
                 "protocol": messages,
                 "binding": binding,
                 "native_result_text": result,
+                "native_run": run_evidence,
                 "fixture_content_sha256": hashlib.sha256(original_data).hexdigest(),
                 "fixture_unchanged": True,
                 "audit": [
@@ -213,6 +284,8 @@ async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
             }
         )
     finally:
+        if runtime is not None:
+            await runtime.close()
         await adapter.close()
         await gateway.shutdown()
     assert process is not None and process.returncode is not None
@@ -227,3 +300,60 @@ async def test_native_adapter_real_stdio_protocol(tmp_path, monkeypatch):
         evidence_path.write_text(
             json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
         )
+
+
+def _native_tool_definition():
+    definition = {
+        "format": "wright-native-process",
+        "schema_version": "1.0.0",
+        "id": "native-tool-proof",
+        "title": "Local measured artifact",
+        "steps": [],
+        "ports": [],
+        "connections": [],
+        "outputs": [],
+    }
+    operations = {row["id"]: row for row in language_contract()["operations"]}
+    previous = None
+    for index, (operation, config) in enumerate(
+        [
+            ("text.input@1", {"value": '{"value":0.5}'}),
+            ("mcp.call@1", {}),
+            ("artifact.write-text@1", {"filename": "measurement.json"}),
+            ("artifact.read-text@1", {}),
+        ]
+    ):
+        step_id = f"step-{index}"
+        definition["steps"].append(
+            {"id": step_id, "title": step_id, "operation": operation, "config": config}
+        )
+        for direction in ("input", "output"):
+            for port in operations[operation][direction + "s"]:
+                port_id = step_id + "-" + port["key"]
+                definition["ports"].append(
+                    {
+                        **port,
+                        "id": port_id,
+                        "step_id": step_id,
+                        "label": port["key"],
+                        "direction": direction,
+                    }
+                )
+                if direction == "input":
+                    definition["connections"].append(
+                        {
+                            "id": f"edge-{index}",
+                            "source_port_id": previous,
+                            "target_port_id": port_id,
+                        }
+                    )
+                else:
+                    previous = port_id
+    definition["outputs"] = [
+        {
+            "id": "measured-output",
+            "title": "Measured artifact",
+            "port_id": "step-2-artifact",
+        }
+    ]
+    return definition

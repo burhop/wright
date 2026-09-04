@@ -1,0 +1,406 @@
+{
+  "scope": "disposable local stdio native adapter integration; not catalog qualification",
+  "occurred_at": "2026-09-04T23:19:08.320813+00:00",
+  "python_version": "3.13.5",
+  "platform": "win32",
+  "protocol": [
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "wright",
+            "version": "0.1.0"
+          }
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {
+            "tools": {}
+          },
+          "serverInfo": {
+            "name": "native-disposable-measurement",
+            "version": "1"
+          }
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "notifications/initialized"
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/list"
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "tools": [
+            {
+              "name": "measure",
+              "description": "Measure a safe local fixture",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "minimum": 0.25
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "outputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "measure",
+          "arguments": {
+            "value": 0.5
+          }
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Local fixture measured"
+            }
+          ],
+          "structuredContent": {
+            "value": 1.25
+          }
+        }
+      }
+    }
+  ],
+  "binding": {
+    "server_id": "native-proof",
+    "tool_name": "measure",
+    "input_schema_digest": "17923f7488898f40d1a8f105e9c0141ff081dba83a2681be4b22886b6bca13ec",
+    "output_schema_digest": "2c3b6f52cf59051a229a1032374562cddf409ed846df939de3db8e66c895aa32"
+  },
+  "native_result_text": "{\"value\":1.25}",
+  "native_run": {
+    "run_id": "daacf5b5-bbe7-407d-9a32-bf8c3356fc2d",
+    "process_id": "native-tool-proof",
+    "state": "succeeded",
+    "semantic_digest": "74c9614410481ef24013741bc041cf6225898e12b70c2e60fa224cd62b4e9909",
+    "created_at": "2026-09-04T23:19:07.667125+00:00",
+    "started_at": "2026-09-04T23:19:07.730387+00:00",
+    "completed_at": "2026-09-04T23:19:08.237970+00:00",
+    "derived_from_run_id": null,
+    "trace_id": "native-local-protocol-trace",
+    "reason": null,
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "edge-1",
+            "source_port_id": "step-0-value",
+            "target_port_id": "step-1-arguments"
+          },
+          {
+            "id": "edge-2",
+            "source_port_id": "step-1-result",
+            "target_port_id": "step-2-text"
+          },
+          {
+            "id": "edge-3",
+            "source_port_id": "step-2-artifact",
+            "target_port_id": "step-3-artifact"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "native-tool-proof",
+        "outputs": [
+          {
+            "id": "measured-output",
+            "port_id": "step-2-artifact",
+            "title": "Measured artifact"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "step-0-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "step-0",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "step-1-arguments",
+            "key": "arguments",
+            "label": "arguments",
+            "required": true,
+            "step_id": "step-1",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "step-1-result",
+            "key": "result",
+            "label": "result",
+            "required": true,
+            "step_id": "step-1",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "step-2-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "step-2",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "step-2-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "step-2",
+            "type": "artifact"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "step-3-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "step-3",
+            "type": "artifact"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "step-3-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "step-3",
+            "type": "text"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": "{\"value\":0.5}"
+            },
+            "id": "step-0",
+            "operation": "text.input@1",
+            "title": "step-0"
+          },
+          {
+            "config": {},
+            "id": "step-1",
+            "operation": "mcp.call@1",
+            "title": "step-1"
+          },
+          {
+            "config": {
+              "filename": "measurement.json"
+            },
+            "id": "step-2",
+            "operation": "artifact.write-text@1",
+            "title": "step-2"
+          },
+          {
+            "config": {},
+            "id": "step-3",
+            "operation": "artifact.read-text@1",
+            "title": "step-3"
+          }
+        ],
+        "title": "Local measured artifact"
+      },
+      "revision": 1,
+      "semantic_digest": "74c9614410481ef24013741bc041cf6225898e12b70c2e60fa224cd62b4e9909",
+      "token": "[REDACTED]"
+    },
+    "bindings": {
+      "step-1": {
+        "input_schema_digest": "17923f7488898f40d1a8f105e9c0141ff081dba83a2681be4b22886b6bca13ec",
+        "output_schema_digest": "2c3b6f52cf59051a229a1032374562cddf409ed846df939de3db8e66c895aa32",
+        "server_id": "native-proof",
+        "tool_name": "measure"
+      }
+    },
+    "actor": "engineer",
+    "timeout_seconds": 15,
+    "steps": [
+      {
+        "step_id": "step-0",
+        "operation": "text.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-04T23:19:07.750534+00:00",
+        "completed_at": "2026-09-04T23:19:07.762482+00:00",
+        "inputs": {},
+        "outputs": {
+          "step-0-value": "{\"value\":0.5}"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "step-1",
+        "operation": "mcp.call@1",
+        "state": "succeeded",
+        "started_at": "2026-09-04T23:19:07.777061+00:00",
+        "completed_at": "2026-09-04T23:19:08.091033+00:00",
+        "inputs": {
+          "step-1-arguments": "{\"value\":0.5}"
+        },
+        "outputs": {
+          "step-1-result": "{\"value\":1.25}"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "step-2",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-04T23:19:08.105619+00:00",
+        "completed_at": "2026-09-04T23:19:08.175265+00:00",
+        "inputs": {
+          "step-2-text": "{\"value\":1.25}"
+        },
+        "outputs": {
+          "step-2-artifact": {
+            "artifact_id": "f9225c33-e14b-4808-ad99-7f71a6a18ab3",
+            "content_digest": "77ae6e7716d3c051fbb21bd7557d8ba449709cf17c197f0ace15b2b33c56dae0",
+            "filename": "measurement.json",
+            "size": 14
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "step-3",
+        "operation": "artifact.read-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-04T23:19:08.190912+00:00",
+        "completed_at": "2026-09-04T23:19:08.224376+00:00",
+        "inputs": {
+          "step-3-artifact": {
+            "artifact_id": "f9225c33-e14b-4808-ad99-7f71a6a18ab3",
+            "content_digest": "77ae6e7716d3c051fbb21bd7557d8ba449709cf17c197f0ace15b2b33c56dae0",
+            "filename": "measurement.json",
+            "size": 14
+          }
+        },
+        "outputs": {
+          "step-3-text": "{\"value\":1.25}"
+        },
+        "reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "artifact_id": "f9225c33-e14b-4808-ad99-7f71a6a18ab3",
+        "step_id": "step-2",
+        "port_id": "step-2-artifact",
+        "filename": "measurement.json",
+        "content_digest": "77ae6e7716d3c051fbb21bd7557d8ba449709cf17c197f0ace15b2b33c56dae0",
+        "size": 14,
+        "media_type": "application/json",
+        "provenance": {
+          "actor": "engineer",
+          "config": {
+            "filename": "measurement.json"
+          },
+          "inputs": {
+            "text": "{\"value\":1.25}"
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "daacf5b5-bbe7-407d-9a32-bf8c3356fc2d",
+          "semantic_digest": "74c9614410481ef24013741bc041cf6225898e12b70c2e60fa224cd62b4e9909",
+          "step_id": "step-2",
+          "trace_id": "native-local-protocol-trace"
+        }
+      }
+    ],
+    "last_sequence": 12
+  },
+  "fixture_content_sha256": "8ac1ddbe1e1edd5b0536294fd27197fb146a8aeccdc03b20ae1b61877c8b7a78",
+  "fixture_unchanged": true,
+  "audit": [
+    {
+      "operation": "tool.call",
+      "server_id": "native-proof",
+      "target_name": "measure",
+      "outcome": "started",
+      "metadata_json": "{\"argument_count\": 1, \"lifecycle_kind\": \"ordinary\", \"timeout_ms\": 14954, \"trace_id\": \"native-local-protocol-trace\"}"
+    },
+    {
+      "operation": "tool.call",
+      "server_id": "native-proof",
+      "target_name": "measure",
+      "outcome": "succeeded",
+      "metadata_json": "{\"argument_count\": 1, \"lifecycle_kind\": \"ordinary\", \"response_bytes\": 15, \"result_key_count\": 1, \"timeout_ms\": 14954, \"trace_id\": \"native-local-protocol-trace\"}"
+    }
+  ],
+  "child_exited": true
+}
