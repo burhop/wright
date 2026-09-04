@@ -34,7 +34,7 @@
     "title": "Native engineering process: create to verified output",
     "feature_id": "EPP-N01",
     "tasks_path": "specs/079-wright-native-authoring/tasks.md",
-    "scope_revision": 1,
+    "scope_revision": 2,
     "scope_history": [
       {
         "revision": 1,
@@ -75,13 +75,21 @@
         ],
         "removed_task_ids": [],
         "reason": "Initial independently reviewed bounded 32-task milestone; standing user scope includes native semantics, execution and dashboard."
+      },
+      {
+        "revision": 2,
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "added_task_ids": [],
+        "removed_task_ids": [],
+        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02\u2013AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
       }
     ],
     "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
     "capabilities": [
-      "In the local feature build, create and configure native processes, connect exact typed ports, undo, save/reopen, and recover from stale-writer conflicts. The actual browser/SQLite journey has passed.",
-      "Three development workflows produce actual local artifact bytes in runtime tests, including a 135 g mass result and linked correction. Runtime review fixes and UI/headless integration remain active.",
-      "The process language is the shared semantic authority for programmatic clients, canvas and runtime. Dev integration, human usability and Rivet migration/retirement remain pending."
+      "In the local feature build, create/configure/connect/save/reopen native processes with exact typed ports and one official language for programmatic clients, Inspector, canvas and runtime.",
+      "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
+      "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
+      "This is local feature-branch delivery. Full candidate gates, human usability, dev PR/deployment and final acceptance remain pending; benchmark qualification remains 0/100."
     ],
     "tasks": [
       {
@@ -214,7 +222,7 @@
       },
       {
         "id": "T017",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -222,7 +230,7 @@
       },
       {
         "id": "T018",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -230,7 +238,7 @@
       },
       {
         "id": "T019",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -238,7 +246,7 @@
       },
       {
         "id": "T020",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -246,7 +254,7 @@
       },
       {
         "id": "T021",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -254,7 +262,7 @@
       },
       {
         "id": "T022",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -262,7 +270,7 @@
       },
       {
         "id": "T023",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -270,7 +278,7 @@
       },
       {
         "id": "T024",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -278,7 +286,7 @@
       },
       {
         "id": "T025",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -286,7 +294,7 @@
       },
       {
         "id": "T026",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -312,7 +320,7 @@
       },
       {
         "id": "T029",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -320,7 +328,7 @@
       },
       {
         "id": "T030",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -367,7 +375,8 @@
           "T007"
         ],
         "required_check_ids": [
-          "Q-SEMANTICS"
+          "Q-SEMANTICS",
+          "Q-COMBINED"
         ]
       },
       {
@@ -386,7 +395,8 @@
         "required_check_ids": [
           "Q-PERSISTENCE",
           "Q-EDITOR",
-          "Q-HUMAN"
+          "Q-HUMAN",
+          "Q-COMBINED"
         ]
       },
       {
@@ -399,7 +409,8 @@
           "T023"
         ],
         "required_check_ids": [
-          "Q-RUNTIME"
+          "Q-RUNTIME",
+          "Q-COMBINED"
         ]
       },
       {
@@ -412,7 +423,8 @@
         ],
         "required_check_ids": [
           "Q-ARTIFACTS",
-          "Q-RUNTIME"
+          "Q-RUNTIME",
+          "Q-COMBINED"
         ]
       },
       {
@@ -425,7 +437,8 @@
           "T023"
         ],
         "required_check_ids": [
-          "Q-RUNTIME"
+          "Q-RUNTIME",
+          "Q-COMBINED"
         ]
       },
       {
@@ -436,7 +449,8 @@
           "T025"
         ],
         "required_check_ids": [
-          "Q-MCP"
+          "Q-MCP",
+          "Q-COMBINED"
         ]
       },
       {
@@ -449,7 +463,8 @@
           "T026"
         ],
         "required_check_ids": [
-          "Q-EXAMPLES"
+          "Q-EXAMPLES",
+          "Q-COMBINED"
         ]
       },
       {
@@ -773,6 +788,45 @@
           "scripts"
         ],
         "independent_required": false
+      },
+      {
+        "id": "Q-COMBINED",
+        "label": "Combined native API, runtime and browser checkpoint",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026"
+        ],
+        "source_paths": [
+          "packages/core/src/core",
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service",
+          "packages/tool_registry/src/tool_registry",
+          "apps/api/src/api",
+          "apps/web/src",
+          "src/wright_engineering"
+        ],
+        "independent_required": false
       }
     ],
     "evidence": [
@@ -941,6 +995,228 @@
           }
         ],
         "counts": null
+      },
+      {
+        "id": "Q-EXAMPLES-20260904-1",
+        "check_id": "Q-EXAMPLES",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "caf958da0a5b7ce18c5f7b25a2e28043af15b4ab55f53fd9a8919760730fe77b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Combined runtime positive/negative/correction checks and real browser downloads passed for all three development examples; no benchmark qualification.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PERSISTENCE-20260904-2",
+        "check_id": "Q-PERSISTENCE",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "500fc35592e8514905315199601d75fde3fbc2979fdddf9779743d5897a42ef9",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The shared 60-test combined API/startup/runtime/run/artifact suite passed. Telemetry and lifecycle findings are independently closed; authoring, saved IDs and exact replay remain covered.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 60,
+          "passed": 60,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-EDITOR-20260904-2",
+        "check_id": "Q-EDITOR",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "23a7788c75a3e5834a4d24ed0248fe9fb925f40984223ea652679f7262d43b35",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "10 Chromium checks passed: 8 explicitly simulated services plus 2 actual API journeys. Covers authoring identities, save/reopen/recovery, narrow/zoomed accessibility and real run artifacts. Human acceptance remains separate.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 10,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-RUNTIME-20260904-2",
+        "check_id": "Q-RUNTIME",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "7b642b95eb06733400a8d0d2394d6849bc1c28e930952f3d91cbd802c2928f1c",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "60 combined API/runtime/run/artifact tests and 10 browser checks passed. Eight independent API closure probes passed; the four earlier runtime findings remain closed. Broader candidate gates are pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-ARTIFACTS-20260904-1",
+        "check_id": "Q-ARTIFACTS",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "8012b0f50266740e91fd4f575a65789ae1ce22cd75095c7afe627cc359eefbb3",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Combined artifact persistence/integrity tests and actual browser downloads verified bytes, size, SHA256, producing run/definition and retained failure/correction evidence.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-MCP-20260904-2",
+        "check_id": "Q-MCP",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "0f40f414e6daf5d4a2c2b63e891a73ce5e6c03de",
+        "tested_tree": "6af81de7c9c05a40177a654fa41e4d00fde0709c",
+        "scope_sha256": "fbc299767c2da64cb4f180f9a1a62d716836dcdd534909c0dc8200f23cb012ee",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Two actual local stdio paths passed, including a native process producing and reading measurement.json with value 1.25, provenance and child teardown. Adapter and telemetry corrections independently closed. Disposable integration fixture only.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-REVIEW-20260904-2",
+        "check_id": "Q-REVIEW",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "3978831710f195cbb7515c4edec1b455fe8b976cf1951e5b8cb27e6ebb6db4b2",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "All reported bounded runtime, MCP, telemetry, save-recovery and API findings are independently closed. Fresh whole-candidate review and prospective governance amendment review are in progress.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PACKAGING-20260904-1",
+        "check_id": "Q-PACKAGING",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "e4c58d952b1415321b9a5c6921da025fdf14c54f",
+        "tested_tree": "ff73d110e35bd37d76bd9d1b74423413c568b7cd",
+        "scope_sha256": "9d3f67abf6a3ecb67d1c9ba9c0efad5d174995a013b1f998fafdbee99bd96b7b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "One built wheel passed isolated actual API execution and retained evidence across 3 fresh processes including relocation, with outbound network denied. Full packaging invocation was not green; fresh frontend, Docker, version-update and other-OS coverage remain pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-COMBINED-20260904-1",
+        "check_id": "Q-COMBINED",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "03387a9f6ad6564e8ab423db67d9bfa5c47be65801f1ea12287743bbf37c6298",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "60 combined API/runtime/artifact tests plus 10 Chromium checks passed on the same production candidate (2 live server journeys, 8 simulated). Broad source coverage binds this checkpoint; required gates, independent whole-candidate review, human study and dev delivery remain separate.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 70,
+          "passed": 70,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
       }
     ],
     "blockers": [
@@ -970,11 +1246,11 @@
       }
     ],
     "next_task_ids": [
-      "T021",
-      "T023",
-      "T024",
-      "T025",
-      "T027"
+      "T027",
+      "T029",
+      "T030",
+      "T028",
+      "T031"
     ],
     "examples": [
       {
@@ -1009,7 +1285,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+      "candidate_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
