@@ -22,7 +22,7 @@ from jsonschema import SchemaError
 from jsonschema.validators import validator_for
 from referencing.exceptions import Unresolvable
 from core.native_process import Finding
-from core.tracing import get_tracer, traced
+from core.native_tracing import native_span, traced_native
 from tool_registry.gateway_models import (
     GatewayError,
     GatewayErrorCode,
@@ -257,7 +257,7 @@ class NativeMcpAdapter:
                 "Select an active managed workspace and check its enabled tools.",
             ) from exc
 
-    @traced("native.mcp.discover")
+    @traced_native("native.mcp.discover")
     def discover(self, session_id: str) -> dict[str, Any]:
         context = self._session(session_id)
         try:
@@ -332,7 +332,7 @@ class NativeMcpAdapter:
                 "Refresh the tool catalog and choose a current exact binding.",
             ) from exc
 
-    @traced("native.mcp.preflight")
+    @traced_native("native.mcp.preflight")
     def preflight(self, session_id: str, binding: Mapping[str, Any]) -> dict[str, Any]:
         _, tool = self._preflight(session_id, binding, {})
         return _descriptor(tool)
@@ -345,7 +345,7 @@ class NativeMcpAdapter:
         timeout_seconds: float,
         trace_id: str,
     ) -> str:
-        with get_tracer().start_as_current_span("native.mcp.call") as span:
+        with native_span("native.mcp.call") as span:
             span.set_attribute("native.trace_id", trace_id)
             try:
                 result = await self._call(

@@ -10,7 +10,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Protocol
 
-from core.tracing import traced
+from core.native_tracing import traced_native
 
 from .native_process_repository import NativeRepositoryError
 
@@ -49,11 +49,11 @@ class NativeArtifactStore:
             raise NativeRepositoryError("NATIVE_LIMIT", "Artifact exceeds 10 MiB.")
         return content
 
-    @traced("native.artifact.input")
+    @traced_native("native.artifact.input")
     def input_bytes(self, relative_path: str) -> bytes:
         return self._content(self.paths.resolve(relative_path, must_exist=True))
 
-    @traced("native.artifact.promote")
+    @traced_native("native.artifact.promote")
     def promote(
         self,
         run_id: str,
@@ -124,7 +124,7 @@ class NativeArtifactStore:
             )
         return self.paths.resolve(record["storage_key"], must_exist=True)
 
-    @traced("native.artifact.read")
+    @traced_native("native.artifact.read")
     def read(self, record: dict[str, Any]) -> bytes:
         content = self._content(self._stored_path(record))
         if (

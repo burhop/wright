@@ -11,7 +11,7 @@ from typing import Any
 from core.canonical_json import canonical_json_bytes, strict_json_loads
 from core.native_process import topological_order
 from core.native_runtime_json import runtime_json_bytes, runtime_json_loads
-from core.tracing import traced
+from core.native_tracing import traced_native
 
 from .native_process_repository import (
     NativeProcessRepository,
@@ -181,7 +181,7 @@ class NativeRunRepository(NativeProcessRepository):
             ),
         )
 
-    @traced("native.run.create")
+    @traced_native("native.run.create")
     def create_run(
         self,
         workspace_id: str,
@@ -294,7 +294,7 @@ class NativeRunRepository(NativeProcessRepository):
             )
         return result
 
-    @traced("native.run.inspect")
+    @traced_native("native.run.inspect")
     def inspect(self, workspace_id: str, run_id: str) -> dict[str, Any]:
         with connect_state_db(self.db_path, read_only=True) as connection:
             connection.execute("BEGIN")
@@ -362,7 +362,7 @@ class NativeRunRepository(NativeProcessRepository):
         with connect_state_db(self.db_path, read_only=True) as connection:
             return self._summary(self._row(connection, workspace_id, run_id))
 
-    @traced("native.run.start")
+    @traced_native("native.run.start")
     def start(self, workspace_id: str, run_id: str) -> bool:
         with connect_state_db(self.db_path) as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -388,7 +388,7 @@ class NativeRunRepository(NativeProcessRepository):
                 "NATIVE_LIMIT", "Run recorded values exceed 1 MiB."
             )
 
-    @traced("native.step.start")
+    @traced_native("native.step.start")
     def start_step(
         self, workspace_id: str, run_id: str, step_id: str, inputs: dict[str, Any]
     ) -> bool:
@@ -411,7 +411,7 @@ class NativeRunRepository(NativeProcessRepository):
                 )
             return changed == 1
 
-    @traced("native.step.complete")
+    @traced_native("native.step.complete")
     def complete_step(
         self,
         workspace_id: str,
@@ -473,7 +473,7 @@ class NativeRunRepository(NativeProcessRepository):
             )
         return True
 
-    @traced("native.run.finish")
+    @traced_native("native.run.finish")
     def finish(
         self,
         workspace_id: str,

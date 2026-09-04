@@ -16,7 +16,7 @@ _ERROR_TYPE = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,127}")
 
 
 @contextmanager
-def _native_span(name: str) -> Iterator[Span]:
+def native_span(name: str) -> Iterator[Span]:
     # OTel's context manager also records escaping exceptions by default. Both
     # automatic behaviors must be disabled, including for chained exceptions.
     with _tracer.start_as_current_span(
@@ -46,12 +46,12 @@ def traced_native(span_name: str):
     def decorator(func):
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
-            with _native_span(span_name):
+            with native_span(span_name):
                 return await func(*args, **kwargs)
 
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs):
-            with _native_span(span_name):
+            with native_span(span_name):
                 return func(*args, **kwargs)
 
         return async_wrapper if inspect.iscoroutinefunction(func) else sync_wrapper

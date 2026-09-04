@@ -18,7 +18,7 @@ from core.native_process import (
     readiness,
 )
 from core.native_quantities import Quantity
-from core.tracing import traced
+from core.native_tracing import traced_native
 from data_vault.lifecycle_lock import lifecycle_lock
 from data_vault.models import DatabaseBusyError
 from data_vault.native_process_artifacts import NativeArtifactStore
@@ -193,7 +193,7 @@ class NativeRuntime:
             )
         return paths
 
-    @traced("native.run.execute")
+    @traced_native("native.run.execute")
     async def _drive(self, workspace_id: str, session_id: str, run_id: str):
         snapshot = self.repository.inspect(workspace_id, run_id)
         trace_id = snapshot["trace_id"]
