@@ -82,7 +82,11 @@ def test_publishes_exact_dashboard_and_deterministic_identity(tmp_path: Path) ->
         publisher._git_blob(
             REPOSITORY,
             first.source_commit,
-            "specs/078-process-definition-view/tasks.md",
+            json.loads(
+                publisher._git_blob(
+                    REPOSITORY, first.source_commit, publisher.SOURCE_CATALOG_PATH
+                )
+            )["sources"]["feature_tasks"]["path"],
         )
     )
     assert histories["feature_tasks"]["observations"][-1]["value"] == expected_completed
@@ -452,6 +456,10 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")
+    # Exercise historical F02 task assignment against the current closed registry.
+    subject["state"]["current_feature"] = "EPP-F02"
+    for task_source in subject["work_registry"]["task_sources"]:
+        task_source["active_feature"] = task_source["feature_id"] == "EPP-F02"
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
         REPOSITORY, subject
     )
@@ -509,6 +517,7 @@ def test_work_registry_projects_exact_tasks_assignments_and_roadmap_gap(
         "specs/076-control-plane-validator/tasks.md",
         "specs/077-browser-program-status/tasks.md",
         task_path,
+        "specs/079-wright-native-authoring/tasks.md",
     ]
     assert 0 <= program_done <= program_total
     assert 0 <= feature_done < feature_total
@@ -851,15 +860,18 @@ def test_history_series_have_fixed_semantics_and_causal_committed_order(
         for lane in bundle["supplement"]["work"]["lanes"]
         if lane["kind"] == "continued_development"
     )
-    assert development["latest_capability"].startswith(
-        "Committed customer acceptance evidence: 1 accepted and 1 independently "
-        "verified EPP-F02 use case"
+    assert development["latest_capability"] == (
+        "Native acceptance is tracked by the milestone criteria. "
+        "The historical catalog has 1 accepted and 1 independently verified use cases; "
+        "these do not grant native acceptance credit."
     )
     assert use_case["acceptance_evidence"][0]["evidence"] in development["evidence"]
 
 
 def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     subject = publisher._load_subject(REPOSITORY, "HEAD")
+    # This unit projection deliberately selects the preserved historical feature.
+    subject["state"]["current_feature"] = "EPP-F02"
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
         REPOSITORY, subject
     )

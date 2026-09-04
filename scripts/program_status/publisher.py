@@ -2079,6 +2079,13 @@ def _project_delivery_lanes(
             f"a customer-visible {current_feature} capability yet."
         )
     )
+    if current_feature == "EPP-N01":
+        latest_capability = (
+            "Native acceptance is tracked by the milestone criteria. "
+            f"The historical catalog has {accepted_use_cases} accepted and "
+            f"{verified_use_cases} independently verified use cases; "
+            "these do not grant native acceptance credit."
+        )
     development = {
         "kind": "continued_development",
         "branch": branch,
