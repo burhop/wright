@@ -147,7 +147,7 @@ async def test_document_and_package_negative_controls_fail_from_actual_output(ru
     next(step for step in brief["steps"] if "200 g" in str(step["config"]))["config"][
         "value"
     ] = "No stated mass requirement."
-    _, brief_id = submit(runtime, brief)
+    brief_saved, brief_id = submit(runtime, brief)
     failed = await terminal(repository, brief_id)
     assert failed["state"] == "failed" and failed["artifacts"] == []
     package = definition("package-review")
@@ -155,7 +155,7 @@ async def test_document_and_package_negative_controls_fail_from_actual_output(ru
         step for step in package["steps"] if step["operation"] == "text.input@1"
     )
     source["config"]["value"] = source["config"]["value"].replace("Units: mm\n", "")
-    _, package_id = submit(runtime, package)
+    package_saved, package_id = submit(runtime, package)
     result = await terminal(repository, package_id)
     assert (
         result["state"] == "failed" and result["reason"]["code"] == "ASSERTION_FAILED"
@@ -166,6 +166,35 @@ async def test_document_and_package_negative_controls_fail_from_actual_output(ru
         repository.artifact("one", package_id, artifact["artifact_id"])
     )
     assert b"Units: mm" not in actual
+    for name, saved, failed_id, failed_snapshot in (
+        ("concept-brief", brief_saved, brief_id, failed),
+        ("package-review", package_saved, package_id, result),
+    ):
+        _, corrected_id = submit(
+            runtime, definition(name), saved=saved, prior=failed_id
+        )
+        corrected = await terminal(repository, corrected_id)
+        assert corrected["state"] == "succeeded"
+        assert corrected["derived_from_run_id"] == failed_id
+        oracle = next(row for row in ORACLES if row["id"] == name)
+        output = next(
+            row
+            for row in corrected["artifacts"]
+            if row["filename"] == oracle["artifact"]
+        )
+        assert (
+            NativeArtifactStore(WorkspacePath(workspace))
+            .read(repository.artifact("one", corrected_id, output["artifact_id"]))
+            .decode("utf-8")
+            == oracle["expected_text"]
+        )
+        assert repository.inspect("one", failed_id) == failed_snapshot
+    assert (
+        NativeArtifactStore(WorkspacePath(workspace)).read(
+            repository.artifact("one", package_id, artifact["artifact_id"])
+        )
+        == actual
+    )
 
 
 @pytest.mark.asyncio
