@@ -38,19 +38,19 @@ Independent acceptance: create/connect/configure/undo/save/reopen; reject invali
 
 Independent acceptance: generate/check actual outputs, inspect provenance, fail/correct/rerun, cancel and refresh, compare headless semantics.
 
-- [ ] T017 [US3] Implement immutable run snapshots, ordered events and terminal-state CAS in native repository/runtime with concurrency tests. (FR-009–011; AC04, AC06)
-- [ ] T018 [US3] Implement bounded versioned deterministic operations and output-dependent assertions with negative controls in `native_process_runtime.py`. (FR-004, FR-009, FR-016; AC04, AC08)
-- [ ] T019 [US3] Implement staged indexed workspace artifacts and scoped digest-checked retrieval/reconciliation tests in `native_process_artifacts.py` and application service. (FR-008, FR-012; AC05)
-- [ ] T020 [US4] Implement deadline/cancel/restart/blocked-dependent/recovery-linked-run behavior and race tests in native runtime/service. (FR-013, FR-014; AC06)
-- [ ] T021 [US3] Add native run/history/inspection/cancel/artifact API and headless entrypoint with semantic parity tests. (FR-010–014; AC04–06)
-- [ ] T022 [US3] Implement real run inspection/output access and failure/correction/reconnect UI with component tests. (FR-011–014, FR-019; AC05, AC06)
-- [ ] T023 [US4] Verify real end-to-end run/artifact/failure/cancel/recovery journeys in `tests/e2e/test_native_process.py` and native browser tests. (FR-010–014; AC04–06)
+- [x] T017 [US3] Implement immutable run snapshots, ordered events and terminal-state CAS in native repository/runtime with concurrency tests. (FR-009–011; AC04, AC06)
+- [x] T018 [US3] Implement bounded versioned deterministic operations and output-dependent assertions with negative controls in `native_process_runtime.py`. (FR-004, FR-009, FR-016; AC04, AC08)
+- [x] T019 [US3] Implement staged indexed workspace artifacts and scoped digest-checked retrieval/reconciliation tests in `native_process_artifacts.py` and application service. (FR-008, FR-012; AC05)
+- [x] T020 [US4] Implement deadline/cancel/restart/blocked-dependent/recovery-linked-run behavior and race tests in native runtime/service. (FR-013, FR-014; AC06)
+- [x] T021 [US3] Add native run/history/inspection/cancel/artifact API and headless entrypoint with semantic parity tests. (FR-010–014; AC04–06)
+- [x] T022 [US3] Implement real run inspection/output access and failure/correction/reconnect UI with component tests. (FR-011–014, FR-019; AC05, AC06)
+- [x] T023 [US4] Verify real end-to-end run/artifact/failure/cancel/recovery journeys in `tests/e2e/test_native_process.py` and native browser tests. (FR-010–014; AC04–06)
 
 ## Phase 6: US5 — Exact real tool and examples
 
-- [ ] T024 [US5] Implement exact MCP binding/preflight/current-schema/policy revalidation in `native_process_mcp.py`, API/UI and denied/changed-binding tests. (FR-015; AC07)
-- [ ] T025 [US5] Execute safe disposable real local MCP through the gateway, retain protocol/tool/artifact evidence and teardown proof. (FR-015; AC07)
-- [ ] T026 [US5] Verify all three customer examples and independent positive/negative/recovery assertions; record example maturity without benchmark credit. (FR-016; AC08)
+- [x] T024 [US5] Implement exact MCP binding/preflight/current-schema/policy revalidation in `native_process_mcp.py`, API/UI and denied/changed-binding tests. (FR-015; AC07)
+- [x] T025 [US5] Execute safe disposable real local MCP through the gateway, retain protocol/tool/artifact evidence and teardown proof. (FR-015; AC07)
+- [x] T026 [US5] Verify all three customer examples and independent positive/negative/recovery assertions; record example maturity without benchmark credit. (FR-016; AC08)
 
 ## Phase 7: Verification and integration
 
