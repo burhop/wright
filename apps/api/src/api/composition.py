@@ -359,6 +359,19 @@ def process_definition_reader() -> ProcessDefinitionReader:
     return ProcessDefinitionReader(installed_root, packaged_root)
 
 
+@lru_cache(maxsize=1)
+def native_process_service():
+    import wright_engineering
+    from data_vault.native_process_repository import NativeProcessRepository
+    from workspace_service.native_process_service import NativeProcessService
+
+    return NativeProcessService(
+        NativeProcessRepository(DATABASE_PATH),
+        workspace_service().require_safe_session_workspace,
+        Path(wright_engineering.__file__).resolve().parent / "static" / "native-processes",
+    )
+
+
 def build_engineering_model_application(db_path: str) -> EngineeringModelService:
     database = Path(db_path)
     upgrade_database(database)

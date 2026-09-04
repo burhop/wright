@@ -56,6 +56,31 @@ CLI `python -m workspace_service.native_process_cli --base-url ... --session-id 
 
 ## Execution ownership, terminal state and artifacts
 
+Native run DTOs (shared UI/headless): a summary contains `run_id`, `process_id`,
+`state`, `semantic_digest`, `created_at`, nullable `started_at`/`completed_at`,
+nullable `derived_from_run_id`, nullable `reason` finding, and `trace_id`.
+History returns `{runs:[summary],next_cursor}`. Inspection adds
+`snapshot:{definition,revision,token,semantic_digest}`, `bindings`, `actor`,
+`timeout_seconds`, `steps`, `artifacts`, and `last_sequence`. A step contains
+`step_id`, `operation`, `state`, nullable start/completion timestamps,
+nullable `inputs`/`outputs` maps keyed by exact port ID, and nullable `reason`.
+Values are text strings, `{value,unit}` quantities, or
+`{artifact_id,content_digest,size,filename}` artifact references. Indexed artifacts
+contain `artifact_id`, `step_id`, `port_id`, `filename`, `content_digest`, `size`,
+`media_type` and an actual bounded JSON `provenance` object. Artifact filenames
+are download metadata; stored file leaves are generated internal identities.
+Events return `{events:[{sequence,occurred_at,kind,payload,trace_id}],next_sequence}`.
+Cancellation returns the current summary. Findings have `code`, `message`,
+`recovery`, nullable `step_id` and nullable `port_id`. Times are UTC ISO strings.
+
+Binding discovery returns `{bindings:[{server_id,tool_name,title,input_schema_digest,
+output_schema_digest,input_schema,output_schema}]}`; output schema is nullable.
+Run/check binding maps are keyed by step ID; each value contains exactly
+`server_id`, `tool_name`, `input_schema_digest`, `output_schema_digest`. Digest of
+an absent output schema is SHA256 of canonical JSON `null`. Artifact retrieval
+returns attachment bytes with `X-Content-SHA256`. This freezes DTO detail without
+adding new execution semantics or promoting mocked transport checks to live proof.
+
 One native runtime coordinator per data root owns an OS-held advisory file lock for its lifetime; acquire before accepting run execution or reconciling prior nonterminal runs. A competing coordinator gets `NATIVE_RUNTIME_BUSY` and never interrupts the owner. File-lock release on process death allows the new coordinator to classify abandoned queued/running runs interrupted. CLI uses the HTTP owner. Tests cover a second coordinator, owner termination/restart and disconnected HTTP caller (caller disconnect does not cancel).
 
 Step states: pending/running/succeeded/failed/blocked/cancelled. On first failure stop scheduling remaining steps; dependents become blocked with root cause and independent pending steps become cancelled with `run_stopped_after_failure`. Run success requires all steps succeed. A queued cancellation transitions directly to cancelled without operation calls. During execution, cancel/deadline/success contend through conditional terminal writes; the first committed terminal transition wins, all later attempts return that state.

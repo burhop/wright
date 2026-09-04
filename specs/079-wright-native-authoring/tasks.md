@@ -25,9 +25,9 @@ Independent acceptance: identify current outcome, stage counts, missing quality 
 
 Independent acceptance: create/connect/configure/undo/save/reopen; reject invalid edits, interrupted save and stale writer without losing valid data.
 
-- [ ] T009 [US2] Add native tables/migration and previous-reader/backup recovery tests in `packages/data_vault/src/data_vault/migrations.py` and native repository tests. (FR-007, FR-020; AC03, AC09)
-- [ ] T010 [US2] Implement explicit transactional CAS/idempotency/document persistence and concurrent/failure tests in `native_process_repository.py`. (FR-007; AC03)
-- [ ] T011 [US2] Add authorized native document/check application service, shared language/operation discovery and thin API schemas/routes/tests in `workspace_service/native_process_service.py` and `apps/api/`; enforce the same validation/CAS for UI and programmatic clients. (FR-002, FR-007, FR-008; AC02, AC03)
+- [x] T009 [US2] Add native tables/migration and previous-reader/backup recovery tests in `packages/data_vault/src/data_vault/migrations.py` and native repository tests. (FR-007, FR-020; AC03, AC09)
+- [x] T010 [US2] Implement explicit transactional CAS/idempotency/document persistence and concurrent/failure tests in `native_process_repository.py`. (FR-007; AC03)
+- [x] T011 [US2] Add authorized native document/check application service, shared language/operation discovery and thin API schemas/routes/tests in `workspace_service/native_process_service.py` and `apps/api/`; enforce the same validation/CAS for UI and programmatic clients. (FR-002, FR-007, FR-008; AC02, AC03)
 - [ ] T012 [US2] Implement typed client and atomic commands/undo/invalid-buffer tests against the official language/schema/fixtures in `apps/web/src/services/native-process.ts` and `components/native-process/`; no separate renderer/AI semantics. (FR-002, FR-003, FR-006; AC03)
 - [ ] T013 [US2] Review/pin the renderer and implement graph/precise port adapter, keyboard/click creation/connection and layout tests in native components. (FR-005, FR-019; AC03)
 - [ ] T014 [US2] Implement contextual Inspector, sole input configuration, readable text/source and deletion impact review in native components. (FR-005, FR-006, FR-019; AC03)
