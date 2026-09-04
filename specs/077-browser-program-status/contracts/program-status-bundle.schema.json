@@ -4,25 +4,56 @@
   "title": "Wright Program Status Bundle",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "bundle_id", "generated_at", "source", "dashboard", "supplement"],
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "generated_at",
+    "source",
+    "dashboard",
+    "supplement"
+  ],
   "properties": {
-    "schema_version": { "const": "1.0.0" },
-    "bundle_id": { "$ref": "#/$defs/sha256" },
-    "generated_at": { "$ref": "#/$defs/timestamp" },
-    "source": { "$ref": "#/$defs/source" },
-    "dashboard": { "$ref": "https://wright.local/programs/epp/dashboard-v2.schema.json" },
-    "supplement": { "$ref": "#/$defs/supplement" }
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "bundle_id": {
+      "$ref": "#/$defs/sha256"
+    },
+    "generated_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "dashboard": {
+      "$ref": "https://wright.local/programs/epp/dashboard-v2.schema.json"
+    },
+    "supplement": {
+      "$ref": "#/$defs/supplement"
+    }
   },
   "$defs": {
-    "gitSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "stableId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
     "relativePath": {
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/076-control-plane-validator/|specs/077-browser-program-status/|specs/078-process-definition-view/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/076-control-plane-validator/|specs/077-browser-program-status/|specs/078-process-definition-view/|specs/079-wright-native-authoring/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
     "testResultPath": {
       "type": "string",
@@ -33,160 +64,913 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "tree", "program_tree", "snapshot_path", "snapshot_raw_sha256", "raw_identity_verification", "raw_identity_evidence", "dashboard_canonical_sha256", "source_catalog_path", "source_catalog_sha256", "validation_transition", "validation_verdict"],
+      "required": [
+        "commit",
+        "tree",
+        "program_tree",
+        "snapshot_path",
+        "snapshot_raw_sha256",
+        "raw_identity_verification",
+        "raw_identity_evidence",
+        "dashboard_canonical_sha256",
+        "source_catalog_path",
+        "source_catalog_sha256",
+        "validation_transition",
+        "validation_verdict"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "tree": { "$ref": "#/$defs/gitSha" },
-        "program_tree": { "$ref": "#/$defs/gitSha" },
-        "snapshot_path": { "$ref": "#/$defs/relativePath" },
-        "snapshot_raw_sha256": { "$ref": "#/$defs/sha256" },
-        "raw_identity_verification": { "const": "publisher_git_blob_attested" },
-        "raw_identity_evidence": { "$ref": "#/$defs/evidenceRef" },
-        "dashboard_canonical_sha256": { "$ref": "#/$defs/sha256" },
-        "source_catalog_path": { "const": "specs/077-browser-program-status/contracts/program-status-source-catalog.json" },
-        "source_catalog_sha256": { "$ref": "#/$defs/sha256" },
-        "validation_transition": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
-        "validation_verdict": { "const": "passed" }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "tree": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "program_tree": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "snapshot_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "snapshot_raw_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "raw_identity_verification": {
+          "const": "publisher_git_blob_attested"
+        },
+        "raw_identity_evidence": {
+          "$ref": "#/$defs/evidenceRef"
+        },
+        "dashboard_canonical_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_catalog_path": {
+          "const": "specs/077-browser-program-status/contracts/program-status-source-catalog.json"
+        },
+        "source_catalog_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "validation_transition": {
+          "type": "string",
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "validation_verdict": {
+          "const": "passed"
+        }
       }
     },
     "evidenceRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "path", "sha256"],
+      "required": [
+        "id",
+        "path",
+        "sha256"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
-        "path": { "$ref": "#/$defs/relativePath" },
-        "sha256": { "$ref": "#/$defs/sha256" }
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "action": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "purpose", "eligibility", "authority_state", "requires_human_approval", "blocker", "evidence"],
+      "required": [
+        "id",
+        "label",
+        "purpose",
+        "eligibility",
+        "authority_state",
+        "requires_human_approval",
+        "blocker",
+        "evidence"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,99}$" },
-        "label": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "purpose": { "enum": ["current_program_action", "metric_guidance", "lane_next_action", "benchmark_qualifying_action"] },
-        "eligibility": { "enum": ["eligible", "blocked", "requires_approval", "unavailable"] },
-        "authority_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] },
-        "requires_human_approval": { "type": "boolean" },
-        "blocker": { "type": ["string", "null"], "maxLength": 500 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{1,99}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "purpose": {
+          "enum": [
+            "current_program_action",
+            "metric_guidance",
+            "lane_next_action",
+            "benchmark_qualifying_action"
+          ]
+        },
+        "eligibility": {
+          "enum": [
+            "eligible",
+            "blocked",
+            "requires_approval",
+            "unavailable"
+          ]
+        },
+        "authority_state": {
+          "enum": [
+            "authorized",
+            "not_authorized",
+            "not_required",
+            "stale",
+            "unavailable"
+          ]
+        },
+        "requires_human_approval": {
+          "type": "boolean"
+        },
+        "blocker": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "eligibility": { "const": "eligible" } }, "required": ["eligibility"] },
-          "then": { "properties": { "requires_human_approval": { "const": false }, "authority_state": { "enum": ["authorized", "not_required"] }, "blocker": { "type": "null" } } }
+          "if": {
+            "properties": {
+              "eligibility": {
+                "const": "eligible"
+              }
+            },
+            "required": [
+              "eligibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "requires_human_approval": {
+                "const": false
+              },
+              "authority_state": {
+                "enum": [
+                  "authorized",
+                  "not_required"
+                ]
+              },
+              "blocker": {
+                "type": "null"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "eligibility": { "const": "blocked" } }, "required": ["eligibility"] },
-          "then": { "properties": { "requires_human_approval": { "const": false }, "blocker": { "type": "string", "minLength": 1 } } }
+          "if": {
+            "properties": {
+              "eligibility": {
+                "const": "blocked"
+              }
+            },
+            "required": [
+              "eligibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "requires_human_approval": {
+                "const": false
+              },
+              "blocker": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "eligibility": { "const": "requires_approval" } }, "required": ["eligibility"] },
-          "then": { "properties": { "requires_human_approval": { "const": true }, "authority_state": { "enum": ["not_authorized", "stale", "unavailable"] }, "blocker": { "type": "string", "minLength": 1 } } }
+          "if": {
+            "properties": {
+              "eligibility": {
+                "const": "requires_approval"
+              }
+            },
+            "required": [
+              "eligibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "requires_human_approval": {
+                "const": true
+              },
+              "authority_state": {
+                "enum": [
+                  "not_authorized",
+                  "stale",
+                  "unavailable"
+                ]
+              },
+              "blocker": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "eligibility": { "const": "unavailable" } }, "required": ["eligibility"] },
-          "then": { "properties": { "requires_human_approval": { "const": false }, "authority_state": { "const": "unavailable" }, "blocker": { "type": "string", "minLength": 1 } } }
+          "if": {
+            "properties": {
+              "eligibility": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "eligibility"
+            ]
+          },
+          "then": {
+            "properties": {
+              "requires_human_approval": {
+                "const": false
+              },
+              "authority_state": {
+                "const": "unavailable"
+              },
+              "blocker": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       ]
     },
     "sourceClass": {
-      "enum": ["product_acceptance", "test_evidence", "automation_capability", "program_gate", "readiness_gate", "benchmark_qualification", "program_task", "feature_task", "integration_gate"]
+      "enum": [
+        "product_acceptance",
+        "test_evidence",
+        "automation_capability",
+        "program_gate",
+        "readiness_gate",
+        "benchmark_qualification",
+        "program_task",
+        "feature_task",
+        "integration_gate"
+      ]
     },
     "sourceName": {
-      "enum": ["dashboard", "program_state", "roadmap", "lifecycle_policy", "gate_catalog", "gate_evidence", "benchmark_coverage", "audit_status", "risk_register", "decision_register", "transition_evidence", "legacy_v8_discovery", "correction_evidence", "verification_evidence", "approval_evidence", "work_registry", "use_case_registry", "test_run_ledger", "customer_story_catalog", "feature_tasks"]
+      "enum": [
+        "dashboard",
+        "program_state",
+        "roadmap",
+        "lifecycle_policy",
+        "gate_catalog",
+        "gate_evidence",
+        "benchmark_coverage",
+        "audit_status",
+        "risk_register",
+        "decision_register",
+        "transition_evidence",
+        "legacy_v8_discovery",
+        "correction_evidence",
+        "verification_evidence",
+        "approval_evidence",
+        "work_registry",
+        "use_case_registry",
+        "test_run_ledger",
+        "customer_story_catalog",
+        "feature_tasks"
+      ]
     },
     "observation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "transition_id", "parent_commit", "observed_at", "value", "denominator", "label", "source_classification", "change_reason", "evidence"],
+      "required": [
+        "commit",
+        "transition_id",
+        "parent_commit",
+        "observed_at",
+        "value",
+        "denominator",
+        "label",
+        "source_classification",
+        "change_reason",
+        "evidence"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "transition_id": { "type": ["string", "null"], "pattern": "^TR-[0-9]{4}$" },
-        "parent_commit": { "oneOf": [{ "$ref": "#/$defs/gitSha" }, { "type": "null" }] },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "value": { "type": "number", "minimum": 0 },
-        "denominator": { "type": ["number", "null"], "minimum": 0 },
-        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "source_classification": { "$ref": "#/$defs/sourceClass" },
-        "change_reason": { "type": ["string", "null"], "maxLength": 500 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/historyEvidenceRef" } }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "transition_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "parent_commit": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "denominator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "source_classification": {
+          "$ref": "#/$defs/sourceClass"
+        },
+        "change_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/historyEvidenceRef"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "source_classification": { "const": "test_evidence" } }, "required": ["source_classification"] },
-          "else": { "properties": { "evidence": { "items": { "$ref": "#/$defs/evidenceRef" } } } }
+          "if": {
+            "properties": {
+              "source_classification": {
+                "const": "test_evidence"
+              }
+            },
+            "required": [
+              "source_classification"
+            ]
+          },
+          "else": {
+            "properties": {
+              "evidence": {
+                "items": {
+                  "$ref": "#/$defs/evidenceRef"
+                }
+              }
+            }
+          }
         }
       ]
     },
     "latestChange": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "observed_at", "from_value", "to_value", "reason"],
+      "required": [
+        "commit",
+        "observed_at",
+        "from_value",
+        "to_value",
+        "reason"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "from_value": { "type": ["number", "null"] },
-        "to_value": { "type": "number" },
-        "reason": { "type": "string", "minLength": 1, "maxLength": 500 }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "from_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "to_value": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
       }
     },
     "series": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "unit", "counting_rule", "source_classification", "availability", "feature_id", "decision_use", "current_limitation", "next_action", "latest_change", "omitted_observations", "unavailable_reason", "observations"],
+      "required": [
+        "id",
+        "label",
+        "unit",
+        "counting_rule",
+        "source_classification",
+        "availability",
+        "feature_id",
+        "decision_use",
+        "current_limitation",
+        "next_action",
+        "latest_change",
+        "omitted_observations",
+        "unavailable_reason",
+        "observations"
+      ],
       "properties": {
-        "id": { "enum": ["customer_capability", "quality", "process_automation", "governance", "product_readiness", "benchmark_readiness", "commercial_readiness", "program_health", "benchmark_qualified", "program_tasks", "feature_tasks", "integration_delivery"] },
-        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "unit": { "enum": ["accepted_customer_scenarios", "passing_required_checks_ratio", "demonstrated_lifecycle_capabilities", "passing_program_gates_ratio", "passing_readiness_gates_ratio", "qualified_processes_of_100", "completed_program_tasks_ratio", "completed_feature_tasks_ratio", "completed_integration_gates_of_8"] },
-        "counting_rule": { "enum": ["distinct_committed_customer_acceptance", "required_candidate_checks", "distinct_committed_lifecycle_demonstrations", "authoritative_program_health_gates", "authoritative_readiness_area_gates", "governed_qualification_only", "closed_registered_task_sources", "exact_feature_task_ids", "ordered_integration_gate_completion"] },
-        "source_classification": { "$ref": "#/$defs/sourceClass" },
-        "availability": { "enum": ["available", "unavailable"] },
-        "feature_id": { "type": ["string", "null"], "maxLength": 64 },
-        "decision_use": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "current_limitation": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "metric_guidance" } } }] },
-        "latest_change": { "oneOf": [{ "$ref": "#/$defs/latestChange" }, { "type": "null" }] },
-        "omitted_observations": { "type": "integer", "minimum": 0 },
-        "unavailable_reason": { "type": ["string", "null"], "maxLength": 500 },
-        "observations": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/observation" } }
+        "id": {
+          "enum": [
+            "customer_capability",
+            "quality",
+            "process_automation",
+            "governance",
+            "product_readiness",
+            "benchmark_readiness",
+            "commercial_readiness",
+            "program_health",
+            "benchmark_qualified",
+            "program_tasks",
+            "feature_tasks",
+            "integration_delivery"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "unit": {
+          "enum": [
+            "accepted_customer_scenarios",
+            "passing_required_checks_ratio",
+            "demonstrated_lifecycle_capabilities",
+            "passing_program_gates_ratio",
+            "passing_readiness_gates_ratio",
+            "qualified_processes_of_100",
+            "completed_program_tasks_ratio",
+            "completed_feature_tasks_ratio",
+            "completed_integration_gates_of_8"
+          ]
+        },
+        "counting_rule": {
+          "enum": [
+            "distinct_committed_customer_acceptance",
+            "required_candidate_checks",
+            "distinct_committed_lifecycle_demonstrations",
+            "authoritative_program_health_gates",
+            "authoritative_readiness_area_gates",
+            "governed_qualification_only",
+            "closed_registered_task_sources",
+            "exact_feature_task_ids",
+            "ordered_integration_gate_completion"
+          ]
+        },
+        "source_classification": {
+          "$ref": "#/$defs/sourceClass"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "unavailable"
+          ]
+        },
+        "feature_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "decision_use": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "current_limitation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "next_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "metric_guidance"
+                }
+              }
+            }
+          ]
+        },
+        "latest_change": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/latestChange"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "omitted_observations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unavailable_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "observations": {
+          "type": "array",
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        }
       },
       "allOf": [
-        { "if": { "properties": { "availability": { "const": "available" } }, "required": ["availability"] }, "then": { "properties": { "observations": { "minItems": 1 }, "latest_change": { "$ref": "#/$defs/latestChange" }, "unavailable_reason": { "type": "null" } } } },
-        { "if": { "properties": { "availability": { "const": "unavailable" } }, "required": ["availability"] }, "then": { "properties": { "observations": { "maxItems": 0 }, "latest_change": { "type": "null" }, "unavailable_reason": { "type": "string", "minLength": 1 } } } },
-        { "if": { "properties": { "id": { "const": "customer_capability" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "accepted_customer_scenarios" }, "counting_rule": { "const": "distinct_committed_customer_acceptance" }, "source_classification": { "const": "product_acceptance" } } } },
-        { "if": { "properties": { "id": { "const": "quality" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "passing_required_checks_ratio" }, "counting_rule": { "const": "required_candidate_checks" }, "source_classification": { "const": "test_evidence" } } } },
-        { "if": { "properties": { "id": { "const": "process_automation" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "demonstrated_lifecycle_capabilities" }, "counting_rule": { "const": "distinct_committed_lifecycle_demonstrations" }, "source_classification": { "const": "automation_capability" } } } },
-        { "if": { "properties": { "id": { "const": "governance" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "passing_program_gates_ratio" }, "counting_rule": { "const": "authoritative_program_health_gates" }, "source_classification": { "const": "program_gate" } } } },
-        { "if": { "properties": { "id": { "enum": ["product_readiness", "benchmark_readiness", "commercial_readiness", "program_health"] } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "passing_readiness_gates_ratio" }, "counting_rule": { "const": "authoritative_readiness_area_gates" }, "source_classification": { "const": "readiness_gate" } } } },
-        { "if": { "properties": { "id": { "const": "benchmark_qualified" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "qualified_processes_of_100" }, "counting_rule": { "const": "governed_qualification_only" }, "source_classification": { "const": "benchmark_qualification" } } } },
-        { "if": { "properties": { "id": { "const": "program_tasks" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "completed_program_tasks_ratio" }, "counting_rule": { "const": "closed_registered_task_sources" }, "source_classification": { "const": "program_task" }, "feature_id": { "type": "null" } } } },
-        { "if": { "properties": { "id": { "const": "feature_tasks" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "completed_feature_tasks_ratio" }, "counting_rule": { "const": "exact_feature_task_ids" }, "source_classification": { "const": "feature_task" }, "feature_id": { "type": "string", "minLength": 1 } } } },
-        { "if": { "properties": { "id": { "const": "integration_delivery" } }, "required": ["id"] }, "then": { "properties": { "unit": { "const": "completed_integration_gates_of_8" }, "counting_rule": { "const": "ordered_integration_gate_completion" }, "source_classification": { "const": "integration_gate" } } } }
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "available"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observations": {
+                "minItems": 1
+              },
+              "latest_change": {
+                "$ref": "#/$defs/latestChange"
+              },
+              "unavailable_reason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observations": {
+                "maxItems": 0
+              },
+              "latest_change": {
+                "type": "null"
+              },
+              "unavailable_reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "customer_capability"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "accepted_customer_scenarios"
+              },
+              "counting_rule": {
+                "const": "distinct_committed_customer_acceptance"
+              },
+              "source_classification": {
+                "const": "product_acceptance"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "quality"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "passing_required_checks_ratio"
+              },
+              "counting_rule": {
+                "const": "required_candidate_checks"
+              },
+              "source_classification": {
+                "const": "test_evidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "process_automation"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "demonstrated_lifecycle_capabilities"
+              },
+              "counting_rule": {
+                "const": "distinct_committed_lifecycle_demonstrations"
+              },
+              "source_classification": {
+                "const": "automation_capability"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "governance"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "passing_program_gates_ratio"
+              },
+              "counting_rule": {
+                "const": "authoritative_program_health_gates"
+              },
+              "source_classification": {
+                "const": "program_gate"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "enum": [
+                  "product_readiness",
+                  "benchmark_readiness",
+                  "commercial_readiness",
+                  "program_health"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "passing_readiness_gates_ratio"
+              },
+              "counting_rule": {
+                "const": "authoritative_readiness_area_gates"
+              },
+              "source_classification": {
+                "const": "readiness_gate"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "benchmark_qualified"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "qualified_processes_of_100"
+              },
+              "counting_rule": {
+                "const": "governed_qualification_only"
+              },
+              "source_classification": {
+                "const": "benchmark_qualification"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "program_tasks"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "completed_program_tasks_ratio"
+              },
+              "counting_rule": {
+                "const": "closed_registered_task_sources"
+              },
+              "source_classification": {
+                "const": "program_task"
+              },
+              "feature_id": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "feature_tasks"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "completed_feature_tasks_ratio"
+              },
+              "counting_rule": {
+                "const": "exact_feature_task_ids"
+              },
+              "source_classification": {
+                "const": "feature_task"
+              },
+              "feature_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "integration_delivery"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unit": {
+                "const": "completed_integration_gates_of_8"
+              },
+              "counting_rule": {
+                "const": "ordered_integration_gate_completion"
+              },
+              "source_classification": {
+                "const": "integration_gate"
+              }
+            }
+          }
+        }
       ]
     },
     "catalog": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["proposed_total", "source_path", "source_digest", "maturity_counts"],
+      "required": [
+        "proposed_total",
+        "source_path",
+        "source_digest",
+        "maturity_counts"
+      ],
       "properties": {
-        "proposed_total": { "const": 100 },
-        "source_path": { "$ref": "#/$defs/relativePath" },
-        "source_digest": { "$ref": "#/$defs/sha256" },
+        "proposed_total": {
+          "const": 100
+        },
+        "source_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/sha256"
+        },
         "maturity_counts": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["fully_defined", "ready_to_specify", "shaped", "candidate", "discovery_shaped", "discovery", "discovery_separate_t4_authority_required"],
+          "required": [
+            "fully_defined",
+            "ready_to_specify",
+            "shaped",
+            "candidate",
+            "discovery_shaped",
+            "discovery",
+            "discovery_separate_t4_authority_required"
+          ],
           "properties": {
-            "fully_defined": { "type": "integer", "minimum": 0 },
-            "ready_to_specify": { "type": "integer", "minimum": 0 },
-            "shaped": { "type": "integer", "minimum": 0 },
-            "candidate": { "type": "integer", "minimum": 0 },
-            "discovery_shaped": { "type": "integer", "minimum": 0 },
-            "discovery": { "type": "integer", "minimum": 0 },
-            "discovery_separate_t4_authority_required": { "type": "integer", "minimum": 0 }
+            "fully_defined": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ready_to_specify": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "shaped": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "discovery_shaped": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "discovery": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "discovery_separate_t4_authority_required": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         }
       }
@@ -194,246 +978,1071 @@
     "testResultEvidenceRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "path", "sha256"],
+      "required": [
+        "id",
+        "path",
+        "sha256"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
-        "path": { "$ref": "#/$defs/testResultPath" },
-        "sha256": { "$ref": "#/$defs/sha256" }
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+        },
+        "path": {
+          "$ref": "#/$defs/testResultPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "historyEvidenceRef": {
       "oneOf": [
-        { "$ref": "#/$defs/evidenceRef" },
-        { "$ref": "#/$defs/testResultEvidenceRef" }
+        {
+          "$ref": "#/$defs/evidenceRef"
+        },
+        {
+          "$ref": "#/$defs/testResultEvidenceRef"
+        }
       ]
     },
     "graphChange": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "observed_at", "summary", "evidence"],
+      "required": [
+        "commit",
+        "observed_at",
+        "summary",
+        "evidence"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "graphContext": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["meaning", "latest_change", "current_limitation", "next_action"],
+      "required": [
+        "meaning",
+        "latest_change",
+        "current_limitation",
+        "next_action"
+      ],
       "properties": {
-        "meaning": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "latest_change": { "oneOf": [{ "$ref": "#/$defs/graphChange" }, { "type": "null" }] },
-        "current_limitation": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "metric_guidance" } } }] }
+        "meaning": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "latest_change": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/graphChange"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current_limitation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "next_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "metric_guidance"
+                }
+              }
+            }
+          ]
+        }
       }
     },
     "allUseCaseFunnel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["total", "not_started", "in_progress", "implemented", "independently_verified", "remaining"],
+      "required": [
+        "total",
+        "not_started",
+        "in_progress",
+        "implemented",
+        "independently_verified",
+        "remaining"
+      ],
       "properties": {
-        "total": { "type": "integer", "minimum": 0 },
-        "not_started": { "type": "integer", "minimum": 0 },
-        "in_progress": { "type": "integer", "minimum": 0 },
-        "implemented": { "type": "integer", "minimum": 0 },
-        "independently_verified": { "type": "integer", "minimum": 0 },
-        "remaining": { "type": "integer", "minimum": 0 }
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_started": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "in_progress": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "implemented": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "independently_verified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "processUseCaseFunnel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["population_target", "defined", "in_progress", "implemented", "tested", "independently_verified", "benchmark_qualified"],
+      "required": [
+        "population_target",
+        "defined",
+        "in_progress",
+        "implemented",
+        "tested",
+        "independently_verified",
+        "benchmark_qualified"
+      ],
       "properties": {
-        "population_target": { "const": 100 },
-        "defined": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "in_progress": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "implemented": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "tested": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "independently_verified": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "benchmark_qualified": { "type": "integer", "minimum": 0, "maximum": 100 }
+        "population_target": {
+          "const": 100
+        },
+        "defined": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "in_progress": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "implemented": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "tested": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "independently_verified": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "benchmark_qualified": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
       }
     },
     "useCases": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_path", "source_digest", "all", "process_100", "items", "graph_context"],
+      "required": [
+        "source_path",
+        "source_digest",
+        "all",
+        "process_100",
+        "items",
+        "graph_context"
+      ],
       "properties": {
-        "source_path": { "$ref": "#/$defs/relativePath" },
-        "source_digest": { "$ref": "#/$defs/sha256" },
-        "all": { "$ref": "#/$defs/allUseCaseFunnel" },
-        "process_100": { "$ref": "#/$defs/processUseCaseFunnel" },
-        "items": { "type": "array", "maxItems": 500, "uniqueItems": true, "items": { "$ref": "#/$defs/useCaseDetail" } },
-        "graph_context": { "$ref": "#/$defs/graphContext" }
+        "source_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "all": {
+          "$ref": "#/$defs/allUseCaseFunnel"
+        },
+        "process_100": {
+          "$ref": "#/$defs/processUseCaseFunnel"
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/useCaseDetail"
+          }
+        },
+        "graph_context": {
+          "$ref": "#/$defs/graphContext"
+        }
       }
     },
     "useCaseStageEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["evidence_class", "source_name", "subject_id", "verdict", "acceptance_subject_id", "evidence_author", "independent_verifier", "evidence"],
+      "required": [
+        "evidence_class",
+        "source_name",
+        "subject_id",
+        "verdict",
+        "acceptance_subject_id",
+        "evidence_author",
+        "independent_verifier",
+        "evidence"
+      ],
       "properties": {
-        "evidence_class": { "enum": ["definition", "progress", "customer_acceptance", "test", "independent_verification", "benchmark_qualification"] },
-        "source_name": { "$ref": "#/$defs/sourceName" },
-        "subject_id": { "$ref": "#/$defs/stableId" },
-        "verdict": { "enum": ["not_applicable", "in_progress", "passed", "failed", "skipped", "not_run", "inconclusive"] },
-        "acceptance_subject_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
-        "evidence_author": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
-        "independent_verifier": { "type": ["string", "null"], "minLength": 1, "maxLength": 160 },
-        "evidence": { "$ref": "#/$defs/evidenceRef" }
+        "evidence_class": {
+          "enum": [
+            "definition",
+            "progress",
+            "customer_acceptance",
+            "test",
+            "independent_verification",
+            "benchmark_qualification"
+          ]
+        },
+        "source_name": {
+          "$ref": "#/$defs/sourceName"
+        },
+        "subject_id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "verdict": {
+          "enum": [
+            "not_applicable",
+            "in_progress",
+            "passed",
+            "failed",
+            "skipped",
+            "not_run",
+            "inconclusive"
+          ]
+        },
+        "acceptance_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/stableId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "independent_verifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceRef"
+        }
       }
     },
     "useCaseDetail": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "title", "customer_outcome", "process_100_id", "definition_evidence", "progress_evidence", "acceptance_evidence", "test_evidence", "independent_verification_evidence", "benchmark_qualification_evidence"],
+      "required": [
+        "id",
+        "title",
+        "customer_outcome",
+        "process_100_id",
+        "definition_evidence",
+        "progress_evidence",
+        "acceptance_evidence",
+        "test_evidence",
+        "independent_verification_evidence",
+        "benchmark_qualification_evidence"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^EPP-UC-[0-9]{3}$" },
-        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "customer_outcome": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "process_100_id": { "type": ["string", "null"], "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$" },
-        "definition_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "definition" }, "source_name": { "enum": ["roadmap", "customer_story_catalog"] }, "verdict": { "const": "not_applicable" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
-        "progress_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "progress" }, "source_name": { "enum": ["transition_evidence", "work_registry", "feature_tasks"] }, "verdict": { "const": "in_progress" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "null" }, "independent_verifier": { "type": "null" } } }] } },
-        "acceptance_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "customer_acceptance" }, "source_name": { "enum": ["gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "type": "null" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }] } },
-        "test_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "test" }, "source_name": { "enum": ["test_run_ledger", "verification_evidence"] }, "verdict": { "enum": ["passed", "failed", "skipped", "not_run", "inconclusive"] }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "null" } } }] } },
-        "independent_verification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "independent_verification" }, "source_name": { "const": "verification_evidence" }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }] } },
-        "benchmark_qualification_evidence": { "type": "array", "maxItems": 25, "items": { "allOf": [{ "$ref": "#/$defs/useCaseStageEvidence" }, { "properties": { "evidence_class": { "const": "benchmark_qualification" }, "source_name": { "enum": ["dashboard", "benchmark_coverage", "gate_evidence", "verification_evidence"] }, "verdict": { "const": "passed" }, "acceptance_subject_id": { "$ref": "#/$defs/stableId" }, "evidence_author": { "type": "string" }, "independent_verifier": { "type": "string" } } }] } }
+        "id": {
+          "type": "string",
+          "pattern": "^EPP-UC-[0-9]{3}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "customer_outcome": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "process_100_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^EPP-PROC-(?:00[1-9]|0[1-9][0-9]|100)$"
+        },
+        "definition_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "definition"
+                  },
+                  "source_name": {
+                    "enum": [
+                      "roadmap",
+                      "customer_story_catalog"
+                    ]
+                  },
+                  "verdict": {
+                    "const": "not_applicable"
+                  },
+                  "acceptance_subject_id": {
+                    "type": "null"
+                  },
+                  "evidence_author": {
+                    "type": "null"
+                  },
+                  "independent_verifier": {
+                    "type": "null"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "progress_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "progress"
+                  },
+                  "source_name": {
+                    "enum": [
+                      "transition_evidence",
+                      "work_registry",
+                      "feature_tasks"
+                    ]
+                  },
+                  "verdict": {
+                    "const": "in_progress"
+                  },
+                  "acceptance_subject_id": {
+                    "type": "null"
+                  },
+                  "evidence_author": {
+                    "type": "null"
+                  },
+                  "independent_verifier": {
+                    "type": "null"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "acceptance_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "customer_acceptance"
+                  },
+                  "source_name": {
+                    "enum": [
+                      "gate_evidence",
+                      "verification_evidence"
+                    ]
+                  },
+                  "verdict": {
+                    "const": "passed"
+                  },
+                  "acceptance_subject_id": {
+                    "type": "null"
+                  },
+                  "evidence_author": {
+                    "type": "string"
+                  },
+                  "independent_verifier": {
+                    "type": "null"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "test_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "test"
+                  },
+                  "source_name": {
+                    "enum": [
+                      "test_run_ledger",
+                      "verification_evidence"
+                    ]
+                  },
+                  "verdict": {
+                    "enum": [
+                      "passed",
+                      "failed",
+                      "skipped",
+                      "not_run",
+                      "inconclusive"
+                    ]
+                  },
+                  "evidence_author": {
+                    "type": "string"
+                  },
+                  "independent_verifier": {
+                    "type": "null"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "independent_verification_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "independent_verification"
+                  },
+                  "source_name": {
+                    "const": "verification_evidence"
+                  },
+                  "verdict": {
+                    "const": "passed"
+                  },
+                  "acceptance_subject_id": {
+                    "$ref": "#/$defs/stableId"
+                  },
+                  "evidence_author": {
+                    "type": "string"
+                  },
+                  "independent_verifier": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "benchmark_qualification_evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/useCaseStageEvidence"
+              },
+              {
+                "properties": {
+                  "evidence_class": {
+                    "const": "benchmark_qualification"
+                  },
+                  "source_name": {
+                    "enum": [
+                      "dashboard",
+                      "benchmark_coverage",
+                      "gate_evidence",
+                      "verification_evidence"
+                    ]
+                  },
+                  "verdict": {
+                    "const": "passed"
+                  },
+                  "acceptance_subject_id": {
+                    "$ref": "#/$defs/stableId"
+                  },
+                  "evidence_author": {
+                    "type": "string"
+                  },
+                  "independent_verifier": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
       }
     },
     "testCounts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["total", "passed", "failed", "skipped", "not_run"],
+      "required": [
+        "total",
+        "passed",
+        "failed",
+        "skipped",
+        "not_run"
+      ],
       "properties": {
-        "total": { "type": "integer", "minimum": 0 },
-        "passed": { "type": "integer", "minimum": 0 },
-        "failed": { "type": "integer", "minimum": 0 },
-        "skipped": { "type": "integer", "minimum": 0 },
-        "not_run": { "type": "integer", "minimum": 0 }
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_run": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "testSuiteSource": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["suite_id", "population_id", "run_id", "run_key", "attempt", "observed_at", "terminal", "aggregate_role", "category", "test_case_ids", "test_case_set_sha256", "counts", "evidence"],
+      "required": [
+        "suite_id",
+        "population_id",
+        "run_id",
+        "run_key",
+        "attempt",
+        "observed_at",
+        "terminal",
+        "aggregate_role",
+        "category",
+        "test_case_ids",
+        "test_case_set_sha256",
+        "counts",
+        "evidence"
+      ],
       "properties": {
-        "suite_id": { "$ref": "#/$defs/stableId" },
-        "population_id": { "$ref": "#/$defs/stableId" },
-        "run_id": { "$ref": "#/$defs/stableId" },
-        "run_key": { "$ref": "#/$defs/sha256" },
-        "attempt": { "type": "integer", "minimum": 1 },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "terminal": { "const": true },
-        "aggregate_role": { "enum": ["component", "summary_only"] },
-        "category": { "enum": ["unit", "integration", "e2e", "benchmark"] },
+        "suite_id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "population_id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "run_id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "run_key": {
+          "$ref": "#/$defs/sha256"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "terminal": {
+          "const": true
+        },
+        "aggregate_role": {
+          "enum": [
+            "component",
+            "summary_only"
+          ]
+        },
+        "category": {
+          "enum": [
+            "unit",
+            "integration",
+            "e2e",
+            "benchmark"
+          ]
+        },
         "test_case_ids": {
           "type": "array",
           "maxItems": 5000,
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
         },
-        "test_case_set_sha256": { "$ref": "#/$defs/sha256" },
-        "counts": { "$ref": "#/$defs/testCounts" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "oneOf": [{ "$ref": "#/$defs/evidenceRef" }, { "$ref": "#/$defs/testResultEvidenceRef" }] } }
+        "test_case_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "counts": {
+          "$ref": "#/$defs/testCounts"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/evidenceRef"
+              },
+              {
+                "$ref": "#/$defs/testResultEvidenceRef"
+              }
+            ]
+          }
+        }
       }
     },
     "testCheckpoint": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "observed_at", "counts", "pass_rate", "categories", "suite_sources"],
+      "required": [
+        "commit",
+        "observed_at",
+        "counts",
+        "pass_rate",
+        "categories",
+        "suite_sources"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "counts": { "$ref": "#/$defs/testCounts" },
-        "pass_rate": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "counts": {
+          "$ref": "#/$defs/testCounts"
+        },
+        "pass_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
         "categories": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["unit", "integration", "e2e", "benchmark"],
+          "required": [
+            "unit",
+            "integration",
+            "e2e",
+            "benchmark"
+          ],
           "properties": {
-            "unit": { "oneOf": [{ "$ref": "#/$defs/testCounts" }, { "type": "null" }] },
-            "integration": { "oneOf": [{ "$ref": "#/$defs/testCounts" }, { "type": "null" }] },
-            "e2e": { "oneOf": [{ "$ref": "#/$defs/testCounts" }, { "type": "null" }] },
-            "benchmark": { "oneOf": [{ "$ref": "#/$defs/testCounts" }, { "type": "null" }] }
+            "unit": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/testCounts"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "integration": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/testCounts"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "e2e": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/testCounts"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "benchmark": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/testCounts"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         },
-        "suite_sources": { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/testSuiteSource" } }
+        "suite_sources": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/testSuiteSource"
+          }
+        }
       }
     },
     "testHistory": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["availability", "counting_rule", "pass_rate_rule", "identity_digest_rule", "run_key_rule", "runs_digest_rule", "selection_attestation", "graph_context", "unavailable_reason", "checkpoints"],
+      "required": [
+        "availability",
+        "counting_rule",
+        "pass_rate_rule",
+        "identity_digest_rule",
+        "run_key_rule",
+        "runs_digest_rule",
+        "selection_attestation",
+        "graph_context",
+        "unavailable_reason",
+        "checkpoints"
+      ],
       "properties": {
-        "availability": { "enum": ["available", "unavailable"] },
-        "counting_rule": { "const": "latest_terminal_attempt_per_commit_suite_id_population_id" },
-        "pass_rate_rule": { "const": "passed_divided_by_passed_plus_failed_else_unavailable" },
-        "identity_digest_rule": { "const": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256" },
-        "run_key_rule": { "const": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256" },
-        "runs_digest_rule": { "const": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order" },
+        "availability": {
+          "enum": [
+            "available",
+            "unavailable"
+          ]
+        },
+        "counting_rule": {
+          "const": "latest_terminal_attempt_per_commit_suite_id_population_id"
+        },
+        "pass_rate_rule": {
+          "const": "passed_divided_by_passed_plus_failed_else_unavailable"
+        },
+        "identity_digest_rule": {
+          "const": "wright_test_id_set_v1_lf_then_utf8_byte_lexicographic_unique_nfc_ids_length_colon_bytes_lf_sha256"
+        },
+        "run_key_rule": {
+          "const": "wright_test_run_key_v1_lf_then_length_framed_nfc_utf8_commit_suite_population_attempt_sha256"
+        },
+        "runs_digest_rule": {
+          "const": "wright_json_c14n_v1_nfc_sha256_complete_runs_array_in_stored_order"
+        },
         "selection_attestation": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["source_path", "source_digest", "ledger_revision", "prior_ledger_runs_sha256", "runs_sha256", "publisher_verified_append_only", "selected_run_ids"],
+          "required": [
+            "source_path",
+            "source_digest",
+            "ledger_revision",
+            "prior_ledger_runs_sha256",
+            "runs_sha256",
+            "publisher_verified_append_only",
+            "selected_run_ids"
+          ],
           "properties": {
-            "source_path": { "$ref": "#/$defs/relativePath" },
-            "source_digest": { "$ref": "#/$defs/sha256" },
-            "ledger_revision": { "type": "integer", "minimum": 1 },
-            "prior_ledger_runs_sha256": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
-            "runs_sha256": { "$ref": "#/$defs/sha256" },
-            "publisher_verified_append_only": { "const": true },
-            "selected_run_ids": { "type": "array", "maxItems": 1000, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } }
+            "source_path": {
+              "$ref": "#/$defs/relativePath"
+            },
+            "source_digest": {
+              "$ref": "#/$defs/sha256"
+            },
+            "ledger_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "prior_ledger_runs_sha256": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "runs_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "publisher_verified_append_only": {
+              "const": true
+            },
+            "selected_run_ids": {
+              "type": "array",
+              "maxItems": 1000,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/stableId"
+              }
+            }
           }
         },
-        "graph_context": { "$ref": "#/$defs/graphContext" },
-        "unavailable_reason": { "type": ["string", "null"], "maxLength": 500 },
-        "checkpoints": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/testCheckpoint" } }
+        "graph_context": {
+          "$ref": "#/$defs/graphContext"
+        },
+        "unavailable_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "checkpoints": {
+          "type": "array",
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/testCheckpoint"
+          }
+        }
       },
       "allOf": [
-        { "if": { "properties": { "availability": { "const": "available" } }, "required": ["availability"] }, "then": { "properties": { "checkpoints": { "minItems": 1 }, "unavailable_reason": { "type": "null" } } } },
-        { "if": { "properties": { "availability": { "const": "unavailable" } }, "required": ["availability"] }, "then": { "properties": { "checkpoints": { "maxItems": 0 }, "unavailable_reason": { "type": "string", "minLength": 1 } } } }
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "available"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checkpoints": {
+                "minItems": 1
+              },
+              "unavailable_reason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checkpoints": {
+                "maxItems": 0
+              },
+              "unavailable_reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
       ]
     },
     "commitTree": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "tree"],
+      "required": [
+        "commit",
+        "tree"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "tree": { "$ref": "#/$defs/gitSha" }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "tree": {
+          "$ref": "#/$defs/gitSha"
+        }
       }
     },
     "leaseRecovery": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "last_audit_transition", "rollback_state", "exhausted_cause_ids", "active_cause_id", "repair_maximum", "repair_remaining"],
+      "required": [
+        "status",
+        "last_audit_transition",
+        "rollback_state",
+        "exhausted_cause_ids",
+        "active_cause_id",
+        "repair_maximum",
+        "repair_remaining"
+      ],
       "properties": {
-        "status": { "enum": ["audit_current", "reactivated", "interrupted", "expired", "blocked"] },
-        "last_audit_transition": { "type": "string", "pattern": "^TR-[0-9]{4}$" },
-        "rollback_state": { "type": "string", "pattern": "^evidence/states/program-state-revision-[0-9]{4}\\.json$" },
-        "exhausted_cause_ids": { "type": "array", "uniqueItems": true, "maxItems": 100, "items": { "type": "string", "pattern": "^[A-Z0-9-]{3,100}$" } },
-        "active_cause_id": { "type": ["string", "null"], "pattern": "^[A-Z0-9-]{3,100}$" },
-        "repair_maximum": { "const": 2 },
-        "repair_remaining": { "type": "integer", "minimum": 0, "maximum": 2 }
+        "status": {
+          "enum": [
+            "audit_current",
+            "reactivated",
+            "interrupted",
+            "expired",
+            "blocked"
+          ]
+        },
+        "last_audit_transition": {
+          "type": "string",
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "rollback_state": {
+          "type": "string",
+          "pattern": "^evidence/states/program-state-revision-[0-9]{4}\\.json$"
+        },
+        "exhausted_cause_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9-]{3,100}$"
+          }
+        },
+        "active_cause_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Z0-9-]{3,100}$"
+        },
+        "repair_maximum": {
+          "const": 2
+        },
+        "repair_remaining": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        }
       }
     },
     "lease": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["feature_id", "branch", "worktree_id", "dev_baseline", "worktree_start", "holder_role", "lease_mode", "lease_revision", "acquired_at", "expires_at", "allowed_paths", "path_restrictions", "allowed_actions", "recovery"],
+      "required": [
+        "feature_id",
+        "branch",
+        "worktree_id",
+        "dev_baseline",
+        "worktree_start",
+        "holder_role",
+        "lease_mode",
+        "lease_revision",
+        "acquired_at",
+        "expires_at",
+        "allowed_paths",
+        "path_restrictions",
+        "allowed_actions",
+        "recovery"
+      ],
       "properties": {
-        "feature_id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
-        "branch": { "type": "string", "minLength": 1, "maxLength": 200 },
-        "worktree_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,99}$" },
-        "dev_baseline": { "$ref": "#/$defs/commitTree" },
-        "worktree_start": { "$ref": "#/$defs/commitTree" },
-        "holder_role": { "const": "feature_owner" },
-        "lease_mode": { "enum": ["planning", "implementation", "verification"] },
-        "lease_revision": { "type": "integer", "minimum": 1 },
-        "acquired_at": { "$ref": "#/$defs/timestamp" },
-        "expires_at": { "$ref": "#/$defs/timestamp" },
-        "allowed_paths": { "type": "array", "minItems": 1, "maxItems": 250, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 300 } },
+        "feature_id": {
+          "type": "string",
+          "pattern": "^EPP-[A-Z0-9-]+$"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "worktree_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,99}$"
+        },
+        "dev_baseline": {
+          "$ref": "#/$defs/commitTree"
+        },
+        "worktree_start": {
+          "$ref": "#/$defs/commitTree"
+        },
+        "holder_role": {
+          "const": "feature_owner"
+        },
+        "lease_mode": {
+          "enum": [
+            "planning",
+            "implementation",
+            "verification"
+          ]
+        },
+        "lease_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "acquired_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "allowed_paths": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        },
         "path_restrictions": {
           "type": "array",
           "maxItems": 100,
@@ -441,276 +2050,1250 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["path", "restriction"],
+            "required": [
+              "path",
+              "restriction"
+            ],
             "properties": {
-              "path": { "type": "string", "minLength": 1, "maxLength": 300 },
-              "restriction": { "type": "string", "minLength": 1, "maxLength": 300 }
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "restriction": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
             }
           }
         },
-        "allowed_actions": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["inspect", "edit_allowlisted_paths", "run_deterministic_checks", "create_local_artifacts", "create_local_commits"] } },
-        "recovery": { "$ref": "#/$defs/leaseRecovery" }
+        "allowed_actions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "inspect",
+              "edit_allowlisted_paths",
+              "run_deterministic_checks",
+              "create_local_artifacts",
+              "create_local_commits"
+            ]
+          }
+        },
+        "recovery": {
+          "$ref": "#/$defs/leaseRecovery"
+        }
       }
     },
     "checkpoint": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commit", "transition_id", "parent_commit", "observed_at", "label", "source_classification", "evidence"],
+      "required": [
+        "commit",
+        "transition_id",
+        "parent_commit",
+        "observed_at",
+        "label",
+        "source_classification",
+        "evidence"
+      ],
       "properties": {
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "transition_id": { "type": ["string", "null"], "pattern": "^TR-[0-9]{4}$" },
-        "parent_commit": { "oneOf": [{ "$ref": "#/$defs/gitSha" }, { "type": "null" }] },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
-        "source_classification": { "$ref": "#/$defs/sourceClass" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "transition_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^TR-[0-9]{4}$"
+        },
+        "parent_commit": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "source_classification": {
+          "$ref": "#/$defs/sourceClass"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "checks": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["passing", "failing", "pending"],
+      "required": [
+        "passing",
+        "failing",
+        "pending"
+      ],
       "properties": {
-        "passing": { "type": "integer", "minimum": 0 },
-        "failing": { "type": "integer", "minimum": 0 },
-        "pending": { "type": "integer", "minimum": 0 }
+        "passing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
     "pullRequest": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["number", "url"],
+      "required": [
+        "number",
+        "url"
+      ],
       "properties": {
-        "number": { "type": "integer", "minimum": 1 },
-        "url": { "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/pull/[1-9][0-9]*$" }
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 1000,
+          "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/pull/[1-9][0-9]*$"
+        }
       }
     },
     "deliveryEvent": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "commit", "observed_at", "result", "evidence"],
+      "required": [
+        "kind",
+        "commit",
+        "observed_at",
+        "result",
+        "evidence"
+      ],
       "properties": {
-        "kind": { "type": "string", "minLength": 1, "maxLength": 80 },
-        "commit": { "$ref": "#/$defs/gitSha" },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "result": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "result": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "integrationLane": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "branch", "milestone", "latest_capability", "blocker", "next_action", "observed_at", "evidence", "target_branch", "frozen_candidate", "last_pushed_commit", "last_pushed_at", "pull_request", "phase", "checks", "ci_started_at", "first_actionable_failure", "dev_sync", "merge_gate", "authority_state", "events"],
+      "required": [
+        "kind",
+        "branch",
+        "milestone",
+        "latest_capability",
+        "blocker",
+        "next_action",
+        "observed_at",
+        "evidence",
+        "target_branch",
+        "frozen_candidate",
+        "last_pushed_commit",
+        "last_pushed_at",
+        "pull_request",
+        "phase",
+        "checks",
+        "ci_started_at",
+        "first_actionable_failure",
+        "dev_sync",
+        "merge_gate",
+        "authority_state",
+        "events"
+      ],
       "properties": {
-        "kind": { "const": "integration" },
-        "branch": { "type": "string", "minLength": 1, "maxLength": 255 },
-        "milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "latest_capability": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "blocker": { "type": ["string", "null"], "maxLength": 500 },
-        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "lane_next_action" } } }] },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } },
-        "target_branch": { "type": "string", "minLength": 1, "maxLength": 255 },
-        "frozen_candidate": { "oneOf": [{ "$ref": "#/$defs/gitSha" }, { "type": "null" }] },
-        "last_pushed_commit": { "oneOf": [{ "$ref": "#/$defs/gitSha" }, { "type": "null" }] },
-        "last_pushed_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "pull_request": { "oneOf": [{ "$ref": "#/$defs/pullRequest" }, { "type": "null" }] },
-        "phase": { "enum": ["not pushed", "local gate", "PR open", "CI running", "CI failed", "merge ready", "merged", "dev deployment verified"] },
-        "checks": { "oneOf": [{ "$ref": "#/$defs/checks" }, { "type": "null" }] },
-        "ci_started_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "first_actionable_failure": { "type": ["string", "null"], "maxLength": 500 },
-        "dev_sync": { "type": ["string", "null"], "maxLength": 160 },
-        "merge_gate": { "type": ["string", "null"], "maxLength": 160 },
-        "authority_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] },
-        "events": { "type": "array", "maxItems": 50, "items": { "$ref": "#/$defs/deliveryEvent" } }
+        "kind": {
+          "const": "integration"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "milestone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "latest_capability": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "blocker": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "next_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "lane_next_action"
+                }
+              }
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        },
+        "target_branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "frozen_candidate": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_pushed_commit": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_pushed_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pull_request": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/pullRequest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "phase": {
+          "enum": [
+            "not pushed",
+            "local gate",
+            "PR open",
+            "CI running",
+            "CI failed",
+            "merge ready",
+            "merged",
+            "dev deployment verified"
+          ]
+        },
+        "checks": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/checks"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ci_started_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "first_actionable_failure": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "dev_sync": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "merge_gate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "authority_state": {
+          "enum": [
+            "authorized",
+            "not_authorized",
+            "not_required",
+            "stale",
+            "unavailable"
+          ]
+        },
+        "events": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/deliveryEvent"
+          }
+        }
       }
     },
     "developmentLane": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "branch", "milestone", "latest_capability", "blocker", "next_action", "observed_at", "evidence", "base_commit", "authority_state"],
+      "required": [
+        "kind",
+        "branch",
+        "milestone",
+        "latest_capability",
+        "blocker",
+        "next_action",
+        "observed_at",
+        "evidence",
+        "base_commit",
+        "authority_state"
+      ],
       "properties": {
-        "kind": { "const": "continued_development" },
-        "branch": { "type": "string", "minLength": 1, "maxLength": 255 },
-        "milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "latest_capability": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "blocker": { "type": ["string", "null"], "maxLength": 500 },
-        "next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "lane_next_action" } } }] },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "evidence": { "type": "array", "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } },
-        "base_commit": { "$ref": "#/$defs/gitSha" },
-        "authority_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] }
+        "kind": {
+          "const": "continued_development"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "milestone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "latest_capability": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "blocker": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "next_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "lane_next_action"
+                }
+              }
+            }
+          ]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        },
+        "base_commit": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "authority_state": {
+          "enum": [
+            "authorized",
+            "not_authorized",
+            "not_required",
+            "stale",
+            "unavailable"
+          ]
+        }
       }
     },
     "evidenceDetail": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "path", "sha256", "summary", "freshness", "recovery", "availability", "exact_url"],
+      "required": [
+        "id",
+        "label",
+        "path",
+        "sha256",
+        "summary",
+        "freshness",
+        "recovery",
+        "availability",
+        "exact_url"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
-        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "path": { "$ref": "#/$defs/relativePath" },
-        "sha256": { "$ref": "#/$defs/sha256" },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
-        "freshness": { "enum": ["current", "stale", "unavailable", "unknown"] },
-        "recovery": { "type": ["string", "null"], "maxLength": 1000 },
-        "availability": { "enum": ["checkout_available", "exact_github", "identity_only"] },
-        "exact_url": { "oneOf": [{ "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$" }, { "type": "null" }] }
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "freshness": {
+          "enum": [
+            "current",
+            "stale",
+            "unavailable",
+            "unknown"
+          ]
+        },
+        "recovery": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "availability": {
+          "enum": [
+            "checkout_available",
+            "exact_github",
+            "identity_only"
+          ]
+        },
+        "exact_url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1000,
+              "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       },
       "allOf": [
-        { "if": { "properties": { "availability": { "const": "exact_github" } }, "required": ["availability"] }, "then": { "properties": { "exact_url": { "type": "string" } } } }
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "exact_github"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exact_url": {
+                "type": "string"
+              }
+            }
+          }
+        }
       ]
     },
     "testResultEvidenceDetail": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "path", "sha256", "summary", "freshness", "recovery", "availability", "exact_url"],
+      "required": [
+        "id",
+        "label",
+        "path",
+        "sha256",
+        "summary",
+        "freshness",
+        "recovery",
+        "availability",
+        "exact_url"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$" },
-        "label": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "path": { "$ref": "#/$defs/testResultPath" },
-        "sha256": { "$ref": "#/$defs/sha256" },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
-        "freshness": { "enum": ["current", "stale", "unavailable", "unknown"] },
-        "recovery": { "type": ["string", "null"], "maxLength": 1000 },
-        "availability": { "enum": ["checkout_available", "exact_github", "identity_only"] },
-        "exact_url": { "oneOf": [{ "type": "string", "maxLength": 1000, "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$" }, { "type": "null" }] }
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "path": {
+          "$ref": "#/$defs/testResultPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "freshness": {
+          "enum": [
+            "current",
+            "stale",
+            "unavailable",
+            "unknown"
+          ]
+        },
+        "recovery": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "availability": {
+          "enum": [
+            "checkout_available",
+            "exact_github",
+            "identity_only"
+          ]
+        },
+        "exact_url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 1000,
+              "pattern": "^https://github\\.com/[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_-])?/blob/[0-9a-f]{40}/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       },
       "allOf": [
-        { "if": { "properties": { "availability": { "const": "exact_github" } }, "required": ["availability"] }, "then": { "properties": { "exact_url": { "type": "string" } } } }
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "exact_github"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "exact_url": {
+                "type": "string"
+              }
+            }
+          }
+        }
       ]
     },
     "correctionDisclosure": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["profile_id", "path", "digest", "correction_class", "authority_status", "approval_id", "expected_claim_ids", "verified_claim_ids", "finding_ids", "resolved_finding_ids", "unresolved_finding_ids", "verification_ids", "verification_subject", "verified_at", "evidence"],
+      "required": [
+        "profile_id",
+        "path",
+        "digest",
+        "correction_class",
+        "authority_status",
+        "approval_id",
+        "expected_claim_ids",
+        "verified_claim_ids",
+        "finding_ids",
+        "resolved_finding_ids",
+        "unresolved_finding_ids",
+        "verification_ids",
+        "verification_subject",
+        "verified_at",
+        "evidence"
+      ],
       "properties": {
-        "profile_id": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "path": { "$ref": "#/$defs/relativePath" },
-        "digest": { "$ref": "#/$defs/sha256" },
-        "correction_class": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "authority_status": { "enum": ["approved", "pending", "stale", "unavailable"] },
-        "approval_id": { "type": ["string", "null"], "maxLength": 160 },
-        "expected_claim_ids": { "type": "array", "minItems": 1, "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "verified_claim_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "resolved_finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "unresolved_finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "verification_ids": { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "verification_subject": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "verified_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "profile_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "correction_class": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "authority_status": {
+          "enum": [
+            "approved",
+            "pending",
+            "stale",
+            "unavailable"
+          ]
+        },
+        "approval_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "expected_claim_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "verified_claim_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "finding_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "resolved_finding_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "unresolved_finding_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "verification_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "verification_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "verified_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "finding": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "status", "severity", "summary", "blocking", "opened_at", "resolved_at", "correction_profile_id", "resolution_verification_id", "recovery", "evidence"],
+      "required": [
+        "id",
+        "status",
+        "severity",
+        "summary",
+        "blocking",
+        "opened_at",
+        "resolved_at",
+        "correction_profile_id",
+        "resolution_verification_id",
+        "recovery",
+        "evidence"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/stableId" },
-        "status": { "enum": ["open", "resolved", "accepted", "unavailable"] },
-        "severity": { "enum": ["P0", "P1", "P2", "P3", "unknown"] },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
-        "blocking": { "type": "boolean" },
-        "opened_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "resolved_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "correction_profile_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
-        "resolution_verification_id": { "oneOf": [{ "$ref": "#/$defs/stableId" }, { "type": "null" }] },
-        "recovery": { "type": ["string", "null"], "maxLength": 1000 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "resolved",
+            "accepted",
+            "unavailable"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "unknown"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "opened_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resolved_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "correction_profile_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/stableId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resolution_verification_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/stableId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recovery": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "status": { "const": "resolved" } }, "required": ["status"] },
-          "then": { "properties": { "resolved_at": { "$ref": "#/$defs/timestamp" }, "correction_profile_id": { "$ref": "#/$defs/stableId" }, "resolution_verification_id": { "$ref": "#/$defs/stableId" }, "blocking": { "const": false } } }
+          "if": {
+            "properties": {
+              "status": {
+                "const": "resolved"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "resolved_at": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "correction_profile_id": {
+                "$ref": "#/$defs/stableId"
+              },
+              "resolution_verification_id": {
+                "$ref": "#/$defs/stableId"
+              },
+              "blocking": {
+                "const": false
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "status": { "const": "open" } }, "required": ["status"] },
-          "then": { "properties": { "resolved_at": { "type": "null" }, "correction_profile_id": { "type": "null" }, "resolution_verification_id": { "type": "null" } } }
+          "if": {
+            "properties": {
+              "status": {
+                "const": "open"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "resolved_at": {
+                "type": "null"
+              },
+              "correction_profile_id": {
+                "type": "null"
+              },
+              "resolution_verification_id": {
+                "type": "null"
+              }
+            }
+          }
         }
       ]
     },
     "risk": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "severity", "status", "owner", "overdue", "blocks", "summary", "evidence"],
+      "required": [
+        "id",
+        "severity",
+        "status",
+        "owner",
+        "overdue",
+        "blocks",
+        "summary",
+        "evidence"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "severity": { "enum": ["P0", "P1", "P2", "P3", "unknown"] },
-        "status": { "type": "string", "minLength": 1, "maxLength": 80 },
-        "owner": { "type": ["string", "null"], "maxLength": 160 },
-        "overdue": { "type": "boolean" },
-        "blocks": { "type": "boolean" },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "severity": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "unknown"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "overdue": {
+          "type": "boolean"
+        },
+        "blocks": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "decision": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "status", "owner", "overdue", "blocks", "summary", "evidence"],
+      "required": [
+        "id",
+        "status",
+        "owner",
+        "overdue",
+        "blocks",
+        "summary",
+        "evidence"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "status": { "type": "string", "minLength": 1, "maxLength": 80 },
-        "owner": { "type": ["string", "null"], "maxLength": 160 },
-        "overdue": { "type": "boolean" },
-        "blocks": { "type": "boolean" },
-        "summary": { "type": "string", "minLength": 1, "maxLength": 1000 },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        },
+        "overdue": {
+          "type": "boolean"
+        },
+        "blocks": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "independentVerification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "author", "verifier", "independent", "subject", "verdict", "blocking", "finding_ids", "correction_profile_ids", "verified_at", "evidence"],
+      "required": [
+        "id",
+        "author",
+        "verifier",
+        "independent",
+        "subject",
+        "verdict",
+        "blocking",
+        "finding_ids",
+        "correction_profile_ids",
+        "verified_at",
+        "evidence"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/stableId" },
-        "author": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "verifier": { "type": "string", "minLength": 1, "maxLength": 160 },
-        "independent": { "const": true },
-        "subject": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "verdict": { "enum": ["passed", "failed", "inconclusive"] },
-        "blocking": { "type": "boolean" },
-        "finding_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "correction_profile_ids": { "type": "array", "maxItems": 250, "uniqueItems": true, "items": { "$ref": "#/$defs/stableId" } },
-        "verified_at": { "$ref": "#/$defs/timestamp" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "verifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "independent": {
+          "const": true
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "verdict": {
+          "enum": [
+            "passed",
+            "failed",
+            "inconclusive"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "finding_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "correction_profile_ids": {
+          "type": "array",
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "verified_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       },
       "allOf": [
-        { "if": { "properties": { "verdict": { "const": "passed" } }, "required": ["verdict"] }, "then": { "properties": { "blocking": { "const": false } } } },
-        { "if": { "properties": { "verdict": { "enum": ["failed", "inconclusive"] } }, "required": ["verdict"] }, "then": { "properties": { "blocking": { "const": true } } } }
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "passed"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "blocking": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "failed",
+                  "inconclusive"
+                ]
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "blocking": {
+                "const": true
+              }
+            }
+          }
+        }
       ]
     },
     "governance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["corrections", "findings", "risks", "decisions", "verification", "limits", "flow"],
+      "required": [
+        "corrections",
+        "findings",
+        "risks",
+        "decisions",
+        "verification",
+        "limits",
+        "flow"
+      ],
       "properties": {
-        "corrections": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/correctionDisclosure" } },
-        "findings": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/finding" } },
-        "risks": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/risk" } },
-        "decisions": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/decision" } },
-        "verification": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/independentVerification" } },
+        "corrections": {
+          "type": "array",
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/correctionDisclosure"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/risk"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/decision"
+          }
+        },
+        "verification": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/independentVerification"
+          }
+        },
         "limits": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["wip_max", "repair_max", "push_max"],
+          "required": [
+            "wip_max",
+            "repair_max",
+            "push_max"
+          ],
           "properties": {
-            "wip_max": { "type": "integer", "minimum": 1 },
-            "repair_max": { "const": 2 },
-            "push_max": { "type": ["integer", "null"], "minimum": 1 }
+            "wip_max": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "repair_max": {
+              "const": 2
+            },
+            "push_max": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
           }
         },
         "flow": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["active_feature_count", "active_lease_count", "roadmap_blocker_count", "open_p0_decision_count", "open_p0_risk_count"],
+          "required": [
+            "active_feature_count",
+            "active_lease_count",
+            "roadmap_blocker_count",
+            "open_p0_decision_count",
+            "open_p0_risk_count"
+          ],
           "properties": {
-            "active_feature_count": { "type": "integer", "minimum": 0 },
-            "active_lease_count": { "type": "integer", "minimum": 0 },
-            "roadmap_blocker_count": { "type": "integer", "minimum": 0 },
-            "open_p0_decision_count": { "type": "integer", "minimum": 0 },
-            "open_p0_risk_count": { "type": "integer", "minimum": 0 }
+            "active_feature_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "active_lease_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "roadmap_blocker_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "open_p0_decision_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "open_p0_risk_count": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         }
       }
@@ -718,82 +3301,350 @@
     "benchmarkDependency": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "status", "blocking", "evidence"],
+      "required": [
+        "id",
+        "label",
+        "status",
+        "blocking",
+        "evidence"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/stableId" },
-        "label": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "status": { "enum": ["satisfied", "pending", "blocked", "not_authorized", "unavailable"] },
-        "blocking": { "type": "boolean" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "status": {
+          "enum": [
+            "satisfied",
+            "pending",
+            "blocked",
+            "not_authorized",
+            "unavailable"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       }
     },
     "benchmarkContext": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["phase", "hold_state", "hold_reason", "dependencies", "authorization_state", "next_qualifying_action", "evidence"],
+      "required": [
+        "phase",
+        "hold_state",
+        "hold_reason",
+        "dependencies",
+        "authorization_state",
+        "next_qualifying_action",
+        "evidence"
+      ],
       "properties": {
-        "phase": { "enum": ["not_started", "qualification_planning", "qualification_active", "on_hold", "blocked", "complete", "unavailable"] },
-        "hold_state": { "enum": ["none", "on_hold", "blocked", "unavailable"] },
-        "hold_reason": { "type": ["string", "null"], "maxLength": 1000 },
-        "dependencies": { "type": "array", "maxItems": 50, "uniqueItems": true, "items": { "$ref": "#/$defs/benchmarkDependency" } },
-        "authorization_state": { "enum": ["authorized", "not_authorized", "not_required", "stale", "unavailable"] },
-        "next_qualifying_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "benchmark_qualifying_action" } } }] },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+        "phase": {
+          "enum": [
+            "not_started",
+            "qualification_planning",
+            "qualification_active",
+            "on_hold",
+            "blocked",
+            "complete",
+            "unavailable"
+          ]
+        },
+        "hold_state": {
+          "enum": [
+            "none",
+            "on_hold",
+            "blocked",
+            "unavailable"
+          ]
+        },
+        "hold_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "dependencies": {
+          "type": "array",
+          "maxItems": 50,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/benchmarkDependency"
+          }
+        },
+        "authorization_state": {
+          "enum": [
+            "authorized",
+            "not_authorized",
+            "not_required",
+            "stale",
+            "unavailable"
+          ]
+        },
+        "next_qualifying_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "benchmark_qualifying_action"
+                }
+              }
+            }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "hold_state": { "const": "none" } }, "required": ["hold_state"] },
-          "then": { "properties": { "hold_reason": { "type": "null" } } }
+          "if": {
+            "properties": {
+              "hold_state": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "hold_state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "hold_reason": {
+                "type": "null"
+              }
+            }
+          }
         },
         {
-          "if": { "properties": { "hold_state": { "enum": ["on_hold", "blocked", "unavailable"] } }, "required": ["hold_state"] },
-          "then": { "properties": { "hold_reason": { "type": "string", "minLength": 1 } } }
+          "if": {
+            "properties": {
+              "hold_state": {
+                "enum": [
+                  "on_hold",
+                  "blocked",
+                  "unavailable"
+                ]
+              }
+            },
+            "required": [
+              "hold_state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "hold_reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       ]
     },
     "publisher": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "mode", "observed_commit", "last_attempt_at", "last_success_at", "failure_code", "recovery"],
+      "required": [
+        "state",
+        "mode",
+        "observed_commit",
+        "last_attempt_at",
+        "last_success_at",
+        "failure_code",
+        "recovery"
+      ],
       "properties": {
-        "state": { "enum": ["active", "inactive", "failed", "unavailable"] },
-        "mode": { "enum": ["committed_watch", "package_install", "manual"] },
-        "observed_commit": { "oneOf": [{ "$ref": "#/$defs/gitSha" }, { "type": "null" }] },
-        "last_attempt_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "last_success_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-        "failure_code": { "type": ["string", "null"], "maxLength": 96 },
-        "recovery": { "type": ["string", "null"], "maxLength": 1000 }
+        "state": {
+          "enum": [
+            "active",
+            "inactive",
+            "failed",
+            "unavailable"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "committed_watch",
+            "package_install",
+            "manual"
+          ]
+        },
+        "observed_commit": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gitSha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_attempt_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_success_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failure_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 96
+        },
+        "recovery": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
       }
     },
     "work": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["current_milestone", "active_feature", "lease", "program_tasks", "tasks", "active_assignments", "checkpoints", "blockers", "current_next_action", "lanes"],
+      "required": [
+        "current_milestone",
+        "active_feature",
+        "lease",
+        "program_tasks",
+        "tasks",
+        "active_assignments",
+        "checkpoints",
+        "blockers",
+        "current_next_action",
+        "lanes"
+      ],
       "properties": {
-        "current_milestone": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "active_feature": { "type": ["string", "null"], "maxLength": 64 },
-        "lease": { "oneOf": [{ "$ref": "#/$defs/lease" }, { "type": "null" }] },
+        "current_milestone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "active_feature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "lease": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/lease"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "program_tasks": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["completed", "total", "remaining", "registered_sources", "undecomposed_roadmap_items"],
+          "required": [
+            "completed",
+            "total",
+            "remaining",
+            "registered_sources",
+            "undecomposed_roadmap_items"
+          ],
           "properties": {
-            "completed": { "type": "integer", "minimum": 0 },
-            "total": { "type": "integer", "minimum": 0 },
-            "remaining": { "type": "integer", "minimum": 0 },
-            "registered_sources": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "$ref": "#/$defs/relativePath" } },
-            "undecomposed_roadmap_items": { "type": "array", "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" } }
+            "completed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "registered_sources": {
+              "type": "array",
+              "maxItems": 100,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/relativePath"
+              }
+            },
+            "undecomposed_roadmap_items": {
+              "type": "array",
+              "maxItems": 100,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^EPP-[A-Z0-9-]+$"
+              }
+            }
           }
         },
         "tasks": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["feature_id", "completed", "total", "remaining"],
+          "required": [
+            "feature_id",
+            "completed",
+            "total",
+            "remaining"
+          ],
           "properties": {
-            "feature_id": { "type": "string", "minLength": 1, "maxLength": 64 },
-            "completed": { "type": "integer", "minimum": 0 },
-            "total": { "type": "integer", "minimum": 0 },
-            "remaining": { "type": "integer", "minimum": 0 }
+            "feature_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "completed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "remaining": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         },
         "active_assignments": {
@@ -802,69 +3653,1822 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["agent_id", "feature_id", "task_id", "task_title", "task_state", "branch", "worktree_id", "lane", "why_this_matters", "observed_at", "evidence"],
+            "required": [
+              "agent_id",
+              "feature_id",
+              "task_id",
+              "task_title",
+              "task_state",
+              "branch",
+              "worktree_id",
+              "lane",
+              "why_this_matters",
+              "observed_at",
+              "evidence"
+            ],
             "properties": {
-              "agent_id": { "$ref": "#/$defs/stableId" },
-              "feature_id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
-              "task_id": { "type": "string", "pattern": "^T[0-9]{3}$" },
-              "task_title": { "type": "string", "minLength": 1, "maxLength": 300 },
-              "task_state": { "enum": ["assigned", "in_progress", "blocked", "verifying"] },
-              "branch": { "type": "string", "minLength": 1, "maxLength": 255 },
-              "worktree_id": { "type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9-]{2,99}$" },
-              "lane": { "enum": ["integration", "continued_development", "verification", "unavailable"] },
-              "why_this_matters": { "type": "string", "minLength": 1, "maxLength": 500 },
-              "observed_at": { "$ref": "#/$defs/timestamp" },
-              "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidenceRef" } }
+              "agent_id": {
+                "$ref": "#/$defs/stableId"
+              },
+              "feature_id": {
+                "type": "string",
+                "pattern": "^EPP-[A-Z0-9-]+$"
+              },
+              "task_id": {
+                "type": "string",
+                "pattern": "^T[0-9]{3}$"
+              },
+              "task_title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "task_state": {
+                "enum": [
+                  "assigned",
+                  "in_progress",
+                  "blocked",
+                  "verifying"
+                ]
+              },
+              "branch": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "worktree_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z0-9][a-z0-9-]{2,99}$"
+              },
+              "lane": {
+                "enum": [
+                  "integration",
+                  "continued_development",
+                  "verification",
+                  "unavailable"
+                ]
+              },
+              "why_this_matters": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "observed_at": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 25,
+                "items": {
+                  "$ref": "#/$defs/evidenceRef"
+                }
+              }
             }
           }
         },
-        "checkpoints": { "type": "array", "maxItems": 250, "items": { "$ref": "#/$defs/checkpoint" } },
-        "blockers": { "type": "array", "maxItems": 100, "items": { "type": "string", "maxLength": 500 } },
-        "current_next_action": { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "purpose": { "const": "current_program_action" } } }] },
+        "checkpoints": {
+          "type": "array",
+          "maxItems": 250,
+          "items": {
+            "$ref": "#/$defs/checkpoint"
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "current_next_action": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "properties": {
+                "purpose": {
+                  "const": "current_program_action"
+                }
+              }
+            }
+          ]
+        },
         "lanes": {
           "type": "array",
           "prefixItems": [
-            { "$ref": "#/$defs/integrationLane" },
-            { "$ref": "#/$defs/developmentLane" }
+            {
+              "$ref": "#/$defs/integrationLane"
+            },
+            {
+              "$ref": "#/$defs/developmentLane"
+            }
           ],
           "items": false,
           "minItems": 2,
           "maxItems": 2
+        },
+        "milestone": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "title",
+            "feature_id",
+            "scope_revision",
+            "scope_history",
+            "source_commit",
+            "observed_at",
+            "candidate_commit",
+            "language_authority",
+            "capabilities",
+            "tasks",
+            "acceptance",
+            "checks",
+            "counts",
+            "blockers",
+            "next_task_ids",
+            "examples",
+            "delivery",
+            "readiness",
+            "source_record",
+            "attestations",
+            "delivery_attested"
+          ],
+          "properties": {
+            "id": {
+              "const": "NATIVE-01"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "feature_id": {
+              "const": "EPP-N01"
+            },
+            "scope_revision": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "scope_history": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "revision",
+                  "observed_at",
+                  "added_task_ids",
+                  "removed_task_ids",
+                  "reason"
+                ],
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "added_task_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^T[0-9]{3}$"
+                    }
+                  },
+                  "removed_task_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^T[0-9]{3}$"
+                    }
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  }
+                }
+              }
+            },
+            "source_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "observed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "candidate_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "language_authority": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "capabilities": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 500,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "tasks": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "title",
+                  "activity",
+                  "owner",
+                  "implemented",
+                  "verification",
+                  "integration",
+                  "integration_required",
+                  "blocker_ids"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^T[0-9]{3}$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "activity": {
+                    "enum": [
+                      "planned",
+                      "active",
+                      "blocked",
+                      "verifying",
+                      "idle"
+                    ]
+                  },
+                  "owner": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "implemented": {
+                    "type": "boolean"
+                  },
+                  "verification": {
+                    "enum": [
+                      "passed",
+                      "failed",
+                      "stale",
+                      "invalid",
+                      "blocked",
+                      "skipped",
+                      "not_run",
+                      "unavailable",
+                      "inconclusive",
+                      "not_tested",
+                      "not_applicable"
+                    ]
+                  },
+                  "integration": {
+                    "enum": [
+                      "passed",
+                      "failed",
+                      "stale",
+                      "invalid",
+                      "blocked",
+                      "skipped",
+                      "not_run",
+                      "unavailable",
+                      "inconclusive",
+                      "not_tested",
+                      "not_applicable"
+                    ]
+                  },
+                  "integration_required": {
+                    "type": "boolean"
+                  },
+                  "blocker_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                    }
+                  }
+                }
+              }
+            },
+            "acceptance": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "title",
+                  "task_ids",
+                  "check_ids",
+                  "status",
+                  "missing_check_ids"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^AC[0-9]{2}$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "task_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^T[0-9]{3}$"
+                    }
+                  },
+                  "check_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                    }
+                  },
+                  "status": {
+                    "enum": [
+                      "passed",
+                      "failed",
+                      "stale",
+                      "invalid",
+                      "blocked",
+                      "skipped",
+                      "not_run",
+                      "unavailable",
+                      "inconclusive",
+                      "not_tested",
+                      "not_applicable"
+                    ]
+                  },
+                  "missing_check_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                    }
+                  }
+                }
+              }
+            },
+            "checks": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "label",
+                  "stage",
+                  "kind",
+                  "task_ids",
+                  "status",
+                  "evidence_id",
+                  "observed_at",
+                  "tested_commit",
+                  "coverage_current",
+                  "counts",
+                  "summary",
+                  "artifact_urls"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "stage": {
+                    "enum": [
+                      "verification",
+                      "integration"
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "automated_test",
+                      "technical_review",
+                      "human_review",
+                      "live_tool",
+                      "packaging",
+                      "dev_integration",
+                      "dev_deployment"
+                    ]
+                  },
+                  "task_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^T[0-9]{3}$"
+                    }
+                  },
+                  "status": {
+                    "enum": [
+                      "passed",
+                      "failed",
+                      "stale",
+                      "invalid",
+                      "blocked",
+                      "skipped",
+                      "not_run",
+                      "unavailable",
+                      "inconclusive",
+                      "not_tested",
+                      "not_applicable"
+                    ]
+                  },
+                  "evidence_id": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "observed_at": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "tested_commit": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{40}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "coverage_current": {
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "counts": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "total",
+                          "passed",
+                          "failed",
+                          "skipped",
+                          "not_run"
+                        ],
+                        "properties": {
+                          "total": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "passed": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "failed": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "skipped": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "not_run": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "artifact_urls": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 30,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^https://github[.]com/burhop/wright/blob/[a-f0-9]{40}/(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/)[A-Za-z0-9._/-]+$"
+                    }
+                  }
+                }
+              }
+            },
+            "counts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "implementation",
+                "verification",
+                "integration"
+              ],
+              "properties": {
+                "implementation": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "completed",
+                    "total"
+                  ],
+                  "properties": {
+                    "completed": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                },
+                "verification": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "completed",
+                    "total"
+                  ],
+                  "properties": {
+                    "completed": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                },
+                "integration": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "completed",
+                    "total",
+                    "not_applicable"
+                  ],
+                  "properties": {
+                    "completed": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "not_applicable": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            },
+            "blockers": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "summary",
+                  "owner",
+                  "required_action",
+                  "task_ids",
+                  "check_ids",
+                  "observed_at"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "owner": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "required_action": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "task_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^T[0-9]{3}$"
+                    }
+                  },
+                  "check_ids": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                    }
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "next_task_ids": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 30,
+              "items": {
+                "type": "string",
+                "pattern": "^T[0-9]{3}$"
+              }
+            },
+            "examples": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 20,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "title",
+                  "execution_mode",
+                  "check_ids",
+                  "definition_path",
+                  "maturity"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "execution_mode": {
+                    "enum": [
+                      "fixture",
+                      "local_computation",
+                      "live_mcp"
+                    ]
+                  },
+                  "check_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                    }
+                  },
+                  "definition_path": {
+                    "type": "string",
+                    "pattern": "^(?:apps|packages|scripts|tests|src|specs|docs)/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                  },
+                  "maturity": {
+                    "enum": [
+                      "planned",
+                      "tested",
+                      "independently_verified"
+                    ]
+                  }
+                }
+              }
+            },
+            "delivery": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "branch",
+                "target_branch",
+                "baseline_commit",
+                "candidate_commit",
+                "pull_requests",
+                "merged_commit",
+                "deployment_check_ids",
+                "deployment_status"
+              ],
+              "properties": {
+                "branch": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "target_branch": {
+                  "const": "dev"
+                },
+                "baseline_commit": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                "candidate_commit": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{40}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pull_requests": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 30,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "url",
+                      "head_commit",
+                      "observed_at"
+                    ],
+                    "properties": {
+                      "url": {
+                        "type": "string",
+                        "pattern": "^https://github[.]com/burhop/wright/pull/[1-9][0-9]*$"
+                      },
+                      "head_commit": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{40}$"
+                      },
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                },
+                "merged_commit": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{40}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "deployment_check_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                  }
+                },
+                "deployment_status": {
+                  "enum": [
+                    "passed",
+                    "failed",
+                    "stale",
+                    "invalid",
+                    "blocked",
+                    "skipped",
+                    "not_run",
+                    "unavailable",
+                    "inconclusive",
+                    "not_tested",
+                    "not_applicable"
+                  ]
+                }
+              }
+            },
+            "readiness": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "native_milestone",
+                "benchmark",
+                "commercial",
+                "release",
+                "rivet_migration",
+                "rivet_retirement"
+              ],
+              "properties": {
+                "native_milestone": {
+                  "enum": [
+                    "in_progress",
+                    "complete"
+                  ]
+                },
+                "benchmark": {
+                  "const": "not_qualified"
+                },
+                "commercial": {
+                  "const": "not_assessed"
+                },
+                "release": {
+                  "const": "not_authorized"
+                },
+                "rivet_migration": {
+                  "const": "not_started"
+                },
+                "rivet_retirement": {
+                  "const": "not_started"
+                }
+              }
+            },
+            "source_record": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schema_version",
+                "id",
+                "title",
+                "feature_id",
+                "tasks_path",
+                "scope_revision",
+                "scope_history",
+                "language_authority",
+                "capabilities",
+                "tasks",
+                "acceptance",
+                "checks",
+                "evidence",
+                "blockers",
+                "next_task_ids",
+                "examples",
+                "delivery"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "1.0.0"
+                },
+                "id": {
+                  "const": "NATIVE-01"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "feature_id": {
+                  "const": "EPP-N01"
+                },
+                "tasks_path": {
+                  "const": "specs/079-wright-native-authoring/tasks.md"
+                },
+                "scope_revision": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "scope_history": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "revision",
+                      "observed_at",
+                      "added_task_ids",
+                      "removed_task_ids",
+                      "reason"
+                    ],
+                    "properties": {
+                      "revision": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "added_task_ids": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^T[0-9]{3}$"
+                        }
+                      },
+                      "removed_task_ids": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^T[0-9]{3}$"
+                        }
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      }
+                    }
+                  }
+                },
+                "language_authority": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "capabilities": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 500,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  }
+                },
+                "tasks": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 500,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "activity",
+                      "owner",
+                      "integration_required",
+                      "integration_exemption",
+                      "blocker_ids"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^T[0-9]{3}$"
+                      },
+                      "activity": {
+                        "enum": [
+                          "planned",
+                          "active",
+                          "blocked",
+                          "verifying",
+                          "idle"
+                        ]
+                      },
+                      "owner": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "integration_required": {
+                        "type": "boolean"
+                      },
+                      "integration_exemption": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 500
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "blocker_ids": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                        }
+                      }
+                    }
+                  }
+                },
+                "acceptance": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "title",
+                      "task_ids",
+                      "required_check_ids"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^AC[0-9]{2}$"
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "task_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^T[0-9]{3}$"
+                        }
+                      },
+                      "required_check_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                        }
+                      }
+                    }
+                  }
+                },
+                "checks": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "label",
+                      "stage",
+                      "kind",
+                      "task_ids",
+                      "source_paths",
+                      "independent_required"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "stage": {
+                        "enum": [
+                          "verification",
+                          "integration"
+                        ]
+                      },
+                      "kind": {
+                        "enum": [
+                          "automated_test",
+                          "technical_review",
+                          "human_review",
+                          "live_tool",
+                          "packaging",
+                          "dev_integration",
+                          "dev_deployment"
+                        ]
+                      },
+                      "task_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^T[0-9]{3}$"
+                        }
+                      },
+                      "source_paths": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^(?:apps|packages|scripts|tests|src|specs|docs|docker)(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                        }
+                      },
+                      "independent_required": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                },
+                "evidence": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 500,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "check_id",
+                      "attempt",
+                      "result",
+                      "observed_at",
+                      "tested_commit",
+                      "tested_tree",
+                      "scope_sha256",
+                      "author_id",
+                      "verifier_id",
+                      "verification_actor_kind",
+                      "summary",
+                      "artifacts",
+                      "counts"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      "check_id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      "attempt": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "result": {
+                        "enum": [
+                          "passed",
+                          "failed",
+                          "skipped",
+                          "not_run",
+                          "unavailable",
+                          "inconclusive"
+                        ]
+                      },
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "tested_commit": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{40}$"
+                      },
+                      "tested_tree": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{40}$"
+                      },
+                      "scope_sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "author_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "verifier_id": {
+                        "oneOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "verification_actor_kind": {
+                        "enum": [
+                          "automated",
+                          "agent",
+                          "human"
+                        ]
+                      },
+                      "summary": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "artifacts": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 30,
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "path",
+                            "sha256",
+                            "commit"
+                          ],
+                          "properties": {
+                            "path": {
+                              "type": "string",
+                              "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                            },
+                            "sha256": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "commit": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{40}$"
+                            }
+                          }
+                        }
+                      },
+                      "counts": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "total",
+                              "passed",
+                              "failed",
+                              "skipped",
+                              "not_run"
+                            ],
+                            "properties": {
+                              "total": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "passed": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "failed": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "skipped": {
+                                "type": "integer",
+                                "minimum": 0
+                              },
+                              "not_run": {
+                                "type": "integer",
+                                "minimum": 0
+                              }
+                            }
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "blockers": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "summary",
+                      "owner",
+                      "required_action",
+                      "task_ids",
+                      "check_ids",
+                      "observed_at"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      "summary": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "owner": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "required_action": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "task_ids": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^T[0-9]{3}$"
+                        }
+                      },
+                      "check_ids": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 500,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                        }
+                      },
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                },
+                "next_task_ids": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 30,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^T[0-9]{3}$"
+                  }
+                },
+                "examples": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 20,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "title",
+                      "execution_mode",
+                      "check_ids",
+                      "definition_path"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "execution_mode": {
+                        "enum": [
+                          "fixture",
+                          "local_computation",
+                          "live_mcp"
+                        ]
+                      },
+                      "check_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                        }
+                      },
+                      "definition_path": {
+                        "type": "string",
+                        "pattern": "^(?:apps|packages|scripts|tests|src|specs|docs)/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                      }
+                    }
+                  }
+                },
+                "delivery": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "branch",
+                    "target_branch",
+                    "baseline_commit",
+                    "candidate_commit",
+                    "pull_requests",
+                    "merged_commit",
+                    "deployment_check_ids"
+                  ],
+                  "properties": {
+                    "branch": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "target_branch": {
+                      "const": "dev"
+                    },
+                    "baseline_commit": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{40}$"
+                    },
+                    "candidate_commit": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{40}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "pull_requests": {
+                      "type": "array",
+                      "minItems": 0,
+                      "maxItems": 30,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "url",
+                          "head_commit",
+                          "observed_at"
+                        ],
+                        "properties": {
+                          "url": {
+                            "type": "string",
+                            "pattern": "^https://github[.]com/burhop/wright/pull/[1-9][0-9]*$"
+                          },
+                          "head_commit": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{40}$"
+                          },
+                          "observed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "merged_commit": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{40}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "deployment_check_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 100,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "attestations": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "evidence_id",
+                  "tested_scope_sha256",
+                  "current_scope_sha256",
+                  "commit_tree_matches",
+                  "artifacts_match"
+                ],
+                "properties": {
+                  "evidence_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                  },
+                  "tested_scope_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "current_scope_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "commit_tree_matches": {
+                    "type": "boolean"
+                  },
+                  "artifacts_match": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "delivery_attested": {
+              "type": "boolean"
+            }
+          }
         }
       }
     },
     "supplement": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["history", "customer_catalog", "use_cases", "test_history", "benchmark_context", "work", "governance", "evidence_index"],
+      "required": [
+        "history",
+        "customer_catalog",
+        "use_cases",
+        "test_history",
+        "benchmark_context",
+        "work",
+        "governance",
+        "evidence_index"
+      ],
       "properties": {
         "history": {
           "type": "array",
           "prefixItems": [
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "customer_capability" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "quality" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "process_automation" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "governance" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "product_readiness" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "benchmark_readiness" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "commercial_readiness" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "program_health" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "benchmark_qualified" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "program_tasks" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "feature_tasks" } } }] },
-            { "allOf": [{ "$ref": "#/$defs/series" }, { "properties": { "id": { "const": "integration_delivery" } } }] }
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "customer_capability"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "quality"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "process_automation"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "governance"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "product_readiness"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "benchmark_readiness"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "commercial_readiness"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "program_health"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "benchmark_qualified"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "program_tasks"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "feature_tasks"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/series"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "const": "integration_delivery"
+                    }
+                  }
+                }
+              ]
+            }
           ],
           "items": false,
           "minItems": 12,
           "maxItems": 12
         },
-        "customer_catalog": { "$ref": "#/$defs/catalog" },
-        "use_cases": { "$ref": "#/$defs/useCases" },
-        "test_history": { "$ref": "#/$defs/testHistory" },
-        "benchmark_context": { "$ref": "#/$defs/benchmarkContext" },
-        "work": { "$ref": "#/$defs/work" },
-        "governance": { "$ref": "#/$defs/governance" },
-        "evidence_index": { "type": "array", "maxItems": 500, "items": { "oneOf": [{ "$ref": "#/$defs/evidenceDetail" }, { "$ref": "#/$defs/testResultEvidenceDetail" }] } }
+        "customer_catalog": {
+          "$ref": "#/$defs/catalog"
+        },
+        "use_cases": {
+          "$ref": "#/$defs/useCases"
+        },
+        "test_history": {
+          "$ref": "#/$defs/testHistory"
+        },
+        "benchmark_context": {
+          "$ref": "#/$defs/benchmarkContext"
+        },
+        "work": {
+          "$ref": "#/$defs/work"
+        },
+        "governance": {
+          "$ref": "#/$defs/governance"
+        },
+        "evidence_index": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/evidenceDetail"
+              },
+              {
+                "$ref": "#/$defs/testResultEvidenceDetail"
+              }
+            ]
+          }
+        }
       }
     }
   }

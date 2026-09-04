@@ -1,0 +1,1405 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Wright Program Status</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #080d18;
+        --panel: #111a2b;
+        --line: #2a3853;
+        --text: #f3f7ff;
+        --muted: #9cabc4;
+        --cyan: #3dd9eb;
+        --blue: #6c8cff;
+        --green: #4ade80;
+        --amber: #fbbf24;
+        --red: #fb7185;
+        --violet: #c084fc;
+        --radius: 18px;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 18% -5%, #132d4d 0, transparent 30%),
+          var(--bg);
+        color: var(--text);
+      }
+      button,
+      a {
+        font: inherit;
+      }
+      .shell {
+        width: min(1500px, calc(100% - 36px));
+        margin: auto;
+        padding: 28px 0 56px;
+      }
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 20px;
+      }
+      .eyebrow {
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: clamp(30px, 4vw, 54px);
+        line-height: 1;
+        margin: 8px 0 10px;
+        letter-spacing: -0.045em;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin: 0;
+        max-width: 850px;
+        font-size: 15px;
+      }
+      .live {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        padding-top: 8px;
+        white-space: nowrap;
+      }
+      .pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 6px #4ade8020;
+      }
+      .refresh,
+      .tab {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: var(--panel);
+        border-radius: 10px;
+        padding: 9px 12px;
+        cursor: pointer;
+      }
+      .refresh:hover,
+      .refresh:focus-visible,
+      .tab:hover,
+      .tab:focus-visible {
+        border-color: var(--cyan);
+        outline: none;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin: 0 0 20px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        background: #0c1423;
+        border-radius: 14px;
+        width: max-content;
+        max-width: 100%;
+        overflow: auto;
+      }
+      .tab {
+        border-color: transparent;
+        background: transparent;
+        white-space: nowrap;
+      }
+      .tab[aria-selected="true"] {
+        background: #1b3150;
+        border-color: #2e527c;
+        color: var(--cyan);
+      }
+      .tab-view[hidden] {
+        display: none;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .metrics {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+      .metric,
+      .panel {
+        border: 1px solid var(--line);
+        background: linear-gradient(145deg, #121c2f, #0e1626);
+        border-radius: var(--radius);
+        box-shadow: 0 18px 50px #0005;
+      }
+      .metric {
+        min-height: 140px;
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .metric:after {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        right: -34px;
+        top: -34px;
+        border-radius: 50%;
+        background: var(--accent, var(--cyan));
+        opacity: 0.12;
+      }
+      .metric-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .metric-value {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin: 16px 0 5px;
+        text-transform: capitalize;
+      }
+      .metric-note,
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .row-2 {
+        grid-template-columns: 1.15fr 0.85fr;
+        margin-top: 16px;
+      }
+      .row-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+        margin-top: 16px;
+      }
+      .panel {
+        padding: 20px;
+        min-width: 0;
+      }
+      .panel-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 15px;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .panel-kicker {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .readiness {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .area {
+        padding: 14px;
+        border: 1px solid var(--line);
+        background: #0c1423;
+        border-radius: 13px;
+      }
+      .area-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: 0 0 auto;
+      }
+      .area-name {
+        font-weight: 750;
+        font-size: 13px;
+      }
+      .area-status {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: 800;
+        text-transform: capitalize;
+      }
+      .area-count {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .progress-track {
+        height: 10px;
+        background: #07101e;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 15px;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--cyan), var(--blue));
+      }
+      .chart {
+        width: 100%;
+        min-height: 235px;
+        overflow: hidden;
+      }
+      .chart svg {
+        width: 100%;
+        height: 235px;
+        display: block;
+      }
+      .chart.chart-tall,
+      .chart.chart-tall svg {
+        min-height: 280px;
+        height: 280px;
+      }
+      .trend-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .trend-stat {
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #0c1423;
+      }
+      .trend-stat strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+      }
+      .ledger-breakdown {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 4px;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      .legend span:before {
+        content: "";
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--legend);
+        margin-right: 6px;
+      }
+      .blockers {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 10px;
+      }
+      .blocker {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 11px;
+        border-radius: 12px;
+        background: #23141d;
+        border: 1px solid #5f2838;
+      }
+      .blocker-index {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        color: #17070c;
+        background: var(--red);
+        font-size: 12px;
+        font-weight: 900;
+      }
+      .blocker code {
+        color: #ffd9e1;
+        font-size: 12px;
+        word-break: break-word;
+      }
+      .blocker small {
+        display: block;
+        color: #d5a2ae;
+        margin-top: 4px;
+      }
+      .actions {
+        counter-reset: action;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 12px;
+      }
+      .actions li {
+        counter-increment: action;
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 12px;
+        align-items: center;
+        color: #dfe7f7;
+      }
+      .actions li:before {
+        content: counter(action);
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #1b3150;
+        color: var(--cyan);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: #1b263a;
+        border: 1px solid var(--line);
+        color: #cad6ea;
+        font-size: 11px;
+      }
+      .footer-note {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 18px;
+      }
+      .loading {
+        min-height: 60vh;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+      }
+      .error {
+        border: 1px solid #702739;
+        background: #2b121a;
+        padding: 18px;
+        border-radius: 14px;
+        color: #ffd4dd;
+      }
+      .journey {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .journey th,
+      .journey td {
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+      }
+      .journey th {
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .state {
+        display: inline-flex;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 11px;
+        text-transform: capitalize;
+      }
+      .state.pass {
+        color: var(--green);
+        border-color: #245b3c;
+      }
+      .state.blocked {
+        color: var(--red);
+        border-color: #6b2c3b;
+      }
+      .state.not_started,
+      .state.not_customer_facing {
+        color: var(--muted);
+      }
+      .callout {
+        padding: 18px;
+        border-radius: 14px;
+        background: #0b1e2b;
+        border: 1px solid #1f5268;
+        color: #dff9ff;
+        font-size: 18px;
+        line-height: 1.45;
+      }
+      .decision-note {
+        margin-top: 14px;
+        padding: 13px 15px;
+        border: 1px solid #2b4f64;
+        background: #0b1a28;
+        border-radius: 12px;
+        color: #cdd9ec;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .decision-note strong {
+        color: var(--cyan);
+      }
+      .recovery-ledger {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .recovery-phase {
+        padding: 11px;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--phase-color, var(--muted));
+        border-radius: 10px;
+        background: #091322;
+      }
+      .recovery-phase strong,
+      .recovery-phase span {
+        display: block;
+      }
+      .recovery-phase span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .approval-stop {
+        border-color: #7a2940;
+        background: #29101a;
+        color: #ffd5df;
+      }
+      .evidence-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .evidence-card {
+        display: block;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #091322;
+        color: var(--text);
+        text-decoration: none;
+      }
+      .evidence-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+      }
+      .evidence-card span {
+        display: block;
+        padding: 8px;
+        font-size: 11px;
+      }
+      .hold-card {
+        padding: 15px;
+        border: 1px solid #6b5220;
+        background: #241c0d;
+        border-radius: 13px;
+        color: #ffe4a3;
+        line-height: 1.5;
+      }
+      .hold-card .hold-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .hold-card ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+        color: #d9c89f;
+        font-size: 12px;
+      }
+      .agent-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .agent-table th,
+      .agent-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        font-size: 12px;
+      }
+      .agent-table th {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-size: 10px;
+      }
+      .notice {
+        padding: 14px 16px;
+        border: 1px solid #66501d;
+        background: #2a2110;
+        border-radius: 13px;
+        color: #ffe7a3;
+      }
+      .allocation {
+        display: grid;
+        gap: 13px;
+      }
+      .allocation-row {
+        display: grid;
+        grid-template-columns: 150px 1fr 52px;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+      }
+      .bar {
+        height: 12px;
+        border-radius: 999px;
+        background: #08101d;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: var(--bar, var(--cyan));
+        border-radius: inherit;
+      }
+      .checkpoint-list {
+        display: grid;
+        gap: 8px;
+        max-height: 330px;
+        overflow: auto;
+      }
+      .checkpoint {
+        display: grid;
+        grid-template-columns: 72px 145px 130px 1fr;
+        gap: 10px;
+        padding: 9px;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        align-items: center;
+      }
+      .checkpoint time {
+        color: #cbd6e9;
+        white-space: nowrap;
+      }
+      .checkpoint .category {
+        text-transform: capitalize;
+        color: var(--muted);
+      }
+      .lane-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .lane-details {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 9px 14px;
+        font-size: 13px;
+      }
+      .lane-details dt {
+        color: var(--muted);
+      }
+      .lane-details dd {
+        margin: 0;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      .event-list {
+        margin: 14px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .event-list li {
+        margin: 7px 0;
+      }
+      .history-archive {
+        margin-top: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+      .history-archive summary {
+        width: max-content;
+        max-width: 100%;
+        cursor: pointer;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 750;
+      }
+      .history-archive summary:focus-visible {
+        outline: 2px solid var(--cyan);
+        outline-offset: 4px;
+        border-radius: 4px;
+      }
+      .phase {
+        color: var(--amber);
+        font-weight: 800;
+        text-transform: capitalize;
+      }
+      .pr-link {
+        color: var(--cyan);
+      }
+      @media (max-width: 1100px) {
+        .metrics {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .row-2,
+        .row-3,
+        .lane-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 700px) {
+        .shell {
+          width: min(100% - 22px, 1500px);
+          padding-top: 18px;
+        }
+        header {
+          flex-direction: column;
+        }
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+        }
+        .trend-stats {
+          grid-template-columns: 1fr 1fr;
+        }
+        .readiness {
+          grid-template-columns: 1fr 1fr;
+        }
+        .allocation-row {
+          grid-template-columns: 105px 1fr 44px;
+        }
+        .journey {
+          display: block;
+          overflow: auto;
+        }
+        .agent-table {
+          display: block;
+          overflow: auto;
+        }
+        .lane-details {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 450px) {
+        .metrics,
+        .readiness,
+        .trend-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <div>
+          <div class="eyebrow">Engineering Process Platform</div>
+          <h1>Program status</h1>
+          <p class="subtitle">
+            Customer readiness, engineering health, and agent execution from one
+            live local evidence view.
+          </p>
+        </div>
+        <div class="live">
+          <span class="pulse" aria-hidden="true"></span
+          ><span id="updated">Loading…</span
+          ><button class="refresh" id="refresh" data-testid="refresh-status">
+            Refresh
+          </button>
+        </div>
+      </header>
+      <nav class="tabs" role="tablist" aria-label="Dashboard views">
+        <button
+          class="tab"
+          role="tab"
+          aria-selected="true"
+          data-tab="goal"
+          data-testid="tab-goal"
+        >
+          Current Goal</button
+        ><button
+          class="tab"
+          role="tab"
+          aria-selected="false"
+          data-tab="customer"
+          data-testid="tab-customer"
+        >
+          Customer / Demo</button
+        ><button
+          class="tab"
+          role="tab"
+          aria-selected="false"
+          data-tab="lanes"
+          data-testid="tab-lanes"
+        >
+          Delivery Lanes</button
+        ><button
+          class="tab"
+          role="tab"
+          aria-selected="false"
+          data-tab="engineering"
+          data-testid="tab-engineering"
+        >
+          Engineering Health</button
+        ><button
+          class="tab"
+          role="tab"
+          aria-selected="false"
+          data-tab="agents"
+          data-testid="tab-agents"
+        >
+          Agent Activity
+        </button>
+      </nav>
+      <div id="app" class="loading">Reading committed program evidence…</div>
+    </main>
+    <script>
+      const colors = {
+        cyan: "#3dd9eb",
+        blue: "#6c8cff",
+        green: "#4ade80",
+        amber: "#fbbf24",
+        red: "#fb7185",
+        violet: "#c084fc",
+        muted: "#7485a3",
+        grid: "#26344e",
+      };
+      let activeTab = "goal";
+      const esc = (v) =>
+        String(v ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const statusColor = (s) =>
+        ["ready", "passed", "complete", "completed", "pass"].includes(s)
+          ? colors.green
+          : ["in_progress", "active"].includes(s)
+            ? colors.amber
+            : ["blocked", "failed"].includes(s)
+              ? colors.red
+              : colors.muted;
+      const label = (s) => String(s).replaceAll("_", " ");
+      const checkpointTime = (value) =>
+        new Intl.DateTimeFormat(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
+        }).format(new Date(value));
+      const shownTime = (value) =>
+        value ? checkpointTime(value) : "Not available";
+      const newestFirst = (rows, key = "at") =>
+        rows.slice().sort((left, right) => {
+          const leftTime = Date.parse(left?.[key] ?? ""),
+            rightTime = Date.parse(right?.[key] ?? "");
+          if (!Number.isFinite(leftTime))
+            return Number.isFinite(rightTime) ? 1 : 0;
+          if (!Number.isFinite(rightTime)) return -1;
+          return rightTime - leftTime;
+        });
+      function metric(name, value, note, color) {
+        return `<article class="metric" style="--accent:${color}"><div class="metric-label">${esc(name)}</div><div class="metric-value">${esc(label(value))}</div><div class="metric-note">${esc(note)}</div></article>`;
+      }
+      function lineChart(target, labels, series, maxY, yLabels = null) {
+        if (!target) return;
+        const w = 760,
+          h = 235,
+          l = 44,
+          r = 14,
+          t = 18,
+          b = 34,
+          iw = w - l - r,
+          ih = h - t - b,
+          count = Math.max(labels.length, 2),
+          x = (i) => l + (i * iw) / (count - 1),
+          y = (v) => t + ih - (Math.max(0, Math.min(maxY, v)) / maxY) * ih;
+        let svg = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(target.dataset.label)}">`;
+        for (let i = 0; i <= 4; i++) {
+          const value = (maxY * i) / 4,
+            py = y(value),
+            txt = yLabels
+              ? (yLabels[Math.round(value)] ?? "")
+              : Math.round(value);
+          svg += `<line x1="${l}" x2="${w - r}" y1="${py}" y2="${py}" stroke="${colors.grid}"/><text x="${l - 8}" y="${py + 4}" fill="#8090ab" font-size="10" text-anchor="end">${esc(txt)}</text>`;
+        }
+        const step = Math.max(1, Math.floor(labels.length / 5));
+        labels.forEach((v, i) => {
+          if (i % step === 0 || i === labels.length - 1)
+            svg += `<text x="${x(i)}" y="${h - 9}" fill="#8090ab" font-size="10" text-anchor="middle">${esc(v)}</text>`;
+        });
+        series.forEach((row) => {
+          const points = row.values.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+          svg += `<polyline points="${points}" fill="none" stroke="${row.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+          row.values.forEach(
+            (v, i) =>
+              (svg += `<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${row.color}"><title>${esc(row.name)}: ${esc(v)} at ${esc(labels[i])}</title></circle>`),
+          );
+        });
+        target.innerHTML = svg + "</svg>";
+      }
+      function deliveryTimeline(taskRows, checkpointRows) {
+        const tasks = taskRows
+            .map((row) => ({ ...row, time: Date.parse(row.date) }))
+            .filter((row) => Number.isFinite(row.time))
+            .sort((left, right) => left.time - right.time),
+          checkpoints = checkpointRows
+            .map((row) => ({ ...row, time: Date.parse(row.at) }))
+            .filter((row) => Number.isFinite(row.time))
+            .sort((left, right) => left.time - right.time),
+          moments = [
+            ...new Set([
+              ...tasks.map((row) => row.time),
+              ...checkpoints.map((row) => row.time),
+            ]),
+          ].sort((left, right) => left - right);
+        let taskIndex = 0,
+          checkpointIndex = 0,
+          total = 0,
+          completed = 0;
+        return moments.map((time) => {
+          while (taskIndex < tasks.length && tasks[taskIndex].time <= time) {
+            total = tasks[taskIndex].total;
+            completed = tasks[taskIndex].completed;
+            taskIndex += 1;
+          }
+          while (
+            checkpointIndex < checkpoints.length &&
+            checkpoints[checkpointIndex].time <= time
+          )
+            checkpointIndex += 1;
+          return { time, total, completed, checkpoints: checkpointIndex };
+        });
+      }
+      function dualLineChart(
+        target,
+        labels,
+        leftSeries,
+        leftMax,
+        rightSeries,
+        rightMax,
+      ) {
+        if (!target) return;
+        const w = 900,
+          h = 280,
+          l = 52,
+          r = 52,
+          t = 26,
+          b = 38,
+          iw = w - l - r,
+          ih = h - t - b,
+          count = Math.max(labels.length, 2),
+          safeLeftMax = Math.max(1, leftMax),
+          safeRightMax = Math.max(1, rightMax),
+          x = (index) => l + (index * iw) / (count - 1),
+          yLeft = (value) => t + ih - (value / safeLeftMax) * ih,
+          yRight = (value) => t + ih - (value / safeRightMax) * ih;
+        let svg = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(target.dataset.label)}"><text x="${l}" y="13" fill="${colors.cyan}" font-size="10">Tasks</text><text x="${w - r}" y="13" fill="${colors.violet}" font-size="10" text-anchor="end">Checkpoints</text>`;
+        for (let index = 0; index <= 4; index += 1) {
+          const ratio = index / 4,
+            py = t + ih - ratio * ih;
+          svg += `<line x1="${l}" x2="${w - r}" y1="${py}" y2="${py}" stroke="${colors.grid}"/><text x="${l - 8}" y="${py + 4}" fill="#8090ab" font-size="10" text-anchor="end">${Math.round(safeLeftMax * ratio)}</text><text x="${w - r + 8}" y="${py + 4}" fill="#8090ab" font-size="10">${Math.round(safeRightMax * ratio)}</text>`;
+        }
+        const labelStep = Math.max(1, Math.ceil(labels.length / 6));
+        labels.forEach((value, index) => {
+          if (index % labelStep === 0 || index === labels.length - 1)
+            svg += `<text x="${x(index)}" y="${h - 10}" fill="#8090ab" font-size="10" text-anchor="middle">${esc(value)}</text>`;
+        });
+        const draw = (row, y) => {
+          const points = row.values
+            .map((value, index) => `${x(index)},${y(value)}`)
+            .join(" ");
+          svg += `<polyline points="${points}" fill="none" stroke="${row.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+          const pointStep = Math.max(1, Math.ceil(row.values.length / 36));
+          row.values.forEach((value, index) => {
+            if (index % pointStep === 0 || index === row.values.length - 1)
+              svg += `<circle cx="${x(index)}" cy="${y(value)}" r="3" fill="${row.color}"><title>${esc(row.name)}: ${esc(value)} at ${esc(labels[index])}</title></circle>`;
+          });
+        };
+        leftSeries.forEach((row) => draw(row, yLeft));
+        rightSeries.forEach((row) => draw(row, yRight));
+        target.innerHTML = svg + "</svg>";
+      }
+      function readinessScore(s) {
+        return (
+          {
+            unknown: 0,
+            not_started: 0,
+            blocked: 1,
+            stale: 1,
+            in_progress: 2,
+            active: 2,
+            ready: 3,
+            passed: 3,
+            complete: 3,
+          }[s] ?? 0
+        );
+      }
+      function setTab(name) {
+        activeTab = name;
+        document
+          .querySelectorAll('[role="tab"]')
+          .forEach((button) =>
+            button.setAttribute(
+              "aria-selected",
+              String(button.dataset.tab === name),
+            ),
+          );
+        document
+          .querySelectorAll(".tab-view")
+          .forEach((view) => (view.hidden = view.dataset.view !== name));
+      }
+      let lastValidMilestone = null;
+      function milestonePanel(envelope) {
+        if (envelope?.value) lastValidMilestone = envelope.value;
+        const m = envelope?.value ?? lastValidMilestone;
+        if (!m) return `<article class="panel"><h2>Native engineering process milestone</h2><p role="status">${esc(envelope?.error ?? "Awaiting a published milestone checkpoint.")}</p></article>`;
+        const safeLink = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(text)}</a>`;
+        const checks = m.checks.map(c => `<tr><th scope="row">${esc(c.label)}</th><td>${esc(label(c.status))}${c.coverage_current === false ? " · covered code changed" : ""}</td><td>${esc(c.tested_commit?.slice(0, 8) ?? "Untested")}<br>${esc(c.observed_at ? shownTime(c.observed_at) : "No observation")}</td><td>${c.counts ? `${c.counts.passed}/${c.counts.total} passed · ${c.counts.failed} failed · ${c.counts.skipped} skipped · ${c.counts.not_run} not run` : "No count recorded"}<br>${esc(c.summary)}<br>${c.artifact_urls.map((url, i) => safeLink(url, `Evidence ${i + 1}`)).join(" · ")}</td></tr>`).join("");
+        return `<article class="panel" style="margin-bottom:16px" aria-label="Current native milestone"><div class="panel-head"><h2>${esc(m.title)}</h2><span class="tag">${esc(m.id)} · scope ${m.scope_revision}</span></div><p>${esc(m.language_authority)}</p><p role="status">${envelope?.error ? `Previous valid checkpoint retained. ${esc(envelope.error)}` : envelope?.current ? "Published checkpoint matches this checkout." : "Published checkpoint is behind this checkout; implementation activity may be newer."} Source ${safeLink(`https://github.com/burhop/wright/tree/${m.source_commit}`, m.source_commit.slice(0, 8))} · observed ${esc(shownTime(m.observed_at))}</p><div class="grid metrics">${metric("Implemented", `${m.counts.implementation.completed}/${m.counts.implementation.total}`, "Task implementation recorded", colors.cyan)}${metric("Verified", `${m.counts.verification.completed}/${m.counts.verification.total}`, "Required current evidence passed", colors.green)}${metric("Integrated", `${m.counts.integration.completed}/${m.counts.integration.total}`, `${m.counts.integration.not_applicable} post-integration tasks exempt`, colors.violet)}${metric("Acceptance", `${m.acceptance.filter(a => a.status === "passed").length}/${m.acceptance.length}`, "Independent criteria; no composite readiness score", colors.amber)}</div><h3>Delivered capabilities</h3><ul>${m.capabilities.map(c => `<li>${esc(c)}</li>`).join("")}</ul><h3>Remaining acceptance</h3><ul>${m.acceptance.map(a => `<li><strong>${esc(a.id)} ${esc(a.title)}</strong> · ${esc(label(a.status))}${a.missing_check_ids.length ? ` — pending ${esc(a.missing_check_ids.join(", "))}` : ""}</li>`).join("")}</ul><h3>Current work and blockers</h3><p>Next: ${esc(m.next_task_ids.join(", "))}</p><ul>${m.blockers.map(b => `<li><strong>${esc(b.summary)}</strong> Owner: ${esc(b.owner)}. ${esc(b.required_action)}</li>`).join("")}</ul><details><summary>All ${m.tasks.length} task stages and owners</summary><div style="overflow-x:auto"><table class="agent-table"><thead><tr><th>Task</th><th>Owner / activity</th><th>Implementation</th><th>Verification</th><th>Integration</th></tr></thead><tbody>${m.tasks.map(t => `<tr><th scope="row">${esc(t.id)} ${esc(t.title)}</th><td>${esc(t.owner)} / ${esc(t.activity)}</td><td>${t.implemented ? "Implemented" : "Pending"}</td><td>${esc(label(t.verification))}</td><td>${esc(label(t.integration))}</td></tr>`).join("")}</tbody></table></div></details><details><summary>Quality, evidence and source coverage</summary><div style="overflow-x:auto"><table class="agent-table"><thead><tr><th>Check</th><th>Result</th><th>Tested identity / observation</th><th>Counts and evidence</th></tr></thead><tbody>${checks}</tbody></table></div></details><h3>Three native examples</h3><ul>${m.examples.map(e => `<li>${esc(e.title)} · ${esc(label(e.execution_mode))} · ${esc(label(e.maturity))}</li>`).join("")}</ul><p>Dev deployment: <strong>${esc(label(m.delivery.deployment_status))}</strong> · branch ${esc(m.delivery.branch)} → ${esc(m.delivery.target_branch)} · baseline ${esc(m.delivery.baseline_commit.slice(0, 8))}. ${m.delivery.pull_requests.map(pr => safeLink(pr.url, "Pull request")).join(" · ")}</p><p>Native milestone: ${esc(label(m.readiness.native_milestone))}. Benchmark qualification, commercial readiness and release remain separate. Rivet migration: ${esc(label(m.readiness.rivet_migration))}; retirement: ${esc(label(m.readiness.rivet_retirement))}.</p><details><summary>Scope changes</summary><ul>${m.scope_history.map(h => `<li>Revision ${h.revision}: ${esc(h.reason)} (+${h.added_task_ids.length}/−${h.removed_task_ids.length} tasks)</li>`).join("")}</ul></details></article>`;
+      }
+      function render(data) {
+        const v = data.validator,
+          t = data.tasks,
+          recovery = data.recovery,
+          g = data.git,
+          p = data.program,
+          tests = data.tests,
+          c = data.customer,
+          catalog = data.customerCatalog,
+          activity = data.activity,
+          checkpoints = data.history.checkpoints,
+          benchmark = data.benchmarkControl,
+          lanes = data.lanes,
+          ci = lanes.integration,
+          dev = lanes.development,
+          goal = lanes.currentGoal,
+          currentFeature = p.feature || t.feature || "Active feature",
+          programTotal = Number(t.programTotal ?? t.total),
+          programCompleted = Number(t.programCompleted ?? t.completed),
+          programOpen = Number(t.programOpen ?? t.open),
+          programFeatureCount = Number(t.programFeatureCount ?? 1),
+          programFeatureRows = Array.isArray(t.programFeatures)
+            ? t.programFeatures
+            : [],
+          goalCheckpoints = goal.history.length,
+          orderedGoalHistory = newestFirst(goal.history),
+          latestGoalCheckpoint = orderedGoalHistory[0],
+          recentGoalHistory = orderedGoalHistory.slice(0, 12),
+          olderGoalHistory = orderedGoalHistory.slice(12),
+          activeAgentCount = activity.agents.filter(
+            (agent) => agent.status === "running",
+          ).length,
+          delivery = deliveryTimeline(t.programHistory ?? t.history, goal.history);
+        const productCheckpoints = checkpoints.filter(
+            (x) => x.category === "customer_product",
+          ).length,
+          supportCheckpoints = checkpoints.length - productCheckpoints,
+          catalogTotal = catalog.available ? catalog.total : "Unavailable",
+          laneUpdated = shownTime(lanes.updatedAt),
+          observedAt = shownTime(data.observedAt),
+          testsLabel = tests.failed ? "Red" : tests.fresh ? "Green" : "Stale";
+        const customerCards = [
+          [
+            "Active process",
+            `${c.demoableJourneys}/${c.promisedJourneys} demoable`,
+            "One active customer-journey target — not the catalog total",
+            colors.red,
+          ],
+          [
+            "Story catalog",
+            catalog.available ? `${catalogTotal} proposed` : "Unavailable",
+            "Planning candidates; maturity is derived from the immutable catalog",
+            colors.cyan,
+          ],
+          [
+            "Governed benchmark",
+            `${v.benchmark} qualified`,
+            `${benchmark.status}: proposed stories do not count`,
+            colors.violet,
+          ],
+          [
+            "Acceptance",
+            `${c.acceptedScenarios}/${c.promisedScenarios}`,
+            "Acceptance for the active customer journey",
+            colors.red,
+          ],
+          [
+            "Delivery",
+            ci.phase,
+            `PR #${ci.pullRequest?.number ?? "—"} · target ${ci.target}`,
+            statusColor(ci.phase),
+          ],
+          [
+            "Next value",
+            "Engineering run",
+            "Useful operation with inspectable artifact",
+            colors.cyan,
+          ],
+        ];
+        const engineeringCards = [
+          [
+            "Feature",
+            p.featureState,
+            `${p.feature} · revision ${p.revision} · observed ${observedAt}`,
+            statusColor(p.featureState.toLowerCase()),
+          ],
+          [
+            "Active tasks",
+            `${t.completed}/${t.total}`,
+            `${p.feature} only — not overall product completion · observed ${observedAt}`,
+            colors.cyan,
+          ],
+          [
+            "Validator",
+            v.verdict,
+            `${v.blockerCount} blocker classes · ${v.fatals.length} fatal findings · observed ${observedAt}`,
+            statusColor(v.verdict),
+          ],
+          [
+            "Tests",
+            testsLabel,
+            `${tests.passed} passed · ${tests.failed} failed · ${tests.skipped} skipped${tests.fresh ? "" : " · rerun required after newer changes"} · observed ${shownTime(tests.observed_at)}`,
+            tests.failed
+              ? colors.red
+              : tests.fresh
+                ? colors.green
+                : colors.amber,
+          ],
+          [
+            "Benchmark",
+            v.benchmark,
+            `${benchmark.status}: ${benchmark.shortReason} · observed ${observedAt}`,
+            colors.violet,
+          ],
+          [
+            "Delivery",
+            ci.phase,
+            `branch ${ci.branch} · target ${ci.target} · updated ${laneUpdated}`,
+            statusColor(ci.phase),
+          ],
+        ];
+        document.getElementById("app").className = "";
+        document.getElementById("app").innerHTML = `
+<section class="tab-view" data-view="goal"><div class="grid metrics">${goal.outcomes.map((o) => metric(o.label, label(o.status), o.evidence, statusColor(o.status))).join("")}</div><div class="grid" style="margin-top:16px"><article class="panel"><div class="panel-head"><h2>Tasks and checkpoints over time</h2><span class="panel-kicker">All registered feature tasks · durable goal checkpoints</span></div><div class="trend-stats"><div class="trend-stat"><span class="small">Task ledger</span><strong>${esc(programCompleted)}/${esc(programTotal)}</strong><span class="small">completed across ${esc(programFeatureCount)} features</span></div><div class="trend-stat"><span class="small">Open tasks</span><strong>${esc(programOpen)}</strong><span class="small">registered dependency-ordered tasks</span></div><div class="trend-stat"><span class="small">Checkpoints</span><strong>${esc(goalCheckpoints)}</strong><span class="small">durable goal-history entries</span></div><div class="trend-stat"><span class="small">Latest checkpoint</span><strong>${esc(latestGoalCheckpoint ? shownTime(latestGoalCheckpoint.at) : "None")}</strong><span class="small">history remains newest first</span></div></div><div class="ledger-breakdown" aria-label="Task ledger by feature">${programFeatureRows.map((row) => `<span class="tag">${esc(row.feature)} ${esc(row.completed)}/${esc(row.total)}${row.open ? ` · ${esc(row.open)} open` : ""}</span>`).join("")}</div><div class="chart chart-tall" id="delivery-history-chart" data-label="Program task ledger and durable goal checkpoints over time; task counts use the left axis and checkpoints use the right axis"></div><div class="legend"><span style="--legend:${colors.cyan}">Total tasks</span><span style="--legend:${colors.green}">Completed tasks</span><span style="--legend:${colors.violet}">Checkpoints</span></div><div class="decision-note"><strong>Scope:</strong> task totals come only from the ${esc(programFeatureCount)} feature files registered by Wright; checkpoints come from this goal's durable history. These are delivery-volume measures, not a customer-readiness percentage.</div></article></div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>${esc(goal.title)}</h2><span class="tag">${esc(label(goal.status))}</span></div><dl class="lane-details"><dt>Active step</dt><dd>${esc(goal.activeStep)}</dd><dt>Blocker</dt><dd>${esc(goal.blocker ?? "None")}</dd><dt>Next action</dt><dd>${esc(goal.nextAction)}</dd><dt>Completed artifacts</dt><dd>${goal.artifacts.completed.map((x) => `<span class="tag">${esc(x)}</span>`).join(" ")}</dd><dt>Remaining</dt><dd>${goal.artifacts.remaining.map((x) => `<span class="tag">${esc(x)}</span>`).join(" ")}</dd></dl></article><article class="panel"><div class="panel-head"><h2>Goal checkpoint history</h2><span class="panel-kicker">Newest 12 shown · local time</span></div><ol class="event-list">${recentGoalHistory
+          .map(
+            (e) =>
+              `<li><time datetime="${esc(e.at)}">${esc(shownTime(e.at))}</time> · <strong>${esc(label(e.status))}</strong><br>${esc(e.detail)}</li>`,
+          )
+          .join(
+            "",
+          )}</ol>${olderGoalHistory.length ? `<details class="history-archive"><summary>Show ${esc(olderGoalHistory.length)} older checkpoints</summary><ol class="event-list" start="13">${olderGoalHistory.map((e) => `<li><time datetime="${esc(e.at)}">${esc(shownTime(e.at))}</time> · <strong>${esc(label(e.status))}</strong><br>${esc(e.detail)}</li>`).join("")}</ol></details>` : ""}<div class="decision-note"><strong>Independent reviews:</strong> engineering usability — ${esc(label(goal.reviews.engineeringUsability))}; architecture/test — ${esc(label(goal.reviews.architectureAndTest))}.</div></article></div></section>
+<section class="tab-view" data-view="lanes" hidden><div class="lane-grid"><article class="panel"><div class="panel-head"><h2>Dev Integration &amp; CI</h2><span class="phase">${esc(ci.phase)}</span></div><dl class="lane-details"><dt>Branch → target</dt><dd><span class="mono">${esc(ci.branch)}</span> → <span class="mono">${esc(ci.target)}</span></dd><dt>Pull request</dt><dd>${ci.pullRequest ? `<a class="pr-link" href="${esc(ci.pullRequest.url)}" target="_blank" rel="noreferrer">#${esc(ci.pullRequest.number)} on GitHub</a>` : "Not open"}</dd><dt>Frozen candidate F</dt><dd class="mono">${esc(ci.frozenCandidate)}</dd><dt>Last pushed</dt><dd><span class="mono">${esc(ci.lastPushedSha)}</span><br><span class="small">${esc(shownTime(ci.lastPushTime))}</span></dd><dt>Checks</dt><dd><span style="color:${colors.green}">${esc(ci.checks.passing)} passing</span> · <span style="color:${colors.red}">${esc(ci.checks.failing)} failing</span> · ${esc(ci.checks.pending)} pending</dd><dt>CI age</dt><dd>${ci.ciStartedAt ? `${Math.max(0, Math.round((Date.now() - Date.parse(ci.ciStartedAt)) / 60000))} minutes` : "Not running"}</dd><dt>First actionable failure</dt><dd>${esc(ci.firstActionableFailure ?? "None")}</dd><dt>dev sync / merge gate</dt><dd>${esc(ci.devSync)} / ${esc(ci.fullMergeGate)}</dd><dt>Next action</dt><dd>${esc(ci.nextAction)}</dd></dl><h3 class="small">Push / CI history</h3><ol class="event-list">${newestFirst(ci.events)
+          .map(
+            (e) =>
+              `<li><time datetime="${esc(e.at)}">${esc(shownTime(e.at))}</time> · <strong>${esc(e.kind)}</strong> · <span class="mono">${esc((e.sha ?? "").slice(0, 8))}</span><br>${esc(e.detail)}</li>`,
+          )
+          .join(
+            "",
+          )}</ol></article><article class="panel"><div class="panel-head"><h2>Continued Development</h2><span class="tag">separate worktree</span></div><dl class="lane-details"><dt>Task</dt><dd class="mono">${esc(dev.taskId)}</dd><dt>Branch</dt><dd class="mono">${esc(dev.branch)}</dd><dt>Customer milestone</dt><dd>${esc(dev.customerMilestone)}</dd><dt>Latest demonstrated capability</dt><dd>${esc(dev.latestCapability)}</dd><dt>Blocker</dt><dd>${esc(dev.blocker ?? "None")}</dd><dt>Next action</dt><dd>${esc(dev.nextAction)}</dd></dl><div class="decision-note"><strong>WIP limit:</strong> one integration lane plus one feature-development lane. Candidate F is immutable in the development lane; branch <span class="mono">${esc(ci.branch)}</span> belongs only to integration and CI.</div></article></div></section>
+<section class="tab-view" data-view="customer"><div class="grid metrics">${customerCards.map((x) => metric(...x)).join("")}</div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Active customer-journey delivery</h2><span class="panel-kicker">The 1 is an active target, not total scope</span></div><table class="journey"><thead><tr><th>Journey</th><th>Local</th><th>PR</th><th>dev</th><th>Customer</th></tr></thead><tbody>${c.journeys.map((j) => `<tr><td>${esc(j.name)}</td>${["local", "pr", "dev", "customer"].map((k) => `<td><span class="state ${j[k]}">${esc(label(j[k]))}</span></td>`).join("")}</tr>`).join("")}</tbody></table></article><article class="panel"><div class="panel-head"><h2>Customer story catalog</h2><span class="tag">proposed · non-authoritative</span></div>${catalog.available ? `<div class="callout"><strong>${esc(catalog.total)} proposed stories</strong> · ${esc(v.benchmark)} governed benchmark cases qualified</div><div class="legend">${catalog.maturity.map((m) => `<span style="--legend:${colors.cyan}">${esc(m.label)}: ${esc(m.count)}</span>`).join("")}</div><div class="decision-note"><strong>Interpretation:</strong> these are product discovery and specification candidates, not executed or qualified processes. Counts are derived from the immutable catalog at <span class="mono">${esc(catalog.sourceCommit.slice(0, 8))}</span>; ${esc(catalog.derivedStoryCount)} distinct definitions were parsed.</div>` : `<div class="error">Catalog unavailable: ${esc(catalog.error)}</div>`}<p class="footer-note"><strong>Next customer value:</strong> ${esc(c.nextValue)}</p></article></div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Verified effort mix</h2><span class="panel-kicker">Diagnostic only — not product progress</span></div><div class="chart" id="checkpoint-chart" data-label="Cumulative commit classifications showing customer product and supporting work"></div><div class="legend"><span style="--legend:${colors.green}">Customer product</span><span style="--legend:${colors.cyan}">Quality</span><span style="--legend:${colors.violet}">Process automation</span><span style="--legend:${colors.amber}">Governance</span></div><div class="decision-note"><strong>What this means:</strong> ${productCheckpoints} customer-product checkpoint(s) versus ${supportCheckpoints} supporting checkpoint(s) on this branch. This chart diagnoses allocation; it does not claim the product is nearly done. <strong>Action:</strong> finish the current delivery gate, then direct the next bounded feature at the first demoable customer workflow.</div></article><article class="panel"><div class="panel-head"><h2>Immediate delivery path</h2><span class="panel-kicker">Three fixed moves</span></div><ol class="actions">${data.nextActions.map((a) => `<li>${esc(a)}</li>`).join("")}</ol></article></div></section>
+<section class="tab-view" data-view="engineering" hidden><div class="grid metrics">${engineeringCards.map((x) => metric(...x)).join("")}</div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Four independent readiness areas</h2><span class="panel-kicker">No composite score</span></div><div class="readiness">${v.areas.map((a) => `<div class="area"><div class="area-top"><span class="area-name">${esc(a.label)}</span><span class="dot" style="background:${statusColor(a.status)}"></span></div><div class="area-status" style="color:${statusColor(a.status)}">${esc(label(a.status))}</div><div class="area-count">${a.passed}/${a.required} gates passed</div></div>`).join("")}</div><div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, Number(v.benchmark.split("/")[0]) || 0)}%"></div></div><div class="legend"><span style="--legend:${colors.violet}">Benchmark ${esc(v.benchmark)}</span><span style="--legend:${colors.red}">Release eligible: ${v.releaseEligible ? "yes" : "no"}</span></div></article><article class="panel"><div class="panel-head"><h2>Blocking findings</h2><span class="tag">${v.fatals.length} fatal</span></div><ol class="blockers">${v.fatals.map((b, i) => `<li class="blocker"><span class="blocker-index">${i + 1}</span><div><code>${esc(b.code)}</code><small>${esc(b.artifact)} ${esc(b.pointer)}</small></div></li>`).join("")}</ol></article></div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Benchmark qualification</h2><span class="panel-kicker">Primary outcome metric · qualified / 100</span></div><div class="hold-card"><div class="hold-title"><span>${esc(benchmark.status)}</span><span class="tag">${esc(v.benchmark)}</span></div><div>${esc(benchmark.reason)}</div><ul>${benchmark.blockers.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><div class="decision-note"><strong>Unblock condition:</strong> ${esc(benchmark.unblock)}<br><strong>Next decision:</strong> ${esc(benchmark.nextDecision)}</div></div><div class="chart" id="benchmark-chart" data-label="Benchmark qualification history; currently zero because qualification is held by explicit roadmap dependencies and authorization"></div><div class="legend"><span style="--legend:${colors.violet}">Qualified</span><span style="--legend:${colors.muted}">Target</span></div></article><article class="panel"><div class="panel-head"><h2>Active ${esc(currentFeature)} tasks</h2><span class="panel-kicker">Current feature only — not overall program</span></div><div class="chart" id="task-chart" data-label="Task completion history for ${esc(currentFeature)}, the active feature, not overall product completion"></div><div class="legend"><span style="--legend:${colors.cyan}">Feature scope</span><span style="--legend:${colors.green}">Feature completed</span></div><div class="decision-note"><strong>Scope warning:</strong> ${t.completed}/${t.total} describes ${esc(currentFeature)}, the current bounded feature. Customer status remains ${c.demoableJourneys}/${c.promisedJourneys} demoable journeys and ${c.acceptedScenarios}/${c.promisedScenarios} accepted scenarios. Completing this feature does not mean Wright is nearly customer-ready.</div></article></div><div class="grid" style="margin-top:16px"><article class="panel"><div class="panel-head"><h2>Readiness history</h2><span class="panel-kicker">Independent program revisions</span></div><div class="chart" id="readiness-chart" data-label="Readiness history"></div><div class="legend"><span style="--legend:${colors.cyan}">Product</span><span style="--legend:${colors.violet}">Benchmark</span><span style="--legend:${colors.amber}">Commercial</span><span style="--legend:${colors.green}">Program</span></div></article></div></section>
+<section class="tab-view" data-view="agents" hidden><div class="notice"><strong>Token accounting unavailable.</strong> ${esc(activity.tokenTelemetry.reason)} Verified checkpoints are used as the work axis; no token number is inferred.</div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Active agents</h2><span class="tag">${activity.agents.length} active</span></div><table class="agent-table"><thead><tr><th>Agent / role</th><th>Current bounded task</th><th>Category</th><th>Attempt</th><th>Tokens</th><th>Evidence / blocker</th></tr></thead><tbody>${activity.agents.map((a) => `<tr><td><strong>${esc(a.id)}</strong><br><span class="small">${esc(a.role)}</span></td><td>${esc(a.currentTask)}<br><span class="small">Next: ${esc(a.nextAction)}</span></td><td>${esc(a.workCategory)}</td><td>${esc(a.attempt)}</td><td>${a.tokens == null ? "Unavailable" : esc(a.tokens)}</td><td>${esc(a.evidence)}<br><span class="small">Blocker: ${esc(a.blocker ?? "none")}</span></td></tr>`).join("")}</tbody></table></article><article class="panel"><div class="panel-head"><h2>Target token allocation</h2><span class="panel-kicker">Guardrail, not release gate</span></div><div class="allocation"><div class="allocation-row"><span>Customer product</span><div class="bar"><span style="width:65%;--bar:${colors.green}"></span></div><strong>60–70%</strong></div><div class="allocation-row"><span>Quality / tests</span><div class="bar"><span style="width:22%;--bar:${colors.cyan}"></span></div><strong>20–25%</strong></div><div class="allocation-row"><span>Governance</span><div class="bar"><span style="width:15%;--bar:${colors.amber}"></span></div><strong>≤15%</strong></div><div class="allocation-row"><span>Rework</span><div class="bar"><span style="width:20%;--bar:${colors.red}"></span></div><strong>&lt;20%</strong></div></div><p class="footer-note">Observed allocation remains unavailable until token telemetry is exposed. Commit categories below are evidence, not a token proxy.</p></article></div><div class="grid row-2"><article class="panel"><div class="panel-head"><h2>Checkpoint mix</h2><span class="panel-kicker">Current unpushed branch</span></div><div class="chart" id="agent-checkpoint-chart" data-label="Checkpoint mix by work category"></div><div class="legend"><span style="--legend:${colors.green}">Customer product</span><span style="--legend:${colors.cyan}">Quality</span><span style="--legend:${colors.violet}">Process automation</span><span style="--legend:${colors.amber}">Governance</span></div></article><article class="panel"><div class="panel-head"><h2>Recent verified checkpoints</h2><span class="panel-kicker">Newest first · local time</span></div><div class="checkpoint-list">${newestFirst(checkpoints, "committedAt")
+          .map(
+            (x) =>
+              `<div class="checkpoint"><span class="mono">${esc(x.commit)}</span><time datetime="${esc(x.committedAt)}" title="${esc(x.committedAt)}">${esc(checkpointTime(x.committedAt))}</time><span class="category">${esc(label(x.category))}</span><span>${esc(x.subject)}</span></div>`,
+          )
+          .join("")}</div></article></div></section>`;
+        const goalView = document.querySelector('[data-view="goal"]'),
+          goalMetrics = goalView?.querySelector(".grid.metrics"),
+          recoveryLabels = [
+            "Canvas-first recovery",
+            "Three-treatment port lab",
+            "Reviewed AI proposal",
+            "Needs-input run state",
+            "Artifact lineage",
+          ],
+          recoveryMarkup = recovery ? `<div class="grid row-2" style="margin-top:16px"><article class="panel"><div class="panel-head"><h2>Recovery execution ledger</h2><span class="tag">${esc(recovery.completed)}/${esc(recovery.total)} · ${esc(recovery.roadmapStatus)}</span></div><div class="callout"><strong>${esc(recovery.feature)} remains ${esc(recovery.roadmapStatus)}.</strong> This recovery projection is intentionally separate from governed F02B work and does not activate or register the replacement feature.</div><div class="recovery-ledger">${recovery.phases.map((phase) => `<div class="recovery-phase ${phase.tasks === "T051" ? "approval-stop" : ""}" style="--phase-color:${statusColor(phase.status)}"><strong>${esc(phase.label)}</strong><span>${esc(phase.tasks)} · ${esc(phase.completed)}/${esc(phase.total)} · ${esc(label(phase.status))}</span></div>`).join("")}</div><div class="decision-note approval-stop"><strong>Mandatory stop:</strong> T051 human product approval is ${esc(recovery.approval)}. T052–T060 remain deferred and unauthorized. Customer readiness is incomplete.</div></article><article class="panel"><div class="panel-head"><h2>Frozen vs recovered evidence</h2><span class="panel-kicker">Exact clickable walkthrough artifacts</span></div><div class="evidence-gallery"><a class="evidence-card" href="${esc(recovery.evidence.frozenReport)}" target="_blank"><img src="${esc(recovery.evidence.frozenImage)}" alt="Frozen Checkpoint D composer"><span>Frozen Checkpoint D report</span></a>${recovery.evidence.recoveryImages.map((image, index) => `<a class="evidence-card" href="${esc(recovery.evidence.recoveryReport)}" target="_blank"><img src="${esc(image)}" alt="Recovery walkthrough evidence ${index + 1}"><span>${esc(recoveryLabels[index])}</span></a>`).join("")}</div><div class="decision-note"><strong>Exact subject:</strong> <span class="mono">${esc(recovery.prototype.commit.slice(0, 8))}</span> / tree <span class="mono">${esc(recovery.prototype.tree.slice(0, 8))}</span>. <a href="${esc(recovery.evidence.recoveryReport)}" target="_blank">Report</a> · <a href="${esc(recovery.evidence.recoveryStatus)}" target="_blank">status</a> · <a href="${esc(recovery.evidence.recoveryManifest)}" target="_blank">manifest</a>.</div></article></div>` : "";
+        goalMetrics?.insertAdjacentHTML("afterend", recoveryMarkup);
+        document.querySelector('[data-view="goal"]')?.insertAdjacentHTML("afterbegin", milestonePanel(data.milestone));
+        const governedPanel = [...goalView.querySelectorAll(".panel")].find(
+          (panel) => panel.querySelector("h2")?.textContent === "Tasks and checkpoints over time",
+        );
+        if (governedPanel && recovery) {
+          governedPanel.querySelector("h2").textContent = "Governed tasks and checkpoints over time";
+          governedPanel.querySelector(".panel-kicker").textContent =
+            "Registered program features only · recovery remains separate";
+          governedPanel.querySelector(".decision-note").innerHTML =
+            `<strong>Scope:</strong> the governed ledger remains ${esc(programCompleted)}/${esc(programTotal)} and F02B remains ${esc(t.completed)}/${esc(t.total)} with T028–T038 open. Recovery ${esc(recovery.completed)}/${esc(recovery.total)} is projected separately until authorized activation. Neither measure is customer readiness.`;
+        }
+        const reviewNote = [...goalView.querySelectorAll(".decision-note")].find(
+          (note) => note.textContent.startsWith("Independent reviews:"),
+        );
+        if (reviewNote)
+          reviewNote.innerHTML = `<strong>Independent reviews:</strong> checkpoint/capability — ${esc(label(goal.reviews.checkpointAndCapabilityAudit))}; model/renderer — ${esc(label(goal.reviews.modelAndRendererAudit))}; dashboard/machine — ${esc(label(goal.reviews.dashboardAndMachineAudit))}; product approval — ${esc(label(goal.reviews.productApproval))}.`;
+        const customerView = document.querySelector('[data-view="customer"]'),
+          customerMetrics = customerView?.querySelector(".grid.metrics");
+        customerView?.insertAdjacentHTML(
+          "afterbegin",
+          `<div class="notice approval-stop"><strong>Customer readiness incomplete.</strong> Recovery evidence is not a released customer journey: ${esc(c.demoableJourneys)}/${esc(c.promisedJourneys)} demoable, ${esc(c.acceptedScenarios)}/${esc(c.promisedScenarios)} accepted, benchmark ${esc(v.benchmark)}, release eligible ${v.releaseEligible ? "yes" : "no"}.</div>`,
+        );
+        if (customerMetrics) customerMetrics.style.marginTop = "16px";
+        const cpLabels = checkpoints.map((x) => String(x.index));
+        const cpSeries = [
+          ["Customer product", "customer_product", colors.green],
+          ["Quality", "quality", colors.cyan],
+          ["Process automation", "process_automation", colors.violet],
+          ["Governance", "governance", colors.amber],
+        ].map(([name, key, color]) => ({
+          name,
+          color,
+          values: checkpoints.map((x) => x.cumulative[key]),
+        }));
+        lineChart(
+          document.getElementById("checkpoint-chart"),
+          cpLabels,
+          cpSeries,
+          Math.max(1, checkpoints.length),
+        );
+        lineChart(
+          document.getElementById("agent-checkpoint-chart"),
+          cpLabels,
+          cpSeries,
+          Math.max(1, checkpoints.length),
+        );
+        dualLineChart(
+          document.getElementById("delivery-history-chart"),
+          delivery.map((row) =>
+            new Intl.DateTimeFormat(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+            }).format(new Date(row.time)),
+          ),
+          [
+            {
+              name: "Total tasks",
+              color: colors.cyan,
+              values: delivery.map((row) => row.total),
+            },
+            {
+              name: "Completed tasks",
+              color: colors.green,
+              values: delivery.map((row) => row.completed),
+            },
+          ],
+          Math.max(1, programTotal),
+          [
+            {
+              name: "Checkpoints",
+              color: colors.violet,
+              values: delivery.map((row) => row.checkpoints),
+            },
+          ],
+          Math.max(1, goalCheckpoints),
+        );
+        lineChart(
+          document.getElementById("task-chart"),
+          t.history.map((x) => x.commit),
+          [
+            {
+              name: "Total",
+              color: colors.cyan,
+              values: t.history.map((x) => x.total),
+            },
+            {
+              name: "Completed",
+              color: colors.green,
+              values: t.history.map((x) => x.completed),
+            },
+          ],
+          Math.max(80, ...t.history.map((x) => x.total)),
+        );
+        const ready = data.history.readiness.slice(-24);
+        lineChart(
+          document.getElementById("readiness-chart"),
+          ready.map((x) => `r${x.revision}`),
+          [
+            {
+              name: "Product",
+              color: colors.cyan,
+              values: ready.map((x) => readinessScore(x.product)),
+            },
+            {
+              name: "Benchmark",
+              color: colors.violet,
+              values: ready.map((x) => readinessScore(x.benchmark)),
+            },
+            {
+              name: "Commercial",
+              color: colors.amber,
+              values: ready.map((x) => readinessScore(x.commercial)),
+            },
+            {
+              name: "Program",
+              color: colors.green,
+              values: ready.map((x) => readinessScore(x.program)),
+            },
+          ],
+          3,
+          ["not started", "blocked", "in progress", "ready"],
+        );
+        const bench = data.history.benchmark;
+        lineChart(
+          document.getElementById("benchmark-chart"),
+          bench.map((x) => x.commit),
+          [
+            {
+              name: "Qualified",
+              color: colors.violet,
+              values: bench.map((x) => x.counted),
+            },
+            {
+              name: "Target",
+              color: colors.muted,
+              values: bench.map((x) => x.target),
+            },
+          ],
+          100,
+        );
+        setTab(activeTab);
+        document.getElementById("updated").textContent =
+          `Live · ${new Date(data.observedAt).toLocaleTimeString()}`;
+      }
+      function refreshLabels(data) {
+        const activity = data.activity,
+          active = activity.agents.filter((a) =>
+            ["active", "in_progress", "running", "verifying"].includes(a.status),
+          ),
+          stopped = activity.agents.filter((a) =>
+            ["blocked", "completed_failed"].includes(a.status),
+          ),
+          completed = activity.agents.filter((a) =>
+            ["completed", "completed_passed"].includes(a.status),
+          ),
+          observedAt = shownTime(data.observedAt),
+          laneUpdated = shownTime(data.lanes.updatedAt);
+        const panelByHeading = (view, text) =>
+          [...document.querySelectorAll(`[data-view="${view}"] .panel`)].find(
+            (panel) => panel.querySelector("h2")?.textContent === text,
+          );
+        const goalTag = panelByHeading(
+          "goal",
+          data.lanes.currentGoal.title,
+        )?.querySelector(".panel-head .tag");
+        if (goalTag)
+          goalTag.textContent = `${label(data.lanes.currentGoal.status)} · updated ${laneUpdated}`;
+        const developmentTag = panelByHeading(
+          "lanes",
+          "Continued Development",
+        )?.querySelector(".panel-head .tag");
+        if (developmentTag)
+          developmentTag.textContent = `separate worktree · updated ${laneUpdated}`;
+        document.querySelectorAll('[data-view="lanes"] dt').forEach((term) => {
+          if (term.textContent !== "CI age") return;
+          term.textContent = "CI timing";
+          const running = ["CI running", "CI failed"].includes(
+            data.lanes.integration.phase,
+          );
+          term.nextElementSibling.textContent = running
+            ? `${Math.max(0, Math.round((Date.now() - Date.parse(data.lanes.integration.ciStartedAt)) / 60000))} minutes since start`
+            : `Terminal · last event ${shownTime(newestFirst(data.lanes.integration.events)[0]?.at)}`;
+        });
+        [
+          ["customer", "Active customer-journey delivery"],
+          ["customer", "Customer story catalog"],
+          ["engineering", "Four independent readiness areas"],
+          ["engineering", "Benchmark qualification"],
+        ].forEach(([view, text]) => {
+          const marker = panelByHeading(view, text)?.querySelector(
+            ".panel-kicker, .panel-head .tag",
+          );
+          if (marker) marker.textContent += ` · observed ${observedAt}`;
+        });
+        const agentView = document.querySelector('[data-view="agents"]');
+        const heading = agentView?.querySelector("h2");
+        const tag = agentView?.querySelector(".panel-head .tag");
+        if (heading) heading.textContent = "Agent activity";
+        if (tag)
+          tag.textContent = `${active.length} active · ${stopped.length} stopped · ${completed.length} completed`;
+        agentView?.querySelectorAll("tbody tr").forEach((row, index) => {
+          const agent = activity.agents[index],
+            cell = row.querySelector("td");
+          if (cell && agent?.updatedAt)
+            cell.insertAdjacentHTML(
+              "beforeend",
+              `<br><span class="small">Status: ${esc(label(agent.status))}<br>Updated: ${esc(shownTime(agent.updatedAt))}</span>`,
+            );
+        });
+      }
+      async function refresh() {
+        const button = document.getElementById("refresh");
+        button.disabled = true;
+        try {
+          const response = await fetch("/api/status", { cache: "no-store" });
+          if (!response.ok)
+            throw new Error(`Status request failed: ${response.status}`);
+          const data = await response.json();
+          render(data);
+          refreshLabels(data);
+        } catch (error) {
+          if (!document.querySelector(".tab-view")) document.getElementById("app").textContent = error.message;
+          document.getElementById("updated").textContent = `Refresh failed — previous valid display retained. ${error.message}`;
+        } finally {
+          button.disabled = false;
+        }
+      }
+      document.querySelector(".tabs").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-tab]");
+        if (button) setTab(button.dataset.tab);
+      });
+      document.getElementById("refresh").addEventListener("click", refresh);
+      refresh();
+      setInterval(refresh, 30000);
+    </script>
+  </body>
+</html>

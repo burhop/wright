@@ -1,4 +1,6 @@
 import { hostAdapter } from "./host-adapter";
+import { decodeNativeMilestone } from "./milestone-status";
+import type { NativeMilestone } from "../components/program-status/NativeMilestone.types";
 
 export const PROGRAM_STATUS_SCHEMA_VERSION = "1.0.0" as const;
 
@@ -144,6 +146,7 @@ export interface ProgramStatusBundle {
       evidence: EvidenceRef[];
     };
     work: {
+      milestone?: NativeMilestone;
       current_milestone: string;
       active_feature: string | null;
       program_tasks: TaskCounts & {
@@ -951,6 +954,7 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
         ),
       },
       work: {
+        ...(work.milestone === undefined ? {} : { milestone: decodeNativeMilestone(work.milestone, String(source.commit)) }),
         current_milestone: stringValue(
           work.current_milestone,
           "/supplement/work/current_milestone",

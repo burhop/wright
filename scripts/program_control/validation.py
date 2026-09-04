@@ -3439,18 +3439,22 @@ def validate_f01b_lease_checkpoint_correction(
             current_lease = successor_state.get("active_mutating_lease")
             expected_lease = expected_state["active_mutating_lease"]
             if current_lease is None:
-                valid = valid and successor_state.get("feature_state") in {
-                    "BLOCKED",
-                    "CANDIDATE_FROZEN",
-                    "INDEPENDENTLY_VERIFIED",
-                    "PUSH_AUTHORIZATION_PENDING",
-                    "PR_READY",
-                    "DEV_MERGE_READY",
-                    "DEV_INTEGRATED",
-                    "DEV_DEPLOYMENT_VERIFIED",
-                    "ROLLED_BACK",
-                    "STOPPED",
-                }
+                valid = valid and (
+                    successor_state.get("feature_state")
+                    in {
+                        "BLOCKED",
+                        "CANDIDATE_FROZEN",
+                        "INDEPENDENTLY_VERIFIED",
+                        "PUSH_AUTHORIZATION_PENDING",
+                        "PR_READY",
+                        "DEV_MERGE_READY",
+                        "DEV_INTEGRATED",
+                        "DEV_DEPLOYMENT_VERIFIED",
+                        "ROLLED_BACK",
+                        "STOPPED",
+                    }
+                    or _native_scoped_checkpoint(successor_state)
+                )
             elif isinstance(current_lease, Mapping):
                 same_f01b_lease = all(
                     current_lease.get(field) == expected_lease.get(field)
@@ -3757,9 +3761,13 @@ def _validate_state_chain(
                 and authority.get("authority_kind") == "standing_user_scope"
             ):
                 _validate_native_scope_authority(
-                    documents, program_root,
-                    {"current_feature": transition.get("feature_id"),
-                     "revision": new_revision, "approval": authority},
+                    documents,
+                    program_root,
+                    {
+                        "current_feature": transition.get("feature_id"),
+                        "revision": new_revision,
+                        "approval": authority,
+                    },
                     findings,
                 )
             domain = transition.get("state_domain")
@@ -3988,6 +3996,20 @@ def evaluate_approval_history(
     return sorted(findings, key=Finding.sort_key), selected
 
 
+def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
+    checkpoint = state.get("scoped_checkpoint")
+    return (
+        state.get("current_feature") == "EPP-N01"
+        and state.get("revision", 0) >= 94
+        and state.get("feature_state") == "IMPLEMENTING"
+        and isinstance(checkpoint, Mapping)
+        and checkpoint.get("status") == "awaiting_independent_review"
+        and bool(checkpoint.get("task_ids"))
+        and checkpoint.get("whole_feature_complete") is False
+        and state.get("approval", {}).get("authority_kind") == "standing_user_scope"
+    )
+
+
 def validate_roadmap_approval_and_lease(
     documents: Mapping[str, Any],
     program_root: str,
@@ -4168,7 +4190,34 @@ def validate_roadmap_approval_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
+    if (
+        _native_scoped_checkpoint(state)
+        and reader is not None
+        and source_commit is not None
+    ):
+        checkpoint = state["scoped_checkpoint"]
+        try:
+            identity = reader.resolve_identity(
+                checkpoint["candidate_commit"], program_root
+            )
+            registered = documents[f"{program_root}/work-registry.json"]["milestone"][
+                "tasks"
+            ]
+            valid_checkpoint = identity.source_tree == checkpoint[
+                "candidate_tree"
+            ] and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+        except (GitSubjectError, KeyError, TypeError):
+            valid_checkpoint = False
+        if not valid_checkpoint:
+            findings.append(
+                _finding(
+                    "LEASE_IDENTITY_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "NATIVE_SCOPED_CANDIDATE_IDENTITY",
+                )
+            )
     if lease_closed and lease is not None:
         findings.append(
             _finding(
@@ -4415,7 +4464,7 @@ def _validate_roadmap_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
     if (
         current_feature
         and not lease_closed
@@ -4653,7 +4702,9 @@ def _validate_native_scope_authority(
     if not valid:
         findings.append(
             _finding(
-                "NATIVE_SCOPE_AUTHORITY_INVALID", "fatal", path,
+                "NATIVE_SCOPE_AUTHORITY_INVALID",
+                "fatal",
+                path,
                 "RECORDED_NATIVE_SCOPE_NOT_EXACT_APPROVAL",
             )
         )
