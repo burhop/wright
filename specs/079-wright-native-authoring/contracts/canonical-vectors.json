@@ -1,0 +1,73 @@
+{
+  "version": "wright-native-json-v1",
+  "accepted": [
+    {
+      "id": "ascii",
+      "input_json": "{\"z\":2,\"a\":1}",
+      "canonical_utf8_hex": "7b2261223a312c227a223a327d",
+      "sha256": "99168216144c7fed5d4c54916cf98d9c66096280c04a499822a99b6658bd177a"
+    },
+    {
+      "id": "unicode",
+      "input_json": "{\"\ue000\":1,\"\ud800\udc00\":2,\"title\":\"Caf\u00e9 \ud83d\udd27\"}",
+      "canonical_utf8_hex": "7b227469746c65223a22436166c3a920f09f94a7222c22ee8080223a312c22f0908080223a327d",
+      "sha256": "6c76a8f1f4495ae7ab43ff39fd3b61f968f9d18ae4b985a2ddbe64c5fd5114c1"
+    },
+    {
+      "id": "controls",
+      "input_json": "{\"text\":\"line\\n\\t\\\"\\\\\"}",
+      "canonical_utf8_hex": "7b2274657874223a226c696e655c6e5c745c225c5c227d",
+      "sha256": "43327f4b096c1f91a3cdb3baea981ea067300e00a85b0a3864a1d5a21ff2a64f"
+    },
+    {
+      "id": "safe-integers",
+      "input_json": "{\"low\":-9007199254740991,\"high\":9007199254740991}",
+      "canonical_utf8_hex": "7b2268696768223a393030373139393235343734303939312c226c6f77223a2d393030373139393235343734303939317d",
+      "sha256": "8274cf69c1f4a1d2039d6104a42d06445b3f19759805ae085cf2d175d4f70bd7"
+    },
+    {
+      "id": "ordered-array",
+      "input_json": "{\"values\":[3,1,2]}",
+      "canonical_utf8_hex": "7b2276616c756573223a5b332c312c325d7d",
+      "sha256": "c2d02feadd9a74ac8989f91e0f89044215f3f18e368c414771d457b8246ce293"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "duplicate-key",
+      "input_json": "{\"a\":1,\"a\":2}"
+    },
+    {
+      "id": "float",
+      "input_json": "{\"a\":1.0}"
+    },
+    {
+      "id": "exponent",
+      "input_json": "{\"a\":1e0}"
+    },
+    {
+      "id": "negative-zero",
+      "input_json": "{\"a\":-0}"
+    },
+    {
+      "id": "unsafe-integer",
+      "input_json": "{\"a\":9007199254740992}"
+    },
+    {
+      "id": "non-nfc",
+      "input_json": "{\"a\":\"e\\u0301\"}"
+    },
+    {
+      "id": "surrogate",
+      "input_json": "{\"a\":\"\\ud800\"}"
+    },
+    {
+      "id": "nonfinite",
+      "input_json": "{\"a\":NaN}"
+    },
+    {
+      "id": "bom",
+      "input_json": "\ufeff{}"
+    }
+  ]
+}

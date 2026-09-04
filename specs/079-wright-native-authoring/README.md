@@ -1,4 +1,8 @@
-# Wright-native authoring: decision package
+# Wright-native engineering-process milestone
+
+**Current direction (2026-09-04):** The user authorized the complete native author/save/run/artifact/recovery milestone and dashboard evolution. Start with [the current plan](plan.md), [scope authority](milestone-decision.md), [tasks](tasks.md) and [verification handoff](quickstart.md). The original September 2 proposal is preserved at commit `6daeb214`.
+
+The notes below describe that historical proposal and its original approval state; they do not override the September 4 scope.
 
 This is the corrected planning direction, not an implementation or an accepted architecture decision.
 

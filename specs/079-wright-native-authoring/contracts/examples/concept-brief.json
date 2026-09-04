@@ -1,0 +1,172 @@
+{
+  "format": "wright-native-process",
+  "schema_version": "1.0.0",
+  "id": "concept-brief",
+  "title": "Create a traceable concept brief",
+  "steps": [
+    {
+      "id": "need-source",
+      "title": "need source",
+      "operation": "text.input@1",
+      "config": {
+        "value": "Design a desk bracket."
+      }
+    },
+    {
+      "id": "constraint-source",
+      "title": "constraint source",
+      "operation": "text.input@1",
+      "config": {
+        "value": "Maximum mass: 200 g."
+      }
+    },
+    {
+      "id": "brief-compose",
+      "title": "brief compose",
+      "operation": "text.join@1",
+      "config": {
+        "separator": "\n"
+      }
+    },
+    {
+      "id": "brief-check",
+      "title": "brief check",
+      "operation": "text.require@1",
+      "config": {
+        "terms": [
+          "desk bracket",
+          "200 g"
+        ]
+      }
+    },
+    {
+      "id": "brief-file",
+      "title": "brief file",
+      "operation": "artifact.write-text@1",
+      "config": {
+        "filename": "concept-brief.md"
+      }
+    }
+  ],
+  "ports": [
+    {
+      "id": "need-source-output-value",
+      "step_id": "need-source",
+      "key": "value",
+      "label": "value",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-compose-input-first",
+      "step_id": "brief-compose",
+      "key": "first",
+      "label": "first",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "constraint-source-output-value",
+      "step_id": "constraint-source",
+      "key": "value",
+      "label": "value",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-compose-input-second",
+      "step_id": "brief-compose",
+      "key": "second",
+      "label": "second",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-compose-output-text",
+      "step_id": "brief-compose",
+      "key": "text",
+      "label": "text",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-check-input-text",
+      "step_id": "brief-check",
+      "key": "text",
+      "label": "text",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-check-output-text",
+      "step_id": "brief-check",
+      "key": "text",
+      "label": "text",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-file-input-text",
+      "step_id": "brief-file",
+      "key": "text",
+      "label": "text",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "brief-file-output-artifact",
+      "step_id": "brief-file",
+      "key": "artifact",
+      "label": "artifact",
+      "direction": "output",
+      "type": "artifact",
+      "cardinality": "one",
+      "required": true
+    }
+  ],
+  "connections": [
+    {
+      "id": "link-1",
+      "source_port_id": "need-source-output-value",
+      "target_port_id": "brief-compose-input-first"
+    },
+    {
+      "id": "link-2",
+      "source_port_id": "constraint-source-output-value",
+      "target_port_id": "brief-compose-input-second"
+    },
+    {
+      "id": "link-3",
+      "source_port_id": "brief-compose-output-text",
+      "target_port_id": "brief-check-input-text"
+    },
+    {
+      "id": "link-4",
+      "source_port_id": "brief-check-output-text",
+      "target_port_id": "brief-file-input-text"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "brief-result",
+      "title": "Concept brief",
+      "port_id": "brief-file-output-artifact"
+    }
+  ]
+}

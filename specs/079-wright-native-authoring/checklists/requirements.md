@@ -1,40 +1,18 @@
-# Specification Quality Checklist: Wright-native Workflow Authoring
+# Specification Quality Checklist: Native Engineering Process Milestone
 
-**Purpose**: Validate written requirements, not implementation or acceptance evidence.
+Updated September 4 under the user's standing goal and language-authority clarification. Original manual-only checklist and approval state are preserved at `6daeb214`. This checklist evaluates requirements, not implemented functionality.
 
-**Created**: 2026-09-02
+- [x] Native create/save/run/artifact/recovery and useful dashboard outcomes are explicit.
+- [x] The versioned language is official for AI clients, canvas and runtime; Rivet replacement and migration/retirement boundaries are explicit.
+- [x] Bounded schema, operation signatures, units, API, concurrency, artifact publication and restart ownership are concrete.
+- [x] Three development workflows, a separate human-study fixture, invalid/draft cases and canonicalization vectors are present.
+- [x] Fixture schema, unique identities and exact endpoint/output types were checked; this is contract verification only.
+- [x] Atomic commands, invalid buffers, save conflicts, accessibility, UI/headless parity and negative controls are mapped to stable tasks.
+- [x] The five-person human protocol freezes task instructions, scoring, failure injections and denominator rules; recruitment/results remain pending.
+- [x] User scope authorization and historical exact-subject approvals are distinguished; no repeated routine approval is inferred.
+- [x] Planning review findings and remediation are preserved in analysis.md; the architectural contradiction is prospectively amended, not concealed.
+- [ ] Independent follow-up consistency review confirms no unresolved critical/high planning finding.
+- [ ] Renderer installed dependency graph/advisory review and bundle measurement complete before its implementation candidate is accepted (T013).
+- [ ] Actual implementation, independent review, human validation, dev gates and deployment evidence satisfy the milestone (T006–T032).
 
-**Feature**: [spec.md](../spec.md)
-
-## Content Quality
-
-- [x] Specification describes user outcomes and constraints, with technical recommendations isolated in the proposed ADR.
-- [x] User value is graph comprehension, manual control, exact ports, and preservation of authored work.
-- [x] All mandatory template sections are complete.
-- [x] No prototype, image, or quarantined test is claimed as production evidence.
-
-## Requirement Completeness
-
-- [x] No unresolved placeholder markers remain; recommended scope choices are explicit proposals requiring approval.
-- [x] Requirements are testable and scoped to non-executing manual authoring.
-- [x] Success criteria state measurable user outcomes, correctness, recovery, and accessibility thresholds.
-- [x] Primary flows, empty/incomplete states, failure, conflict, unsupported versions, and recovery are described.
-- [x] Port identity, cardinality, fan-out, invalid connections, and deletion impacts are specified.
-- [x] Dependencies and assumptions include the roadmap split and residual architecture decisions.
-
-## Feature Readiness
-
-- [x] Acceptance scenarios cover FR-001 through FR-020 and the four independent user stories.
-- [x] Native ownership and the prohibition on Rivet investment are explicit.
-- [x] Persistent authored data has retention/rollback requirements distinct from the read-only view.
-- [x] Specification quality review is separate from implementation authority.
-
-## Approval Gate — Not Passed
-
-- [ ] Human accepts the bounded [proposed ADR](../proposed-adr.md).
-- [ ] The manual-precursor scope/dependency split is approved without closing residual EPP-F06 decisions.
-- [ ] Exact schema/examples, command/state/API contracts, storage migration, dependency review, study protocol, and implementation plan/tasks/analysis are reviewed before product code.
-
-## Notes
-
-All written-specification quality items pass. The unchecked items are future authority/evidence gates, not claims that this design has been implemented or tested. No active EPP approval, roadmap status, benchmark count, or release readiness was changed.
+The user already authorized bounded implementation and dev integration. Pending technical/human evidence cannot be self-certified or replaced by this checklist.

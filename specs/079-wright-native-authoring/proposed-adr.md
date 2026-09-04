@@ -1,5 +1,7 @@
 # Proposed ADR: Wright-native Manual Authoring Boundary
 
+**Historical proposal:** preserved as submitted at `6daeb214`. The September 4 [milestone decision](milestone-decision.md), [current plan](plan.md) and [language-authority contract](contracts/language-authority.md) supersede its prospective manual-only scope and repeated approval steps. Its original statements below remain historical context, not current implementation gates.
+
 **Status**: Proposed; not accepted and not implementation authority.
 
 **Date**: 2026-09-02

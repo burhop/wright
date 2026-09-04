@@ -1,27 +1,25 @@
 <!--
 Sync Impact Report
-- Version change: 2.0.0 -> 3.0.0
+- Version change: 3.0.0 -> 3.1.0 (2026-09-04)
 - Modified principles:
-  - Production Distribution Strategy (Hermes-only prerequisites -> manager-owned prerequisites)
-  - Native Runtime Isolation (Hermes-owned runtime -> Wright-owned manager-neutral runtime)
-  - Agent Abstraction (explicit Codex and OpenClaw installation adapters)
+  - Architectural Foundation: explicitly include the established workspace_service application boundary, with core/data_vault ownership and dependency-direction gates retained.
 - Added sections: none
 - Removed sections: none
 - Templates:
   - .specify/templates/plan-template.md: validated; no structural change required
   - .specify/templates/spec-template.md: validated; no structural change required
   - .specify/templates/tasks-template.md: validated; no structural change required
-- Runtime guidance pending implementation evidence:
-  - README.md: describe the shared Wright runtime and manager-specific adapters
-  - docs/getting-started/install-matrix.md: document Hermes, Codex, and OpenClaw prerequisites separately
-  - docs/getting-started/hermes-plugin.md: document the supported Hermes Git plugin path
+- Feature guidance: specs/079-wright-native-authoring/plan.md and milestone-decision.md record the bounded amendment and independent finding C1.
+- Prior distribution/runtime obligations from v3.0.0 remain unchanged.
 - Deferred placeholders: none
 -->
-# Virtual Mechanical Engineer Constitution v3.0.0
+# Virtual Mechanical Engineer Constitution v3.1.0
+
+Amendment 2026-09-04: Under the user's standing native-milestone architecture authorization, clarify the established modular application-service boundary. The prior wording named only adapter/registry packages despite the accepted workspace-service architecture. Independent planning review identified this contradiction (C1); this prospective clarification changes no historical approval or evidence and does not weaken thin routes, offline operation, or security gates.
 
 ## 1. Architectural Foundation
 * **Framework**: The backend API MUST be implemented using the strictly typed FastAPI framework to ensure native Pydantic data validation and fast local execution.
-* **Architecture**: The system MUST utilize a Modular Monorepo (using `uv` or `Poetry`). Code MUST follow strict boundaries: API routes must contain zero business logic and route immediately to the isolated `agent_adapters` and `tool_registry` packages.
+* **Architecture**: The system MUST utilize a Modular Monorepo (using `uv` or `Poetry`). API routes MUST contain no business logic and delegate to isolated application services in `workspace_service`, `agent_adapters`, or `tool_registry` according to ownership. Pure domain contracts belong in `core`; storage belongs in `data_vault`. Application services compose these boundaries without importing HTTP transport code. Existing dependency-direction and package-boundary checks remain mandatory.
 * **Offline-First Mandate**: The entire appliance MUST be capable of running fully air-gapped. No core functionality may rely on an external cloud API without a graceful local fallback.
 
 ## 2. Serving & Execution
@@ -105,4 +103,4 @@ and AI-generated change MUST identify applicable gates, and release changes
 MUST update the authoritative merge-gate scripts when new CI failures expose a
 missing local gate.
 
-**Version**: 3.0.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-07-29
+**Version**: 3.1.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-09-04
