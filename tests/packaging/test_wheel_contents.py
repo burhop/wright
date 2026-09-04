@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import runpy
 import subprocess
 import sys
 import tomllib
@@ -137,6 +138,21 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
         "tool_registry/process_definition.py",
         "api/routers/process_definition.py",
         "api/schemas/process_definition.py",
+        "core/native_process.py",
+        "core/native_process_contract/definition.schema.json",
+        "core/native_tracing.py",
+        "data_vault/native_process_repository.py",
+        "data_vault/native_process_runs.py",
+        "data_vault/native_process_artifacts.py",
+        "workspace_service/native_process_service.py",
+        "workspace_service/native_process_runtime.py",
+        "workspace_service/native_process_mcp.py",
+        "workspace_service/native_process_cli.py",
+        "api/routers/native_process.py",
+        "api/schemas/native_process.py",
+        "wright_engineering/static/native-processes/concept-brief.json",
+        "wright_engineering/static/native-processes/mass-check.json",
+        "wright_engineering/static/native-processes/package-review.json",
         "tool_registry/catalog/catalog-snapshot-envelope.schema.json",
         "tool_registry/catalog/engineering-catalog.yaml",
         "tool_registry/catalog/import-preview.schema.json",
@@ -207,3 +223,10 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
         timeout=60,
     )
     assert probe.returncode == 0, probe.stdout + probe.stderr
+
+    native = runpy.run_path(
+        str(ROOT / "tests/native_runtime/test_native_process_lifecycle.py")
+    )
+    native["verify_installed_native_lifecycle"](
+        installed, tmp_path / "native-process-lifecycle"
+    )
