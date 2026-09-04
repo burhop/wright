@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0093",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 93,
+  "new_revision": 94,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "f1d874241d48f51854177843065c1ecd7805c2c95e28aa851aab392ac54627e1",
+  "new_state_digest": "2c068df6dc23130733a560f1ee7cdf040652050454bdd0617bd7e506c57deac5",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex dashboard sole writer"
+  },
+  "action": "Bounded dashboard and prospective current authority implementation checkpoint. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
+  "started_at": "2026-09-04T22:15:21.381669Z",
+  "finished_at": "2026-09-04T22:15:21.381669Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "3a1573512593476318fa364ccf5e9688d7bd6407",
+    "source_tree": "085b8d7e39a4d694b41e8faa0c35e8099a7d0207",
+    "source_program_tree": "44c3992eef21900c8aa98ee87c0735639e58fe9f",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0094.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0093.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0093.json",
+      "sha256": "08dd8b90d432282e244ed196ab40f3248aa16b3a8b2d088dfa5f106deb9c89dd",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0094.json",
+      "sha256": "05d82ce501b3aa6e4fe1c4ff225fe94e5ead828bf9b2bd52bdb3add619e8e35b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DASHBOARD-CHECKPOINT",
+      "method": "Preserve complete historical state chain; record implementation and close the bounded writer lease before candidate validation.",
+      "environment": "Exact committed dashboard implementation at 3a1573512593476318fa364ccf5e9688d7bd6407",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "3a1573512593476318fa364ccf5e9688d7bd6407",
+        "specs/079-wright-native-authoring/contracts/dashboard.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "F02 deployed browser verification remains pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0093.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
