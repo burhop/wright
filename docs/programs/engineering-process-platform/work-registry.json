@@ -775,7 +775,174 @@
         "independent_required": false
       }
     ],
-    "evidence": [],
+    "evidence": [
+      {
+        "id": "Q-SEMANTICS-20260904-1",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:10:07.711699Z",
+        "tested_commit": "1d0cd0798130fa5c3e7c8a0e78655090ac95f5d9",
+        "tested_tree": "dec9d797a140c6735ed292e17a2f1478beca2523",
+        "scope_sha256": "31417408c5d71b8b870a1fc4c71ff3e676121945da5ee5027bd8af242bfe6568",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "41 native language/quantity tests passed; independent review closed Decimal context dependence.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": {
+          "total": 41,
+          "passed": 41,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-DASHBOARD-20260904-1",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:10:07.977505Z",
+        "tested_commit": "88d36f3793f05a29f10a210623788b93ed32cfcd",
+        "tested_tree": "738cd8ae559c11b4ebfcb18ba7e25d8e1d479e8d",
+        "scope_sha256": "789e5fbcd62848125873b0fb39e446db3a0cea355568d8bd37e078afeb4aaba4",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Existing dashboard browser, projection and refresh checks passed; independent review closed four findings. Detached-checkout harness correction passed 10 scope tests in the combined branch.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-EDITOR-20260904-1",
+        "check_id": "Q-EDITOR",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:10:08.332563Z",
+        "tested_commit": "da12fc6d1b723a0ef3c909c361ea03a572adc82e",
+        "tested_tree": "01a9601348917bb30ea189284f878258dc115bb6",
+        "scope_sha256": "94f5b701e4b75f0b1cc4632ca5dae0b25b266f767e6f4d16f5e9146e015483aa",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual authoring browser journey passed before run-panel integration; 8 save/recovery component tests passed and independent finding closed. Repeat combined browser acceptance after runtime API wiring.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PERSISTENCE-20260904-1",
+        "check_id": "Q-PERSISTENCE",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:10:08.516968Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "84de1278d4826ef2416110402afa91de3e2ae5e00459e6a5608e971def95b635",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "20 persistence/migration and 10 API checks passed on a00bd7c0. Independent review found native telemetry can disclose raw internal exception text; correction and closure pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-RUNTIME-20260904-1",
+        "check_id": "Q-RUNTIME",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.691329Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "618ef56287086d70c457c3c5b2e12541c71088a0a936195bed2860aba7511709",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "11 runtime tests passed on dc90caa7, then independent probes reproduced 4 failures: fractional arguments, Unicode byte/character limit, non-NFC runtime text persistence and late artifact cleanup race.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": {
+          "total": 4,
+          "passed": 0,
+          "failed": 4,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-MCP-20260904-1",
+        "check_id": "Q-MCP",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.915521Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "9381f67d07fdb70e42b6adbae1da52ebe3b8a5b69de010cf4a05e78e9ba56526",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "49 focused checks and one actual stdio proof passed; independent review found unresolved-reference error normalization and cancellation trace gaps. Fix awaits independent closure; full native tool/artifact journey pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-REVIEW-20260904-1",
+        "check_id": "Q-REVIEW",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.996105Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "debf828d63beb2eebb8cfbdeeb6b214ce4720c5dbea7d1678ed14801f3ef9c68",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent bounded review agents",
+        "verification_actor_kind": "agent",
+        "summary": "Bounded independent reviews found 4 runtime P2 issues, 1 MCP P2 plus trace P3, and 1 telemetry P2. Full candidate review follows corrections and actual API integration.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      }
+    ],
     "blockers": [
       {
         "id": "B-HUMAN",
@@ -842,7 +1009,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": null,
+      "candidate_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
