@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "2.0",
   "program_id": "EPP-2026",
-  "revision": 96,
+  "revision": 93,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -20,13 +20,67 @@
   },
   "control_plane": {
     "root": "docs/programs/engineering-process-platform",
-    "candidate_subject_resolution": "Final dashboard checkpoint: historical customer acceptance stays separate from native milestone credit; focused publisher and browser checks completed. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
+    "candidate_subject_resolution": "Activate EPP-N01 under the recorded standing user scope after independent planning review; preserve all historical exact approvals.",
     "schema_status": "passed",
     "audit_status": "passed"
   },
   "current_feature": "EPP-N01",
-  "active_mutating_lease": null,
-  "last_transition": "TR-0095",
+  "active_mutating_lease": {
+    "feature_id": "EPP-N01",
+    "branch": "codex/079-native-dashboard",
+    "worktree_id": "dashboard",
+    "dev_baseline": {
+      "commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+      "tree": "9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8"
+    },
+    "worktree_start": {
+      "commit": "73fa6617a6b9fe8bbd8e50707560341324c3ae6c",
+      "tree": "e2ad7d8ffdc46b60670e98dd2a026cc39ffc4043"
+    },
+    "holder_role": "feature_owner",
+    "lease_mode": "implementation",
+    "lease_revision": 1,
+    "acquired_at": "2026-09-04T21:48:39.730754Z",
+    "expires_at": "2026-09-05T21:48:39.730754Z",
+    "allowed_paths": [
+      "docs/programs/engineering-process-platform/**",
+      "scripts/program_status/**",
+      "scripts/program_control/**",
+      "packages/tool_registry/**",
+      "apps/web/src/services/program-status.ts",
+      "apps/web/src/services/milestone-status.ts",
+      "apps/web/src/components/program-status/**",
+      "apps/web/src/components/pages/ProgramStatusPage.tsx",
+      "apps/web/src/__tests__/**",
+      "tests/program_control_plane/**",
+      "tests/ui-integration/program-status.spec.ts",
+      "specs/077-browser-program-status/contracts/**",
+      "src/wright_engineering/static/program-status/**"
+    ],
+    "path_restrictions": [
+      {
+        "path": "docs/programs/engineering-process-platform/**",
+        "restriction": "Preserve historical evidence and record only prospective scope and truthful current status."
+      }
+    ],
+    "allowed_actions": [
+      "inspect",
+      "edit_allowlisted_paths",
+      "run_deterministic_checks",
+      "create_local_artifacts",
+      "create_local_commits"
+    ],
+    "recovery": {
+      "status": "reactivated",
+      "last_audit_transition": "TR-0092",
+      "rollback_state": "evidence/states/program-state-revision-0092.json",
+      "exhausted_cause_ids": [],
+      "active_cause_id": null,
+      "repair_maximum": 2,
+      "repair_remaining": 2
+    }
+  },
+  "last_transition": "TR-0092",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -85,10 +139,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "EXECUTE_CURRENT_FEATURE_TASKS",
+      "action": "START_NATIVE_MILESTONE_IMPLEMENTATION",
       "roadmap_item": "EPP-N01",
       "requires_human_approval": false,
-      "reason": "Review this bounded dashboard checkpoint, then allocate the next writer lease for remaining native implementation. No complete milestone, integration, deployment or human-review credit is claimed."
+      "reason": "Activate EPP-N01 under the recorded standing user scope after independent planning review; preserve all historical exact approvals."
     }
   ],
   "approval": {
@@ -98,19 +152,6 @@
     "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
     "exact_subject_approval": false
   },
-  "feature_state": "IMPLEMENTING",
-  "policy_version": "EPP-LIFECYCLE-1",
-  "scoped_checkpoint": {
-    "status": "awaiting_independent_review",
-    "candidate_commit": "a54b3e0a1d65077f5f9a08eb55465b6edc48646c",
-    "candidate_tree": "5faf9561812c91ac045fffd39c1375aa4ef525fc",
-    "task_ids": [
-      "T001",
-      "T003",
-      "T004",
-      "T005"
-    ],
-    "reason": "Final dashboard checkpoint: historical customer acceptance stays separate from native milestone credit; focused publisher and browser checks completed. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
-    "whole_feature_complete": false
-  }
+  "feature_state": "IMPLEMENTATION_AUTHORIZED",
+  "policy_version": "EPP-LIFECYCLE-1"
 }

@@ -829,223 +829,256 @@
           }
         },
         "authority": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "required_scopes",
-            "approval_records",
-            "subject",
-            "legacy_checkpoint",
-            "migration"
-          ],
-          "properties": {
-            "authority_kind": {
-              "enum": [
-                "planning_reanalysis",
-                "feature_planning"
-              ]
-            },
-            "required_scopes": {
-              "oneOf": [
-                {
-                  "const": [
-                    "material_change",
-                    "feature_implementation"
-                  ]
-                },
-                {
-                  "const": [
-                    "material_change"
-                  ]
-                }
-              ]
-            },
-            "approval_records": {
-              "oneOf": [
-                {
-                  "type": "array",
-                  "minItems": 2,
-                  "maxItems": 2,
-                  "uniqueItems": true,
-                  "items": {
-                    "type": "string",
-                    "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-(MC|IMPL)-[0-9]{3}\\.json$"
-                  }
-                },
-                {
-                  "const": [
-                    "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "minItems": 1,
-                  "maxItems": 1,
-                  "items": {
-                    "type": "string",
-                    "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
-                  }
-                }
-              ]
-            },
-            "subject": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "git_commit",
-                "git_tree",
-                "program_tree",
-                "artifact_count",
-                "manifest_transition"
-              ],
-              "properties": {
-                "git_commit": {
-                  "$ref": "#/$defs/commit"
-                },
-                "git_tree": {
-                  "$ref": "#/$defs/commit"
-                },
-                "program_tree": {
-                  "$ref": "#/$defs/commit"
-                },
-                "artifact_count": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 500
-                },
-                "manifest_transition": {
-                  "type": "string",
-                  "pattern": "^TR-[0-9]{4}$"
-                }
-              }
-            },
-            "legacy_checkpoint": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "profile",
-                "transition",
-                "resolution_rule"
-              ],
-              "properties": {
-                "profile": {
-                  "const": "epp-bridge-v1-r10-r19"
-                },
-                "transition": {
-                  "const": "TR-0018"
-                },
-                "resolution_rule": {
-                  "const": "exact_material_change_approval_subject"
-                }
-              }
-            },
-            "migration": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "from_schema_version",
-                "to_schema_version",
-                "sole_successor"
-              ],
-              "properties": {
-                "from_schema_version": {
-                  "const": "1.0"
-                },
-                "to_schema_version": {
-                  "const": "2.0"
-                },
-                "sole_successor": {
-                  "const": true
-                }
-              }
-            }
-          },
-          "allOf": [
+          "oneOf": [
             {
-              "if": {
-                "properties": {
-                  "required_scopes": {
-                    "const": [
-                      "material_change"
-                    ]
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "required_scopes",
+                "approval_records",
+                "subject",
+                "legacy_checkpoint",
+                "migration"
+              ],
+              "properties": {
+                "authority_kind": {
+                  "enum": [
+                    "planning_reanalysis",
+                    "feature_planning"
+                  ]
+                },
+                "required_scopes": {
+                  "oneOf": [
+                    {
+                      "const": [
+                        "material_change",
+                        "feature_implementation"
+                      ]
+                    },
+                    {
+                      "const": [
+                        "material_change"
+                      ]
+                    }
+                  ]
+                },
+                "approval_records": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-(MC|IMPL)-[0-9]{3}\\.json$"
+                      }
+                    },
+                    {
+                      "const": [
+                        "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                      ]
+                    },
+                    {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
+                      }
+                    }
+                  ]
+                },
+                "subject": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "git_commit",
+                    "git_tree",
+                    "program_tree",
+                    "artifact_count",
+                    "manifest_transition"
+                  ],
+                  "properties": {
+                    "git_commit": {
+                      "$ref": "#/$defs/commit"
+                    },
+                    "git_tree": {
+                      "$ref": "#/$defs/commit"
+                    },
+                    "program_tree": {
+                      "$ref": "#/$defs/commit"
+                    },
+                    "artifact_count": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 500
+                    },
+                    "manifest_transition": {
+                      "type": "string",
+                      "pattern": "^TR-[0-9]{4}$"
+                    }
                   }
                 },
-                "required": [
-                  "required_scopes"
-                ]
+                "legacy_checkpoint": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "profile",
+                    "transition",
+                    "resolution_rule"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "epp-bridge-v1-r10-r19"
+                    },
+                    "transition": {
+                      "const": "TR-0018"
+                    },
+                    "resolution_rule": {
+                      "const": "exact_material_change_approval_subject"
+                    }
+                  }
+                },
+                "migration": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "from_schema_version",
+                    "to_schema_version",
+                    "sole_successor"
+                  ],
+                  "properties": {
+                    "from_schema_version": {
+                      "const": "1.0"
+                    },
+                    "to_schema_version": {
+                      "const": "2.0"
+                    },
+                    "sole_successor": {
+                      "const": true
+                    }
+                  }
+                }
               },
-              "then": {
-                "required": [
-                  "authority_kind"
-                ],
-                "oneOf": [
-                  {
+              "allOf": [
+                {
+                  "if": {
                     "properties": {
-                      "authority_kind": {
-                        "const": "planning_reanalysis"
-                      },
-                      "approval_records": {
+                      "required_scopes": {
                         "const": [
-                          "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                          "material_change"
                         ]
-                      },
-                      "subject": {
+                      }
+                    },
+                    "required": [
+                      "required_scopes"
+                    ]
+                  },
+                  "then": {
+                    "required": [
+                      "authority_kind"
+                    ],
+                    "oneOf": [
+                      {
                         "properties": {
-                          "git_commit": {
-                            "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47"
+                          "authority_kind": {
+                            "const": "planning_reanalysis"
                           },
-                          "git_tree": {
-                            "const": "574cd8919c62086e7b657f14c116ee4c6b2429ea"
+                          "approval_records": {
+                            "const": [
+                              "evidence/approvals/APR-EPP-F01-REPAIR-PLANNING-001.json"
+                            ]
                           },
-                          "program_tree": {
-                            "const": "138debc23878ec34991af7e824667091c57b14e7"
+                          "subject": {
+                            "properties": {
+                              "git_commit": {
+                                "const": "c3012733d358dbbeb4821a2fbf5449d6d1b12c47"
+                              },
+                              "git_tree": {
+                                "const": "574cd8919c62086e7b657f14c116ee4c6b2429ea"
+                              },
+                              "program_tree": {
+                                "const": "138debc23878ec34991af7e824667091c57b14e7"
+                              },
+                              "artifact_count": {
+                                "const": 2
+                              },
+                              "manifest_transition": {
+                                "const": "TR-0026"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "authority_kind": {
+                            "const": "feature_planning"
                           },
-                          "artifact_count": {
-                            "const": 2
-                          },
-                          "manifest_transition": {
-                            "const": "TR-0026"
+                          "approval_records": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 1,
+                            "items": {
+                              "type": "string",
+                              "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
+                            }
                           }
                         }
                       }
-                    }
-                  },
-                  {
-                    "properties": {
-                      "authority_kind": {
-                        "const": "feature_planning"
-                      },
-                      "approval_records": {
-                        "type": "array",
-                        "minItems": 1,
-                        "maxItems": 1,
-                        "items": {
-                          "type": "string",
-                          "pattern": "^evidence/approvals/APR-EPP-[A-Z0-9-]+-PLANNING-CLOSURE-[0-9]{3}\\.json$"
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "if": {
-                "properties": {
-                  "required_scopes": {
-                    "const": [
-                      "material_change",
-                      "feature_implementation"
                     ]
                   }
                 },
-                "required": [
-                  "required_scopes"
-                ]
-              },
-              "then": {
-                "properties": {
-                  "authority_kind": false
+                {
+                  "if": {
+                    "properties": {
+                      "required_scopes": {
+                        "const": [
+                          "material_change",
+                          "feature_implementation"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "required_scopes"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "authority_kind": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "authority_kind",
+                "status",
+                "record",
+                "record_digest",
+                "exact_subject_approval"
+              ],
+              "properties": {
+                "authority_kind": {
+                  "const": "standing_user_scope"
+                },
+                "status": {
+                  "const": "authorized_scope"
+                },
+                "record": {
+                  "const": "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+                },
+                "record_digest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "exact_subject_approval": {
+                  "const": false
                 }
               }
             }

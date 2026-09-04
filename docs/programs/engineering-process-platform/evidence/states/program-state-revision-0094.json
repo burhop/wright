@@ -2,7 +2,7 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "2.0",
   "program_id": "EPP-2026",
-  "revision": 96,
+  "revision": 94,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
@@ -20,13 +20,13 @@
   },
   "control_plane": {
     "root": "docs/programs/engineering-process-platform",
-    "candidate_subject_resolution": "Final dashboard checkpoint: historical customer acceptance stays separate from native milestone credit; focused publisher and browser checks completed. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
+    "candidate_subject_resolution": "Bounded dashboard and prospective current authority implementation checkpoint. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
     "schema_status": "passed",
     "audit_status": "passed"
   },
   "current_feature": "EPP-N01",
   "active_mutating_lease": null,
-  "last_transition": "TR-0095",
+  "last_transition": "TR-0093",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -102,15 +102,15 @@
   "policy_version": "EPP-LIFECYCLE-1",
   "scoped_checkpoint": {
     "status": "awaiting_independent_review",
-    "candidate_commit": "a54b3e0a1d65077f5f9a08eb55465b6edc48646c",
-    "candidate_tree": "5faf9561812c91ac045fffd39c1375aa4ef525fc",
+    "candidate_commit": "3a1573512593476318fa364ccf5e9688d7bd6407",
+    "candidate_tree": "085b8d7e39a4d694b41e8faa0c35e8099a7d0207",
     "task_ids": [
       "T001",
       "T003",
       "T004",
       "T005"
     ],
-    "reason": "Final dashboard checkpoint: historical customer acceptance stays separate from native milestone credit; focused publisher and browser checks completed. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
+    "reason": "Bounded dashboard and prospective current authority implementation checkpoint. Close the dashboard writer lease before exact candidate validation and independent review; the native feature remains implementing.",
     "whole_feature_complete": false
   }
 }

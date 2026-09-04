@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   fetchProgramStatus,
   fetchProgramStatusPublisher,
@@ -14,6 +14,35 @@ import { ActiveAssignments } from "../program-status/ActiveAssignments";
 import { UseCaseFunnels } from "../program-status/UseCaseFunnels";
 import { DeliveryLanes } from "../program-status/DeliveryLanes";
 import { EvidenceDetails } from "../program-status/EvidenceDetails";
+import { NativeMilestone } from "../program-status/NativeMilestone";
+import type { NativeMilestone as Milestone } from "../program-status/NativeMilestone.types";
+
+function HistoricalDetails({
+  children,
+  collapsed,
+}: {
+  children: ReactNode;
+  collapsed: boolean;
+}) {
+  return collapsed ? (
+    <details data-testid="program-historical-details">
+      <summary style={{ cursor: "pointer", padding: "var(--space-md) 0" }}>
+        Historical readiness, program context and governance
+      </summary>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-lg)",
+        }}
+      >
+        {children}
+      </div>
+    </details>
+  ) : (
+    <>{children}</>
+  );
+}
 
 export function ProgramStatusPage() {
   const [bundle, setBundle] = useState<ProgramStatusBundle | null>(null);
@@ -26,6 +55,11 @@ export function ProgramStatusPage() {
   const [message, setMessage] = useState<string | null>(null);
   const etag = useRef<string | undefined>(undefined);
   const hasBundle = useRef(false);
+  const milestone = (
+    bundle?.supplement.work as
+      | (ProgramStatusBundle["supplement"]["work"] & { milestone?: Milestone })
+      | undefined
+  )?.milestone;
 
   useEffect(() => {
     let active = true;
@@ -139,69 +173,81 @@ export function ProgramStatusPage() {
 
       {bundle ? (
         <>
-          <AtAGlanceSummary bundle={bundle} />
-          <WorkProgress work={bundle.supplement.work} />
-          <ActiveAssignments
-            assignments={bundle.supplement.work.active_assignments}
-          />
-          <UseCaseFunnels supplement={bundle.supplement} />
-          <DeliveryLanes lanes={bundle.supplement.work.lanes} />
-          <section aria-labelledby="readiness-heading">
-            <h2 id="readiness-heading">Independent readiness areas</h2>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
-                gap: "var(--space-md)",
-              }}
-            >
-              {Object.entries(
-                (bundle.dashboard.areas ?? {}) as Record<
-                  string,
-                  Record<string, unknown>
-                >,
-              ).map(([id, area]) => (
-                <article
-                  key={id}
-                  style={{
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "12px",
-                    padding: "var(--space-md)",
-                  }}
-                >
-                  <h3 style={{ marginTop: 0 }}>{id.replaceAll("_", " ")}</h3>
-                  <strong>{String(area.status ?? "unavailable")}</strong>
-                  <p>
-                    {String(area.passed_gates ?? 0)}/
-                    {String(area.required_gates ?? 0)} gates passed
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-          <ProgramHistory history={bundle.supplement.history} />
-          <EvidenceDetails bundle={bundle} />
-          <details>
-            <summary>Evidence identity and limitations</summary>
-            <dl>
-              <dt>Commit</dt>
-              <dd>
-                <code>{bundle.source.commit}</code>
-              </dd>
-              <dt>Tree</dt>
-              <dd>
-                <code>{bundle.source.tree}</code>
-              </dd>
-              <dt>Program tree</dt>
-              <dd>
-                <code>{bundle.source.program_tree}</code>
-              </dd>
-              <dt>Validation transition</dt>
-              <dd>{bundle.source.validation_transition}</dd>
-              <dt>Evidence index</dt>
-              <dd>{bundle.supplement.evidence_index.length} bounded records</dd>
-            </dl>
-          </details>
+          {milestone && (
+            <NativeMilestone
+              milestone={milestone}
+              benchmarkQualified={
+                bundle.supplement.use_cases.process_100.benchmark_qualified
+              }
+            />
+          )}
+          <HistoricalDetails collapsed={Boolean(milestone)}>
+            <AtAGlanceSummary bundle={bundle} />
+            <WorkProgress work={bundle.supplement.work} />
+            <ActiveAssignments
+              assignments={bundle.supplement.work.active_assignments}
+            />
+            <UseCaseFunnels supplement={bundle.supplement} />
+            <DeliveryLanes lanes={bundle.supplement.work.lanes} />
+            <section aria-labelledby="readiness-heading">
+              <h2 id="readiness-heading">Independent readiness areas</h2>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+                  gap: "var(--space-md)",
+                }}
+              >
+                {Object.entries(
+                  (bundle.dashboard.areas ?? {}) as Record<
+                    string,
+                    Record<string, unknown>
+                  >,
+                ).map(([id, area]) => (
+                  <article
+                    key={id}
+                    style={{
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "12px",
+                      padding: "var(--space-md)",
+                    }}
+                  >
+                    <h3 style={{ marginTop: 0 }}>{id.replaceAll("_", " ")}</h3>
+                    <strong>{String(area.status ?? "unavailable")}</strong>
+                    <p>
+                      {String(area.passed_gates ?? 0)}/
+                      {String(area.required_gates ?? 0)} gates passed
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+            <ProgramHistory history={bundle.supplement.history} />
+            <EvidenceDetails bundle={bundle} />
+            <details>
+              <summary>Evidence identity and limitations</summary>
+              <dl>
+                <dt>Commit</dt>
+                <dd>
+                  <code>{bundle.source.commit}</code>
+                </dd>
+                <dt>Tree</dt>
+                <dd>
+                  <code>{bundle.source.tree}</code>
+                </dd>
+                <dt>Program tree</dt>
+                <dd>
+                  <code>{bundle.source.program_tree}</code>
+                </dd>
+                <dt>Validation transition</dt>
+                <dd>{bundle.source.validation_transition}</dd>
+                <dt>Evidence index</dt>
+                <dd>
+                  {bundle.supplement.evidence_index.length} bounded records
+                </dd>
+              </dl>
+            </details>
+          </HistoricalDetails>
         </>
       ) : (
         <section

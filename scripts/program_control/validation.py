@@ -3439,18 +3439,22 @@ def validate_f01b_lease_checkpoint_correction(
             current_lease = successor_state.get("active_mutating_lease")
             expected_lease = expected_state["active_mutating_lease"]
             if current_lease is None:
-                valid = valid and successor_state.get("feature_state") in {
-                    "BLOCKED",
-                    "CANDIDATE_FROZEN",
-                    "INDEPENDENTLY_VERIFIED",
-                    "PUSH_AUTHORIZATION_PENDING",
-                    "PR_READY",
-                    "DEV_MERGE_READY",
-                    "DEV_INTEGRATED",
-                    "DEV_DEPLOYMENT_VERIFIED",
-                    "ROLLED_BACK",
-                    "STOPPED",
-                }
+                valid = valid and (
+                    successor_state.get("feature_state")
+                    in {
+                        "BLOCKED",
+                        "CANDIDATE_FROZEN",
+                        "INDEPENDENTLY_VERIFIED",
+                        "PUSH_AUTHORIZATION_PENDING",
+                        "PR_READY",
+                        "DEV_MERGE_READY",
+                        "DEV_INTEGRATED",
+                        "DEV_DEPLOYMENT_VERIFIED",
+                        "ROLLED_BACK",
+                        "STOPPED",
+                    }
+                    or _native_scoped_checkpoint(successor_state)
+                )
             elif isinstance(current_lease, Mapping):
                 same_f01b_lease = all(
                     current_lease.get(field) == expected_lease.get(field)
@@ -3478,11 +3482,23 @@ def validate_f01b_lease_checkpoint_correction(
                         },
                     )
                 )
+                # The old correction remains bound to revision 76. A later
+                # native lease is independently governed by its standing scope
+                # and the ordinary lease checks; it cannot rewrite that proof.
+                native_successor = (
+                    successor_state.get("revision", 0) >= 93
+                    and successor_state.get("current_feature") == "EPP-N01"
+                    and current_lease.get("feature_id") == "EPP-N01"
+                    and successor_state.get("approval", {}).get("authority_kind")
+                    == "standing_user_scope"
+                    and successor_state.get("approval", {}).get("record")
+                    == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+                )
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
                         successor_state.get("revision", 0) > 76,
-                        same_f01b_lease or exact_f02_successor,
+                        same_f01b_lease or exact_f02_successor or native_successor,
                     )
                 )
             else:
@@ -3739,6 +3755,21 @@ def _validate_state_chain(
                 )
             )
         if transition.get("schema_version") == "2.0":
+            authority = transition.get("authority")
+            if (
+                isinstance(authority, Mapping)
+                and authority.get("authority_kind") == "standing_user_scope"
+            ):
+                _validate_native_scope_authority(
+                    documents,
+                    program_root,
+                    {
+                        "current_feature": transition.get("feature_id"),
+                        "revision": new_revision,
+                        "approval": authority,
+                    },
+                    findings,
+                )
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
@@ -3965,6 +3996,20 @@ def evaluate_approval_history(
     return sorted(findings, key=Finding.sort_key), selected
 
 
+def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
+    checkpoint = state.get("scoped_checkpoint")
+    return (
+        state.get("current_feature") == "EPP-N01"
+        and state.get("revision", 0) >= 94
+        and state.get("feature_state") == "IMPLEMENTING"
+        and isinstance(checkpoint, Mapping)
+        and checkpoint.get("status") == "awaiting_independent_review"
+        and bool(checkpoint.get("task_ids"))
+        and checkpoint.get("whole_feature_complete") is False
+        and state.get("approval", {}).get("authority_kind") == "standing_user_scope"
+    )
+
+
 def validate_roadmap_approval_and_lease(
     documents: Mapping[str, Any],
     program_root: str,
@@ -4145,7 +4190,53 @@ def validate_roadmap_approval_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
+    if (
+        _native_scoped_checkpoint(state)
+        and reader is not None
+        and source_commit is not None
+    ):
+        checkpoint = state["scoped_checkpoint"]
+        try:
+            identity = reader.resolve_identity(
+                checkpoint["candidate_commit"], program_root
+            )
+            registered = documents[f"{program_root}/work-registry.json"]["milestone"][
+                "tasks"
+            ]
+            permitted_metadata = (
+                f"{program_root}/evidence/",
+                f"{program_root}/work-registry.json",
+                f"{program_root}/test-run-ledger.json",
+                f"{program_root}/program-state.json",
+                "specs/079-wright-native-authoring/tasks.md",
+            )
+            changes = reader.diff_paths(identity.source_commit, source_commit)
+            valid_checkpoint = (
+                identity.source_tree == checkpoint["candidate_tree"]
+                and reader.is_ancestor(identity.source_commit, source_commit)
+                and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+                and all(
+                    any(
+                        path.startswith(prefix)
+                        if prefix.endswith("/")
+                        else path == prefix
+                        for prefix in permitted_metadata
+                    )
+                    for path in changes
+                )
+            )
+        except (GitSubjectError, KeyError, TypeError):
+            valid_checkpoint = False
+        if not valid_checkpoint:
+            findings.append(
+                _finding(
+                    "LEASE_IDENTITY_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "NATIVE_SCOPED_CANDIDATE_IDENTITY",
+                )
+            )
     if lease_closed and lease is not None:
         findings.append(
             _finding(
@@ -4392,7 +4483,7 @@ def _validate_roadmap_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
     if (
         current_feature
         and not lease_closed
@@ -4476,6 +4567,12 @@ def _validate_current_authority(
     if not isinstance(state, Mapping):
         return
     approval_state = state.get("approval")
+    if (
+        isinstance(approval_state, Mapping)
+        and approval_state.get("authority_kind") == "standing_user_scope"
+    ):
+        _validate_native_scope_authority(documents, program_root, state, findings)
+        return
     required = (
         approval_state.get("required_records", [])
         if isinstance(approval_state, Mapping)
@@ -4583,6 +4680,53 @@ def _validate_current_authority(
                     "ARTIFACT_DIGESTS",
                 )
             )
+
+
+def _validate_native_scope_authority(
+    documents: Mapping[str, Any],
+    program_root: str,
+    state: Mapping[str, Any],
+    findings: list[Finding],
+) -> None:
+    """Recognize the recorded native scope without inventing exact approval."""
+
+    approval = state.get("approval", {})
+    path = f"{program_root}/evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+    record = documents.get(path)
+    schema = documents.get(f"{program_root}/schemas/scope-authorization.schema.json")
+    valid = (
+        isinstance(approval, Mapping)
+        and isinstance(record, Mapping)
+        and isinstance(schema, Mapping)
+        and not validate_schema(schema, record)
+        and state.get("current_feature") == "EPP-N01"
+        and isinstance(state.get("revision"), int)
+        and state["revision"] >= 93
+        and approval.get("status") == "authorized_scope"
+        and approval.get("record")
+        == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+        and approval.get("exact_subject_approval") is False
+    )
+    if valid:
+        assert isinstance(record, Mapping)
+        valid = (
+            record.get("revoked") is False
+            and record.get("exact_subject_approval") is False
+            and record.get("human_review_evidence") is False
+            and approval.get("record_digest") == canonical_digest(record)
+            and isinstance(record.get("instruction"), str)
+            and sha256_bytes(record["instruction"].encode("utf-8"))
+            == record.get("instruction_sha256")
+        )
+    if not valid:
+        findings.append(
+            _finding(
+                "NATIVE_SCOPE_AUTHORITY_INVALID",
+                "fatal",
+                path,
+                "RECORDED_NATIVE_SCOPE_NOT_EXACT_APPROVAL",
+            )
+        )
 
 
 def _release_approval(

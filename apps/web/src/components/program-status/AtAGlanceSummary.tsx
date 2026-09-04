@@ -102,11 +102,12 @@ export function AtAGlanceSummary({ bundle }: { bundle: ProgramStatusBundle }) {
             {feature.completed}/{feature.total}
           </strong>
           <p>
-            EPP-F01B tasks complete ({percent(feature.completed, feature.total)}
+            {feature.feature_id} tasks complete (
+            {percent(feature.completed, feature.total)}
             %)
           </p>
           <progress
-            aria-label="EPP-F01B task completion"
+            aria-label={`${feature.feature_id} task completion`}
             value={feature.completed}
             max={Math.max(feature.total, 1)}
             style={{ width: "100%" }}

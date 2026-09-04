@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import logging
 import os
@@ -837,6 +838,7 @@ def _load_closed_catalog_sources(
         "specs/076-control-plane-validator/contracts",
         "specs/077-browser-program-status/contracts",
         "specs/078-process-definition-view/contracts",
+        "specs/079-wright-native-authoring/contracts",
     )
     assert isinstance(listed_raw, str)
     repository_paths = tuple(path for path in listed_raw.splitlines() if path)
@@ -2077,6 +2079,13 @@ def _project_delivery_lanes(
             f"a customer-visible {current_feature} capability yet."
         )
     )
+    if current_feature == "EPP-N01":
+        latest_capability = (
+            "Native acceptance is tracked by the milestone criteria. "
+            f"The historical catalog has {accepted_use_cases} accepted and "
+            f"{verified_use_cases} independently verified use cases; "
+            "these do not grant native acceptance credit."
+        )
     development = {
         "kind": "continued_development",
         "branch": branch,
@@ -2105,8 +2114,133 @@ def _project_delivery_lanes(
     return integration, development
 
 
+def _milestone_scope_identity(
+    repository: Path, commit: str, paths: list[str]
+) -> tuple[str, bool]:
+    """Cover exact blobs/trees, including absence, without working-tree timestamps."""
+    rows = []
+    for path in sorted(set(paths)):
+        if not re.fullmatch(
+            r"(?:apps|packages|scripts|tests|src|specs|docs|docker)(?:/[A-Za-z0-9_.-]+)*",
+            path,
+        ) or any(part in {".", "..", ""} for part in path.split("/")):
+            raise ValueError("unsafe milestone coverage path")
+        raw = _git(repository, "ls-tree", commit, "--", path)
+        rows.append([path, str(raw).strip() or "missing"])
+    return _digest(rows), bool(rows) and all(row[1] != "missing" for row in rows)
+
+
+def _milestone_scope_digest(repository: Path, commit: str, paths: list[str]) -> str:
+    return _milestone_scope_identity(repository, commit, paths)[0]
+
+
+def _project_native_milestone(
+    repository: Path, subject: Mapping[str, Any]
+) -> dict[str, Any] | None:
+    source = subject["work_registry"].get("milestone")
+    if source is None:
+        return None
+    if source["feature_id"] != subject["state"]["current_feature"]:
+        raise ValueError("native milestone is not the active feature")
+    commit = str(subject["commit"])
+    checks = {row["id"]: row for row in source["checks"]}
+    attestations = []
+    for evidence in source["evidence"]:
+        paths = checks[evidence["check_id"]]["source_paths"]
+        tested = evidence["tested_commit"]
+        tree = str(_git(repository, "rev-parse", f"{tested}^{{tree}}")).strip()
+        tested_scope, tested_available = _milestone_scope_identity(
+            repository, tested, paths
+        )
+        current_scope, current_available = _milestone_scope_identity(
+            repository, commit, paths
+        )
+        artifacts_match = True
+        for artifact in evidence["artifacts"]:
+            mode = str(
+                _git(repository, "ls-tree", artifact["commit"], "--", artifact["path"])
+            )
+            artifacts_match = artifacts_match and mode.startswith(
+                ("100644 blob ", "100755 blob ")
+            )
+            artifacts_match = (
+                artifacts_match
+                and _raw_digest(
+                    _git_blob(repository, artifact["commit"], artifact["path"])
+                )
+                == artifact["sha256"]
+            )
+        attestations.append(
+            {
+                "evidence_id": evidence["id"],
+                "tested_scope_sha256": tested_scope,
+                "current_scope_sha256": current_scope,
+                "coverage_available": tested_available and current_available,
+                "commit_tree_matches": tree == evidence["tested_tree"],
+                "artifacts_match": artifacts_match,
+            }
+        )
+    # Integration requires a real merge object on the recorded dev baseline and
+    # a recorded PR head which is a parent of that merge. Deployment has its own check.
+    delivery = source["delivery"]
+    merged = delivery["merged_commit"]
+    delivery_attested = False
+    if merged and delivery["pull_requests"]:
+        baseline = str(subject["state"]["baseline"]["commit"])
+        parents = str(_git(repository, "show", "-s", "--format=%P", merged)).split()
+        ancestor = (
+            subprocess.run(
+                ["git", "merge-base", "--is-ancestor", merged, baseline],
+                cwd=repository,
+                capture_output=True,
+            ).returncode
+            == 0
+        )
+        delivery_attested = (
+            ancestor
+            and len(parents) > 1
+            and any(pr["head_commit"] in parents for pr in delivery["pull_requests"])
+        )
+        integrated_checks = [
+            row for row in checks.values() if row["stage"] == "integration"
+        ]
+        delivery_attested = delivery_attested and bool(integrated_checks)
+        for check in integrated_checks:
+            merged_scope, merged_available = _milestone_scope_identity(
+                repository, merged, check["source_paths"]
+            )
+            current_scope, current_available = _milestone_scope_identity(
+                repository, commit, check["source_paths"]
+            )
+            delivery_attested = (
+                delivery_attested
+                and merged_available
+                and current_available
+                and merged_scope == current_scope
+            )
+    module_path = (
+        repository / "packages/tool_registry/src/tool_registry/milestone_status.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "_wright_milestone_projection", module_path
+    )
+    if spec is None or spec.loader is None:
+        raise ValueError("native milestone projection module is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.derive_milestone(
+        source,
+        _task_records(_git_blob(repository, commit, source["tasks_path"])),
+        source_commit=commit,
+        observed_at=str(subject["generated_at"]),
+        attestations=attestations,
+        delivery_attested=delivery_attested,
+    )
+
+
 def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str, Any]:
     blobs = subject["blobs"]
+    native_milestone = _project_native_milestone(repository, subject)
     state = subject["state"]
     lifecycle = subject["lifecycle"]
     feature_id = str(state.get("current_feature") or "EPP-F02")
@@ -2601,6 +2735,7 @@ def _build_supplement(repository: Path, subject: Mapping[str, Any]) -> dict[str,
             "evidence": [dashboard_ref, roadmap_ref, benchmark_ref],
         },
         "work": {
+            **({"milestone": native_milestone} if native_milestone is not None else {}),
             "current_milestone": development_lane["milestone"],
             "active_feature": feature_id,
             "lease": dict(lease) if isinstance(lease, Mapping) else None,

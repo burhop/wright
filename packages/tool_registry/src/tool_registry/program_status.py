@@ -249,10 +249,20 @@ class ProgramStatusReader:
                 ProgramStatusErrorCode.UNAVAILABLE,
             )
             if _git_normalized_digest(catalog_raw) != catalog_digest:
-                raise ProgramStatusReadError(
+                if _git_normalized_digest(catalog_raw) != "d1b388d0cf30cebca5ec7c3380a5e5f412429215125f8bcf7c59017c7ccace84":
+                    raise ProgramStatusReadError(
+                        ProgramStatusErrorCode.IDENTITY_MISMATCH,
+                        "reinstall_program_status_contracts",
+                    )
+                catalog_raw = _read_bounded(
+                    self.schema_root / "program-status-source-catalog-legacy-f02.json",
                     ProgramStatusErrorCode.IDENTITY_MISMATCH,
-                    "reinstall_program_status_contracts",
                 )
+                if _git_normalized_digest(catalog_raw) != catalog_digest:
+                    raise ProgramStatusReadError(
+                        ProgramStatusErrorCode.IDENTITY_MISMATCH,
+                        "reinstall_program_status_contracts",
+                    )
             catalog = _strict_json(catalog_raw)
             schema_files = (
                 SOURCE_CATALOG_SCHEMA_FILENAME,
@@ -308,6 +318,10 @@ class ProgramStatusReader:
 
         supplement = value["supplement"]
         work = supplement["work"]
+        if "milestone" in work:
+            from .milestone_status import validate_milestone
+
+            validate_milestone(work["milestone"], str(value["source"]["commit"]))
         for name in ("program_tasks", "tasks"):
             counts = work[name]
             if counts["completed"] + counts["remaining"] != counts["total"]:

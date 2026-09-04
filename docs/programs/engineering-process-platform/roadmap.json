@@ -66,8 +66,8 @@
       "kind": "product_feature",
       "priority": 20,
       "title": "Canonical process definition and read-only engineer view",
-      "outcome": "An engineer can open a versioned process, understand phases, blocks, ports, gates, feedback and intended artifacts, and inspect the same semantic identities in text and diagram without enabling execution or inheriting prototype runtime code.",
-      "status": "active",
+      "outcome": "Merged through PR117 as a69cb744 with the exact head tree bad0533c. Read-only process inspection is implemented; actual deployed-browser verification is pending and not credited.",
+      "status": "integrated",
       "depends_on": [
         "EPP-F01B"
       ],
@@ -83,14 +83,39 @@
       "spec_kit_feature": true
     },
     {
+      "id": "EPP-N01",
+      "kind": "product_feature",
+      "priority": 25,
+      "title": "Native process language, authoring, execution and verified output",
+      "outcome": "Deliver one Wright-owned language shared by AI/programmatic clients, canvas and runtime: create, preserve, run, inspect artifacts and recover from failure. Track independent human/technical and dev deployment verification honestly.",
+      "status": "active",
+      "depends_on": [
+        "EPP-F01B"
+      ],
+      "blocking_decisions": [],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-03",
+        "PROD-04",
+        "PROD-05",
+        "PROD-08",
+        "PROD-10",
+        "PROD-11"
+      ],
+      "independently_shippable": true,
+      "spec_kit_feature": true
+    },
+    {
       "id": "EPP-F03",
       "kind": "product_feature",
       "priority": 30,
       "title": "Durable run evidence and layered failure inspector",
-      "outcome": "Deterministic runs produce immutable run and step records, truthful mode and provenance, boundary-level activity, inspectable inputs and outputs, distinct failure layers, blocked-dependent explanations, cancellation/reconnect semantics, and recovery guidance.",
+      "outcome": "Expansion after the bounded native milestone: Deterministic runs produce immutable run and step records, truthful mode and provenance, boundary-level activity, inspectable inputs and outputs, distinct failure layers, blocked-dependent explanations, cancellation/reconnect semantics, and recovery guidance.",
       "status": "proposed",
       "depends_on": [
-        "EPP-F02"
+        "EPP-F02",
+        "EPP-N01"
       ],
       "blocking_decisions": [
         "DEC-P0-005",
@@ -113,11 +138,12 @@
       "kind": "product_feature",
       "priority": 40,
       "title": "Exact MCP binding and schema-aware preflight",
-      "outcome": "A workflow author can select an installed server and exact tool, inspect identity/schema/approval, map typed producer outputs to required arguments, and receive honest preflight diagnostics without calling a tool or using domain-specific dispatch.",
+      "outcome": "Expansion after the bounded native milestone: A workflow author can select an installed server and exact tool, inspect identity/schema/approval, map typed producer outputs to required arguments, and receive honest preflight diagnostics without calling a tool or using domain-specific dispatch.",
       "status": "proposed",
       "depends_on": [
         "EPP-F02",
-        "EPP-F03"
+        "EPP-F03",
+        "EPP-N01"
       ],
       "blocking_decisions": [],
       "gate_impacts": [
@@ -136,11 +162,12 @@
       "kind": "product_feature",
       "priority": 50,
       "title": "Governed UI and headless execution with actionable outputs",
-      "outcome": "The same reviewed definition runs through Wright's governed boundary from UI or headless entrypoints, with exact application identity, approvals, deadlines, cancellation, durable evidence, verified artifacts, usable output actions and explicit cleanup/rollback.",
+      "outcome": "Expansion after the bounded native milestone: The same reviewed definition runs through Wright's governed boundary from UI or headless entrypoints, with exact application identity, approvals, deadlines, cancellation, durable evidence, verified artifacts, usable output actions and explicit cleanup/rollback.",
       "status": "proposed",
       "depends_on": [
         "EPP-F03",
-        "EPP-F04"
+        "EPP-F04",
+        "EPP-N01"
       ],
       "blocking_decisions": [
         "DEC-P0-003",
@@ -196,11 +223,12 @@
       "kind": "product_feature",
       "priority": 70,
       "title": "Reviewed text and LLM process authoring",
-      "outcome": "Engineers and bounded LLM adapters propose validated atomic changes against one canonical model, inspect semantic diffs and assumptions, and accept or reject without execution authority or stale-revision mutation.",
+      "outcome": "Expansion after the bounded native milestone: Engineers and bounded LLM adapters propose validated atomic changes against one canonical model, inspect semantic diffs and assumptions, and accept or reject without execution authority or stale-revision mutation.",
       "status": "proposed",
       "depends_on": [
         "EPP-F04",
-        "EPP-F05"
+        "EPP-F05",
+        "EPP-N01"
       ],
       "blocking_decisions": [
         "DEC-P0-002",
@@ -299,6 +327,25 @@
       ],
       "independently_shippable": false,
       "spec_kit_feature": false
+    },
+    {
+      "id": "EPP-N02",
+      "kind": "product_feature",
+      "priority": 85,
+      "title": "Rivet migration and retirement",
+      "outcome": "Inventory retained Rivet work, implement verified conversion or explicit compatibility, and retire legacy entrypoints only after data preservation and replacement acceptance. Native milestone delivery does not complete this work.",
+      "status": "proposed",
+      "depends_on": [
+        "EPP-N01"
+      ],
+      "blocking_decisions": [],
+      "gate_impacts": [
+        "PROD-01",
+        "PROD-10",
+        "PROD-11"
+      ],
+      "independently_shippable": true,
+      "spec_kit_feature": true
     }
   ]
 }

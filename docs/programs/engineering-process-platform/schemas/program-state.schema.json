@@ -757,45 +757,78 @@
           }
         },
         "approval": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "status",
-            "record",
-            "required_records"
-          ],
-          "properties": {
-            "status": {
-              "enum": [
-                "pending",
-                "approved",
-                "rejected",
-                "stale",
-                "revoked"
-              ]
-            },
-            "record": {
-              "oneOf": [
-                {
-                  "type": "null"
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "record",
+                "required_records"
+              ],
+              "properties": {
+                "status": {
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected",
+                    "stale",
+                    "revoked"
+                  ]
                 },
-                {
-                  "type": "string",
-                  "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+                "record": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+                    }
+                  ]
+                },
+                "required_records": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+                  }
                 }
-              ]
+              }
             },
-            "required_records": {
-              "type": "array",
-              "minItems": 2,
-              "maxItems": 2,
-              "uniqueItems": true,
-              "items": {
-                "type": "string",
-                "pattern": "^evidence/approvals/APR-[A-Z0-9-]+\\.json$"
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "authority_kind",
+                "status",
+                "record",
+                "record_digest",
+                "exact_subject_approval"
+              ],
+              "properties": {
+                "authority_kind": {
+                  "const": "standing_user_scope"
+                },
+                "status": {
+                  "const": "authorized_scope"
+                },
+                "record": {
+                  "const": "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+                },
+                "record_digest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "exact_subject_approval": {
+                  "const": false
+                }
               }
             }
-          }
+          ]
         },
         "feature_state": {
           "oneOf": [
@@ -835,6 +868,49 @@
         },
         "policy_version": {
           "const": "EPP-LIFECYCLE-1"
+        },
+        "scoped_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "candidate_commit",
+            "candidate_tree",
+            "task_ids",
+            "reason",
+            "whole_feature_complete"
+          ],
+          "properties": {
+            "status": {
+              "const": "awaiting_independent_review"
+            },
+            "candidate_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "candidate_tree": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "task_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^T0(?:0[1-9]|[12][0-9]|3[0-2])$"
+              }
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "whole_feature_complete": {
+              "const": false
+            }
+          }
         }
       }
     }

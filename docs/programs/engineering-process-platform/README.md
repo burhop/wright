@@ -2,9 +2,11 @@
 
 **Program ID:** `EPP-2026`
 
-**Status:** EPP-F01 local closure is in progress under the user's 2026-08-28 authorization to complete the existing tasks, run delivery gates, push, and open the PR. T066 passed independent raw-identity replacement-candidate verification at `87360afe` with 258 tests passing and one declared Windows symlink skip; deterministic dashboard delivery T067 is next.
+**Current milestone:** EPP-N01 / NATIVE-01, the native engineering-process path from authoring to verified output. Read [current state](program-state.json), [registered tasks](work-registry.json), and the [native plan](../../../specs/079-wright-native-authoring/plan.md). Native language semantics are shared by programmatic/AI clients, canvas and runtime; autonomous AI authoring and Rivet migration/retirement are separate later work.
 
-**Current authority:** this directory is the approved control plane for Wright's next engineering-process platform under [`APR-EPP-2026-001`](evidence/approvals/APR-EPP-2026-001.json). That approval authorizes bounded child-feature selection and specification only. Product implementation, dependencies, external writes, benchmark generation, dev integration and release retain their own explicit gates.
+**Current scope authority:** the [recorded user goal](evidence/authorizations/AUTH-EPP-N01-2026-001.json) authorizes this bounded milestone, tested feature pushes and dev PR integration. It does not claim exact-subject approval or human-review results. Historical approvals and state revision 89 retain their original meaning.
+
+**Baseline:** F02 PR #117 merged as `a69cb744` on August 31; its head and merged tree match. Actual deployment/browser verification remains outstanding. A merge or CI result alone does not close that requirement. Benchmark qualification remains 0/100; production release is separately authorized.
 
 ## Empty-context orientation
 
