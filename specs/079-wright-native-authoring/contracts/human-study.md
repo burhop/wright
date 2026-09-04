@@ -46,7 +46,7 @@ All conditions required: range failure identified at actual 135 g versus maximum
 
 ### H5 — Understand delivered and remaining work (four minutes)
 
-Start at the actual candidate's Program status page. Freeze its source bundle and observed quality/candidate state in the observer answer sheet before trials. This is an observation of actual records, not a fabricated production-status fixture.
+Start at the existing standalone implementation dashboard (`http://127.0.0.1:8765/` for the local study). Freeze its source bundle and observed quality/candidate state in the observer answer sheet before trials. This is an observation of actual records, not a fabricated production-status fixture.
 
 Instruction: "Show the current milestone and distinguish implemented, verified and integrated work. Identify a remaining requirement and what action it needs. Find which code the latest relevant quality evidence covers. Explain whether the native milestone means all 100 benchmark cases are qualified or all existing Rivet processes have been migrated."
 
@@ -59,3 +59,5 @@ Each of H1–H5 requires at least four successful participants out of the five-p
 Separately perform and record an actual manual accessibility review: complete H2 with keyboard only and with click controls without dragging; inspect 320 CSS-pixel width, 200% zoom, forced colors, reduced motion, focus order/visibility and non-color status cues. Automated axe checks supplement this review and must have no serious/critical violations. Record reviewer identity and exact build; agents may provide technical accessibility evidence but never label it independent human evidence.
 
 Recruitment remains an external dependency. Continue implementation and technical verification while it is pending; expose the specific human acceptance gap on the dashboard.
+
+September 4 amendment, before any measured trial: H5 uses the existing standalone implementation dashboard, following the user's clarification that this page must be independent of Wright's running product. Participant population, instructions, scoring and evidence requirements are unchanged; the original protocol remains in Git history.
