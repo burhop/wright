@@ -954,7 +954,14 @@ export function decodeProgramStatusBundle(value: unknown): ProgramStatusBundle {
         ),
       },
       work: {
-        ...(work.milestone === undefined ? {} : { milestone: decodeNativeMilestone(work.milestone, String(source.commit)) }),
+        ...(work.milestone === undefined
+          ? {}
+          : {
+              milestone: decodeNativeMilestone(
+                work.milestone,
+                String(source.commit),
+              ),
+            }),
         current_milestone: stringValue(
           work.current_milestone,
           "/supplement/work/current_milestone",
