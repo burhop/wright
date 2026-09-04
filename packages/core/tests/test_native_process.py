@@ -273,3 +273,27 @@ def test_quantities_are_independent_of_callers_decimal_context():
         assert Quantity("0.00005", "m3").multiply(
             Quantity("2700", "kg/m3"), "g"
         ) == Quantity("135", "g")
+
+
+def test_quantity_context_isolates_exponents_clamp_and_all_traps():
+    with localcontext() as context:
+        context.prec = 5
+        context.Emin = -2
+        context.Emax = 2
+        context.clamp = 1
+        context.clear_flags()
+        for signal in context.traps:
+            context.traps[signal] = True
+        assert Quantity("1", "kg").convert("g") == Quantity("1000", "g")
+        assert Quantity("0.001", "g").convert("kg") == Quantity("0.000001", "kg")
+        assert Quantity("0.00005", "m3").multiply(
+            Quantity("2700", "kg/m3"), "g"
+        ) == Quantity("135", "g")
+        assert Quantity("0.001", "g").compare(Quantity("0.000001", "kg")) == 0
+        assert (context.prec, context.Emin, context.Emax, context.clamp) == (
+            5,
+            -2,
+            2,
+            1,
+        )
+        assert not any(context.flags.values())

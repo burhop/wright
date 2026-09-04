@@ -4,7 +4,17 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from decimal import Decimal, Inexact, InvalidOperation, Overflow, Rounded, localcontext
+from decimal import (
+    ROUND_HALF_EVEN,
+    Context,
+    Decimal,
+    DivisionByZero,
+    Inexact,
+    InvalidOperation,
+    Overflow,
+    Rounded,
+    localcontext,
+)
 
 Dimension = tuple[int, int, int]  # length, mass, time
 
@@ -85,8 +95,7 @@ class Quantity:
     def convert(self, unit: str) -> Quantity:
         if unit not in UNITS or self.dimension != UNITS[unit].dimension:
             raise ValueError("incompatible quantity conversion")
-        with localcontext() as context:
-            _exact_context(context)
+        with localcontext(_exact_context()):
             value = (
                 decimal_value(self.value) * UNITS[self.unit].factor / UNITS[unit].factor
             )
@@ -96,8 +105,7 @@ class Quantity:
         dimension = tuple(a + b for a, b in zip(self.dimension, other.dimension))
         if unit not in UNITS or dimension != UNITS[unit].dimension:
             raise ValueError("multiplication target has incompatible dimensions")
-        with localcontext() as context:
-            _exact_context(context)
+        with localcontext(_exact_context()):
             value = (
                 decimal_value(self.value)
                 * UNITS[self.unit].factor
@@ -112,14 +120,22 @@ class Quantity:
             raise ValueError("cannot compare incompatible quantities")
         # Compare base values directly: an intermediate conversion need not fit
         # the public value bound when each original operand is valid.
-        with localcontext() as context:
-            _exact_context(context)
+        with localcontext(_exact_context()):
             left = decimal_value(self.value) * UNITS[self.unit].factor
             right = decimal_value(other.value) * UNITS[other.unit].factor
             return (left > right) - (left < right)
 
 
-def _exact_context(context) -> None:
-    context.prec = 68
-    for signal in (Inexact, Rounded, Overflow, InvalidOperation):
-        context.traps[signal] = True
+def _exact_context() -> Context:
+    # A complete context isolates exponent limits, clamp, flags and every trap
+    # as well as precision. Copying the ambient context is insufficient.
+    return Context(
+        prec=68,
+        rounding=ROUND_HALF_EVEN,
+        Emin=-999,
+        Emax=999,
+        capitals=1,
+        clamp=0,
+        flags=[],
+        traps=[Inexact, Rounded, Overflow, InvalidOperation, DivisionByZero],
+    )
