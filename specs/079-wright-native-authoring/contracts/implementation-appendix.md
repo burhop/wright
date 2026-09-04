@@ -11,7 +11,7 @@ This appendix resolves planning review C1/U1–U7/I1. The semantic JSON schema a
 | `text.input@1` | none | value/text | optional value, max 4000 characters; missing means needs input |
 | `quantity.input@1` | none | value/quantity | optional exact value; missing means needs input |
 | `artifact.input@1` | none | value/artifact | optional authorized relative path, max 240 characters; recheck file digest at execution |
-| `text.join@1` | first, second/text | text/text | optional separator, max 100 characters; concatenate in first/second order |
+| `text.join@1` | first, second/text | text/text | optional separator, max 100 characters, defaults to empty string; concatenate in first/second order |
 | `text.require@1` | text/text | text/text | 1–20 unique required substrings (max 200 each); fail on absent term, pass through on success |
 | `quantity.multiply@1` | left, right/quantity | value/quantity | required target unit; multiply exact values/dimensions and explicitly convert |
 | `quantity.convert@1` | value/quantity | value/quantity | required target unit; same dimension only |

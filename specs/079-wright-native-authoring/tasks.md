@@ -5,7 +5,7 @@
 ## Phase 1: Baseline and contracts
 
 - [ ] T001 Reconcile merged F02/current authority, roadmap and worktree pointers with preserved historical evidence in `docs/programs/engineering-process-platform/` and `AGENTS.md`. (FR-001, FR-017, FR-020; AC01)
-- [ ] T002 Complete spec/plan/contracts, frozen valid/invalid examples, human protocol and independent consistency review in `specs/079-wright-native-authoring/`. (FR-001–020; AC01–10)
+- [x] T002 Complete spec/plan/contracts, frozen valid/invalid examples, human protocol and independent consistency review in `specs/079-wright-native-authoring/`. (FR-001–020; AC01–10)
 
 ## Phase 2: US1 — Useful current dashboard
 
@@ -17,9 +17,9 @@ Independent acceptance: identify current outcome, stage counts, missing quality 
 
 ## Phase 3: Foundation — Semantics and examples
 
-- [ ] T006 Implement native typed definitions, strict parsing/canonical identity, structural validation and readiness with cross-language/negative tests in `packages/core/src/core/native_process.py` and `packages/core/tests/test_native_process.py`. (FR-001–003; AC02)
-- [ ] T007 Implement bounded canonical quantities and explicit dimensional operations/tests in the native core/runtime value contract. (FR-004; AC02, AC08)
-- [ ] T008 Create three versioned development definitions and negative fixtures under `src/wright_engineering/static/native-processes/` with independent expected outcomes. (FR-016; AC08)
+- [x] T006 Implement native typed definitions, strict parsing/canonical identity, structural validation and readiness with cross-language/negative tests in `packages/core/src/core/native_process.py` and `packages/core/tests/test_native_process.py`. (FR-001–003; AC02)
+- [x] T007 Implement bounded canonical quantities and explicit dimensional operations/tests in the native core/runtime value contract. (FR-004; AC02, AC08)
+- [x] T008 Create three versioned development definitions and negative fixtures under `src/wright_engineering/static/native-processes/` with independent expected outcomes. (FR-016; AC08)
 
 ## Phase 4: US2 — Author and preserve work
 
@@ -63,7 +63,7 @@ Independent acceptance: generate/check actual outputs, inspect provenance, fail/
 
 ## Dependencies
 
-T001/T002 precede product implementation. Dashboard T003→T004→T005 may run independently after contracts; core T006→T007/T008 precedes persistence T009→T010→T011 and client T012→T013/T014→T015→T016. Runtime T017→T018/T019→T020→T021→T022→T023; T024→T025 requires runtime and gateway boundary. T026 requires examples/runtime. T027/T028/T029 require the affected complete candidate. T030→T031→T032 require all applicable acceptance evidence. Recruit T028 participants during planning; do not delay independent work while scheduling.
+T001 baseline inspection and T002 contracts precede product implementation. T001's prospective transition/catalog record work may proceed alongside independent native foundation code, but must complete before initial dashboard publication. Dashboard T003→T004→T005 may run independently after contracts; core T006→T007/T008 precedes persistence T009→T010→T011 and client T012→T013/T014→T015→T016. Runtime T017→T018/T019→T020→T021→T022→T023; T024→T025 requires runtime and gateway boundary. T026 requires examples/runtime. T027/T028/T029 require the affected complete candidate. T030→T031→T032 require all applicable acceptance evidence. Recruit T028 participants during planning; do not delay independent work while scheduling.
 
 ## Parallel work and implementation strategy
 
