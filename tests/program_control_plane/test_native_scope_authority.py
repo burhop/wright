@@ -109,7 +109,13 @@ def test_old_candidate_cannot_keep_changed_implementation_unleased(
         )
         for name in names
     }
-    state = docs[f"{ROOT}/program-state.json"]
+    # Exercise the closed-lease checkpoint independent of the current writer
+    # state and whether CI checked out a branch or a detached candidate.
+    state = json.loads(
+        (repository_root / ROOT / "evidence/states/program-state-revision-0096.json")
+        .read_text(encoding="utf-8")
+    )
+    docs[f"{ROOT}/program-state.json"] = state
     previous = reader.resolve_identity("7404a549ae244cc05d89e062c60276e8862f53c9", ROOT)
     state["scoped_checkpoint"].update(
         candidate_commit=previous.source_commit, candidate_tree=previous.source_tree
@@ -118,7 +124,7 @@ def test_old_candidate_cannot_keep_changed_implementation_unleased(
         docs,
         ROOT,
         observed_at=datetime.now(timezone.utc),
-        actual_branch=reader.current_branch(),
+        actual_branch="",
         worktree_id=repository_root.name,
         reader=reader,
         source_commit=reader.current_head(),

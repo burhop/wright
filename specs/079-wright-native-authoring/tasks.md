@@ -4,16 +4,16 @@
 
 ## Phase 1: Baseline and contracts
 
-- [ ] T001 Reconcile merged F02/current authority, roadmap and worktree pointers with preserved historical evidence in `docs/programs/engineering-process-platform/` and `AGENTS.md`. (FR-001, FR-017, FR-020; AC01)
+- [x] T001 Reconcile merged F02/current authority, roadmap and worktree pointers with preserved historical evidence in `docs/programs/engineering-process-platform/` and `AGENTS.md`. (FR-001, FR-017, FR-020; AC01)
 - [x] T002 Complete spec/plan/contracts, frozen valid/invalid examples, human protocol and independent consistency review in `specs/079-wright-native-authoring/`. (FR-001–020; AC01–10)
 
 ## Phase 2: US1 — Useful current dashboard
 
 Independent acceptance: identify current outcome, stage counts, missing quality evidence and next action without reading historical governance details.
 
-- [ ] T003 [US1] Extend typed milestone/task/evidence registry, publisher and strict packaged readers with derived counts and old-bundle compatibility in `scripts/program_status/`, `packages/tool_registry/` and source/package status schemas. (FR-017, FR-018; AC01)
-- [ ] T004 [US1] Implement accessible milestone/quality/task/current-work presentation and remove hardcoded feature labels in `apps/web/src/components/program-status/`, `ProgramStatusPage.tsx` and its service/tests. (FR-017–019; AC01)
-- [ ] T005 [US1] Publish an honest initial checkpoint and verify actual dashboard browser/freshness/recovery journey in `tests/ui-integration/program-status.spec.ts` and milestone evidence. (FR-017–020; AC01)
+- [x] T003 [US1] Extend typed milestone/task/evidence registry, publisher and strict packaged readers with derived counts and old-bundle compatibility in `scripts/program_status/`, `packages/tool_registry/` and source/package status schemas. (FR-017, FR-018; AC01)
+- [x] T004 [US1] Implement accessible milestone/quality/task/current-work presentation and remove hardcoded feature labels in `apps/web/src/components/program-status/`, `ProgramStatusPage.tsx` and its service/tests. (FR-017–019; AC01)
+- [x] T005 [US1] Publish an honest initial checkpoint and verify actual dashboard browser/freshness/recovery journey in `tests/ui-integration/program-status.spec.ts` and milestone evidence. (FR-017–020; AC01)
 
 ## Phase 3: Foundation — Semantics and examples
 
@@ -28,11 +28,11 @@ Independent acceptance: create/connect/configure/undo/save/reopen; reject invali
 - [x] T009 [US2] Add native tables/migration and previous-reader/backup recovery tests in `packages/data_vault/src/data_vault/migrations.py` and native repository tests. (FR-007, FR-020; AC03, AC09)
 - [x] T010 [US2] Implement explicit transactional CAS/idempotency/document persistence and concurrent/failure tests in `native_process_repository.py`. (FR-007; AC03)
 - [x] T011 [US2] Add authorized native document/check application service, shared language/operation discovery and thin API schemas/routes/tests in `workspace_service/native_process_service.py` and `apps/api/`; enforce the same validation/CAS for UI and programmatic clients. (FR-002, FR-007, FR-008; AC02, AC03)
-- [ ] T012 [US2] Implement typed client and atomic commands/undo/invalid-buffer tests against the official language/schema/fixtures in `apps/web/src/services/native-process.ts` and `components/native-process/`; no separate renderer/AI semantics. (FR-002, FR-003, FR-006; AC03)
-- [ ] T013 [US2] Review/pin the renderer and implement graph/precise port adapter, keyboard/click creation/connection and layout tests in native components. (FR-005, FR-019; AC03)
-- [ ] T014 [US2] Implement contextual Inspector, sole input configuration, readable text/source and deletion impact review in native components. (FR-005, FR-006, FR-019; AC03)
-- [ ] T015 [US2] Implement save/reopen/conflict/unsaved navigation UI and isolated route/navigation wiring in `NativeProcessPage.tsx` and supporting tests. (FR-006, FR-007; AC03)
-- [ ] T016 [US2] Verify mocked and real editor/browser journeys including programmatic-definition/canvas round trips, layout-independent semantic identity, accessibility and checkpoint evidence. Label simulated AI-client payload tests accurately. (FR-002, FR-019; AC02, AC03)
+- [x] T012 [US2] Implement typed client and atomic commands/undo/invalid-buffer tests against the official language/schema/fixtures in `apps/web/src/services/native-process.ts` and `components/native-process/`; no separate renderer/AI semantics. (FR-002, FR-003, FR-006; AC03)
+- [x] T013 [US2] Review/pin the renderer and implement graph/precise port adapter, keyboard/click creation/connection and layout tests in native components. (FR-005, FR-019; AC03)
+- [x] T014 [US2] Implement contextual Inspector, sole input configuration, readable text/source and deletion impact review in native components. (FR-005, FR-006, FR-019; AC03)
+- [x] T015 [US2] Implement save/reopen/conflict/unsaved navigation UI and isolated route/navigation wiring in `NativeProcessPage.tsx` and supporting tests. (FR-006, FR-007; AC03)
+- [x] T016 [US2] Verify mocked and real editor/browser journeys including programmatic-definition/canvas round trips, layout-independent semantic identity, accessibility and checkpoint evidence. Label simulated AI-client payload tests accurately. (FR-002, FR-019; AC02, AC03)
 
 ## Phase 5: US3/US4 — Execute, inspect and recover
 

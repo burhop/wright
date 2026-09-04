@@ -79,12 +79,14 @@
     ],
     "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
     "capabilities": [
-      "An immutable sample process has an implemented read-only text and diagram view (F02, merged PR117). Actual deployed-browser verification remains pending."
+      "In the local feature build, create and configure native processes, connect exact typed ports, undo, save/reopen, and recover from stale-writer conflicts. The actual browser/SQLite journey has passed.",
+      "Three development workflows produce actual local artifact bytes in runtime tests, including a 135 g mass result and linked correction. Runtime review fixes and UI/headless integration remain active.",
+      "The process language is the shared semantic authority for programmatic clients, canvas and runtime. Dev integration, human usability and Rivet migration/retirement remain pending."
     ],
     "tasks": [
       {
         "id": "T001",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "dashboard",
         "integration_required": true,
         "integration_exemption": null,
@@ -92,7 +94,7 @@
       },
       {
         "id": "T002",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -100,7 +102,7 @@
       },
       {
         "id": "T003",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "dashboard",
         "integration_required": true,
         "integration_exemption": null,
@@ -108,7 +110,7 @@
       },
       {
         "id": "T004",
-        "activity": "active",
+        "activity": "verifying",
         "owner": "dashboard",
         "integration_required": true,
         "integration_exemption": null,
@@ -116,7 +118,7 @@
       },
       {
         "id": "T005",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "dashboard",
         "integration_required": true,
         "integration_exemption": null,
@@ -124,7 +126,7 @@
       },
       {
         "id": "T006",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -132,7 +134,7 @@
       },
       {
         "id": "T007",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -140,7 +142,7 @@
       },
       {
         "id": "T008",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -148,7 +150,7 @@
       },
       {
         "id": "T009",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -156,7 +158,7 @@
       },
       {
         "id": "T010",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -164,7 +166,7 @@
       },
       {
         "id": "T011",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -172,7 +174,7 @@
       },
       {
         "id": "T012",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -180,7 +182,7 @@
       },
       {
         "id": "T013",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -188,7 +190,7 @@
       },
       {
         "id": "T014",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -196,7 +198,7 @@
       },
       {
         "id": "T015",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -204,7 +206,7 @@
       },
       {
         "id": "T016",
-        "activity": "planned",
+        "activity": "verifying",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -212,7 +214,7 @@
       },
       {
         "id": "T017",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -220,7 +222,7 @@
       },
       {
         "id": "T018",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -228,7 +230,7 @@
       },
       {
         "id": "T019",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -236,7 +238,7 @@
       },
       {
         "id": "T020",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -244,7 +246,7 @@
       },
       {
         "id": "T021",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -268,7 +270,7 @@
       },
       {
         "id": "T024",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -292,7 +294,7 @@
       },
       {
         "id": "T027",
-        "activity": "planned",
+        "activity": "active",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -300,7 +302,7 @@
       },
       {
         "id": "T028",
-        "activity": "planned",
+        "activity": "blocked",
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
@@ -801,10 +803,11 @@
       }
     ],
     "next_task_ids": [
-      "T003",
-      "T004",
-      "T005",
-      "T006"
+      "T021",
+      "T023",
+      "T024",
+      "T025",
+      "T027"
     ],
     "examples": [
       {
