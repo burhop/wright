@@ -1,0 +1,42 @@
+.native-milestone {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.native-milestone h2 {
+  margin-bottom: var(--space-md);
+}
+
+.native-milestone p {
+  margin-block: var(--space-sm);
+}
+
+.native-milestone ul,
+.native-milestone ol {
+  padding-inline-start: var(--space-lg);
+}
+
+.native-milestone li + li {
+  margin-top: var(--space-xs);
+}
+
+.native-milestone dt {
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+}
+
+.native-milestone dd {
+  margin: 0 0 var(--space-sm);
+}
+
+.native-milestone a:focus-visible,
+.native-milestone summary:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.native-milestone article:target {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 3px;
+}
