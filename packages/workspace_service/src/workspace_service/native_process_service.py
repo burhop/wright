@@ -62,6 +62,8 @@ class NativeProcessService:
         self._startup_guard = threading.Lock()
         self._started = False
         self._closing = False
+        self._workers: set[asyncio.Task] = set()
+        self._close_task: asyncio.Task | None = None
         self.reconciliation: dict[str, Any] = {"removed": 0, "residue": []}
 
     def configure_execution(
@@ -121,11 +123,33 @@ class NativeProcessService:
             )
 
     async def startup(self) -> dict[str, Any]:
-        await asyncio.to_thread(self._startup)
+        await self._worker(self._startup)
         return self.reconciliation
+
+    async def _worker(self, operation, *args):
+        # Keep the actual thread future alive after a disconnected/cancelled
+        # request so shutdown can drain it before releasing owner resources.
+        self._execution()
+        task = asyncio.create_task(asyncio.to_thread(operation, *args))
+        self._workers.add(task)
+
+        def finished(completed):
+            self._workers.discard(completed)
+            if not completed.cancelled():
+                completed.exception()
+
+        task.add_done_callback(finished)
+        return await asyncio.shield(task)
 
     async def close(self) -> None:
         self._closing = True
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._drain_and_close())
+        await asyncio.shield(self._close_task)
+
+    async def _drain_and_close(self) -> None:
+        if self._workers:
+            await asyncio.gather(*tuple(self._workers), return_exceptions=True)
         try:
             if self.runtime is not None:
                 await self.runtime.close()
@@ -362,7 +386,7 @@ class NativeProcessService:
             actor=actor,
             trace_id=trace_id,
         )
-        workspace_id, replay = await asyncio.to_thread(
+        workspace_id, replay = await self._worker(
             self._prepare_run, session_id, process_id, arguments
         )
         current_workspace, _ = self.scope(session_id)
@@ -412,7 +436,7 @@ class NativeProcessService:
     @traced_native("native.run.cancel")
     async def cancel_run(self, session_id: str, run_id: str) -> dict[str, Any]:
         workspace_id, _ = self.scope(session_id)
-        await asyncio.to_thread(self._startup)
+        await self._worker(self._startup)
         return await self._execution().cancel(workspace_id, run_id)
 
     @traced_native("native.run.artifact")

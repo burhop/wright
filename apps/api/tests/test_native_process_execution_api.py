@@ -15,6 +15,7 @@ import httpx
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from starlette.middleware.cors import CORSMiddleware
 
 from api.composition import build_native_process_service
 from api.middleware.tracing import TracingMiddleware
@@ -36,6 +37,7 @@ from tool_registry.manager import McpEngine
 from workspace_service.native_process_cli import main as cli_main
 from workspace_service.service import WorkspaceService
 from workspace_service.workspace_path import WorkspacePath
+from workspace_service.native_process_runtime import NativeRuntime
 
 BASE = "/api/native-processes"
 SESSION = {"session_id": "session-one"}
@@ -355,6 +357,81 @@ async def test_submitted_run_survives_http_client_disconnect(execution, monkeypa
         release.set()
         await service.close()
         await gateway.shutdown()
+
+
+@pytest.mark.asyncio
+async def test_cancelled_startup_is_drained_before_owner_release(
+    execution, monkeypatch
+):
+    service, gateway, _ = execution
+    entered, release = threading.Event(), threading.Event()
+    original = service.repository.interrupt_abandoned
+
+    def paused_interrupt():
+        entered.set()
+        assert release.wait(5)
+        return original()
+
+    monkeypatch.setattr(service.repository, "interrupt_abandoned", paused_interrupt)
+    startup = asyncio.create_task(service.startup())
+    contender = NativeRuntime(service.repository, service.scope)
+    closing = None
+    try:
+        assert await asyncio.to_thread(entered.wait, 3)
+        startup.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await startup
+        closing = asyncio.create_task(service.close())
+        await asyncio.sleep(0.02)
+        assert not closing.done(), "Close must drain the still-running startup worker"
+        release.set()
+        await asyncio.wait_for(closing, 3)
+        assert service.runtime._owner is None
+        assert not service._workers
+        contender.ensure_owner()
+    finally:
+        release.set()
+        if closing is not None:
+            await closing
+        await service.close()
+        await contender.close()
+        await gateway.shutdown()
+
+
+def test_actual_cross_origin_artifact_exposes_verifiable_digest(execution):
+    from api import main
+
+    app = app_for(execution)
+    configuration = next(
+        row for row in main.app.user_middleware if row.cls is CORSMiddleware
+    )
+    app.add_middleware(configuration.cls, **configuration.kwargs)
+    with TestClient(app, headers=AUTH) as client:
+        saved = save(client, document())
+        created = client.post(
+            f"{BASE}/{saved['definition']['id']}/runs",
+            params=SESSION,
+            json=submission(saved),
+        ).json()
+        run = wait_run(client, created["run_id"])
+        artifact = run["artifacts"][0]
+        response = client.get(
+            f"{BASE}/runs/{run['run_id']}/artifacts/{artifact['artifact_id']}",
+            params=SESSION,
+            headers={"Origin": "http://localhost:5173"},
+        )
+        assert response.status_code == 200
+        assert (
+            response.headers["Access-Control-Allow-Origin"] == "http://localhost:5173"
+        )
+        assert response.headers["X-Content-SHA256"] == artifact["content_digest"]
+        exposed = {
+            value.strip().lower()
+            for value in response.headers.get(
+                "Access-Control-Expose-Headers", ""
+            ).split(",")
+        }
+        assert "x-content-sha256" in exposed
 
 
 def test_artifact_tampering_and_route_limits_return_frozen_errors(execution):

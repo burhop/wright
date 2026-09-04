@@ -219,7 +219,7 @@ app.add_middleware(
         "X-Wright-Display-Contract",
         "If-None-Match",
     ],
-    expose_headers=["ETag", "X-Trace-Id"],
+    expose_headers=["ETag", "X-Trace-Id", "X-Content-SHA256"],
 )
 app.add_middleware(ControlPlaneSecurityMiddleware)
 
