@@ -81,6 +81,16 @@ an absent output schema is SHA256 of canonical JSON `null`. Artifact retrieval
 returns attachment bytes with `X-Content-SHA256`. This freezes DTO detail without
 adding new execution semantics or promoting mocked transport checks to live proof.
 
+MCP schema metadata digests use SHA256 of UTF-8 JSON serialized with sorted
+object keys, compact `,`/`:` separators, `ensure_ascii=False`, and
+`allow_nan=False` (Python's finite JSON number representation). This matches the
+existing finite JSON digest convention; it is separate from
+`wright-native-json-v1` document canonicalization. Finite fractional schema
+bounds and structured MCP result values are permitted. A structured result is
+serialized with the same finite JSON convention and returned as a native text
+value. It does not add floating-point numeric tokens to native documents.
+The absent output schema hashes the four UTF-8 bytes `null`.
+
 One native runtime coordinator per data root owns an OS-held advisory file lock for its lifetime; acquire before accepting run execution or reconciling prior nonterminal runs. A competing coordinator gets `NATIVE_RUNTIME_BUSY` and never interrupts the owner. File-lock release on process death allows the new coordinator to classify abandoned queued/running runs interrupted. CLI uses the HTTP owner. Tests cover a second coordinator, owner termination/restart and disconnected HTTP caller (caller disconnect does not cancel).
 
 Step states: pending/running/succeeded/failed/blocked/cancelled. On first failure stop scheduling remaining steps; dependents become blocked with root cause and independent pending steps become cancelled with `run_stopped_after_failure`. Run success requires all steps succeed. A queued cancellation transitions directly to cancelled without operation calls. During execution, cancel/deadline/success contend through conditional terminal writes; the first committed terminal transition wins, all later attempts return that state.

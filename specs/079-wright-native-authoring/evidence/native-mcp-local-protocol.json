@@ -1,0 +1,154 @@
+{
+  "scope": "disposable local stdio native adapter integration; not catalog qualification",
+  "occurred_at": "2026-09-04T22:56:52.461782+00:00",
+  "python_version": "3.13.5",
+  "platform": "win32",
+  "protocol": [
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "wright",
+            "version": "0.1.0"
+          }
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {
+            "tools": {}
+          },
+          "serverInfo": {
+            "name": "native-disposable-measurement",
+            "version": "1"
+          }
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "notifications/initialized"
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/list"
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "tools": [
+            {
+              "name": "measure",
+              "description": "Measure a safe local fixture",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "minimum": 0.25
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "outputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "direction": "request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "measure",
+          "arguments": {
+            "value": 0.5
+          }
+        }
+      }
+    },
+    {
+      "direction": "response",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Local fixture measured"
+            }
+          ],
+          "structuredContent": {
+            "value": 1.25
+          }
+        }
+      }
+    }
+  ],
+  "binding": {
+    "server_id": "native-proof",
+    "tool_name": "measure",
+    "input_schema_digest": "17923f7488898f40d1a8f105e9c0141ff081dba83a2681be4b22886b6bca13ec",
+    "output_schema_digest": "2c3b6f52cf59051a229a1032374562cddf409ed846df939de3db8e66c895aa32"
+  },
+  "native_result_text": "{\"value\":1.25}",
+  "fixture_content_sha256": "8ac1ddbe1e1edd5b0536294fd27197fb146a8aeccdc03b20ae1b61877c8b7a78",
+  "fixture_unchanged": true,
+  "audit": [
+    {
+      "operation": "tool.call",
+      "server_id": "native-proof",
+      "target_name": "measure",
+      "outcome": "started",
+      "metadata_json": "{\"argument_count\": 1, \"lifecycle_kind\": \"ordinary\", \"timeout_ms\": 3000, \"trace_id\": \"native-local-protocol-trace\"}"
+    },
+    {
+      "operation": "tool.call",
+      "server_id": "native-proof",
+      "target_name": "measure",
+      "outcome": "succeeded",
+      "metadata_json": "{\"argument_count\": 1, \"lifecycle_kind\": \"ordinary\", \"response_bytes\": 15, \"result_key_count\": 1, \"timeout_ms\": 3000, \"trace_id\": \"native-local-protocol-trace\"}"
+    }
+  ],
+  "child_exited": true
+}
