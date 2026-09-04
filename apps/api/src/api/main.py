@@ -47,6 +47,7 @@ from api.surface_websocket_proxy import SurfaceWebSocketProxy
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
     build_api_gateway_service,
+    build_native_process_service,
     close_application_services,
     close_surface_application_services,
     surface_application,
@@ -143,6 +144,10 @@ async def lifespan(app: FastAPI):
     )
     try:
         app.state.workspace_service = workspace_service()
+        app.state.native_process_service = build_native_process_service(
+            DATABASE_PATH, app.state.gateway_service, app.state.workspace_service
+        )
+        await app.state.native_process_service.startup()
         app.state.engineering_model_application = engineering_model_application()
         app.state.support_diagnostic_application = support_diagnostic_application()
         if app.state.workspace_surface_settings.flags.model:
@@ -169,6 +174,12 @@ async def lifespan(app: FastAPI):
             yield
     finally:
         # Shutdown owns every process and worker constructed during startup.
+        try:
+            native = getattr(app.state, "native_process_service", None)
+            if native is not None:
+                await native.close()
+        except Exception as error:
+            logger.error("native_shutdown_failed", error_type=type(error).__name__)
         try:
             surface_graph = getattr(app.state, "surface_application", None)
             if surface_graph is not None:
@@ -301,7 +312,9 @@ app.include_router(
     prefix="/api/process-definitions",
     tags=["Process Definitions"],
 )
-app.include_router(native_process_router, prefix="/api/native-processes", tags=["Native Processes"])
+app.include_router(
+    native_process_router, prefix="/api/native-processes", tags=["Native Processes"]
+)
 app.include_router(
     engineering_models_router,
     prefix="/api/v1/engineering-models",

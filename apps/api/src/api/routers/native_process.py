@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from typing import Annotated, TypeVar
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.routing import APIRoute
 from pydantic import BaseModel, ValidationError
 from starlette.concurrency import run_in_threadpool
@@ -25,6 +26,8 @@ from api.schemas.native_process import (
     CheckNativeProcess,
     CreateNativeProcess,
     SaveNativeProcess,
+    StartNativeRun,
+    EmptyNativeRequest,
 )
 
 logger = get_logger(__name__)
@@ -73,6 +76,8 @@ class NativeRoute(APIRoute):
                     "NATIVE_BINDING_CHANGED": 409,
                     "NATIVE_RUNTIME_BUSY": 503,
                     "NATIVE_LIMIT": 413,
+                    "NATIVE_ARTIFACT_INVALID": 409,
+                    "NATIVE_INTERNAL": 500,
                 }.get(code, 400)
             except (RequestValidationError, ValidationError):
                 code, message, status = (
@@ -131,18 +136,28 @@ def get_service(request: Request) -> NativeProcessService:
     return native_process_service()
 
 
-async def body(request: Request, model: type[M]) -> M:
+async def body(
+    request: Request,
+    model: type[M],
+    *,
+    max_bytes: int = 1100 * 1024,
+    empty: bool = False,
+) -> M:
     raw = bytearray()
     async for chunk in request.stream():
         raw.extend(chunk)
-        if len(raw) > 1100 * 1024:
+        if len(raw) > max_bytes:
             raise NativeServiceError(
                 "NATIVE_LIMIT",
                 "Request exceeds the native size limit.",
                 "Use a smaller definition.",
             )
     try:
-        value = strict_json_loads(bytes(raw), max_bytes=1100 * 1024)
+        value = (
+            {}
+            if empty and not raw
+            else strict_json_loads(bytes(raw), max_bytes=max_bytes)
+        )
     except (ValueError, UnicodeError, RecursionError) as error:
         raise NativeServiceError(
             "NATIVE_INVALID",
@@ -198,6 +213,80 @@ async def check(request: Request, session_id: Session, service: Service):
         session_id,
         payload.definition,
         {key: value.model_dump() for key, value in payload.bindings.items()},
+    )
+
+
+@router.get("/bindings")
+def bindings(session_id: Session, service: Service):
+    return service.bindings(session_id)
+
+
+@router.get("/runs/{run_id}")
+def inspect_run(run_id: str, session_id: Session, service: Service):
+    return service.inspect_run(session_id, run_id)
+
+
+@router.get("/runs/{run_id}/events")
+def events(
+    run_id: str,
+    session_id: Session,
+    service: Service,
+    after_sequence: int = Query(0, ge=0),
+    limit: int = Query(200, ge=1, le=200),
+):
+    return service.run_events(
+        session_id, run_id, after_sequence=after_sequence, limit=limit
+    )
+
+
+@router.post("/runs/{run_id}/cancel")
+async def cancel(run_id: str, request: Request, session_id: Session, service: Service):
+    await body(request, EmptyNativeRequest, max_bytes=64 * 1024, empty=True)
+    return await service.cancel_run(session_id, run_id)
+
+
+@router.get("/runs/{run_id}/artifacts/{artifact_id}")
+def artifact(run_id: str, artifact_id: str, session_id: Session, service: Service):
+    record, content = service.run_artifact(session_id, run_id, artifact_id)
+    # Download metadata never becomes a filesystem path or active inline page.
+    filename = quote(record["filename"], safe="")
+    return Response(
+        content,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f"attachment; filename*=UTF-8''{filename}",
+            "X-Content-SHA256": record["content_digest"],
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.get("/{process_id}/runs")
+def history(
+    process_id: str,
+    session_id: Session,
+    service: Service,
+    limit: int = Query(25, ge=1, le=100),
+    cursor: str | None = Query(None, max_length=512),
+):
+    return service.run_history(session_id, process_id, limit=limit, cursor=cursor)
+
+
+@router.post("/{process_id}/runs", status_code=202)
+async def start_run(
+    process_id: str, request: Request, session_id: Session, service: Service
+):
+    payload = await body(request, StartNativeRun)
+    return await service.start_run(
+        session_id,
+        process_id,
+        expected_token=payload.expected_token,
+        request_id=payload.request_id,
+        bindings={key: value.model_dump() for key, value in payload.bindings.items()},
+        derived_from_run_id=payload.derived_from_run_id,
+        timeout_seconds=payload.timeout_seconds,
+        actor=getattr(request.state, "principal_role", "local-operator"),
+        trace_id=trace_id(request),
     )
 
 

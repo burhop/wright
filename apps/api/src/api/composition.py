@@ -368,8 +368,35 @@ def native_process_service():
     return NativeProcessService(
         NativeProcessRepository(DATABASE_PATH),
         workspace_service().require_safe_session_workspace,
-        Path(wright_engineering.__file__).resolve().parent / "static" / "native-processes",
+        Path(wright_engineering.__file__).resolve().parent
+        / "static"
+        / "native-processes",
     )
+
+
+def build_native_process_service(
+    db_path: str, gateway: GatewayService, workspace: WorkspaceService | None = None
+):
+    """Compose one native executor using the already configured shared gateway."""
+    import wright_engineering
+    from data_vault.native_process_runs import NativeRunRepository
+    from workspace_service.native_process_service import NativeProcessService
+    from workspace_service.native_process_runtime import NativeRuntime
+    from workspace_service.native_process_mcp import NativeMcpAdapter
+
+    managed = workspace or workspace_service()
+    repository = NativeRunRepository(db_path)
+    service = NativeProcessService(
+        repository,
+        managed.require_safe_session_workspace,
+        Path(wright_engineering.__file__).resolve().parent
+        / "static"
+        / "native-processes",
+    )
+    adapter = NativeMcpAdapter(gateway, managed.require_safe_session_workspace)
+    runtime = NativeRuntime(repository, service.scope, mcp=adapter)
+    service.configure_execution(runtime, adapter)
+    return service
 
 
 def build_engineering_model_application(db_path: str) -> EngineeringModelService:
@@ -386,6 +413,7 @@ def build_engineering_model_application(db_path: str) -> EngineeringModelService
 async def close_application_services() -> None:
     program_status_reader.cache_clear()
     process_definition_reader.cache_clear()
+    native_process_service.cache_clear()
     if support_diagnostic_application.cache_info().currsize:
         support_diagnostic_application().invalidate_all()
         support_diagnostic_application.cache_clear()
