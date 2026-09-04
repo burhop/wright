@@ -3478,11 +3478,23 @@ def validate_f01b_lease_checkpoint_correction(
                         },
                     )
                 )
+                # The old correction remains bound to revision 76. A later
+                # native lease is independently governed by its standing scope
+                # and the ordinary lease checks; it cannot rewrite that proof.
+                native_successor = (
+                    successor_state.get("revision", 0) >= 93
+                    and successor_state.get("current_feature") == "EPP-N01"
+                    and current_lease.get("feature_id") == "EPP-N01"
+                    and successor_state.get("approval", {}).get("authority_kind")
+                    == "standing_user_scope"
+                    and successor_state.get("approval", {}).get("record")
+                    == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+                )
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
                         successor_state.get("revision", 0) > 76,
-                        same_f01b_lease or exact_f02_successor,
+                        same_f01b_lease or exact_f02_successor or native_successor,
                     )
                 )
             else:
