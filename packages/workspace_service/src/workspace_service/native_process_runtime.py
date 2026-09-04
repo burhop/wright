@@ -9,7 +9,7 @@ from decimal import DecimalException
 from pathlib import Path
 from typing import Any, Protocol
 
-from core.canonical_json import strict_json_loads
+from core.native_runtime_json import runtime_json_loads
 from core.logging import get_logger
 from core.native_process import (
     Finding,
@@ -339,10 +339,11 @@ class NativeRuntime:
             if not self.repository.start_step(workspace_id, run_id, identity, inputs):
                 return
             promoted: list[dict[str, Any]] = []
+            abandoned = threading.Event()
             try:
                 if step["operation"] == "mcp.call@1":
                     assert self.mcp is not None
-                    arguments = strict_json_loads(
+                    arguments = runtime_json_loads(
                         _text(keyed_inputs["arguments"]).encode("utf-8"),
                         max_bytes=16 * 1024,
                     )
@@ -382,6 +383,7 @@ class NativeRuntime:
                         keyed_inputs,
                         store,
                         promoted,
+                        abandoned,
                     )
                 outputs = {
                     port["id"]: output_values[port["key"]]
@@ -395,14 +397,25 @@ class NativeRuntime:
                 values.update(outputs)
                 promoted.clear()
             finally:
-                # The synchronous worker also checks terminal state after any
-                # late promotion. A cancelled await can never index its output.
+                # Publish abandonment before inspecting the list. A worker may
+                # promote after this finally but before the terminal DB commit.
+                # Append-before-check in the worker covers either ordering.
+                abandoned.set()
                 for record in promoted:
-                    store.discard_unindexed(run_id, record)
+                    self._discard(workspace_id, run_id, store, record)
         active_step[0] = None
 
     def _local_operation(
-        self, workspace_id, run_id, snapshot, step, ports, inputs, store, promoted
+        self,
+        workspace_id,
+        run_id,
+        snapshot,
+        step,
+        ports,
+        inputs,
+        store,
+        promoted,
+        abandoned,
     ):
         operation, config = step["operation"], step["config"]
         if operation in _PURE:
@@ -412,10 +425,6 @@ class NativeRuntime:
                 workspace_id, run_id, inputs["artifact"]["artifact_id"]
             )
             content = store.read(record)
-            if len(content) > 4000:
-                raise OperationFailure(
-                    "TEXT_LIMIT", "Text artifact exceeds 4,000 UTF-8 bytes."
-                )
             try:
                 return {"text": _text(content.decode("utf-8", errors="strict"))}
             except UnicodeError as error:
@@ -455,11 +464,9 @@ class NativeRuntime:
                 provenance=provenance,
             )
             promoted.append(record)
-            if (
-                self.repository.summary(workspace_id, run_id)["state"]
-                in TERMINAL_STATES
-            ):
-                store.discard_unindexed(run_id, record)
+            state = self.repository.summary(workspace_id, run_id)["state"]
+            if abandoned.is_set() or state in TERMINAL_STATES:
+                self._discard(workspace_id, run_id, store, record)
             return {
                 output["key"]: {
                     key: record[key]
@@ -469,6 +476,12 @@ class NativeRuntime:
         raise OperationFailure(
             "OPERATION_UNBOUND", "The operation version is not installed."
         )
+
+    def _discard(self, workspace_id, run_id, store, record):
+        if not store.discard_unindexed(run_id, record):
+            self.repository.record_cleanup_residue(
+                workspace_id, run_id, record["artifact_id"]
+            )
 
     async def cancel(self, workspace_id: str, run_id: str) -> dict[str, Any]:
         self.ensure_owner()

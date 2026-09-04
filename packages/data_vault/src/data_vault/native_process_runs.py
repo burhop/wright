@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import base64
+import re
 import sqlite3
 import uuid
 from typing import Any
 
 from core.canonical_json import canonical_json_bytes, strict_json_loads
 from core.native_process import topological_order
+from core.native_runtime_json import runtime_json_bytes, runtime_json_loads
 from core.tracing import traced
 
 from .native_process_repository import (
@@ -28,20 +30,107 @@ MAX_VALUE_BYTES = 1024 * 1024
 
 def _decode(raw: bytes | None):
     return (
-        strict_json_loads(raw, max_bytes=MAX_VALUE_BYTES) if raw is not None else None
+        runtime_json_loads(raw, max_bytes=MAX_VALUE_BYTES) if raw is not None else None
     )
 
 
 def _encode(value: Any) -> bytes:
-    raw = canonical_json_bytes(value)
-    if len(raw) > MAX_VALUE_BYTES:
+    try:
+        return runtime_json_bytes(value, max_bytes=MAX_VALUE_BYTES)
+    except (ValueError, UnicodeError) as error:
         raise NativeRepositoryError(
-            "NATIVE_LIMIT", "Recorded native values exceed 1 MiB."
-        )
-    return raw
+            "NATIVE_LIMIT", "Recorded native values must be valid bounded JSON."
+        ) from error
 
 
 class NativeRunRepository(NativeProcessRepository):
+    @staticmethod
+    def _run_fingerprint(
+        workspace_id: str,
+        process_id: str,
+        *,
+        session_id: str,
+        expected_token: str,
+        request_id: str,
+        bindings: dict[str, Any],
+        timeout_seconds: int,
+        derived_from_run_id: str | None,
+        actor: str,
+        trace_id: str,
+    ) -> str:
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", request_id):
+            raise NativeRepositoryError(
+                "NATIVE_INVALID", "Request identity is invalid."
+            )
+        if not re.fullmatch(r"[0-9a-f]{64}", expected_token):
+            raise NativeRepositoryError("NATIVE_INVALID", "Expected token is invalid.")
+        if type(timeout_seconds) is not int or not 1 <= timeout_seconds <= 300:
+            raise NativeRepositoryError(
+                "NATIVE_INVALID", "Run deadline must be between 1 and 300 seconds."
+            )
+        return fingerprint(
+            {
+                "operation": "run",
+                "workspace_id": workspace_id,
+                "process_id": process_id,
+                "expected_token": expected_token,
+                "bindings": bindings,
+                "timeout_seconds": timeout_seconds,
+                "derived_from_run_id": derived_from_run_id,
+                "session_id": session_id,
+                "actor": actor,
+            }
+        )
+
+    def replay_run(
+        self, workspace_id: str, process_id: str, **request
+    ) -> dict[str, Any] | None:
+        """Look up exact submission before current-definition preflight.
+
+        create_run repeats this lookup inside its write transaction. A service
+        may safely return the original submission after later saves or startup.
+        """
+        digest = self._run_fingerprint(workspace_id, process_id, **request)
+        with connect_state_db(self.db_path, read_only=True) as connection:
+            return self._replay(connection, workspace_id, request["request_id"], digest)
+
+    def indexed_artifact_keys(self, workspace_id: str) -> frozenset[str]:
+        with connect_state_db(self.db_path, read_only=True) as connection:
+            return frozenset(
+                row[0]
+                for row in connection.execute(
+                    "SELECT storage_key FROM native_process_artifacts WHERE workspace_id=?",
+                    (workspace_id,),
+                )
+            )
+
+    def artifact_scopes(self) -> list[dict[str, str]]:
+        with connect_state_db(self.db_path, read_only=True) as connection:
+            return [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT DISTINCT workspace_id,session_id FROM native_process_runs ORDER BY workspace_id,session_id"
+                )
+            ]
+
+    def record_cleanup_residue(
+        self, workspace_id: str, run_id: str, artifact_id: str
+    ) -> None:
+        """Retain a safe diagnostic if bounded cleanup cannot remove a leaf."""
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = self._row(connection, workspace_id, run_id)
+            self._event(
+                connection,
+                row,
+                "artifact.cleanup_residue",
+                {
+                    "artifact_id": artifact_id,
+                    "message": "An unindexed generated artifact could not be removed; owner startup reconciliation will retry.",
+                },
+                utc_now(),
+            )
+
     @staticmethod
     def _row(connection: sqlite3.Connection, workspace_id: str, run_id: str):
         row = connection.execute(
@@ -71,7 +160,7 @@ class NativeRunRepository(NativeProcessRepository):
 
     @staticmethod
     def _event(connection, row, kind: str, payload: dict[str, Any], timestamp: str):
-        raw = canonical_json_bytes(payload)
+        raw = _encode(payload)
         if len(raw) > 64 * 1024:
             raise NativeRepositoryError("NATIVE_LIMIT", "Run event exceeds 64 KiB.")
         sequence = connection.execute(
@@ -107,22 +196,17 @@ class NativeRunRepository(NativeProcessRepository):
         actor: str,
         trace_id: str,
     ) -> dict[str, Any]:
-        if type(timeout_seconds) is not int or not 1 <= timeout_seconds <= 300:
-            raise NativeRepositoryError(
-                "NATIVE_INVALID", "Run deadline must be between 1 and 300 seconds."
-            )
-        digest = fingerprint(
-            {
-                "operation": "run",
-                "workspace_id": workspace_id,
-                "process_id": process_id,
-                "expected_token": expected_token,
-                "bindings": bindings,
-                "timeout_seconds": timeout_seconds,
-                "derived_from_run_id": derived_from_run_id,
-                "session_id": session_id,
-                "actor": actor,
-            }
+        digest = self._run_fingerprint(
+            workspace_id,
+            process_id,
+            session_id=session_id,
+            expected_token=expected_token,
+            request_id=request_id,
+            bindings=bindings,
+            timeout_seconds=timeout_seconds,
+            derived_from_run_id=derived_from_run_id,
+            actor=actor,
+            trace_id=trace_id,
         )
         with connect_state_db(self.db_path) as connection:
             connection.execute("BEGIN IMMEDIATE")

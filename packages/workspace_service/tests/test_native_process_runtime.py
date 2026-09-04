@@ -4,13 +4,14 @@ import asyncio
 import hashlib
 import json
 import time
+import threading
 import uuid
 from pathlib import Path
 
 import pytest
 import pytest_asyncio
 
-from core.native_process import validate_definition
+from core.native_process import validate_definition, language_contract
 from data_vault.migrations import upgrade_database
 from data_vault.native_process_artifacts import NativeArtifactStore
 from data_vault.native_process_runs import NativeRunRepository, TERMINAL_STATES
@@ -301,3 +302,163 @@ async def test_mcp_runtime_deadline_and_trace_adapter_contract(runtime, tool_tim
     else:
         assert result["state"] == "succeeded"
         assert result["steps"][-1]["outputs"] == {"tool-step-result": '{"value":1.25}'}
+
+
+def flow(operations):
+    data = {
+        "format": "wright-native-process",
+        "schema_version": "1.0.0",
+        "id": "review-process",
+        "title": "Independent runtime review",
+        "steps": [],
+        "ports": [],
+        "connections": [],
+        "outputs": [],
+    }
+    previous = None
+    for index, (operation, config) in enumerate(operations):
+        identity = f"step-{index}"
+        data["steps"].append(
+            {
+                "id": identity,
+                "title": identity,
+                "operation": operation,
+                "config": config,
+            }
+        )
+        descriptor = next(
+            item
+            for item in language_contract()["operations"]
+            if item["id"] == operation
+        )
+        for direction in ("input", "output"):
+            for port in descriptor[direction + "s"]:
+                exact = identity + "-" + port["key"]
+                data["ports"].append(
+                    {
+                        **port,
+                        "id": exact,
+                        "step_id": identity,
+                        "label": port["key"],
+                        "direction": direction,
+                    }
+                )
+                if direction == "input" and previous:
+                    data["connections"].append(
+                        {
+                            "id": f"edge-{index}",
+                            "source_port_id": previous,
+                            "target_port_id": exact,
+                        }
+                    )
+                elif direction == "output":
+                    previous = exact
+    return data
+
+
+@pytest.mark.asyncio
+async def test_valid_unicode_write_read_roundtrip(runtime):
+    _, repository, _ = runtime
+    data = flow(
+        [
+            ("text.input@1", {"value": "é" * 3000}),
+            ("artifact.write-text@1", {"filename": "review.txt"}),
+            ("artifact.read-text@1", {}),
+        ]
+    )
+    _, run_id = submit(runtime, data)
+    result = await terminal(repository, run_id)
+    assert result["state"] == "succeeded", result["reason"]
+
+
+@pytest.mark.asyncio
+async def test_valid_fractional_mcp_arguments_reach_adapter(runtime):
+    owner, repository, _ = runtime
+    calls = []
+
+    class Adapter:
+        async def call(self, *args):
+            calls.append(args)
+            return "ok"
+
+    owner.mcp = Adapter()
+    data = flow([("text.input@1", {"value": '{"value":0.5}'}), ("mcp.call@1", {})])
+    _, run_id = submit(runtime, data, bindings={"step-1": {"server_id": "review"}})
+    result = await terminal(repository, run_id)
+    assert result["state"] == "succeeded", result["reason"]
+    assert calls[0][2] == {"value": 0.5}
+
+
+@pytest.mark.asyncio
+async def test_valid_nfc_input_strings_may_join_to_decomposed_text(runtime):
+    _, repository, _ = runtime
+    data = flow(
+        [
+            ("text.input@1", {"value": "e"}),
+            ("text.input@1", {"value": "\u0301"}),
+            ("text.join@1", {}),
+        ]
+    )
+    data["connections"] = [
+        {
+            "id": "edge-first",
+            "source_port_id": "step-0-value",
+            "target_port_id": "step-2-first",
+        },
+        {
+            "id": "edge-second",
+            "source_port_id": "step-1-value",
+            "target_port_id": "step-2-second",
+        },
+    ]
+    _, run_id = submit(runtime, data)
+    result = await terminal(repository, run_id)
+    assert result["state"] == "succeeded", result["reason"]
+    assert result["steps"][-1]["outputs"] == {"step-2-text": "e\u0301"}
+
+
+@pytest.mark.asyncio
+async def test_cancelled_promotion_after_cleanup_before_terminal_is_removed(
+    runtime, monkeypatch
+):
+    owner, repository, workspace = runtime
+    promote_entered = threading.Event()
+    release_promote = threading.Event()
+    checked_state = threading.Event()
+    original_promote = NativeArtifactStore.promote
+    original_finish = repository.finish
+    original_summary = repository.summary
+
+    def paused_promote(self, *args, **kwargs):
+        promote_entered.set()
+        assert release_promote.wait(4)
+        return original_promote(self, *args, **kwargs)
+
+    def observe_summary(*args, **kwargs):
+        result = original_summary(*args, **kwargs)
+        if threading.current_thread() is not threading.main_thread():
+            checked_state.set()
+        return result
+
+    def paused_finish(*args, **kwargs):
+        if args[2] == "timed_out":
+            # _execute's finally has already observed its empty promotion list;
+            # the worker can finish while the terminal transaction is pending.
+            release_promote.set()
+            assert checked_state.wait(4)
+        return original_finish(*args, **kwargs)
+
+    monkeypatch.setattr(NativeArtifactStore, "promote", paused_promote)
+    monkeypatch.setattr(repository, "summary", observe_summary)
+    monkeypatch.setattr(repository, "finish", paused_finish)
+    data = flow(
+        [
+            ("text.input@1", {"value": "review"}),
+            ("artifact.write-text@1", {"filename": "review.txt"}),
+        ]
+    )
+    _, run_id = submit(runtime, data, timeout=1)
+    result = await terminal(repository, run_id)
+    assert result["state"] == "timed_out" and result["artifacts"] == []
+    await asyncio.sleep(0.1)
+    assert list((workspace / ".wright/native/artifacts").glob("*/*.bin")) == []

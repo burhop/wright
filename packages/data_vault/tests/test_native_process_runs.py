@@ -88,6 +88,26 @@ def test_snapshot_replay_and_terminal_evidence_are_immutable(runs):
     )
     assert repository.inspect("one", run_id)["snapshot"] == observed["snapshot"]
     assert create(runs) == queued
+    assert (
+        repository.replay_run(
+            "one",
+            saved["definition"]["id"],
+            session_id="session-one",
+            expected_token=saved["token"],
+            request_id="run-request",
+            bindings={},
+            timeout_seconds=60,
+            derived_from_run_id=None,
+            actor="engineer",
+            trace_id="new-transport-trace",
+        )
+        == queued
+    )
+    assert repository.artifact_scopes() == [
+        {"workspace_id": "one", "session_id": "session-one"}
+    ]
+    assert repository.indexed_artifact_keys("one") == frozenset()
+    assert repository.indexed_artifact_keys("two") == frozenset()
     assert repository.start("one", run_id)
     for step in observed["steps"]:
         assert repository.start_step("one", run_id, step["step_id"], {})
