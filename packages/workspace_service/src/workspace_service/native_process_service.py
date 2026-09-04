@@ -14,7 +14,7 @@ from core.native_process import (
     readiness,
     validate_definition,
 )
-from core.tracing import traced
+from core.native_tracing import traced_native
 from data_vault.native_process_repository import NativeProcessRepository
 
 from .errors import WorkspaceNotFoundError, WorkspaceServiceError
@@ -79,12 +79,12 @@ class NativeProcessService:
                 "Select an available managed workspace.",
             ) from exc
 
-    @traced("native.contract.read")
+    @traced_native("native.contract.read")
     def contract(self, session_id: str) -> dict[str, Any]:
         self.scope(session_id)
         return language_contract()
 
-    @traced("native.examples.read")
+    @traced_native("native.examples.read")
     def examples(self) -> dict[str, Any]:
         examples = []
         for name in ("concept-brief", "mass-check", "package-review"):
@@ -102,19 +102,19 @@ class NativeProcessService:
             )
         return {"examples": examples}
 
-    @traced("native.document.list")
+    @traced_native("native.document.list")
     def list_documents(
         self, session_id: str, *, limit: int = 25, cursor: str | None = None
     ) -> dict[str, Any]:
         workspace_id, _ = self.scope(session_id)
         return self.repository.list(workspace_id, limit=limit, cursor=cursor)
 
-    @traced("native.document.read")
+    @traced_native("native.document.read")
     def get_document(self, session_id: str, process_id: str) -> dict[str, Any]:
         workspace_id, _ = self.scope(session_id)
         return self.repository.get(workspace_id, process_id)
 
-    @traced("native.document.save")
+    @traced_native("native.document.save")
     def save_document(
         self,
         session_id: str,
@@ -143,7 +143,7 @@ class NativeProcessService:
             trace_id=trace_id,
         )
 
-    @traced("native.document.check")
+    @traced_native("native.document.check")
     def check(
         self,
         session_id: str,

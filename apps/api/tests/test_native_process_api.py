@@ -7,10 +7,16 @@ from types import SimpleNamespace
 import pytest
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.trace import StatusCode
 
+from api.middleware import tracing as request_tracing
 from api.middleware.tracing import TracingMiddleware
 from api.routers.native_process import router
 from api.security import ControlPlaneSecurityMiddleware, SecuritySettings
+from core import native_tracing, tracing
 from core.native_process import language_contract
 from data_vault.migrations import upgrade_database
 from data_vault.native_process_repository import NativeProcessRepository
@@ -225,15 +231,43 @@ def test_permission_session_and_scope_checks(service):
 
 
 def test_internal_error_does_not_disclose_path_or_payload(service, monkeypatch):
-    def fail(*args, **kwargs):
-        raise RuntimeError("C:/private/secret-token")
+    provider = TracerProvider()
+    exporter = InMemorySpanExporter()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    tracer = provider.get_tracer("native-api-test")
+    for module in (native_tracing, tracing, request_tracing):
+        monkeypatch.setattr(module, "_tracer", tracer)
+    sentinel = "NATIVE_API_TEST_PRIVATE_PAYLOAD"
 
-    monkeypatch.setattr(service.repository, "save", fail)
-    with client_for(service) as client:
-        failed = client.post(BASE + "?session_id=session-one", json=payload())
+    def fail(*args, **kwargs):
+        try:
+            raise ValueError("api_key=" + sentinel)
+        except ValueError as cause:
+            raise RuntimeError("C:/private/" + sentinel) from cause
+
+    # Fail inside the real transaction so both repository and service wrappers
+    # see the exception before the HTTP transport sanitizes its response.
+    monkeypatch.setattr(service.repository, "_remember", fail)
+    try:
+        with client_for(service) as client:
+            failed = client.post(BASE + "?session_id=session-one", json=payload())
+        finished = exporter.get_finished_spans()
+    finally:
+        provider.shutdown()
     assert failed.status_code == 500
     assert failed.json()["code"] == "NATIVE_INTERNAL"
-    assert "private" not in failed.text and "secret-token" not in failed.text
+    assert "private" not in failed.text and sentinel not in failed.text
+    native_spans = [s for s in finished if s.name == "native.document.save"]
+    assert len(native_spans) == 2
+    for span in native_spans:
+        assert span.status.status_code == StatusCode.ERROR
+        assert span.attributes["error.type"] == "RuntimeError"
+        assert span.status.description is None
+        assert not span.events
+    assert all(sentinel not in span.to_json() for span in finished)
+    request_span = next(s for s in finished if "http.method" in s.attributes)
+    assert all(s.context.trace_id == request_span.context.trace_id for s in native_spans)
+    assert service.list_documents("session-one")["documents"] == []
 
 
 def test_file_preflight_never_accepts_unavailable_input_or_caller_asserted_tool_binding(

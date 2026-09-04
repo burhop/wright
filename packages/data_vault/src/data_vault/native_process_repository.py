@@ -12,7 +12,7 @@ from typing import Any
 from core.canonical_json import canonical_json_bytes, strict_json_loads
 from core.logging import get_logger
 from core.native_process import NativeDocument, validate_presentation
-from core.tracing import traced
+from core.native_tracing import traced_native
 
 from .state_store import connect_state_db
 
@@ -76,7 +76,7 @@ class NativeProcessRepository:
             (workspace_id, request_id, digest, result, timestamp, trace_id),
         )
 
-    @traced("native.document.save")
+    @traced_native("native.document.save")
     def save(
         self,
         workspace_id: str,
@@ -206,7 +206,7 @@ class NativeProcessRepository:
         )
         return envelope
 
-    @traced("native.document.read")
+    @traced_native("native.document.read")
     def get(
         self, workspace_id: str, process_id: str, *, previous: bool = False
     ) -> dict[str, Any]:
@@ -222,7 +222,7 @@ class NativeProcessRepository:
             )
         return decode_envelope(row[0])
 
-    @traced("native.document.list")
+    @traced_native("native.document.list")
     def list(
         self, workspace_id: str, *, limit: int = 25, cursor: str | None = None
     ) -> dict[str, Any]:
