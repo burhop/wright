@@ -4,6 +4,7 @@ import {
   nativeProcessApi,
   NativeProcessError,
   type NativeCheck,
+  type NativeBinding,
   type NativeContract,
   type NativeDocument,
   type NativeExample,
@@ -24,6 +25,7 @@ import {
 import { NativeCanvas } from "./NativeCanvas";
 import { NativeInspector, type StepBuffer } from "./NativeInspector";
 import { NativeConfirmDialog } from "./NativeConfirmDialog";
+import { NativeRunPanel } from "./NativeRunPanel";
 
 interface DraftCheckpoint {
   version: 1;
@@ -66,6 +68,7 @@ export function NativeEditor({
     future: [],
   }));
   const [saved, setSaved] = useState<SavedProcess | null>(null);
+  const [bindings, setBindings] = useState<Record<string, NativeBinding>>({});
   const [baseline, setBaseline] = useState(() =>
     canonicalJson(history.present),
   );
@@ -103,7 +106,16 @@ export function NativeEditor({
     Object.keys(buffers).length > 0 ||
     title !== document.definition.title;
   const semantic = canonicalJson(document.definition);
-  const currentCheck = check?.semantic === semantic ? check.result : null;
+  const currentBindings = Object.fromEntries(
+    document.definition.steps
+      .filter((step) => step.operation === "mcp.call@1" && bindings[step.id])
+      .map((step) => [step.id, bindings[step.id]]),
+  );
+  const checkIdentity = canonicalJson({
+    definition: document.definition,
+    bindings: currentBindings,
+  });
+  const currentCheck = check?.semantic === checkIdentity ? check.result : null;
   const hasBuffers =
     Object.keys(buffers).length > 0 || title !== document.definition.title;
   useEffect(() => {
@@ -259,6 +271,7 @@ export function NativeEditor({
     validateDocument(editable, contract);
     setHistory({ present: editable, past: [], future: [] });
     setSaved(envelope);
+    setBindings({});
     setBaseline(envelope ? canonicalJson(editable) : "");
     setBuffers({});
     setTitle(next.definition.title);
@@ -401,8 +414,10 @@ export function NativeEditor({
       const result = await nativeProcessApi.check(
         sessionId,
         document.definition,
+        undefined,
+        currentBindings,
       );
-      setCheck({ result, semantic });
+      setCheck({ result, semantic: checkIdentity });
       setStatus(
         result.ready
           ? "The service reports this definition ready. No execution has occurred."
@@ -823,6 +838,31 @@ export function NativeEditor({
               />
             </div>
           </fieldset>
+          <NativeRunPanel
+            key={document.definition.id}
+            sessionId={sessionId}
+            saved={saved}
+            definition={document.definition}
+            dirty={dirty}
+            authoringBusy={busy}
+            bindings={bindings}
+            setBindings={setBindings}
+            inspectStep={(id) => {
+              setSelected(id);
+              requestAnimationFrame(() => {
+                window.document
+                  .querySelector<HTMLElement>(
+                    '[data-testid="native-inspector"]',
+                  )
+                  ?.scrollIntoView({ block: "start" });
+                window.document
+                  .querySelector<HTMLInputElement>(
+                    '[data-testid="native-step-title"]',
+                  )
+                  ?.focus();
+              });
+            }}
+          />
           {currentCheck && (
             <section
               className="native-check-results"
@@ -857,8 +897,8 @@ export function NativeEditor({
           )}
           {check && !currentCheck && (
             <p role="status">
-              The definition changed after its last readiness check. Check it
-              again.
+              The definition or its tool bindings changed after its last
+              readiness check. Check it again.
             </p>
           )}
           <details className="native-source">
@@ -902,13 +942,6 @@ export function NativeEditor({
               </p>
             )}
           </details>
-          <p
-            className="native-execution-boundary"
-            data-testid="native-execution-boundary"
-          >
-            Run inspection is not available in this authoring increment.
-            Readiness checks and declared outputs are not execution evidence.
-          </p>
         </>
       )}
       {pendingAction && (

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
@@ -114,6 +114,8 @@ async function mockService(page: Page) {
       if (path.endsWith("/contract")) return route.fulfill({ json: contract });
       if (path.endsWith("/examples"))
         return route.fulfill({ json: { examples } });
+      if (path.endsWith("/runs") && request.method() === "GET")
+        return route.fulfill({ json: { runs: [], next_cursor: null } });
       if (path.endsWith("/check"))
         return route.fulfill({
           json: { structurally_valid: true, ready: true, findings: [] },
@@ -210,6 +212,174 @@ async function mockService(page: Page) {
 }
 async function source(page: Page) {
   return JSON.parse(await page.getByTestId("native-source").inputValue());
+}
+async function mockRunService(
+  page: Page,
+  savedRecords: Map<string, any>,
+  initial: "failed" | "succeeded" | "running" = "failed",
+) {
+  const runs = new Map<string, any>(),
+    submissions: any[] = [];
+  const content = Buffer.from("Verified fixture artifact\n", "utf8");
+  const digest = createHash("sha256").update(content).digest("hex");
+  let tamper = false,
+    unavailable = false,
+    cancellations = 0;
+  await page.route("**/api/native-processes/**", async (route) => {
+    const request = route.request(),
+      path = new URL(request.url()).pathname;
+    const historyMatch = /^\/api\/native-processes\/([^/]+)\/runs$/.exec(path);
+    if (historyMatch) {
+      if (request.method() === "GET")
+        return route.fulfill({
+          json: {
+            runs: [...runs.values()]
+              .filter((run) => run.process_id === historyMatch[1])
+              .reverse(),
+            next_cursor: null,
+          },
+        });
+      const body = request.postDataJSON(),
+        saved = savedRecords.get(historyMatch[1]);
+      submissions.push(body);
+      expect(body.expected_token).toBe(saved.token);
+      const id = `run-${runs.size + 1}`,
+        state = body.derived_from_run_id ? "succeeded" : initial;
+      const reason = {
+        code: "NATIVE_ASSERTION_FAILED",
+        message: "Fixture assertion did not match.",
+        recovery: "Correct the terms, save, and rerun.",
+        step_id: "brief-check",
+        port_id: null,
+      };
+      const run = {
+        run_id: id,
+        process_id: saved.definition.id,
+        state,
+        semantic_digest: saved.semantic_digest,
+        created_at: "2026-09-04T12:00:00Z",
+        started_at: "2026-09-04T12:00:01Z",
+        completed_at: state === "running" ? null : "2026-09-04T12:00:02Z",
+        derived_from_run_id: body.derived_from_run_id,
+        reason: state === "failed" ? reason : null,
+        trace_id: `trace-${id}`,
+        snapshot: {
+          definition: saved.definition,
+          revision: saved.revision,
+          token: saved.token,
+          semantic_digest: saved.semantic_digest,
+        },
+        bindings: body.bindings,
+        actor: "simulated-engineer",
+        timeout_seconds: body.timeout_seconds,
+        steps: saved.definition.steps.map((step: any) => ({
+          step_id: step.id,
+          operation: step.operation,
+          state:
+            state === "running"
+              ? "pending"
+              : state === "failed" && step.id === "brief-check"
+                ? "failed"
+                : state === "failed" && step.id === "brief-file"
+                  ? "blocked"
+                  : "succeeded",
+          started_at: null,
+          completed_at: null,
+          inputs: {},
+          outputs: {},
+          reason:
+            state === "failed" && step.id === "brief-check" ? reason : null,
+        })),
+        artifacts:
+          state === "succeeded"
+            ? [
+                {
+                  artifact_id: `artifact-${id}`,
+                  step_id: "brief-file",
+                  port_id: "brief-file-output-artifact",
+                  filename: "fixture-brief.md",
+                  content_digest: digest,
+                  size: content.length,
+                  media_type: "text/markdown",
+                  provenance: {
+                    operation: "artifact.write-text@1",
+                    semantic_digest: saved.semantic_digest,
+                    input_port: "brief-file-input-text",
+                    fixture_mode: "simulated_runtime",
+                  },
+                },
+              ]
+            : [],
+        last_sequence: 3,
+      };
+      runs.set(id, run);
+      return route.fulfill({
+        status: 202,
+        json: { run_id: id, state, semantic_digest: saved.semantic_digest },
+      });
+    }
+    const runMatch = /^\/api\/native-processes\/runs\/([^/]+)(.*)$/.exec(path);
+    if (!runMatch) return route.fallback();
+    const run = runs.get(runMatch[1]),
+      suffix = runMatch[2];
+    if (suffix === "/cancel") {
+      cancellations++;
+      run.state = "cancelled";
+      run.last_sequence++;
+      run.completed_at = "2026-09-04T12:00:03Z";
+      return route.fulfill({ json: run });
+    }
+    if (suffix.startsWith("/artifacts/")) {
+      const bytes = tamper
+        ? Buffer.concat([Buffer.from("X"), content.subarray(1)])
+        : content;
+      return route.fulfill({
+        body: bytes,
+        contentType: "text/markdown",
+        headers: {
+          "X-Content-SHA256": digest,
+          "Content-Disposition": 'attachment; filename="fixture-brief.md"',
+        },
+      });
+    }
+    if (suffix === "/events")
+      return route.fulfill({
+        json: {
+          events: [
+            {
+              sequence: 3,
+              occurred_at: "2026-09-04T12:00:02Z",
+              kind: "fixture_run_state",
+              payload: { state: run.state },
+              trace_id: run.trace_id,
+            },
+          ],
+          next_sequence: 3,
+        },
+      });
+    if (unavailable)
+      return route.fulfill({
+        status: 503,
+        json: {
+          code: "NATIVE_RUNTIME_BUSY",
+          message: "Simulated service unavailable.",
+          recovery: "Reconnect.",
+        },
+      });
+    return route.fulfill({ json: run });
+  });
+  return {
+    submissions,
+    content,
+    digest,
+    setTamper: () => {
+      tamper = true;
+    },
+    setUnavailable: (value: boolean) => {
+      unavailable = value;
+    },
+    cancellations: () => cancellations,
+  };
 }
 async function openExample(page: Page, id = "concept-brief") {
   await page.goto("/native-processes");
@@ -403,12 +573,127 @@ test.describe("Native authoring with a simulated service", () => {
       observations.push(Date.now() - started);
     }
     // Includes browser automation overhead; diagnostic, not an invented microbenchmark pass threshold.
+    const observationsPath = info.outputPath(
+      "25-step-warm-open-observations.json",
+    );
+    writeFileSync(
+      observationsPath,
+      JSON.stringify(
+        {
+          mode: "simulated_service_actual_browser",
+          milliseconds: observations,
+        },
+        null,
+        2,
+      ),
+    );
     await info.attach("25-step-warm-open-observations", {
-      body: JSON.stringify({
-        mode: "simulated_service_actual_browser",
-        milliseconds: observations,
-      }),
+      path: observationsPath,
       contentType: "application/json",
     });
+  });
+});
+
+test.describe("Native run inspection with a simulated runtime and actual browser bytes", () => {
+  test("fails, corrects, saves a linked rerun and verifies/downloads actual artifact bytes", async ({
+    page,
+  }, info) => {
+    const service = await mockService(page),
+      runtime = await mockRunService(page, service.records);
+    await openExample(page);
+    await expect(page.getByTestId("native-run-start")).toBeDisabled();
+    await page.getByTestId("native-save").click();
+    await expect(page.getByTestId("native-status")).toContainText(
+      "Saved revision",
+    );
+    await page.getByTestId("native-run-start").click();
+    await expect(page.getByTestId("native-run-state")).toHaveText("failed");
+    await expect(page.getByTestId("native-run-reason")).toContainText(
+      "Correct the terms",
+    );
+    await page.getByTestId("native-correct-brief-check").click();
+    await page
+      .getByTestId("native-config-terms")
+      .fill("Verified fixture artifact");
+    await page.getByTestId("native-apply-step").click();
+    await expect(page.getByTestId("native-run-derived")).toBeDisabled();
+    await page.getByTestId("native-save").click();
+    await expect(page.getByTestId("native-status")).toContainText(
+      "Saved revision 2",
+    );
+    await page.getByTestId("native-run-derived").click();
+    await expect(page.getByTestId("native-run-state")).toHaveText("succeeded");
+    expect(runtime.submissions[1].derived_from_run_id).toBe("run-1");
+    await page.getByTestId("native-inspect-artifact-artifact-run-2").click();
+    await expect(
+      page.getByTestId("native-artifact-content-artifact-run-2"),
+    ).toHaveValue(runtime.content.toString("utf8"));
+    await page.getByTestId("native-provenance-artifact-run-2").click();
+    await expect(
+      page.getByTestId("native-artifact-artifact-run-2"),
+    ).toContainText("simulated_runtime");
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByTestId("native-download-artifact-run-2").click();
+    const download = await downloadPromise,
+      bytes = readFileSync((await download.path())!);
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+      runtime.digest,
+    );
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="native-run-panel"]')
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+    await page
+      .getByTestId("native-artifact-artifact-run-2")
+      .screenshot({ path: info.outputPath("verified-artifact.png") });
+  });
+  test("rejects altered artifact bytes without exposing a preview or download", async ({
+    page,
+  }) => {
+    const service = await mockService(page),
+      runtime = await mockRunService(page, service.records, "succeeded");
+    await openExample(page);
+    await page.getByTestId("native-save").click();
+    await expect(page.getByTestId("native-status")).toContainText(
+      "Saved revision",
+    );
+    await page.getByTestId("native-run-start").click();
+    await expect(page.getByTestId("native-run-state")).toHaveText("succeeded");
+    runtime.setTamper();
+    await page.getByTestId("native-inspect-artifact-artifact-run-1").click();
+    await expect(
+      page.getByTestId("native-artifact-artifact-run-1"),
+    ).toContainText("Artifact digest does not match");
+    await expect(
+      page.getByTestId("native-download-artifact-run-1"),
+    ).toHaveCount(0);
+    await expect(
+      page.getByTestId("native-artifact-content-artifact-run-1"),
+    ).toHaveCount(0);
+  });
+  test("reconnects to a retained running snapshot and cancels through the service", async ({
+    page,
+  }) => {
+    const service = await mockService(page),
+      runtime = await mockRunService(page, service.records, "running");
+    await openExample(page);
+    await page.getByTestId("native-save").click();
+    await expect(page.getByTestId("native-status")).toContainText(
+      "Saved revision",
+    );
+    await page.getByTestId("native-run-start").click();
+    await expect(page.getByTestId("native-run-state")).toHaveText("running");
+    runtime.setUnavailable(true);
+    await page.getByTestId("native-run-refresh").click();
+    await expect(page.getByTestId("native-run-disconnected")).toBeVisible();
+    await expect(page.getByTestId("native-run-state")).toHaveText("running");
+    runtime.setUnavailable(false);
+    await page.getByTestId("native-run-reconnect").click();
+    await expect(page.getByTestId("native-run-disconnected")).toHaveCount(0);
+    await page.getByTestId("native-run-cancel").click();
+    await expect(page.getByTestId("native-run-state")).toHaveText("cancelled");
+    expect(runtime.cancellations()).toBe(1);
+    await expect(page.getByTestId("native-run-cancel")).toHaveCount(0);
   });
 });

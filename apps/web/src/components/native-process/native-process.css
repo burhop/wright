@@ -280,6 +280,55 @@
 .native-dialog button {
   margin: var(--space-sm);
 }
+.native-runs {
+  margin-block: var(--space-xl);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+}
+.native-runs pre {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  max-height: 420px;
+  overflow: auto;
+}
+.native-runs details {
+  margin-block: var(--space-md);
+}
+.native-runs summary {
+  cursor: pointer;
+  padding-block: var(--space-sm);
+  min-height: 32px;
+}
+.native-runs label {
+  margin-block: var(--space-md);
+}
+.native-run-steps {
+  padding-left: var(--space-xl);
+}
+.native-run-steps > li {
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+.native-artifact {
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-block: var(--space-lg);
+  background: var(--color-surface);
+}
+.native-artifact a {
+  display: inline-block;
+  padding: var(--space-md);
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
 @media (max-width: 1000px) {
   .native-editor-grid {
     grid-template-columns: minmax(0, 1fr);

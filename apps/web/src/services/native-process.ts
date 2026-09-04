@@ -127,6 +127,89 @@ export interface NativeFailure {
   trace_id?: string;
   findings?: NativeFinding[];
 }
+export type NativeRunState =
+  | "queued"
+  | "running"
+  | "succeeded"
+  | "failed"
+  | "cancelled"
+  | "timed_out"
+  | "interrupted";
+export type NativeStepState =
+  "pending" | "running" | "succeeded" | "failed" | "blocked" | "cancelled";
+export interface NativeBinding {
+  server_id: string;
+  tool_name: string;
+  input_schema_digest: string;
+  output_schema_digest: string;
+}
+export interface NativeBindingOption extends NativeBinding {
+  title: string;
+  input_schema: Record<string, unknown>;
+  output_schema: Record<string, unknown> | null;
+}
+export interface NativeRunSummary {
+  run_id: string;
+  process_id: string;
+  state: NativeRunState;
+  semantic_digest: string;
+  created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
+  derived_from_run_id: string | null;
+  reason: NativeFinding | null;
+  trace_id: string;
+}
+export type NativeValue =
+  | string
+  | { value: string; unit: string }
+  | {
+      artifact_id: string;
+      content_digest: string;
+      size: number;
+      filename: string;
+    };
+export interface NativeRunStep {
+  step_id: string;
+  operation: string;
+  state: NativeStepState;
+  started_at: string | null;
+  completed_at: string | null;
+  inputs: Record<string, NativeValue> | null;
+  outputs: Record<string, NativeValue> | null;
+  reason: NativeFinding | null;
+}
+export interface NativeArtifact {
+  artifact_id: string;
+  step_id: string;
+  port_id: string;
+  filename: string;
+  content_digest: string;
+  size: number;
+  media_type: string;
+  provenance: Record<string, unknown>;
+}
+export interface NativeRun extends NativeRunSummary {
+  snapshot: {
+    definition: NativeDefinition;
+    revision: number;
+    token: string;
+    semantic_digest: string;
+  };
+  bindings: Record<string, NativeBinding>;
+  actor: string;
+  timeout_seconds: number;
+  steps: NativeRunStep[];
+  artifacts: NativeArtifact[];
+  last_sequence: number;
+}
+export interface NativeEvent {
+  sequence: number;
+  occurred_at: string;
+  kind: string;
+  payload: Record<string, unknown>;
+  trace_id: string;
+}
 export class NativeProcessError extends Error {
   readonly detail: NativeFailure;
   readonly status: number;
@@ -265,12 +348,187 @@ export const nativeProcessApi = {
     session: string,
     definition: NativeDefinition,
     signal?: AbortSignal,
+    bindings: Record<string, NativeBinding> = {},
   ) =>
     request<NativeCheck>(
       session,
       "/check",
       "POST",
-      { definition, bindings: {} },
+      { definition, bindings },
       signal,
     ),
 };
+
+export const nativeRunApi = {
+  history: (
+    session: string,
+    processId: string,
+    cursor?: string,
+    signal?: AbortSignal,
+  ) =>
+    request<{ runs: NativeRunSummary[]; next_cursor: string | null }>(
+      session,
+      `/${encodeURIComponent(processId)}/runs${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
+      "GET",
+      undefined,
+      signal,
+    ),
+  get: (session: string, runId: string, signal?: AbortSignal) =>
+    request<NativeRun>(
+      session,
+      `/runs/${encodeURIComponent(runId)}`,
+      "GET",
+      undefined,
+      signal,
+    ),
+  events: (
+    session: string,
+    runId: string,
+    after: number,
+    signal?: AbortSignal,
+  ) =>
+    request<{ events: NativeEvent[]; next_sequence: number }>(
+      session,
+      `/runs/${encodeURIComponent(runId)}/events?after_sequence=${after}&limit=200`,
+      "GET",
+      undefined,
+      signal,
+    ),
+  start: (
+    session: string,
+    processId: string,
+    expectedToken: string,
+    requestId: string,
+    bindings: Record<string, NativeBinding>,
+    timeoutSeconds: number,
+    derivedFrom: string | null,
+  ) =>
+    request<{ run_id: string; state: NativeRunState; semantic_digest: string }>(
+      session,
+      `/${encodeURIComponent(processId)}/runs`,
+      "POST",
+      {
+        expected_token: expectedToken,
+        request_id: requestId,
+        bindings,
+        timeout_seconds: timeoutSeconds,
+        derived_from_run_id: derivedFrom,
+      },
+    ),
+  cancel: (session: string, runId: string) =>
+    request<NativeRunSummary>(
+      session,
+      `/runs/${encodeURIComponent(runId)}/cancel`,
+      "POST",
+    ),
+  bindings: (session: string, signal?: AbortSignal) =>
+    request<{ bindings: NativeBindingOption[] }>(
+      session,
+      "/bindings",
+      "GET",
+      undefined,
+      signal,
+    ),
+};
+
+/** Artifact bytes are never exposed to the viewer/download link until size and SHA-256 match the run index. */
+export async function fetchNativeArtifact(
+  session: string,
+  runId: string,
+  artifact: NativeArtifact,
+  signal?: AbortSignal,
+): Promise<Blob> {
+  if (!crypto.subtle)
+    throw new NativeProcessError({
+      code: "NATIVE_ARTIFACT_INVALID",
+      message:
+        "This browser cannot verify artifact digests on the current connection.",
+      recovery: "Open Wright over HTTPS or from localhost, then retry.",
+    });
+  const limit = 10 * 1024 * 1024;
+  if (
+    !Number.isSafeInteger(artifact.size) ||
+    artifact.size < 0 ||
+    artifact.size > limit
+  )
+    throw new NativeProcessError({
+      code: "NATIVE_ARTIFACT_INVALID",
+      message: "The recorded artifact size is invalid.",
+      recovery: "Inspect the run and service diagnostics.",
+    });
+  const span = telemetry.startSpan("native.process artifact");
+  try {
+    const url = `${hostAdapter.getApiBaseUrl()}/api/native-processes/runs/${encodeURIComponent(runId)}/artifacts/${encodeURIComponent(artifact.artifact_id)}?session_id=${encodeURIComponent(session)}`;
+    const response = await hostAdapter.fetch(url, {
+      signal,
+      headers: span.traceId ? { "X-Trace-Id": span.traceId } : {},
+    });
+    if (!response.ok)
+      throw new NativeProcessError(
+        {
+          code: "NATIVE_ARTIFACT_INVALID",
+          message: `Artifact access failed (HTTP ${response.status}).`,
+          recovery:
+            "Reconnect and inspect run permissions or artifact integrity.",
+        },
+        response.status,
+      );
+    const reader = response.body?.getReader(),
+      chunks: Uint8Array[] = [];
+    let size = 0;
+    if (reader) {
+      while (true) {
+        const part = await reader.read();
+        if (part.done) break;
+        size += part.value.byteLength;
+        if (size > limit || size > artifact.size) {
+          await reader.cancel();
+          throw new Error("Artifact exceeds its recorded size.");
+        }
+        chunks.push(part.value);
+      }
+    } else {
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      chunks.push(bytes);
+      size = bytes.length;
+    }
+    if (size !== artifact.size || size > limit)
+      throw new Error("Artifact size does not match its run record.");
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.length;
+    }
+    const hash = await crypto.subtle.digest("SHA-256", bytes);
+    const digest = Array.from(new Uint8Array(hash), (byte) =>
+      byte.toString(16).padStart(2, "0"),
+    ).join("");
+    if (
+      digest !== artifact.content_digest ||
+      response.headers.get("X-Content-SHA256") !== digest
+    )
+      throw new Error(
+        "Artifact digest does not match its run record and response.",
+      );
+    span.end();
+    // Downloads remain inert even if an indexed artifact contains HTML or SVG.
+    return new Blob([bytes], { type: "application/octet-stream" });
+  } catch (failure) {
+    span.error(
+      failure instanceof Error
+        ? failure
+        : new Error("Artifact verification failed"),
+    );
+    if (failure instanceof NativeProcessError) throw failure;
+    throw new NativeProcessError({
+      code: "NATIVE_ARTIFACT_INVALID",
+      message:
+        failure instanceof Error
+          ? failure.message
+          : "Artifact verification failed.",
+      recovery:
+        "No unverified bytes were displayed. Reconnect or inspect service integrity diagnostics.",
+    });
+  }
+}

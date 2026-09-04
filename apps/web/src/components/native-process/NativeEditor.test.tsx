@@ -11,6 +11,7 @@ import { NativeEditor } from "./NativeEditor";
 import { contract, example, savedProcess } from "./native-process.fixture";
 import {
   nativeProcessApi,
+  nativeRunApi,
   NativeProcessError,
 } from "../../services/native-process";
 vi.mock("../../services/native-process", async (original) => {
@@ -27,6 +28,7 @@ vi.mock("../../services/native-process", async (original) => {
       save: vi.fn(),
       check: vi.fn(),
     },
+    nativeRunApi: { history: vi.fn(), get: vi.fn() },
   };
 });
 // These are mocked component journeys; real React Flow/browser evidence is separate.
@@ -41,6 +43,10 @@ vi.mock("./NativeCanvas", () => ({
 }));
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.mocked(nativeRunApi.history).mockResolvedValue({
+    runs: [],
+    next_cursor: null,
+  });
   vi.mocked(nativeProcessApi.contract).mockResolvedValue(contract);
   vi.mocked(nativeProcessApi.examples).mockResolvedValue({
     examples: [{ ...example, id: "concept-brief", title: "Concept brief" }],
@@ -232,7 +238,7 @@ describe("mocked authoring journeys", () => {
       screen.queryByRole("heading", { name: "Ready for execution" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText(/definition changed after its last readiness/),
+      screen.getByText(/changed after its last readiness/),
     ).toBeInTheDocument();
   });
 });
