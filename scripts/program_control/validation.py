@@ -3739,6 +3739,17 @@ def _validate_state_chain(
                 )
             )
         if transition.get("schema_version") == "2.0":
+            authority = transition.get("authority")
+            if (
+                isinstance(authority, Mapping)
+                and authority.get("authority_kind") == "standing_user_scope"
+            ):
+                _validate_native_scope_authority(
+                    documents, program_root,
+                    {"current_feature": transition.get("feature_id"),
+                     "revision": new_revision, "approval": authority},
+                    findings,
+                )
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
@@ -4476,6 +4487,12 @@ def _validate_current_authority(
     if not isinstance(state, Mapping):
         return
     approval_state = state.get("approval")
+    if (
+        isinstance(approval_state, Mapping)
+        and approval_state.get("authority_kind") == "standing_user_scope"
+    ):
+        _validate_native_scope_authority(documents, program_root, state, findings)
+        return
     required = (
         approval_state.get("required_records", [])
         if isinstance(approval_state, Mapping)
@@ -4583,6 +4600,51 @@ def _validate_current_authority(
                     "ARTIFACT_DIGESTS",
                 )
             )
+
+
+def _validate_native_scope_authority(
+    documents: Mapping[str, Any],
+    program_root: str,
+    state: Mapping[str, Any],
+    findings: list[Finding],
+) -> None:
+    """Recognize the recorded native scope without inventing exact approval."""
+
+    approval = state.get("approval", {})
+    path = f"{program_root}/evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+    record = documents.get(path)
+    schema = documents.get(f"{program_root}/schemas/scope-authorization.schema.json")
+    valid = (
+        isinstance(approval, Mapping)
+        and isinstance(record, Mapping)
+        and isinstance(schema, Mapping)
+        and not validate_schema(schema, record)
+        and state.get("current_feature") == "EPP-N01"
+        and isinstance(state.get("revision"), int)
+        and state["revision"] >= 93
+        and approval.get("status") == "authorized_scope"
+        and approval.get("record")
+        == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+        and approval.get("exact_subject_approval") is False
+    )
+    if valid:
+        assert isinstance(record, Mapping)
+        valid = (
+            record.get("revoked") is False
+            and record.get("exact_subject_approval") is False
+            and record.get("human_review_evidence") is False
+            and approval.get("record_digest") == canonical_digest(record)
+            and isinstance(record.get("instruction"), str)
+            and sha256_bytes(record["instruction"].encode("utf-8"))
+            == record.get("instruction_sha256")
+        )
+    if not valid:
+        findings.append(
+            _finding(
+                "NATIVE_SCOPE_AUTHORITY_INVALID", "fatal", path,
+                "RECORDED_NATIVE_SCOPE_NOT_EXACT_APPROVAL",
+            )
+        )
 
 
 def _release_approval(
