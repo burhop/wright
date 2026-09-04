@@ -193,6 +193,7 @@ export function decodeNativeMilestone(
       if (
         !proof.commit_tree_matches ||
         !proof.artifacts_match ||
+        !proof.coverage_available ||
         proof.tested_scope_sha256 !== r.scope_sha256
       )
         result = "invalid";

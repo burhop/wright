@@ -55,7 +55,7 @@ def milestone_bundle(repo: Path, head: str) -> dict:
     from tool_registry.program_status import ProgramStatusReader
 
     schemas = repo / "src/wright_engineering/static/program-status"
-    installed = Path(os.environ.get("WRIGHT_IMPLEMENTATION_STATUS_DATA", str(repo / ".local-run/implementation-status/program-status")))
+    installed = Path(os.environ.get("WRIGHT_IMPLEMENTATION_STATUS_DATA", str(repo / ".local-run/implementation-status")))
     try:
         document = ProgramStatusReader(installed, schemas).read_bundle()
         bundle = document.as_dict()
@@ -114,6 +114,16 @@ def git(repo: Path, *args: str) -> str:
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def unavailable_lanes() -> dict:
+    """The published milestone remains usable without local narrative sidecars."""
+    return {
+        "updatedAt": None,
+        "integration": {"branch": "unavailable", "target": "dev", "phase": "unavailable", "pullRequest": None, "checks": {"passing": 0, "failing": 0, "pending": 0, "skipped": 0}, "events": [], "frozenCandidate": "unavailable", "lastPushedSha": "unavailable", "lastPushTime": None, "ciStartedAt": None, "firstActionableFailure": None, "devSync": "No local delivery narrative supplied.", "fullMergeGate": "No current gate observation supplied.", "nextAction": "Consult the published milestone delivery evidence."},
+        "development": {"branch": "unavailable", "taskId": "unavailable", "customerMilestone": "See published milestone", "latestCapability": "See published milestone", "blocker": None, "nextAction": "Consult the published milestone next tasks."},
+        "currentGoal": {"title": "Local narrative history", "status": "unavailable", "activeStep": "See the authoritative milestone above.", "blocker": None, "nextAction": "Consult the published milestone next tasks.", "outcomes": [], "history": [], "artifacts": {"completed": [], "remaining": []}, "reviews": {"engineeringUsability": "unavailable", "architectureAndTest": "unavailable"}},
+    }
 
 
 def count_tasks(text: str) -> tuple[int, int, list[str]]:
@@ -674,12 +684,9 @@ class StatusCache:
                 if blocker not in state_blockers:
                     state_blockers.append(blocker)
         activity_path = ROOT / "agent-activity.json"
-        activity = load_json(activity_path) if activity_path.is_file() else {"tokenTelemetry": {"available": False}, "agents": []}
+        activity = load_json(activity_path) if activity_path.is_file() else {"tokenTelemetry": {"available": False, "reason": "No local activity sidecar supplied."}, "agents": []}
         lane_status_path = ROOT / "lane-status.json"
-        lanes = load_json(lane_status_path) if lane_status_path.is_file() else {
-            "integration": {"phase": "unknown", "checks": {"passing": 0, "failing": 0, "pending": 0}, "events": []},
-            "development": {"branch": "unknown", "blocker": "Lane status is unavailable."},
-        }
+        lanes = load_json(lane_status_path) if lane_status_path.is_file() else unavailable_lanes()
         checkpoints = checkpoint_history(self.repo, branch)
         product_checkpoints = sum(row["category"] == "customer_product" for row in checkpoints)
         return {

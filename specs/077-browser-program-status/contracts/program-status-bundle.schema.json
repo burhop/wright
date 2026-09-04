@@ -5216,7 +5216,8 @@
                   "tested_scope_sha256",
                   "current_scope_sha256",
                   "commit_tree_matches",
-                  "artifacts_match"
+                  "artifacts_match",
+                  "coverage_available"
                 ],
                 "properties": {
                   "evidence_id": {
@@ -5235,6 +5236,9 @@
                     "type": "boolean"
                   },
                   "artifacts_match": {
+                    "type": "boolean"
+                  },
+                  "coverage_available": {
                     "type": "boolean"
                   }
                 }

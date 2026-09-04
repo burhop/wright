@@ -1325,7 +1325,7 @@
           laneUpdated = shownTime(data.lanes.updatedAt);
         const panelByHeading = (view, text) =>
           [...document.querySelectorAll(`[data-view="${view}"] .panel`)].find(
-            (panel) => panel.querySelector("h2")?.textContent === text,
+            (panel) => panel.getAttribute("aria-label") !== "Current native milestone" && panel.querySelector("h2")?.textContent === text,
           );
         const goalTag = panelByHeading(
           "goal",

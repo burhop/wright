@@ -528,7 +528,11 @@
           "T007"
         ],
         "source_paths": [
-          "packages/core/src/core/native_process.py"
+          "packages/core/src/core/native_process.py",
+          "packages/core/src/core/native_quantities.py",
+          "packages/core/src/core/canonical_json.py",
+          "packages/core/src/core/native_process_contract",
+          "packages/core/tests/test_native_process.py"
         ],
         "independent_required": false
       },
@@ -810,7 +814,7 @@
         "check_ids": [
           "Q-EXAMPLES"
         ],
-        "definition_path": "src/wright_engineering/static/native-processes/document.json"
+        "definition_path": "src/wright_engineering/static/native-processes/concept-brief.json"
       },
       {
         "id": "EX-QUANTITY",
@@ -819,7 +823,7 @@
         "check_ids": [
           "Q-EXAMPLES"
         ],
-        "definition_path": "src/wright_engineering/static/native-processes/quantity.json"
+        "definition_path": "src/wright_engineering/static/native-processes/mass-check.json"
       },
       {
         "id": "EX-REVISION",
@@ -828,7 +832,7 @@
         "check_ids": [
           "Q-EXAMPLES"
         ],
-        "definition_path": "src/wright_engineering/static/native-processes/revision.json"
+        "definition_path": "src/wright_engineering/static/native-processes/package-review.json"
       }
     ],
     "delivery": {

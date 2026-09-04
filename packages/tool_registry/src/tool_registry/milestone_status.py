@@ -126,6 +126,7 @@ def derive_milestone(
             identity_valid = (
                 proof["commit_tree_matches"]
                 and proof["artifacts_match"]
+                and proof["coverage_available"]
                 and proof["tested_scope_sha256"] == row["scope_sha256"]
             )
             status = row["result"]

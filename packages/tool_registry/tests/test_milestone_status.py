@@ -67,6 +67,7 @@ def evidence_fixture(source, result="passed"):
             "current_scope_sha256": "c" * 64,
             "commit_tree_matches": True,
             "artifacts_match": True,
+            "coverage_available": True,
         }
     ]
 

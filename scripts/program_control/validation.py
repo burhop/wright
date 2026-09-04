@@ -4204,9 +4204,28 @@ def validate_roadmap_approval_and_lease(
             registered = documents[f"{program_root}/work-registry.json"]["milestone"][
                 "tasks"
             ]
-            valid_checkpoint = identity.source_tree == checkpoint[
-                "candidate_tree"
-            ] and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+            permitted_metadata = (
+                f"{program_root}/evidence/",
+                f"{program_root}/work-registry.json",
+                f"{program_root}/test-run-ledger.json",
+                f"{program_root}/program-state.json",
+                "specs/079-wright-native-authoring/tasks.md",
+            )
+            changes = reader.diff_paths(identity.source_commit, source_commit)
+            valid_checkpoint = (
+                identity.source_tree == checkpoint["candidate_tree"]
+                and reader.is_ancestor(identity.source_commit, source_commit)
+                and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+                and all(
+                    any(
+                        path.startswith(prefix)
+                        if prefix.endswith("/")
+                        else path == prefix
+                        for prefix in permitted_metadata
+                    )
+                    for path in changes
+                )
+            )
         except (GitSubjectError, KeyError, TypeError):
             valid_checkpoint = False
         if not valid_checkpoint:

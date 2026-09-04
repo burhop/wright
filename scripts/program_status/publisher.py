@@ -2107,7 +2107,9 @@ def _project_delivery_lanes(
     return integration, development
 
 
-def _milestone_scope_digest(repository: Path, commit: str, paths: list[str]) -> str:
+def _milestone_scope_identity(
+    repository: Path, commit: str, paths: list[str]
+) -> tuple[str, bool]:
     """Cover exact blobs/trees, including absence, without working-tree timestamps."""
     rows = []
     for path in sorted(set(paths)):
@@ -2118,7 +2120,11 @@ def _milestone_scope_digest(repository: Path, commit: str, paths: list[str]) -> 
             raise ValueError("unsafe milestone coverage path")
         raw = _git(repository, "ls-tree", commit, "--", path)
         rows.append([path, str(raw).strip() or "missing"])
-    return _digest(rows)
+    return _digest(rows), bool(rows) and all(row[1] != "missing" for row in rows)
+
+
+def _milestone_scope_digest(repository: Path, commit: str, paths: list[str]) -> str:
+    return _milestone_scope_identity(repository, commit, paths)[0]
 
 
 def _project_native_milestone(
@@ -2136,6 +2142,12 @@ def _project_native_milestone(
         paths = checks[evidence["check_id"]]["source_paths"]
         tested = evidence["tested_commit"]
         tree = str(_git(repository, "rev-parse", f"{tested}^{{tree}}")).strip()
+        tested_scope, tested_available = _milestone_scope_identity(
+            repository, tested, paths
+        )
+        current_scope, current_available = _milestone_scope_identity(
+            repository, commit, paths
+        )
         artifacts_match = True
         for artifact in evidence["artifacts"]:
             mode = str(
@@ -2154,12 +2166,9 @@ def _project_native_milestone(
         attestations.append(
             {
                 "evidence_id": evidence["id"],
-                "tested_scope_sha256": _milestone_scope_digest(
-                    repository, tested, paths
-                ),
-                "current_scope_sha256": _milestone_scope_digest(
-                    repository, commit, paths
-                ),
+                "tested_scope_sha256": tested_scope,
+                "current_scope_sha256": current_scope,
+                "coverage_available": tested_available and current_available,
                 "commit_tree_matches": tree == evidence["tested_tree"],
                 "artifacts_match": artifacts_match,
             }
@@ -2185,6 +2194,23 @@ def _project_native_milestone(
             and len(parents) > 1
             and any(pr["head_commit"] in parents for pr in delivery["pull_requests"])
         )
+        integrated_checks = [
+            row for row in checks.values() if row["stage"] == "integration"
+        ]
+        delivery_attested = delivery_attested and bool(integrated_checks)
+        for check in integrated_checks:
+            merged_scope, merged_available = _milestone_scope_identity(
+                repository, merged, check["source_paths"]
+            )
+            current_scope, current_available = _milestone_scope_identity(
+                repository, commit, check["source_paths"]
+            )
+            delivery_attested = (
+                delivery_attested
+                and merged_available
+                and current_available
+                and merged_scope == current_scope
+            )
     module_path = (
         repository / "packages/tool_registry/src/tool_registry/milestone_status.py"
     )

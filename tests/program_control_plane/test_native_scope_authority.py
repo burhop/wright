@@ -46,7 +46,19 @@ def test_recorded_instruction_supports_bounded_scope(repository_root: Path) -> N
     assert findings == []
 
 
-@pytest.mark.parametrize("change", ["feature", "revision", "exact", "digest", "instruction", "scope", "human", "revoked"])
+@pytest.mark.parametrize(
+    "change",
+    [
+        "feature",
+        "revision",
+        "exact",
+        "digest",
+        "instruction",
+        "scope",
+        "human",
+        "revoked",
+    ],
+)
 def test_scope_cannot_rewrite_authority_or_grant_other_claims(
     repository_root: Path, change: str
 ) -> None:
@@ -72,3 +84,47 @@ def test_scope_cannot_rewrite_authority_or_grant_other_claims(
     findings = []
     _validate_native_scope_authority(docs, ROOT, state, findings)
     assert [finding.code for finding in findings] == ["NATIVE_SCOPE_AUTHORITY_INVALID"]
+
+
+def test_old_candidate_cannot_keep_changed_implementation_unleased(
+    repository_root: Path,
+) -> None:
+    from datetime import datetime, timezone
+    from program_control.git_subject import GitReader
+    from program_control.validation import validate_roadmap_approval_and_lease
+
+    reader = GitReader(repository_root)
+    names = (
+        "program-state.json",
+        "roadmap.json",
+        "decision-register.json",
+        "risk-register.json",
+        "lifecycle-policy.json",
+        "gate-catalog.json",
+        "work-registry.json",
+    )
+    docs = {
+        f"{ROOT}/{name}": json.loads(
+            (repository_root / ROOT / name).read_text(encoding="utf-8")
+        )
+        for name in names
+    }
+    state = docs[f"{ROOT}/program-state.json"]
+    previous = reader.resolve_identity("7404a549ae244cc05d89e062c60276e8862f53c9", ROOT)
+    state["scoped_checkpoint"].update(
+        candidate_commit=previous.source_commit, candidate_tree=previous.source_tree
+    )
+    findings, _ = validate_roadmap_approval_and_lease(
+        docs,
+        ROOT,
+        observed_at=datetime.now(timezone.utc),
+        actual_branch=reader.current_branch(),
+        worktree_id=repository_root.name,
+        reader=reader,
+        source_commit=reader.current_head(),
+    )
+    assert any(
+        f.code == "LEASE_IDENTITY_MISMATCH"
+        and f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY"
+        for f in findings
+    )
