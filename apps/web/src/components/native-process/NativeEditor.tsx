@@ -354,6 +354,19 @@ export function NativeEditor({
             snapshot,
             saveAttempt.current.id,
           );
+      // A replay can acknowledge an older save. Keep the dirty draft and the
+      // original retry identity until a read confirms this is the current head.
+      const latest = await nativeProcessApi.get(
+        sessionId,
+        envelope.definition.id,
+      );
+      if (latest.token !== envelope.token) {
+        setConflict(true);
+        setError(
+          "The service holds a newer version than this save. Your draft is retained. Compare the current saved version or save a copy.",
+        );
+        return;
+      }
       setSaved(envelope);
       setBaseline(
         canonicalJson({
@@ -376,17 +389,6 @@ export function NativeEditor({
       setStatus(
         `Saved revision ${envelope.revision}. The process has not been executed by saving.`,
       );
-      // An idempotent replay may return an earlier save; never present it as the current remote head.
-      const latest = await nativeProcessApi.get(
-        sessionId,
-        envelope.definition.id,
-      );
-      if (latest.token !== envelope.token) {
-        setConflict(true);
-        setError(
-          "The service holds a newer version than this save. Your draft is retained. Compare the current saved version or save a copy.",
-        );
-      }
       saveAttempt.current = null;
     } catch (failure) {
       setError(errorText(failure));

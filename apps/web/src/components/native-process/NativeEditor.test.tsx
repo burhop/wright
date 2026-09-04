@@ -62,10 +62,10 @@ beforeEach(() => {
   });
 });
 afterEach(cleanup);
-async function renderExample() {
+async function renderExample(onDirtyChange?: (dirty: boolean) => void) {
   render(
     <MemoryRouter>
-      <NativeEditor sessionId="session-one" />
+      <NativeEditor sessionId="session-one" onDirtyChange={onDirtyChange} />
     </MemoryRouter>,
   );
   await screen.findByTestId("native-example-list");
@@ -76,6 +76,51 @@ async function renderExample() {
   return screen;
 }
 describe("mocked authoring journeys", () => {
+  it.each(["newer-version", "read-failure"])(
+    "retains recovery and retry identity when save confirmation has %s",
+    async (outcome) => {
+      sessionStorage.clear();
+      const dirty = vi.fn();
+      await renderExample(dirty);
+      vi.mocked(nativeProcessApi.create).mockImplementation(
+        async (_, document) => savedProcess(document),
+      );
+      if (outcome === "newer-version") {
+        vi.mocked(nativeProcessApi.get).mockImplementation(async (_, id) =>
+          savedProcess(
+            {
+              ...example,
+              definition: {
+                ...example.definition,
+                id,
+                title: "Newer remote work",
+              },
+            },
+            2,
+          ),
+        );
+      } else {
+        vi.mocked(nativeProcessApi.get).mockRejectedValue(
+          new Error("Current version unavailable"),
+        );
+      }
+      fireEvent.click(screen.getByTestId("native-save"));
+      await screen.findByTestId("native-error");
+      expect(dirty.mock.lastCall?.[0]).toBe(true);
+      expect(
+        sessionStorage.getItem("wright-native-draft-v1:session-one"),
+      ).not.toBeNull();
+      expect(screen.getByTestId("native-run-start")).toBeDisabled();
+      const first = vi.mocked(nativeProcessApi.create).mock.calls[0];
+      fireEvent.click(screen.getByTestId("native-save"));
+      await waitFor(() =>
+        expect(nativeProcessApi.create).toHaveBeenCalledTimes(2),
+      );
+      expect(vi.mocked(nativeProcessApi.create).mock.calls[1]).toEqual(first);
+      expect(dirty.mock.lastCall?.[0]).toBe(true);
+      expect(nativeProcessApi.save).not.toHaveBeenCalled();
+    },
+  );
   it("renders programmatic identities and preserves invalid field buffers across selection", async () => {
     await renderExample();
     expect(screen.getByTestId("mocked-canvas")).toHaveTextContent(
