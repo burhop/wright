@@ -181,7 +181,7 @@ def examples(service: Service):
     return service.examples()
 
 
-@router.get("")
+@router.get("/documents")
 def documents(
     session_id: Session,
     service: Service,
@@ -191,7 +191,7 @@ def documents(
     return service.list_documents(session_id, limit=limit, cursor=cursor)
 
 
-@router.post("", status_code=201)
+@router.post("/documents", status_code=201)
 async def create(request: Request, session_id: Session, service: Service):
     payload = await body(request, CreateNativeProcess)
     return await run_in_threadpool(
@@ -261,7 +261,7 @@ def artifact(run_id: str, artifact_id: str, session_id: Session, service: Servic
     )
 
 
-@router.get("/{process_id}/runs")
+@router.get("/documents/{process_id}/runs")
 def history(
     process_id: str,
     session_id: Session,
@@ -272,7 +272,7 @@ def history(
     return service.run_history(session_id, process_id, limit=limit, cursor=cursor)
 
 
-@router.post("/{process_id}/runs", status_code=202)
+@router.post("/documents/{process_id}/runs", status_code=202)
 async def start_run(
     process_id: str, request: Request, session_id: Session, service: Service
 ):
@@ -290,12 +290,12 @@ async def start_run(
     )
 
 
-@router.get("/{process_id}")
+@router.get("/documents/{process_id}")
 def read(process_id: str, session_id: Session, service: Service):
     return service.get_document(session_id, process_id)
 
 
-@router.put("/{process_id}")
+@router.put("/documents/{process_id}")
 async def save(
     process_id: str, request: Request, session_id: Session, service: Service
 ):
@@ -310,3 +310,23 @@ async def save(
         expected_token=payload.expected_token,
         trace_id=trace_id(request),
     )
+
+
+# Register legacy dynamic aliases last so they cannot shadow canonical document
+# IDs such as /documents/runs. Static service routes retain their old meaning.
+router.add_api_route("", documents, methods=["GET"], include_in_schema=False)
+router.add_api_route(
+    "", create, methods=["POST"], status_code=201, include_in_schema=False
+)
+router.add_api_route("/{process_id}", read, methods=["GET"], include_in_schema=False)
+router.add_api_route("/{process_id}", save, methods=["PUT"], include_in_schema=False)
+router.add_api_route(
+    "/{process_id}/runs", history, methods=["GET"], include_in_schema=False
+)
+router.add_api_route(
+    "/{process_id}/runs",
+    start_run,
+    methods=["POST"],
+    status_code=202,
+    include_in_schema=False,
+)

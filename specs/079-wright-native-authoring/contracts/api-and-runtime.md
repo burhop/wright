@@ -4,6 +4,8 @@
 
 Separate authenticated native routes from immutable `/api/process-definitions`. List/create/read/save/check/run/history/inspect/cancel/artifact requests resolve an authorized existing workspace/session in the application service. HTTP mapping: malformed 400, denied 403, absent scoped record 404, stale token/idempotency/binding conflict 409, semantic invalidity 422. Responses include stable code/recovery/trace without absolute host paths or secrets. Headless and HTTP use the same service; parity compares semantic snapshot/output/artifact digests excluding transport timestamps and trace IDs.
 
+Canonical document resources use `/api/native-processes/documents` for list/create, `/documents/{process_id}` below the native prefix for read/save, and `/documents/{process_id}/runs` for history/start. Service actions and run inspection keep their separate paths. All language-valid IDs, including service names, remain addressable; old document paths are compatibility aliases and retain service meanings where ambiguous. The complete route table and compatibility amendment are in [the implementation appendix](implementation-appendix.md#api-and-headless).
+
 ## Runtime
 
 Sequential DAG order with declared-order ties. Record actual bounded inputs/outputs, exact operation, timings and cause. Failure prevents dependent execution and records why. Definition/readiness/binding/schema/permission/execution/assertion/artifact-finalization failures stay distinct.

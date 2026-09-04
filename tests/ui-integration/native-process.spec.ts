@@ -111,12 +111,16 @@ async function mockService(page: Page) {
       path = url.pathname;
     if (path.startsWith("/api/native-processes")) {
       expect(url.searchParams.get("session_id")).toBe("native-test-session");
-      if (path.endsWith("/contract")) return route.fulfill({ json: contract });
-      if (path.endsWith("/examples"))
+      if (path === "/api/native-processes/contract")
+        return route.fulfill({ json: contract });
+      if (path === "/api/native-processes/examples")
         return route.fulfill({ json: { examples } });
-      if (path.endsWith("/runs") && request.method() === "GET")
+      if (
+        /^\/api\/native-processes\/documents\/[^/]+\/runs$/.test(path) &&
+        request.method() === "GET"
+      )
         return route.fulfill({ json: { runs: [], next_cursor: null } });
-      if (path.endsWith("/check"))
+      if (path === "/api/native-processes/check")
         return route.fulfill({
           json: { structurally_valid: true, ready: true, findings: [] },
         });
@@ -150,7 +154,9 @@ async function mockService(page: Page) {
           json: envelope,
         });
       }
-      const id = path.replace("/api/native-processes", "").replace(/^\//, "");
+      const id = path
+        .replace("/api/native-processes/documents", "")
+        .replace(/^\//, "");
       if (id) return route.fulfill({ json: records.get(id) });
       return route.fulfill({
         json: {
@@ -228,7 +234,8 @@ async function mockRunService(
   await page.route("**/api/native-processes/**", async (route) => {
     const request = route.request(),
       path = new URL(request.url()).pathname;
-    const historyMatch = /^\/api\/native-processes\/([^/]+)\/runs$/.exec(path);
+    const historyMatch =
+      /^\/api\/native-processes\/documents\/([^/]+)\/runs$/.exec(path);
     if (historyMatch) {
       if (request.method() === "GET")
         return route.fulfill({

@@ -27,6 +27,12 @@ The safe local tool fixture is opt-in: set `WRIGHT_NATIVE_MCP_PROTOCOL=1`, then 
 9. Offline/package/migration/recovery/legacy checks, independent candidate review and required gates.
 10. PR merge to dev; verify exact built/deployed identity and browser journeys; publish final status.
 
+## API namespace amendment
+
+Use the canonical `/api/native-processes/documents` collection to list or create processes, `/api/native-processes/documents/{process_id}` to reopen or save, and `/api/native-processes/documents/{process_id}/runs` to inspect history or start a run. Supply the existing workspace `session_id` query and authentication on each request; save/run retain the required expected token and request identity. UI and CLI use these resources through the same service.
+
+For example, a valid process named `contract` reopens at `/api/native-processes/documents/contract`; `/api/native-processes/contract` still returns the language contract. The IDs `bindings`, `examples`, `runs`, `check` and `documents` work the same way. Legacy document routes remain compatibility aliases, while canonical resources address every language-valid ID without ambiguity. Run inspection, events, cancellation and artifact download remain under `/api/native-processes/runs/{run_id}`. See the [API table](contracts/implementation-appendix.md#api-and-headless) for payloads.
+
 ## Evidence log
 
 - 2026-09-04: live dev observed at `7404a549`; independent read-only architecture/dashboard investigations completed. Planning evidence only.

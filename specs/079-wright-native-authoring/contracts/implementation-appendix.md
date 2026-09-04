@@ -37,18 +37,20 @@ Prefix `/api/native-processes`. Every workspace route has a required `session_id
 |---|---|---|
 | GET `/examples` | none | `{examples:[{id,title,definition,presentation}]}` |
 | GET `/contract` | session | `{format,schema_version,schema,operations:[{id,inputs,outputs,config_schema,required_config_keys}],canonicalization}`; same packaged schema and registry used by validation/runtime; no tool credentials |
-| GET `` | session | `{documents:[{id,title,revision,token,updated_at}],next_cursor}`; limit default 25/max100 |
-| POST `` | `{definition,presentation,request_id}` | saved envelope, 201; existing ID conflicts |
-| GET `/{id}` | session | `{definition,presentation,revision,token,semantic_digest,updated_at}` |
-| PUT `/{id}` | `{definition,presentation,expected_token,request_id}` | saved envelope, 200 |
+| GET `/documents` | session | `{documents:[{id,title,revision,token,updated_at}],next_cursor}`; limit default 25/max100 |
+| POST `/documents` | `{definition,presentation,request_id}` | saved envelope, 201; existing ID conflicts |
+| GET `/documents/{process_id}` | session | `{definition,presentation,revision,token,semantic_digest,updated_at}` |
+| PUT `/documents/{process_id}` | `{definition,presentation,expected_token,request_id}` | saved envelope, 200 |
 | POST `/check` | `{definition,bindings}` | `{structurally_valid,ready,findings:[{code,step_id,port_id,message,recovery}]}` |
-| POST `/{id}/runs` | `{expected_token,request_id,bindings,derived_from_run_id,timeout_seconds}` | `{run_id,state,semantic_digest}`, 202 |
-| GET `/{id}/runs` | session, optional opaque cursor/limit | scoped recent summaries, default25/max100 |
+| POST `/documents/{process_id}/runs` | `{expected_token,request_id,bindings,derived_from_run_id,timeout_seconds}` | `{run_id,state,semantic_digest}`, 202 |
+| GET `/documents/{process_id}/runs` | session, optional opaque cursor/limit | scoped recent summaries, default25/max100 |
 | GET `/runs/{run_id}` | session | snapshot summary, steps, artifacts, cause/recovery, last sequence |
 | GET `/runs/{run_id}/events` | session, after_sequence>=0, limit<=200 | events + next_sequence; max200 per response |
 | POST `/runs/{run_id}/cancel` | session | current run summary; queued/running cancellation, terminal is unchanged idempotent 200 |
 | GET `/runs/{run_id}/artifacts/{artifact_id}` | session | bounded verified bytes, attachment filename, content digest |
 | GET `/bindings` | session | actual permitted tool identities/schemas; no invocation |
+
+API namespace amendment: `/documents` is the canonical document collection for UI, AI and headless clients. Every language-valid process ID remains valid, including `bindings`, `contract`, `examples`, `runs`, `check` and `documents`; no service names are reserved in the language. Legacy collection, `/{process_id}` and `/{process_id}/runs` routes remain compatibility aliases, registered after canonical resources. Existing service routes retain their meanings at ambiguous legacy paths, so clients must use canonical resources to address all IDs. OpenAPI publishes canonical routes only. Run inspection/events/cancellation/artifacts remain under `/runs/{run_id}`.
 
 Enforce document request size 1 MiB plus bounded envelope overhead (maximum total 1100 KiB), run/check body maximum 1100 KiB, remaining requests 64 KiB. Unknown/malformed payload rejects before mutation. Tokens are opaque SHA256, body expected_token is required for update/run. JSON error envelope `{code,message,recovery,trace_id,findings}` uses `NATIVE_INVALID`, `NATIVE_NOT_FOUND`, `NATIVE_DENIED`, `NATIVE_CONFLICT`, `NATIVE_REQUEST_REUSED`, `NATIVE_NOT_READY`, `NATIVE_BINDING_CHANGED`, `NATIVE_RUNTIME_BUSY`, `NATIVE_ARTIFACT_INVALID`, `NATIVE_LIMIT`, `NATIVE_INTERNAL`; runtime-busy is 503. No stack/local paths/secrets are exposed.
 

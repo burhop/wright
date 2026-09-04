@@ -308,7 +308,7 @@ export const nativeProcessApi = {
   list: (session: string, cursor?: string, signal?: AbortSignal) =>
     request<{ documents: ProcessSummary[]; next_cursor: string | null }>(
       session,
-      cursor ? `?cursor=${encodeURIComponent(cursor)}` : "",
+      `/documents${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
       "GET",
       undefined,
       signal,
@@ -316,13 +316,13 @@ export const nativeProcessApi = {
   get: (session: string, id: string, signal?: AbortSignal) =>
     request<SavedProcess>(
       session,
-      `/${encodeURIComponent(id)}`,
+      `/documents/${encodeURIComponent(id)}`,
       "GET",
       undefined,
       signal,
     ),
   create: (session: string, document: NativeDocument, requestId: string) =>
-    request<SavedProcess>(session, "", "POST", {
+    request<SavedProcess>(session, "/documents", "POST", {
       definition: document.definition,
       presentation: document.presentation,
       request_id: requestId,
@@ -335,7 +335,7 @@ export const nativeProcessApi = {
   ) =>
     request<SavedProcess>(
       session,
-      `/${encodeURIComponent(document.definition.id)}`,
+      `/documents/${encodeURIComponent(document.definition.id)}`,
       "PUT",
       {
         definition: document.definition,
@@ -368,7 +368,7 @@ export const nativeRunApi = {
   ) =>
     request<{ runs: NativeRunSummary[]; next_cursor: string | null }>(
       session,
-      `/${encodeURIComponent(processId)}/runs${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
+      `/documents/${encodeURIComponent(processId)}/runs${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`,
       "GET",
       undefined,
       signal,
@@ -405,7 +405,7 @@ export const nativeRunApi = {
   ) =>
     request<{ run_id: string; state: NativeRunState; semantic_digest: string }>(
       session,
-      `/${encodeURIComponent(processId)}/runs`,
+      `/documents/${encodeURIComponent(processId)}/runs`,
       "POST",
       {
         expected_token: expectedToken,

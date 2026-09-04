@@ -75,7 +75,10 @@ def main(argv: list[str] | None = None, *, client=None) -> int:
                 "bindings": _file(args.bindings) if args.bindings else {},
             }
         elif args.command == "run":
-            route, method = "/" + quote(args.process_id, safe="") + "/runs", "POST"
+            route, method = (
+                "/documents/" + quote(args.process_id, safe="") + "/runs",
+                "POST",
+            )
             payload = {
                 "expected_token": args.expected_token,
                 "request_id": args.request_id,
