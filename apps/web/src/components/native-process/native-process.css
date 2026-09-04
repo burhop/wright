@@ -1,0 +1,314 @@
+/* Wright token adapter: renderer geometry is replaceable; semantic state lives in model.ts. */
+.native-process {
+  --xy-background-color: var(--color-surface-subtle);
+  --xy-node-color: var(--color-primary);
+  --xy-edge-stroke: var(--color-secondary);
+  --xy-controls-button-background-color: var(--color-surface);
+  --xy-controls-button-color: var(--color-primary);
+  --xy-controls-button-border-color: var(--color-border);
+  --xy-attribution-background-color: var(--color-surface);
+  --xy-minimap-background-color: var(--color-surface);
+  padding: var(--space-xl);
+  color: var(--color-primary);
+  max-width: 1800px;
+  margin-inline: auto;
+  min-width: 0;
+}
+.native-process header {
+  margin-bottom: var(--space-xl);
+}
+.native-process h1 {
+  font-size: var(--font-size-2xl);
+}
+.native-process h2 {
+  font-size: var(--font-size-lg);
+  margin-block: var(--space-md);
+}
+.native-process h3 {
+  font-size: var(--font-size-md);
+  margin-block: var(--space-md);
+}
+.native-process p {
+  margin-block: var(--space-md);
+  line-height: 1.5;
+}
+.native-process label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: var(--font-size-md);
+  min-width: 0;
+}
+.native-process input,
+.native-process select,
+.native-process textarea,
+.native-process button {
+  font: inherit;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  min-height: 40px;
+  max-width: 100%;
+}
+.native-process textarea {
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+.native-process select {
+  text-overflow: ellipsis;
+}
+.native-process button {
+  cursor: pointer;
+}
+.native-process button:hover:enabled {
+  background: var(--color-surface-hover);
+  border-color: var(--color-secondary);
+}
+.native-process button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.native-process :is(button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
+}
+.native-process fieldset {
+  border: 1px solid var(--color-border-hover);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  min-width: 0;
+}
+.native-process fieldset.native-work {
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.native-process fieldset:disabled .native-canvas {
+  pointer-events: none;
+  opacity: 0.65;
+}
+.native-process code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+.native-workspace {
+  max-width: 480px;
+  margin-block: var(--space-lg);
+}
+.native-status {
+  padding: var(--space-md);
+  border-left: 3px solid var(--color-secondary);
+  background: var(--color-surface-subtle);
+}
+.native-warning {
+  border: 1px solid var(--color-warning);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  margin-block: var(--space-md);
+}
+.native-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: end;
+  flex-wrap: wrap;
+  margin-block: var(--space-lg);
+}
+.native-actions label {
+  flex: 1 1 190px;
+  max-width: 360px;
+}
+.native-actions .native-title-label {
+  max-width: 500px;
+}
+.native-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: var(--space-lg);
+  align-items: start;
+}
+.native-graph-region {
+  min-width: 0;
+}
+.native-canvas {
+  height: 560px;
+  min-height: 320px;
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+.native-canvas-empty {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+.native-node {
+  width: 230px;
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+.native-node strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.native-operation {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  overflow-wrap: anywhere;
+  margin-block: var(--space-sm);
+}
+.native-process .react-flow__node.selected .native-node,
+.native-process .react-flow__node:focus-visible .native-node {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+.native-node-port {
+  position: relative;
+  margin-block: var(--space-xs);
+}
+.native-node-port--output {
+  text-align: right;
+}
+.native-node-port button {
+  font-size: var(--font-size-sm);
+  border: 0;
+  background: transparent;
+  padding-inline: var(--space-xs);
+}
+.native-node-port button[aria-pressed="true"] {
+  outline: 2px solid var(--color-secondary);
+}
+.native-node-port small {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  margin-inline: var(--space-xs);
+}
+.native-process .react-flow__handle {
+  background: var(--color-secondary);
+  border: 2px solid var(--color-surface);
+  width: 9px;
+  height: 9px;
+}
+.native-process .react-flow__handle-left {
+  left: -13px;
+}
+.native-process .react-flow__handle-right {
+  right: -13px;
+}
+.native-process .react-flow__edge-path {
+  stroke: var(--color-secondary);
+  stroke-width: 2px;
+}
+.native-process .react-flow__attribution a {
+  color: var(--color-primary);
+}
+.native-connection-controls {
+  margin-top: var(--space-lg);
+}
+.native-connection-controls label {
+  margin-block: var(--space-md);
+}
+.native-inspector {
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+  min-width: 0;
+}
+.native-inspector label,
+.native-inspector fieldset {
+  margin-block: var(--space-md);
+}
+.native-inspector input[type="checkbox"] {
+  min-height: 20px;
+  width: 20px;
+}
+.native-port-list {
+  padding-left: var(--space-lg);
+}
+.native-port-list li {
+  margin-block: var(--space-md);
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.native-port-list button {
+  display: block;
+  margin-block: var(--space-sm);
+}
+.native-source {
+  margin-block: var(--space-xl);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+.native-source summary {
+  cursor: pointer;
+  min-height: 32px;
+}
+.native-source textarea {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+}
+.native-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--color-neutral) 80%, transparent);
+  padding: var(--space-lg);
+}
+.native-dialog > div {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-hover);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  width: min(100%, 560px);
+}
+.native-dialog button {
+  margin: var(--space-sm);
+}
+@media (max-width: 1000px) {
+  .native-editor-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .native-canvas {
+    height: 420px;
+  }
+}
+@media (max-width: 600px) {
+  .native-process {
+    padding: var(--space-md);
+  }
+  .native-actions {
+    align-items: stretch;
+  }
+  .native-actions label {
+    max-width: none;
+    flex-basis: 100%;
+  }
+  .native-actions button {
+    flex-grow: 1;
+  }
+  .native-canvas {
+    height: 360px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .native-process * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

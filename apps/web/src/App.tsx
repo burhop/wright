@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   HashRouter,
@@ -30,6 +30,10 @@ import {
   workspaceSurfacesEnabled,
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
+
+const NativeProcessPage = lazy(
+  () => import("./components/pages/NativeProcessPage"),
+);
 
 function App() {
   useDesktopIntegration();
@@ -71,6 +75,16 @@ function App() {
                 element={<EngineeringModelLibraryPage />}
               />
               <Route path="/program-status" element={<ProgramStatusPage />} />
+              <Route
+                path="/native-processes"
+                element={
+                  <Suspense
+                    fallback={<p role="status">Loading native processes…</p>}
+                  >
+                    <NativeProcessPage />
+                  </Suspense>
+                }
+              />
               {processDefinitionEnabled && (
                 <Route
                   path="/processes/product-definition-v1"
