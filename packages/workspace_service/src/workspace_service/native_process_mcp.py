@@ -20,6 +20,7 @@ from typing import Any
 import structlog
 from jsonschema import SchemaError
 from jsonschema.validators import validator_for
+from referencing.exceptions import Unresolvable
 from core.native_process import Finding
 from core.tracing import get_tracer, traced
 from tool_registry.gateway_models import (
@@ -423,6 +424,15 @@ class NativeMcpAdapter:
             )
         except _DispatchRejected as exc:
             raise exc.native_error from exc
+        except (SchemaError, Unresolvable, RecursionError) as exc:
+            # Local references can pass a schema's metaschema check yet fail
+            # when the gateway validates actual arguments. Keep that provider
+            # contract failure inside the native error boundary.
+            raise _error(
+                "NATIVE_MCP_SCHEMA_INVALID",
+                "The bound tool schema cannot validate this call.",
+                "Repair the installed tool's local schema references, then refresh its binding.",
+            ) from exc
         except GatewayError as exc:
             codes = {
                 GatewayErrorCode.TIMEOUT: (

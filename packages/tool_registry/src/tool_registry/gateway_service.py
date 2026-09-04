@@ -1107,6 +1107,7 @@ class GatewayService:
                 "cancelled",
                 "cancelled",
                 now,
+                metadata=audit_metadata if trace_id is not None else None,
                 operation=audit_operation,
             )
             raise

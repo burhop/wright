@@ -275,7 +275,7 @@ async def test_call_validates_and_preserves_child_structured_content() -> None:
 
 @pytest.mark.asyncio
 async def test_foreign_tool_and_cancellation_are_denied() -> None:
-    instance, lifecycle, _ = service()
+    instance, lifecycle, audit = service()
     with pytest.raises(GatewayError, match="Unknown or disabled"):
         await instance.call_tool("s1", "foreign", "fea__run", {})
 
@@ -286,6 +286,8 @@ async def test_foreign_tool_and_cancellation_are_denied() -> None:
     assert instance.cancel("s1", "owned", "operator") is True
     with pytest.raises(asyncio.CancelledError):
         await call
+    terminal = next(event for event in audit.events if event["outcome"] == "cancelled")
+    assert terminal["metadata"] == {}
 
 
 @pytest.mark.asyncio

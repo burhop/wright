@@ -289,6 +289,41 @@ async def test_schema_input_and_output_errors_are_actionable(harness):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
+    "schema",
+    [
+        {"type": "object", "$ref": "#/$defs/absent"},
+        {"type": "object", "$ref": "#absent-anchor"},
+        {"$ref": "#"},
+    ],
+)
+async def test_unusable_local_schema_references_fail_inside_native_boundary(
+    harness, schema, monkeypatch
+):
+    adapter, gateway, _, catalog, lifecycle, _ = harness
+
+    def deny_network(*_args, **_kwargs):
+        pytest.fail("Local schema validation must not retrieve remote resources")
+
+    monkeypatch.setattr("urllib.request.urlopen", deny_network)
+    catalog.tool = replace(catalog.tool, input_schema=schema)
+    binding = select(adapter)
+    with pytest.raises(NativeServiceError) as error:
+        await adapter.call("s1", binding, {"value": 1}, 1, "local-schema")
+    assert error.value.code == "NATIVE_NOT_READY"
+    assert reason(error) == "MCP_SCHEMA_INVALID"
+    assert "absent" not in str(error.value)
+    assert lifecycle.starts == 0 and lifecycle.calls == []
+    assert gateway._requests == {}
+
+    catalog.tool = replace(catalog.tool, input_schema=INPUT)
+    assert (
+        await adapter.call("s1", select(adapter), {"value": 1}, 1, "repaired-schema")
+        == '{"value":0.5}'
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
     "output,expected",
     [
         (
@@ -338,7 +373,7 @@ async def test_invalid_or_provider_error_results_fail_bounded(harness, output):
 
 @pytest.mark.asyncio
 async def test_timeout_and_cancellation_stop_forwarding(harness):
-    adapter, gateway, _, _, lifecycle, _ = harness
+    adapter, gateway, _, _, lifecycle, audit = harness
     binding = select(adapter)
     lifecycle.wait = True
     with pytest.raises(NativeServiceError) as error:
@@ -351,6 +386,8 @@ async def test_timeout_and_cancellation_stop_forwarding(harness):
     with pytest.raises(asyncio.CancelledError):
         await task
     assert gateway._requests == {}
+    terminal = next(event for event in audit.events if event["outcome"] == "cancelled")
+    assert terminal["metadata"]["trace_id"] == "cancel"
 
 
 def test_remote_schema_reference_is_rejected_without_resolution(harness):
