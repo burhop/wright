@@ -18,6 +18,12 @@
       "feature_id": "EPP-F02",
       "tasks_path": "specs/078-process-definition-view/tasks.md",
       "roadmap_item_id": "EPP-F02",
+      "active_feature": false
+    },
+    {
+      "feature_id": "EPP-N01",
+      "tasks_path": "specs/079-wright-native-authoring/tasks.md",
+      "roadmap_item_id": "EPP-N01",
       "active_feature": true
     }
   ],
