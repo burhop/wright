@@ -64,14 +64,17 @@ contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
 
-Changes in the OCI PR build scope also run `scripts.release.scan_image` in the
-fast gate; the full merge gate always runs it. Build the candidate once from a
+Changes to every bound Docker input also run `scripts.release.scan_image` in the
+fast gate and select OCI PR CI, including `.dockerignore`, root package files,
+`src/`, the Hermes plugin, both Rivet package trees and `README.md`. The full
+merge gate always runs it. Build the candidate once from a
 clean Git archive, then set `WRIGHT_GATE_DOCKER_IMAGE` to that existing image
 before running either gate. The helper resolves the reference to an immutable
 local image ID and checks its OCI revision against the current checkout. A
 metadata descendant may reuse it only when the original revision is an ancestor
-and no Docker build input changed, including staged, unstaged and untracked
-inputs. It never builds or publishes. For a standalone scan, use
+and no Docker build input changed. Committed, staged and unstaged differences
+are checked separately, so reverting a dirty file cannot mask a changed HEAD
+or index; untracked inputs are also rejected. It never builds or publishes. For a standalone scan, use
 `python -m scripts.release.scan_image --image <image>`.
 
 The local gates and OCI PR workflow use the same pinned Trivy 0.70.0 image,
@@ -81,7 +84,10 @@ and Wright's own dependency audit do not cover the installed Hermes/OS image
 inventory: PR #121 exposed this gap when Tornado 6.5.6 passed smoke but failed
 the fixable High policy. Tornado 6.5.8 is the bounded upstream security fix.
 Missing candidate images, source mismatch, unavailable databases, malformed
-reports and policy violations fail. Only an unavailable supported local Docker
+reports and policy violations fail. Every reported vulnerability must have a
+valid identity, installed version and exact known severity. A missing fixed
+version remains a valid unfixed finding, governed by the existing policy.
+Only an unavailable supported local Docker
 host can produce an explicit recorded host limitation; CI never uses that opt-in.
 
 Each scan retains its raw report/logs locally and produces a public projection

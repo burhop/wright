@@ -109,7 +109,7 @@ while IFS= read -r changed_file; do
   # Match the OCI PR build boundary; contract tests alone do not inspect installed
   # Hermes, OS or nested Node dependencies against a current vulnerability DB.
   case "$changed_file" in
-    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|docker/*|apps/*|packages/*|pyproject.toml|uv.lock|package-lock.json|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
+    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|.dockerignore|docker/*|apps/*|packages/*|src/*|hermes-plugin-wright/*|integrations/rivet/editor/*|integrations/rivet/runner/*|pyproject.toml|uv.lock|package.json|package-lock.json|README.md|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
       CHECK_DOCKER_SCAN=1
       CHECK_PYTHON=1
       ;;

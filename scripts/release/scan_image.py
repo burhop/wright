@@ -44,6 +44,7 @@ BUILD_INPUTS = (
 )
 SHA256 = re.compile(r"sha256:[0-9a-f]{64}\Z")
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
+SEVERITIES = {"UNKNOWN", "LOW", "MEDIUM", "HIGH", "CRITICAL"}
 
 
 class ImageScanError(ValueError):
@@ -176,11 +177,18 @@ def bind_source(
     ).strip()
     if checkout != head:
         raise ImageScanError("Requested scan source is not the current checkout")
-    commands.run(
-        "image-inputs",
-        ["git", "diff", "--quiet", revision, "--", *BUILD_INPUTS],
-        timeout=10,
-    )
+    # Check each boundary separately. An unstaged revert must not cancel a
+    # committed or staged change while we attribute the image to this HEAD.
+    for label, revisions in (
+        ("image-inputs", [revision, head]),
+        ("staged-image-inputs", ["--cached", head]),
+        ("unstaged-image-inputs", []),
+    ):
+        commands.run(
+            label,
+            ["git", "diff", "--quiet", *revisions, "--", *BUILD_INPUTS],
+            timeout=10,
+        )
     extra = commands.run(
         "untracked-image-inputs",
         ["git", "ls-files", "--others", "--exclude-standard", "--", *BUILD_INPUTS],
@@ -218,6 +226,25 @@ def validate_report(report: dict[str, Any], image_id: str) -> None:
         raise ImageScanError(
             "Scanner report is missing Wright Python, Node or OS package coverage"
         )
+    for section in results:
+        if "Vulnerabilities" not in section:
+            continue
+        findings = section["Vulnerabilities"]
+        if not isinstance(findings, list):
+            raise ImageScanError("Malformed vulnerability collection")
+        for finding in findings:
+            if not isinstance(finding, dict) or any(
+                not isinstance(finding.get(key), str) or not finding[key].strip()
+                for key in ("VulnerabilityID", "PkgName", "InstalledVersion")
+            ):
+                raise ImageScanError("Malformed vulnerability identity or version")
+            severity = finding.get("Severity")
+            if not isinstance(severity, str) or severity not in SEVERITIES:
+                raise ImageScanError("Malformed vulnerability severity")
+            if "FixedVersion" in finding and not isinstance(
+                finding["FixedVersion"], str
+            ):
+                raise ImageScanError("Malformed vulnerability fixed version")
 
 
 def public_findings(report: dict[str, Any]) -> list[dict[str, str | None]]:
@@ -282,7 +309,7 @@ def scan(
         if (
             not isinstance(severities, list)
             or not severities
-            or not set(severities) <= {"UNKNOWN", "LOW", "MEDIUM", "HIGH", "CRITICAL"}
+            or not set(severities) <= SEVERITIES
         ):
             raise ImageScanError("Invalid blocked-severity policy")
         # A fresh per-observation cache requires a current database download; an

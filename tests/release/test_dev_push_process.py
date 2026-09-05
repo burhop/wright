@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from fnmatch import fnmatchcase
 from pathlib import Path
+
+import pytest
+
+from scripts.release.scan_image import BUILD_INPUTS
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -99,6 +104,30 @@ def test_local_and_pr_ci_scan_the_existing_image_with_one_blocking_policy() -> N
     assert "test-results/docker-image-security/ci/public" in workflow
     assert "WRIGHT_GATE_DOCKER_IMAGE" in runbook
     assert "Missing candidate images" in runbook
+
+
+@pytest.mark.parametrize(
+    "changed_path",
+    [
+        path + "/nested/input.txt" if (ROOT / path).is_dir() else path
+        for path in BUILD_INPUTS
+    ],
+)
+def test_every_bound_docker_input_selects_both_push_and_ci_scan(
+    changed_path: str,
+) -> None:
+    push = _read("scripts/check-dev-push.sh")
+    start = push.index('case "$changed_file" in')
+    selection = push[start + len('case "$changed_file" in') : push.index(")", start)]
+    push_patterns = selection.strip().split("|")
+    workflow = _read(".github/workflows/docker-pr.yml")
+    paths = workflow.split("    paths:\n", 1)[1].split("\npermissions:", 1)[0]
+    ci_patterns = [line.strip().removeprefix("- ") for line in paths.splitlines()]
+    for patterns in (push_patterns, ci_patterns):
+        assert any(fnmatchcase(changed_path, pattern) for pattern in patterns)
+        assert not any(
+            fnmatchcase("docs/review-only.md", pattern) for pattern in patterns
+        )
 
 
 def test_dashboard_server_changes_select_exact_http_security_regressions() -> None:
