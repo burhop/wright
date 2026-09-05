@@ -1,4 +1,6 @@
-import contract from "../../../../specs/077-browser-program-status/contracts/program-status-bundle.schema.json";
+// Distribution copy of the authoritative bundle's $defs.work.properties.milestone.
+// tests/packaging/test_web_runtime_schema.py prevents drift from both schema copies.
+import contract from "../contracts/native-milestone.schema.json";
 import type { NativeMilestone } from "../components/program-status/NativeMilestone.types";
 
 type Row = Record<string, unknown>;
@@ -105,7 +107,7 @@ export function decodeNativeMilestone(
   value: unknown,
   sourceCommit: string,
 ): NativeMilestone {
-  const schema = contract.$defs.work.properties.milestone as Schema;
+  const schema = contract as Schema;
   if (!shape(value, schema)) fail();
   const v = object(value),
     source = object(v.source_record);
