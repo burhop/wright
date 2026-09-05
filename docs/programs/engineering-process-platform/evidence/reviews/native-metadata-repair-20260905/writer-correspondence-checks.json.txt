@@ -1,0 +1,35 @@
+{
+  "observed_at": "2026-09-05T07:05:35.896611+00:00",
+  "actor": "/root/dashboard_review reconstruction writer; separate independent closure required",
+  "old_tip": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860",
+  "new_tip": "de4189230bf13699bfd8f80a960ba79057baf4ee",
+  "full_map_sha256": "dbb12e23888528a9ce4a1784dc687029c3a9fc01c036e80190586d547b92e488",
+  "non_program_changes": [],
+  "current_task_bytes_identical": true,
+  "old_typed_review_bytes_identical": true,
+  "transitions": [
+    {
+      "transition": "TR-0108",
+      "containing_commit": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+      "actual_paths_excluding_transition": [
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json",
+        "specs/079-wright-native-authoring/tasks.md"
+      ],
+      "manifest_matches": true,
+      "started_at": "2026-09-05T07:01:54.585375Z"
+    },
+    {
+      "transition": "TR-0109",
+      "containing_commit": "9c19245d0814700e33a1c71ecb1b6e07c912ea28",
+      "actual_paths_excluding_transition": [
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0110.json",
+        "docs/programs/engineering-process-platform/program-state.json"
+      ],
+      "manifest_matches": true,
+      "started_at": "2026-09-05T07:01:57.156155Z"
+    }
+  ],
+  "owning_head_observed": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860"
+}
