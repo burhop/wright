@@ -88,7 +88,7 @@
       "priority": 25,
       "title": "Native process language, authoring, execution and verified output",
       "outcome": "Deliver one Wright-owned language shared by AI/programmatic clients, canvas and runtime: create, preserve, run, inspect artifacts and recover from failure. Track independent human/technical and dev deployment verification honestly.",
-      "status": "active",
+      "status": "blocked",
       "depends_on": [
         "EPP-F01B"
       ],
