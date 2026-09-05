@@ -4290,7 +4290,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---
 
 Name: dompurify
-Version: 3.4.12
+Version: 3.4.14
 License: (MPL-2.0 OR Apache-2.0)
 Private: false
 Description: DOMPurify is a DOM-only, super-fast, uber-tolerant XSS sanitizer for HTML, MathML and SVG. It runs as JavaScript and works in all modern browsers, as well as in Node.js (via jsdom). DOMPurify is written by security people who have vast background in web attacks and XSS. Fear not.
