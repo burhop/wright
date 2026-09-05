@@ -1,0 +1,143 @@
+{
+  "scope": "Actual package-sourced schema16 predecessor to native17 and distinct-root recovery; not a published release or installer-update claim",
+  "predecessor_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+  "predecessor_tree": "9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
+  "predecessor_wheel_sha256": "89b45f2cbe7a797385c27a5fd0236e8a4c80db605735555c00e5afb0fe4c4f2b",
+  "candidate_commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+  "candidate_wheel_sha256": "d968c2fa6b7d23292340b51caacfb2ebcc1126fe02b8298c278a52d3a002e9d7",
+  "current_probe_git_blob_sha256": "fbf4a3f8051c54691cc86cd73ce3b991c12b773758c86959a20928f16ad43966",
+  "boundary_probe_sha256": "41b039deaf001cf0c86c01b77a30f6e9b15ffe89c486e92779f9bdf650d463b2",
+  "observed_at": "2026-09-05T06:01:45.466720+00:00",
+  "format": "wright-packaged-predecessor-recovery-v1",
+  "result": "passed",
+  "build": {
+    "command": "python -m hatchling build -t wheel -d <task-owned predecessor-dist>",
+    "hatchling_version": "1.31.0",
+    "source_clean": true,
+    "rebuilt_current_candidate": false,
+    "published": false,
+    "version_label_note": "Both builds carry 0.1.9; Git and wheel hashes distinguish schema16 predecessor from schema17 candidate."
+  },
+  "predecessor_package_correspondence": [
+    {
+      "source": "packages/data_vault/src/data_vault/migrations.py",
+      "package_member": "data_vault/migrations.py",
+      "git_blob_sha256": "c7d49a5c7e8c24fef101c39a9641a635c257acf387cb6e30726fd43572c31d55",
+      "package_bytes_sha256": "9bd8938b8e377e3eac75689b48b9c733adc5708635ff52ffb1f5ee7cc5247e0f",
+      "comparison": "equal after ordinary CRLF/LF normalization"
+    },
+    {
+      "source": "packages/data_vault/src/data_vault/backup.py",
+      "package_member": "data_vault/backup.py",
+      "git_blob_sha256": "0ada77754541e6ab7b0f130c214d3af9e4f92a8d7ce86509e11b50b764adbe16",
+      "package_bytes_sha256": "276d488ee0288291cdf4e74dc3c410d3480ea88faff9ee3dd44197fbd4f268b0",
+      "comparison": "equal after ordinary CRLF/LF normalization"
+    },
+    {
+      "source": "src/wright_engineering/compatibility.json",
+      "package_member": "wright_engineering/compatibility.json",
+      "git_blob_sha256": "2b61db98c366dc748e2a08827d543831b5057088cf5858a6b8a06b68a39cd3af",
+      "package_bytes_sha256": "98342002826df1666b866ceb51b3edcddabb2a9922332dca844ed5eb0805f402",
+      "comparison": "equal after ordinary CRLF/LF normalization"
+    }
+  ],
+  "phases": [
+    {
+      "phase": "initialize16",
+      "schema_max": 16,
+      "database_sha256": "7bde911382ad3e134c4829cd2d278c1c3d5aca30dee7a3b85281b07ec59b1ed6",
+      "package_module_origins_verified": 42
+    },
+    {
+      "phase": "create",
+      "pid": 5096,
+      "wright_modules_checked": 282,
+      "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+      "run_id": "8a2eca34-8c9f-43f7-bb61-83049db368fb",
+      "offline": true,
+      "native_span_count": 30
+    },
+    {
+      "phase": "retain17",
+      "schema_max": 17,
+      "snapshot_sha256": "7a856a4b9b2d58ee88964bd3d89a559be327e4ea4e15c90afa6e62fe514ad48e",
+      "database_sha256": "ff1f323209873a12bff85ff569f7879ab797162bf2f089fa38d6a4d5fd6085f2",
+      "package_module_origins_verified": 42
+    },
+    {
+      "phase": "reject17_restore16",
+      "schema_max": 16,
+      "rejections": [
+        "DatabaseCompatibilityError",
+        "DatabaseCompatibilityError"
+      ],
+      "newer_database_unchanged": true,
+      "schema16_backup_sha256": "87a31c68cc175aeb143ac34f216df1bf8c5bb8038ec115af07e516947073b595",
+      "schema16_manifest_sha256": "da232f29d6e1c399ede508f268558414db3c9eb54f8606fccee7f24154dc2659",
+      "restored_database_sha256": "87a31c68cc175aeb143ac34f216df1bf8c5bb8038ec115af07e516947073b595",
+      "restored_schema": 16,
+      "native_tables_absent": true,
+      "package_module_origins_verified": 42
+    },
+    {
+      "phase": "restart",
+      "pid": 38904,
+      "wright_modules_checked": 282,
+      "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+      "run_id": "8a2eca34-8c9f-43f7-bb61-83049db368fb",
+      "offline": true,
+      "native_span_count": 12
+    }
+  ],
+  "retained_failures": [
+    {
+      "stage": "initial Git source check",
+      "classification": "local worktree ownership configuration",
+      "outcome": "Stopped before any package phase; corrected command-local safe.directory entries only."
+    },
+    {
+      "stage": "first candidate workspace setup",
+      "classification": "scratch workspace inside protected repository",
+      "outcome": "Expected policy denial NATIVE_DENIED; first run preserved. Moved only new task data root to temporary storage; original exact current probe and product code unchanged.",
+      "log_sha256": "1c16592f421196ab50f1a1dd6a5a4a7df189dfc87fa0558dd56f3d844e4e4ced"
+    }
+  ],
+  "raw_evidence": [
+    {
+      "filename": "01-predecessor-initialize.log",
+      "sha256": "2fbcd5b98e3cf44844b1193524bd4ab09d232ef5ed31cd81b630d14c728e06f7",
+      "bytes": 2711
+    },
+    {
+      "filename": "02-candidate-upgrade-and-run.log",
+      "sha256": "0caa298832f760258f32663d2a5ff217a62623aa815882ab9d78232da7161748",
+      "bytes": 1513
+    },
+    {
+      "filename": "03-preserve-native-backup.log",
+      "sha256": "829b7b062f549b27119b9c11799f34f0a4e0ed711dfd3eae20350f966f40f85f",
+      "bytes": 2963
+    },
+    {
+      "filename": "04-predecessor-reject-and-restore.log",
+      "sha256": "751937c328fa2fa3177733e53190b3b56263429fc04f8f24143494cb5671b2b5",
+      "bytes": 3079
+    },
+    {
+      "filename": "05-current-forward-reopen.log",
+      "sha256": "2544f4e902f23fa02c530a13752699d078da8549dd0c21ef7a439e86e7bdcd02",
+      "bytes": 814
+    },
+    {
+      "filename": "recovery-report.json",
+      "sha256": "124206d1aa6ff5266b64c184072c07923fca728adc2ac250367db86a7da0145a",
+      "bytes": 11853
+    }
+  ],
+  "limits": [
+    "Package-sourced subprocesses use actual extracted wheel bytes and assert Wright module origins; dependencies use the existing local Python environment.",
+    "No published release upgrade, different-version installer replacement, cross-platform recovery, or full-container backup restore is claimed.",
+    "Schema16 restored root contains only pre-upgrade work; schema17 native work remains in its distinct preserved root and verified backup. No downgrade or merge of roots.",
+    "Current native probe denies remote network and verifies in-memory native spans; Docker collector evidence is a separate check."
+  ]
+}
