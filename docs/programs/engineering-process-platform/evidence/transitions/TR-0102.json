@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0102",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "BLOCKED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 102,
+  "new_revision": 103,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "3a80e11f6c3afd000eca4fc89cb3827f4c0f9ec2399790fc36ebcff0f9791fea",
+  "new_state_digest": "902990e1df33317f0379a9dcc46ebc2bbb5b8aca85d6649cc46cc047b5b699d9",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Authorize the audited dependency patch and regenerated packaged assets under overnight authority. Preserve candidate 60 evidence and require fresh full gates and independent review.",
+  "started_at": "2026-09-05T03:22:55.681381Z",
+  "finished_at": "2026-09-05T03:22:55.681381Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "300d4380f494da91c70815b83e225ee819d721c8",
+    "source_tree": "93fec53a5cbec730c493554eb02a1ab39d9e04bb",
+    "source_program_tree": "cceaabe0e0bed3335b50a8c5e52991e446173930",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0102.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0102.json",
+      "sha256": "affba6327e5f976fdd6e2c5542ed93ad21a393c7ce5a4f2c4cf5687c23182405",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0103.json",
+      "sha256": "113af74d0951e801e4a21182b70474f61a533436eaa72d09034c2feecd0a04fb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-AUDIT-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. Authorize the audited dependency patch and regenerated packaged assets under overnight authority. Preserve candidate 60 evidence and require fresh full gates and independent review.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "300d4380f494da91c70815b83e225ee819d721c8",
+        "evidence/states/program-state-revision-0102.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required npm audit dependency correction remains open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0102.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}
