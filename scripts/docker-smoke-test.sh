@@ -187,12 +187,14 @@ echo -e "\n--- Scenario E: File Restore from Backup ---"
 echo -e "Validation command: scripts/backup-volumes.sh && scripts/restore-volume.sh wright_logs <timestamp>"
 echo -e "This was verified successfully during Phase 8 testing."
 
-# 7. Start the exact candidate and prove both the API and Hermes gateway are
-# healthy. This must consume IMAGE_TAG; it must never trigger a rebuild.
-echo -e "\n${YELLOW}Step 7: Testing API and Hermes gateway readiness...${NC}"
+# 7. Start a cold exact candidate without external networking and prove both the
+# API and Hermes gateway are healthy using only the image-built environment.
+# No host ports, startup dependency downloads, or diagnostic UV overrides.
+# This must consume IMAGE_TAG; it must never trigger a rebuild.
+echo -e "\n${YELLOW}Step 7: Testing cold offline API and Hermes gateway readiness...${NC}"
 SMOKE_CONTAINER="wright-exact-candidate-smoke-$$"
 docker run --rm -d --name "$SMOKE_CONTAINER" \
-  -p 127.0.0.1:8090:8000 \
+  --network none \
   -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
   -e LLM_API_KEY="ci-test" \
   -e LLM_API_MODEL="ci-model" \
@@ -207,7 +209,8 @@ cleanup_smoke() {
 trap cleanup_smoke EXIT
 
 for attempt in $(seq 1 45); do
-  if curl --fail --silent --max-time 2 http://127.0.0.1:8090/api/health >/dev/null 2>&1; then
+  if docker exec "$SMOKE_CONTAINER" \
+    curl --fail --silent --max-time 2 http://127.0.0.1:8000/api/health >/dev/null 2>&1; then
     break
   fi
   if [ "$attempt" -eq 45 ]; then
@@ -236,8 +239,9 @@ for attempt in $(seq 1 30); do
 done
 
 for attempt in $(seq 1 45); do
-  AGENT_HEALTH=$(curl --fail --silent --max-time 2 \
-    http://127.0.0.1:8090/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
+  AGENT_HEALTH=$(docker exec "$SMOKE_CONTAINER" \
+    curl --fail --silent --max-time 2 \
+    http://127.0.0.1:8000/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
   AGENT_STATE=$(printf '%s' "$AGENT_HEALTH" | "${PYTHON_CMD[@]}" -c \
     'import json, sys; print(json.load(sys.stdin).get("state", "unknown"))')
   echo "Agent health attempt $attempt: $AGENT_HEALTH"
