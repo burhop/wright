@@ -54,7 +54,7 @@ Independent acceptance: generate/check actual outputs, inspect provenance, fail/
 
 ## Phase 7: Verification and integration
 
-- [x] T027 Perform independent exact-candidate architecture/security/quality review; resolve actionable findings and preserve original results. (FR-001–020; AC10)
+- [ ] T027 Perform independent exact-candidate architecture/security/quality review; resolve actionable findings and preserve original results. (FR-001–020; AC10)
 - [ ] T028 Execute accessibility/manual usability protocol with real independent participants, record actual results and address acceptance failures. (FR-019; AC03, AC10)
 - [ ] T029 Verify packaging, native/Docker/offline, migration/retention/recovery and legacy non-interference; document actual host limitations. (FR-020; AC09)
 - [ ] T030 Run required push/merge gates on exact candidates, inspect all terminal CI jobs and consolidate any necessary corrections. (FR-020; AC10)

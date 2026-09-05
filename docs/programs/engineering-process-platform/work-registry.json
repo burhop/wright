@@ -90,7 +90,7 @@
       "Invalid configuration remains buffered until corrected; the editor preserves and explains its 100-command undo history. The atomic path/producer and undo corrections are independently closed.",
       "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
       "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
-      "Linux amd64 cold offline Docker and native workflow/restart checks passed; the complete local merge gate passed on 60ef8672. Final metadata review, required push/CI checks, packaging scope consolidation, dev PR integration and actual integrated-build verification remain pending.",
+      "Candidate 60ef8672 passed the complete local merge gate and retained Linux amd64 cold offline Docker/native restart evidence. Required npm audit subsequently identified dependency blockers; the bounded correction is integrated at 9b636479. Packaged frontend assets are regenerated; fresh complete gates and exact-candidate independent review are pending. Dev PR/CI, development image publication and actual integrated-build verification remain pending.",
       "The authorized overnight work targets technical dev delivery. Human usability is separately tracked as FOLLOWUP-NATIVE-HUMAN-01; participants/results and T028/Q-HUMAN remain pending. Whole-milestone human acceptance, benchmark qualification (0/100), and Rivet migration/retirement remain distinct."
     ],
     "tasks": [
@@ -304,11 +304,13 @@
       },
       {
         "id": "T027",
-        "activity": "active",
-        "owner": "coordinator",
+        "activity": "verifying",
+        "owner": "independent reviewer",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": []
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
       },
       {
         "id": "T028",
@@ -326,7 +328,9 @@
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": []
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
       },
       {
         "id": "T030",
@@ -334,7 +338,9 @@
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": []
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
       },
       {
         "id": "T031",
@@ -1658,6 +1664,195 @@
             "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
           }
         ]
+      },
+      {
+        "id": "Q-REVIEW-9b636479-5",
+        "check_id": "Q-REVIEW",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "The prior exact-candidate review remains historical. The dependency correction requires a fresh independent exact-candidate review; T027 is reopened. No new review verdict is recorded. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-9b636479-5",
+        "check_id": "Q-GATES",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "efb0e4a92c1b7e8506f847057c7ffd0ef65ea6fdf95e1306fdc8379237439571",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Required npm audit found six high advisory blockers on the former dependency set. The bounded correction is integrated; the complete local gate, push gate and terminal CI for the corrected candidate remain pending. Preserve the previous full-gate pass, failed attempts and raw skips as history. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-9b636479-4",
+        "check_id": "Q-PACKAGING",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "d7d5dc13d3e726f901dbec7a491000674b08540b483689d2bf280984561946ab",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Previous wheel/sdist and cold offline Docker/native restart evidence remains historical. The dependency correction requires regenerated web assets and validation of the assembled corrected artifacts. No new package, image, publication or deployment result is recorded. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-EDITOR-9b636479-4",
+        "check_id": "Q-EDITOR",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Native editor implementation is retained. The changed frontend dependency set requires fresh authoring checks and browser verification; earlier tests and exact counts remain historical, with no new acceptance verdict. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-9b636479-4",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Dashboard implementation is retained. The changed frontend dependency set requires fresh affected checks; earlier scoped results and exact counts remain historical, with no new acceptance verdict. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-9b636479-4",
+        "check_id": "Q-RUNTIME",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Runtime implementation and prior durable run evidence are retained. Combined runtime/browser acceptance must be verified with the corrected dependency set; earlier results and exact counts remain historical. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-9b636479-4",
+        "check_id": "Q-COMBINED",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "ae53812a15e967f44341c8f682327829c21cd9200c1f74d73bbbbe5d6f1d03cb",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "The combined native acceptance population is awaiting the corrected assembled candidate and fresh gate/browser evidence. Declared source scopes alone do not cover dependency-lock changes, so the previous combined pass is not carried forward as current acceptance. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -1684,6 +1879,23 @@
         ],
         "check_ids": [],
         "observed_at": "2026-09-04T21:37:44Z"
+      },
+      {
+        "id": "B-FRESH-NATIVE-CANDIDATE",
+        "summary": "The dependency correction is implemented; fresh assembled-candidate gates and independent review are pending.",
+        "owner": "coordinator and independent reviewer",
+        "required_action": "Regenerate and validate actual artifacts, complete the local and push gates and exact-candidate independent review, then inspect terminal dev PR CI. Preserve previous audit/gate/review results; retain the separate human follow-up.",
+        "task_ids": [
+          "T027",
+          "T029",
+          "T030"
+        ],
+        "check_ids": [
+          "Q-REVIEW",
+          "Q-PACKAGING",
+          "Q-GATES"
+        ],
+        "observed_at": "2026-09-05T03:27:41.359131Z"
       }
     ],
     "next_task_ids": [
@@ -1726,7 +1938,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+      "candidate_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
