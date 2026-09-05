@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0122",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED",
+  "to_state": "PUSH_AUTHORIZATION_PENDING",
+  "prior_revision": 122,
+  "new_revision": 123,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "a646096ad1a29752830ae716c473dbe790c4efd2b449770de4f0f40d871c0d49",
+  "new_state_digest": "1ddf5cbec090a059dd4dd9ce48ce9280bb21186cda3137024a6f60e3c8671502",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Standing original and overnight user authority covers the consolidated correction push and dev PR integration after checks. Exact28efd review is committed, lease closed, full e15 merge gate passed. Preserve failed H1 and all correction history; actual H2 push gate and CI remain pending.",
+  "started_at": "2026-09-05T10:05:21.691901Z",
+  "finished_at": "2026-09-05T10:05:21.691901Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "81daeae4b57b11b37049efbc4be35433657f77ae",
+    "source_tree": "f4ed5872f1b6df03c677877675e892dfc78f89d9",
+    "source_program_tree": "01a9cbbb6db75880c129eac4c5c9e728039ffd12",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0123.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0122.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0122.json",
+      "sha256": "2219d3340c6434a7c32c5a4574585a5ca3005f4935c202feb77b87d4aad16625",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0123.json",
+      "sha256": "139a1b8c2b30dd15ad1946664c6950c2fb9d2774b49bd0c518aaebbfe653b217",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Standing original and overnight user authority covers the consolidated correction push and dev PR integration after checks. Exact28efd review is committed, lease closed, full e15 merge gate passed. Preserve failed H1 and all correction history; actual H2 push gate and CI remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "81daeae4b57b11b37049efbc4be35433657f77ae",
+        "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": "NATIVE-PR121-CI-SECURITY-20260905",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0122.json",
+  "next_action": "OPEN_CURRENT_FEATURE_PR"
+}
