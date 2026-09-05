@@ -1,0 +1,66 @@
+{
+  "format": "wright-native-d734-codeql-preparation-history-v1",
+  "source_commit": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+  "attempts": [
+    {
+      "attempt": 1,
+      "stage": "source_archive_verification",
+      "result": "failed",
+      "codeql_query_analysis_started": false,
+      "started_at": null,
+      "completed_at": null,
+      "time_note": "No execution timestamps were recorded in this original preparation record; no times are inferred.",
+      "cause": "The exact-byte guard rejected Windows Git archive CRLF conversion before any CodeQL execution.",
+      "retained_private_observation": {
+        "filename": "preparation-failure.json",
+        "raw_file_sha256": "6c5d2d96fd47f3902b04b511c204906059d6592589e9e737cf7200780eebff6a",
+        "raw_bytes": 788
+      }
+    },
+    {
+      "attempt": 2,
+      "stage": "database_create",
+      "result": "failed",
+      "codeql_query_analysis_started": false,
+      "started_at": "2026-09-05T08:58:07.878255Z",
+      "completed_at": "2026-09-05T08:58:21.528510Z",
+      "database_create_exit_code": 2,
+      "cause": "Windows py launcher had no registered interpreter.",
+      "retained_private_observation": {
+        "filename": "observation.json",
+        "raw_file_sha256": "18c27253fb53feb1a29886598f9024f064f2eb3052b1d78f9adbe35c199f1fe6",
+        "raw_bytes": 2636
+      },
+      "retained_private_log": {
+        "filename": "create.log",
+        "raw_file_sha256": "12c9c0e4851a48c1e97dc15057da480ab43eb5c8f0e4bdbd4fa9c6a547765510",
+        "raw_bytes": 1112
+      }
+    },
+    {
+      "attempt": 3,
+      "stage": "database_create",
+      "result": "failed",
+      "codeql_query_analysis_started": false,
+      "started_at": "2026-09-05T09:01:14.195818Z",
+      "completed_at": "2026-09-05T09:01:25.400878Z",
+      "database_create_exit_code": 2,
+      "cause": "The declared interpreter-name option rejected an absolute path; it accepts py/python/python3.",
+      "retained_private_observation": {
+        "filename": "observation.json",
+        "raw_file_sha256": "3f35ebfa99a4e1070487747d307142ecc654880f49f9d1288d37f1d8b8fbb4c4",
+        "raw_bytes": 3034
+      },
+      "retained_private_log": {
+        "filename": "create.log",
+        "raw_file_sha256": "3ff09940fb005fddff04767e24e8144b5822d67d951989801da20a1d96816d61",
+        "raw_bytes": 407
+      }
+    }
+  ],
+  "successful_query_execution": {
+    "attempt": 4,
+    "receipt": "codeql-d734-public-projection.json.txt"
+  },
+  "preservation": "Failed preparations remain separate failures. Query analysis ran successfully only in attempt 4; no failed attempt is relabeled."
+}
