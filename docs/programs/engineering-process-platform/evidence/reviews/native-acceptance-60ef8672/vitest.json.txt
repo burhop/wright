@@ -1,0 +1,498 @@
+[
+  {
+    "name": "native milestone strict projection > accepts the Python projection and keeps missing evidence untested",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects counts corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects missing corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects duplicate corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects scope corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects readiness corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects unknown corruption",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "native milestone strict projection > rejects a different source identity",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/milestone-status.test.ts"
+  },
+  {
+    "name": "scopes and traces programmatic writes using the same canonical payload and CAS token",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID bindings",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID contract",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID examples",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID runs",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID check",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses document resources for the valid process ID documents",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "uses the canonical collection for create and paginated list",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "retains native conflict details and actionable findings",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "rejects an unreadable service response without pretending a document was saved",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/services/native-process.test.ts"
+  },
+  {
+    "name": "packaged program status fallback > is accepted by the same decoder and identity verifier as the browser",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/PackagedProgramStatus.test.ts"
+  },
+  {
+    "name": "native milestone dashboard > keeps implementation, verified tasks, integration and benchmark denominators distinct",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/NativeMilestone.test.tsx"
+  },
+  {
+    "name": "native milestone dashboard > makes stale coverage, failed/skipped/not-run results and missing human evidence explicit",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/NativeMilestone.test.tsx"
+  },
+  {
+    "name": "native milestone dashboard > offers keyboard-accessible evidence with exact tested identity separate from report and candidate",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/NativeMilestone.test.tsx"
+  },
+  {
+    "name": "native milestone dashboard > shows scope changes, all task stages, and delivery records on demand",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/NativeMilestone.test.tsx"
+  },
+  {
+    "name": "native milestone dashboard > has honest empty states without inferring capabilities from implemented tasks",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/NativeMilestone.test.tsx"
+  },
+  {
+    "name": "program status evidence > exposes exact identity and keyboard-operable bounded detail",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusEvidence.test.tsx"
+  },
+  {
+    "name": "program status evidence > rejects traversal and non-exact GitHub links before rendering",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusEvidence.test.tsx"
+  },
+  {
+    "name": "ProgramHistory > explains task scope and preserves exact time/commit table evidence",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusHistory.test.tsx"
+  },
+  {
+    "name": "ProgramHistory > renders unavailable rather than inventing history",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusHistory.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > keeps the exact last bundle current after an unchanged 304",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > keeps the last valid bundle visible when a later refresh fails",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > shows an honest unavailable state when no prior bundle exists",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > does not retain a false active publisher when heartbeat polling fails",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > retains the last bundle but marks a failed publisher heartbeat stale",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "ProgramStatusPage refresh state > prioritizes the native milestone and retains it when refresh fails",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPageRefresh.test.tsx"
+  },
+  {
+    "name": "program status contract and first viewport > decodes honest zero progress without conflating proposed stories",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPage.test.tsx"
+  },
+  {
+    "name": "program status contract and first viewport > rejects unknown top-level fields and invalid task arithmetic",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPage.test.tsx"
+  },
+  {
+    "name": "program status contract and first viewport > keeps publisher health separate and closed",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPage.test.tsx"
+  },
+  {
+    "name": "program status contract and first viewport > answers customer and engineering questions in the first viewport",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPage.test.tsx"
+  },
+  {
+    "name": "program status contract and first viewport > labels active feature counts from the current feature identity",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusPage.test.tsx"
+  },
+  {
+    "name": "program status conditional refresh transport > sends the prior exact identity and accepts a bodyless 304",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > decodes a changed bundle as one complete 200 response",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > independently rejects dashboard and bundle identity drift",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > verifies the complete raw supplement before projecting UI fields",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > requires each emitted evidence reference to resolve exactly once",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > binds raw snapshot, source catalog, history, and delivery-lane identities",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > binds checkpoint time to the latest selected test source",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > admits test-results evidence only for selected test suite sources",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > resolves evidence nested inside a non-empty governed use-case stage",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > recomputes a non-empty use-case funnel and rejects non-independent evidence",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > uses Python-compatible shortest canonical numbers",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > recomputes canonical test-case and run-key digests in the browser",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > keeps typed failure recovery bounded",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status conditional refresh transport > reads publisher health separately with no-store semantics",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusRefresh.test.ts"
+  },
+  {
+    "name": "program status work and capability detail > states task denominator limitations and undecomposed roadmap work",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusWork.test.tsx"
+  },
+  {
+    "name": "program status work and capability detail > does not infer an agent assignment",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusWork.test.tsx"
+  },
+  {
+    "name": "program status work and capability detail > keeps proposed, implemented, tested, and qualified counts separate",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusWork.test.tsx"
+  },
+  {
+    "name": "program status work and capability detail > shows integration and development as separate evidence-backed lanes",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/__tests__/ProgramStatusWork.test.tsx"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > matches frozen UTF-8 bytes: ascii",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > matches frozen UTF-8 bytes: unicode",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > matches frozen UTF-8 bytes: controls",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > matches frozen UTF-8 bytes: safe-integers",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > matches frozen UTF-8 bytes: ordered-array",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: duplicate-key",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: float",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: exponent",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: negative-zero",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: unsafe-integer",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: non-nfc",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: surrogate",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: nonfinite",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > rejects noncanonical input: bom",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > accepts the same frozen schema and example used by backend clients",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "official language conformance (simulated programmatic clients) > permits incomplete drafts while rejecting unknown document keys",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path safe.txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path folder/safe.txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path folder\\safe.txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path résumé.txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path folder/name..txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > accepts the core relative artifact path folder/space name.txt",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path  atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path ../outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path folder/../outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path ./safe.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path folder/./safe.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path /outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path \\outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path C:\\outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path C:outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path \\\\server\\share\\outside.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path folder//safe.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path folder\\\\safe.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path folder/ atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path safe.txt:stream atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects the core-invalid artifact path safe\u0000.txt atomically",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects a second producer for a many-valued draft input without losing the first",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > undoes and redoes all 60 complete edits rather than dropping the earliest ten",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > retains exactly the latest 100 edits and clears redo after a new branch",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > preserves explicitly configured empty text when editing a programmatic step",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > creates exact descriptor ports without introducing renderer semantics",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > retains exact endpoints and rejects a duplicate single input without mutation",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects mismatched port types and cycles",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > deletes all affected edges/outputs atomically and undo restores exact identity",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > layout-only edits preserve the semantic bytes and exact endpoints",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects invalid exact decimal 1.0 without replacing a valid document",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects invalid exact decimal 01 without replacing a valid document",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects invalid exact decimal -0 without replacing a valid document",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects invalid exact decimal 1e3 without replacing a valid document",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "atomic authoring commands > rejects invalid exact decimal 1000000000000000001 without replacing a valid document",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/model.test.ts"
+  },
+  {
+    "name": "mocked authoring journeys > keeps an invalid artifact path buffered and the valid definition unchanged until corrected",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > shows the session undo limit and available undo and redo counts",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > retains recovery and retry identity when save confirmation has newer-version",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > retains recovery and retry identity when save confirmation has read-failure",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > renders programmatic identities and preserves invalid field buffers across selection",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > saves the language definition and reopens the exact server response",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > preserves a conflicting draft and uses CAS tokens on updates",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > requires confirmation before replacing dirty work and returns keyboard focus",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > recovers unapplied fields after unmount without declaring them saved",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked authoring journeys > reports actual readiness only after a service check and invalidates it on edit",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeEditor.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > shows actual failure, immutable revision and missing observed artifacts",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > gates dirty work and retains the idempotency key on an ambiguous linked rerun",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > cancels using the service response and refreshes terminal state",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > reconnects after an unavailable snapshot without issuing cancellation",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > never exposes failed artifact bytes through preview or download",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  },
+  {
+    "name": "mocked run inspection and recovery > requires rebinding when a selected tool's exact schema changes",
+    "file": "D:/repos/wright/.local-run/native-process-milestone/wright/apps/web/src/components/native-process/NativeRunPanel.test.tsx"
+  }
+]

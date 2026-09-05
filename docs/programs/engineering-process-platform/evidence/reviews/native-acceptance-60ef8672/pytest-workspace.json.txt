@@ -1,0 +1,340 @@
+{
+  "collection_only": true,
+  "exit_code": 0,
+  "selected_files": [
+    "packages/workspace_service/tests/test_native_process_mcp.py",
+    "packages/workspace_service/tests/test_native_process_mcp_protocol.py",
+    "packages/workspace_service/tests/test_native_process_runtime.py",
+    "packages/workspace_service/tests/test_native_process_restart.py"
+  ],
+  "tests": [
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_schema_digest_accepts_fractions_and_hashes_null",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 162,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_discovery_and_preflight_are_read_only_and_snapshot_schemas",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 173,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_exact_schema_changes_fail_before_start[input]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 182,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_exact_schema_changes_fail_before_start[output]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 182,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_exact_schema_changes_fail_before_start[missing_output]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 182,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_post_startup_guard_prevents_changed_dispatch[schema]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 200,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_post_startup_guard_prevents_changed_dispatch[enabled]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 200,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_post_startup_guard_prevents_changed_dispatch[approval]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 200,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_post_startup_guard_prevents_changed_dispatch[archived]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 200,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_denied_and_unavailable_tools_never_discover",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 231,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_malformed_bindings_cannot_dispatch[invalid0]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 247,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_malformed_bindings_cannot_dispatch[invalid1]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 247,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_malformed_bindings_cannot_dispatch[invalid2]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 247,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_actual_gateway_route_preserves_trace_and_canonical_structured_text",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 258,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_schema_input_and_output_errors_are_actionable",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 277,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_unusable_local_schema_references_fail_inside_native_boundary[schema0]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 290,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_unusable_local_schema_references_fail_inside_native_boundary[schema1]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 290,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_unusable_local_schema_references_fail_inside_native_boundary[schema2]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 290,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_text_and_empty_structured_results[output0-hello/nworld]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 325,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_text_and_empty_structured_results[output1-{}]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 325,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_or_provider_error_results_fail_bounded[output0]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 351,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_or_provider_error_results_fail_bounded[output1]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 351,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_or_provider_error_results_fail_bounded[output2]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 351,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_or_provider_error_results_fail_bounded[output3]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 351,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_timeout_and_cancellation_stop_forwarding",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 374,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_remote_schema_reference_is_rejected_without_resolution",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 393,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_adapter_closes_owned_sessions",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 403,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_arguments_are_frozen_before_startup_and_timeout_is_capped",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 415,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_arguments_and_timeout_never_start[arguments0-1]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 430,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_arguments_and_timeout_never_start[arguments1-0]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 430,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_arguments_and_timeout_never_start[arguments2-inf]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 430,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_invalid_arguments_and_timeout_never_start[arguments3-1]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 430,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_input_size_and_adapter_session_limits",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 448,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp.py::test_workspace_location_change_fails_closed",
+      "file": "packages/workspace_service/tests/test_native_process_mcp.py",
+      "line": 463,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp_protocol.py::test_native_adapter_real_stdio_protocol[adapter]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp_protocol.py",
+      "line": 52,
+      "skip_markers": [
+        {
+          "name": "skipif",
+          "conditions": [
+            "True"
+          ],
+          "reason": "explicit opt-in disposable local MCP protocol proof"
+        }
+      ]
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_mcp_protocol.py::test_native_adapter_real_stdio_protocol[native-process-artifact]",
+      "file": "packages/workspace_service/tests/test_native_process_mcp_protocol.py",
+      "line": 52,
+      "skip_markers": [
+        {
+          "name": "skipif",
+          "conditions": [
+            "True"
+          ],
+          "reason": "explicit opt-in disposable local MCP protocol proof"
+        }
+      ]
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_real_deterministic_examples_match_independent_output_oracles[concept-brief]",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 88,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_real_deterministic_examples_match_independent_output_oracles[mass-check]",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 88,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_real_deterministic_examples_match_independent_output_oracles[package-review]",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 88,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_failed_mass_can_be_corrected_into_linked_success_without_rewriting_evidence",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 120,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_document_and_package_negative_controls_fail_from_actual_output",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 143,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_second_coordinator_cannot_interrupt_the_owner_and_new_owner_recovers",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 200,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_queued_cancel_calls_no_operation",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 217,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_deadline_prevents_late_worker_artifact_publication",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 230,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_changed_workspace_binding_stops_execution_without_artifacts",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 248,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_mcp_runtime_deadline_and_trace_adapter_contract[False]",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 261,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_mcp_runtime_deadline_and_trace_adapter_contract[True]",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 261,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_valid_unicode_write_read_roundtrip",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 388,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_valid_fractional_mcp_arguments_reach_adapter",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 403,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_valid_nfc_input_strings_may_join_to_decomposed_text",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 421,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_runtime.py::test_cancelled_promotion_after_cleanup_before_terminal_is_removed",
+      "file": "packages/workspace_service/tests/test_native_process_runtime.py",
+      "line": 449,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/workspace_service/tests/test_native_process_restart.py::test_actual_process_death_preserves_evidence_and_allows_linked_restart",
+      "file": "packages/workspace_service/tests/test_native_process_restart.py",
+      "line": 129,
+      "skip_markers": []
+    }
+  ]
+}

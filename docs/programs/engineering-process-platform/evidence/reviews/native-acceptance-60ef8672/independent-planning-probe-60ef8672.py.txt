@@ -1,0 +1,118 @@
+"""Bounded current-source planning identity and frozen-contract checks."""
+from __future__ import annotations
+
+from collections import Counter
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+
+from jsonschema import Draft202012Validator
+
+ROOT = Path(__file__).resolve().parents[1]
+CANDIDATE = "60ef8672f1f61c2f4942e618638ec8901e9aa9a0"
+BASELINE = "7404a549ae244cc05d89e062c60276e8862f53c9"
+PREFIX = "specs/079-wright-native-authoring"
+PROGRAM = "docs/programs/engineering-process-platform"
+
+
+def git(*args):
+    return subprocess.check_output(["git", "-c", f"safe.directory={ROOT.as_posix()}", *args], cwd=ROOT)
+
+
+def read(path):
+    return git("show", f"{CANDIDATE}:{path}")
+
+
+def document(path):
+    return json.loads(read(path))
+
+
+registry = document(PROGRAM + "/work-registry.json")["milestone"]
+check = next(row for row in registry["checks"] if row["id"] == "Q-PLANNING")
+assert check["task_ids"] == ["T001", "T002"] and check["independent_required"] is True
+assert check["source_paths"] == [PREFIX]
+scope_rows = [[path, git("ls-tree", CANDIDATE, "--", path).decode().strip() or "missing"] for path in sorted(set(check["source_paths"]))]
+assert all(row[1] != "missing" for row in scope_rows)
+scope_sha256 = hashlib.sha256(json.dumps(scope_rows, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+tasks_text = read(PREFIX + "/tasks.md").decode()
+tasks = re.findall(r"^- \[([ xX])\] (T\d{3}) (.+)$", tasks_text, re.MULTILINE)
+assert len(tasks) == 32
+assert [row[1] for row in tasks] == [f"T{n:03}" for n in range(1, 33)]
+assert [row[1] for row in tasks if row[0] != " "] == [f"T{n:03}" for n in range(1, 27)]
+assert {row["id"] for row in registry["tasks"]} == {row[1] for row in tasks}
+integration_exempt = [row["id"] for row in registry["tasks"] if not row["integration_required"]]
+assert integration_exempt == ["T031", "T032"]
+assert all(row["integration_exemption"] for row in registry["tasks"] if not row["integration_required"])
+
+schema = document(PREFIX + "/contracts/native-process.schema.json")
+Draft202012Validator.check_schema(schema)
+assert schema == document("packages/core/src/core/native_process_contract/definition.schema.json")
+validator = Draft202012Validator(schema)
+fixture_results = []
+for name in ["concept-brief", "mass-check", "mass-check-fails", "package-review", "study-trace"]:
+    example = document(PREFIX + f"/contracts/examples/{name}.json")
+    validator.validate(example)
+    ids = [example["id"]] + [row["id"] for kind in ["steps", "ports", "connections", "outputs"] for row in example[kind]]
+    assert len(ids) == len(set(ids)), name
+    steps = {row["id"] for row in example["steps"]}
+    ports = {row["id"]: row for row in example["ports"]}
+    assert all(port["step_id"] in steps for port in ports.values()), name
+    assert len({(port["step_id"], port["direction"], port["key"]) for port in ports.values()}) == len(ports), name
+    targets = Counter()
+    successors = {step: set() for step in steps}
+    for edge in example["connections"]:
+        source, target = ports[edge["source_port_id"]], ports[edge["target_port_id"]]
+        assert source["direction"] == "output" and target["direction"] == "input", name
+        assert source["type"] == target["type"] and source["cardinality"] == target["cardinality"], name
+        targets[target["id"]] += 1
+        assert targets[target["id"]] == 1, name
+        successors[source["step_id"]].add(target["step_id"])
+    remaining = set(steps)
+    while remaining:
+        incoming = {target for source in remaining for target in successors[source] if target in remaining}
+        roots = remaining - incoming
+        assert roots, name
+        remaining -= roots
+    assert all(ports[row["port_id"]]["direction"] == "output" and ports[row["port_id"]]["type"] == "artifact" for row in example["outputs"]), name
+    fixture_results.append({"id": name, "steps": len(steps), "ports": len(ports), "connections": len(example["connections"]), "output_declarations": len(example["outputs"])})
+
+oracles = document(PREFIX + "/contracts/examples/oracles.json")["cases"]
+assert {row["id"] for row in oracles} == {"concept-brief", "mass-check", "package-review"}
+assert all(row["expected_text"] and row["negative"] for row in oracles)
+for example in registry["examples"]:
+    packaged = document(example["definition_path"])
+    assert packaged == document(PREFIX + f'/contracts/examples/{packaged["id"]}.json')
+assert len(registry["examples"]) == 3
+cases = document(PREFIX + "/contracts/examples/invalid-and-draft-cases.json")["cases"]
+assert len(cases) == 8
+assert Counter(row["expected"] for row in cases) == {"structural_error": 5, "saveable_not_ready": 3}
+vectors = document(PREFIX + "/contracts/canonical-vectors.json")
+assert len(vectors["accepted"]) == 5 and len(vectors["rejected"]) == 9
+
+preserved = ["specs/078-process-definition-view/contracts", "src/wright_engineering/static/process-definitions", "integrations/rivet"]
+for path in preserved:
+    assert git("ls-tree", CANDIDATE, "--", path) == git("ls-tree", BASELINE, "--", path), path
+assert b"specs/079-wright-native-authoring/plan.md" in read("AGENTS.md")
+state = document(PROGRAM + "/program-state.json")
+assert state["baseline"]["commit"] == BASELINE and state["current_feature"] == "EPP-N01"
+assert state["baseline"]["tree"] == git("rev-parse", BASELINE + "^{tree}").decode().strip()
+
+result = {
+    "check_id": "Q-PLANNING", "candidate_commit": CANDIDATE,
+    "candidate_tree": git("rev-parse", CANDIDATE + "^{tree}").decode().strip(),
+    "source_paths": check["source_paths"], "scope_rows": scope_rows, "scope_sha256": scope_sha256,
+    "scope_file_count": len(git("ls-tree", "-r", "--name-only", CANDIDATE, "--", PREFIX).decode().splitlines()),
+    "task_ids": check["task_ids"], "task_population": len(tasks),
+    "implemented_partition": [row[1] for row in tasks if row[0] != " "],
+    "pending_partition": [row[1] for row in tasks if row[0] == " "],
+    "integration_denominator": 30, "integration_exempt": integration_exempt,
+    "fixture_checks": fixture_results, "development_example_count": 3,
+    "structural_negative_cases": 5, "saveable_draft_cases": 3,
+    "canonical_accepted_vectors_present": 5, "canonical_rejected_vectors_present": 9,
+    "preserved_baseline_subtrees": preserved,
+    "scope_probe_result": "passed",
+    "limits": "Planning/source consistency only; no runtime, human, full-gate, dev deployment or final candidate acceptance is asserted."
+}
+print(json.dumps(result, indent=2))

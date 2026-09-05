@@ -1,0 +1,68 @@
+[
+  {
+    "path": "docker-result-c7f1f218.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/result-c7f1f218.json",
+    "sha256": "c20134766438401761597aef83649c1cfcf0a701b7a8615e4f4f53942fe8707e",
+    "bytes": 3993
+  },
+  {
+    "path": "docker-original-manifest-c7f1f218.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/manifest-c7f1f218.json",
+    "sha256": "a4883cb9029a5065070fa535db5af8d7179debaf18789eafddddd926adf955fb",
+    "bytes": 1577
+  },
+  {
+    "path": "docker-native-c7f1f218.log",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/native-c7f1f218.log",
+    "sha256": "bde95377158bbb3f6e682ef26b9a3b678ad80510bf819b1dbf7e69dfaabf472c",
+    "bytes": 5445
+  },
+  {
+    "path": "docker-schema-c7f1f218.log",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/schema-c7f1f218.log",
+    "sha256": "0e6f2f39090454a80ef8f8c3754c7de3d044de4ee17e00d7777de75642abd2a3",
+    "bytes": 889
+  },
+  {
+    "path": "independent-assembled-candidate-review-60ef8672.md",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/independent-assembled-candidate-review-60ef8672.md",
+    "sha256": "e85d4c7c5b85e4b67991c995a925813e9b748f003939c260d8cc1545d1e5739d",
+    "bytes": 3584
+  },
+  {
+    "path": "independent-artifact-result-60ef8672.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-candidate-review/.local-run/review-assembled-artifacts-60ef8672-result.json",
+    "sha256": "ec2e7d8aeb0cd9f00ce9ce5fca280f75bd525f1a4f0997199d6658951fb119f4",
+    "bytes": 1826
+  },
+  {
+    "path": "independent-core-resources-review-8fc1e207.md",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/independent-core-resources-review-8fc1e207.md",
+    "sha256": "410d2ad09cc6d3ab995c1f95d51878f3b7bdbc871c21879c59e7bb074c957175",
+    "bytes": 3358
+  },
+  {
+    "path": "browser-last-run.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/native-live-c7f1f218/.last-run.json",
+    "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "bytes": 45
+  },
+  {
+    "path": "actual-native-runs.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/native-live-c7f1f218/native-process-live--live--f04bb-ailure-and-links-correction-chromium/actual-native-runs.json",
+    "sha256": "b0a6c6dfb334a87409fb54371fddbf8b5935daed99568034220b7ed6a7cf33fb",
+    "bytes": 33113
+  },
+  {
+    "path": "native-run-recovery.png",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/native-live-c7f1f218/native-process-live--live--f04bb-ailure-and-links-correction-chromium/native-run-recovery.png",
+    "sha256": "bf6030467f0189e91a0f6890d35ea30a0133bdcf6abefae89d23eb5e8f4306bd",
+    "bytes": 71054
+  },
+  {
+    "path": "actual-native-example-runs.json",
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/native-live-c7f1f218/native-process-live--live--fd1a8-xamples-produce-exact-files-chromium/actual-native-example-runs.json",
+    "sha256": "a4663cf36d6345f27b9d0bf92992c117dd0fc35bee48bb9cce4dcb06f0fb14d3",
+    "bytes": 19985
+  }
+]

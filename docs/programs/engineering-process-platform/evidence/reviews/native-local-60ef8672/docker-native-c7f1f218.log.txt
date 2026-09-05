@@ -1,0 +1,28 @@
+Exactc7f1f218 standard image, network none, no UV_NO_SYNC override, disposable data, real HTTP
+Command: docker volume create wright-native-c7f1f218-data
+wright-native-c7f1f218-data
+Command: docker run --rm --network none --mount type=volume,source=wright-native-c7f1f218-data,target=/home/agent --mount type=bind,source=D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/native_http_probe.py,target=/proof.py,readonly -e WRIGHT_SECRETS_PATH=/home/agent/.config/wright/native-docker-secrets.json --entrypoint /workspace/.venv/bin/python sha256:455f0a756e098042dd34aca472875987cedd6708b3ada28949140625128748c8 /proof.py prepare
+{"phase": "prepare", "workspace": "native-docker-workspace"}
+Command: docker run -d --name wright-native-c7f1f218-proof --network none --mount type=volume,source=wright-native-c7f1f218-data,target=/home/agent --mount type=bind,source=D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/native_http_probe.py,target=/proof.py,readonly -e WRIGHT_API_TOKEN=native-docker-disposable-token -e WRIGHT_AUTH_MODE=enforced -e WRIGHT_SECRETS_PATH=/home/agent/.config/wright/native-docker-secrets.json -e WRIGHT_API_MCP_AUTOSTART=0 -e WRIGHT_REMOTE_TELEMETRY_ENABLED=0 -e LLM_API_URL=http://127.0.0.1:1/v1 -e LLM_API_KEY=disposable-no-provider -e LLM_API_MODEL=disposable-no-provider sha256:455f0a756e098042dd34aca472875987cedd6708b3ada28949140625128748c8
+1585e26617ab782822f3a38b8f6a8b03615a8e10f5dcda11bddddd2d2823441b
+Command: docker exec wright-native-c7f1f218-proof /workspace/.venv/bin/python /proof.py create
+{"phase": "create", "pid": 15, "transport": "real HTTP inside network-none container", "examples": [{"process_id": "concept-brief", "run_id": "a364a2fc-362f-4388-9f7e-c973f20c5a69", "state": "succeeded", "semantic_digest": "ecdd78d4dcdbaaf2517127998f189cc20f03cc30acdbe6302f3adc5c0842c7ae", "artifacts": [{"filename": "concept-brief.md", "sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407", "size": 43}]}, {"process_id": "mass-check", "run_id": "5effb8c3-afa9-43eb-8784-899227c4edee", "state": "succeeded", "semantic_digest": "3417943ed9e1d0b5dc0254a46956ce84f157524e1714916765edfb17fe2844ec", "artifacts": [{"filename": "mass-report.txt", "sha256": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205", "size": 11}]}, {"process_id": "package-review", "run_id": "b1d01ad0-c18a-4975-8b11-37c1c6772ec0", "state": "succeeded", "semantic_digest": "4bc55f84df95b1abe8795bb34d2ec09588b89f2828cf32689ca18cb9a2c13202", "artifacts": [{"filename": "release-note.txt", "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84", "size": 34}, {"filename": "checked-release-note.txt", "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84", "size": 34}]}]}
+Command: docker inspect wright-native-c7f1f218-proof --format {{.State.StartedAt}}
+2026-09-05T01:38:42.221054687Z
+Command: docker restart --timeout 15 wright-native-c7f1f218-proof
+wright-native-c7f1f218-proof
+Command: docker exec wright-native-c7f1f218-proof /workspace/.venv/bin/python /proof.py restart
+{"phase": "restart", "pid": 22, "transport": "real HTTP inside network-none container", "examples": [{"process_id": "concept-brief", "run_id": "a364a2fc-362f-4388-9f7e-c973f20c5a69", "state": "succeeded", "semantic_digest": "ecdd78d4dcdbaaf2517127998f189cc20f03cc30acdbe6302f3adc5c0842c7ae", "artifacts": [{"filename": "concept-brief.md", "sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407", "size": 43}]}, {"process_id": "mass-check", "run_id": "5effb8c3-afa9-43eb-8784-899227c4edee", "state": "succeeded", "semantic_digest": "3417943ed9e1d0b5dc0254a46956ce84f157524e1714916765edfb17fe2844ec", "artifacts": [{"filename": "mass-report.txt", "sha256": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205", "size": 11}]}, {"process_id": "package-review", "run_id": "b1d01ad0-c18a-4975-8b11-37c1c6772ec0", "state": "succeeded", "semantic_digest": "4bc55f84df95b1abe8795bb34d2ec09588b89f2828cf32689ca18cb9a2c13202", "artifacts": [{"filename": "release-note.txt", "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84", "size": 34}, {"filename": "checked-release-note.txt", "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84", "size": 34}]}]}
+Command: docker inspect wright-native-c7f1f218-proof --format {{.State.StartedAt}}
+2026-09-05T01:39:00.381522872Z
+Command: docker exec wright-native-c7f1f218-proof curl --fail --silent --max-time 3 http://127.0.0.1:8000/api/agent/health
+{"state":"connected","latencyMs":10.024265007814392,"baseUrl":"http://127.0.0.1:8642","error":null}
+Command: docker exec wright-native-c7f1f218-proof curl --fail --silent --max-time 3 http://127.0.0.1:8642/health
+{"status": "ok", "platform": "hermes-agent", "version": "0.19.0"}
+Command: docker exec wright-native-c7f1f218-proof supervisorctl -c /etc/supervisor/conf.d/wright.conf status
+hermes-gateway                   RUNNING   pid 42, uptime 0:00:07
+wright-api                       RUNNING   pid 43, uptime 0:00:07
+Command: docker cp wright-native-c7f1f218-proof:/home/agent/.local/share/wright/native-docker-baseline.json D:/repos/wright/.local-run/native-process-milestone/native-docker-evidence/baseline-c7f1f218.json
+Command: docker stop --timeout 15 wright-native-c7f1f218-proof
+wright-native-c7f1f218-proof
+Native execution/restart exit: 0

@@ -1,0 +1,1104 @@
+{
+  "mockedRequests": false,
+  "definitionId": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+  "initial": {
+    "run_id": "bba1c01c-99dc-44be-b798-3c82ed29606d",
+    "process_id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+    "state": "succeeded",
+    "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+    "created_at": "2026-09-05T01:35:32.558690+00:00",
+    "started_at": "2026-09-05T01:35:32.609008+00:00",
+    "completed_at": "2026-09-05T01:35:32.970324+00:00",
+    "derived_from_run_id": null,
+    "trace_id": "f928c3a114ef622b03b39c67cd55f868",
+    "reason": null,
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "link-1",
+            "source_port_id": "volume-source-output-value",
+            "target_port_id": "mass-product-input-left"
+          },
+          {
+            "id": "link-2",
+            "source_port_id": "density-source-output-value",
+            "target_port_id": "mass-product-input-right"
+          },
+          {
+            "id": "link-3",
+            "source_port_id": "mass-product-output-value",
+            "target_port_id": "mass-check-input-value"
+          },
+          {
+            "id": "link-4",
+            "source_port_id": "mass-check-output-value",
+            "target_port_id": "mass-report-input-value"
+          },
+          {
+            "id": "link-5",
+            "source_port_id": "mass-report-output-text",
+            "target_port_id": "mass-file-input-text"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+        "outputs": [
+          {
+            "id": "mass-result",
+            "port_id": "mass-file-output-artifact",
+            "title": "Mass report"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "volume-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "volume-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-left",
+            "key": "left",
+            "label": "left",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "density-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "density-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-right",
+            "key": "right",
+            "label": "right",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-product-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-check-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-check-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-report-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-report-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "artifact"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": {
+                "unit": "m3",
+                "value": "0.00005"
+              }
+            },
+            "id": "volume-source",
+            "operation": "quantity.input@1",
+            "title": "volume source"
+          },
+          {
+            "config": {
+              "value": {
+                "unit": "kg/m3",
+                "value": "2700"
+              }
+            },
+            "id": "density-source",
+            "operation": "quantity.input@1",
+            "title": "density source"
+          },
+          {
+            "config": {
+              "unit": "g"
+            },
+            "id": "mass-product",
+            "operation": "quantity.multiply@1",
+            "title": "mass product"
+          },
+          {
+            "config": {
+              "maximum": {
+                "unit": "g",
+                "value": "200"
+              },
+              "minimum": {
+                "unit": "g",
+                "value": "1"
+              }
+            },
+            "id": "mass-check-step",
+            "operation": "quantity.range@1",
+            "title": "mass check"
+          },
+          {
+            "config": {
+              "label": "Mass"
+            },
+            "id": "mass-report",
+            "operation": "quantity.format@1",
+            "title": "mass report"
+          },
+          {
+            "config": {
+              "filename": "mass-report.txt"
+            },
+            "id": "mass-file",
+            "operation": "artifact.write-text@1",
+            "title": "mass file"
+          }
+        ],
+        "title": "Calculate and check mass with explicit units"
+      },
+      "revision": 1,
+      "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+      "token": "[omitted: document revision CAS fingerprint; raw evidence retained locally]"
+    },
+    "bindings": {},
+    "actor": "local-operator",
+    "timeout_seconds": 60,
+    "steps": [
+      {
+        "step_id": "volume-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.641656+00:00",
+        "completed_at": "2026-09-05T01:35:32.664837+00:00",
+        "inputs": {},
+        "outputs": {
+          "volume-source-output-value": {
+            "unit": "m3",
+            "value": "0.00005"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "density-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.690722+00:00",
+        "completed_at": "2026-09-05T01:35:32.705542+00:00",
+        "inputs": {},
+        "outputs": {
+          "density-source-output-value": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-product",
+        "operation": "quantity.multiply@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.731238+00:00",
+        "completed_at": "2026-09-05T01:35:32.748254+00:00",
+        "inputs": {
+          "mass-product-input-left": {
+            "unit": "m3",
+            "value": "0.00005"
+          },
+          "mass-product-input-right": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "outputs": {
+          "mass-product-output-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-check-step",
+        "operation": "quantity.range@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.779005+00:00",
+        "completed_at": "2026-09-05T01:35:32.795651+00:00",
+        "inputs": {
+          "mass-check-input-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "outputs": {
+          "mass-check-output-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-report",
+        "operation": "quantity.format@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.826377+00:00",
+        "completed_at": "2026-09-05T01:35:32.844089+00:00",
+        "inputs": {
+          "mass-report-input-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "outputs": {
+          "mass-report-output-text": "Mass: 135 g"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-file",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:32.870830+00:00",
+        "completed_at": "2026-09-05T01:35:32.953740+00:00",
+        "inputs": {
+          "mass-file-input-text": "Mass: 135 g"
+        },
+        "outputs": {
+          "mass-file-output-artifact": {
+            "artifact_id": "14e4e77e-f309-4af8-98ce-47dce6ef1ca7",
+            "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+            "filename": "mass-report.txt",
+            "size": 11
+          }
+        },
+        "reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "artifact_id": "14e4e77e-f309-4af8-98ce-47dce6ef1ca7",
+        "step_id": "mass-file",
+        "port_id": "mass-file-output-artifact",
+        "filename": "mass-report.txt",
+        "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+        "size": 11,
+        "media_type": "text/plain",
+        "provenance": {
+          "actor": "local-operator",
+          "config": {
+            "filename": "mass-report.txt"
+          },
+          "inputs": {
+            "text": "Mass: 135 g"
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "bba1c01c-99dc-44be-b798-3c82ed29606d",
+          "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+          "step_id": "mass-file",
+          "trace_id": "f928c3a114ef622b03b39c67cd55f868"
+        }
+      }
+    ],
+    "last_sequence": 16
+  },
+  "failed": {
+    "run_id": "aee71659-ca53-4b93-b5d4-30ddb0a5f071",
+    "process_id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+    "state": "failed",
+    "semantic_digest": "7462e1b10ffd479187f5c3a4de17700ea38404f51ac941352c82e4eaad752716",
+    "created_at": "2026-09-05T01:35:35.794264+00:00",
+    "started_at": "2026-09-05T01:35:35.844972+00:00",
+    "completed_at": "2026-09-05T01:35:36.045802+00:00",
+    "derived_from_run_id": null,
+    "trace_id": "038b2c856b92dec6cbbe6d5460eb01cf",
+    "reason": {
+      "code": "ASSERTION_FAILED",
+      "message": "Measured quantity 135 g is outside the configured inclusive range.",
+      "port_id": null,
+      "recovery": "Correct the indicated step and create a linked run.",
+      "step_id": "mass-check-step"
+    },
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "link-1",
+            "source_port_id": "volume-source-output-value",
+            "target_port_id": "mass-product-input-left"
+          },
+          {
+            "id": "link-2",
+            "source_port_id": "density-source-output-value",
+            "target_port_id": "mass-product-input-right"
+          },
+          {
+            "id": "link-3",
+            "source_port_id": "mass-product-output-value",
+            "target_port_id": "mass-check-input-value"
+          },
+          {
+            "id": "link-4",
+            "source_port_id": "mass-check-output-value",
+            "target_port_id": "mass-report-input-value"
+          },
+          {
+            "id": "link-5",
+            "source_port_id": "mass-report-output-text",
+            "target_port_id": "mass-file-input-text"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+        "outputs": [
+          {
+            "id": "mass-result",
+            "port_id": "mass-file-output-artifact",
+            "title": "Mass report"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "volume-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "volume-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-left",
+            "key": "left",
+            "label": "left",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "density-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "density-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-right",
+            "key": "right",
+            "label": "right",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-product-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-check-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-check-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-report-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-report-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "artifact"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": {
+                "unit": "m3",
+                "value": "0.00005"
+              }
+            },
+            "id": "volume-source",
+            "operation": "quantity.input@1",
+            "title": "volume source"
+          },
+          {
+            "config": {
+              "value": {
+                "unit": "kg/m3",
+                "value": "2700"
+              }
+            },
+            "id": "density-source",
+            "operation": "quantity.input@1",
+            "title": "density source"
+          },
+          {
+            "config": {
+              "unit": "g"
+            },
+            "id": "mass-product",
+            "operation": "quantity.multiply@1",
+            "title": "mass product"
+          },
+          {
+            "config": {
+              "maximum": {
+                "unit": "g",
+                "value": "100"
+              },
+              "minimum": {
+                "unit": "g",
+                "value": "1"
+              }
+            },
+            "id": "mass-check-step",
+            "operation": "quantity.range@1",
+            "title": "mass check"
+          },
+          {
+            "config": {
+              "label": "Mass"
+            },
+            "id": "mass-report",
+            "operation": "quantity.format@1",
+            "title": "mass report"
+          },
+          {
+            "config": {
+              "filename": "mass-report.txt"
+            },
+            "id": "mass-file",
+            "operation": "artifact.write-text@1",
+            "title": "mass file"
+          }
+        ],
+        "title": "Calculate and check mass with explicit units"
+      },
+      "revision": 2,
+      "semantic_digest": "7462e1b10ffd479187f5c3a4de17700ea38404f51ac941352c82e4eaad752716",
+      "token": "[omitted: document revision CAS fingerprint; raw evidence retained locally]"
+    },
+    "bindings": {},
+    "actor": "local-operator",
+    "timeout_seconds": 60,
+    "steps": [
+      {
+        "step_id": "volume-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:35.884285+00:00",
+        "completed_at": "2026-09-05T01:35:35.905084+00:00",
+        "inputs": {},
+        "outputs": {
+          "volume-source-output-value": {
+            "unit": "m3",
+            "value": "0.00005"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "density-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:35.934049+00:00",
+        "completed_at": "2026-09-05T01:35:35.952541+00:00",
+        "inputs": {},
+        "outputs": {
+          "density-source-output-value": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-product",
+        "operation": "quantity.multiply@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:35.979872+00:00",
+        "completed_at": "2026-09-05T01:35:35.997671+00:00",
+        "inputs": {
+          "mass-product-input-left": {
+            "unit": "m3",
+            "value": "0.00005"
+          },
+          "mass-product-input-right": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "outputs": {
+          "mass-product-output-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-check-step",
+        "operation": "quantity.range@1",
+        "state": "failed",
+        "started_at": "2026-09-05T01:35:36.026298+00:00",
+        "completed_at": "2026-09-05T01:35:36.045802+00:00",
+        "inputs": {
+          "mass-check-input-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "outputs": null,
+        "reason": {
+          "code": "ASSERTION_FAILED",
+          "message": "Measured quantity 135 g is outside the configured inclusive range.",
+          "port_id": null,
+          "recovery": "Correct the indicated step and create a linked run.",
+          "step_id": "mass-check-step"
+        }
+      },
+      {
+        "step_id": "mass-report",
+        "operation": "quantity.format@1",
+        "state": "blocked",
+        "started_at": null,
+        "completed_at": "2026-09-05T01:35:36.045802+00:00",
+        "inputs": null,
+        "outputs": null,
+        "reason": {
+          "code": "DEPENDENCY_FAILED",
+          "message": "A preceding process step failed.",
+          "port_id": null,
+          "recovery": "Correct the failure and create a linked run.",
+          "step_id": "mass-check-step"
+        }
+      },
+      {
+        "step_id": "mass-file",
+        "operation": "artifact.write-text@1",
+        "state": "blocked",
+        "started_at": null,
+        "completed_at": "2026-09-05T01:35:36.045802+00:00",
+        "inputs": null,
+        "outputs": null,
+        "reason": {
+          "code": "DEPENDENCY_FAILED",
+          "message": "A preceding process step failed.",
+          "port_id": null,
+          "recovery": "Correct the failure and create a linked run.",
+          "step_id": "mass-check-step"
+        }
+      }
+    ],
+    "artifacts": [],
+    "last_sequence": 13
+  },
+  "corrected": {
+    "run_id": "fd82504b-622a-494c-b601-8fa2275e407e",
+    "process_id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+    "state": "succeeded",
+    "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+    "created_at": "2026-09-05T01:35:37.282929+00:00",
+    "started_at": "2026-09-05T01:35:37.339932+00:00",
+    "completed_at": "2026-09-05T01:35:37.718073+00:00",
+    "derived_from_run_id": "aee71659-ca53-4b93-b5d4-30ddb0a5f071",
+    "trace_id": "89c12106976815657fb9e0389ae4e047",
+    "reason": null,
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "link-1",
+            "source_port_id": "volume-source-output-value",
+            "target_port_id": "mass-product-input-left"
+          },
+          {
+            "id": "link-2",
+            "source_port_id": "density-source-output-value",
+            "target_port_id": "mass-product-input-right"
+          },
+          {
+            "id": "link-3",
+            "source_port_id": "mass-product-output-value",
+            "target_port_id": "mass-check-input-value"
+          },
+          {
+            "id": "link-4",
+            "source_port_id": "mass-check-output-value",
+            "target_port_id": "mass-report-input-value"
+          },
+          {
+            "id": "link-5",
+            "source_port_id": "mass-report-output-text",
+            "target_port_id": "mass-file-input-text"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "process-606bb48e-a94a-4202-be9d-c4a60c815a24",
+        "outputs": [
+          {
+            "id": "mass-result",
+            "port_id": "mass-file-output-artifact",
+            "title": "Mass report"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "volume-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "volume-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-left",
+            "key": "left",
+            "label": "left",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "density-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "density-source",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-product-input-right",
+            "key": "right",
+            "label": "right",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-product-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-product",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-check-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-check-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-check-step",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-report-input-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "quantity"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-report-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-report",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "mass-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "mass-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "mass-file",
+            "type": "artifact"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": {
+                "unit": "m3",
+                "value": "0.00005"
+              }
+            },
+            "id": "volume-source",
+            "operation": "quantity.input@1",
+            "title": "volume source"
+          },
+          {
+            "config": {
+              "value": {
+                "unit": "kg/m3",
+                "value": "2700"
+              }
+            },
+            "id": "density-source",
+            "operation": "quantity.input@1",
+            "title": "density source"
+          },
+          {
+            "config": {
+              "unit": "g"
+            },
+            "id": "mass-product",
+            "operation": "quantity.multiply@1",
+            "title": "mass product"
+          },
+          {
+            "config": {
+              "maximum": {
+                "unit": "g",
+                "value": "200"
+              },
+              "minimum": {
+                "unit": "g",
+                "value": "1"
+              }
+            },
+            "id": "mass-check-step",
+            "operation": "quantity.range@1",
+            "title": "mass check"
+          },
+          {
+            "config": {
+              "label": "Mass"
+            },
+            "id": "mass-report",
+            "operation": "quantity.format@1",
+            "title": "mass report"
+          },
+          {
+            "config": {
+              "filename": "mass-report.txt"
+            },
+            "id": "mass-file",
+            "operation": "artifact.write-text@1",
+            "title": "mass file"
+          }
+        ],
+        "title": "Calculate and check mass with explicit units"
+      },
+      "revision": 3,
+      "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+      "token": "[omitted: document revision CAS fingerprint; raw evidence retained locally]"
+    },
+    "bindings": {},
+    "actor": "local-operator",
+    "timeout_seconds": 60,
+    "steps": [
+      {
+        "step_id": "volume-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.381152+00:00",
+        "completed_at": "2026-09-05T01:35:37.403086+00:00",
+        "inputs": {},
+        "outputs": {
+          "volume-source-output-value": {
+            "unit": "m3",
+            "value": "0.00005"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "density-source",
+        "operation": "quantity.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.428082+00:00",
+        "completed_at": "2026-09-05T01:35:37.451044+00:00",
+        "inputs": {},
+        "outputs": {
+          "density-source-output-value": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-product",
+        "operation": "quantity.multiply@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.479108+00:00",
+        "completed_at": "2026-09-05T01:35:37.498149+00:00",
+        "inputs": {
+          "mass-product-input-left": {
+            "unit": "m3",
+            "value": "0.00005"
+          },
+          "mass-product-input-right": {
+            "unit": "kg/m3",
+            "value": "2700"
+          }
+        },
+        "outputs": {
+          "mass-product-output-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-check-step",
+        "operation": "quantity.range@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.529503+00:00",
+        "completed_at": "2026-09-05T01:35:37.549318+00:00",
+        "inputs": {
+          "mass-check-input-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "outputs": {
+          "mass-check-output-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-report",
+        "operation": "quantity.format@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.580098+00:00",
+        "completed_at": "2026-09-05T01:35:37.601736+00:00",
+        "inputs": {
+          "mass-report-input-value": {
+            "unit": "g",
+            "value": "135"
+          }
+        },
+        "outputs": {
+          "mass-report-output-text": "Mass: 135 g"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "mass-file",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:37.627198+00:00",
+        "completed_at": "2026-09-05T01:35:37.699081+00:00",
+        "inputs": {
+          "mass-file-input-text": "Mass: 135 g"
+        },
+        "outputs": {
+          "mass-file-output-artifact": {
+            "artifact_id": "905754ad-c56d-42b1-a802-08cce3c1cba0",
+            "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+            "filename": "mass-report.txt",
+            "size": 11
+          }
+        },
+        "reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "artifact_id": "905754ad-c56d-42b1-a802-08cce3c1cba0",
+        "step_id": "mass-file",
+        "port_id": "mass-file-output-artifact",
+        "filename": "mass-report.txt",
+        "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+        "size": 11,
+        "media_type": "text/plain",
+        "provenance": {
+          "actor": "local-operator",
+          "config": {
+            "filename": "mass-report.txt"
+          },
+          "inputs": {
+            "text": "Mass: 135 g"
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "fd82504b-622a-494c-b601-8fa2275e407e",
+          "semantic_digest": "dbe3d47a9f2cfc22e0312eeab470f07acb6ecd45346e338d557532189030c263",
+          "step_id": "mass-file",
+          "trace_id": "89c12106976815657fb9e0389ae4e047"
+        }
+      }
+    ],
+    "last_sequence": 16
+  }
+}
