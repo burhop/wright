@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0107",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 107,
+  "new_revision": 108,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "7835365dde3ef6ce850274c1f5e6ef879eae2136963334f7fb6f5273aaa854a9",
+  "new_state_digest": "cc0695aaf0acabc3411fd78c880c9be7f5f127eb11d652ca6ca71d4c76ffaf4f",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Freeze exact0aae81db and its T001-T026 implementation scope with the lease closed. Completed local evidence remains source-bound; independent entire-candidate review and required push/CI/dev delivery are next. T027-T032 and human acceptance remain pending.",
+  "started_at": "2026-09-05T06:16:04.886054Z",
+  "finished_at": "2026-09-05T06:16:04.886054Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "8b3f83d3c0096f437acb0e0acf0aa5ab63a76fbd",
+    "source_tree": "c0140dc8bb4c7d6475d79bbd326524420d522368",
+    "source_program_tree": "cf984ad95ff658f66f8d54939e175d6089d851fd",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0107.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0107.json",
+      "sha256": "f6cf37145b4ca59e83d4bd362239d470617fd3a8d4d97983b86b76b73aa8361b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0108.json",
+      "sha256": "088cdd4af1b521fa9f1b4c443783c36b3f8185fff381f47a832ffd4870ee5dfb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Freeze exact0aae81db and its T001-T026 implementation scope with the lease closed. Completed local evidence remains source-bound; independent entire-candidate review and required push/CI/dev delivery are next. T027-T032 and human acceptance remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "8b3f83d3c0096f437acb0e0acf0aa5ab63a76fbd",
+        "7f55b31cb754421a605f2e7aff1d676ba501606d"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0107.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}
