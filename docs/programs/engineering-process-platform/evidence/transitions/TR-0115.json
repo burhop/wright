@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0115",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 115,
+  "new_revision": 116,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "1a7e57f548c191de887c770e9b82f1477702e50e9761bcac96618a48b3db61ee",
+  "new_state_digest": "323cb2d82c50ce2ccd34276bae2caf4d640cd5d129360338ee44ea18225732d0",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Freeze exactd734 and its26-task scope with the correction lease closed. Focused tests and initial image scan passed; exact-LF image336e4f0d has now built successfully with every source blob verified. Full gate, final independent review, actual CodeQL and H2 CI remain pending.",
+  "started_at": "2026-09-05T09:02:18.110202Z",
+  "finished_at": "2026-09-05T09:02:18.110202Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "6cafd581058e409dde2822e0e0d9f8db635a5406",
+    "source_tree": "a317d1e8629a01dd800f31fac0f9be5f67126bf7",
+    "source_program_tree": "9ed34d7ed62a9dbcfb04eabd54eee2a1334935b1",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0116.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0115.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0115.json",
+      "sha256": "cbab0ed3520ccda6f98cd2e7313234ef447a7df31f96fcf1ffadc6b6f5ddd0b2",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0116.json",
+      "sha256": "c77669227096c0f8a936428e2d9b9649d0b064710628414ac96a782f11144b79",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Freeze exactd734 and its26-task scope with the correction lease closed. Focused tests and initial image scan passed; exact-LF image336e4f0d has now built successfully with every source blob verified. Full gate, final independent review, actual CodeQL and H2 CI remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "6cafd581058e409dde2822e0e0d9f8db635a5406",
+        "d734f4c0955f1cce93855fab751cb3f64628dd79"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0115.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}
