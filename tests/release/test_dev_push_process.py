@@ -79,6 +79,39 @@ def test_fast_gate_routes_container_changes_to_image_contract_tests() -> None:
     assert "tests/release/test_workflow_policy.py" in gate
 
 
+def test_local_and_pr_ci_scan_the_existing_image_with_one_blocking_policy() -> None:
+    push = _read("scripts/check-dev-push.sh")
+    merge = _read("scripts/check-dev-merge.sh")
+    workflow = _read(".github/workflows/docker-pr.yml")
+    runbook = _read(RUNBOOK)
+    for gate in (push, merge):
+        assert "-m scripts.release.scan_image --allow-unavailable-local-host" in gate
+        assert gate.index("-m scripts.release.scan_image") < gate.index("npm run build")
+    assert merge.index("-m scripts.release.scan_image") < merge.index(
+        "scripts/build-python-distributions.sh"
+    )
+    assert "CHECK_DOCKER_SCAN=1" in push
+    assert "scripts/release/scan_image.py" in push
+    assert "-m scripts.release.scan_image --image" in workflow
+    assert "--allow-unavailable-local-host" not in workflow
+    assert "aquasecurity/trivy-action@" not in workflow
+    assert "always() && steps.scan.outcome != 'skipped'" in workflow
+    assert "test-results/docker-image-security/ci/public" in workflow
+    assert "WRIGHT_GATE_DOCKER_IMAGE" in runbook
+    assert "Missing candidate images" in runbook
+
+
+def test_dashboard_server_changes_select_exact_http_security_regressions() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    start = gate.index("scripts/program_status/implementation-dashboard/*)")
+    route = gate[start : gate.index(";;", start)]
+    assert "tests/program_control_plane/test_dashboard_http_boundary.py" in route
+    assert "PYTHON_TEST_TARGETS+=(tests)" not in route
+    runbook = _read(RUNBOOK)
+    assert "exact static routes, trusted MIME values" in runbook
+    assert "CodeQL" in runbook
+
+
 def test_program_control_changes_route_through_focused_quality_gates() -> None:
     push = _read("scripts/check-dev-push.sh")
     merge = _read("scripts/check-dev-merge.sh")
@@ -135,7 +168,9 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
         assert state in runbook
     assert "active mutating lease" in push
     assert "synthetic" in runbook
-    assert "scripts/validate-engineering-process-program.py validate --source HEAD" in push
+    assert (
+        "scripts/validate-engineering-process-program.py validate --source HEAD" in push
+    )
 
 
 def test_fast_gate_excludes_already_selected_nested_tests_from_broad_collection() -> (

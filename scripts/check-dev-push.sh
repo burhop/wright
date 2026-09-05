@@ -100,12 +100,25 @@ CHECK_PYTHON=0
 CHECK_DOCS=0
 CHECK_GITLEAKS=0
 CHECK_PROGRAM_CONTROL=0
+CHECK_DOCKER_SCAN=0
 PYTHON_TEST_TARGETS=()
 PLAYWRIGHT_TARGETS=()
 PLAYWRIGHT_ALL_PROJECTS=0
 while IFS= read -r changed_file; do
   [[ -z "$changed_file" ]] && continue
+  # Match the OCI PR build boundary; contract tests alone do not inspect installed
+  # Hermes, OS or nested Node dependencies against a current vulnerability DB.
   case "$changed_file" in
+    .github/workflows/docker-pr.yml|.github/workflows/docker-build.yml|docker/*|apps/*|packages/*|pyproject.toml|uv.lock|package-lock.json|scripts/release/scan_image.py|scripts/release/vulnerability_policy.py|scripts/check-dev-*)
+      CHECK_DOCKER_SCAN=1
+      CHECK_PYTHON=1
+      ;;
+  esac
+  case "$changed_file" in
+    scripts/program_status/implementation-dashboard/*)
+      CHECK_PYTHON=1
+      PYTHON_TEST_TARGETS+=(tests/program_control_plane/test_dashboard_http_boundary.py)
+      ;;
     docs/programs/engineering-process-platform/*|specs/076-control-plane-validator/*)
       CHECK_PYTHON=1
       CHECK_DOCS=1
@@ -223,7 +236,7 @@ while IFS= read -r changed_file; do
   esac
 done <<<"$CHANGED_FILES"
 
-echo "Selected scopes: python=$CHECK_PYTHON frontend=$CHECK_FRONTEND docs=$CHECK_DOCS"
+echo "Selected scopes: python=$CHECK_PYTHON frontend=$CHECK_FRONTEND docs=$CHECK_DOCS image_scan=$CHECK_DOCKER_SCAN"
 if [[ "${#PYTHON_TEST_TARGETS[@]}" -gt 0 ]]; then
   printf 'Selected Python target: %s\n' "${PYTHON_TEST_TARGETS[@]}"
 fi
@@ -244,6 +257,9 @@ fi
 
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
+  if [[ "$CHECK_DOCKER_SCAN" == "1" ]]; then
+    run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
+  fi
   if [[ "$CHECK_PROGRAM_CONTROL" == "1" ]]; then
     PROGRAM_PUSH_STATE="$($GATE_PYTHON -c 'import json; print(json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["feature_state"])')"
     PROGRAM_LEASE_STATE="$($GATE_PYTHON -c 'import json; print("closed" if json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["active_mutating_lease"] is None else "open")')"
