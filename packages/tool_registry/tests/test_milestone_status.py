@@ -14,6 +14,10 @@ SOURCE = ROOT / "docs/programs/engineering-process-platform/work-registry.json"
 
 def fixture():
     source = json.loads(SOURCE.read_text(encoding="utf-8"))["milestone"]
+    # Each test supplies its own evidence and attestations. Live checkpoint
+    # observations must not turn this synthetic empty-evidence case into a
+    # mismatched proof set as implementation progresses.
+    source["evidence"] = []
     tasks = {r["id"]: {"title": r["id"], "completed": False} for r in source["tasks"]}
     return source, tasks
 
@@ -72,11 +76,14 @@ def evidence_fixture(source, result="passed"):
     ]
 
 
-def test_missing_evidence_has_no_verification_or_integration_credit():
+@pytest.mark.parametrize("implemented", [False, True])
+def test_missing_evidence_has_no_verification_or_integration_credit(implemented):
     source, tasks = fixture()
+    for task in tasks.values():
+        task["completed"] = implemented
     value = project(source, tasks)
     assert value["counts"] == {
-        "implementation": {"completed": 0, "total": 32},
+        "implementation": {"completed": 32 if implemented else 0, "total": 32},
         "verification": {"completed": 0, "total": 32},
         "integration": {"completed": 0, "total": 30, "not_applicable": 2},
     }
@@ -84,6 +91,20 @@ def test_missing_evidence_has_no_verification_or_integration_credit():
     value["counts"]["verification"]["completed"] = 1
     with pytest.raises(ValueError):
         validate_milestone(value, "a" * 40)
+
+
+@pytest.mark.parametrize("mismatch", ["missing", "extra", "different_identity"])
+def test_evidence_and_attestations_must_match_exactly(mismatch):
+    source, tasks = fixture()
+    attestations = evidence_fixture(source)
+    if mismatch == "missing":
+        attestations.clear()
+    elif mismatch == "extra":
+        source["evidence"].clear()
+    else:
+        attestations[0]["evidence_id"] = "OTHER"
+    with pytest.raises(ValueError, match="milestone evidence attestation set differs"):
+        project(source, tasks, attestations)
 
 
 def test_unchanged_scoped_code_retains_credit_at_new_evidence_commit():
