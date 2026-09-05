@@ -1,0 +1,178 @@
+Running Wright dev merge gate from /d/repos/wright/.local-run/native-process-milestone/wright
+Set SKIP_PLAYWRIGHT=1 only for a documented local browser/runtime limitation.
+Required reading: docs/contributing/dev-push-runbook.md
+Isolated live gate: API 18091, UI 15191
+
+==> git diff --check
+
+==> uv sync --all-packages --all-groups --reinstall-package wright-engineering
+Resolved 87 packages in 6ms
+   Building wright-engineering @ file:///D:/repos/wright/.local-run/native-process-milestone/wright
+      Built wright-engineering @ file:///D:/repos/wright/.local-run/native-process-milestone/wright
+Prepared 1 package in 3.08s
+Uninstalled 1 package in 53ms
+Installed 1 package in 440ms
+ ~ wright-engineering==0.1.9 (from file:///D:/repos/wright/.local-run/native-process-milestone/wright)
+
+==> Checking Playwright live gate ports
+
+==> uv run ruff check src/wright_engineering scripts/release scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane scripts/build-native-runtime.py scripts/test-native-hermes-install.py scripts/test-published-native-hermes.py scripts/activate-hermes-package-channel.py apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+All checks passed!
+
+==> uv run ruff format --check src/wright_engineering scripts/release scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane scripts/build-native-runtime.py scripts/test-native-hermes-install.py scripts/test-published-native-hermes.py scripts/activate-hermes-package-channel.py apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
+646 files already formatted
+
+==> npx -w apps/web eslint .
+
+D:\repos\wright\.local-run\native-process-milestone\wright\apps\web\src\components\chat\WorkspacePanel.tsx
+  268:9  warning  The 'activeSessionStreamActivity' logical expression could make the dependencies of useEffect Hook (at line 1487) change on every render. To fix this, wrap the initialization of 'activeSessionStreamActivity' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+D:\repos\wright\.local-run\native-process-milestone\wright\apps\web\src\components\surfaces\LiveAppControls.tsx
+  68:6  warning  React Hook useEffect has a missing dependency: 'descriptor.lifecycle'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\repos\wright\.local-run\native-process-milestone\wright\apps\web\src\components\surfaces\LiveAppSurface.tsx
+  205:6  warning  React Hook useEffect has a missing dependency: 'open'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 3 problems (0 errors, 3 warnings)
+
+
+==> npx prettier --check apps/web/ --end-of-line auto
+Checking formatting...
+All matched files use Prettier code style!
+
+==> npx tsc --noEmit -p apps/web/tsconfig.app.json
+
+==> uv run --with mypy mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
+Success: no issues found in 39 source files
+
+==> uv run --with mypy mypy src/wright_engineering scripts/release scripts/validate-engineering-process-program.py scripts/program_control tests/program_control_plane scripts/build-native-runtime.py scripts/test-native-hermes-install.py scripts/test-published-native-hermes.py scripts/activate-hermes-package-channel.py apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports
+apps\api\tests\conftest.py: error: Duplicate module named "conftest" (also at "tests\program_control_plane\conftest.py")
+apps\api\tests\conftest.py: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#mapping-file-paths-to-modules for more info
+apps\api\tests\conftest.py: note: Common resolutions include:
+apps\api\tests\conftest.py: note:     a) using `--exclude` to avoid checking one of them,
+apps\api\tests\conftest.py: note:     b) adding `__init__.py` somewhere,
+apps\api\tests\conftest.py: note:     c) using `--explicit-package-bases` or adjusting `MYPYPATH`
+Found 1 error in 1 file (errors prevented further checking)
+::warning::Mypy type checks failed with warning mode enabled.
+
+==> env PYTHON=/d/repos/wright/.local-run/native-process-milestone/wright/.venv-dev-gate/Scripts/python.exe scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+metadata ok: wright-core 0.1.0
+metadata ok: wright-tool-registry 0.1.0
+Dry run completed. Package metadata is release-ready.
+
+==> uv run python -c from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))
+
+==> uv run --extra runtime python -m pytest -q tests/program_control_plane
+........................................................................ [ 19%]
+...................................F.................................... [ 39%]
+.................s...................................................... [ 59%]
+........................................................................ [ 79%]
+........................................................................ [ 99%]
+..                                                                       [100%]
+================================== FAILURES ===================================
+______________ test_task_implementation_paths_stay_inside_lease _______________
+
+repository_root = WindowsPath('D:/repos/wright/.local-run/native-process-milestone/wright')
+
+    def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> None:
+        current = load(
+            repository_root
+            / "docs/programs/engineering-process-platform/program-state.json"
+        )
+        archived = load(
+            repository_root
+            / "docs/programs/engineering-process-platform/evidence/states"
+            / f"program-state-revision-{current['revision']:04d}.json"
+        )
+        assert archived == current
+        lease = current["active_mutating_lease"]
+        if lease is None:
+            assert current["feature_state"] in {
+                "BLOCKED",
+                "AUTHOR_VERIFIED",
+                "CANDIDATE_FROZEN",
+                "INDEPENDENTLY_VERIFIED",
+                "PUSH_AUTHORIZATION_PENDING",
+                "PR_READY",
+                "DEV_MERGE_READY",
+                "DEV_INTEGRATED",
+                "DEV_DEPLOYMENT_VERIFIED",
+            }
+            if current["feature_state"] == "BLOCKED":
+                assert all(
+                    action["requires_human_approval"]
+                    for action in current["next_eligible_actions"]
+                )
+            return
+        allowed = lease["allowed_paths"]
+        assert any(
+            path.rstrip("/*") == "docs/programs/engineering-process-platform"
+            for path in allowed
+        )
+        assert "src/**" not in allowed
+        if lease["lease_mode"] == "planning":
+            assert any(path.startswith("specs/") for path in allowed)
+            assert "scripts/program_control/**" not in allowed
+            assert "tests/program_control_plane/**" not in allowed
+        else:
+            assert lease["feature_id"] == current["current_feature"]
+            assert "edit_allowlisted_paths" in lease["allowed_actions"]
+            registry = load(
+                repository_root
+                / "docs/programs/engineering-process-platform/work-registry.json"
+            )
+            task_contracts = [
+                repository_root / row["tasks_path"]
+                for row in registry["task_sources"]
+                if row["feature_id"] == lease["feature_id"]
+            ]
+            assert len(task_contracts) == 1
+            task_text = task_contracts[0].read_text("utf-8")
+            task_paths = {
+                token.rstrip("/")
+                for token in re.findall(r"`([^`]+)`", task_text)
+                if token.startswith(
+                    (
+                        "apps/",
+                        "docs/",
+                        "packages/",
+                        "scripts/",
+                        "specs/",
+                        "src/",
+                        "tests/",
+                        "pyproject.toml",
+                    )
+                )
+                and " " not in token
+                and not token.startswith("http")
+            }
+            assert task_paths
+            uncovered = {
+                path
+                for path in task_paths
+                if not any(
+                    fnmatch.fnmatchcase(path, pattern)
+                    or (pattern.endswith("/**") and path == pattern[:-3])
+                    or (
+                        not any(char in pattern for char in "*?[")
+                        and path.startswith(pattern + "/")
+                    )
+                    for pattern in allowed
+                )
+            }
+>           assert uncovered == set()
+E           AssertionError: assert {'apps/api', ...ions.py', ...} == set()
+E             
+E             Extra items in the left set:
+E             'scripts/program_status'
+E             'apps/api'
+E             'packages/core/src/core/native_process.py'
+E             'specs/079-wright-native-authoring'
+E             'packages/tool_registry'...
+E             
+E             ...Full output truncated (8 lines hidden), use '-vv' to show
+
+tests\program_control_plane\test_contract_schemas.py:591: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/program_control_plane/test_contract_schemas.py::test_task_implementation_paths_stay_inside_lease
+1 failed, 360 passed, 1 skipped in 407.69s (0:06:47)
