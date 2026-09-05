@@ -13,12 +13,11 @@
     "opentelemetry-sdk>=1.25,<2",
     "passlib[bcrypt]>=1.7,<2",
     "pydantic>=2.7,<3",
-    "python-jose[cryptography]>=3.3,<4",
     "python-multipart>=0.0.32,<1",
     "structlog>=24.1,<27",
     "uvicorn[standard]>=0.30,<1"
   ],
   "schema_version": 1,
-  "uv_lock_sha256": "6d736ec55887fa06a4b4ba29907c0f9e81a995566d60f8a26ecbba514a3ded8c",
+  "uv_lock_sha256": "284093f806d36c6b91aa7ffb057e03fad2bdc32ca18f8592ad1e0c299a79a3e1",
   "version": "0.1.9"
 }

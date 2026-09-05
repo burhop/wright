@@ -268,7 +268,7 @@ classDiagram
 
 Operating on sensitive intellectual property, Wright incorporates native, air-gapped security frameworks:
 
-- **Zero-Cloud Authentication**: Uses FastAPI's native `OAuth2PasswordBearer` with `passlib` (bcrypt hashing) and `python-jose` (JSON Web Tokens) to authenticate local operators. No external telemetry or cloud identity providers (e.g., Auth0, Cognito) are permitted.
+- **Zero-Cloud Authentication**: Uses Wright's opaque local bearer credential and an HMAC-SHA256-derived browser session with constant-time validation and origin enforcement. Browser sessions use HttpOnly, SameSite=Strict cookies. This existing path does not sign or verify JWTs. No external telemetry or cloud identity providers (e.g., Auth0, Cognito) are permitted.
 - **Role-Based Access Control (RBAC)**: Distinguishes between standard Engineers (allowed to execute chats, browse files, and run CAD tools) and Administrators (allowed to register custom MCP tools, delete workspace histories, and modify engine configurations).
 - **Destructive Gating via MCP Metadata**: Interactive tools expose semantic metadata tags (`readOnlyHint`, `destructiveHint`, `idempotentHint`). Safe operations (e.g., querying mechanical properties, listing file nodes) are executed automatically by the agent. Destructive actions (e.g., executing shell scripts, deleting CAD bodies, committing git history) are paused by the client shell, requiring explicit user approval before execution.
 
@@ -288,7 +288,7 @@ Operating on sensitive intellectual property, Wright incorporates native, air-ga
 ┌───────────────────────────────────▼────────────────────────────────────┐
 │                             API GATEWAY                                │
 │                   FastAPI • Pydantic v2 • Uvicorn                      │
-│                OpenTelemetry Middleware • OAuth2 / JWT                 │
+│             OpenTelemetry Middleware • Local bearer/session            │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
                     In-Process Calls / Subprocesses

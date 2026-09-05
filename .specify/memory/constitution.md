@@ -1,19 +1,21 @@
 <!--
 Sync Impact Report
-- Version change: 3.0.0 -> 3.1.0 (2026-09-04)
+- Version change: 3.1.0 -> 3.1.1 (2026-09-05)
 - Modified principles:
-  - Architectural Foundation: explicitly include the established workspace_service application boundary, with core/data_vault ownership and dependency-direction gates retained.
+  - Local Authentication: reconcile the obsolete OAuth2/JWT library prescription with the existing opaque local credential and derived browser-session implementation.
 - Added sections: none
 - Removed sections: none
 - Templates:
   - .specify/templates/plan-template.md: validated; no structural change required
   - .specify/templates/spec-template.md: validated; no structural change required
   - .specify/templates/tasks-template.md: validated; no structural change required
-- Feature guidance: specs/079-wright-native-authoring/plan.md and milestone-decision.md record the bounded amendment and independent finding C1.
-- Prior distribution/runtime obligations from v3.0.0 remain unchanged.
+- Feature guidance: the standing native-milestone security authorization covers removal of the unused python-jose dependency and its vulnerable ecdsa dependency; historical audit evidence remains unchanged.
+- Existing authentication, origin enforcement, RBAC, local-only identity and prior architecture/distribution obligations remain unchanged.
 - Deferred placeholders: none
 -->
-# Virtual Mechanical Engineer Constitution v3.1.0
+# Virtual Mechanical Engineer Constitution v3.1.1
+
+Amendment 2026-09-05: Reconcile the authentication wording with the already-shipped implementation in `apps/api/src/api/security.py` and `src/wright_engineering/runtime/auth.py`. Wright uses an opaque local credential and an HMAC-derived browser session, not JWT signing or verification. Removing unused `python-jose` also removes the vulnerable `ecdsa` dependency without changing authentication code, wire behavior, RBAC or audit acceptance rules. This PATCH clarifies the established mechanism under the user's standing security-fix authorization; it introduces no authentication redesign or weaker obligation. The separate credential-storage paragraph is outside this bounded amendment and retains its historical wording.
 
 Amendment 2026-09-04: Under the user's standing native-milestone architecture authorization, clarify the established modular application-service boundary. The prior wording named only adapter/registry packages despite the accepted workspace-service architecture. Independent planning review identified this contradiction (C1); this prospective clarification changes no historical approval or evidence and does not weaken thin routes, offline operation, or security gates.
 
@@ -61,7 +63,7 @@ Amendment 2026-09-04: Under the user's standing native-milestone architecture au
 * **File Vault**: All generated physical artifacts (STEP, STL, G-code) MUST be saved to a structured local file system vault, with file paths indexed in SQLite.
 
 ## 4. Security & Identity
-* **Local Authentication**: The system MUST use FastAPI's native `OAuth2PasswordBearer` with `passlib` (bcrypt) and `python-jose` (JWT). No external identity providers (Auth0/Cognito) are permitted.
+* **Local Authentication**: The system MUST authenticate local control-plane callers using Wright's opaque bearer credential or its derived HMAC-SHA256 browser session, with constant-time credential validation and fail-closed origin checks. No external identity providers (Auth0/Cognito) are permitted.
 * **Storage**: User credentials MUST be securely hashed and stored in the local SQLite database.
 * **Role-Based Access Control (RBAC)**: The system MUST enforce basic roles, distinguishing between administrators (tool/user management) and standard engineers (task execution).
 
@@ -103,4 +105,4 @@ and AI-generated change MUST identify applicable gates, and release changes
 MUST update the authoritative merge-gate scripts when new CI failures expose a
 missing local gate.
 
-**Version**: 3.1.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-09-04
+**Version**: 3.1.1 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-09-05
