@@ -2,7 +2,7 @@
 
 **Program ID:** `EPP-2026`
 
-**Current milestone:** EPP-N01 / NATIVE-01, the native engineering-process path from authoring to verified output. Read [current state](program-state.json), [registered tasks](work-registry.json), and the [native plan](../../../specs/079-wright-native-authoring/plan.md). Native language semantics are shared by programmatic/AI clients, canvas and runtime; autonomous AI authoring and Rivet migration/retirement are separate later work.
+**Current milestone:** EPP-N01 / NATIVE-01, the native engineering-process path from authoring to verified output. Read [current state](program-state.json), [registered tasks](work-registry.json), and the [native plan](https://github.com/burhop/wright/blob/dev/specs/079-wright-native-authoring/plan.md). Native language semantics are shared by programmatic/AI clients, canvas and runtime; autonomous AI authoring and Rivet migration/retirement are separate later work.
 
 **Current scope authority:** the [recorded user goal](evidence/authorizations/AUTH-EPP-N01-2026-001.json) authorizes this bounded milestone, tested feature pushes and dev PR integration. It does not claim exact-subject approval or human-review results. Historical approvals and state revision 89 retain their original meaning.
 
