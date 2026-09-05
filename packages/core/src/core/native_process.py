@@ -11,7 +11,7 @@ import hashlib
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from functools import lru_cache
-from pathlib import Path, PureWindowsPath
+from importlib.resources import files
 from typing import Any, Literal, Never
 
 from jsonschema import Draft202012Validator
@@ -136,8 +136,8 @@ OPERATIONS: dict[str, Operation] = {
 @lru_cache(maxsize=1)
 def _schema() -> dict[str, Any]:
     raw = (
-        Path(__file__)
-        .with_name("native_process_contract")
+        files("core")
+        .joinpath("native_process_contract")
         .joinpath("definition.schema.json")
         .read_bytes()
     )
@@ -339,11 +339,9 @@ def _validate_semantics(d: Mapping[str, Any]) -> None:
 
 
 def _validate_relative_path(value: str, step_id: str) -> None:
-    windows = PureWindowsPath(value)
     parts = value.replace("\\", "/").split("/")
     if (
-        windows.drive
-        or value.startswith(("/", "\\"))
+        value.startswith(("/", "\\"))
         or any(part in {"", ".", ".."} for part in parts)
         or ":" in value
         or "\x00" in value

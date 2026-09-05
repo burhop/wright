@@ -29,7 +29,10 @@ it("scopes and traces programmatic writes using the same canonical payload and C
   );
   await nativeProcessApi.save(
     "session with spaces",
-    Object.assign(document, { token: "response-only-token", revision: 1 }),
+    Object.assign(document, {
+      token: "dummy-response-only-token",
+      revision: 1,
+    }),
     "expected-token",
     "request-id",
   );
