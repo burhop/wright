@@ -50,17 +50,27 @@ it.each(["bindings", "contract", "examples", "runs", "check", "documents"])(
   async (id) => {
     const document = emptyDocument();
     document.definition.id = id;
-    vi.mocked(hostAdapter.fetch).mockImplementation(async () =>
-      new Response(JSON.stringify({}), { status: 200 }),
+    vi.mocked(hostAdapter.fetch).mockImplementation(
+      async () => new Response(JSON.stringify({}), { status: 200 }),
     );
     await nativeProcessApi.get("session", id);
     await nativeProcessApi.save("session", document, "token", "save-request");
     await nativeRunApi.history("session", id, "next page");
-    await nativeRunApi.start("session", id, "token", "run-request", {}, 60, null);
-    const requests = vi.mocked(hostAdapter.fetch).mock.calls.map(([url, init]) => ({
-      path: new URL(String(url)).pathname,
-      method: init?.method,
-    }));
+    await nativeRunApi.start(
+      "session",
+      id,
+      "token",
+      "run-request",
+      {},
+      60,
+      null,
+    );
+    const requests = vi
+      .mocked(hostAdapter.fetch)
+      .mock.calls.map(([url, init]) => ({
+        path: new URL(String(url)).pathname,
+        method: init?.method,
+      }));
     const path = `/api/native-processes/documents/${id}`;
     expect(requests).toEqual([
       { path, method: "GET" },
@@ -76,16 +86,20 @@ it.each(["bindings", "contract", "examples", "runs", "check", "documents"])(
   },
 );
 it("uses the canonical collection for create and paginated list", async () => {
-  vi.mocked(hostAdapter.fetch).mockImplementation(async () =>
-    new Response(JSON.stringify({}), { status: 200 }),
+  vi.mocked(hostAdapter.fetch).mockImplementation(
+    async () => new Response(JSON.stringify({}), { status: 200 }),
   );
   await nativeProcessApi.create("session", emptyDocument(), "request-id");
   await nativeProcessApi.list("session");
   await nativeProcessApi.list("session", "next page");
   for (const [url] of vi.mocked(hostAdapter.fetch).mock.calls) {
-    expect(new URL(String(url)).pathname).toBe("/api/native-processes/documents");
+    expect(new URL(String(url)).pathname).toBe(
+      "/api/native-processes/documents",
+    );
   }
-  const listUrl = new URL(String(vi.mocked(hostAdapter.fetch).mock.calls[2][0]));
+  const listUrl = new URL(
+    String(vi.mocked(hostAdapter.fetch).mock.calls[2][0]),
+  );
   expect(listUrl.searchParams.get("cursor")).toBe("next page");
 });
 it("retains native conflict details and actionable findings", async () => {

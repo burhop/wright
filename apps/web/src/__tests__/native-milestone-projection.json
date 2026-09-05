@@ -359,9 +359,7 @@
       "verification": "not_tested",
       "integration": "not_tested",
       "integration_required": true,
-      "blocker_ids": [
-        "B-HUMAN"
-      ]
+      "blocker_ids": ["B-HUMAN"]
     },
     {
       "id": "T029",
@@ -412,37 +410,18 @@
     {
       "id": "AC01",
       "title": "Truthful current dashboard",
-      "task_ids": [
-        "T001",
-        "T003",
-        "T004",
-        "T005",
-        "T032"
-      ],
-      "check_ids": [
-        "Q-DASHBOARD",
-        "Q-FINAL"
-      ],
+      "task_ids": ["T001", "T003", "T004", "T005", "T032"],
+      "check_ids": ["Q-DASHBOARD", "Q-FINAL"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-DASHBOARD",
-        "Q-FINAL"
-      ]
+      "missing_check_ids": ["Q-DASHBOARD", "Q-FINAL"]
     },
     {
       "id": "AC02",
       "title": "Official shared native language and quantities",
-      "task_ids": [
-        "T006",
-        "T007"
-      ],
-      "check_ids": [
-        "Q-SEMANTICS"
-      ],
+      "task_ids": ["T006", "T007"],
+      "check_ids": ["Q-SEMANTICS"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-SEMANTICS"
-      ]
+      "missing_check_ids": ["Q-SEMANTICS"]
     },
     {
       "id": "AC03",
@@ -457,128 +436,62 @@
         "T015",
         "T016"
       ],
-      "check_ids": [
-        "Q-PERSISTENCE",
-        "Q-EDITOR",
-        "Q-HUMAN"
-      ],
+      "check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-PERSISTENCE",
-        "Q-EDITOR",
-        "Q-HUMAN"
-      ]
+      "missing_check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"]
     },
     {
       "id": "AC04",
       "title": "Shared UI and headless execution",
-      "task_ids": [
-        "T017",
-        "T018",
-        "T021",
-        "T023"
-      ],
-      "check_ids": [
-        "Q-RUNTIME"
-      ],
+      "task_ids": ["T017", "T018", "T021", "T023"],
+      "check_ids": ["Q-RUNTIME"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-RUNTIME"
-      ]
+      "missing_check_ids": ["Q-RUNTIME"]
     },
     {
       "id": "AC05",
       "title": "Real artifacts and provenance",
-      "task_ids": [
-        "T019",
-        "T022",
-        "T023"
-      ],
-      "check_ids": [
-        "Q-ARTIFACTS",
-        "Q-RUNTIME"
-      ],
+      "task_ids": ["T019", "T022", "T023"],
+      "check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-ARTIFACTS",
-        "Q-RUNTIME"
-      ]
+      "missing_check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"]
     },
     {
       "id": "AC06",
       "title": "Failure, cancellation and recovery",
-      "task_ids": [
-        "T017",
-        "T020",
-        "T022",
-        "T023"
-      ],
-      "check_ids": [
-        "Q-RUNTIME"
-      ],
+      "task_ids": ["T017", "T020", "T022", "T023"],
+      "check_ids": ["Q-RUNTIME"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-RUNTIME"
-      ]
+      "missing_check_ids": ["Q-RUNTIME"]
     },
     {
       "id": "AC07",
       "title": "Exact real local MCP integration",
-      "task_ids": [
-        "T024",
-        "T025"
-      ],
-      "check_ids": [
-        "Q-MCP"
-      ],
+      "task_ids": ["T024", "T025"],
+      "check_ids": ["Q-MCP"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-MCP"
-      ]
+      "missing_check_ids": ["Q-MCP"]
     },
     {
       "id": "AC08",
       "title": "Three examples and independent assertions",
-      "task_ids": [
-        "T007",
-        "T008",
-        "T018",
-        "T026"
-      ],
-      "check_ids": [
-        "Q-EXAMPLES"
-      ],
+      "task_ids": ["T007", "T008", "T018", "T026"],
+      "check_ids": ["Q-EXAMPLES"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-EXAMPLES"
-      ]
+      "missing_check_ids": ["Q-EXAMPLES"]
     },
     {
       "id": "AC09",
       "title": "Offline, distribution and legacy compatibility",
-      "task_ids": [
-        "T009",
-        "T029"
-      ],
-      "check_ids": [
-        "Q-PACKAGING"
-      ],
+      "task_ids": ["T009", "T029"],
+      "check_ids": ["Q-PACKAGING"],
       "status": "not_tested",
-      "missing_check_ids": [
-        "Q-PACKAGING"
-      ]
+      "missing_check_ids": ["Q-PACKAGING"]
     },
     {
       "id": "AC10",
       "title": "Independent reviews and verified dev deployment",
-      "task_ids": [
-        "T027",
-        "T028",
-        "T029",
-        "T030",
-        "T031",
-        "T032"
-      ],
+      "task_ids": ["T027", "T028", "T029", "T030", "T031", "T032"],
       "check_ids": [
         "Q-REVIEW",
         "Q-HUMAN",
@@ -606,10 +519,7 @@
       "label": "Baseline and independently reviewed contracts",
       "stage": "verification",
       "kind": "technical_review",
-      "task_ids": [
-        "T001",
-        "T002"
-      ],
+      "task_ids": ["T001", "T002"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -624,11 +534,7 @@
       "label": "Dashboard projection, readers and browser journey",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T003",
-        "T004",
-        "T005"
-      ],
+      "task_ids": ["T003", "T004", "T005"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -643,10 +549,7 @@
       "label": "Native language and quantity contracts",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T006",
-        "T007"
-      ],
+      "task_ids": ["T006", "T007"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -661,11 +564,7 @@
       "label": "Three examples, independent outputs and negative controls",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T008",
-        "T018",
-        "T026"
-      ],
+      "task_ids": ["T008", "T018", "T026"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -680,11 +579,7 @@
       "label": "Persistence, workspace authorization and failure recovery",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T009",
-        "T010",
-        "T011"
-      ],
+      "task_ids": ["T009", "T010", "T011"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -699,13 +594,7 @@
       "label": "Accessible native authoring, save and reopen",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T012",
-        "T013",
-        "T014",
-        "T015",
-        "T016"
-      ],
+      "task_ids": ["T012", "T013", "T014", "T015", "T016"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -720,14 +609,7 @@
       "label": "Shared runtime, cancellation, failure and recovery",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T017",
-        "T018",
-        "T020",
-        "T021",
-        "T022",
-        "T023"
-      ],
+      "task_ids": ["T017", "T018", "T020", "T021", "T022", "T023"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -742,9 +624,7 @@
       "label": "Actual indexed artifacts and provenance",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T019"
-      ],
+      "task_ids": ["T019"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -759,10 +639,7 @@
       "label": "Exact real local MCP and teardown evidence",
       "stage": "verification",
       "kind": "live_tool",
-      "task_ids": [
-        "T024",
-        "T025"
-      ],
+      "task_ids": ["T024", "T025"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -777,9 +654,7 @@
       "label": "Independent exact-candidate technical review",
       "stage": "verification",
       "kind": "technical_review",
-      "task_ids": [
-        "T027"
-      ],
+      "task_ids": ["T027"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -794,9 +669,7 @@
       "label": "Actual independent human usability study",
       "stage": "verification",
       "kind": "human_review",
-      "task_ids": [
-        "T028"
-      ],
+      "task_ids": ["T028"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -811,9 +684,7 @@
       "label": "Native/Docker/offline and legacy compatibility",
       "stage": "verification",
       "kind": "packaging",
-      "task_ids": [
-        "T029"
-      ],
+      "task_ids": ["T029"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -828,9 +699,7 @@
       "label": "Required exact-candidate push and merge gates",
       "stage": "verification",
       "kind": "automated_test",
-      "task_ids": [
-        "T030"
-      ],
+      "task_ids": ["T030"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -845,9 +714,7 @@
       "label": "Actual integrated build health and browser journeys",
       "stage": "verification",
       "kind": "dev_deployment",
-      "task_ids": [
-        "T031"
-      ],
+      "task_ids": ["T031"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -862,9 +729,7 @@
       "label": "Final dashboard evidence and remaining obligations",
       "stage": "verification",
       "kind": "technical_review",
-      "task_ids": [
-        "T032"
-      ],
+      "task_ids": ["T032"],
       "status": "not_tested",
       "evidence_id": null,
       "observed_at": null,
@@ -942,12 +807,8 @@
       "summary": "Independent human participants and study results are pending.",
       "owner": "project maintainer",
       "required_action": "Arrange actual independent participants and execute the preregistered usability protocol.",
-      "task_ids": [
-        "T028"
-      ],
-      "check_ids": [
-        "Q-HUMAN"
-      ],
+      "task_ids": ["T028"],
+      "check_ids": ["Q-HUMAN"],
       "observed_at": "2026-09-04T21:37:44Z"
     },
     {
@@ -955,27 +816,18 @@
       "summary": "F02 merged; actual deployed-browser verification has not been recorded.",
       "owner": "coordinator",
       "required_action": "Verify the deployed build and changed process-view journey; preserve the missing evidence until observed.",
-      "task_ids": [
-        "T001"
-      ],
+      "task_ids": ["T001"],
       "check_ids": [],
       "observed_at": "2026-09-04T21:37:44Z"
     }
   ],
-  "next_task_ids": [
-    "T003",
-    "T004",
-    "T005",
-    "T006"
-  ],
+  "next_task_ids": ["T003", "T004", "T005", "T006"],
   "examples": [
     {
       "id": "EX-DOCUMENT",
       "title": "Generate and review an engineering document",
       "execution_mode": "local_computation",
-      "check_ids": [
-        "Q-EXAMPLES"
-      ],
+      "check_ids": ["Q-EXAMPLES"],
       "definition_path": "src/wright_engineering/static/native-processes/document.json",
       "maturity": "planned"
     },
@@ -983,9 +835,7 @@
       "id": "EX-QUANTITY",
       "title": "Calculate an engineering quantity with units",
       "execution_mode": "local_computation",
-      "check_ids": [
-        "Q-EXAMPLES"
-      ],
+      "check_ids": ["Q-EXAMPLES"],
       "definition_path": "src/wright_engineering/static/native-processes/quantity.json",
       "maturity": "planned"
     },
@@ -993,9 +843,7 @@
       "id": "EX-REVISION",
       "title": "Check an artifact, correct a failure and rerun",
       "execution_mode": "local_computation",
-      "check_ids": [
-        "Q-EXAMPLES"
-      ],
+      "check_ids": ["Q-EXAMPLES"],
       "definition_path": "src/wright_engineering/static/native-processes/revision.json",
       "maturity": "planned"
     }
@@ -1007,9 +855,7 @@
     "candidate_commit": null,
     "pull_requests": [],
     "merged_commit": null,
-    "deployment_check_ids": [
-      "Q-DEV"
-    ],
+    "deployment_check_ids": ["Q-DEV"],
     "deployment_status": "not_tested"
   },
   "readiness": {
@@ -1296,9 +1142,7 @@
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": [
-          "B-HUMAN"
-        ]
+        "blocker_ids": ["B-HUMAN"]
       },
       {
         "id": "T029",
@@ -1337,28 +1181,14 @@
       {
         "id": "AC01",
         "title": "Truthful current dashboard",
-        "task_ids": [
-          "T001",
-          "T003",
-          "T004",
-          "T005",
-          "T032"
-        ],
-        "required_check_ids": [
-          "Q-DASHBOARD",
-          "Q-FINAL"
-        ]
+        "task_ids": ["T001", "T003", "T004", "T005", "T032"],
+        "required_check_ids": ["Q-DASHBOARD", "Q-FINAL"]
       },
       {
         "id": "AC02",
         "title": "Official shared native language and quantities",
-        "task_ids": [
-          "T006",
-          "T007"
-        ],
-        "required_check_ids": [
-          "Q-SEMANTICS"
-        ]
+        "task_ids": ["T006", "T007"],
+        "required_check_ids": ["Q-SEMANTICS"]
       },
       {
         "id": "AC03",
@@ -1373,97 +1203,48 @@
           "T015",
           "T016"
         ],
-        "required_check_ids": [
-          "Q-PERSISTENCE",
-          "Q-EDITOR",
-          "Q-HUMAN"
-        ]
+        "required_check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"]
       },
       {
         "id": "AC04",
         "title": "Shared UI and headless execution",
-        "task_ids": [
-          "T017",
-          "T018",
-          "T021",
-          "T023"
-        ],
-        "required_check_ids": [
-          "Q-RUNTIME"
-        ]
+        "task_ids": ["T017", "T018", "T021", "T023"],
+        "required_check_ids": ["Q-RUNTIME"]
       },
       {
         "id": "AC05",
         "title": "Real artifacts and provenance",
-        "task_ids": [
-          "T019",
-          "T022",
-          "T023"
-        ],
-        "required_check_ids": [
-          "Q-ARTIFACTS",
-          "Q-RUNTIME"
-        ]
+        "task_ids": ["T019", "T022", "T023"],
+        "required_check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"]
       },
       {
         "id": "AC06",
         "title": "Failure, cancellation and recovery",
-        "task_ids": [
-          "T017",
-          "T020",
-          "T022",
-          "T023"
-        ],
-        "required_check_ids": [
-          "Q-RUNTIME"
-        ]
+        "task_ids": ["T017", "T020", "T022", "T023"],
+        "required_check_ids": ["Q-RUNTIME"]
       },
       {
         "id": "AC07",
         "title": "Exact real local MCP integration",
-        "task_ids": [
-          "T024",
-          "T025"
-        ],
-        "required_check_ids": [
-          "Q-MCP"
-        ]
+        "task_ids": ["T024", "T025"],
+        "required_check_ids": ["Q-MCP"]
       },
       {
         "id": "AC08",
         "title": "Three examples and independent assertions",
-        "task_ids": [
-          "T007",
-          "T008",
-          "T018",
-          "T026"
-        ],
-        "required_check_ids": [
-          "Q-EXAMPLES"
-        ]
+        "task_ids": ["T007", "T008", "T018", "T026"],
+        "required_check_ids": ["Q-EXAMPLES"]
       },
       {
         "id": "AC09",
         "title": "Offline, distribution and legacy compatibility",
-        "task_ids": [
-          "T009",
-          "T029"
-        ],
-        "required_check_ids": [
-          "Q-PACKAGING"
-        ]
+        "task_ids": ["T009", "T029"],
+        "required_check_ids": ["Q-PACKAGING"]
       },
       {
         "id": "AC10",
         "title": "Independent reviews and verified dev deployment",
-        "task_ids": [
-          "T027",
-          "T028",
-          "T029",
-          "T030",
-          "T031",
-          "T032"
-        ],
+        "task_ids": ["T027", "T028", "T029", "T030", "T031", "T032"],
         "required_check_ids": [
           "Q-REVIEW",
           "Q-HUMAN",
@@ -1481,13 +1262,8 @@
         "label": "Baseline and independently reviewed contracts",
         "kind": "technical_review",
         "stage": "verification",
-        "task_ids": [
-          "T001",
-          "T002"
-        ],
-        "source_paths": [
-          "specs/079-wright-native-authoring"
-        ],
+        "task_ids": ["T001", "T002"],
+        "source_paths": ["specs/079-wright-native-authoring"],
         "independent_required": true
       },
       {
@@ -1495,11 +1271,7 @@
         "label": "Dashboard projection, readers and browser journey",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T003",
-          "T004",
-          "T005"
-        ],
+        "task_ids": ["T003", "T004", "T005"],
         "source_paths": [
           "scripts/program_status",
           "packages/tool_registry/src/tool_registry/program_status.py",
@@ -1515,13 +1287,8 @@
         "label": "Native language and quantity contracts",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T006",
-          "T007"
-        ],
-        "source_paths": [
-          "packages/core/src/core/native_process.py"
-        ],
+        "task_ids": ["T006", "T007"],
+        "source_paths": ["packages/core/src/core/native_process.py"],
         "independent_required": false
       },
       {
@@ -1529,11 +1296,7 @@
         "label": "Three examples, independent outputs and negative controls",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T008",
-          "T018",
-          "T026"
-        ],
+        "task_ids": ["T008", "T018", "T026"],
         "source_paths": [
           "src/wright_engineering/static/native-processes",
           "packages/workspace_service/src/workspace_service/native_process_runtime.py"
@@ -1545,11 +1308,7 @@
         "label": "Persistence, workspace authorization and failure recovery",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T009",
-          "T010",
-          "T011"
-        ],
+        "task_ids": ["T009", "T010", "T011"],
         "source_paths": [
           "packages/data_vault/src/data_vault",
           "packages/workspace_service/src/workspace_service/native_process_service.py",
@@ -1562,13 +1321,7 @@
         "label": "Accessible native authoring, save and reopen",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T012",
-          "T013",
-          "T014",
-          "T015",
-          "T016"
-        ],
+        "task_ids": ["T012", "T013", "T014", "T015", "T016"],
         "source_paths": [
           "apps/web/src/components/native-process",
           "apps/web/src/services/native-process.ts",
@@ -1581,14 +1334,7 @@
         "label": "Shared runtime, cancellation, failure and recovery",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T017",
-          "T018",
-          "T020",
-          "T021",
-          "T022",
-          "T023"
-        ],
+        "task_ids": ["T017", "T018", "T020", "T021", "T022", "T023"],
         "source_paths": [
           "packages/workspace_service/src/workspace_service/native_process_runtime.py",
           "packages/workspace_service/src/workspace_service/native_process_service.py",
@@ -1602,9 +1348,7 @@
         "label": "Actual indexed artifacts and provenance",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T019"
-        ],
+        "task_ids": ["T019"],
         "source_paths": [
           "packages/data_vault/src/data_vault/native_process_artifacts.py"
         ],
@@ -1615,10 +1359,7 @@
         "label": "Exact real local MCP and teardown evidence",
         "kind": "live_tool",
         "stage": "verification",
-        "task_ids": [
-          "T024",
-          "T025"
-        ],
+        "task_ids": ["T024", "T025"],
         "source_paths": [
           "packages/workspace_service/src/workspace_service/native_process_mcp.py"
         ],
@@ -1629,9 +1370,7 @@
         "label": "Independent exact-candidate technical review",
         "kind": "technical_review",
         "stage": "verification",
-        "task_ids": [
-          "T027"
-        ],
+        "task_ids": ["T027"],
         "source_paths": [
           "packages/core/src/core",
           "packages/data_vault/src/data_vault",
@@ -1646,9 +1385,7 @@
         "label": "Actual independent human usability study",
         "kind": "human_review",
         "stage": "verification",
-        "task_ids": [
-          "T028"
-        ],
+        "task_ids": ["T028"],
         "source_paths": [
           "apps/web/src/components/native-process",
           "apps/web/src/components/pages/NativeProcessPage.tsx"
@@ -1660,9 +1397,7 @@
         "label": "Native/Docker/offline and legacy compatibility",
         "kind": "packaging",
         "stage": "verification",
-        "task_ids": [
-          "T029"
-        ],
+        "task_ids": ["T029"],
         "source_paths": [
           "src/wright_engineering",
           "packages/data_vault/src/data_vault",
@@ -1675,15 +1410,8 @@
         "label": "Required exact-candidate push and merge gates",
         "kind": "automated_test",
         "stage": "verification",
-        "task_ids": [
-          "T030"
-        ],
-        "source_paths": [
-          "scripts",
-          "packages",
-          "apps",
-          "src"
-        ],
+        "task_ids": ["T030"],
+        "source_paths": ["scripts", "packages", "apps", "src"],
         "independent_required": false
       },
       {
@@ -1691,14 +1419,8 @@
         "label": "Actual integrated build health and browser journeys",
         "kind": "dev_deployment",
         "stage": "verification",
-        "task_ids": [
-          "T031"
-        ],
-        "source_paths": [
-          "packages",
-          "apps",
-          "src"
-        ],
+        "task_ids": ["T031"],
+        "source_paths": ["packages", "apps", "src"],
         "independent_required": false
       },
       {
@@ -1706,9 +1428,7 @@
         "label": "Final dashboard evidence and remaining obligations",
         "kind": "technical_review",
         "stage": "verification",
-        "task_ids": [
-          "T032"
-        ],
+        "task_ids": ["T032"],
         "source_paths": [
           "scripts/program_status",
           "apps/web/src/components/program-status"
@@ -1752,12 +1472,7 @@
           "T029",
           "T030"
         ],
-        "source_paths": [
-          "packages",
-          "apps",
-          "src",
-          "scripts"
-        ],
+        "source_paths": ["packages", "apps", "src", "scripts"],
         "independent_required": false
       }
     ],
@@ -1768,12 +1483,8 @@
         "summary": "Independent human participants and study results are pending.",
         "owner": "project maintainer",
         "required_action": "Arrange actual independent participants and execute the preregistered usability protocol.",
-        "task_ids": [
-          "T028"
-        ],
-        "check_ids": [
-          "Q-HUMAN"
-        ],
+        "task_ids": ["T028"],
+        "check_ids": ["Q-HUMAN"],
         "observed_at": "2026-09-04T21:37:44Z"
       },
       {
@@ -1781,45 +1492,32 @@
         "summary": "F02 merged; actual deployed-browser verification has not been recorded.",
         "owner": "coordinator",
         "required_action": "Verify the deployed build and changed process-view journey; preserve the missing evidence until observed.",
-        "task_ids": [
-          "T001"
-        ],
+        "task_ids": ["T001"],
         "check_ids": [],
         "observed_at": "2026-09-04T21:37:44Z"
       }
     ],
-    "next_task_ids": [
-      "T003",
-      "T004",
-      "T005",
-      "T006"
-    ],
+    "next_task_ids": ["T003", "T004", "T005", "T006"],
     "examples": [
       {
         "id": "EX-DOCUMENT",
         "title": "Generate and review an engineering document",
         "execution_mode": "local_computation",
-        "check_ids": [
-          "Q-EXAMPLES"
-        ],
+        "check_ids": ["Q-EXAMPLES"],
         "definition_path": "src/wright_engineering/static/native-processes/document.json"
       },
       {
         "id": "EX-QUANTITY",
         "title": "Calculate an engineering quantity with units",
         "execution_mode": "local_computation",
-        "check_ids": [
-          "Q-EXAMPLES"
-        ],
+        "check_ids": ["Q-EXAMPLES"],
         "definition_path": "src/wright_engineering/static/native-processes/quantity.json"
       },
       {
         "id": "EX-REVISION",
         "title": "Check an artifact, correct a failure and rerun",
         "execution_mode": "local_computation",
-        "check_ids": [
-          "Q-EXAMPLES"
-        ],
+        "check_ids": ["Q-EXAMPLES"],
         "definition_path": "src/wright_engineering/static/native-processes/revision.json"
       }
     ],
@@ -1830,9 +1528,7 @@
       "candidate_commit": null,
       "pull_requests": [],
       "merged_commit": null,
-      "deployment_check_ids": [
-        "Q-DEV"
-      ]
+      "deployment_check_ids": ["Q-DEV"]
     }
   },
   "attestations": [],
