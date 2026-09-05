@@ -90,7 +90,8 @@
       "Invalid configuration remains buffered until corrected; the editor preserves and explains its 100-command undo history. The atomic path/producer and undo corrections are independently closed.",
       "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
       "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
-      "Linux amd64 cold offline Docker and actual native workflow/restart checks passed on the retained local c7 image. Complete gates, packaging scope consolidation, independent final approval, human study, CI, dev delivery and final reporting remain pending; benchmark qualification remains 0/100."
+      "Linux amd64 cold offline Docker and native workflow/restart checks passed; the complete local merge gate passed on 60ef8672. Final metadata review, required push/CI checks, packaging scope consolidation, dev PR integration and actual integrated-build verification remain pending.",
+      "The authorized overnight work targets technical dev delivery. Human usability is separately tracked as FOLLOWUP-NATIVE-HUMAN-01; participants/results and T028/Q-HUMAN remain pending. Whole-milestone human acceptance, benchmark qualification (0/100), and Rivet migration/retirement remain distinct."
     ],
     "tasks": [
       {
@@ -312,7 +313,7 @@
       {
         "id": "T028",
         "activity": "blocked",
-        "owner": "coordinator",
+        "owner": "project maintainer / study coordinator",
         "integration_required": true,
         "integration_exemption": null,
         "blocker_ids": [
@@ -1662,16 +1663,16 @@
     "blockers": [
       {
         "id": "B-HUMAN",
-        "summary": "Independent human participants and study results are pending.",
+        "summary": "Human usability is separately tracked as FOLLOWUP-NATIVE-HUMAN-01; actual independent participants and study results remain pending.",
         "owner": "project maintainer",
-        "required_action": "Arrange actual independent participants and execute the preregistered usability protocol.",
+        "required_action": "Project maintainer / study coordinator: arrange the five-person study after technical dev delivery using evidence/followups/FOLLOWUP-NATIVE-HUMAN-01.md and the preserved H1-H5 protocol. Retain actual trials and manual accessibility evidence before granting T028/Q-HUMAN credit.",
         "task_ids": [
           "T028"
         ],
         "check_ids": [
           "Q-HUMAN"
         ],
-        "observed_at": "2026-09-04T21:37:44Z"
+        "observed_at": "2026-09-05T02:59:17Z"
       },
       {
         "id": "B-F02-DEPLOY",
@@ -1686,11 +1687,11 @@
       }
     ],
     "next_task_ids": [
-      "T030",
-      "T029",
       "T027",
-      "T028",
-      "T031"
+      "T029",
+      "T030",
+      "T031",
+      "T032"
     ],
     "examples": [
       {
