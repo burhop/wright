@@ -1,0 +1,11 @@
+# Independent Q-PLANNING freshness rebind after T027 closure
+
+**Result: PASS for current Q-PLANNING, T001/T002 only.** Reviewer: `/root/native_candidate_review`. This supplements the independently authored planning review on `60ef8672f1f61c2f4942e618638ec8901e9aa9a0`; its substantive planning assessment and limitations remain unchanged.
+
+Current observed commit: `0f594b764971d811a8fd3318d2f69874c4f027fd`; Git tree: `564d57756fff5af32cfb03345a8fc55ddcd599ec`. Declared Q-PLANNING scope remains `specs/079-wright-native-authoring`. Its current subtree is `0fcd399665aa042a5477a57964ec6b4b0904961b` and publisher-compatible scope SHA-256 is `57774ec088430c8b1356d3eab6337ee2a340a3086aa7475288cb5ad99a513b46`.
+
+The complete Git diff of this scope against the reviewed code60 contains exactly one change: T027's task checkbox changes from unchecked to checked. Independent comparison after checkbox-marker normalization confirms every other task character is unchanged. There are no other 079 file, contract, fixture, requirement, task identity or dependency changes. The reason for T027 progress is the completed exact-candidate independent technical review plus the separately documented post-freeze attachment-index closure.
+
+The current task checklist therefore records 27 completed tasks, T001–T027, and five pending tasks, T028–T032. This does not rewrite the original frozen delivery partition: its exact candidate remains code60 with T001–T026 included and T027–T032 explicitly pending at that historical freeze. The typed review is unchanged byte-for-byte, and the current scoped checkpoint retains the original 26+6 partition. Current progress and original delivery scope have different purposes and correctly coexist.
+
+A read-only identity/diff check passed and its result is retained as `independent-planning-rebind-0f594b76-result.json`. No implementation test or full suite was repeated for a checkbox-only change. The existing substantive planning review applies at this new exact source identity; the previous scope digest remains evidence for its original source, not the current directory bytes. Human study, packaging/compatibility acceptance, gates/terminal CI, dev deployment and final reporting keep their separate remaining requirements. This rebind supplies neither those results nor a changed frozen implementation approval.
