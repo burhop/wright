@@ -1853,6 +1853,279 @@
             "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
           }
         ]
+      },
+      {
+        "id": "Q-SEMANTICS-b699191d-3",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "39ac8928795494e83a2128f101ff360ff70a34dfc28d7e20083c8193322f9322",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 65 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 65,
+          "passed": 65,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-b699191d-5",
+        "check_id": "Q-RUNTIME",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 204 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 204,
+          "passed": 204,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-b699191d-5",
+        "check_id": "Q-COMBINED",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "686b723ebe082e810cae059fe2f3e47500211b0b7def739a4baad9fd5ff2eea3",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 269 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 269,
+          "passed": 269,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-b699191d-5",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 124 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 124,
+          "passed": 124,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-EDITOR-b699191d-5",
+        "check_id": "Q-EDITOR",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 10 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 10,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-b699191d-6",
+        "check_id": "Q-GATES",
+        "attempt": 6,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "660953a62e6aee8952f121413c7d2d7820fc986d0800ba3cb31986db2a840f5a",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Bounded composed local verification completed; the original full40 script remains failed and no later full-script exit0 is claimed. Required push checks and terminal CI remain pending; this is not whole-gate completion. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-b699191d-6",
+        "check_id": "Q-REVIEW",
+        "attempt": 6,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The corrected complete browser stage and unchanged earlier stages passed; final independent review must bind the frozen exact candidate and resolve any remaining findings. No new independent-review verdict is inferred. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-b699191d-5",
+        "check_id": "Q-PACKAGING",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "e372ec8017f1fdea928801e82b3076ee2afc589d5d80d73519d39b1dda4ab7b6",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Original failed gate, unchanged completed stages, corrected complete browser stage and scoped Docker evidence are retained. Consolidate exact assembled artifacts, compatibility, host limitations and required lifecycle coverage before whole packaging acceptance. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-PLANNING-4419a3c3-2",
+        "check_id": "Q-PLANNING",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-05T04:49:15.510033Z",
+        "tested_commit": "4419a3c3218380cbdc1bc797f70a0f69668cf53a",
+        "tested_tree": "ec81f619ab1866e15d1a4b3d88ea0cb648df24bb",
+        "scope_sha256": "588d99a6e91e0d8aa4fa04871060bae682c1e5b38874fce94e974cb2a93b76c1",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent bounded planning review accepts the exact constitution3.1.1 reference correction with all other079 semantics unchanged from the prior complete planning review. Current source scope matches the reviewed43-file scope; fixed32 tasks retain26 implemented and6 pending. No human, final implementation review or integration credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-4419a3c3.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "6069172a0aa78b0d79399be0e359a41e3370876788b914f604efde31bf6c159f"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -1882,9 +2155,9 @@
       },
       {
         "id": "B-FRESH-NATIVE-CANDIDATE",
-        "summary": "The dependency correction is implemented; fresh assembled-candidate gates and independent review are pending.",
+        "summary": "Bounded composed verification completed; final exact-candidate review, packaging consolidation and required push/CI checks remain pending. No later full-script exit0 is claimed.",
         "owner": "coordinator and independent reviewer",
-        "required_action": "Regenerate and validate actual artifacts, complete the local and push gates and exact-candidate independent review, then inspect terminal dev PR CI. Preserve previous audit/gate/review results; retain the separate human follow-up.",
+        "required_action": "Finish the independent exact-candidate review and packaging scope assessment, run required push/history checks and inspect terminal dev PR CI. Preserve the separate human follow-up.",
         "task_ids": [
           "T027",
           "T029",
@@ -1895,7 +2168,7 @@
           "Q-PACKAGING",
           "Q-GATES"
         ],
-        "observed_at": "2026-09-05T03:27:41.359131Z"
+        "observed_at": "2026-09-05T05:59:48.311128+00:00"
       }
     ],
     "next_task_ids": [
@@ -1938,7 +2211,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+      "candidate_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
