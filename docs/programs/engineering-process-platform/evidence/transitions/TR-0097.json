@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0097",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "AUTHOR_VERIFIED",
+  "prior_revision": 97,
+  "new_revision": 98,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "2286a60b0bd48b03f8b9b868dd5d732c2c175941a10449680bc93d1c127e91ca",
+  "new_state_digest": "01a4909a263afed8a005668e43adacdd6dbe482a0952ecf823d84c2e549add55",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Full authoritative scripts/check-dev-merge.sh passed with exit 0 on clean candidate 60ef8672, observed 2026-09-05T02:32:37Z. Retained log SHA256 3b4758ad651920c3f372d4abfc9898d1608bf8d376500dec850a0c6646ea3040. All blocking local stages passed, 170 Playwright passed and 5 explicit skips; actual native-server journeys separately 2 passed on production-equivalent c7. Wheel/sdist clean installs and independent archive correspondence, exact Docker cold-offline native artifact/restart proof retained. T001-T026 implemented; T027-T032 remain pending, including human study, CI and dev delivery. No whole-milestone completion or publication authorization inferred.",
+  "started_at": "2026-09-05T02:33:31.408439Z",
+  "finished_at": "2026-09-05T02:33:31.408439Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+    "source_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+    "source_program_tree": "21d89e63e01de4c5bf8c2e77417da56d5f8902e2",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0098.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0097.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0097.json",
+      "sha256": "3e75b1612b54bdbe720e5ac0ce866e5a3d5538dfb5cbede50a47978fc5420ccb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0098.json",
+      "sha256": "f86a87d927b8f5140212154509f49ca7a79875ce8f665073298c6eba6507bfa0",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Full authoritative scripts/check-dev-merge.sh passed with exit 0 on clean candidate 60ef8672, observed 2026-09-05T02:32:37Z. Retained log SHA256 3b4758ad651920c3f372d4abfc9898d1608bf8d376500dec850a0c6646ea3040. All blocking local stages passed, 170 Playwright passed and 5 explicit skips; actual native-server journeys separately 2 passed on production-equivalent c7. Wheel/sdist clean installs and independent archive correspondence, exact Docker cold-offline native artifact/restart proof retained. T001-T026 implemented; T027-T032 remain pending, including human study, CI and dev delivery. No whole-milestone completion or publication authorization inferred.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "60ef8672f1f61c2f4942e618638ec8901e9aa9a0"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "F02 deployed browser verification remains pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0097.json",
+  "next_action": "FREEZE_CURRENT_FEATURE_CANDIDATE"
+}
