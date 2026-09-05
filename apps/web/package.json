@@ -18,7 +18,7 @@
     "@opentelemetry/sdk-trace-web": "^2.10.0",
     "@testing-library/user-event": "^14.6.1",
     "@xyflow/react": "12.11.6",
-    "dompurify": "3.4.12",
+    "dompurify": "3.4.14",
     "idb": "^8.0.3",
     "plotly.js-dist-min": "3.7.0",
     "react": "^19.2.8",
