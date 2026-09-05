@@ -38,10 +38,10 @@ jobs:
       - name: Run Public Alpha Leak Scan
         run: python scripts/check-public-alpha-leaks.py
 
-      - name: Run Python dependency audit with expiring exceptions
+      - name: Audit locked Python runtime dependencies with expiring exceptions
         shell: bash
         run: |
-          uv run --with pip-audit pip-audit --format json --output pip-audit.json || true
+          uv run --locked --extra runtime --with pip-audit pip-audit --format json --output pip-audit.json || true
           python -c "from pathlib import Path; from scripts.release.dependency_audit import evaluate_pip_audit; evaluate_pip_audit(Path('pip-audit.json'), Path('.github/dependency-audit-policy.json'))"
 
       - name: Run npm dependency audit with expiring exceptions
