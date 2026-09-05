@@ -6,6 +6,10 @@ import { expect, test, type Page } from "@playwright/test";
 // Opt in with PLAYWRIGHT_INCLUDE_LIVE=1, PLAYWRIGHT_BASE_URL and an explicitly
 // prepared disposable workspace/session. All browser/API traffic is real.
 const session = process.env.WRIGHT_NATIVE_LIVE_SESSION;
+test.skip(
+  !session,
+  "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+);
 const query = () => `?session_id=${encodeURIComponent(session!)}`;
 const source = async (page: Page) =>
   JSON.parse(await page.getByTestId("native-source").inputValue());

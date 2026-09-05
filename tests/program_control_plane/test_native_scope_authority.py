@@ -112,8 +112,9 @@ def test_old_candidate_cannot_keep_changed_implementation_unleased(
     # Exercise the closed-lease checkpoint independent of the current writer
     # state and whether CI checked out a branch or a detached candidate.
     state = json.loads(
-        (repository_root / ROOT / "evidence/states/program-state-revision-0096.json")
-        .read_text(encoding="utf-8")
+        (
+            repository_root / ROOT / "evidence/states/program-state-revision-0096.json"
+        ).read_text(encoding="utf-8")
     )
     docs[f"{ROOT}/program-state.json"] = state
     previous = reader.resolve_identity("7404a549ae244cc05d89e062c60276e8862f53c9", ROOT)

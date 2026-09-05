@@ -249,7 +249,10 @@ class ProgramStatusReader:
                 ProgramStatusErrorCode.UNAVAILABLE,
             )
             if _git_normalized_digest(catalog_raw) != catalog_digest:
-                if _git_normalized_digest(catalog_raw) != "d1b388d0cf30cebca5ec7c3380a5e5f412429215125f8bcf7c59017c7ccace84":
+                if (
+                    _git_normalized_digest(catalog_raw)
+                    != "d1b388d0cf30cebca5ec7c3380a5e5f412429215125f8bcf7c59017c7ccace84"
+                ):
                     raise ProgramStatusReadError(
                         ProgramStatusErrorCode.IDENTITY_MISMATCH,
                         "reinstall_program_status_contracts",

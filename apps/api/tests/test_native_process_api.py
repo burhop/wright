@@ -266,7 +266,9 @@ def test_internal_error_does_not_disclose_path_or_payload(service, monkeypatch):
         assert not span.events
     assert all(sentinel not in span.to_json() for span in finished)
     request_span = next(s for s in finished if "http.method" in s.attributes)
-    assert all(s.context.trace_id == request_span.context.trace_id for s in native_spans)
+    assert all(
+        s.context.trace_id == request_span.context.trace_id for s in native_spans
+    )
     assert service.list_documents("session-one")["documents"] == []
 
 

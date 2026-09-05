@@ -1,0 +1,96 @@
+{
+  "at": "2026-09-05T00:01:57.152Z",
+  "url": "http://127.0.0.1:8765/",
+  "source": "e594b3ab0f94523ac99218932424c387d00dc807",
+  "current": true,
+  "counts": {
+    "implementation": {
+      "completed": 26,
+      "total": 32
+    },
+    "integration": {
+      "completed": 0,
+      "not_applicable": 2,
+      "total": 30
+    },
+    "verification": {
+      "completed": 24,
+      "total": 32
+    }
+  },
+  "checks": [
+    {
+      "id": "Q-PLANNING",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-DASHBOARD",
+      "status": "passed"
+    },
+    {
+      "id": "Q-SEMANTICS",
+      "status": "passed"
+    },
+    {
+      "id": "Q-EXAMPLES",
+      "status": "passed"
+    },
+    {
+      "id": "Q-PERSISTENCE",
+      "status": "passed"
+    },
+    {
+      "id": "Q-EDITOR",
+      "status": "passed"
+    },
+    {
+      "id": "Q-RUNTIME",
+      "status": "passed"
+    },
+    {
+      "id": "Q-ARTIFACTS",
+      "status": "passed"
+    },
+    {
+      "id": "Q-MCP",
+      "status": "passed"
+    },
+    {
+      "id": "Q-REVIEW",
+      "status": "inconclusive"
+    },
+    {
+      "id": "Q-HUMAN",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-PACKAGING",
+      "status": "inconclusive"
+    },
+    {
+      "id": "Q-GATES",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-DEV",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-FINAL",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-INTEGRATION",
+      "status": "not_tested"
+    },
+    {
+      "id": "Q-COMBINED",
+      "status": "passed"
+    }
+  ],
+  "keyboardTaskDisclosure": true,
+  "failedRefreshRetainsCounts": true,
+  "refreshRecovery": true,
+  "mobileOverflow": false,
+  "pageErrors": []
+}

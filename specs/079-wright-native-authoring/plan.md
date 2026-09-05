@@ -45,6 +45,8 @@ Reconcile baseline/contracts/task plan/independent analysis → dashboard visibi
 
 Keep each PR independently useful. Dashboard can ship before native execution; do not push bookkeeping-only changes per task. Existing `.specify/extensions.yml` planning/task/analysis/implementation hooks are optional; skip redundant automatic commits and perform deliberate scoped checkpoints.
 
+The [prospective scoped delivery rule](../../docs/programs/engineering-process-platform/coordinator-state-machine.md#prospective-native-implementation-delivery-revision-98-onward) uses the existing lifecycle and unchanged required gates for an independently reviewed implementation PR. Its exact candidate explicitly partitions implemented and pending tasks. Human study, actual deployment and final reporting remain pending until observed; scoped dev integration never implies whole-milestone acceptance.
+
 ## Verification and Recovery
 
 Test invalid graphs/decimals/units, cross-language identity, two writers/idempotency/interrupted transactions, terminal races, output-dependent assertions, deadlines, denied scope/changed bindings, exact endpoints/undo/invalid field buffers/save conflicts and artifact recovery. Run focused tests during implementation and full required gates at candidate boundaries. Independent review binds exact commit/tree. Human study remains pending until real participants execute it. Retain upgraded DB and backups; never claim an old build opens a schema version it rejects.
