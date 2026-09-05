@@ -25,3 +25,13 @@ Thirteen separate scanner matches were independently established as exact public
 The Python dependency audit remains unperformed. Automatic approval review rejected transmitting Python dependency metadata to separate package/advisory services because the explicit audit permission covered npm. The coordinator requested that specific additional permission and is continuing unaffected local work. No indirect transmission or audit-policy exception is claimed. Required terminal CI, dev PR integration, development-image publication and actual integrated-build verification remain pending.
 
 Human usability remains separately tracked by `FOLLOWUP-NATIVE-HUMAN-01`. The 100-example benchmark has no new qualification credit. Full Rivet migration/retirement and production release remain separate roadmap work.
+
+## Subsequent observations at 2026-09-05 04:35 UTC
+
+The earlier Python-approval paragraph records the earlier blocked state. Automatic review subsequently accepted the bounded audit after read-only verification that all 87 locked package identity/registry tuples already appeared on public `origin/dev` source `7404a549ae244cc05d89e062c60276e8862f53c9`. No additional user reply is attributed. The default CI environment audit found zero vulnerabilities among 46 packages, but omitted runtime extras. The actual runtime audit examined 95 packages and found `PYSEC-2026-1325` in `ecdsa==0.19.2`, with no fixed version. The unchanged evaluator rejected its expired exception. The accompanying public finding preserves both outcomes; no exception was extended.
+
+Independent inspection found no use of the Python JOSE chain in 340 production/adapter Python files. Removing the two unused manifest requirements makes exactly five packages unreachable. The minimal dependency removal, reconciled authentication documentation and runtime audit coverage correction remain subject to exact patch review, a fresh audit, required gates and package validation. Authentication behavior is unchanged by this plan.
+
+Candidate `22a5743a6b28ece520ef709bb1586e38162a1eda` completed the full local merge gate with exit zero, including 547 frontend tests and 170 browser passes with five recorded skips. The adjacent `native-local-gate-22a5743a` directory binds the actual log and test evidence. This is the tested predecessor of the pending runtime dependency correction, not a passing claim for that future candidate.
+
+The environment-report prevention patch `58a6a0ac` independently closed the P2 finding and was integrated as `d8abe78c`; it removes ambient environment serialization while retaining child-process inheritance. Required security audit correction, fresh candidate gate, final independent review, push gate, terminal CI and dev integration remain pending.

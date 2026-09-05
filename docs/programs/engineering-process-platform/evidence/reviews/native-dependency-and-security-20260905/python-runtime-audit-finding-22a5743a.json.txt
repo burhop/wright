@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-09-05T04:31:25.803148+00:00",
+  "source_commit": "22a5743a6b28ece520ef709bb1586e38162a1eda",
+  "reports": [
+    {
+      "source_filename": "pip-audit-overnight-public.json",
+      "source_sha256": "6a98517accc5c832d883c43ae74fa61d96fc1897a32f7c8c3032a1fa112c79eb",
+      "scope": "root/default CI environment",
+      "audit_exit_code": 0,
+      "dependency_count": 46,
+      "skipped_count": 0,
+      "affected_packages": []
+    },
+    {
+      "source_filename": "pip-audit-runtime-public.json",
+      "source_sha256": "91f872c6ab1b64b1ab2ac387fe614e1e86feea75de345ccb75da1daa17f24e6b",
+      "scope": "root runtime extra environment",
+      "audit_exit_code": 1,
+      "dependency_count": 95,
+      "skipped_count": 0,
+      "affected_packages": [
+        {
+          "name": "ecdsa",
+          "version": "0.19.2",
+          "vulnerabilities": [
+            {
+              "id": "PYSEC-2026-1325",
+              "aliases": [
+                "CVE-2024-23342",
+                "GHSA-wj6h-64fc-37mp"
+              ],
+              "fix_versions": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "runtime_policy_result": "DependencyAuditError: dependency audit exception expired: PYSEC-2026-1325:ecdsa",
+  "policy_changed": false,
+  "authorization_provenance": "Initial automatic review rejected Python audit separately from npm. A bounded retry was accepted after read-only verification that all 87 locked package identity/registry tuples already exist on public origin/dev 7404a549ae244cc05d89e062c60276e8862f53c9. No user reply is attributed. Audit requests excluded inherited credential variables.",
+  "coverage_limitation": "Default audit success is not runtime audit success. Runtime had 95 packages including audit-tool dependencies; no evidence of affected signing API use is inferred from the dependency finding."
+}
