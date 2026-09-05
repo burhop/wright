@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0103",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 103,
+  "new_revision": 104,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "902990e1df33317f0379a9dcc46ebc2bbb5b8aca85d6649cc46cc047b5b699d9",
+  "new_state_digest": "078f32df24fcc2a6889d1ff156a386b35704413c35fb75f296cd288019e97931",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Apply the bounded dependency correction and refresh packaged assets. Previous candidate 60 gate and review remain historical; require a new full gate and exact-candidate independent review.",
+  "started_at": "2026-09-05T03:23:19.287840Z",
+  "finished_at": "2026-09-05T03:23:19.287840Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "e6a8596e6f58fdab5553b97707888a7122b077c4",
+    "source_tree": "efefb5ff8945daf8e163445b006e797a7b24216d",
+    "source_program_tree": "746485d3c6186c1ed01ff9cda4e63098485e6194",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0104.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0103.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0103.json",
+      "sha256": "113af74d0951e801e4a21182b70474f61a533436eaa72d09034c2feecd0a04fb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0104.json",
+      "sha256": "38f84ab75c0c862c44d89335be0d2b830cb579ef6661735f3b69bee01773b50c",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-AUDIT-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. Apply the bounded dependency correction and refresh packaged assets. Previous candidate 60 gate and review remain historical; require a new full gate and exact-candidate independent review.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "e6a8596e6f58fdab5553b97707888a7122b077c4",
+        "evidence/states/program-state-revision-0103.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required npm audit dependency correction remains open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0103.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
