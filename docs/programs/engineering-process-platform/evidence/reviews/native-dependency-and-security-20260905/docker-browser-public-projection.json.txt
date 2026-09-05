@@ -1,0 +1,185 @@
+{
+  "presentation": "Explicit public projection; this is not the complete raw test report or raw API responses.",
+  "prepared_by": "Codex native_editor verification agent",
+  "projection_prepared_at_utc": "2026-09-05T03:51:01.903355+00:00",
+  "original_result_recorded_at_utc": "2026-09-05T03:47:17.947682+00:00",
+  "original_browser_started_at_utc": "2026-09-05T03:43:06.087Z",
+  "identity_note": "The original tested identity remains historical. Subsequent publication-metadata mapping does not imply a rebuild or a new test run.",
+  "original_tested_source": {
+    "commit": "9b63647988b781ff02eb780fff40af5ff4c793ab",
+    "tree": "f8c810065e2a2965edc0519e4cc54c45e3217a8c",
+    "local_image_tag": "wright:native-9b636479",
+    "image_id_and_manifest_list": "sha256:6776798e85c7b359f50cc3e1d474cc6c0d5282cfd5aff75e5ab1f07ba43b045b",
+    "platform_manifest": "sha256:0f7bf21d41295d8f6e27750bb9abff809bfc8b86a1515fe4aa700830825b0dcf",
+    "config_digest": "sha256:79cd277c109229e238e4cc1856063ee2b9943c890cbbbc71dc035105e8b33555",
+    "version": "0.1.9",
+    "platform": "linux/amd64"
+  },
+  "counts": {
+    "builds": 1,
+    "native_examples": 3,
+    "example_artifacts": 4,
+    "additional_corrected_run_artifacts": 1,
+    "published_operations": 12,
+    "browser_passed": 2,
+    "browser_skipped": 0,
+    "browser_failed_after_setup_correction": 0,
+    "browser_initial_setup_timeouts": 2,
+    "browser_duration_seconds": 26.059183
+  },
+  "network_scopes": {
+    "cold_start_schema_native_http_restart": "none",
+    "browser": "bridge with host port bound only to loopback; not offline"
+  },
+  "native_runs": [
+    {
+      "process_id": "concept-brief",
+      "run_id": "7b96bf29-2059-4837-821f-f2e4795da710",
+      "state": "succeeded",
+      "semantic_digest": "ecdd78d4dcdbaaf2517127998f189cc20f03cc30acdbe6302f3adc5c0842c7ae",
+      "derived_from_run_id": null,
+      "failure_code": null,
+      "artifact_count": 1,
+      "artifacts": [
+        {
+          "filename": "concept-brief.md",
+          "bytes": 43,
+          "sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+          "provenance": {
+            "run_id": "7b96bf29-2059-4837-821f-f2e4795da710",
+            "step_id": "brief-file",
+            "operation": "artifact.write-text@1",
+            "mode": "local_computation",
+            "semantic_digest": "ecdd78d4dcdbaaf2517127998f189cc20f03cc30acdbe6302f3adc5c0842c7ae",
+            "trace_id": "native-docker-concept-brief"
+          }
+        }
+      ]
+    },
+    {
+      "process_id": "mass-check",
+      "run_id": "65e9f2ce-d8f8-40c9-970e-e7b9c661ed8e",
+      "state": "succeeded",
+      "semantic_digest": "3417943ed9e1d0b5dc0254a46956ce84f157524e1714916765edfb17fe2844ec",
+      "derived_from_run_id": null,
+      "failure_code": null,
+      "artifact_count": 1,
+      "artifacts": [
+        {
+          "filename": "mass-report.txt",
+          "bytes": 11,
+          "sha256": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+          "provenance": {
+            "run_id": "65e9f2ce-d8f8-40c9-970e-e7b9c661ed8e",
+            "step_id": "mass-file",
+            "operation": "artifact.write-text@1",
+            "mode": "local_computation",
+            "semantic_digest": "3417943ed9e1d0b5dc0254a46956ce84f157524e1714916765edfb17fe2844ec",
+            "trace_id": "native-docker-mass-check"
+          }
+        }
+      ]
+    },
+    {
+      "process_id": "package-review",
+      "run_id": "de2183f4-e19d-4001-a78a-82b459143111",
+      "state": "succeeded",
+      "semantic_digest": "4bc55f84df95b1abe8795bb34d2ec09588b89f2828cf32689ca18cb9a2c13202",
+      "derived_from_run_id": null,
+      "failure_code": null,
+      "artifact_count": 2,
+      "artifacts": [
+        {
+          "filename": "release-note.txt",
+          "bytes": 34,
+          "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+          "provenance": {
+            "run_id": "de2183f4-e19d-4001-a78a-82b459143111",
+            "step_id": "draft-file",
+            "operation": "artifact.write-text@1",
+            "mode": "local_computation",
+            "semantic_digest": "4bc55f84df95b1abe8795bb34d2ec09588b89f2828cf32689ca18cb9a2c13202",
+            "trace_id": "native-docker-package-review"
+          }
+        },
+        {
+          "filename": "checked-release-note.txt",
+          "bytes": 34,
+          "sha256": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+          "provenance": {
+            "run_id": "de2183f4-e19d-4001-a78a-82b459143111",
+            "step_id": "checked-file",
+            "operation": "artifact.write-text@1",
+            "mode": "local_computation",
+            "semantic_digest": "4bc55f84df95b1abe8795bb34d2ec09588b89f2828cf32689ca18cb9a2c13202",
+            "trace_id": "native-docker-package-review"
+          }
+        }
+      ]
+    }
+  ],
+  "failure_and_correction": [
+    {
+      "process_id": "mass-check-correction-proof",
+      "run_id": "6a676c4e-9cbb-4f9b-a89f-dbd63c6d1d49",
+      "state": "failed",
+      "semantic_digest": "67d3b0244cfa2b0b881ee64cc3951a69431d1446dca91beea2eabb4398a18959",
+      "derived_from_run_id": null,
+      "failure_code": "ASSERTION_FAILED",
+      "artifact_count": 0,
+      "artifacts": []
+    },
+    {
+      "process_id": "mass-check-correction-proof",
+      "run_id": "acbca2bf-1eb0-4884-a306-17ad3f7584c1",
+      "state": "succeeded",
+      "semantic_digest": "1ebe4b9b115f300ea05bb56f2e9b55c9a820b3a6dbcc8aa037530adf7f33bd09",
+      "derived_from_run_id": "6a676c4e-9cbb-4f9b-a89f-dbd63c6d1d49",
+      "failure_code": null,
+      "artifact_count": 1,
+      "artifacts": [
+        {
+          "filename": "mass-report.txt",
+          "bytes": 11,
+          "sha256": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+          "provenance": {
+            "run_id": "acbca2bf-1eb0-4884-a306-17ad3f7584c1",
+            "step_id": "mass-file",
+            "operation": "artifact.write-text@1",
+            "mode": "local_computation",
+            "semantic_digest": "1ebe4b9b115f300ea05bb56f2e9b55c9a820b3a6dbcc8aa037530adf7f33bd09",
+            "trace_id": "f0b9ef3862b9ecc960718ae148d6e0f4"
+          }
+        }
+      ]
+    }
+  ],
+  "raw_provenance": [
+    {
+      "file": "result-9b636479.json",
+      "sha256": "5f6ee70d2a107a11adf026cf00435307a351de04acedc4a27cd05be500d91fcb",
+      "bytes": 8011
+    },
+    {
+      "file": "manifest-9b636479.json",
+      "sha256": "5aac1ba453f3f1962213ed85aba0b05391b72fccae17a8f122f2b329d13cece2",
+      "bytes": 8564
+    },
+    {
+      "file": "baseline-9b636479.json",
+      "sha256": "8d0755e99f663cfa3d0c4673b7e2652dd97f3f0381065527cb99694df8c0ecaa",
+      "bytes": 63857
+    },
+    {
+      "file": "correction-9b636479.json",
+      "sha256": "60d67261f76fa790f884f54392ff9f0d1c7e3de6ee4efc877ba4013707cf3292",
+      "bytes": 38011
+    },
+    {
+      "file": "browser-9b636479-authenticated-report.json",
+      "sha256": "9e4824ac635aaff1de0822186ab98df0e2651baca3bee3b57fdc2e5b4bbe8350",
+      "bytes": 8188
+    }
+  ],
+  "selection_rule": "Constructed fields only: recorded identities and times, counts, network scope, run identity/state/failure code/linkage, artifact filename/size/content digest, and provenance run/step/operation/mode/semantic digest/trace identity. No other raw response fields are copied."
+}

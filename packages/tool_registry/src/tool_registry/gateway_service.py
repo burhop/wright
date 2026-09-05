@@ -4,7 +4,7 @@ import asyncio
 import re
 import time
 import uuid
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 from jsonschema import ValidationError, validate  # type: ignore[import-untyped]
 
@@ -802,6 +802,8 @@ class GatewayService:
         workspace_approvals: set[str] | None = None,
         progress_callback: ProgressCallback | None = None,
         _app_server_id: str | None = None,
+        before_dispatch: Callable[[GatewayTool], None] | None = None,
+        trace_id: str | None = None,
     ) -> GatewayToolResult:
         session = self._session(session_id)
         available_tools = (
@@ -881,6 +883,8 @@ class GatewayService:
             "argument_count": len(arguments),
             "lifecycle_kind": lifecycle_projection["kind"],
         }
+        if trace_id is not None:
+            audit_metadata["trace_id"] = trace_id
         self._audit(
             session,
             request_id,
@@ -924,8 +928,12 @@ class GatewayService:
 
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
+                if before_dispatch is not None:
+                    before_dispatch(tool)
                 return await self.management.call(session, tool.name, dict(arguments))
             if capability_provider is not None:
+                if before_dispatch is not None:
+                    before_dispatch(tool)
                 return await capability_provider.call(
                     session,
                     tool,
@@ -970,6 +978,11 @@ class GatewayService:
                         else None
                     ),
                 ) from error
+            # Exact-binding callers revalidate after startup may refresh the
+            # catalog, and before any child invocation. Legacy calls retain
+            # their existing behavior when no guard is supplied.
+            if before_dispatch is not None:
+                before_dispatch(tool)
             try:
                 if progress_callback is None:
                     return await self.lifecycle.call_tool(
@@ -1094,17 +1107,21 @@ class GatewayService:
                 "cancelled",
                 "cancelled",
                 now,
+                metadata=audit_metadata if trace_id is not None else None,
                 operation=audit_operation,
             )
             raise
-        except GatewayError:
+        except GatewayError as exc:
             request.transition(RequestState.FAILED)
             self._audit(
                 session,
                 request_id,
                 tool,
-                True,
-                "invalid_output",
+                not (
+                    before_dispatch is not None
+                    and exc.code is GatewayErrorCode.POLICY_DENIED
+                ),
+                str(exc.code) if before_dispatch is not None else "invalid_output",
                 "failed",
                 now,
                 metadata=audit_metadata,

@@ -1,0 +1,1745 @@
+{
+  "production_commit": "e4c58d952b1415321b9a5c6921da025fdf14c54f",
+  "browser": "Chromium",
+  "base_url": "http://127.0.0.1:5188",
+  "workspace": "native-validation-session",
+  "mocked_requests": false,
+  "observed_result": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 16.4
+  },
+  "checks": [
+    "three actual example files",
+    "browser download bytes and SHA256",
+    "producer run and semantic identity",
+    "range failure and blocked steps",
+    "linked correction with retained failed snapshot",
+    "reload and history",
+    "no serious/critical axe findings",
+    "no page errors in correction journey"
+  ],
+  "runs": [
+    {
+      "run_id": "553c036b-6b6b-4aa1-93db-f59308de0863",
+      "process_id": "process-2a58fc72-4e54-429c-9116-294ebd01e133",
+      "state": "succeeded",
+      "semantic_digest": "3008433da523fdf1007659c0c71550454a9f6e855c38b389e3174e2ff5cf120e",
+      "created_at": "2026-09-04T23:31:13.758913+00:00",
+      "started_at": "2026-09-04T23:31:13.784735+00:00",
+      "completed_at": "2026-09-04T23:31:13.999559+00:00",
+      "derived_from_run_id": null,
+      "trace_id": "3d071a7f81c5fcdb221c04ace963325c",
+      "reason": null,
+      "snapshot": {
+        "definition": {
+          "connections": [
+            {
+              "id": "link-1",
+              "source_port_id": "note-source-output-value",
+              "target_port_id": "draft-file-input-text"
+            },
+            {
+              "id": "link-2",
+              "source_port_id": "draft-file-output-artifact",
+              "target_port_id": "note-read-input-artifact"
+            },
+            {
+              "id": "link-3",
+              "source_port_id": "note-read-output-text",
+              "target_port_id": "note-check-input-text"
+            },
+            {
+              "id": "link-4",
+              "source_port_id": "note-check-output-text",
+              "target_port_id": "checked-file-input-text"
+            }
+          ],
+          "format": "wright-native-process",
+          "id": "process-2a58fc72-4e54-429c-9116-294ebd01e133",
+          "outputs": [
+            {
+              "id": "checked-result",
+              "port_id": "checked-file-output-artifact",
+              "title": "Checked release note"
+            }
+          ],
+          "ports": [
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "note-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "note-source",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "draft-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "draft-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "draft-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "draft-file",
+              "type": "artifact"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "note-read-input-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "note-read",
+              "type": "artifact"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "note-read-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "note-read",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "note-check-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "note-check",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "note-check-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "note-check",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "checked-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "checked-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "checked-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "checked-file",
+              "type": "artifact"
+            }
+          ],
+          "schema_version": "1.0.0",
+          "steps": [
+            {
+              "config": {
+                "value": "Part: BR-001\nUnits: mm\nRevision: A"
+              },
+              "id": "note-source",
+              "operation": "text.input@1",
+              "title": "note source"
+            },
+            {
+              "config": {
+                "filename": "release-note.txt"
+              },
+              "id": "draft-file",
+              "operation": "artifact.write-text@1",
+              "title": "draft file"
+            },
+            {
+              "config": {},
+              "id": "note-read",
+              "operation": "artifact.read-text@1",
+              "title": "note read"
+            },
+            {
+              "config": {
+                "terms": [
+                  "BR-001",
+                  "Units: mm",
+                  "Revision: A"
+                ]
+              },
+              "id": "note-check",
+              "operation": "text.require@1",
+              "title": "note check"
+            },
+            {
+              "config": {
+                "filename": "checked-release-note.txt"
+              },
+              "id": "checked-file",
+              "operation": "artifact.write-text@1",
+              "title": "checked file"
+            }
+          ],
+          "title": "Review and correct a local release note"
+        },
+        "revision": 1,
+        "semantic_digest": "3008433da523fdf1007659c0c71550454a9f6e855c38b389e3174e2ff5cf120e",
+        "token": "85a7fe4e32f6e87173de0abc9f8e1a06aadc7a3d53a526b32346b29efc9664f9"
+      },
+      "bindings": {},
+      "actor": "local-operator",
+      "timeout_seconds": 60,
+      "steps": [
+        {
+          "step_id": "note-source",
+          "operation": "text.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:13.801442+00:00",
+          "completed_at": "2026-09-04T23:31:13.813434+00:00",
+          "inputs": {},
+          "outputs": {
+            "note-source-output-value": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "reason": null
+        },
+        {
+          "step_id": "draft-file",
+          "operation": "artifact.write-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:13.828446+00:00",
+          "completed_at": "2026-09-04T23:31:13.881213+00:00",
+          "inputs": {
+            "draft-file-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "outputs": {
+            "draft-file-output-artifact": {
+              "artifact_id": "31a63357-0438-47bb-bd6d-2108fc1dba69",
+              "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+              "filename": "release-note.txt",
+              "size": 34
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "note-read",
+          "operation": "artifact.read-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:13.896766+00:00",
+          "completed_at": "2026-09-04T23:31:13.920139+00:00",
+          "inputs": {
+            "note-read-input-artifact": {
+              "artifact_id": "31a63357-0438-47bb-bd6d-2108fc1dba69",
+              "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+              "filename": "release-note.txt",
+              "size": 34
+            }
+          },
+          "outputs": {
+            "note-read-output-text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "reason": null
+        },
+        {
+          "step_id": "note-check",
+          "operation": "text.require@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:13.935155+00:00",
+          "completed_at": "2026-09-04T23:31:13.946697+00:00",
+          "inputs": {
+            "note-check-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "outputs": {
+            "note-check-output-text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "reason": null
+        },
+        {
+          "step_id": "checked-file",
+          "operation": "artifact.write-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:13.961865+00:00",
+          "completed_at": "2026-09-04T23:31:13.989087+00:00",
+          "inputs": {
+            "checked-file-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "outputs": {
+            "checked-file-output-artifact": {
+              "artifact_id": "3356a17f-36b9-4467-a3a0-ac5d89dbe9b9",
+              "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+              "filename": "checked-release-note.txt",
+              "size": 34
+            }
+          },
+          "reason": null
+        }
+      ],
+      "artifacts": [
+        {
+          "artifact_id": "31a63357-0438-47bb-bd6d-2108fc1dba69",
+          "step_id": "draft-file",
+          "port_id": "draft-file-output-artifact",
+          "filename": "release-note.txt",
+          "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+          "size": 34,
+          "media_type": "text/plain",
+          "provenance": {
+            "actor": "local-operator",
+            "config": {
+              "filename": "release-note.txt"
+            },
+            "inputs": {
+              "text": "Part: BR-001\nUnits: mm\nRevision: A"
+            },
+            "mode": "local_computation",
+            "operation": "artifact.write-text@1",
+            "run_id": "553c036b-6b6b-4aa1-93db-f59308de0863",
+            "semantic_digest": "3008433da523fdf1007659c0c71550454a9f6e855c38b389e3174e2ff5cf120e",
+            "step_id": "draft-file",
+            "trace_id": "3d071a7f81c5fcdb221c04ace963325c"
+          }
+        },
+        {
+          "artifact_id": "3356a17f-36b9-4467-a3a0-ac5d89dbe9b9",
+          "step_id": "checked-file",
+          "port_id": "checked-file-output-artifact",
+          "filename": "checked-release-note.txt",
+          "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+          "size": 34,
+          "media_type": "text/plain",
+          "provenance": {
+            "actor": "local-operator",
+            "config": {
+              "filename": "checked-release-note.txt"
+            },
+            "inputs": {
+              "text": "Part: BR-001\nUnits: mm\nRevision: A"
+            },
+            "mode": "local_computation",
+            "operation": "artifact.write-text@1",
+            "run_id": "553c036b-6b6b-4aa1-93db-f59308de0863",
+            "semantic_digest": "3008433da523fdf1007659c0c71550454a9f6e855c38b389e3174e2ff5cf120e",
+            "step_id": "checked-file",
+            "trace_id": "3d071a7f81c5fcdb221c04ace963325c"
+          }
+        }
+      ],
+      "last_sequence": 15
+    },
+    {
+      "run_id": "babefe2d-d31c-40a0-9750-ebd373fff58f",
+      "process_id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+      "state": "succeeded",
+      "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+      "created_at": "2026-09-04T23:31:05.403851+00:00",
+      "started_at": "2026-09-04T23:31:05.429716+00:00",
+      "completed_at": "2026-09-04T23:31:05.624281+00:00",
+      "derived_from_run_id": "0ee71700-6b73-4f82-a4de-53b45d6bc73f",
+      "trace_id": "18d0c14df11f75e5fa72bb1087f774d9",
+      "reason": null,
+      "snapshot": {
+        "definition": {
+          "connections": [
+            {
+              "id": "link-1",
+              "source_port_id": "volume-source-output-value",
+              "target_port_id": "mass-product-input-left"
+            },
+            {
+              "id": "link-2",
+              "source_port_id": "density-source-output-value",
+              "target_port_id": "mass-product-input-right"
+            },
+            {
+              "id": "link-3",
+              "source_port_id": "mass-product-output-value",
+              "target_port_id": "mass-check-input-value"
+            },
+            {
+              "id": "link-4",
+              "source_port_id": "mass-check-output-value",
+              "target_port_id": "mass-report-input-value"
+            },
+            {
+              "id": "link-5",
+              "source_port_id": "mass-report-output-text",
+              "target_port_id": "mass-file-input-text"
+            }
+          ],
+          "format": "wright-native-process",
+          "id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+          "outputs": [
+            {
+              "id": "mass-result",
+              "port_id": "mass-file-output-artifact",
+              "title": "Mass report"
+            }
+          ],
+          "ports": [
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "volume-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "volume-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-left",
+              "key": "left",
+              "label": "left",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "density-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "density-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-right",
+              "key": "right",
+              "label": "right",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-product-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-check-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-check-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-report-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-report-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "artifact"
+            }
+          ],
+          "schema_version": "1.0.0",
+          "steps": [
+            {
+              "config": {
+                "value": {
+                  "unit": "m3",
+                  "value": "0.00005"
+                }
+              },
+              "id": "volume-source",
+              "operation": "quantity.input@1",
+              "title": "volume source"
+            },
+            {
+              "config": {
+                "value": {
+                  "unit": "kg/m3",
+                  "value": "2700"
+                }
+              },
+              "id": "density-source",
+              "operation": "quantity.input@1",
+              "title": "density source"
+            },
+            {
+              "config": {
+                "unit": "g"
+              },
+              "id": "mass-product",
+              "operation": "quantity.multiply@1",
+              "title": "mass product"
+            },
+            {
+              "config": {
+                "maximum": {
+                  "unit": "g",
+                  "value": "200"
+                },
+                "minimum": {
+                  "unit": "g",
+                  "value": "1"
+                }
+              },
+              "id": "mass-check-step",
+              "operation": "quantity.range@1",
+              "title": "mass check"
+            },
+            {
+              "config": {
+                "label": "Mass"
+              },
+              "id": "mass-report",
+              "operation": "quantity.format@1",
+              "title": "mass report"
+            },
+            {
+              "config": {
+                "filename": "mass-report.txt"
+              },
+              "id": "mass-file",
+              "operation": "artifact.write-text@1",
+              "title": "mass file"
+            }
+          ],
+          "title": "Calculate and check mass with explicit units"
+        },
+        "revision": 3,
+        "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+        "token": "f881cb6eb68133aae3965e620a26dec1ebe02528f24f5f34530ba6d87f5d1087"
+      },
+      "bindings": {},
+      "actor": "local-operator",
+      "timeout_seconds": 60,
+      "steps": [
+        {
+          "step_id": "volume-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.447124+00:00",
+          "completed_at": "2026-09-04T23:31:05.458487+00:00",
+          "inputs": {},
+          "outputs": {
+            "volume-source-output-value": {
+              "unit": "m3",
+              "value": "0.00005"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "density-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.473273+00:00",
+          "completed_at": "2026-09-04T23:31:05.484519+00:00",
+          "inputs": {},
+          "outputs": {
+            "density-source-output-value": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-product",
+          "operation": "quantity.multiply@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.499555+00:00",
+          "completed_at": "2026-09-04T23:31:05.511171+00:00",
+          "inputs": {
+            "mass-product-input-left": {
+              "unit": "m3",
+              "value": "0.00005"
+            },
+            "mass-product-input-right": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "outputs": {
+            "mass-product-output-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-check-step",
+          "operation": "quantity.range@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.525516+00:00",
+          "completed_at": "2026-09-04T23:31:05.536914+00:00",
+          "inputs": {
+            "mass-check-input-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "outputs": {
+            "mass-check-output-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-report",
+          "operation": "quantity.format@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.552914+00:00",
+          "completed_at": "2026-09-04T23:31:05.565126+00:00",
+          "inputs": {
+            "mass-report-input-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "outputs": {
+            "mass-report-output-text": "Mass: 135 g"
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-file",
+          "operation": "artifact.write-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:05.579260+00:00",
+          "completed_at": "2026-09-04T23:31:05.613614+00:00",
+          "inputs": {
+            "mass-file-input-text": "Mass: 135 g"
+          },
+          "outputs": {
+            "mass-file-output-artifact": {
+              "artifact_id": "bc323e1c-c5dc-4eac-bfa4-cfaf6823e95b",
+              "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+              "filename": "mass-report.txt",
+              "size": 11
+            }
+          },
+          "reason": null
+        }
+      ],
+      "artifacts": [
+        {
+          "artifact_id": "bc323e1c-c5dc-4eac-bfa4-cfaf6823e95b",
+          "step_id": "mass-file",
+          "port_id": "mass-file-output-artifact",
+          "filename": "mass-report.txt",
+          "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+          "size": 11,
+          "media_type": "text/plain",
+          "provenance": {
+            "actor": "local-operator",
+            "config": {
+              "filename": "mass-report.txt"
+            },
+            "inputs": {
+              "text": "Mass: 135 g"
+            },
+            "mode": "local_computation",
+            "operation": "artifact.write-text@1",
+            "run_id": "babefe2d-d31c-40a0-9750-ebd373fff58f",
+            "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+            "step_id": "mass-file",
+            "trace_id": "18d0c14df11f75e5fa72bb1087f774d9"
+          }
+        }
+      ],
+      "last_sequence": 16
+    },
+    {
+      "run_id": "0ee71700-6b73-4f82-a4de-53b45d6bc73f",
+      "process_id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+      "state": "failed",
+      "semantic_digest": "0d0ba9dbb48941e731212919e2a38b7a433a4c915efda5100ec689817a8c24f5",
+      "created_at": "2026-09-04T23:31:04.710605+00:00",
+      "started_at": "2026-09-04T23:31:04.739991+00:00",
+      "completed_at": "2026-09-04T23:31:04.850008+00:00",
+      "derived_from_run_id": null,
+      "trace_id": "b5b4b84ec3e2051536e096306fddd818",
+      "reason": {
+        "code": "ASSERTION_FAILED",
+        "message": "Measured quantity 135 g is outside the configured inclusive range.",
+        "port_id": null,
+        "recovery": "Correct the indicated step and create a linked run.",
+        "step_id": "mass-check-step"
+      },
+      "snapshot": {
+        "definition": {
+          "connections": [
+            {
+              "id": "link-1",
+              "source_port_id": "volume-source-output-value",
+              "target_port_id": "mass-product-input-left"
+            },
+            {
+              "id": "link-2",
+              "source_port_id": "density-source-output-value",
+              "target_port_id": "mass-product-input-right"
+            },
+            {
+              "id": "link-3",
+              "source_port_id": "mass-product-output-value",
+              "target_port_id": "mass-check-input-value"
+            },
+            {
+              "id": "link-4",
+              "source_port_id": "mass-check-output-value",
+              "target_port_id": "mass-report-input-value"
+            },
+            {
+              "id": "link-5",
+              "source_port_id": "mass-report-output-text",
+              "target_port_id": "mass-file-input-text"
+            }
+          ],
+          "format": "wright-native-process",
+          "id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+          "outputs": [
+            {
+              "id": "mass-result",
+              "port_id": "mass-file-output-artifact",
+              "title": "Mass report"
+            }
+          ],
+          "ports": [
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "volume-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "volume-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-left",
+              "key": "left",
+              "label": "left",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "density-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "density-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-right",
+              "key": "right",
+              "label": "right",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-product-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-check-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-check-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-report-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-report-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "artifact"
+            }
+          ],
+          "schema_version": "1.0.0",
+          "steps": [
+            {
+              "config": {
+                "value": {
+                  "unit": "m3",
+                  "value": "0.00005"
+                }
+              },
+              "id": "volume-source",
+              "operation": "quantity.input@1",
+              "title": "volume source"
+            },
+            {
+              "config": {
+                "value": {
+                  "unit": "kg/m3",
+                  "value": "2700"
+                }
+              },
+              "id": "density-source",
+              "operation": "quantity.input@1",
+              "title": "density source"
+            },
+            {
+              "config": {
+                "unit": "g"
+              },
+              "id": "mass-product",
+              "operation": "quantity.multiply@1",
+              "title": "mass product"
+            },
+            {
+              "config": {
+                "maximum": {
+                  "unit": "g",
+                  "value": "100"
+                },
+                "minimum": {
+                  "unit": "g",
+                  "value": "1"
+                }
+              },
+              "id": "mass-check-step",
+              "operation": "quantity.range@1",
+              "title": "mass check"
+            },
+            {
+              "config": {
+                "label": "Mass"
+              },
+              "id": "mass-report",
+              "operation": "quantity.format@1",
+              "title": "mass report"
+            },
+            {
+              "config": {
+                "filename": "mass-report.txt"
+              },
+              "id": "mass-file",
+              "operation": "artifact.write-text@1",
+              "title": "mass file"
+            }
+          ],
+          "title": "Calculate and check mass with explicit units"
+        },
+        "revision": 2,
+        "semantic_digest": "0d0ba9dbb48941e731212919e2a38b7a433a4c915efda5100ec689817a8c24f5",
+        "token": "b8a60a3ccaee8e7c99968efa8480a5f66960a4d0c013ad693597ac4842c06b6f"
+      },
+      "bindings": {},
+      "actor": "local-operator",
+      "timeout_seconds": 60,
+      "steps": [
+        {
+          "step_id": "volume-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:04.760106+00:00",
+          "completed_at": "2026-09-04T23:31:04.771749+00:00",
+          "inputs": {},
+          "outputs": {
+            "volume-source-output-value": {
+              "unit": "m3",
+              "value": "0.00005"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "density-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:04.786495+00:00",
+          "completed_at": "2026-09-04T23:31:04.797974+00:00",
+          "inputs": {},
+          "outputs": {
+            "density-source-output-value": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-product",
+          "operation": "quantity.multiply@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:04.812627+00:00",
+          "completed_at": "2026-09-04T23:31:04.823968+00:00",
+          "inputs": {
+            "mass-product-input-left": {
+              "unit": "m3",
+              "value": "0.00005"
+            },
+            "mass-product-input-right": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "outputs": {
+            "mass-product-output-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-check-step",
+          "operation": "quantity.range@1",
+          "state": "failed",
+          "started_at": "2026-09-04T23:31:04.838896+00:00",
+          "completed_at": "2026-09-04T23:31:04.850008+00:00",
+          "inputs": {
+            "mass-check-input-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "outputs": null,
+          "reason": {
+            "code": "ASSERTION_FAILED",
+            "message": "Measured quantity 135 g is outside the configured inclusive range.",
+            "port_id": null,
+            "recovery": "Correct the indicated step and create a linked run.",
+            "step_id": "mass-check-step"
+          }
+        },
+        {
+          "step_id": "mass-report",
+          "operation": "quantity.format@1",
+          "state": "blocked",
+          "started_at": null,
+          "completed_at": "2026-09-04T23:31:04.850008+00:00",
+          "inputs": null,
+          "outputs": null,
+          "reason": {
+            "code": "DEPENDENCY_FAILED",
+            "message": "A preceding process step failed.",
+            "port_id": null,
+            "recovery": "Correct the failure and create a linked run.",
+            "step_id": "mass-check-step"
+          }
+        },
+        {
+          "step_id": "mass-file",
+          "operation": "artifact.write-text@1",
+          "state": "blocked",
+          "started_at": null,
+          "completed_at": "2026-09-04T23:31:04.850008+00:00",
+          "inputs": null,
+          "outputs": null,
+          "reason": {
+            "code": "DEPENDENCY_FAILED",
+            "message": "A preceding process step failed.",
+            "port_id": null,
+            "recovery": "Correct the failure and create a linked run.",
+            "step_id": "mass-check-step"
+          }
+        }
+      ],
+      "artifacts": [],
+      "last_sequence": 13
+    },
+    {
+      "run_id": "30ac1018-fab3-43ca-92e1-cb1009f20732",
+      "process_id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+      "state": "succeeded",
+      "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+      "created_at": "2026-09-04T23:31:02.045067+00:00",
+      "started_at": "2026-09-04T23:31:02.070592+00:00",
+      "completed_at": "2026-09-04T23:31:02.463791+00:00",
+      "derived_from_run_id": null,
+      "trace_id": "3de4a0415b882b1e9ca41933895d20e1",
+      "reason": null,
+      "snapshot": {
+        "definition": {
+          "connections": [
+            {
+              "id": "link-1",
+              "source_port_id": "volume-source-output-value",
+              "target_port_id": "mass-product-input-left"
+            },
+            {
+              "id": "link-2",
+              "source_port_id": "density-source-output-value",
+              "target_port_id": "mass-product-input-right"
+            },
+            {
+              "id": "link-3",
+              "source_port_id": "mass-product-output-value",
+              "target_port_id": "mass-check-input-value"
+            },
+            {
+              "id": "link-4",
+              "source_port_id": "mass-check-output-value",
+              "target_port_id": "mass-report-input-value"
+            },
+            {
+              "id": "link-5",
+              "source_port_id": "mass-report-output-text",
+              "target_port_id": "mass-file-input-text"
+            }
+          ],
+          "format": "wright-native-process",
+          "id": "process-4beebecd-32a4-43f0-9d15-05478dda1416",
+          "outputs": [
+            {
+              "id": "mass-result",
+              "port_id": "mass-file-output-artifact",
+              "title": "Mass report"
+            }
+          ],
+          "ports": [
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "volume-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "volume-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-left",
+              "key": "left",
+              "label": "left",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "density-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "density-source",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-product-input-right",
+              "key": "right",
+              "label": "right",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-product-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-product",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-check-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-check-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-check-step",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-report-input-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "quantity"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-report-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-report",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "mass-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "mass-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "mass-file",
+              "type": "artifact"
+            }
+          ],
+          "schema_version": "1.0.0",
+          "steps": [
+            {
+              "config": {
+                "value": {
+                  "unit": "m3",
+                  "value": "0.00005"
+                }
+              },
+              "id": "volume-source",
+              "operation": "quantity.input@1",
+              "title": "volume source"
+            },
+            {
+              "config": {
+                "value": {
+                  "unit": "kg/m3",
+                  "value": "2700"
+                }
+              },
+              "id": "density-source",
+              "operation": "quantity.input@1",
+              "title": "density source"
+            },
+            {
+              "config": {
+                "unit": "g"
+              },
+              "id": "mass-product",
+              "operation": "quantity.multiply@1",
+              "title": "mass product"
+            },
+            {
+              "config": {
+                "maximum": {
+                  "unit": "g",
+                  "value": "200"
+                },
+                "minimum": {
+                  "unit": "g",
+                  "value": "1"
+                }
+              },
+              "id": "mass-check-step",
+              "operation": "quantity.range@1",
+              "title": "mass check"
+            },
+            {
+              "config": {
+                "label": "Mass"
+              },
+              "id": "mass-report",
+              "operation": "quantity.format@1",
+              "title": "mass report"
+            },
+            {
+              "config": {
+                "filename": "mass-report.txt"
+              },
+              "id": "mass-file",
+              "operation": "artifact.write-text@1",
+              "title": "mass file"
+            }
+          ],
+          "title": "Calculate and check mass with explicit units"
+        },
+        "revision": 1,
+        "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+        "token": "e81793d08608fc8a5e6a050294edb3d8ac76278de190515e0f15e280170ab5a2"
+      },
+      "bindings": {},
+      "actor": "local-operator",
+      "timeout_seconds": 60,
+      "steps": [
+        {
+          "step_id": "volume-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.088545+00:00",
+          "completed_at": "2026-09-04T23:31:02.099334+00:00",
+          "inputs": {},
+          "outputs": {
+            "volume-source-output-value": {
+              "unit": "m3",
+              "value": "0.00005"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "density-source",
+          "operation": "quantity.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.113924+00:00",
+          "completed_at": "2026-09-04T23:31:02.126366+00:00",
+          "inputs": {},
+          "outputs": {
+            "density-source-output-value": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-product",
+          "operation": "quantity.multiply@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.142422+00:00",
+          "completed_at": "2026-09-04T23:31:02.154704+00:00",
+          "inputs": {
+            "mass-product-input-left": {
+              "unit": "m3",
+              "value": "0.00005"
+            },
+            "mass-product-input-right": {
+              "unit": "kg/m3",
+              "value": "2700"
+            }
+          },
+          "outputs": {
+            "mass-product-output-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-check-step",
+          "operation": "quantity.range@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.169385+00:00",
+          "completed_at": "2026-09-04T23:31:02.181058+00:00",
+          "inputs": {
+            "mass-check-input-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "outputs": {
+            "mass-check-output-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-report",
+          "operation": "quantity.format@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.195533+00:00",
+          "completed_at": "2026-09-04T23:31:02.207503+00:00",
+          "inputs": {
+            "mass-report-input-value": {
+              "unit": "g",
+              "value": "135"
+            }
+          },
+          "outputs": {
+            "mass-report-output-text": "Mass: 135 g"
+          },
+          "reason": null
+        },
+        {
+          "step_id": "mass-file",
+          "operation": "artifact.write-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:02.222765+00:00",
+          "completed_at": "2026-09-04T23:31:02.450905+00:00",
+          "inputs": {
+            "mass-file-input-text": "Mass: 135 g"
+          },
+          "outputs": {
+            "mass-file-output-artifact": {
+              "artifact_id": "6b017287-ccf0-4218-98a6-27d7b1b81d99",
+              "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+              "filename": "mass-report.txt",
+              "size": 11
+            }
+          },
+          "reason": null
+        }
+      ],
+      "artifacts": [
+        {
+          "artifact_id": "6b017287-ccf0-4218-98a6-27d7b1b81d99",
+          "step_id": "mass-file",
+          "port_id": "mass-file-output-artifact",
+          "filename": "mass-report.txt",
+          "content_digest": "52967be3596b4d6582dbfe1aa595de725c0e3c3dd948c2c8bf26d55c4130c205",
+          "size": 11,
+          "media_type": "text/plain",
+          "provenance": {
+            "actor": "local-operator",
+            "config": {
+              "filename": "mass-report.txt"
+            },
+            "inputs": {
+              "text": "Mass: 135 g"
+            },
+            "mode": "local_computation",
+            "operation": "artifact.write-text@1",
+            "run_id": "30ac1018-fab3-43ca-92e1-cb1009f20732",
+            "semantic_digest": "b0e8ea5934170d8317da72b8299ce2c8d92182b269190397db9e29f16a13e5fb",
+            "step_id": "mass-file",
+            "trace_id": "3de4a0415b882b1e9ca41933895d20e1"
+          }
+        }
+      ],
+      "last_sequence": 16
+    },
+    {
+      "run_id": "5f23336b-66d2-4797-8858-01b75423fdff",
+      "process_id": "process-7f98fa5c-a03f-450d-90f9-4cfbaec2945e",
+      "state": "succeeded",
+      "semantic_digest": "e4aaf126b4bfef205e2f956e1e3184aea448f861a5781478a52b094a0565b287",
+      "created_at": "2026-09-04T23:31:11.371893+00:00",
+      "started_at": "2026-09-04T23:31:11.399161+00:00",
+      "completed_at": "2026-09-04T23:31:11.793074+00:00",
+      "derived_from_run_id": null,
+      "trace_id": "9d2837b9c06c3c50c581b368e4222db7",
+      "reason": null,
+      "snapshot": {
+        "definition": {
+          "connections": [
+            {
+              "id": "link-1",
+              "source_port_id": "need-source-output-value",
+              "target_port_id": "brief-compose-input-first"
+            },
+            {
+              "id": "link-2",
+              "source_port_id": "constraint-source-output-value",
+              "target_port_id": "brief-compose-input-second"
+            },
+            {
+              "id": "link-3",
+              "source_port_id": "brief-compose-output-text",
+              "target_port_id": "brief-check-input-text"
+            },
+            {
+              "id": "link-4",
+              "source_port_id": "brief-check-output-text",
+              "target_port_id": "brief-file-input-text"
+            }
+          ],
+          "format": "wright-native-process",
+          "id": "process-7f98fa5c-a03f-450d-90f9-4cfbaec2945e",
+          "outputs": [
+            {
+              "id": "brief-result",
+              "port_id": "brief-file-output-artifact",
+              "title": "Concept brief"
+            }
+          ],
+          "ports": [
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "need-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "need-source",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "brief-compose-input-first",
+              "key": "first",
+              "label": "first",
+              "required": true,
+              "step_id": "brief-compose",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "constraint-source-output-value",
+              "key": "value",
+              "label": "value",
+              "required": true,
+              "step_id": "constraint-source",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "brief-compose-input-second",
+              "key": "second",
+              "label": "second",
+              "required": true,
+              "step_id": "brief-compose",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "brief-compose-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "brief-compose",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "brief-check-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "brief-check",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "brief-check-output-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "brief-check",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "input",
+              "id": "brief-file-input-text",
+              "key": "text",
+              "label": "text",
+              "required": true,
+              "step_id": "brief-file",
+              "type": "text"
+            },
+            {
+              "cardinality": "one",
+              "direction": "output",
+              "id": "brief-file-output-artifact",
+              "key": "artifact",
+              "label": "artifact",
+              "required": true,
+              "step_id": "brief-file",
+              "type": "artifact"
+            }
+          ],
+          "schema_version": "1.0.0",
+          "steps": [
+            {
+              "config": {
+                "value": "Design a desk bracket."
+              },
+              "id": "need-source",
+              "operation": "text.input@1",
+              "title": "need source"
+            },
+            {
+              "config": {
+                "value": "Maximum mass: 200 g."
+              },
+              "id": "constraint-source",
+              "operation": "text.input@1",
+              "title": "constraint source"
+            },
+            {
+              "config": {
+                "separator": "\n"
+              },
+              "id": "brief-compose",
+              "operation": "text.join@1",
+              "title": "brief compose"
+            },
+            {
+              "config": {
+                "terms": [
+                  "desk bracket",
+                  "200 g"
+                ]
+              },
+              "id": "brief-check",
+              "operation": "text.require@1",
+              "title": "brief check"
+            },
+            {
+              "config": {
+                "filename": "concept-brief.md"
+              },
+              "id": "brief-file",
+              "operation": "artifact.write-text@1",
+              "title": "brief file"
+            }
+          ],
+          "title": "Create a traceable concept brief"
+        },
+        "revision": 1,
+        "semantic_digest": "e4aaf126b4bfef205e2f956e1e3184aea448f861a5781478a52b094a0565b287",
+        "token": "38ead5e23bad82ed8721957741b1d0a829148eb004a597e5ea696286985f7755"
+      },
+      "bindings": {},
+      "actor": "local-operator",
+      "timeout_seconds": 60,
+      "steps": [
+        {
+          "step_id": "need-source",
+          "operation": "text.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:11.417509+00:00",
+          "completed_at": "2026-09-04T23:31:11.430517+00:00",
+          "inputs": {},
+          "outputs": {
+            "need-source-output-value": "Design a desk bracket."
+          },
+          "reason": null
+        },
+        {
+          "step_id": "constraint-source",
+          "operation": "text.input@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:11.446557+00:00",
+          "completed_at": "2026-09-04T23:31:11.458865+00:00",
+          "inputs": {},
+          "outputs": {
+            "constraint-source-output-value": "Maximum mass: 200 g."
+          },
+          "reason": null
+        },
+        {
+          "step_id": "brief-compose",
+          "operation": "text.join@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:11.474717+00:00",
+          "completed_at": "2026-09-04T23:31:11.487197+00:00",
+          "inputs": {
+            "brief-compose-input-first": "Design a desk bracket.",
+            "brief-compose-input-second": "Maximum mass: 200 g."
+          },
+          "outputs": {
+            "brief-compose-output-text": "Design a desk bracket.\nMaximum mass: 200 g."
+          },
+          "reason": null
+        },
+        {
+          "step_id": "brief-check",
+          "operation": "text.require@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:11.501971+00:00",
+          "completed_at": "2026-09-04T23:31:11.517078+00:00",
+          "inputs": {
+            "brief-check-input-text": "Design a desk bracket.\nMaximum mass: 200 g."
+          },
+          "outputs": {
+            "brief-check-output-text": "Design a desk bracket.\nMaximum mass: 200 g."
+          },
+          "reason": null
+        },
+        {
+          "step_id": "brief-file",
+          "operation": "artifact.write-text@1",
+          "state": "succeeded",
+          "started_at": "2026-09-04T23:31:11.532760+00:00",
+          "completed_at": "2026-09-04T23:31:11.780289+00:00",
+          "inputs": {
+            "brief-file-input-text": "Design a desk bracket.\nMaximum mass: 200 g."
+          },
+          "outputs": {
+            "brief-file-output-artifact": {
+              "artifact_id": "8ff120ca-38ee-4c7a-a356-5d896be87c80",
+              "content_digest": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+              "filename": "concept-brief.md",
+              "size": 43
+            }
+          },
+          "reason": null
+        }
+      ],
+      "artifacts": [
+        {
+          "artifact_id": "8ff120ca-38ee-4c7a-a356-5d896be87c80",
+          "step_id": "brief-file",
+          "port_id": "brief-file-output-artifact",
+          "filename": "concept-brief.md",
+          "content_digest": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+          "size": 43,
+          "media_type": "text/markdown",
+          "provenance": {
+            "actor": "local-operator",
+            "config": {
+              "filename": "concept-brief.md"
+            },
+            "inputs": {
+              "text": "Design a desk bracket.\nMaximum mass: 200 g."
+            },
+            "mode": "local_computation",
+            "operation": "artifact.write-text@1",
+            "run_id": "5f23336b-66d2-4797-8858-01b75423fdff",
+            "semantic_digest": "e4aaf126b4bfef205e2f956e1e3184aea448f861a5781478a52b094a0565b287",
+            "step_id": "brief-file",
+            "trace_id": "9d2837b9c06c3c50c581b368e4222db7"
+          }
+        }
+      ],
+      "last_sequence": 14
+    }
+  ]
+}

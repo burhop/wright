@@ -19,7 +19,7 @@ def test_packaged_ceiling_tracks_the_complete_program_schema() -> None:
     contract = CompatibilityPolicy.load(
         Path(__file__).parents[2] / "src" / "wright_engineering" / "compatibility.json"
     )
-    assert contract.data_schema_max == MIGRATIONS[-1].version == 16
+    assert contract.data_schema_max == MIGRATIONS[-1].version == 17
 
 
 def test_native_activation_upgrades_predecessor_state_and_creates_backup(

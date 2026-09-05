@@ -1,0 +1,486 @@
+{
+  "collection_only": true,
+  "exit_code": 0,
+  "selected_files": [
+    "packages/core/tests/test_native_process.py",
+    "packages/core/tests/test_native_process_resources.py",
+    "packages/core/tests/test_native_runtime_json.py",
+    "packages/core/tests/test_native_tracing.py"
+  ],
+  "tests": [
+    {
+      "id": "packages/core/tests/test_native_process.py::test_frozen_examples_are_structural_and_ready[concept-brief]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_frozen_examples_are_structural_and_ready[mass-check]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_frozen_examples_are_structural_and_ready[package-review]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_frozen_examples_are_structural_and_ready[mass-check-fails]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_frozen_examples_are_structural_and_ready[study-trace]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_shared_discovery_schema_is_the_frozen_schema_without_mutable_aliases",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 50,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_terminal_newline_cannot_bypass_closed_identifiers[id]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 67,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_terminal_newline_cannot_bypass_closed_identifiers[operation]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 67,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_terminal_newline_cannot_bypass_closed_identifiers[config_key]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 67,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_terminal_newline_cannot_bypass_closed_identifiers[filename]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 67,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_packaged_development_definitions_and_oracles_match_reviewed_contract",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 85,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_independently_frozen_canonical_vectors",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 99,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_invalid_and_saveable_draft_contract_cases",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 114,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_exact_endpoints_cycle_and_multiple_producers",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 124,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_deterministic_topology_uses_declaration_order_not_titles",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 136,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_document_copy_and_layout_cannot_mutate_semantics",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 149,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_empty_draft_and_missing_operation_config_do_not_claim_readiness",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 170,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_quantity_dimensions_are_checked_without_executing_assertions",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 182,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_malformed_or_oversized_document_is_bounded[duplicate]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 202,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_malformed_or_oversized_document_is_bounded[bom]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 202,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_malformed_or_oversized_document_is_bounded[array]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 202,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_malformed_or_oversized_document_is_bounded[oversized]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 202,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_malformed_or_oversized_document_is_bounded[float]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 202,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[../secret]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[C:/secret]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[folder/../../secret]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[//host/share]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[file:stream]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_artifact_input_rejects_unconfined_paths[folder//..//secret]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 212,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[1.0]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[01]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[+1]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[1e0]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[-0]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[NaN]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[1000000000000000001]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[0.0000000000000000001]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_decimal_rejects_ambiguous_or_unbounded_values[123456789012345678.12345678901234567]",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 232,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_quantity_calculation_conversion_and_range_are_exact",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 251,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_quantities_are_independent_of_callers_decimal_context",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 268,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process.py::test_quantity_context_isolates_exponents_clamp_and_all_traps",
+      "file": "packages/core/tests/test_native_process.py",
+      "line": 278,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[safe.txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/safe.txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder//safe.txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[r/xe9sum/xe9.txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/name..txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/space name.txt-True]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[../outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/../outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[./safe.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/./safe.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[/outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[//outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[C://outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[C:outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[////server//share//outside.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder//safe.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder////safe.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[folder/-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[safe.txt:stream-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_artifact_path_matches_shared_client_vectors[safe/x00.txt-False]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 32,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_removing_windows_drive_parser_preserves_lexical_rejections",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 54,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_schema_discovery_uses_installed_package_resources[directory]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 94,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_process_resources.py::test_schema_discovery_uses_installed_package_resources[zip]",
+      "file": "packages/core/tests/test_native_process_resources.py",
+      "line": 94,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_literal_text_and_fractional_data_round_trip_without_changing_documents",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 7,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[{\"x\":1,\"x\":2}]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[NaN]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[Infinity]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[1e999]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[\"/ud800\"]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[/xef/xbb/xbf{}]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_still_rejects_ambiguous_nonfinite_or_unbounded_input[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[0]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 14,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_runtime_json.py::test_runtime_data_byte_limit_applies_in_both_directions",
+      "file": "packages/core/tests/test_native_runtime_json.py",
+      "line": 31,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_tracing.py::test_native_spans_preserve_results_and_parent_context[False]",
+      "file": "packages/core/tests/test_native_tracing.py",
+      "line": 24,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_tracing.py::test_native_spans_preserve_results_and_parent_context[True]",
+      "file": "packages/core/tests/test_native_tracing.py",
+      "line": 24,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_tracing.py::test_native_spans_do_not_export_exception_content_or_chains[False]",
+      "file": "packages/core/tests/test_native_tracing.py",
+      "line": 49,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_tracing.py::test_native_spans_do_not_export_exception_content_or_chains[True]",
+      "file": "packages/core/tests/test_native_tracing.py",
+      "line": 49,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/core/tests/test_native_tracing.py::test_native_async_cancellation_preserves_cancellation_without_exporting_reason",
+      "file": "packages/core/tests/test_native_tracing.py",
+      "line": 79,
+      "skip_markers": []
+    }
+  ]
+}

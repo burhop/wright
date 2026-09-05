@@ -41,8 +41,8 @@ Configure host binding ports and security parameters for the FastAPI service.
 | `WRIGHT_API_PORT` | No | `8000` | Target port number. |
 | `PUBLIC_BASE_URL` | No | None | Public URL to advertise in docs, redirects, or reverse-proxy deployments when a local default is not enough. |
 | `CORS_ALLOWED_ORIGINS` | No | Local development origins | Comma-separated origins allowed to call the API from a browser, if configured by the deployment. |
-| `JWT_SECRET_KEY` | No | None | Signing secret used to authenticate API user access tokens. |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | No | `1440` | Duration token is valid before expiration. |
+| `WRIGHT_API_TOKEN` | When authentication is enforced | Managed for native; required for Docker | Opaque control-plane bearer credential; browser sessions are derived from it. Native lifecycle manages this value; Docker requires a unique installation value from the operator. |
+| `WRIGHT_AUTH_MODE` | No | `enforced` | Require local bearer or browser-session authentication. The `compat` mode is restricted by the local bind/origin policy; tests default to `compat`. |
 
 ---
 

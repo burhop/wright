@@ -1,0 +1,108 @@
+{
+  "fileId": "3b38bcc6526468725edf",
+  "fileName": "native-process-live.spec.ts",
+  "tests": [
+    {
+      "testId": "3b38bcc6526468725edf-060e209b605f496db668",
+      "title": "@live native saved process computes, preserves failure and links correction",
+      "projectName": "chromium",
+      "location": {
+        "file": "native-process-live.spec.ts",
+        "line": 64,
+        "column": 5
+      },
+      "duration": 0,
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+          "location": {
+            "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+            "line": 9,
+            "column": 6
+          }
+        }
+      ],
+      "tags": [
+        "@live"
+      ],
+      "outcome": "skipped",
+      "path": [],
+      "results": [
+        {
+          "duration": 0,
+          "startTime": "2026-09-05T02:27:37.038Z",
+          "retry": 0,
+          "steps": [],
+          "errors": [],
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+              "location": {
+                "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+                "line": 9,
+                "column": 6
+              }
+            }
+          ],
+          "attachments": [],
+          "workerIndex": -1
+        }
+      ],
+      "ok": false
+    },
+    {
+      "testId": "3b38bcc6526468725edf-68e5c9404a505613da5d",
+      "title": "@live native document and artifact-review examples produce exact files",
+      "projectName": "chromium",
+      "location": {
+        "file": "native-process-live.spec.ts",
+        "line": 152,
+        "column": 5
+      },
+      "duration": 0,
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+          "location": {
+            "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+            "line": 9,
+            "column": 6
+          }
+        }
+      ],
+      "tags": [
+        "@live"
+      ],
+      "outcome": "skipped",
+      "path": [],
+      "results": [
+        {
+          "duration": 0,
+          "startTime": "2026-09-05T02:27:37.038Z",
+          "retry": 0,
+          "steps": [],
+          "errors": [],
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+              "location": {
+                "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+                "line": 9,
+                "column": 6
+              }
+            }
+          ],
+          "attachments": [],
+          "workerIndex": -1
+        }
+      ],
+      "ok": false
+    }
+  ]
+}

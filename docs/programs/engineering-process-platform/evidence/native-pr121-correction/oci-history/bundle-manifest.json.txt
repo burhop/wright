@@ -1,0 +1,23 @@
+{
+  "kind": "Public projection file inventory; this manifest is excluded from its own recursive hash list",
+  "files": [
+    {
+      "filename": "oci-correction-history.json.txt",
+      "bytes": 16556,
+      "sha256": "eda1529090ab22e4c33590648ebe5fdc7982f671a78dfb8d10365d3325a0a2e7"
+    },
+    {
+      "filename": "raw-evidence-hashes.json.txt",
+      "bytes": 6948,
+      "sha256": "2a4374da8da0ed3dc8cf155c3438eaad9f6f2405b972eddba09641e8c7822ca9"
+    },
+    {
+      "filename": "README.md",
+      "bytes": 3771,
+      "sha256": "417d7253f6a3ab6d992be521ece8df3d856711eff51f26a18c5969fbe5d480b3"
+    }
+  ],
+  "transformation": "Explicit field selection and authored prose only. No raw file copies. Every source file was hashed before and after assembly and remained unchanged.",
+  "raw_source_files": 39,
+  "generator_sha256": "dec5d79b34554357cb6914729a5d3cca5ab4e14f7378de85ee8010e10fd56152"
+}

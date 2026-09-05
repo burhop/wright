@@ -47,7 +47,7 @@ def test_migration_15_to_16_is_additive_and_preserves_existing_settings(
             "INSERT OR REPLACE INTO system_settings(key, value) VALUES (?, ?)",
             ("llm_provider", "openai-compatible"),
         )
-    result = upgrade_database(database)
+    result = upgrade_database(database, migrations=MIGRATIONS[:16])
     after = _table_names(database)
 
     assert result.starting_version == 15
@@ -286,5 +286,5 @@ def test_native_and_docker_package_manifests_include_model_registry_without_payl
 
     assert (
         database_status(REPO_ROOT / ".nonexistent-compatibility.db").target_version
-        == 16
+        == 17
     )

@@ -18,8 +18,2294 @@
       "feature_id": "EPP-F02",
       "tasks_path": "specs/078-process-definition-view/tasks.md",
       "roadmap_item_id": "EPP-F02",
+      "active_feature": false
+    },
+    {
+      "feature_id": "EPP-N01",
+      "tasks_path": "specs/079-wright-native-authoring/tasks.md",
+      "roadmap_item_id": "EPP-N01",
       "active_feature": true
     }
   ],
-  "active_assignments": []
+  "active_assignments": [],
+  "milestone": {
+    "schema_version": "1.0.0",
+    "id": "NATIVE-01",
+    "title": "Native engineering process: create to verified output",
+    "feature_id": "EPP-N01",
+    "tasks_path": "specs/079-wright-native-authoring/tasks.md",
+    "scope_revision": 2,
+    "scope_history": [
+      {
+        "revision": 1,
+        "observed_at": "2026-09-04T21:37:44Z",
+        "added_task_ids": [
+          "T001",
+          "T002",
+          "T003",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026",
+          "T027",
+          "T028",
+          "T029",
+          "T030",
+          "T031",
+          "T032"
+        ],
+        "removed_task_ids": [],
+        "reason": "Initial independently reviewed bounded 32-task milestone; standing user scope includes native semantics, execution and dashboard."
+      },
+      {
+        "revision": 2,
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "added_task_ids": [],
+        "removed_task_ids": [],
+        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02–AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
+      }
+    ],
+    "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
+    "capabilities": [
+      "In the local feature build, create/configure/connect/save/reopen native processes with exact typed ports and one official language for programmatic clients, Inspector, canvas and runtime.",
+      "Invalid configuration remains buffered until corrected; the editor preserves and explains its 100-command undo history. The atomic path/producer and undo corrections are independently closed.",
+      "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
+      "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
+      "Candidate 60ef8672 passed the complete local merge gate and retained Linux amd64 cold offline Docker/native restart evidence. Required npm audit subsequently identified dependency blockers; the bounded correction is integrated at 9b636479. Packaged frontend assets are regenerated; fresh complete gates and exact-candidate independent review are pending. Dev PR/CI, development image publication and actual integrated-build verification remain pending.",
+      "The authorized overnight work targets technical dev delivery. Human usability is separately tracked as FOLLOWUP-NATIVE-HUMAN-01; participants/results and T028/Q-HUMAN remain pending. Whole-milestone human acceptance, benchmark qualification (0/100), and Rivet migration/retirement remain distinct."
+    ],
+    "tasks": [
+      {
+        "id": "T001",
+        "activity": "verifying",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T002",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T003",
+        "activity": "verifying",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T004",
+        "activity": "verifying",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T005",
+        "activity": "verifying",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T006",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T007",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T008",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T009",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T010",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T011",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T012",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T013",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T014",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T015",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T016",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T017",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T018",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T019",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T020",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T021",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T022",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T023",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T024",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T025",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T026",
+        "activity": "verifying",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T027",
+        "activity": "verifying",
+        "owner": "independent reviewer",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
+      },
+      {
+        "id": "T028",
+        "activity": "blocked",
+        "owner": "project maintainer / study coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": [
+          "B-HUMAN"
+        ]
+      },
+      {
+        "id": "T029",
+        "activity": "active",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
+      },
+      {
+        "id": "T030",
+        "activity": "active",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": [
+          "B-FRESH-NATIVE-CANDIDATE"
+        ]
+      },
+      {
+        "id": "T031",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": false,
+        "integration_exemption": "Records completion after integration; no self-referential follow-up merge is required.",
+        "blocker_ids": []
+      },
+      {
+        "id": "T032",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": false,
+        "integration_exemption": "Records completion after integration; no self-referential follow-up merge is required.",
+        "blocker_ids": []
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "AC01",
+        "title": "Truthful current dashboard",
+        "task_ids": [
+          "T001",
+          "T003",
+          "T004",
+          "T005",
+          "T032"
+        ],
+        "required_check_ids": [
+          "Q-DASHBOARD",
+          "Q-FINAL"
+        ]
+      },
+      {
+        "id": "AC02",
+        "title": "Official shared native language and quantities",
+        "task_ids": [
+          "T006",
+          "T007"
+        ],
+        "required_check_ids": [
+          "Q-SEMANTICS",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC03",
+        "title": "Accessible authoring, save and reopen",
+        "task_ids": [
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016"
+        ],
+        "required_check_ids": [
+          "Q-PERSISTENCE",
+          "Q-EDITOR",
+          "Q-HUMAN",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC04",
+        "title": "Shared UI and headless execution",
+        "task_ids": [
+          "T017",
+          "T018",
+          "T021",
+          "T023"
+        ],
+        "required_check_ids": [
+          "Q-RUNTIME",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC05",
+        "title": "Real artifacts and provenance",
+        "task_ids": [
+          "T019",
+          "T022",
+          "T023"
+        ],
+        "required_check_ids": [
+          "Q-ARTIFACTS",
+          "Q-RUNTIME",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC06",
+        "title": "Failure, cancellation and recovery",
+        "task_ids": [
+          "T017",
+          "T020",
+          "T022",
+          "T023"
+        ],
+        "required_check_ids": [
+          "Q-RUNTIME",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC07",
+        "title": "Exact real local MCP integration",
+        "task_ids": [
+          "T024",
+          "T025"
+        ],
+        "required_check_ids": [
+          "Q-MCP",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC08",
+        "title": "Three examples and independent assertions",
+        "task_ids": [
+          "T007",
+          "T008",
+          "T018",
+          "T026"
+        ],
+        "required_check_ids": [
+          "Q-EXAMPLES",
+          "Q-COMBINED"
+        ]
+      },
+      {
+        "id": "AC09",
+        "title": "Offline, distribution and legacy compatibility",
+        "task_ids": [
+          "T009",
+          "T029"
+        ],
+        "required_check_ids": [
+          "Q-PACKAGING"
+        ]
+      },
+      {
+        "id": "AC10",
+        "title": "Independent reviews and verified dev deployment",
+        "task_ids": [
+          "T027",
+          "T028",
+          "T029",
+          "T030",
+          "T031",
+          "T032"
+        ],
+        "required_check_ids": [
+          "Q-REVIEW",
+          "Q-HUMAN",
+          "Q-PACKAGING",
+          "Q-GATES",
+          "Q-INTEGRATION",
+          "Q-DEV",
+          "Q-FINAL"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "id": "Q-PLANNING",
+        "label": "Baseline and independently reviewed contracts",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": [
+          "T001",
+          "T002"
+        ],
+        "source_paths": [
+          "specs/079-wright-native-authoring"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-DASHBOARD",
+        "label": "Dashboard projection, readers and browser journey",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T003",
+          "T004",
+          "T005"
+        ],
+        "source_paths": [
+          "scripts/program_status",
+          "packages/tool_registry/src/tool_registry/program_status.py",
+          "packages/tool_registry/src/tool_registry/milestone_status.py",
+          "apps/web/src/components/program-status",
+          "apps/web/src/services/program-status.ts",
+          "apps/web/src/services/milestone-status.ts"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-SEMANTICS",
+        "label": "Native language and quantity contracts",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T006",
+          "T007"
+        ],
+        "source_paths": [
+          "packages/core/src/core/native_process.py",
+          "packages/core/src/core/native_quantities.py",
+          "packages/core/src/core/canonical_json.py",
+          "packages/core/src/core/native_process_contract",
+          "packages/core/tests/test_native_process.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-EXAMPLES",
+        "label": "Three examples, independent outputs and negative controls",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T008",
+          "T018",
+          "T026"
+        ],
+        "source_paths": [
+          "src/wright_engineering/static/native-processes",
+          "packages/workspace_service/src/workspace_service/native_process_runtime.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-PERSISTENCE",
+        "label": "Persistence, workspace authorization and failure recovery",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T009",
+          "T010",
+          "T011"
+        ],
+        "source_paths": [
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service/native_process_service.py",
+          "apps/api/src/api/routers/native_process.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-EDITOR",
+        "label": "Accessible native authoring, save and reopen",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016"
+        ],
+        "source_paths": [
+          "apps/web/src/components/native-process",
+          "apps/web/src/services/native-process.ts",
+          "apps/web/src/components/pages/NativeProcessPage.tsx"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-RUNTIME",
+        "label": "Shared runtime, cancellation, failure and recovery",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T017",
+          "T018",
+          "T020",
+          "T021",
+          "T022",
+          "T023"
+        ],
+        "source_paths": [
+          "packages/workspace_service/src/workspace_service/native_process_runtime.py",
+          "packages/workspace_service/src/workspace_service/native_process_service.py",
+          "apps/api/src/api/routers/native_process.py",
+          "apps/web/src/components/native-process"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-ARTIFACTS",
+        "label": "Actual indexed artifacts and provenance",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T019"
+        ],
+        "source_paths": [
+          "packages/data_vault/src/data_vault/native_process_artifacts.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-MCP",
+        "label": "Exact real local MCP and teardown evidence",
+        "kind": "live_tool",
+        "stage": "verification",
+        "task_ids": [
+          "T024",
+          "T025"
+        ],
+        "source_paths": [
+          "packages/workspace_service/src/workspace_service/native_process_mcp.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-REVIEW",
+        "label": "Independent exact-candidate technical review",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": [
+          "T027"
+        ],
+        "source_paths": [
+          "packages/core/src/core",
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service",
+          "apps/api/src/api",
+          "apps/web/src"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-HUMAN",
+        "label": "Actual independent human usability study",
+        "kind": "human_review",
+        "stage": "verification",
+        "task_ids": [
+          "T028"
+        ],
+        "source_paths": [
+          "apps/web/src/components/native-process",
+          "apps/web/src/components/pages/NativeProcessPage.tsx"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-PACKAGING",
+        "label": "Native/Docker/offline and legacy compatibility",
+        "kind": "packaging",
+        "stage": "verification",
+        "task_ids": [
+          "T029"
+        ],
+        "source_paths": [
+          "src/wright_engineering",
+          "packages/data_vault/src/data_vault",
+          "docker"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-GATES",
+        "label": "Required exact-candidate push and merge gates",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T030"
+        ],
+        "source_paths": [
+          "scripts",
+          "packages",
+          "apps",
+          "src"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-DEV",
+        "label": "Actual integrated build health and browser journeys",
+        "kind": "dev_deployment",
+        "stage": "verification",
+        "task_ids": [
+          "T031"
+        ],
+        "source_paths": [
+          "packages",
+          "apps",
+          "src"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-FINAL",
+        "label": "Final dashboard evidence and remaining obligations",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": [
+          "T032"
+        ],
+        "source_paths": [
+          "scripts/program_status",
+          "apps/web/src/components/program-status"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-INTEGRATION",
+        "label": "Native milestone changes integrated through dev PRs",
+        "kind": "dev_integration",
+        "stage": "integration",
+        "task_ids": [
+          "T001",
+          "T002",
+          "T003",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026",
+          "T027",
+          "T028",
+          "T029",
+          "T030"
+        ],
+        "source_paths": [
+          "packages",
+          "apps",
+          "src",
+          "scripts"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-COMBINED",
+        "label": "Combined native API, runtime and browser checkpoint",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": [
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026"
+        ],
+        "source_paths": [
+          "packages/core/src/core",
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service",
+          "packages/tool_registry/src/tool_registry",
+          "apps/api/src/api",
+          "apps/web/src",
+          "src/wright_engineering"
+        ],
+        "independent_required": false
+      }
+    ],
+    "evidence": [
+      {
+        "id": "Q-SEMANTICS-20260904-1",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:10:07.711699Z",
+        "tested_commit": "1d0cd0798130fa5c3e7c8a0e78655090ac95f5d9",
+        "tested_tree": "dec9d797a140c6735ed292e17a2f1478beca2523",
+        "scope_sha256": "31417408c5d71b8b870a1fc4c71ff3e676121945da5ee5027bd8af242bfe6568",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "41 native language/quantity tests passed; independent review closed Decimal context dependence.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": {
+          "total": 41,
+          "passed": 41,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-DASHBOARD-20260904-1",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:10:07.977505Z",
+        "tested_commit": "88d36f3793f05a29f10a210623788b93ed32cfcd",
+        "tested_tree": "738cd8ae559c11b4ebfcb18ba7e25d8e1d479e8d",
+        "scope_sha256": "789e5fbcd62848125873b0fb39e446db3a0cea355568d8bd37e078afeb4aaba4",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Existing dashboard browser, projection and refresh checks passed; independent review closed four findings. Detached-checkout harness correction passed 10 scope tests in the combined branch.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-EDITOR-20260904-1",
+        "check_id": "Q-EDITOR",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:10:08.332563Z",
+        "tested_commit": "da12fc6d1b723a0ef3c909c361ea03a572adc82e",
+        "tested_tree": "01a9601348917bb30ea189284f878258dc115bb6",
+        "scope_sha256": "94f5b701e4b75f0b1cc4632ca5dae0b25b266f767e6f4d16f5e9146e015483aa",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual authoring browser journey passed before run-panel integration; 8 save/recovery component tests passed and independent finding closed. Repeat combined browser acceptance after runtime API wiring.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PERSISTENCE-20260904-1",
+        "check_id": "Q-PERSISTENCE",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:10:08.516968Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "84de1278d4826ef2416110402afa91de3e2ae5e00459e6a5608e971def95b635",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "20 persistence/migration and 10 API checks passed on a00bd7c0. Independent review found native telemetry can disclose raw internal exception text; correction and closure pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-RUNTIME-20260904-1",
+        "check_id": "Q-RUNTIME",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.691329Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "618ef56287086d70c457c3c5b2e12541c71088a0a936195bed2860aba7511709",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "11 runtime tests passed on dc90caa7, then independent probes reproduced 4 failures: fractional arguments, Unicode byte/character limit, non-NFC runtime text persistence and late artifact cleanup race.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": {
+          "total": 4,
+          "passed": 0,
+          "failed": 4,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-MCP-20260904-1",
+        "check_id": "Q-MCP",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.915521Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "9381f67d07fdb70e42b6adbae1da52ebe3b8a5b69de010cf4a05e78e9ba56526",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "49 focused checks and one actual stdio proof passed; independent review found unresolved-reference error normalization and cancellation trace gaps. Fix awaits independent closure; full native tool/artifact journey pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-REVIEW-20260904-1",
+        "check_id": "Q-REVIEW",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-04T23:10:08.996105Z",
+        "tested_commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+        "tested_tree": "8ef855d4dd91207a0fd69ef3b04ef828ac44b9b7",
+        "scope_sha256": "debf828d63beb2eebb8cfbdeeb6b214ce4720c5dbea7d1678ed14801f3ef9c68",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent bounded review agents",
+        "verification_actor_kind": "agent",
+        "summary": "Bounded independent reviews found 4 runtime P2 issues, 1 MCP P2 plus trace P3, and 1 telemetry P2. Full candidate review follows corrections and actual API integration.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/implementation-checkpoint-20260904.md",
+            "commit": "1a46a4560261e23cfee16104cf9e9d32e865d78b",
+            "sha256": "c9c4a63064915f680bd4082361ce35eaab02f966be4c0b1e786c14010b14e4de"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-EXAMPLES-20260904-1",
+        "check_id": "Q-EXAMPLES",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "caf958da0a5b7ce18c5f7b25a2e28043af15b4ab55f53fd9a8919760730fe77b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Combined runtime positive/negative/correction checks and real browser downloads passed for all three development examples; no benchmark qualification.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PERSISTENCE-20260904-2",
+        "check_id": "Q-PERSISTENCE",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "500fc35592e8514905315199601d75fde3fbc2979fdddf9779743d5897a42ef9",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The shared 60-test combined API/startup/runtime/run/artifact suite passed. Telemetry and lifecycle findings are independently closed; authoring, saved IDs and exact replay remain covered.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 60,
+          "passed": 60,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-EDITOR-20260904-2",
+        "check_id": "Q-EDITOR",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "23a7788c75a3e5834a4d24ed0248fe9fb925f40984223ea652679f7262d43b35",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "10 Chromium checks passed: 8 explicitly simulated services plus 2 actual API journeys. Covers authoring identities, save/reopen/recovery, narrow/zoomed accessibility and real run artifacts. Human acceptance remains separate.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 10,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-RUNTIME-20260904-2",
+        "check_id": "Q-RUNTIME",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "7b642b95eb06733400a8d0d2394d6849bc1c28e930952f3d91cbd802c2928f1c",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "60 combined API/runtime/run/artifact tests and 10 browser checks passed. Eight independent API closure probes passed; the four earlier runtime findings remain closed. Broader candidate gates are pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-ARTIFACTS-20260904-1",
+        "check_id": "Q-ARTIFACTS",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "8012b0f50266740e91fd4f575a65789ae1ce22cd75095c7afe627cc359eefbb3",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Combined artifact persistence/integrity tests and actual browser downloads verified bytes, size, SHA256, producing run/definition and retained failure/correction evidence.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-MCP-20260904-2",
+        "check_id": "Q-MCP",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "0f40f414e6daf5d4a2c2b63e891a73ce5e6c03de",
+        "tested_tree": "6af81de7c9c05a40177a654fa41e4d00fde0709c",
+        "scope_sha256": "fbc299767c2da64cb4f180f9a1a62d716836dcdd534909c0dc8200f23cb012ee",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Two actual local stdio paths passed, including a native process producing and reading measurement.json with value 1.25, provenance and child teardown. Adapter and telemetry corrections independently closed. Disposable integration fixture only.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-REVIEW-20260904-2",
+        "check_id": "Q-REVIEW",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "3978831710f195cbb7515c4edec1b455fe8b976cf1951e5b8cb27e6ebb6db4b2",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "All reported bounded runtime, MCP, telemetry, save-recovery and API findings are independently closed. Fresh whole-candidate review and prospective governance amendment review are in progress.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PACKAGING-20260904-1",
+        "check_id": "Q-PACKAGING",
+        "attempt": 1,
+        "result": "inconclusive",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "e4c58d952b1415321b9a5c6921da025fdf14c54f",
+        "tested_tree": "ff73d110e35bd37d76bd9d1b74423413c568b7cd",
+        "scope_sha256": "9d3f67abf6a3ecb67d1c9ba9c0efad5d174995a013b1f998fafdbee99bd96b7b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "One built wheel passed isolated actual API execution and retained evidence across 3 fresh processes including relocation, with outbound network denied. Full packaging invocation was not green; fresh frontend, Docker, version-update and other-OS coverage remain pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-COMBINED-20260904-1",
+        "check_id": "Q-COMBINED",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-04T23:58:03.057374Z",
+        "tested_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+        "tested_tree": "8e945dbf2eaa6a7287e7755861b638b3f732d829",
+        "scope_sha256": "03387a9f6ad6564e8ab423db67d9bfa5c47be65801f1ea12287743bbf37c6298",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "60 combined API/runtime/artifact tests plus 10 Chromium checks passed on the same production candidate (2 live server journeys, 8 simulated). Broad source coverage binds this checkpoint; required gates, independent whole-candidate review, human study and dev delivery remain separate.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/combined-native-checkpoint-20260904.md",
+            "commit": "144ba62c690209a43999e60f77557f3cf3bd260d",
+            "sha256": "442051cacb0e9ef64745826656afa0cefb8856719d35640291b9eef260d1449a"
+          }
+        ],
+        "counts": {
+          "total": 70,
+          "passed": 70,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-EDITOR-20260905-3",
+        "check_id": "Q-EDITOR",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "572a5802838a33bc887f00edc456ef7a6d6ead23",
+        "tested_tree": "c74798d9974ca343d1a819e047a965bb9bd767d8",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Independent review closed atomic path/producer validation and the disclosed 100-command undo history on 40826589. Reachable parent 572a5802 has the identical declared editor source scope, which still matches the current candidate. Focused authoring regressions and original model probes support this corrected scope; no new live-browser or human-study run is inferred.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/independent-editor-closure-40826589.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "171b755668bdc6069c2cd16f86789a20302be787d5e7dd4987d824554994f02a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-DASHBOARD-20260905-2",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Three independent schema-portability checks passed on b861d2ea; reachable parent eb63344c has identical declared dashboard source coverage. The frontend-local schema correction is accepted for that narrow scope. Current whole-dashboard/browser acceptance and complete delivery gates remain pending.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-web-schema-review-b861d2ea.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "13ca9ef21e0ac931ab2e3a60a0c40d831550aa6b88f1447aa1a0eba651466883"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-REVIEW-20260905-3",
+        "check_id": "Q-REVIEW",
+        "attempt": 3,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "984c1a3d643c14e94088ce11f6c0d3bed220b3764504b0f40be0248d9443185c",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Independent corrections closed CR-NATIVE-01/02 on 40826589 and GOV-NATIVE-01/02/03 on b3d33812, with four original governance probes passing unchanged. The b861d2ea schema review passed three focused checks. This partial checkpoint binds identical reachable eb63344c source coverage; an exact final combined-candidate review verdict and terminal delivery gates remain pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/independent-editor-closure-40826589.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "171b755668bdc6069c2cd16f86789a20302be787d5e7dd4987d824554994f02a"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-governance-closure-b3d33812.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "863717b02626527a0e017485554345895a6d82b81c0396094ef3343b1a161de4"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-web-schema-review-b861d2ea.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "13ca9ef21e0ac931ab2e3a60a0c40d831550aa6b88f1447aa1a0eba651466883"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-GATES-20260905-1",
+        "check_id": "Q-GATES",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "b85cb4ed1409471a53a5f0d1fb5eb4d215011e9214d304acc8608bb505df8b71",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The eb63344c required gate stopped at a stale schema-16 assertion: program control 361 passed/1 skipped; release 102 passed; native slice 152 passed/10 skipped/1 failed. Original failure retained. Remaining mandatory gate work and skips are not treated as passed.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-GATES-20260905-2",
+        "check_id": "Q-GATES",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "6d374726ad1602754bf7fcfdec1bfdd39937a866",
+        "tested_tree": "9c0191e8d6f755b8c965409398e20181bf801410",
+        "scope_sha256": "7c8c86690799cb0cb09800ebbc2f3c2ff063d1fb56eb3ae0566e42c106c0fb4c",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Test-only correction 6d374726 passed 17 affected checks. A subsequent coverage slice reported 235 passed, 10 skipped, one resource warning and 85.28% coverage in 31.75s; counts here describe only that coverage slice. Full required-gate completion is not established, and the original failure remains attempt 1.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-coverage-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "b74367c2be23887b43aa879f073a4630901098b71bf6e8f1770a555c4cd28c38"
+          }
+        ],
+        "counts": {
+          "total": 245,
+          "passed": 235,
+          "failed": 0,
+          "skipped": 10,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-PACKAGING-20260905-2",
+        "check_id": "Q-PACKAGING",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "9d3f67abf6a3ecb67d1c9ba9c0efad5d174995a013b1f998fafdbee99bd96b7b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "eb63344c built local image sha256:9b42a07d3ed4d24eb746daab9a05f5ed5e3a124f51a26c4042178275fa63dbfd and networked smoke exited 0. Cold network-none startup failed dependency synchronization. Correction 404269e9 awaits independent review and rebuilt-image verification. No offline Docker, different-version upgrade, other-OS, dev deployment or full packaging pass is claimed.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-coverage-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "b74367c2be23887b43aa879f073a4630901098b71bf6e8f1770a555c4cd28c38"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-PACKAGING-c7f1f218-3",
+        "check_id": "Q-PACKAGING",
+        "attempt": 3,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "c7f1f218007e35dd2447329789ee95c91740ae4a",
+        "tested_tree": "39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c",
+        "scope_sha256": "ffd4a5a8b4a3f4819eaceab08e8c47a879d462c8ccf155225b875740d856f5e6",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Cold network-none Docker startup, schema discovery and real native workflow/restart retention passed on image sha256:455f0a756e098042dd34aca472875987cedd6708b3ada28949140625128748c8. Independent exact 60 archive correspondence passed. Required packaging/compatibility matrix and documented host limits still need consolidation; no fresh backup/restore, different-version upgrade, other-OS, publication or dev deployment is inferred.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-c7f1f218-2",
+        "check_id": "Q-COMBINED",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "c7f1f218007e35dd2447329789ee95c91740ae4a",
+        "tested_tree": "39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c",
+        "scope_sha256": "bf773d7708b16f1b51b63ca2afa0a5f711e57297284db5314d65f6b92d26ebfd",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Two actual Chromium native journeys passed in 25.5 seconds on the restarted c7 API: three example outputs and failure/correction/history with actual artifacts. These counts describe only those two live tests. Current combined required-suite acceptance awaits the terminal full gate and skip classification.",
+        "counts": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-60ef8672-4",
+        "check_id": "Q-REVIEW",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex implementation team",
+        "verifier_id": "native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent accumulated technical review found no open actionable P1/P2; exact committed frontend/runtime metadata and 669 wheel/672 sdist source/resource files correspond. The reviewed resource correction and prior findings are closed within their recorded scopes. Complete gate, frozen final candidate and typed independent review record remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-60ef8672-3",
+        "check_id": "Q-GATES",
+        "attempt": 3,
+        "result": "failed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "c782eba62209abb5090a4a3007ddf2b42d8d4e825bc02d9279ee89cd33e5443a",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The earlier complete-gate attempt stopped at API test_workspace_config_and_remote_operations: 446 passed, 1 skipped, 1 failed. Presence-only investigation attributed the failure to a previously reused fake test credential store; a fresh-store focused test passed without source changes. Preserve this failed attempt; counts refer only to the API suite.",
+        "counts": {
+          "total": 448,
+          "passed": 446,
+          "failed": 1,
+          "skipped": 1,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-60ef8672-4",
+        "check_id": "Q-GATES",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "c782eba62209abb5090a4a3007ddf2b42d8d4e825bc02d9279ee89cd33e5443a",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Full local authoritative merge gate completed exit 0 on clean60ef8672; 170 browser passed and5 explicit skips, native live2passed separately. All blocking local stages passed; raw overlapping suite counts and existing warnings are retained in full-local-gate.md. Q-GATES remains inconclusive because the required push gate and terminal CI are not yet complete. No human or dev deployment claim.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-SEMANTICS-60ef8672-2",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "39ac8928795494e83a2128f101ff360ff70a34dfc28d7e20083c8193322f9322",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All65 required language, quantity, resource and path-conformance cases passed. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 65,
+          "passed": 65,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-60ef8672-3",
+        "check_id": "Q-RUNTIME",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All204 required persistence, artifact, runtime, API, frontend and browser cases passed;2 actual c7 live cases are attributed separately from their default-gate skips. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 204,
+          "passed": 204,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-60ef8672-3",
+        "check_id": "Q-COMBINED",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "bf773d7708b16f1b51b63ca2afa0a5f711e57297284db5314d65f6b92d26ebfd",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All269 explicitly enumerated semantics and runtime acceptance cases passed. Fixed case population includes2 actual c7 live cases, with exact scope equivalence. Real MCP remains the separate current Q-MCP check. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 269,
+          "passed": 269,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-60ef8672-3",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All124 publisher, reader, API, frontend and browser dashboard acceptance cases passed; independent source mapping retains exact case IDs and all raw suite skips. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 124,
+          "passed": 124,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-PLANNING-60ef8672-1",
+        "check_id": "Q-PLANNING",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "0f32facf01d293314af410c5ba849ee7ba1a5b100a03898d6f179239d08b42d4",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent current-source planning review explicitly accepts T001/T002 against the exact079 scope. Shared official language, native/Rivet boundary, baseline, examples and26+6 task partition are consistent. This is current planning acceptance, not backdated approval or human/final implementation evidence.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-9b636479-5",
+        "check_id": "Q-REVIEW",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "The prior exact-candidate review remains historical. The dependency correction requires a fresh independent exact-candidate review; T027 is reopened. No new review verdict is recorded. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-9b636479-5",
+        "check_id": "Q-GATES",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "efb0e4a92c1b7e8506f847057c7ffd0ef65ea6fdf95e1306fdc8379237439571",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Required npm audit found six high advisory blockers on the former dependency set. The bounded correction is integrated; the complete local gate, push gate and terminal CI for the corrected candidate remain pending. Preserve the previous full-gate pass, failed attempts and raw skips as history. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-9b636479-4",
+        "check_id": "Q-PACKAGING",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "d7d5dc13d3e726f901dbec7a491000674b08540b483689d2bf280984561946ab",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Previous wheel/sdist and cold offline Docker/native restart evidence remains historical. The dependency correction requires regenerated web assets and validation of the assembled corrected artifacts. No new package, image, publication or deployment result is recorded. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-EDITOR-9b636479-4",
+        "check_id": "Q-EDITOR",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Native editor implementation is retained. The changed frontend dependency set requires fresh authoring checks and browser verification; earlier tests and exact counts remain historical, with no new acceptance verdict. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-9b636479-4",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Dashboard implementation is retained. The changed frontend dependency set requires fresh affected checks; earlier scoped results and exact counts remain historical, with no new acceptance verdict. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-9b636479-4",
+        "check_id": "Q-RUNTIME",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "Runtime implementation and prior durable run evidence are retained. Combined runtime/browser acceptance must be verified with the corrected dependency set; earlier results and exact counts remain historical. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-9b636479-4",
+        "check_id": "Q-COMBINED",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T03:27:41.359131Z",
+        "tested_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+        "tested_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+        "scope_sha256": "ae53812a15e967f44341c8f682327829c21cd9200c1f74d73bbbbe5d6f1d03cb",
+        "author_id": "Codex native milestone coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "agent",
+        "summary": "The combined native acceptance population is awaiting the corrected assembled candidate and fresh gate/browser evidence. Declared source scopes alone do not cover dependency-lock changes, so the previous combined pass is not carried forward as current acceptance. This is a status observation, not a new test execution; no new counts are asserted.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/authorizations/AUTH-EPP-N01-2026-002.md",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "6ad0b98ccba362108f2fe6cc8ab301d94592dbefc8e4041ebf2e10c104798500"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+            "commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+            "sha256": "e471aaec572ec6d733725d82087000957e04944fd9a548bf0aa7ae8973b78bed"
+          }
+        ]
+      },
+      {
+        "id": "Q-SEMANTICS-b699191d-3",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "39ac8928795494e83a2128f101ff360ff70a34dfc28d7e20083c8193322f9322",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 65 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 65,
+          "passed": 65,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-b699191d-5",
+        "check_id": "Q-RUNTIME",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 204 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 204,
+          "passed": 204,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-b699191d-5",
+        "check_id": "Q-COMBINED",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "686b723ebe082e810cae059fe2f3e47500211b0b7def739a4baad9fd5ff2eea3",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 269 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 269,
+          "passed": 269,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-b699191d-5",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 124 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 124,
+          "passed": 124,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-EDITOR-b699191d-5",
+        "check_id": "Q-EDITOR",
+        "attempt": 5,
+        "result": "passed",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "All 10 fixed required cases passed with exact test identities, current source coverage and retained raw skips; actual stages retain their distinct source commits and original runner IDs; the full40 script remains failed. No CI, integration, human or benchmark credit.",
+        "counts": {
+          "total": 10,
+          "passed": 10,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-b699191d-6",
+        "check_id": "Q-GATES",
+        "attempt": 6,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "660953a62e6aee8952f121413c7d2d7820fc986d0800ba3cb31986db2a840f5a",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Bounded composed local verification completed; the original full40 script remains failed and no later full-script exit0 is claimed. Required push checks and terminal CI remain pending; this is not whole-gate completion. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-b699191d-6",
+        "check_id": "Q-REVIEW",
+        "attempt": 6,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The corrected complete browser stage and unchanged earlier stages passed; final independent review must bind the frozen exact candidate and resolve any remaining findings. No new independent-review verdict is inferred. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-b699191d-5",
+        "check_id": "Q-PACKAGING",
+        "attempt": 5,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T05:59:48.311128+00:00",
+        "tested_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+        "tested_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+        "scope_sha256": "e372ec8017f1fdea928801e82b3076ee2afc589d5d80d73519d39b1dda4ab7b6",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Original failed gate, unchanged completed stages, corrected complete browser stage and scoped Docker evidence are retained. Consolidate exact assembled artifacts, compatibility, host limitations and required lifecycle coverage before whole packaging acceptance. No CI, integration, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/README.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "530fca7212237ded7665d75081416825ab3e1ef692e48a58f9a47e21768b426d"
+          }
+        ]
+      },
+      {
+        "id": "Q-PLANNING-4419a3c3-2",
+        "check_id": "Q-PLANNING",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-05T04:49:15.510033Z",
+        "tested_commit": "4419a3c3218380cbdc1bc797f70a0f69668cf53a",
+        "tested_tree": "ec81f619ab1866e15d1a4b3d88ea0cb648df24bb",
+        "scope_sha256": "588d99a6e91e0d8aa4fa04871060bae682c1e5b38874fce94e974cb2a93b76c1",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent bounded planning review accepts the exact constitution3.1.1 reference correction with all other079 semantics unchanged from the prior complete planning review. Current source scope matches the reviewed43-file scope; fixed32 tasks retain26 implemented and6 pending. No human, final implementation review or integration credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-4419a3c3.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "6069172a0aa78b0d79399be0e359a41e3370876788b914f604efde31bf6c159f"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-0aae81db-7",
+        "check_id": "Q-REVIEW",
+        "attempt": 7,
+        "result": "passed",
+        "observed_at": "2026-09-05T07:01:08.066459Z",
+        "tested_commit": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+        "tested_tree": "ebce3a4a68aaa62cff8b50444a727ef70233ba2d",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Actual independent entire-candidate review and metadata correspondence passed for the reconstructed frozen subject. The original typed review is retained verbatim; no old execution is presented as a new run. Human acceptance, required push/CI and dev delivery remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "93914c0803744f6af4dfda61aaf9ee2d107e825d4b922d631b4dcf8b2db1f7a5"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-40ebc645-6",
+        "check_id": "Q-PACKAGING",
+        "attempt": 6,
+        "result": "passed",
+        "observed_at": "2026-09-05T06:20:50.823991Z",
+        "tested_commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+        "tested_tree": "29f573a09d7e1cbe60351eb21065105286b008bc",
+        "scope_sha256": "e372ec8017f1fdea928801e82b3076ee2afc589d5d80d73519d39b1dda4ab7b6",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Bounded Windows-native/Linux-amd64-Docker packaging acceptance passed: actual archives, offline startup, legacy/retention, actual predecessor16/current17 recovery and in-image native tracing. Exact source/artifact distinctions, original setup failures and host limits remain explicit; no broader platform or publication claim.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-tracing-40ebc645/independent-docker-otel-closure-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "41cbef7de9bf71ce82f54c1e5968b6fbd3f8646d9fa610180dcf1e40bb866e35"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-predecessor-recovery-20260905/independent-packaged-recovery-closure-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "0ef0a297d4c23a985b1f08a11a8e1d86b9a60066b6855e82b6210bbe8e23242d"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-package-provenance-review-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "64176a506281e8c5182f93d33e725a13f96d37152224fcd6c08565e9f3172274"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/docker-browser-public-projection.json.txt",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "d6dc82d5d5a002fc2d7725ad3032b401d3b924a06507099e60342b032c2499a1"
+          }
+        ]
+      },
+      {
+        "id": "Q-PLANNING-f86c2ccf-3",
+        "check_id": "Q-PLANNING",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T06:34:38.611598Z",
+        "tested_commit": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+        "tested_tree": "3d538ee7a338e924464060dd38150a10e923bf4f",
+        "scope_sha256": "3457699a31cf4134936f0ee34238beeae7a974ebc6de38f3dc6ba8ac4a9c30fb",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent current-scope planning rebind passed: only the actually completed T027/T029 checkboxes changed across079; all wording/contracts remain identical. Current28/32 progress and immutable frozen26+6 partition remain distinct. No gate/CI/dev/human completion is inferred.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-4419a3c3.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "6069172a0aa78b0d79399be0e359a41e3370876788b914f604efde31bf6c159f"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-f86c2ccf.md",
+            "commit": "8c326bfc17173fe9852fffa51ba5709c9bdef09c",
+            "sha256": "bba40076517e89fa6415f763470a014541229468a8367c8997e7b5fd2193833a"
+          }
+        ]
+      }
+    ],
+    "blockers": [
+      {
+        "id": "B-HUMAN",
+        "summary": "Human usability is separately tracked as FOLLOWUP-NATIVE-HUMAN-01; actual independent participants and study results remain pending.",
+        "owner": "project maintainer",
+        "required_action": "Project maintainer / study coordinator: arrange the five-person study after technical dev delivery using evidence/followups/FOLLOWUP-NATIVE-HUMAN-01.md and the preserved H1-H5 protocol. Retain actual trials and manual accessibility evidence before granting T028/Q-HUMAN credit.",
+        "task_ids": [
+          "T028"
+        ],
+        "check_ids": [
+          "Q-HUMAN"
+        ],
+        "observed_at": "2026-09-05T02:59:17Z"
+      },
+      {
+        "id": "B-F02-DEPLOY",
+        "summary": "F02 merged; actual deployed-browser verification has not been recorded.",
+        "owner": "coordinator",
+        "required_action": "Verify the deployed build and changed process-view journey; preserve the missing evidence until observed.",
+        "task_ids": [
+          "T001"
+        ],
+        "check_ids": [],
+        "observed_at": "2026-09-04T21:37:44Z"
+      },
+      {
+        "id": "B-FRESH-NATIVE-CANDIDATE",
+        "summary": "The frozen candidate passed independent review and bounded packaging acceptance. Required push checks, terminal CI and dev delivery remain pending.",
+        "owner": "coordinator and independent reviewer",
+        "required_action": "Run the required push gate, inspect all terminal PR CI, merge through the dev PR and verify the actual published development image. Human usability remains a separate follow-up.",
+        "task_ids": [
+          "T030",
+          "T031",
+          "T032"
+        ],
+        "check_ids": [
+          "Q-GATES",
+          "Q-INTEGRATION",
+          "Q-DEV"
+        ],
+        "observed_at": "2026-09-05T06:28:45.782409Z"
+      }
+    ],
+    "next_task_ids": [
+      "T030",
+      "T031",
+      "T032"
+    ],
+    "examples": [
+      {
+        "id": "EX-DOCUMENT",
+        "title": "Generate and review an engineering document",
+        "execution_mode": "local_computation",
+        "check_ids": [
+          "Q-EXAMPLES"
+        ],
+        "definition_path": "src/wright_engineering/static/native-processes/concept-brief.json"
+      },
+      {
+        "id": "EX-QUANTITY",
+        "title": "Calculate an engineering quantity with units",
+        "execution_mode": "local_computation",
+        "check_ids": [
+          "Q-EXAMPLES"
+        ],
+        "definition_path": "src/wright_engineering/static/native-processes/mass-check.json"
+      },
+      {
+        "id": "EX-REVISION",
+        "title": "Check an artifact, correct a failure and rerun",
+        "execution_mode": "local_computation",
+        "check_ids": [
+          "Q-EXAMPLES"
+        ],
+        "definition_path": "src/wright_engineering/static/native-processes/package-review.json"
+      }
+    ],
+    "delivery": {
+      "branch": "codex/079-native-process-milestone",
+      "target_branch": "dev",
+      "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+      "candidate_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+      "pull_requests": [],
+      "merged_commit": null,
+      "deployment_check_ids": [
+        "Q-DEV"
+      ]
+    }
+  }
 }

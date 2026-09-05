@@ -1,0 +1,35 @@
+[
+  {
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/dev-merge-gate-eb63344c-native-compatibility-failure.log",
+    "sha256": "5f262b3c84f14f30790a0a8b015aa5a761079c46c6981b8cd0de340e64fb3cf5",
+    "bytes": 20570,
+    "terminal_failure_lines": []
+  },
+  {
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/dev-merge-gate-53ec6694-model-schema-failure.log",
+    "sha256": "26157c95e3586c9b7ae15b0c2fe3ff7a4e1228b9787658efa8f57e647dde5fb0",
+    "bytes": 35528,
+    "terminal_failure_lines": [
+      "FAILED packages/data_vault/tests/test_model_repository.py::test_schema_version_matches_migration_count",
+      "================== 1 failed, 125 passed, 1 skipped in 14.67s =================="
+    ]
+  },
+  {
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/dev-merge-gate-c7f1f218-local-link-failure.log",
+    "sha256": "e7ee13b87b1a695d7a79ec84800883a895bf545cf93daa2dc1fb070abf690110",
+    "bytes": 6591,
+    "terminal_failure_lines": [
+      "FAILED tests/program_control_plane/test_evidence_walkthrough.py::test_program_readme_local_links_resolve",
+      "1 failed, 360 passed, 1 skipped in 392.02s (0:06:32)"
+    ]
+  },
+  {
+    "source_local_path": "D:/repos/wright/.local-run/native-process-milestone/wright/.local-run/dev-merge-gate-60ef8672-reused-test-secrets-failure.log",
+    "sha256": "540d5830f6069b726cb7132f7fd3f7bfe1f674a5d59578a622cc99bd44f15ed8",
+    "bytes": 30296,
+    "terminal_failure_lines": [
+      "FAILED apps/api/tests/test_workspace_api.py::test_workspace_config_and_remote_operations",
+      "====== 1 failed, 446 passed, 1 skipped, 11 warnings in 334.44s (0:05:34) ======"
+    ]
+  }
+]

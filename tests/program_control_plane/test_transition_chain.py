@@ -218,7 +218,13 @@ def test_f01b_lease_checkpoint_correction_rejects_scope_expansion(
     transition = load(
         repository_root / PROGRAM_ROOT / "evidence/transitions/TR-0075.json"
     )
-    successor_state = load(repository_root / PROGRAM_ROOT / "program-state.json")
+    # Mutate the closed historical successor, not the evolving native writer:
+    # setting an already-IMPLEMENTING N01 state to IMPLEMENTING is a no-op.
+    successor_state = load(
+        repository_root
+        / PROGRAM_ROOT
+        / "evidence/states/program-state-revision-0089.json"
+    )
     if target == "transition":
         transition["action"] += " and widen authority"
     else:
@@ -1283,6 +1289,11 @@ def test_current_v2_chain_has_exact_legal_edges(repository_root: Path) -> None:
     documents[f"{PROGRAM_ROOT}/lifecycle-policy.json"] = load(
         root / "lifecycle-policy.json"
     )
+    for relative in (
+        "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+        "schemas/scope-authorization.schema.json",
+    ):
+        documents[f"{PROGRAM_ROOT}/{relative}"] = load(root / relative)
     findings = []
     _validate_state_chain(
         documents,

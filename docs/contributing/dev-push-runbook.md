@@ -64,6 +64,38 @@ contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
 
+Changes to every bound Docker input also run `scripts.release.scan_image` in the
+fast gate and select OCI PR CI, including `.dockerignore`, root package files,
+`src/`, the Hermes plugin, both Rivet package trees and `README.md`. The full
+merge gate always runs it. Build the candidate once from a
+clean Git archive, then set `WRIGHT_GATE_DOCKER_IMAGE` to that existing image
+before running either gate. The helper resolves the reference to an immutable
+local image ID and checks its OCI revision against the current checkout. A
+metadata descendant may reuse it only when the original revision is an ancestor
+and no Docker build input changed. Committed, staged and unstaged differences
+are checked separately, so reverting a dirty file cannot mask a changed HEAD
+or index; untracked inputs are also rejected. It never builds or publishes. For a standalone scan, use
+`python -m scripts.release.scan_image --image <image>`.
+
+The local gates and OCI PR workflow use the same pinned Trivy 0.70.0 image,
+fresh vulnerability database, OS/Python/Node coverage checks and unchanged
+`docker/release-policy.json` evaluator. Dependency compatibility (`pip check`)
+and Wright's own dependency audit do not cover the installed Hermes/OS image
+inventory: PR #121 exposed this gap when Tornado 6.5.6 passed smoke but failed
+the fixable High policy. Tornado 6.5.8 is the bounded upstream security fix.
+Missing candidate images, source mismatch, unavailable databases, malformed
+reports and policy violations fail. Every reported vulnerability must have a
+valid identity, installed version and exact known severity. A missing fixed
+version remains a valid unfixed finding, governed by the existing policy.
+Only an unavailable supported local Docker
+host can produce an explicit recorded host limitation; CI never uses that opt-in.
+
+Each scan retains its raw report/logs locally and produces a public projection
+with source/image/scanner/policy/database identities, installed/fixed versions
+and hashes. OCI CI uploads that projection even when policy rejects the image.
+Do not upload raw image environment, history or secret matches. Use the emitted
+evidence directory; an existing report directory is never overwritten.
+
 It uses dedicated browser-test ports, so the normal Wright UI on
 5173 and API on 8000 can remain running. Python checks use the cached,
 Git-ignored `.venv-dev-gate` environment instead of modifying the environment
@@ -90,12 +122,27 @@ uv run --extra runtime python -m pytest -q tests/program_control_plane
 
 The corresponding Ruff and format checks cover the entrypoint, package, and focused tests. No gate copies validator semantics; all invoke the same committed implementation and tests.
 
+Changes under `scripts/program_status/implementation-dashboard/` select
+`tests/program_control_plane/test_dashboard_http_boundary.py` directly in the
+fast gate. These regressions cover exact static routes, trusted MIME values and
+public error messages. The full gate includes them in its focused control-plane
+suite. They complement the API download-header/error regressions; actual CodeQL
+analysis remains CI-authoritative.
+
 Before a program-control change can pass the fast push gate, its committed feature
 state must be `PUSH_AUTHORIZATION_PENDING`, `PR_READY`, or `DEV_MERGE_READY`, its
 mutating lease must be closed, and the authoritative validator must pass against
 the exact `HEAD`. This mirrors the non-mutating identity used by GitHub's synthetic
 merge checkout and prevents a locally named implementation worktree from hiding a
 lease/worktree mismatch that would fail pull-request validation.
+
+EPP-N01 may use the [prospective scoped implementation delivery rule](../programs/engineering-process-platform/coordinator-state-machine.md#prospective-native-implementation-delivery-revision-98-onward).
+It passes through these same states and gates with an exact-candidate independent
+technical review, a closed lease, and an explicit partition of delivered and
+pending tasks. Human usability, actual dev deployment, and final reporting may
+remain pending without being counted as passed. This does not waive tests, CI,
+independent review, security/compatibility failures, or any required merge gate;
+the authoritative validator enforces the scoped record and code freshness.
 
 The full merge gate, Linux quality job, and Windows backend job fetch or retain
 full Git history because the program-control tests verify immutable historical

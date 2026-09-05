@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0111",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PR_READY",
+  "to_state": "BLOCKED",
+  "prior_revision": 111,
+  "new_revision": 112,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "da5b7e2db461805e53e25272f7405c5a57ecc157e9e5414c8639bae63421951e",
+  "new_state_digest": "45414abaf771632f3275bc424238f9d297c2870fa28cf7bd12ce702b45811305",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "PR121 exact4480 first-cycle inventory is complete and all actual jobs terminal:27 success,2 failure,1 declared skip. OCI rejects actual Hermes Tornado6.5.6 CVE-2026-82397; external CodeQL reports five blocking boundary alerts. Retain prior candidate/review and failed CI; standing overnight authority permits bounded corrections with a new candidate, full gate and independent review.",
+  "started_at": "2026-09-05T08:27:36.557944Z",
+  "finished_at": "2026-09-05T08:27:36.557944Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+    "source_tree": "4d47527149f1c4db3c1bcc9c56125ef4ea73b836",
+    "source_program_tree": "22fa7bb15f8554b94e2dd6676c37681abf2d5af6",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0112.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0111.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0111.json",
+      "sha256": "3e18aa9074f58a0017d00f0d2157f27fb50210fc51a63d9b72b2024c6f8f3cda",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0112.json",
+      "sha256": "df272347f6098b59431fc06ed247973e6ae36a043d9f17850474a95dde75c1d7",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-CI-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. PR121 exact4480 first-cycle inventory is complete and all actual jobs terminal:27 success,2 failure,1 declared skip. OCI rejects actual Hermes Tornado6.5.6 CVE-2026-82397; external CodeQL reports five blocking boundary alerts. Retain prior candidate/review and failed CI; standing overnight authority permits bounded corrections with a new candidate, full gate and independent review.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+        "evidence/states/program-state-revision-0111.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0111.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE"
+}

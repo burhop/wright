@@ -1,0 +1,30 @@
+{
+  "classification": "public SHA-256 source integrity digest, not a credential",
+  "mapping_commit": "ea9ad2680fe0b92b9388025162d6fd2eaccce2e4",
+  "mapping_path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+  "original_mapping_sha256": "44bef130d1cf5d62676efe802aa9981c58f4b82dcc622f7d9dba1fde8ed5f67d",
+  "tested_source": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+  "original_spec_sha256": "9120973e6e80f6ad700058a758d5b02ff0d0911a440acd375ae517734949fcff",
+  "adapted_spec_sha256": "babdf36b0ae8544c5383774059c190cfe442b56311fdbd9d4a376f31a20c3978",
+  "adapted_spec_lf_sha256": "db299684d19c030ebfa38514253583ba7096a8bdca253177f22fd290f97006a4",
+  "source_hook_lf_sha256": "f62195c547fae4fc4164f3d8d7bb7b7ac924acb4566a7fdb4fb7ae1c28d38277",
+  "source_hook_bytes": 421,
+  "removing_exact_hook_reconstructs_original_git_blob": true,
+  "key_only_rename": true,
+  "renamed_mapping_sha256": "a586bc540e21556f747d9524341662ceb21d566ce7742defb62dff5173494c96",
+  "scanner_config_sha256": "69e8c7d0923eead407b001d035547fdf48aea1a3cbc9333273615cebbd0fbf00",
+  "scanner_image": "sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f",
+  "original_fingerprint": "ea9ad2680fe0b92b9388025162d6fd2eaccce2e4:docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt:generic-api-key:10",
+  "retained_original_failure": [
+    {
+      "filename": "original-dev-push-gate-08a7135e.log",
+      "sha256": "6554016d2a2d5cf925389718b2f99f71be1f9b5cb46900709bf3edac28de63ad",
+      "bytes": 83964
+    },
+    {
+      "filename": "original-dev-push-observation-08a7135e.json",
+      "sha256": "2aa26316037795dbbe46874ee1878b1d1c4016eb4ed37ce69c3023e217e91f7b",
+      "bytes": 645
+    }
+  ]
+}

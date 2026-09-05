@@ -1,0 +1,27 @@
+{
+  "accepted": [
+    "safe.txt",
+    "folder/safe.txt",
+    "folder\\safe.txt",
+    "résumé.txt",
+    "folder/name..txt",
+    "folder/space name.txt"
+  ],
+  "rejected": [
+    "",
+    "../outside.txt",
+    "folder/../outside.txt",
+    "./safe.txt",
+    "folder/./safe.txt",
+    "/outside.txt",
+    "\\outside.txt",
+    "C:\\outside.txt",
+    "C:outside.txt",
+    "\\\\server\\share\\outside.txt",
+    "folder//safe.txt",
+    "folder\\\\safe.txt",
+    "folder/",
+    "safe.txt:stream",
+    "safe\u0000.txt"
+  ]
+}

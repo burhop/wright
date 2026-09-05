@@ -42,3 +42,43 @@ paths = [
 ]
 regexTarget = "match"
 regexes = ['''run_key"\s*:\s*"[0-9a-f]{64}"''']
+
+[[allowlists]]
+description = "Independently classified native evidence integrity values; exact path, rule and matched key/value only. Credentials and other hashes remain scanned."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^specs/079-wright-native-authoring/evidence/native-browser-runs-20260904\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^token": "85a7fe4e32f6e87173de0abc9f8e1a06aadc7a3d53a526b32346b29efc9664f9"$''',
+  '''^token": "f881cb6eb68133aae3965e620a26dec1ebe02528f24f5f34530ba6d87f5d1087"$''',
+  '''^token": "b8a60a3ccaee8e7c99968efa8480a5f66960a4d0c013ad693597ac4842c06b6f"$''',
+  '''^token": "e81793d08608fc8a5e6a050294edb3d8ac76278de190515e0f15e280170ab5a2"$''',
+  '''^token": "38ead5e23bad82ed8721957741b1d0a829148eb004a597e5ea696286985f7755"$''',
+]
+
+[[allowlists]]
+description = "Independently classified native evidence integrity values; exact path, rule and matched key/value only. Credentials and other hashes remain scanned."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^specs/079-wright-native-authoring/evidence/native-browser-runs-997e5610\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^token": "6bc7d0e0698fdda9b8df1d45cb4a124ce12552398db8d5e7963824dcf7136de7"$''',
+  '''^token": "5626fa96e69d133f54dca002ab97986f91a207bec3516f7939425ad0f703362b"$''',
+  '''^token": "aac65b05b6d414bee23698297acf774d584dae43931170fe1596a7d112fa6646"$''',
+  '''^token": "aa1fd37fb049ebb1f85aad93feff9901bc2dd585347ec61e8eb5fcad42116cd7"$''',
+  '''^token": "3b418b4fc101c574a9a4b53afe97e6667f4f3e516866852169c00595322be331"$''',
+]
+
+[[allowlists]]
+description = "Independently classified native evidence integrity values; exact path, rule and matched key/value only. Credentials and other hashes remain scanned."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/required-acceptance-60ef8672\.json\.txt$''']
+regexTarget = "match"
+regexes = [
+  '''^test_native_process_api\.py": "b28d471e177d1d5363d35c2c09d01dc79dc6621e8b103baf332483e37b97e5fb"$''',
+  '''^test_native_process_execution_api\.py": "8a719d23c560baabd4f8c9038765effd434aca71250dfdd6c20664904e6078ed"$''',
+  '''^test_program_status_api\.py": "e0b8a13da4296378531d686f46b0eee7fc263813ff436325d40b3a1c36f4c40d"$''',
+]

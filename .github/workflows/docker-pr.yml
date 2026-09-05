@@ -6,12 +6,22 @@ on:
     paths:
       - .github/workflows/docker-build.yml
       - .github/workflows/docker-pr.yml
+      - .dockerignore
       - docker/**
       - apps/**
       - packages/**
+      - src/**
+      - hermes-plugin-wright/**
+      - integrations/rivet/editor/**
+      - integrations/rivet/runner/**
       - pyproject.toml
       - uv.lock
+      - package.json
       - package-lock.json
+      - README.md
+      - scripts/release/scan_image.py
+      - scripts/release/vulnerability_policy.py
+      - scripts/check-dev-*
 
 permissions:
   contents: read
@@ -45,14 +55,12 @@ jobs:
       - name: Smoke local image without rebuilding
         run: WRIGHT_DOCKER_IMAGE="wright:pr-${GITHUB_SHA}" WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
       - name: Scan local image with blocking policy
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        id: scan
+        run: python -m scripts.release.scan_image --image "wright:pr-${GITHUB_SHA}" --output test-results/docker-image-security/ci
+      - name: Retain image scan identity and findings
+        if: ${{ always() && steps.scan.outcome != 'skipped' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          image-ref: wright:pr-${{ github.sha }}
-          format: json
-          output: trivy.json
-          exit-code: "0"
-          ignore-unfixed: true
-          vuln-type: os,library
-          severity: HIGH,CRITICAL
-      - name: Enforce release vulnerability policy
-        run: python -c "from pathlib import Path; from scripts.release.vulnerability_policy import evaluate_report; evaluate_report(Path('trivy.json'), Path('docker/release-policy.json'))"
+          name: image-vulnerability-policy
+          path: test-results/docker-image-security/ci/public
+          if-no-files-found: error

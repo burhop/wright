@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0099",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "INDEPENDENTLY_VERIFIED",
+  "prior_revision": 99,
+  "new_revision": 100,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "8f7211c06896cdfff73412be5b523c23c491717073f05999647c117363bf6249",
+  "new_state_digest": "e8718e8ce1dba4a6e9da4b675ba8a6a4231e4631086ffa0affe97069489b3631",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Independent entire-candidate technical review passed for frozen60ef8672 with zero open actionable findings, exact schema-bound record and independently validated freeze. Full local merge gate passed. Scope remains T001-T026; human study, push gate, CI and dev deployment remain pending.",
+  "started_at": "2026-09-05T02:52:57.403510Z",
+  "finished_at": "2026-09-05T02:52:57.403510Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "425c2b346348fb68301fc0b7ed477a8e290f3abe",
+    "source_tree": "f3d9108da737b557daeff91559f1ab59f61b5177",
+    "source_program_tree": "04d0b34c93001a0ff4e1704c97d722faa2e3994c",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0100.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0099.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0099.json",
+      "sha256": "3fc261c72bd1a1b4339c939304431895f7105c3841598cfe51f77ca8384dc23e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0100.json",
+      "sha256": "e5ddee432f23ee108abcdf88b3a97d302799cd8798a00729503ad83aa22d5999",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Independent entire-candidate technical review passed for frozen60ef8672 with zero open actionable findings, exact schema-bound record and independently validated freeze. Full local merge gate passed. Scope remains T001-T026; human study, push gate, CI and dev deployment remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "425c2b346348fb68301fc0b7ed477a8e290f3abe",
+        "60ef8672f1f61c2f4942e618638ec8901e9aa9a0"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "F02 deployed browser verification remains pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0099.json",
+  "next_action": "PREPARE_NATIVE_SCOPED_PR"
+}

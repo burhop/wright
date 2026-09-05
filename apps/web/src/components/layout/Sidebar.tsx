@@ -28,6 +28,13 @@ export function Sidebar() {
       order: 2,
     },
     {
+      id: "native-processes",
+      label: "Engineering Processes",
+      path: "/native-processes",
+      icon: "layout-dashboard",
+      order: 2,
+    },
+    {
       id: "tool-registry",
       label: "Tool Registry",
       path: "/tool-registry",

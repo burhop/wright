@@ -1,0 +1,38 @@
+# Native Milestone Verification and Handoff
+
+Owning checkout: `D:/repos/wright/.local-run/native-process-milestone/wright`; branch `codex/079-native-process-milestone`. Original root checkout/uncommitted files are preserved. Commit `6daeb214` preserves the original proposal.
+
+## Current checkpoint
+
+The existing independent implementation dashboard is at [http://127.0.0.1:8765/](http://127.0.0.1:8765/). It reads published task/evidence records without requiring Wright to run. The local Wright product preview is separately at `http://127.0.0.1:5188/native-processes` while the isolated preview service is running; it is not the implementation dashboard.
+
+The combined native build passed 60 API/runtime/artifact checks and 10 Chromium journeys, including two real server journeys that downloaded all three example outputs and verified failure/linked correction. The actual HTTP CLI independently inspected the same corrected browser run (`b2b8c454-f599-4e50-bcd8-9b2a6b304498`) successfully. A complete real local stdio tool process produced an artifact with provenance and verified teardown. OS process-death recovery and isolated wheel-sourced execution/restart/relocation have separate evidence. See the [combined checkpoint and its limitations](evidence/combined-native-checkpoint-20260904.md), [tool proof](evidence/native-runtime-correction-and-tool-proof.md), and [independent product review](evidence/independent-product-review-997e5610.md). Two editor conformance/undo findings are being corrected. Full candidate gates, remaining distribution verification, real human usability and dev delivery remain pending; historical failures are preserved.
+
+## Reproduce the actual browser journey
+
+Use a disposable registered workspace and the corresponding running API/web build. Set `WRIGHT_NATIVE_LIVE_SESSION` to that session, `PLAYWRIGHT_BASE_URL` to the web origin, and `PLAYWRIGHT_INCLUDE_LIVE=1`. Run `npx playwright test tests/ui-integration/native-process-live.spec.ts --project=chromium --workers=1`. This journey uses real requests, validates downloaded bytes/digests/provenance, retains failed run evidence, and checks linked correction and reload. It creates new process identities in the selected workspace. Generic browser runs skip this opt-in file when the explicitly prepared session is absent; that skip is not native live-journey evidence.
+
+The safe local tool fixture is opt-in: set `WRIGHT_NATIVE_MCP_PROTOCOL=1`, then run `python -m pytest packages/workspace_service/tests/test_native_process_mcp_protocol.py -q`. Optional `WRIGHT_NATIVE_MCP_EVIDENCE` writes evidence beneath the current test worktree. Both adapter and complete process paths launch the real stdio child and verify teardown. This fixture does not qualify any engineering catalog server or benchmark case.
+
+## Acceptance journey
+
+1. Inspect dashboard capabilities, current work, remaining criteria and quality gaps.
+2. Create/configure/connect/save/reopen in an authorized workspace.
+3. Execute each example, inspect actual artifact bytes/provenance and independent assertions.
+4. Inject failure, inspect blocked dependencies, correct/rerun and retain linked immutable history.
+5. Cancel/refresh and verify no late artifact publication; exercise restart interruption.
+6. Run the same definition headlessly and compare semantic/artifact digests.
+7. Preflight/invoke exact local MCP; reject changed/denied binding without invocation.
+8. Keyboard/click-only/narrow/zoom checks and actual independent human protocol.
+9. Offline/package/migration/recovery/legacy checks, independent candidate review and required gates.
+10. PR merge to dev; verify exact built/deployed identity and browser journeys; publish final status.
+
+## API namespace amendment
+
+Use the canonical `/api/native-processes/documents` collection to list or create processes, `/api/native-processes/documents/{process_id}` to reopen or save, and `/api/native-processes/documents/{process_id}/runs` to inspect history or start a run. Supply the existing workspace `session_id` query and authentication on each request; save/run retain the required expected token and request identity. UI and CLI use these resources through the same service.
+
+For example, a valid process named `contract` reopens at `/api/native-processes/documents/contract`; `/api/native-processes/contract` still returns the language contract. The IDs `bindings`, `examples`, `runs`, `check` and `documents` work the same way. Legacy document routes remain compatibility aliases, while canonical resources address every language-valid ID without ambiguity. Run inspection, events, cancellation and artifact download remain under `/api/native-processes/runs/{run_id}`. See the [API table](contracts/implementation-appendix.md#api-and-headless) for payloads.
+
+## Evidence log
+
+- 2026-09-04: live dev observed at `7404a549`; independent read-only architecture/dashboard investigations completed. Planning evidence only.

@@ -4,19 +4,679 @@
   "title": "Wright Engineering Process Platform Work Registry",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "program_id", "task_sources", "active_assignments"],
+  "required": [
+    "schema_version",
+    "program_id",
+    "task_sources",
+    "active_assignments"
+  ],
   "properties": {
-    "schema_version": { "const": "1.0.0" },
-    "program_id": { "const": "engineering-process-platform" },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "program_id": {
+      "const": "engineering-process-platform"
+    },
     "task_sources": {
       "type": "array",
       "maxItems": 100,
-      "items": { "$ref": "#/$defs/taskSource" }
+      "items": {
+        "$ref": "#/$defs/taskSource"
+      }
     },
     "active_assignments": {
       "type": "array",
       "maxItems": 10,
-      "items": { "$ref": "#/$defs/assignment" }
+      "items": {
+        "$ref": "#/$defs/assignment"
+      }
+    },
+    "milestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "feature_id",
+        "tasks_path",
+        "scope_revision",
+        "scope_history",
+        "language_authority",
+        "capabilities",
+        "tasks",
+        "acceptance",
+        "checks",
+        "evidence",
+        "blockers",
+        "next_task_ids",
+        "examples",
+        "delivery"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "const": "NATIVE-01"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "feature_id": {
+          "const": "EPP-N01"
+        },
+        "tasks_path": {
+          "const": "specs/079-wright-native-authoring/tasks.md"
+        },
+        "scope_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scope_history": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revision",
+              "observed_at",
+              "added_task_ids",
+              "removed_task_ids",
+              "reason"
+            ],
+            "properties": {
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "added_task_ids": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^T[0-9]{3}$"
+                }
+              },
+              "removed_task_ids": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^T[0-9]{3}$"
+                }
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            }
+          }
+        },
+        "language_authority": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 500,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "activity",
+              "owner",
+              "integration_required",
+              "integration_exemption",
+              "blocker_ids"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^T[0-9]{3}$"
+              },
+              "activity": {
+                "enum": [
+                  "planned",
+                  "active",
+                  "blocked",
+                  "verifying",
+                  "idle"
+                ]
+              },
+              "owner": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "integration_required": {
+                "type": "boolean"
+              },
+              "integration_exemption": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "blocker_ids": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                }
+              }
+            }
+          }
+        },
+        "acceptance": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "task_ids",
+              "required_check_ids"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^AC[0-9]{2}$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "task_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^T[0-9]{3}$"
+                }
+              },
+              "required_check_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                }
+              }
+            }
+          }
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "label",
+              "stage",
+              "kind",
+              "task_ids",
+              "source_paths",
+              "independent_required"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "stage": {
+                "enum": [
+                  "verification",
+                  "integration"
+                ]
+              },
+              "kind": {
+                "enum": [
+                  "automated_test",
+                  "technical_review",
+                  "human_review",
+                  "live_tool",
+                  "packaging",
+                  "dev_integration",
+                  "dev_deployment"
+                ]
+              },
+              "task_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^T[0-9]{3}$"
+                }
+              },
+              "source_paths": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "type": "string",
+                  "pattern": "^(?:apps|packages|scripts|tests|src|specs|docs|docker)(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                }
+              },
+              "independent_required": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "check_id",
+              "attempt",
+              "result",
+              "observed_at",
+              "tested_commit",
+              "tested_tree",
+              "scope_sha256",
+              "author_id",
+              "verifier_id",
+              "verification_actor_kind",
+              "summary",
+              "artifacts",
+              "counts"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              },
+              "check_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              },
+              "attempt": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "result": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "skipped",
+                  "not_run",
+                  "unavailable",
+                  "inconclusive"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "tested_commit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "tested_tree": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "scope_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "author_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "verifier_id": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "verification_actor_kind": {
+                "enum": [
+                  "automated",
+                  "agent",
+                  "human"
+                ]
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "artifacts": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "path",
+                    "sha256",
+                    "commit"
+                  ],
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "commit": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{40}$"
+                    }
+                  }
+                }
+              },
+              "counts": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "total",
+                      "passed",
+                      "failed",
+                      "skipped",
+                      "not_run"
+                    ],
+                    "properties": {
+                      "total": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "passed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "failed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "skipped": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "not_run": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "summary",
+              "owner",
+              "required_action",
+              "task_ids",
+              "check_ids",
+              "observed_at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "owner": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "required_action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "task_ids": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^T[0-9]{3}$"
+                }
+              },
+              "check_ids": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 500,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                }
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "next_task_ids": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 30,
+          "items": {
+            "type": "string",
+            "pattern": "^T[0-9]{3}$"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "execution_mode",
+              "check_ids",
+              "definition_path"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "execution_mode": {
+                "enum": [
+                  "fixture",
+                  "local_computation",
+                  "live_mcp"
+                ]
+              },
+              "check_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+                }
+              },
+              "definition_path": {
+                "type": "string",
+                "pattern": "^(?:apps|packages|scripts|tests|src|specs|docs)/[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+              }
+            }
+          }
+        },
+        "delivery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "branch",
+            "target_branch",
+            "baseline_commit",
+            "candidate_commit",
+            "pull_requests",
+            "merged_commit",
+            "deployment_check_ids"
+          ],
+          "properties": {
+            "branch": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "target_branch": {
+              "const": "dev"
+            },
+            "baseline_commit": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "candidate_commit": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pull_requests": {
+              "type": "array",
+              "minItems": 0,
+              "maxItems": 30,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "url",
+                  "head_commit",
+                  "observed_at"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "pattern": "^https://github[.]com/burhop/wright/pull/[1-9][0-9]*$"
+                  },
+                  "head_commit": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{40}$"
+                  },
+                  "observed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "merged_commit": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "deployment_check_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -26,44 +686,134 @@
       "maxLength": 500,
       "pattern": "^(?:docs/programs/engineering-process-platform/|specs/[0-9]{3}-[A-Za-z0-9_-]+/)[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
-    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "sha256"],
+      "required": [
+        "path",
+        "sha256"
+      ],
       "properties": {
-        "path": { "$ref": "#/$defs/relativePath" },
-        "sha256": { "$ref": "#/$defs/sha256" }
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "taskSource": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["feature_id", "tasks_path", "roadmap_item_id", "active_feature"],
+      "required": [
+        "feature_id",
+        "tasks_path",
+        "roadmap_item_id",
+        "active_feature"
+      ],
       "properties": {
-        "feature_id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
-        "tasks_path": { "$ref": "#/$defs/relativePath" },
-        "roadmap_item_id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
-        "active_feature": { "type": "boolean" }
+        "feature_id": {
+          "type": "string",
+          "pattern": "^EPP-[A-Z0-9-]+$"
+        },
+        "tasks_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "roadmap_item_id": {
+          "type": "string",
+          "pattern": "^EPP-[A-Z0-9-]+$"
+        },
+        "active_feature": {
+          "type": "boolean"
+        }
       }
     },
     "assignment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["agent_id", "feature_id", "task_id", "task_title", "task_state", "branch", "worktree_id", "lane", "why_this_matters", "observed_at", "evidence"],
+      "required": [
+        "agent_id",
+        "feature_id",
+        "task_id",
+        "task_title",
+        "task_state",
+        "branch",
+        "worktree_id",
+        "lane",
+        "why_this_matters",
+        "observed_at",
+        "evidence"
+      ],
       "properties": {
-        "agent_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,99}$" },
-        "feature_id": { "type": "string", "pattern": "^EPP-[A-Z0-9-]+$" },
-        "task_id": { "type": "string", "pattern": "^T[0-9]{3}$" },
-        "task_title": { "type": "string", "minLength": 1, "maxLength": 300 },
-        "task_state": { "enum": ["assigned", "in_progress", "blocked", "verifying"] },
-        "branch": { "type": "string", "minLength": 1, "maxLength": 255 },
-        "worktree_id": { "type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9-]{2,99}$" },
-        "lane": { "enum": ["integration", "continued_development", "verification", "unavailable"] },
-        "why_this_matters": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "observed_at": { "$ref": "#/$defs/timestamp" },
-        "evidence": { "type": "array", "minItems": 1, "maxItems": 25, "items": { "$ref": "#/$defs/evidence" } }
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,99}$"
+        },
+        "feature_id": {
+          "type": "string",
+          "pattern": "^EPP-[A-Z0-9-]+$"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^T[0-9]{3}$"
+        },
+        "task_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "task_state": {
+          "enum": [
+            "assigned",
+            "in_progress",
+            "blocked",
+            "verifying"
+          ]
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "worktree_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z0-9][a-z0-9-]{2,99}$"
+        },
+        "lane": {
+          "enum": [
+            "integration",
+            "continued_development",
+            "verification",
+            "unavailable"
+          ]
+        },
+        "why_this_matters": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
       }
     }
   }

@@ -1,4 +1,5 @@
 from pathlib import Path
+import shlex
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +28,40 @@ def test_public_alpha_safety_runs_gitleaks_and_trufflehog() -> None:
         "--exclude-globs=uv.lock,package-lock.json",
     ]:
         assert expected in workflow
+
+
+def test_public_alpha_safety_audits_locked_runtime_before_policy_evaluation() -> None:
+    workflow = read_text(".github/workflows/public-alpha-safety.yml")
+    commands = [line.strip() for line in workflow.splitlines()]
+    audit_index = next(
+        index
+        for index, command in enumerate(commands)
+        if command.startswith("uv run ") and "pip-audit" in command
+    )
+    audit = shlex.split(commands[audit_index])
+    options = audit[2 : audit.index("--with")]
+
+    assert "--locked" in options
+    assert "--extra" in options
+    assert options[options.index("--extra") + 1] == "runtime"
+    assert audit[audit.index("--with") + 1 : -2] == [
+        "pip-audit",
+        "pip-audit",
+        "--format",
+        "json",
+        "--output",
+        "pip-audit.json",
+    ]
+    # Findings produce a nonzero audit exit; the policy evaluator must still run
+    # and its own failure must remain blocking.
+    assert audit[-2:] == ["||", "true"]
+    evaluator = shlex.split(commands[audit_index + 1])
+    assert evaluator[:2] == ["python", "-c"]
+    assert len(evaluator) == 3
+    assert (
+        "evaluate_pip_audit(Path('pip-audit.json'), "
+        "Path('.github/dependency-audit-policy.json'))"
+    ) in evaluator[2]
 
 
 def test_security_scan_scripts_use_pinned_scanner_images() -> None:

@@ -1,0 +1,1536 @@
+{
+  "id": "NATIVE-01",
+  "title": "Native engineering process: create to verified output",
+  "feature_id": "EPP-N01",
+  "scope_revision": 1,
+  "scope_history": [
+    {
+      "revision": 1,
+      "observed_at": "2026-09-04T21:37:44Z",
+      "added_task_ids": [
+        "T001",
+        "T002",
+        "T003",
+        "T004",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T009",
+        "T010",
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015",
+        "T016",
+        "T017",
+        "T018",
+        "T019",
+        "T020",
+        "T021",
+        "T022",
+        "T023",
+        "T024",
+        "T025",
+        "T026",
+        "T027",
+        "T028",
+        "T029",
+        "T030",
+        "T031",
+        "T032"
+      ],
+      "removed_task_ids": [],
+      "reason": "Initial independently reviewed bounded 32-task milestone; standing user scope includes native semantics, execution and dashboard."
+    }
+  ],
+  "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "observed_at": "2026-09-04T22:00:00Z",
+  "candidate_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
+  "capabilities": [
+    "An immutable sample process has an implemented read-only text and diagram view (F02, merged PR117). Actual deployed-browser verification remains pending."
+  ],
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "T001",
+      "activity": "planned",
+      "owner": "dashboard",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T002",
+      "title": "T002",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T003",
+      "title": "T003",
+      "activity": "active",
+      "owner": "dashboard",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T004",
+      "title": "T004",
+      "activity": "active",
+      "owner": "dashboard",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T005",
+      "title": "T005",
+      "activity": "planned",
+      "owner": "dashboard",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T006",
+      "title": "T006",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T007",
+      "title": "T007",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T008",
+      "title": "T008",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T009",
+      "title": "T009",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T010",
+      "title": "T010",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T011",
+      "title": "T011",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T012",
+      "title": "T012",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T013",
+      "title": "T013",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T014",
+      "title": "T014",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T015",
+      "title": "T015",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T016",
+      "title": "T016",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T017",
+      "title": "T017",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T018",
+      "title": "T018",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T019",
+      "title": "T019",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T020",
+      "title": "T020",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T021",
+      "title": "T021",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T022",
+      "title": "T022",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T023",
+      "title": "T023",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T024",
+      "title": "T024",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T025",
+      "title": "T025",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T026",
+      "title": "T026",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T027",
+      "title": "T027",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T028",
+      "title": "T028",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": ["B-HUMAN"]
+    },
+    {
+      "id": "T029",
+      "title": "T029",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T030",
+      "title": "T030",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_tested",
+      "integration_required": true,
+      "blocker_ids": []
+    },
+    {
+      "id": "T031",
+      "title": "T031",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_applicable",
+      "integration_required": false,
+      "blocker_ids": []
+    },
+    {
+      "id": "T032",
+      "title": "T032",
+      "activity": "planned",
+      "owner": "coordinator",
+      "implemented": false,
+      "verification": "not_tested",
+      "integration": "not_applicable",
+      "integration_required": false,
+      "blocker_ids": []
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC01",
+      "title": "Truthful current dashboard",
+      "task_ids": ["T001", "T003", "T004", "T005", "T032"],
+      "check_ids": ["Q-DASHBOARD", "Q-FINAL"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-DASHBOARD", "Q-FINAL"]
+    },
+    {
+      "id": "AC02",
+      "title": "Official shared native language and quantities",
+      "task_ids": ["T006", "T007"],
+      "check_ids": ["Q-SEMANTICS"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-SEMANTICS"]
+    },
+    {
+      "id": "AC03",
+      "title": "Accessible authoring, save and reopen",
+      "task_ids": [
+        "T009",
+        "T010",
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015",
+        "T016"
+      ],
+      "check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"]
+    },
+    {
+      "id": "AC04",
+      "title": "Shared UI and headless execution",
+      "task_ids": ["T017", "T018", "T021", "T023"],
+      "check_ids": ["Q-RUNTIME"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-RUNTIME"]
+    },
+    {
+      "id": "AC05",
+      "title": "Real artifacts and provenance",
+      "task_ids": ["T019", "T022", "T023"],
+      "check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"]
+    },
+    {
+      "id": "AC06",
+      "title": "Failure, cancellation and recovery",
+      "task_ids": ["T017", "T020", "T022", "T023"],
+      "check_ids": ["Q-RUNTIME"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-RUNTIME"]
+    },
+    {
+      "id": "AC07",
+      "title": "Exact real local MCP integration",
+      "task_ids": ["T024", "T025"],
+      "check_ids": ["Q-MCP"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-MCP"]
+    },
+    {
+      "id": "AC08",
+      "title": "Three examples and independent assertions",
+      "task_ids": ["T007", "T008", "T018", "T026"],
+      "check_ids": ["Q-EXAMPLES"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-EXAMPLES"]
+    },
+    {
+      "id": "AC09",
+      "title": "Offline, distribution and legacy compatibility",
+      "task_ids": ["T009", "T029"],
+      "check_ids": ["Q-PACKAGING"],
+      "status": "not_tested",
+      "missing_check_ids": ["Q-PACKAGING"]
+    },
+    {
+      "id": "AC10",
+      "title": "Independent reviews and verified dev deployment",
+      "task_ids": ["T027", "T028", "T029", "T030", "T031", "T032"],
+      "check_ids": [
+        "Q-REVIEW",
+        "Q-HUMAN",
+        "Q-PACKAGING",
+        "Q-GATES",
+        "Q-INTEGRATION",
+        "Q-DEV",
+        "Q-FINAL"
+      ],
+      "status": "not_tested",
+      "missing_check_ids": [
+        "Q-REVIEW",
+        "Q-HUMAN",
+        "Q-PACKAGING",
+        "Q-GATES",
+        "Q-INTEGRATION",
+        "Q-DEV",
+        "Q-FINAL"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "Q-PLANNING",
+      "label": "Baseline and independently reviewed contracts",
+      "stage": "verification",
+      "kind": "technical_review",
+      "task_ids": ["T001", "T002"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-DASHBOARD",
+      "label": "Dashboard projection, readers and browser journey",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T003", "T004", "T005"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-SEMANTICS",
+      "label": "Native language and quantity contracts",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T006", "T007"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-EXAMPLES",
+      "label": "Three examples, independent outputs and negative controls",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T008", "T018", "T026"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-PERSISTENCE",
+      "label": "Persistence, workspace authorization and failure recovery",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T009", "T010", "T011"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-EDITOR",
+      "label": "Accessible native authoring, save and reopen",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T012", "T013", "T014", "T015", "T016"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-RUNTIME",
+      "label": "Shared runtime, cancellation, failure and recovery",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T017", "T018", "T020", "T021", "T022", "T023"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-ARTIFACTS",
+      "label": "Actual indexed artifacts and provenance",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T019"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-MCP",
+      "label": "Exact real local MCP and teardown evidence",
+      "stage": "verification",
+      "kind": "live_tool",
+      "task_ids": ["T024", "T025"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-REVIEW",
+      "label": "Independent exact-candidate technical review",
+      "stage": "verification",
+      "kind": "technical_review",
+      "task_ids": ["T027"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-HUMAN",
+      "label": "Actual independent human usability study",
+      "stage": "verification",
+      "kind": "human_review",
+      "task_ids": ["T028"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-PACKAGING",
+      "label": "Native/Docker/offline and legacy compatibility",
+      "stage": "verification",
+      "kind": "packaging",
+      "task_ids": ["T029"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-GATES",
+      "label": "Required exact-candidate push and merge gates",
+      "stage": "verification",
+      "kind": "automated_test",
+      "task_ids": ["T030"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-DEV",
+      "label": "Actual integrated build health and browser journeys",
+      "stage": "verification",
+      "kind": "dev_deployment",
+      "task_ids": ["T031"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-FINAL",
+      "label": "Final dashboard evidence and remaining obligations",
+      "stage": "verification",
+      "kind": "technical_review",
+      "task_ids": ["T032"],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    },
+    {
+      "id": "Q-INTEGRATION",
+      "label": "Native milestone changes integrated through dev PRs",
+      "stage": "integration",
+      "kind": "dev_integration",
+      "task_ids": [
+        "T001",
+        "T002",
+        "T003",
+        "T004",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T009",
+        "T010",
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015",
+        "T016",
+        "T017",
+        "T018",
+        "T019",
+        "T020",
+        "T021",
+        "T022",
+        "T023",
+        "T024",
+        "T025",
+        "T026",
+        "T027",
+        "T028",
+        "T029",
+        "T030"
+      ],
+      "status": "not_tested",
+      "evidence_id": null,
+      "observed_at": null,
+      "tested_commit": null,
+      "coverage_current": null,
+      "counts": null,
+      "summary": "No result has been recorded for this required check.",
+      "artifact_urls": []
+    }
+  ],
+  "counts": {
+    "implementation": {
+      "completed": 0,
+      "total": 32
+    },
+    "verification": {
+      "completed": 0,
+      "total": 32
+    },
+    "integration": {
+      "completed": 0,
+      "total": 30,
+      "not_applicable": 2
+    }
+  },
+  "blockers": [
+    {
+      "id": "B-HUMAN",
+      "summary": "Independent human participants and study results are pending.",
+      "owner": "project maintainer",
+      "required_action": "Arrange actual independent participants and execute the preregistered usability protocol.",
+      "task_ids": ["T028"],
+      "check_ids": ["Q-HUMAN"],
+      "observed_at": "2026-09-04T21:37:44Z"
+    },
+    {
+      "id": "B-F02-DEPLOY",
+      "summary": "F02 merged; actual deployed-browser verification has not been recorded.",
+      "owner": "coordinator",
+      "required_action": "Verify the deployed build and changed process-view journey; preserve the missing evidence until observed.",
+      "task_ids": ["T001"],
+      "check_ids": [],
+      "observed_at": "2026-09-04T21:37:44Z"
+    }
+  ],
+  "next_task_ids": ["T003", "T004", "T005", "T006"],
+  "examples": [
+    {
+      "id": "EX-DOCUMENT",
+      "title": "Generate and review an engineering document",
+      "execution_mode": "local_computation",
+      "check_ids": ["Q-EXAMPLES"],
+      "definition_path": "src/wright_engineering/static/native-processes/document.json",
+      "maturity": "planned"
+    },
+    {
+      "id": "EX-QUANTITY",
+      "title": "Calculate an engineering quantity with units",
+      "execution_mode": "local_computation",
+      "check_ids": ["Q-EXAMPLES"],
+      "definition_path": "src/wright_engineering/static/native-processes/quantity.json",
+      "maturity": "planned"
+    },
+    {
+      "id": "EX-REVISION",
+      "title": "Check an artifact, correct a failure and rerun",
+      "execution_mode": "local_computation",
+      "check_ids": ["Q-EXAMPLES"],
+      "definition_path": "src/wright_engineering/static/native-processes/revision.json",
+      "maturity": "planned"
+    }
+  ],
+  "delivery": {
+    "branch": "codex/079-native-process-milestone",
+    "target_branch": "dev",
+    "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+    "candidate_commit": null,
+    "pull_requests": [],
+    "merged_commit": null,
+    "deployment_check_ids": ["Q-DEV"],
+    "deployment_status": "not_tested"
+  },
+  "readiness": {
+    "native_milestone": "in_progress",
+    "benchmark": "not_qualified",
+    "commercial": "not_assessed",
+    "release": "not_authorized",
+    "rivet_migration": "not_started",
+    "rivet_retirement": "not_started"
+  },
+  "source_record": {
+    "schema_version": "1.0.0",
+    "id": "NATIVE-01",
+    "title": "Native engineering process: create to verified output",
+    "feature_id": "EPP-N01",
+    "tasks_path": "specs/079-wright-native-authoring/tasks.md",
+    "scope_revision": 1,
+    "scope_history": [
+      {
+        "revision": 1,
+        "observed_at": "2026-09-04T21:37:44Z",
+        "added_task_ids": [
+          "T001",
+          "T002",
+          "T003",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026",
+          "T027",
+          "T028",
+          "T029",
+          "T030",
+          "T031",
+          "T032"
+        ],
+        "removed_task_ids": [],
+        "reason": "Initial independently reviewed bounded 32-task milestone; standing user scope includes native semantics, execution and dashboard."
+      }
+    ],
+    "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
+    "capabilities": [
+      "An immutable sample process has an implemented read-only text and diagram view (F02, merged PR117). Actual deployed-browser verification remains pending."
+    ],
+    "tasks": [
+      {
+        "id": "T001",
+        "activity": "planned",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T002",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T003",
+        "activity": "active",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T004",
+        "activity": "active",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T005",
+        "activity": "planned",
+        "owner": "dashboard",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T006",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T007",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T008",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T009",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T010",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T011",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T012",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T013",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T014",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T015",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T016",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T017",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T018",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T019",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T020",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T021",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T022",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T023",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T024",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T025",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T026",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T027",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T028",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": ["B-HUMAN"]
+      },
+      {
+        "id": "T029",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T030",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": true,
+        "integration_exemption": null,
+        "blocker_ids": []
+      },
+      {
+        "id": "T031",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": false,
+        "integration_exemption": "Records completion after integration; no self-referential follow-up merge is required.",
+        "blocker_ids": []
+      },
+      {
+        "id": "T032",
+        "activity": "planned",
+        "owner": "coordinator",
+        "integration_required": false,
+        "integration_exemption": "Records completion after integration; no self-referential follow-up merge is required.",
+        "blocker_ids": []
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "AC01",
+        "title": "Truthful current dashboard",
+        "task_ids": ["T001", "T003", "T004", "T005", "T032"],
+        "required_check_ids": ["Q-DASHBOARD", "Q-FINAL"]
+      },
+      {
+        "id": "AC02",
+        "title": "Official shared native language and quantities",
+        "task_ids": ["T006", "T007"],
+        "required_check_ids": ["Q-SEMANTICS"]
+      },
+      {
+        "id": "AC03",
+        "title": "Accessible authoring, save and reopen",
+        "task_ids": [
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016"
+        ],
+        "required_check_ids": ["Q-PERSISTENCE", "Q-EDITOR", "Q-HUMAN"]
+      },
+      {
+        "id": "AC04",
+        "title": "Shared UI and headless execution",
+        "task_ids": ["T017", "T018", "T021", "T023"],
+        "required_check_ids": ["Q-RUNTIME"]
+      },
+      {
+        "id": "AC05",
+        "title": "Real artifacts and provenance",
+        "task_ids": ["T019", "T022", "T023"],
+        "required_check_ids": ["Q-ARTIFACTS", "Q-RUNTIME"]
+      },
+      {
+        "id": "AC06",
+        "title": "Failure, cancellation and recovery",
+        "task_ids": ["T017", "T020", "T022", "T023"],
+        "required_check_ids": ["Q-RUNTIME"]
+      },
+      {
+        "id": "AC07",
+        "title": "Exact real local MCP integration",
+        "task_ids": ["T024", "T025"],
+        "required_check_ids": ["Q-MCP"]
+      },
+      {
+        "id": "AC08",
+        "title": "Three examples and independent assertions",
+        "task_ids": ["T007", "T008", "T018", "T026"],
+        "required_check_ids": ["Q-EXAMPLES"]
+      },
+      {
+        "id": "AC09",
+        "title": "Offline, distribution and legacy compatibility",
+        "task_ids": ["T009", "T029"],
+        "required_check_ids": ["Q-PACKAGING"]
+      },
+      {
+        "id": "AC10",
+        "title": "Independent reviews and verified dev deployment",
+        "task_ids": ["T027", "T028", "T029", "T030", "T031", "T032"],
+        "required_check_ids": [
+          "Q-REVIEW",
+          "Q-HUMAN",
+          "Q-PACKAGING",
+          "Q-GATES",
+          "Q-INTEGRATION",
+          "Q-DEV",
+          "Q-FINAL"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "id": "Q-PLANNING",
+        "label": "Baseline and independently reviewed contracts",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": ["T001", "T002"],
+        "source_paths": ["specs/079-wright-native-authoring"],
+        "independent_required": true
+      },
+      {
+        "id": "Q-DASHBOARD",
+        "label": "Dashboard projection, readers and browser journey",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T003", "T004", "T005"],
+        "source_paths": [
+          "scripts/program_status",
+          "packages/tool_registry/src/tool_registry/program_status.py",
+          "packages/tool_registry/src/tool_registry/milestone_status.py",
+          "apps/web/src/components/program-status",
+          "apps/web/src/services/program-status.ts",
+          "apps/web/src/services/milestone-status.ts"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-SEMANTICS",
+        "label": "Native language and quantity contracts",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T006", "T007"],
+        "source_paths": ["packages/core/src/core/native_process.py"],
+        "independent_required": false
+      },
+      {
+        "id": "Q-EXAMPLES",
+        "label": "Three examples, independent outputs and negative controls",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T008", "T018", "T026"],
+        "source_paths": [
+          "src/wright_engineering/static/native-processes",
+          "packages/workspace_service/src/workspace_service/native_process_runtime.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-PERSISTENCE",
+        "label": "Persistence, workspace authorization and failure recovery",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T009", "T010", "T011"],
+        "source_paths": [
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service/native_process_service.py",
+          "apps/api/src/api/routers/native_process.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-EDITOR",
+        "label": "Accessible native authoring, save and reopen",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T012", "T013", "T014", "T015", "T016"],
+        "source_paths": [
+          "apps/web/src/components/native-process",
+          "apps/web/src/services/native-process.ts",
+          "apps/web/src/components/pages/NativeProcessPage.tsx"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-RUNTIME",
+        "label": "Shared runtime, cancellation, failure and recovery",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T017", "T018", "T020", "T021", "T022", "T023"],
+        "source_paths": [
+          "packages/workspace_service/src/workspace_service/native_process_runtime.py",
+          "packages/workspace_service/src/workspace_service/native_process_service.py",
+          "apps/api/src/api/routers/native_process.py",
+          "apps/web/src/components/native-process"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-ARTIFACTS",
+        "label": "Actual indexed artifacts and provenance",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T019"],
+        "source_paths": [
+          "packages/data_vault/src/data_vault/native_process_artifacts.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-MCP",
+        "label": "Exact real local MCP and teardown evidence",
+        "kind": "live_tool",
+        "stage": "verification",
+        "task_ids": ["T024", "T025"],
+        "source_paths": [
+          "packages/workspace_service/src/workspace_service/native_process_mcp.py"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-REVIEW",
+        "label": "Independent exact-candidate technical review",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": ["T027"],
+        "source_paths": [
+          "packages/core/src/core",
+          "packages/data_vault/src/data_vault",
+          "packages/workspace_service/src/workspace_service",
+          "apps/api/src/api",
+          "apps/web/src"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-HUMAN",
+        "label": "Actual independent human usability study",
+        "kind": "human_review",
+        "stage": "verification",
+        "task_ids": ["T028"],
+        "source_paths": [
+          "apps/web/src/components/native-process",
+          "apps/web/src/components/pages/NativeProcessPage.tsx"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-PACKAGING",
+        "label": "Native/Docker/offline and legacy compatibility",
+        "kind": "packaging",
+        "stage": "verification",
+        "task_ids": ["T029"],
+        "source_paths": [
+          "src/wright_engineering",
+          "packages/data_vault/src/data_vault",
+          "docker"
+        ],
+        "independent_required": false
+      },
+      {
+        "id": "Q-GATES",
+        "label": "Required exact-candidate push and merge gates",
+        "kind": "automated_test",
+        "stage": "verification",
+        "task_ids": ["T030"],
+        "source_paths": ["scripts", "packages", "apps", "src"],
+        "independent_required": false
+      },
+      {
+        "id": "Q-DEV",
+        "label": "Actual integrated build health and browser journeys",
+        "kind": "dev_deployment",
+        "stage": "verification",
+        "task_ids": ["T031"],
+        "source_paths": ["packages", "apps", "src"],
+        "independent_required": false
+      },
+      {
+        "id": "Q-FINAL",
+        "label": "Final dashboard evidence and remaining obligations",
+        "kind": "technical_review",
+        "stage": "verification",
+        "task_ids": ["T032"],
+        "source_paths": [
+          "scripts/program_status",
+          "apps/web/src/components/program-status"
+        ],
+        "independent_required": true
+      },
+      {
+        "id": "Q-INTEGRATION",
+        "label": "Native milestone changes integrated through dev PRs",
+        "kind": "dev_integration",
+        "stage": "integration",
+        "task_ids": [
+          "T001",
+          "T002",
+          "T003",
+          "T004",
+          "T005",
+          "T006",
+          "T007",
+          "T008",
+          "T009",
+          "T010",
+          "T011",
+          "T012",
+          "T013",
+          "T014",
+          "T015",
+          "T016",
+          "T017",
+          "T018",
+          "T019",
+          "T020",
+          "T021",
+          "T022",
+          "T023",
+          "T024",
+          "T025",
+          "T026",
+          "T027",
+          "T028",
+          "T029",
+          "T030"
+        ],
+        "source_paths": ["packages", "apps", "src", "scripts"],
+        "independent_required": false
+      }
+    ],
+    "evidence": [],
+    "blockers": [
+      {
+        "id": "B-HUMAN",
+        "summary": "Independent human participants and study results are pending.",
+        "owner": "project maintainer",
+        "required_action": "Arrange actual independent participants and execute the preregistered usability protocol.",
+        "task_ids": ["T028"],
+        "check_ids": ["Q-HUMAN"],
+        "observed_at": "2026-09-04T21:37:44Z"
+      },
+      {
+        "id": "B-F02-DEPLOY",
+        "summary": "F02 merged; actual deployed-browser verification has not been recorded.",
+        "owner": "coordinator",
+        "required_action": "Verify the deployed build and changed process-view journey; preserve the missing evidence until observed.",
+        "task_ids": ["T001"],
+        "check_ids": [],
+        "observed_at": "2026-09-04T21:37:44Z"
+      }
+    ],
+    "next_task_ids": ["T003", "T004", "T005", "T006"],
+    "examples": [
+      {
+        "id": "EX-DOCUMENT",
+        "title": "Generate and review an engineering document",
+        "execution_mode": "local_computation",
+        "check_ids": ["Q-EXAMPLES"],
+        "definition_path": "src/wright_engineering/static/native-processes/document.json"
+      },
+      {
+        "id": "EX-QUANTITY",
+        "title": "Calculate an engineering quantity with units",
+        "execution_mode": "local_computation",
+        "check_ids": ["Q-EXAMPLES"],
+        "definition_path": "src/wright_engineering/static/native-processes/quantity.json"
+      },
+      {
+        "id": "EX-REVISION",
+        "title": "Check an artifact, correct a failure and rerun",
+        "execution_mode": "local_computation",
+        "check_ids": ["Q-EXAMPLES"],
+        "definition_path": "src/wright_engineering/static/native-processes/revision.json"
+      }
+    ],
+    "delivery": {
+      "branch": "codex/079-native-process-milestone",
+      "target_branch": "dev",
+      "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+      "candidate_commit": null,
+      "pull_requests": [],
+      "merged_commit": null,
+      "deployment_check_ids": ["Q-DEV"]
+    }
+  },
+  "attestations": [],
+  "delivery_attested": false
+}

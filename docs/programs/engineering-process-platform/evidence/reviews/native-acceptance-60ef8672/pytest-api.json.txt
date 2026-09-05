@@ -1,0 +1,235 @@
+{
+  "collection_only": true,
+  "exit_code": 0,
+  "selected_files": [
+    "apps/api/tests/test_native_process_api.py",
+    "apps/api/tests/test_native_process_execution_api.py",
+    "apps/api/tests/test_native_process_route_ids.py",
+    "apps/api/tests/test_database_startup.py",
+    "apps/api/tests/test_program_status_api.py"
+  ],
+  "tests": [
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_real_repository_api_authoring_and_programmatic_parity",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 90,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_closed_strict_request_fails_before_mutation[extra]",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 148,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_closed_strict_request_fails_before_mutation[missing]",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 148,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_closed_strict_request_fails_before_mutation[float]",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 148,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_closed_strict_request_fails_before_mutation[duplicate]",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 148,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_closed_strict_request_fails_before_mutation[oversized]",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 148,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_shared_validator_check_and_identity_mismatch",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 177,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_permission_session_and_scope_checks",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 209,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_internal_error_does_not_disclose_path_or_payload",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 233,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_api.py::test_file_preflight_never_accepts_unavailable_input_or_caller_asserted_tool_binding",
+      "file": "apps/api/tests/test_native_process_api.py",
+      "line": 275,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_actual_api_examples_produce_frozen_bytes_and_scoped_evidence[concept-brief]",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 143,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_actual_api_examples_produce_frozen_bytes_and_scoped_evidence[mass-check]",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 143,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_actual_api_examples_produce_frozen_bytes_and_scoped_evidence[package-review]",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 143,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_exact_run_retry_precedes_current_token_and_readiness",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 192,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_cli_check_run_inspect_cancel_uses_identical_api",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 245,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_submitted_run_survives_http_client_disconnect",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 309,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_cancelled_startup_is_drained_before_owner_release",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 362,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_actual_cross_origin_artifact_exposes_verifiable_digest",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 401,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_artifact_tampering_and_route_limits_return_frozen_errors",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 437,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_running_cancel_is_terminal_and_retains_no_late_output",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 483,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_binding_discovery_check_and_denied_submission_use_current_gateway_policy",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 515,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_scope_is_revalidated_after_async_preflight_before_commit",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 642,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_execution_api.py::test_startup_owner_sweep_preserves_indexed_evidence_and_precedes_enqueue",
+      "file": "apps/api/tests/test_native_process_execution_api.py",
+      "line": 684,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[bindings]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[contract]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[examples]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[runs]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[check]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_service_names_remain_usable_document_ids[documents]",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 23,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_native_process_route_ids.py::test_legacy_aliases_remain_available_but_openapi_publishes_canonical_paths",
+      "file": "apps/api/tests/test_native_process_route_ids.py",
+      "line": 128,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_database_startup.py::test_lifespan_fails_before_runtime_construction_on_migration_error",
+      "file": "apps/api/tests/test_database_startup.py",
+      "line": 8,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_database_startup.py::test_lifespan_orders_migration_secret_catalog_before_runtimes",
+      "file": "apps/api/tests/test_database_startup.py",
+      "line": 45,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_program_status_api.py::test_bundle_returns_private_etag_and_exact_bytes",
+      "file": "apps/api/tests/test_program_status_api.py",
+      "line": 57,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_program_status_api.py::test_matching_etag_returns_bodyless_304",
+      "file": "apps/api/tests/test_program_status_api.py",
+      "line": 69,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_program_status_api.py::test_publisher_is_separate_and_no_store",
+      "file": "apps/api/tests/test_program_status_api.py",
+      "line": 81,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_program_status_api.py::test_typed_reader_failure_is_bounded",
+      "file": "apps/api/tests/test_program_status_api.py",
+      "line": 92,
+      "skip_markers": []
+    },
+    {
+      "id": "apps/api/tests/test_program_status_api.py::test_engineer_or_admin_policy_rejects_missing_principal_when_enforced",
+      "file": "apps/api/tests/test_program_status_api.py",
+      "line": 112,
+      "skip_markers": []
+    }
+  ]
+}

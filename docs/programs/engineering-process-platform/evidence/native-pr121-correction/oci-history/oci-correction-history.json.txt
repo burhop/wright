@@ -1,0 +1,425 @@
+{
+  "projection_kind": "Public allowlisted OCI correction history; not full raw evidence or a whole-candidate acceptance report",
+  "assembled_at": "2026-09-05T09:26:15.921884+00:00",
+  "h1_oci_failure": {
+    "id": 101274446563,
+    "run_id": 33954211577,
+    "run_attempt": 1,
+    "head_sha": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+    "html_url": "https://github.com/burhop/wright/actions/runs/33954211577/job/101274446563",
+    "started_at": "2026-09-05T08:03:22Z",
+    "completed_at": "2026-09-05T08:06:29Z",
+    "conclusion": "failure",
+    "built_ci_merge_source": "055ca1058d202ae26d6b7cc329609bf84b062149",
+    "steps": [
+      {
+        "name": "Build local amd64 validation image",
+        "conclusion": "success"
+      },
+      {
+        "name": "Smoke local image without rebuilding",
+        "conclusion": "success"
+      },
+      {
+        "name": "Scan local image with blocking policy",
+        "conclusion": "success"
+      },
+      {
+        "name": "Enforce release vulnerability policy",
+        "conclusion": "failure"
+      }
+    ],
+    "actual_installed_package": {
+      "name": "tornado",
+      "version": "6.5.6",
+      "environment": "Hermes Python environment in the CI image",
+      "installation_log_lines": [
+        2222
+      ]
+    },
+    "policy_rejection": {
+      "vulnerability_id": "CVE-2026-82397",
+      "package": "tornado",
+      "log_lines": [
+        3599
+      ]
+    },
+    "upstream": {
+      "advisory": "https://github.com/tornadoweb/tornado/security/advisories/GHSA-mpf4-983q-p7j4",
+      "release_notes": "https://www.tornadoweb.org/en/stable/releases/v6.5.8.html",
+      "affected_through": "6.5.7",
+      "fixed_version": "6.5.8",
+      "severity": "HIGH"
+    },
+    "evidence": [
+      "h1-job",
+      "h1-full-log",
+      "h1-log-fetch"
+    ]
+  },
+  "historical_old40_diagnostic": {
+    "started_at": "2026-09-05T08:26:19.763311+00:00",
+    "completed_at": "2026-09-05T08:27:07.910169+00:00",
+    "image_id": "sha256:2347e29360668db4d6c67bc9475e9ca9ddd847fe5d8d56086c682505d0f1ba19",
+    "tested_source": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+    "report_sha256": "3ed3b1a026e780b3bcfb4227f86b78a21ac06b5345b9ab93c8ffe094626db249",
+    "policy_verdict": "failed",
+    "findings": [
+      {
+        "id": "CVE-2026-14456",
+        "package": "libssl3t64",
+        "installed": "3.5.6-1~deb13u2",
+        "fixed": "3.5.7-1~deb13u2",
+        "severity": "HIGH"
+      },
+      {
+        "id": "CVE-2026-14456",
+        "package": "openssl",
+        "installed": "3.5.6-1~deb13u2",
+        "fixed": "3.5.7-1~deb13u2",
+        "severity": "HIGH"
+      },
+      {
+        "id": "CVE-2026-14456",
+        "package": "openssl-provider-legacy",
+        "installed": "3.5.6-1~deb13u2",
+        "fixed": "3.5.7-1~deb13u2",
+        "severity": "HIGH"
+      },
+      {
+        "id": "CVE-2026-82397",
+        "package": "tornado",
+        "installed": "6.5.6",
+        "fixed": "6.5.8",
+        "severity": "HIGH"
+      }
+    ],
+    "scope": "Separate retained older-image diagnostic. Its three OpenSSL findings are not attributed to H1. No rebuild or product service execution.",
+    "evidence": [
+      "old40-diagnostic",
+      "old40-report",
+      "old40-scan-log"
+    ]
+  },
+  "first_corrected_build": {
+    "source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "source_tree": "24481038c37477437e96b89ede7ae5a165894535",
+    "started_at": "2026-09-05T08:43:14.840589Z",
+    "completed_at": "2026-09-05T08:44:42.716589Z",
+    "exit_code": 0,
+    "image_id": "sha256:d134d432131509c05047e9f0d334f8acae91be440e20128f789c2543b9a4d54f",
+    "source_archive_sha256": "30fcfd1257eb40c03cdc7eb3c3208cfed05bc093814a9ea1de1c3cd4a1df2d2d",
+    "published": false,
+    "platform": "linux/amd64",
+    "build_invocations_in_this_record": 1,
+    "archive_status": "Windows archive converted 3127 text blobs to CRLF; initial LF-only description was incorrect and is corrected by a separate retained record.",
+    "smoke": {
+      "observed_at": "2026-09-05T08:46:27.081029Z",
+      "exit_code": 0,
+      "build_skipped": true,
+      "checks": "Existing-image dependency, asset, permissions, entrypoint and cold offline API/Hermes readiness checks.",
+      "limits": "The script prints historical backup/recovery instructions; these are not a newly executed backup/restore proof. No published dev image or human acceptance claim."
+    },
+    "evidence": [
+      "first-build",
+      "first-build-log",
+      "first-build-archive",
+      "first-smoke",
+      "first-smoke-log"
+    ]
+  },
+  "archive_description_correction": {
+    "observed_at": "2026-09-05T08:58:56.118556Z",
+    "source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "original_build_observation_sha256": "9bc91d188ab73425ed32501687c75227b46dbbc5ad3cd43b80a9f5a70815045e",
+    "unchanged_git_blobs": 346,
+    "crlf_converted_blobs": 3127,
+    "other_mismatches": [],
+    "original_records_unchanged": true,
+    "evidence": [
+      "archive-correction"
+    ]
+  },
+  "d734_first_image_scan": {
+    "status": "passed",
+    "started_at": "2026-09-05T08:54:29.860746+00:00",
+    "completed_at": "2026-09-05T08:55:14.627551+00:00",
+    "source_commit": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+    "source_tree": "0ad525b039858809a78e1fae1f8ae039d155a8aa",
+    "image_id": "sha256:d134d432131509c05047e9f0d334f8acae91be440e20128f789c2543b9a4d54f",
+    "image_source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "scanner_image": "docker.io/aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e",
+    "scanner_version": "0.70.0",
+    "policy_sha256": "654d26b26b36137052a2b29fc118cb908046a26202544afa10ecbfb9a44117ea",
+    "database": {
+      "Version": 2,
+      "UpdatedAt": "2026-09-05T07:05:47.425805327Z",
+      "NextUpdate": "2026-09-06T07:05:47.425805137Z",
+      "DownloadedAt": "2026-09-05T08:54:59.023196948Z"
+    },
+    "raw_report_sha256": "8780adab01737aaf8aed99f7d639584b652eb796c75029fefe2e4e8a8c434055",
+    "result_sections": 3,
+    "reported_vulnerability_records": 0,
+    "scope": "Recorded historical exact-image scan only; original helper before its later three guard corrections. No full-gate pass follows from this result.",
+    "evidence": [
+      "d734-scan",
+      "d734-report",
+      "d734-scan-log"
+    ]
+  },
+  "corrected_git_lf_build": {
+    "source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "source_tree": "24481038c37477437e96b89ede7ae5a165894535",
+    "started_at": "2026-09-05T08:58:14.198030Z",
+    "completed_at": "2026-09-05T08:59:39.395809Z",
+    "exit_code": 0,
+    "image_id": "sha256:336e4f0d0d479777da9a482586e779e52e286981f1ac04d905c8ab719226569f",
+    "source_archive_sha256": "e3bf59fca9dee3ac6d890a77a049c79912a9e905ad2351b0e4ebf0be3d921690",
+    "published": false,
+    "platform": "linux/amd64",
+    "build_invocations_in_this_record": 1,
+    "archive_status": "Exact Git LF archive; all 3473 archive file identities match Git blobs.",
+    "smoke": {
+      "observed_at": "2026-09-05T09:06:57.039288Z",
+      "exit_code": 0,
+      "build_skipped": true,
+      "checks": "Existing-image dependency, asset, permissions, entrypoint and cold offline API/Hermes readiness checks.",
+      "limits": "The script prints historical backup/recovery instructions; these are not a newly executed backup/restore proof. No published dev image or human acceptance claim."
+    },
+    "evidence": [
+      "lf-build",
+      "lf-build-log",
+      "lf-build-archive",
+      "lf-smoke",
+      "lf-smoke-log"
+    ],
+    "archive_verification": {
+      "git_blob_count": 3473,
+      "archive_blob_count": 3473,
+      "all_blob_identities_match": true,
+      "core_autocrlf": false,
+      "core_eol": "lf"
+    },
+    "archive_verification_evidence": "lf-archive-verification"
+  },
+  "fcb_git_lf_image_scan": {
+    "status": "passed",
+    "started_at": "2026-09-05T09:03:30.271163+00:00",
+    "completed_at": "2026-09-05T09:04:23.567048+00:00",
+    "source_commit": "fcb26a488d43e22e0d98a9ef6c69480e6b8238ca",
+    "source_tree": "c372f401ab23c82790cbcc6545a6fd8bb96cdd09",
+    "image_id": "sha256:336e4f0d0d479777da9a482586e779e52e286981f1ac04d905c8ab719226569f",
+    "image_source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "scanner_image": "docker.io/aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e",
+    "scanner_version": "0.70.0",
+    "policy_sha256": "654d26b26b36137052a2b29fc118cb908046a26202544afa10ecbfb9a44117ea",
+    "database": {
+      "Version": 2,
+      "UpdatedAt": "2026-09-05T07:05:47.425805327Z",
+      "NextUpdate": "2026-09-06T07:05:47.425805137Z",
+      "DownloadedAt": "2026-09-05T09:04:02.626770359Z"
+    },
+    "raw_report_sha256": "71e242d047db4f5d323de2e5663227986978ae5261de3b97e583ec0ca17b5238",
+    "result_sections": 3,
+    "reported_vulnerability_records": 0,
+    "scope": "Recorded historical exact-image scan only; original helper before its later three guard corrections. No full-gate pass follows from this result.",
+    "evidence": [
+      "fcb-lf-scan",
+      "fcb-lf-report",
+      "fcb-lf-scan-log"
+    ]
+  },
+  "helper_independent_review": {
+    "original_subject": "fa479118b0d1a85d1a5da2a9ac9bba6201bbfc00",
+    "original_integrated_subject": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+    "findings": [
+      {
+        "id": "OCI-SOURCE-01",
+        "priority": "P2",
+        "finding": "Committed source change could be cancelled by an unstaged revert while the changed HEAD was claimed."
+      },
+      {
+        "id": "OCI-REPORT-02",
+        "priority": "P2",
+        "finding": "Missing or malformed severity and empty vulnerability records passed the policy boundary."
+      },
+      {
+        "id": "OCI-DISPATCH-03",
+        "priority": "P2",
+        "finding": "Push and CI filters omitted seven representative actual Docker input paths."
+      }
+    ],
+    "original_probes": {
+      "observed_at": "2026-09-05T09:06:48.350041+00:00",
+      "rows": [
+        {
+          "case": "missing-severity",
+          "exit_code": 0,
+          "status": "passed"
+        },
+        {
+          "case": "unknown-severity",
+          "exit_code": 0,
+          "status": "passed"
+        },
+        {
+          "case": "missing-fixed-version",
+          "exit_code": 0,
+          "status": "passed"
+        },
+        {
+          "case": "empty-finding",
+          "exit_code": 0,
+          "status": "passed"
+        },
+        {
+          "case": "committed-change-with-unstaged-revert",
+          "status": "M docker/Dockerfile",
+          "accepted": true
+        }
+      ],
+      "dispatch_cases": [
+        {
+          "path": ".dockerignore",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "package.json",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "src/wright_engineering/runtime-extra-lock.json",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "hermes-plugin-wright/pyproject.toml",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "integrations/rivet/editor/package.json",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "integrations/rivet/runner/package-lock.json",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "README.md",
+          "actual_bash_push_scan_selected": false,
+          "workflow_selected": false
+        },
+        {
+          "path": "docker/Dockerfile",
+          "actual_bash_push_scan_selected": true,
+          "workflow_selected": true
+        },
+        {
+          "path": "apps/web/package.json",
+          "actual_bash_push_scan_selected": true,
+          "workflow_selected": true
+        }
+      ]
+    },
+    "closure": {
+      "reviewed_at": "2026-09-05T09:14:36.212316+00:00",
+      "subject_commit": "8a2a5276865172ef7cf6107a93d692aabeea2f7a",
+      "subject_tree": "698f62eac1a43a9ec0170019480ced8c434f8478",
+      "three_malformed_records_rejected": true,
+      "valid_unfixed_control_passed": true,
+      "committed_source_cancellation_rejected": true,
+      "all_nine_dispatch_cases_selected": true,
+      "writer_source_unchanged": true,
+      "docker_network_build_or_suite_runs": 0,
+      "corrected_probe_rows": [
+        {
+          "case": "missing-severity",
+          "exit_code": 1,
+          "status": "failed"
+        },
+        {
+          "case": "unknown-severity",
+          "exit_code": 1,
+          "status": "failed"
+        },
+        {
+          "case": "missing-fixed-version",
+          "exit_code": 0,
+          "status": "passed"
+        },
+        {
+          "case": "empty-finding",
+          "exit_code": 1,
+          "status": "failed"
+        },
+        {
+          "case": "committed-change-with-unstaged-revert",
+          "status": "M docker/Dockerfile",
+          "accepted": false
+        }
+      ],
+      "retained_real_report_control": {
+        "validated_at": "2026-09-05T09:15:28.941183+00:00",
+        "retained_report_sha256": "8780adab01737aaf8aed99f7d639584b652eb796c75029fefe2e4e8a8c434055",
+        "retained_scan_source": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+        "retained_image_id": "sha256:d134d432131509c05047e9f0d334f8acae91be440e20128f789c2543b9a4d54f",
+        "actual_retained_result_sections": 3,
+        "vulnerability_records": 0,
+        "strict_report_validation_passed": true,
+        "new_scanner_calls": 0
+      },
+      "scope": "Independent bounded helper closure. Retained-report validation was read-only, not a refreshed scan. Missing FixedVersion remains a valid unchanged-policy control."
+    },
+    "writer_tests": {
+      "passed": 108,
+      "duration_seconds": 7.94,
+      "attribution": "Writer actual tool execution, summarized in writer-focused-observation; not independently repeated."
+    },
+    "evidence": [
+      "helper-findings",
+      "helper-original-probe",
+      "helper-original-results",
+      "dispatch-original-probe",
+      "dispatch-original-results",
+      "helper-closure",
+      "helper-closure-probe",
+      "helper-closure-summary",
+      "helper-corrected-results",
+      "dispatch-corrected-results",
+      "retained-report-control",
+      "writer-focused-observation"
+    ]
+  },
+  "fcb_interrupted_full_gate": {
+    "candidate_commit": "fcb26a488d43e22e0d98a9ef6c69480e6b8238ca",
+    "candidate_tree": "c372f401ab23c82790cbcc6545a6fd8bb96cdd09",
+    "started_at": "2026-09-05T09:03:13.0982512Z",
+    "status": "interrupted_by_coordinator",
+    "exit_code": 1,
+    "reason": "Independent review confirmed OCI-SOURCE-01, OCI-REPORT-02 and OCI-DISPATCH-03; candidate invalidated before full gate completion.",
+    "source_clean_after": true,
+    "observed_at": "2026-09-05T09:11:08.370924Z",
+    "last_log_write_at": "2026-09-05T09:07:13.255193+00:00",
+    "completed_stages": "Exact LF image scan, Ruff/format, frontend ESLint/Prettier/TypeScript, blocking MyPy, package metadata and workflow policy passed. Broad MyPy remained existing warning; control-plane tests were interrupted mid-run.",
+    "overall_gate_passed": false,
+    "completed_at": null,
+    "original_incomplete_observation_preserved": true,
+    "time_scope": "observed_at is the supplemental interruption record time; last_log_write_at is file metadata. Neither is an invented gate completion timestamp.",
+    "evidence": [
+      "fcb-gate-original-observation",
+      "fcb-gate-log",
+      "fcb-gate-interruption"
+    ]
+  },
+  "current_candidate_scope": {
+    "product_candidate": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+    "frozen_source": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+    "result_included": false,
+    "note": "Fresh full gate was running when this historical bundle was requested. This bundle includes no terminal result or aggregate pass for that gate, H2 CI, deployment or human acceptance."
+  }
+}

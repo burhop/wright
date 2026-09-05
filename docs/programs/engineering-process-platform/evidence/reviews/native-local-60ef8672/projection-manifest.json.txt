@@ -1,0 +1,37 @@
+[
+  {
+    "file": "actual-native-example-runs.json.txt",
+    "artifact_kind": "derived review projection, not raw API output",
+    "original_source_local_path": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\.local-run\\native-live-c7f1f218\\native-process-live--live--fd1a8-xamples-produce-exact-files-chromium\\actual-native-example-runs.json",
+    "retained_original_copy": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-evidence-scan-9b42124a\\raw-originals\\actual-native-example-runs.json",
+    "original_sha256": "a4663cf36d6345f27b9d0bf92992c117dd0fc35bee48bb9cce4dcb06f0fb14d3",
+    "original_bytes": 19985,
+    "projection_sha256": "81c33fe44a308ffccfbae9e60ea68c041cdec2bca3e8a3853c7aafc63e2beb5a",
+    "projection_bytes": 20007,
+    "transformation": "Replace only listed quoted snapshot.token values (five across both files); preserve all other bytes.",
+    "replacement_value": "[omitted: document revision CAS fingerprint; raw evidence retained locally]",
+    "omitted_json_pointers": [
+      "/0/snapshot/token",
+      "/1/snapshot/token"
+    ],
+    "other_json_values_unchanged": true
+  },
+  {
+    "file": "actual-native-runs.json.txt",
+    "artifact_kind": "derived review projection, not raw API output",
+    "original_source_local_path": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\.local-run\\native-live-c7f1f218\\native-process-live--live--f04bb-ailure-and-links-correction-chromium\\actual-native-runs.json",
+    "retained_original_copy": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-evidence-scan-9b42124a\\raw-originals\\actual-native-runs.json",
+    "original_sha256": "b0a6c6dfb334a87409fb54371fddbf8b5935daed99568034220b7ed6a7cf33fb",
+    "original_bytes": 33113,
+    "projection_sha256": "c754f5d46374debf937141d987080cd0a96043f717a3b72a9b77ae568a9aed47",
+    "projection_bytes": 33146,
+    "transformation": "Replace only listed quoted snapshot.token values (five across both files); preserve all other bytes.",
+    "replacement_value": "[omitted: document revision CAS fingerprint; raw evidence retained locally]",
+    "omitted_json_pointers": [
+      "/initial/snapshot/token",
+      "/failed/snapshot/token",
+      "/corrected/snapshot/token"
+    ],
+    "other_json_values_unchanged": true
+  }
+]

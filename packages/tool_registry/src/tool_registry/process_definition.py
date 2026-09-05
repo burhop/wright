@@ -5,13 +5,14 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import unicodedata
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, Final, Literal, Mapping
 
 from jsonschema import Draft202012Validator, FormatChecker  # type: ignore[import-untyped]
+
+from core.canonical_json import canonical_json_bytes, strict_json_loads
 
 
 MAX_PROCESS_DEFINITION_BYTES: Final = 1024 * 1024
@@ -65,91 +66,14 @@ class ProcessDefinitionDocument:
         return copy.deepcopy(value)
 
 
-def _reject_number(_token: str) -> int:
-    raise ValueError("only integer number tokens are permitted")
-
-
-def _parse_integer(token: str) -> int:
-    if token == "-0":
-        raise ValueError("negative zero is not permitted")
-    return int(token)
-
-
-def _validate_text_tree(value: object) -> None:
-    if isinstance(value, str):
-        value.encode("utf-8", errors="strict")
-        if unicodedata.normalize("NFC", value) != value:
-            raise ValueError("all strings must already be NFC")
-        return
-    if value is None or isinstance(value, bool):
-        return
-    if isinstance(value, int):
-        return
-    if isinstance(value, float):
-        raise ValueError("floating-point values are not permitted")
-    if isinstance(value, list):
-        for item in value:
-            _validate_text_tree(item)
-        return
-    if isinstance(value, Mapping):
-        for key, item in value.items():
-            if not isinstance(key, str):
-                raise ValueError("object keys must be strings")
-            _validate_text_tree(key)
-            _validate_text_tree(item)
-        return
-    raise ValueError("unsupported canonical JSON value")
-
-
 def load_strict_process_json(raw: bytes) -> object:
-    """Parse the closed process JSON profile without normalizing invalid input."""
-
-    if raw.startswith(b"\xef\xbb\xbf"):
-        raise ValueError("UTF-8 BOM is not permitted")
-    duplicate = False
-
-    def pairs(items: list[tuple[str, Any]]) -> dict[str, Any]:
-        nonlocal duplicate
-        result: dict[str, Any] = {}
-        for key, value in items:
-            duplicate = duplicate or key in result
-            result[key] = value
-        return result
-
-    value = json.loads(
-        raw.decode("utf-8", errors="strict"),
-        object_pairs_hook=pairs,
-        parse_int=_parse_integer,
-        parse_float=_reject_number,
-        parse_constant=lambda token: _reject_number(token),
-    )
-    if duplicate:
-        raise ValueError("duplicate object key")
-    _validate_text_tree(value)
-    return value
-
-
-def _ordered_for_canonical_json(value: object) -> object:
-    if isinstance(value, Mapping):
-        return {
-            key: _ordered_for_canonical_json(value[key])
-            for key in sorted(value, key=lambda item: item.encode("utf-8"))
-        }
-    if isinstance(value, list):
-        return [_ordered_for_canonical_json(item) for item in value]
-    return value
+    """Preserve the legacy profile while sharing the generic exact JSON parser."""
+    return strict_json_loads(raw, safe_integers=False)
 
 
 def canonical_process_json_bytes(value: object) -> bytes:
-    """Serialize one already-valid value as ``wright-process-json-v1`` bytes."""
-
-    _validate_text_tree(value)
-    return json.dumps(
-        _ordered_for_canonical_json(value),
-        ensure_ascii=False,
-        separators=(",", ":"),
-        allow_nan=False,
-    ).encode("utf-8")
+    """Serialize the unchanged ``wright-process-json-v1`` legacy profile."""
+    return canonical_json_bytes(value, safe_integers=False)
 
 
 def _raw_digest(raw: bytes) -> str:

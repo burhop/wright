@@ -1,0 +1,27 @@
+{
+  "format": "wright-native-codeql-public-manifest-v1",
+  "assembled_at": "2026-09-05T09:15:22.722987Z",
+  "producer": {
+    "filename": "prepare-d734-public-projection.py",
+    "raw_file_sha256": "e8d7a3aa82045e004b98fd2092396b82f37818fa9537b000cf4a6e5c2866d8b5",
+    "raw_bytes": 8068
+  },
+  "files": [
+    {
+      "filename": "README.md",
+      "raw_file_sha256": "163c50d04023662f7f7c7da2e3d618e73dd38a24eefffd9517f87960c645e39b",
+      "raw_bytes": 2453
+    },
+    {
+      "filename": "codeql-d734-public-projection.json.txt",
+      "raw_file_sha256": "8e3b2bd153823f7d3901a04b15cca56c39fb25fd997100b9dbb4045438adf73f",
+      "raw_bytes": 6928
+    },
+    {
+      "filename": "host-preparation-history.json.txt",
+      "raw_file_sha256": "3a79d3b5b199b26359cbf1396f518f7c551f1607bf4e83a53106c7303eb185f8",
+      "raw_bytes": 2619
+    }
+  ],
+  "hash_meaning": "Exact generated UTF-8/LF projection bytes; no inferred future Git blob hashes. The manifest does not hash itself."
+}

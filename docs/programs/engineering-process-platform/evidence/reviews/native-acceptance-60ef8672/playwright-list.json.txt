@@ -1,0 +1,474 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Program Files\\nodejs\\node.exe",
+      "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/ui-integration/native-process.spec.ts",
+      "tests/ui-integration/native-process-live.spec.ts",
+      "tests/ui-integration/program-status.spec.ts",
+      "--project=chromium",
+      "--list",
+      "--reporter=json"
+    ],
+    "configFile": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\playwright.config.ts",
+    "rootDir": "D:/repos/wright/.local-run/native-process-milestone/wright/tests/ui-integration",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/repos/wright/.local-run/native-process-milestone/wright/test-results/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/repos/wright/.local-run/native-process-milestone/wright/tests/ui-integration",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "D:/repos/wright/.local-run/native-process-milestone/wright/test-results/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "firefox-workspace-surfaces",
+        "name": "firefox-workspace-surfaces",
+        "testDir": "D:/repos/wright/.local-run/native-process-milestone/wright/tests/ui-integration",
+        "testIgnore": [],
+        "testMatch": [
+          "/workspace-surfaces\\/.*\\.spec\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "D:/repos/wright/.local-run/native-process-milestone/wright/test-results/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "webkit-workspace-surfaces",
+        "name": "webkit-workspace-surfaces",
+        "testDir": "D:/repos/wright/.local-run/native-process-milestone/wright/tests/ui-integration",
+        "testIgnore": [],
+        "testMatch": [
+          "/workspace-surfaces\\/.*\\.spec\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "D:/repos/wright/.local-run/native-process-milestone/wright/test-results/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "workspaceSurfaceHost": "desktop"
+        },
+        "id": "desktop-surface",
+        "name": "desktop-surface",
+        "testDir": "D:/repos/wright/.local-run/native-process-milestone/wright/tests/ui-integration",
+        "testIgnore": [],
+        "testMatch": [
+          "/workspace-surfaces\\/.*\\.spec\\.ts/"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 10,
+    "webServer": {
+      "command": "npm run dev --prefix apps/web -- --host 127.0.0.1 --port 5173",
+      "url": "http://127.0.0.1:5173",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "native-process-live.spec.ts",
+      "file": "native-process-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "@live native saved process computes, preserves failure and links correction",
+          "ok": true,
+          "tags": [
+            "live"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+                  "location": {
+                    "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+                    "line": 9,
+                    "column": 6
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3b38bcc6526468725edf-060e209b605f496db668",
+          "file": "native-process-live.spec.ts",
+          "line": 64,
+          "column": 5
+        },
+        {
+          "title": "@live native document and artifact-review examples produce exact files",
+          "ok": true,
+          "tags": [
+            "live"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Requires WRIGHT_NATIVE_LIVE_SESSION for an explicitly prepared disposable workspace",
+                  "location": {
+                    "file": "D:\\repos\\wright\\.local-run\\native-process-milestone\\wright\\tests\\ui-integration\\native-process-live.spec.ts",
+                    "line": 9,
+                    "column": 6
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3b38bcc6526468725edf-68e5c9404a505613da5d",
+          "file": "native-process-live.spec.ts",
+          "line": 152,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "native-process.spec.ts",
+      "file": "native-process.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Native authoring with a simulated service",
+          "file": "native-process.spec.ts",
+          "line": 399,
+          "column": 6,
+          "specs": [
+            {
+              "title": "creates and connects from keyboard controls, saves and reopens exact language identities",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-4dbb67a2b23c7eca1b3e",
+              "file": "native-process.spec.ts",
+              "line": 400,
+              "column": 7
+            },
+            {
+              "title": "projects programmatic endpoints, preserves semantics while moving, and reviews deletion with undo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-fbfbd973da947464250f",
+              "file": "native-process.spec.ts",
+              "line": 457,
+              "column": 7
+            },
+            {
+              "title": "retains a stale writer's draft and traps confirmation focus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-57ac343d4e0fddb13f3e",
+              "file": "native-process.spec.ts",
+              "line": 496,
+              "column": 7
+            },
+            {
+              "title": "supports narrow layout, 200 percent zoom and automated accessibility checks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-28ec9bb8c34b4579ef15",
+              "file": "native-process.spec.ts",
+              "line": 521,
+              "column": 7
+            },
+            {
+              "title": "records 20 warm opens of a 25-step fixture without losing identities",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-c86e22ddfc71bfe00521",
+              "file": "native-process.spec.ts",
+              "line": 562,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Native run inspection with a simulated runtime and actual browser bytes",
+          "file": "native-process.spec.ts",
+          "line": 604,
+          "column": 6,
+          "specs": [
+            {
+              "title": "fails, corrects, saves a linked rerun and verifies/downloads actual artifact bytes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-954a9fc8db75a700014d",
+              "file": "native-process.spec.ts",
+              "line": 605,
+              "column": 7
+            },
+            {
+              "title": "rejects altered artifact bytes without exposing a preview or download",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-75d935ee1b9b98549323",
+              "file": "native-process.spec.ts",
+              "line": 658,
+              "column": 7
+            },
+            {
+              "title": "reconnects to a retained running snapshot and cancels through the service",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "818415bc50acc447479c-9d58581938fd7fcbb7c3",
+              "file": "native-process.spec.ts",
+              "line": 682,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "program-status.spec.ts",
+      "file": "program-status.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Program status comprehension and accessibility",
+          "file": "program-status.spec.ts",
+          "line": 115,
+          "column": 6,
+          "specs": [
+            {
+              "title": "answers the six operator questions and keeps exact fallbacks usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8c9631dfa50c0a32b90c-9c74c18d112012b1415b",
+              "file": "program-status.spec.ts",
+              "line": 118,
+              "column": 7
+            },
+            {
+              "title": "remains understandable when narrow, zoomed, reduced-motion, and graph code is unavailable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8c9631dfa50c0a32b90c-3fe6a7ab4053712d0d19",
+              "file": "program-status.spec.ts",
+              "line": 199,
+              "column": 7
+            },
+            {
+              "title": "refreshes atomically after an exact committed publication and observes its separate heartbeat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8c9631dfa50c0a32b90c-1b505408b8c09b80ea21",
+              "file": "program-status.spec.ts",
+              "line": 227,
+              "column": 7
+            },
+            {
+              "title": "keeps last-valid evidence on refresh failure and stays honest with no prior bundle",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8c9631dfa50c0a32b90c-9ef6a0c4549f4b6c740a",
+              "file": "program-status.spec.ts",
+              "line": 331,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-05T02:33:00.306Z",
+    "duration": 231.30699999999996,
+    "expected": 0,
+    "skipped": 14,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

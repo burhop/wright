@@ -44,6 +44,7 @@ import {
   type ProgramStatusBundle,
 } from "../services/program-status";
 import { makeProgramStatusBundle } from "./program-status-fixture";
+import { makeNativeMilestone } from "./native-milestone-fixture";
 
 const fetchBundle = vi.mocked(fetchProgramStatus);
 const fetchPublisher = vi.mocked(fetchProgramStatusPublisher);
@@ -83,6 +84,10 @@ describe("ProgramStatusPage refresh state", () => {
     await settleInitialPoll();
 
     expect(screen.getByTestId("rendered-bundle")).toHaveTextContent("4/48");
+    expect(screen.queryByTestId("native-milestone")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("program-historical-details"),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByTestId("program-status-refresh-state"),
     ).toHaveTextContent("Committed evidence current");
@@ -168,5 +173,35 @@ describe("ProgramStatusPage refresh state", () => {
     expect(status).toHaveTextContent("Showing last valid evidence");
     expect(status).toHaveTextContent("PROGRAM_STATUS_SOURCE_INVALID");
     expect(status).toHaveTextContent("repair the exact committed source");
+  });
+
+  it("prioritizes the native milestone and retains it when refresh fails", async () => {
+    const nativeBundle = structuredClone(bundle);
+    Object.assign(nativeBundle.supplement.work, {
+      milestone: makeNativeMilestone(),
+    });
+    fetchBundle
+      .mockResolvedValueOnce({
+        status: 200,
+        etag: '"native-1"',
+        bundle: nativeBundle,
+      })
+      .mockRejectedValueOnce(new Error("refresh failed"));
+    fetchPublisher.mockResolvedValue(publisher);
+    render(<ProgramStatusPage />);
+    await settleInitialPoll();
+
+    expect(screen.getByTestId("native-milestone")).toBeVisible();
+    expect(
+      screen.getByTestId("program-historical-details"),
+    ).not.toHaveAttribute("open");
+    expect(screen.getByTestId("rendered-bundle")).not.toBeVisible();
+    await act(async () => vi.advanceTimersByTimeAsync(5000));
+    expect(
+      screen.getByTestId("native-progress-implementation"),
+    ).toHaveTextContent("2/4");
+    expect(
+      screen.getByTestId("program-status-refresh-state"),
+    ).toHaveTextContent("Showing last valid evidence");
   });
 });

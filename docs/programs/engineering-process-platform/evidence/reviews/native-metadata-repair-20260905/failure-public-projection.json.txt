@@ -1,0 +1,56 @@
+{
+  "schema_version": "native-delivery-metadata-failures-1",
+  "source_commit": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860",
+  "source_tree": "f80e9861d068428104cd3464d02f3dbe94237c3f",
+  "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+  "push_gate": {
+    "started_at": "2026-09-05T06:37:56.0816824Z",
+    "completed_at": "2026-09-05T06:40:55.4487255Z",
+    "exit_code": 1,
+    "log_sha256": "6554016d2a2d5cf925389718b2f99f71be1f9b5cb46900709bf3edac28de63ad",
+    "source_was_clean": true,
+    "source_clean_after": true
+  },
+  "gate_observation_sha256": "2aa26316037795dbbe46874ee1878b1d1c4016eb4ed37ce69c3023e217e91f7b",
+  "history_scan": {
+    "commits_scanned": 863,
+    "findings": 1,
+    "rule": "generic-api-key",
+    "introduced_by": "ea9ad2680fe0b92b9388025162d6fd2eaccce2e4",
+    "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+    "line": 10,
+    "classification": "Independently verified public SHA-256 of the exact 421-byte LF source hook; field-name-only correction passes unchanged scanner and retains synthetic-credential detection.",
+    "classification_report": "independent-source-hook-classification.md"
+  },
+  "validation": {
+    "verdict": "failed",
+    "unresolved_findings": [
+      {
+        "artifact": "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json",
+        "code": "TRANSITION_MANIFEST_MISMATCH",
+        "consequence": "The committed subject cannot be trusted.",
+        "correction_ref": null,
+        "evidence": [],
+        "invariant": "EXACT_SOURCE_CONTAINER_AND_CHANGED_PATHS",
+        "json_pointer": null,
+        "recovery": "Repair the smallest named invariant and rerun the validator.",
+        "resolution_status": "unresolved",
+        "severity": "fatal"
+      }
+    ],
+    "report_sha256": "bb553bab08ac3c14a1cb68e2e1cf5973b4f0e8dac7d8a023d6f121cf2ff150fe",
+    "observation": {
+      "source_commit": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860",
+      "started_at": "2026-09-05T06:51:00.399607+00:00",
+      "completed_at": "2026-09-05T06:51:04.250399+00:00",
+      "exit_code": 3,
+      "purpose": "Full machine-readable diagnostic of already observed transition validation failure; not a fresh product test.",
+      "stdout_sha256": "bb553bab08ac3c14a1cb68e2e1cf5973b4f0e8dac7d8a023d6f121cf2ff150fe"
+    }
+  },
+  "limitations": [
+    "The push gate stopped during security scanning; later stages did not execute.",
+    "Original full merge-gate exit one remains retained separately; composed stage acceptance does not relabel it.",
+    "No push, PR, merge or registry publication has occurred at this observation."
+  ]
+}

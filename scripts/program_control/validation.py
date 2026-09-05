@@ -3439,18 +3439,22 @@ def validate_f01b_lease_checkpoint_correction(
             current_lease = successor_state.get("active_mutating_lease")
             expected_lease = expected_state["active_mutating_lease"]
             if current_lease is None:
-                valid = valid and successor_state.get("feature_state") in {
-                    "BLOCKED",
-                    "CANDIDATE_FROZEN",
-                    "INDEPENDENTLY_VERIFIED",
-                    "PUSH_AUTHORIZATION_PENDING",
-                    "PR_READY",
-                    "DEV_MERGE_READY",
-                    "DEV_INTEGRATED",
-                    "DEV_DEPLOYMENT_VERIFIED",
-                    "ROLLED_BACK",
-                    "STOPPED",
-                }
+                valid = valid and (
+                    successor_state.get("feature_state")
+                    in {
+                        "BLOCKED",
+                        "CANDIDATE_FROZEN",
+                        "INDEPENDENTLY_VERIFIED",
+                        "PUSH_AUTHORIZATION_PENDING",
+                        "PR_READY",
+                        "DEV_MERGE_READY",
+                        "DEV_INTEGRATED",
+                        "DEV_DEPLOYMENT_VERIFIED",
+                        "ROLLED_BACK",
+                        "STOPPED",
+                    }
+                    or _native_scoped_checkpoint(successor_state)
+                )
             elif isinstance(current_lease, Mapping):
                 same_f01b_lease = all(
                     current_lease.get(field) == expected_lease.get(field)
@@ -3478,11 +3482,23 @@ def validate_f01b_lease_checkpoint_correction(
                         },
                     )
                 )
+                # The old correction remains bound to revision 76. A later
+                # native lease is independently governed by its standing scope
+                # and the ordinary lease checks; it cannot rewrite that proof.
+                native_successor = (
+                    successor_state.get("revision", 0) >= 93
+                    and successor_state.get("current_feature") == "EPP-N01"
+                    and current_lease.get("feature_id") == "EPP-N01"
+                    and successor_state.get("approval", {}).get("authority_kind")
+                    == "standing_user_scope"
+                    and successor_state.get("approval", {}).get("record")
+                    == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+                )
                 valid = valid and all(
                     (
                         isinstance(successor_state.get("revision"), int),
                         successor_state.get("revision", 0) > 76,
-                        same_f01b_lease or exact_f02_successor,
+                        same_f01b_lease or exact_f02_successor or native_successor,
                     )
                 )
             else:
@@ -3739,6 +3755,21 @@ def _validate_state_chain(
                 )
             )
         if transition.get("schema_version") == "2.0":
+            authority = transition.get("authority")
+            if (
+                isinstance(authority, Mapping)
+                and authority.get("authority_kind") == "standing_user_scope"
+            ):
+                _validate_native_scope_authority(
+                    documents,
+                    program_root,
+                    {
+                        "current_feature": transition.get("feature_id"),
+                        "revision": new_revision,
+                        "approval": authority,
+                    },
+                    findings,
+                )
             domain = transition.get("state_domain")
             event = transition.get("event_kind")
             pair = (str(transition.get("from_state")), str(transition.get("to_state")))
@@ -3780,6 +3811,20 @@ def _validate_state_chain(
                             "POLICY_EDGE",
                         )
                     )
+            elif (
+                transition.get("feature_id") == "EPP-N01"
+                and new_revision >= 98
+                and domain == "feature"
+                and pair[0] != pair[1]
+            ):
+                findings.append(
+                    _finding(
+                        "LIFECYCLE_EDGE_INVALID",
+                        "fatal",
+                        transition_id,
+                        "NATIVE_DELIVERY_USES_EXISTING_LIFECYCLE",
+                    )
+                )
             if isinstance(prior, Mapping) and isinstance(new, Mapping):
                 if (
                     prior.get("schema_version") == "1.0"
@@ -3965,6 +4010,194 @@ def evaluate_approval_history(
     return sorted(findings, key=Finding.sort_key), selected
 
 
+NATIVE_FROZEN_STATES = frozenset(
+    {"IMPLEMENTING", "AUTHOR_VERIFIED", "CANDIDATE_FROZEN"}
+)
+NATIVE_REVIEWED_STATES = frozenset(
+    {
+        "INDEPENDENTLY_VERIFIED",
+        "PUSH_AUTHORIZATION_PENDING",
+        "PR_READY",
+        "DEV_MERGE_READY",
+        "DEV_INTEGRATED",
+        "DEV_DEPLOYMENT_VERIFIED",
+    }
+)
+NATIVE_TASK_IDS = frozenset(f"T{number:03}" for number in range(1, 33))
+
+
+def _native_task_contract(raw: bytes) -> tuple[str, set[str]]:
+    """Only checkbox progress may change after the task contract is reviewed."""
+
+    text = raw.decode("utf-8").replace("\r\n", "\n")
+    rows = re.findall(r"^- \[([ xX])\] (T\d{3})\b", text, re.MULTILINE)
+    if len(rows) != 32 or {identifier for _, identifier in rows} != NATIVE_TASK_IDS:
+        raise ValueError("native task population must remain the reviewed 32 tasks")
+    normalized = re.sub(
+        r"^(- \[)[ xX](\] T\d{3}\b)", r"\1 \2", text, flags=re.MULTILINE
+    )
+    return normalized, {identifier for checked, identifier in rows if checked != " "}
+
+
+def _native_registry_contract(registry: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep quality/acceptance semantics frozen while evidence and activity evolve."""
+
+    milestone = registry["milestone"]
+    rows = milestone["tasks"]
+    if len(rows) != 32 or {row["id"] for row in rows} != NATIVE_TASK_IDS:
+        raise ValueError("native registry must retain all 32 reviewed task identities")
+    contract = {
+        key: milestone[key]
+        for key in (
+            "id",
+            "title",
+            "feature_id",
+            "tasks_path",
+            "scope_revision",
+            "scope_history",
+            "language_authority",
+            "acceptance",
+            "checks",
+            "examples",
+        )
+    }
+    contract["tasks"] = [
+        {
+            key: row[key]
+            for key in ("id", "integration_required", "integration_exemption")
+        }
+        for row in rows
+    ]
+    return contract
+
+
+def _native_milestone_complete(
+    reader: GitReader,
+    source_commit: str,
+    state: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    observed_at: datetime,
+) -> bool:
+    """Use the existing evidence projection for final acceptance, not a new flag."""
+
+    from program_status import publisher
+
+    try:
+        if (
+            Path(publisher.__file__).resolve()
+            != (reader.repo_root / "scripts/program_status/publisher.py").resolve()
+        ):
+            return False
+        for path in (
+            "scripts/program_status/publisher.py",
+            "packages/tool_registry/src/tool_registry/milestone_status.py",
+        ):
+            if (reader.repo_root / path).read_bytes().replace(b"\r\n", b"\n") != (
+                reader.blob(source_commit, path).replace(b"\r\n", b"\n")
+            ):
+                return False
+        projected = publisher._project_native_milestone(
+            reader.repo_root,
+            {
+                "commit": source_commit,
+                "work_registry": registry,
+                "state": state,
+                "generated_at": observed_at.isoformat().replace("+00:00", "Z"),
+            },
+        )
+        return (
+            projected is not None
+            and projected["readiness"]["native_milestone"] == "complete"
+        )
+    except (
+        publisher.ProgramStatusPublishError,
+        ValueError,
+        KeyError,
+        TypeError,
+        OSError,
+    ):
+        return False
+
+
+def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
+    checkpoint = state.get("scoped_checkpoint")
+    return (
+        state.get("current_feature") == "EPP-N01"
+        and state.get("revision", 0) >= 94
+        and isinstance(checkpoint, Mapping)
+        and (
+            (
+                state.get("feature_state") in NATIVE_FROZEN_STATES
+                and checkpoint.get("status") == "awaiting_independent_review"
+            )
+            or (
+                state.get("revision", 0) >= 98
+                and state.get("feature_state") in NATIVE_REVIEWED_STATES
+                and checkpoint.get("status") == "independently_verified"
+            )
+        )
+        and bool(checkpoint.get("task_ids"))
+        and checkpoint.get("whole_feature_complete") is False
+        and state.get("approval", {}).get("authority_kind") == "standing_user_scope"
+    )
+
+
+def _validate_native_delivery_review(
+    documents: Mapping[str, Any],
+    program_root: str,
+    state: Mapping[str, Any],
+    observed_at: datetime,
+) -> bool:
+    """Bind a scoped delivery claim to independent review, never human acceptance."""
+
+    checkpoint = state["scoped_checkpoint"]
+    milestone = documents[f"{program_root}/work-registry.json"]["milestone"]
+    registered = {row["id"] for row in milestone["tasks"]}
+    included = set(checkpoint["task_ids"])
+    pending = set(checkpoint.get("pending_task_ids", []))
+    if (
+        included & pending
+        or included | pending != registered
+        or registered != NATIVE_TASK_IDS
+        or not pending
+        or milestone.get("id") != "NATIVE-01"
+        or milestone.get("feature_id") != "EPP-N01"
+    ):
+        return False
+    review_ref = checkpoint.get("independent_review")
+    if checkpoint["status"] == "awaiting_independent_review":
+        return review_ref is None
+    if not isinstance(review_ref, Mapping):
+        return False
+    path = review_ref.get("path", "")
+    if not re.fullmatch(r"evidence/reviews/NATIVE-REVIEW-[A-Z0-9-]+\.json", path):
+        return False
+    review = documents.get(f"{program_root}/{path}")
+    schema = documents.get(
+        f"{program_root}/schemas/native-candidate-review.schema.json"
+    )
+    if (
+        not isinstance(review, Mapping)
+        or not isinstance(schema, Mapping)
+        or validate_schema(schema, review)
+    ):
+        return False
+    reviewed_at = _parse_utc(review["reviewed_at"])
+    return (
+        review_ref.get("record_digest") == canonical_digest(review)
+        and review["candidate_commit"] == checkpoint["candidate_commit"]
+        and review["candidate_tree"] == checkpoint["candidate_tree"]
+        and set(review["task_ids"]) == included
+        and bool(review["reviewer_identity"].strip())
+        and review["reviewer_identity"].strip().casefold()
+        not in {
+            author.strip().casefold() for author in review["implementation_authors"]
+        }
+        and reviewed_at is not None
+        and reviewed_at <= observed_at.astimezone(timezone.utc)
+    )
+
+
 def validate_roadmap_approval_and_lease(
     documents: Mapping[str, Any],
     program_root: str,
@@ -4134,6 +4367,23 @@ def validate_roadmap_approval_and_lease(
                     )
                 )
     lease = state.get("active_mutating_lease")
+    native_delivery = (
+        current_feature == "EPP-N01"
+        and state.get("revision", 0) >= 98
+        and feature_state
+        in (NATIVE_FROZEN_STATES | NATIVE_REVIEWED_STATES) - {"IMPLEMENTING"}
+    )
+    if (
+        "scoped_checkpoint" in state or native_delivery
+    ) and not _native_scoped_checkpoint(state):
+        findings.append(
+            _finding(
+                "NATIVE_SCOPED_DELIVERY_INVALID",
+                "fatal",
+                "program-state.json",
+                "NATIVE_SCOPED_STATE_AND_REVIEW_REQUIRED",
+            )
+        )
     lease_closed = feature_state in {
         "BLOCKED",
         "CANDIDATE_FROZEN",
@@ -4145,7 +4395,88 @@ def validate_roadmap_approval_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
+    if (
+        _native_scoped_checkpoint(state)
+        and reader is not None
+        and source_commit is not None
+    ):
+        checkpoint = state["scoped_checkpoint"]
+        try:
+            identity = reader.resolve_identity(
+                checkpoint["candidate_commit"], program_root
+            )
+            registered = documents[f"{program_root}/work-registry.json"]["milestone"][
+                "tasks"
+            ]
+            permitted_metadata = (
+                f"{program_root}/evidence/",
+                f"{program_root}/work-registry.json",
+                f"{program_root}/test-run-ledger.json",
+                f"{program_root}/program-state.json",
+                "specs/079-wright-native-authoring/tasks.md",
+            )
+            changes = reader.diff_paths(identity.source_commit, source_commit)
+            valid_checkpoint = (
+                identity.source_tree == checkpoint["candidate_tree"]
+                and reader.is_ancestor(identity.source_commit, source_commit)
+                and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+                and all(
+                    any(
+                        path.startswith(prefix)
+                        if prefix.endswith("/")
+                        else path == prefix
+                        for prefix in permitted_metadata
+                    )
+                    for path in changes
+                )
+            )
+            if state.get("revision", 0) >= 98:
+                valid_checkpoint = (
+                    valid_checkpoint
+                    and _validate_native_delivery_review(
+                        documents, program_root, state, observed_at
+                    )
+                )
+                tasks_contract, implemented = _native_task_contract(
+                    reader.blob(
+                        source_commit, "specs/079-wright-native-authoring/tasks.md"
+                    )
+                )
+                candidate_tasks, _ = _native_task_contract(
+                    reader.blob(
+                        identity.source_commit,
+                        "specs/079-wright-native-authoring/tasks.md",
+                    )
+                )
+                registry = documents[f"{program_root}/work-registry.json"]
+                candidate_registry = strict_loads(
+                    reader.blob(
+                        identity.source_commit, f"{program_root}/work-registry.json"
+                    )
+                )
+                valid_checkpoint = (
+                    valid_checkpoint
+                    and set(checkpoint["task_ids"]) <= implemented
+                    and tasks_contract == candidate_tasks
+                    and _native_registry_contract(registry)
+                    == _native_registry_contract(candidate_registry)
+                )
+                if feature_state == "DEV_DEPLOYMENT_VERIFIED":
+                    valid_checkpoint = valid_checkpoint and _native_milestone_complete(
+                        reader, source_commit, state, registry, observed_at
+                    )
+        except (GitSubjectError, KeyError, TypeError, ValueError):
+            valid_checkpoint = False
+        if not valid_checkpoint:
+            findings.append(
+                _finding(
+                    "LEASE_IDENTITY_MISMATCH",
+                    "fatal",
+                    "program-state.json",
+                    "NATIVE_SCOPED_CANDIDATE_IDENTITY",
+                )
+            )
     if lease_closed and lease is not None:
         findings.append(
             _finding(
@@ -4334,6 +4665,13 @@ def validate_roadmap_approval_and_lease(
         if (
             len(matching) != 1
             or matching[0].get("requires_human_approval") != declared_human
+            or (
+                action == "PREPARE_NATIVE_SCOPED_PR"
+                and not (
+                    _native_scoped_checkpoint(state)
+                    and state["scoped_checkpoint"]["status"] == "independently_verified"
+                )
+            )
         ):
             findings.append(
                 _finding(
@@ -4392,7 +4730,7 @@ def _validate_roadmap_and_lease(
         "DEV_DEPLOYMENT_VERIFIED",
         "ROLLED_BACK",
         "STOPPED",
-    }
+    } or _native_scoped_checkpoint(state)
     if (
         current_feature
         and not lease_closed
@@ -4476,6 +4814,12 @@ def _validate_current_authority(
     if not isinstance(state, Mapping):
         return
     approval_state = state.get("approval")
+    if (
+        isinstance(approval_state, Mapping)
+        and approval_state.get("authority_kind") == "standing_user_scope"
+    ):
+        _validate_native_scope_authority(documents, program_root, state, findings)
+        return
     required = (
         approval_state.get("required_records", [])
         if isinstance(approval_state, Mapping)
@@ -4583,6 +4927,53 @@ def _validate_current_authority(
                     "ARTIFACT_DIGESTS",
                 )
             )
+
+
+def _validate_native_scope_authority(
+    documents: Mapping[str, Any],
+    program_root: str,
+    state: Mapping[str, Any],
+    findings: list[Finding],
+) -> None:
+    """Recognize the recorded native scope without inventing exact approval."""
+
+    approval = state.get("approval", {})
+    path = f"{program_root}/evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+    record = documents.get(path)
+    schema = documents.get(f"{program_root}/schemas/scope-authorization.schema.json")
+    valid = (
+        isinstance(approval, Mapping)
+        and isinstance(record, Mapping)
+        and isinstance(schema, Mapping)
+        and not validate_schema(schema, record)
+        and state.get("current_feature") == "EPP-N01"
+        and isinstance(state.get("revision"), int)
+        and state["revision"] >= 93
+        and approval.get("status") == "authorized_scope"
+        and approval.get("record")
+        == "evidence/authorizations/AUTH-EPP-N01-2026-001.json"
+        and approval.get("exact_subject_approval") is False
+    )
+    if valid:
+        assert isinstance(record, Mapping)
+        valid = (
+            record.get("revoked") is False
+            and record.get("exact_subject_approval") is False
+            and record.get("human_review_evidence") is False
+            and approval.get("record_digest") == canonical_digest(record)
+            and isinstance(record.get("instruction"), str)
+            and sha256_bytes(record["instruction"].encode("utf-8"))
+            == record.get("instruction_sha256")
+        )
+    if not valid:
+        findings.append(
+            _finding(
+                "NATIVE_SCOPE_AUTHORITY_INVALID",
+                "fatal",
+                path,
+                "RECORDED_NATIVE_SCOPE_NOT_EXACT_APPROVAL",
+            )
+        )
 
 
 def _release_approval(

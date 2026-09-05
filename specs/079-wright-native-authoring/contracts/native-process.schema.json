@@ -1,0 +1,719 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/native-process/definition-1.0.0.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "id",
+    "title",
+    "steps",
+    "ports",
+    "connections",
+    "outputs"
+  ],
+  "properties": {
+    "format": {
+      "const": "wright-native-process"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "steps": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "ports": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/port"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "$ref": "#/$defs/connection"
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/output"
+      }
+    }
+  },
+  "$defs": {
+    "quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]{0,18})(?:\\.[0-9]{1,18})?(?![\\s\\S])",
+          "maxLength": 39
+        },
+        "unit": {
+          "enum": [
+            "1",
+            "mm",
+            "cm",
+            "m",
+            "mm2",
+            "cm2",
+            "m2",
+            "mm3",
+            "cm3",
+            "m3",
+            "g",
+            "kg",
+            "kg/m3",
+            "g/cm3",
+            "N",
+            "Pa",
+            "MPa"
+          ]
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "operation",
+        "config"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]{0,60}@[1-9][0-9]{0,2}(?![\\s\\S])"
+        },
+        "config": {
+          "type": "object",
+          "maxProperties": 20,
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "unit"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "pattern": "^-?(?:0|[1-9][0-9]{0,18})(?:\\.[0-9]{1,18})?(?![\\s\\S])",
+                    "maxLength": 39
+                  },
+                  "unit": {
+                    "enum": [
+                      "1",
+                      "mm",
+                      "cm",
+                      "m",
+                      "mm2",
+                      "cm2",
+                      "m2",
+                      "mm3",
+                      "cm3",
+                      "m3",
+                      "g",
+                      "kg",
+                      "kg/m3",
+                      "g/cm3",
+                      "N",
+                      "Pa",
+                      "MPa"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "string",
+                  "maxLength": 4000
+                }
+              }
+            ]
+          },
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "text.input@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "maxLength": 4000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "quantity.input@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "value": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "unit"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?(?:0|[1-9][0-9]{0,18})(?:\\.[0-9]{1,18})?(?![\\s\\S])",
+                        "maxLength": 39
+                      },
+                      "unit": {
+                        "enum": [
+                          "1",
+                          "mm",
+                          "cm",
+                          "m",
+                          "mm2",
+                          "cm2",
+                          "m2",
+                          "mm3",
+                          "cm3",
+                          "m3",
+                          "g",
+                          "kg",
+                          "kg/m3",
+                          "g/cm3",
+                          "N",
+                          "Pa",
+                          "MPa"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "artifact.input@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 240
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "text.join@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "separator": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "text.require@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "terms": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "quantity.multiply@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "unit": {
+                    "enum": [
+                      "1",
+                      "mm",
+                      "cm",
+                      "m",
+                      "mm2",
+                      "cm2",
+                      "m2",
+                      "mm3",
+                      "cm3",
+                      "m3",
+                      "g",
+                      "kg",
+                      "kg/m3",
+                      "g/cm3",
+                      "N",
+                      "Pa",
+                      "MPa"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "quantity.convert@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "unit": {
+                    "enum": [
+                      "1",
+                      "mm",
+                      "cm",
+                      "m",
+                      "mm2",
+                      "cm2",
+                      "m2",
+                      "mm3",
+                      "cm3",
+                      "m3",
+                      "g",
+                      "kg",
+                      "kg/m3",
+                      "g/cm3",
+                      "N",
+                      "Pa",
+                      "MPa"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "quantity.range@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "minimum": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "unit"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?(?:0|[1-9][0-9]{0,18})(?:\\.[0-9]{1,18})?(?![\\s\\S])",
+                        "maxLength": 39
+                      },
+                      "unit": {
+                        "enum": [
+                          "1",
+                          "mm",
+                          "cm",
+                          "m",
+                          "mm2",
+                          "cm2",
+                          "m2",
+                          "mm3",
+                          "cm3",
+                          "m3",
+                          "g",
+                          "kg",
+                          "kg/m3",
+                          "g/cm3",
+                          "N",
+                          "Pa",
+                          "MPa"
+                        ]
+                      }
+                    }
+                  },
+                  "maximum": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "unit"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?(?:0|[1-9][0-9]{0,18})(?:\\.[0-9]{1,18})?(?![\\s\\S])",
+                        "maxLength": 39
+                      },
+                      "unit": {
+                        "enum": [
+                          "1",
+                          "mm",
+                          "cm",
+                          "m",
+                          "mm2",
+                          "cm2",
+                          "m2",
+                          "mm3",
+                          "cm3",
+                          "m3",
+                          "g",
+                          "kg",
+                          "kg/m3",
+                          "g/cm3",
+                          "N",
+                          "Pa",
+                          "MPa"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "quantity.format@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "artifact.write-text@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {
+                  "filename": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}\\.(?:txt|md|json|csv)(?![\\s\\S])"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "artifact.read-text@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "mcp.call@1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "step_id",
+        "key",
+        "label",
+        "direction",
+        "type",
+        "cardinality",
+        "required"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "step_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "direction": {
+          "enum": [
+            "input",
+            "output"
+          ]
+        },
+        "type": {
+          "enum": [
+            "text",
+            "quantity",
+            "artifact"
+          ]
+        },
+        "cardinality": {
+          "enum": [
+            "one",
+            "many"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_port_id",
+        "target_port_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "source_port_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "target_port_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "port_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "port_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{2,79}(?![\\s\\S])"
+        }
+      }
+    }
+  }
+}

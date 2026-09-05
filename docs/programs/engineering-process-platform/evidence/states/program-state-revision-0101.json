@@ -1,0 +1,150 @@
+{
+  "$schema": "https://wright.local/programs/epp/program-state.schema.json",
+  "schema_version": "2.0",
+  "program_id": "EPP-2026",
+  "revision": 101,
+  "state": "PROGRAM_ACTIVE",
+  "baseline": {
+    "ref": "dev",
+    "commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+    "tree": "9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
+    "observed_clean": true
+  },
+  "prototype_evidence": {
+    "branch": "076-engineering-workflow-prototype",
+    "commit": "e7bb75c1d97e70e55b943e0c94a31ff85cf9f82d",
+    "remote_matches": true,
+    "registered_worktree": false,
+    "mode": "read_only_evidence",
+    "uncommitted_evidence_status": "none_detected"
+  },
+  "control_plane": {
+    "root": "docs/programs/engineering-process-platform",
+    "candidate_subject_resolution": "Scoped implementation delivery; exact candidate review and pending milestone acceptance remain separate.",
+    "schema_status": "passed",
+    "audit_status": "passed"
+  },
+  "current_feature": "EPP-N01",
+  "active_mutating_lease": null,
+  "last_transition": "TR-0100",
+  "readiness": {
+    "product": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "F02 is integrated through PR117; actual deployed-browser verification is pending.",
+        "Native authoring, execution and output recovery are the active milestone, with acceptance evidence still required."
+      ]
+    },
+    "benchmark": {
+      "status": "not_started",
+      "gate_file": "gates.md",
+      "blockers": [
+        "No 100-process collection has been generated or qualified",
+        "DEC-P0-007",
+        "DEC-P0-009",
+        "DEC-P0-010",
+        "DEC-P0-011",
+        "DEC-P0-012"
+      ]
+    },
+    "commercial": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "DEC-P0-001",
+        "DEC-P0-004",
+        "DEC-P0-006",
+        "DEC-P0-011",
+        "DEC-P0-012",
+        "Repository external controls remain evidence requirements"
+      ]
+    },
+    "program_health": {
+      "status": "blocked",
+      "gate_file": "gates.md",
+      "blockers": [
+        "F02 merged; deployment verification is pending and has not been inferred from CI.",
+        "Native milestone and benchmark/commercial/release assessments remain independent."
+      ]
+    }
+  },
+  "open_p0_decisions": [
+    "DEC-P0-001",
+    "DEC-P0-002",
+    "DEC-P0-003",
+    "DEC-P0-004",
+    "DEC-P0-005",
+    "DEC-P0-006",
+    "DEC-P0-007",
+    "DEC-P0-008",
+    "DEC-P0-009",
+    "DEC-P0-010",
+    "DEC-P0-011",
+    "DEC-P0-012"
+  ],
+  "next_eligible_actions": [
+    {
+      "action": "OPEN_CURRENT_FEATURE_PR",
+      "roadmap_item": "EPP-N01",
+      "requires_human_approval": false,
+      "reason": "Prepare the scoped native dev PR under standing user authority after full local gate and independent exact-candidate review passed. Lease is closed; ordinary push gate and CI remain required. Publication, human acceptance and actual dev deployment are not inferred."
+    }
+  ],
+  "approval": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "feature_state": "PUSH_AUTHORIZATION_PENDING",
+  "policy_version": "EPP-LIFECYCLE-1",
+  "scoped_checkpoint": {
+    "status": "independently_verified",
+    "candidate_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+    "candidate_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+    "task_ids": [
+      "T001",
+      "T002",
+      "T003",
+      "T004",
+      "T005",
+      "T006",
+      "T007",
+      "T008",
+      "T009",
+      "T010",
+      "T011",
+      "T012",
+      "T013",
+      "T014",
+      "T015",
+      "T016",
+      "T017",
+      "T018",
+      "T019",
+      "T020",
+      "T021",
+      "T022",
+      "T023",
+      "T024",
+      "T025",
+      "T026"
+    ],
+    "pending_task_ids": [
+      "T027",
+      "T028",
+      "T029",
+      "T030",
+      "T031",
+      "T032"
+    ],
+    "independent_review": {
+      "path": "evidence/reviews/NATIVE-REVIEW-20260905-60EF8672.json",
+      "record_digest": "9c777026188f0514913a054f65d857d37162f24c6c06c45a203c6f41f2635904"
+    },
+    "whole_feature_complete": false,
+    "reason": "Full authoritative scripts/check-dev-merge.sh passed with exit 0 on clean candidate 60ef8672, observed 2026-09-05T02:32:37Z. Retained log SHA256 3b4758ad651920c3f372d4abfc9898d1608bf8d376500dec850a0c6646ea3040. All blocking local stages passed, 170 Playwright passed and 5 explicit skips; actual native-server journeys separately 2 passed on production-equivalent c7. Wheel/sdist clean installs and independent archive correspondence, exact Docker cold-offline native artifact/restart proof retained. T001-T026 implemented; T027-T032 remain pending, including human study, CI and dev delivery. No whole-milestone completion or publication authorization inferred."
+  }
+}

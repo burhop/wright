@@ -1,0 +1,137 @@
+{
+  "collection_only": true,
+  "exit_code": 0,
+  "selected_files": [
+    "packages/data_vault/tests/test_native_process_artifacts.py",
+    "packages/data_vault/tests/test_native_process_repository.py",
+    "packages/data_vault/tests/test_native_process_runs.py"
+  ],
+  "tests": [
+    {
+      "id": "packages/data_vault/tests/test_native_process_artifacts.py::test_generated_storage_and_digest_verification_include_device_filename_metadata",
+      "file": "packages/data_vault/tests/test_native_process_artifacts.py",
+      "line": 29,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_artifacts.py::test_artifact_identity_and_size_limits_reject_without_escape",
+      "file": "packages/data_vault/tests/test_native_process_artifacts.py",
+      "line": 51,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_artifacts.py::test_reconciliation_removes_only_generated_unindexed_residue",
+      "file": "packages/data_vault/tests/test_native_process_artifacts.py",
+      "line": 79,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_artifacts.py::test_confined_input_and_cancelled_unindexed_cleanup",
+      "file": "packages/data_vault/tests/test_native_process_artifacts.py",
+      "line": 101,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_save_reopen_previous_revision_layout_identity_and_trace",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 75,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_exact_retry_returns_original_result_after_later_save",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 101,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_stale_writers_and_create_collision_cannot_overwrite",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 111,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_parallel_writers_have_exactly_one_success",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 130,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_fault_between_document_and_request_insertion_rolls_back_both",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 154,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_workspace_scope_and_bounded_pagination",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 173,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_migration_retains_verified_predecessor_and_forward_native_work",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 199,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_repository.py::test_interrupted_migration_does_not_leave_partial_native_tables",
+      "file": "packages/data_vault/tests/test_native_process_repository.py",
+      "line": 235,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_snapshot_replay_and_terminal_evidence_are_immutable",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 74,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_first_failure_records_dependents_and_independent_unstarted_steps",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 129,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_queued_cancel_and_late_step_or_artifact_cannot_publish",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 147,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_concurrent_terminal_transitions_have_exactly_one_committed_winner",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 161,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_success_requires_completed_steps_and_scope_is_enforced",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 181,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_restart_marks_only_nonterminal_runs_and_links_new_evidence",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 199,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_history_and_event_cursors_are_bounded_and_ordered",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 216,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_artifact_index_step_result_and_event_commit_together",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 234,
+      "skip_markers": []
+    },
+    {
+      "id": "packages/data_vault/tests/test_native_process_runs.py::test_value_budget_rejects_before_step_mutation",
+      "file": "packages/data_vault/tests/test_native_process_runs.py",
+      "line": 279,
+      "skip_markers": []
+    }
+  ]
+}

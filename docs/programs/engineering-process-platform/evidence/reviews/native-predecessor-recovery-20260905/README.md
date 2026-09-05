@@ -1,0 +1,9 @@
+# Actual packaged predecessor recovery
+
+The actual schema16 predecessor wheel built from public dev `7404a549` and the exact schema17 candidate40 wheel passed a five-phase package boundary exercise. Their Git trees and archive hashes distinguish the builds, which both retain version label 0.1.9. Current candidate packaging was not rebuilt.
+
+The predecessor created schema16 and a legacy workspace. The current packaged API upgraded to17 with a verified16 backup, then saved and executed a native example and checked actual artifact bytes/provenance plus in-memory tracing. A separate verified17 backup was retained. The actual old package rejected17 without changing database/WAL/SHM bytes, restored only the16 backup to a separate root, and confirmed that post-upgrade native tables were absent there. Reopening the retained17 root with the current package preserved the exact saved document, run, events, artifact digest and idempotent history.
+
+An initial command-local Git ownership setup error and a first workspace path rejected for being inside the repository are retained. The correction used temporary task data outside the repository; it did not change production protection or test assertions. Actual wheel bytes were extracted into isolated directories; every imported Wright module was required to originate there. Existing local Python dependencies were used. This is a package-sourced database compatibility proof, not a published release, different-version installer update or cross-platform claim. The older root does not regain post-upgrade native work; the two roots are never downgraded, overwritten or merged.
+
+The selected projection binds actual phase outcomes, package/source identities, module-origin checks and raw log hashes. Raw runtime logs and local data remain private. Independent closure, separate Docker span verification and final delivery gates remain pending at this checkpoint.

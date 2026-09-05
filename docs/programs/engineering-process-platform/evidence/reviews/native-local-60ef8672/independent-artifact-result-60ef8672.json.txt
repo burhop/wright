@@ -1,0 +1,52 @@
+{
+  "candidate": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+  "tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+  "manifest_files": 13,
+  "manifest_sha256": "bb7128ec2551bcf5d14dfb611aeccf3c3ef606ef3c0343c1277e0094f731c599",
+  "resolved_chunks": [
+    "NativeProcessPage-CHP8FWMI.css",
+    "NativeProcessPage-DKdwkon2.js",
+    "index-BtNJkgKG.js",
+    "index-C42fYR6I.css",
+    "plotly.min-dkCWgMZq.js",
+    "rolldown-runtime-Dd_uD5pT.js"
+  ],
+  "runtime_extra_lock_sha256": "2c58f4614c8e258900ea471fc6239cd6d44f394633e1a234d4e0b2b7bba185c8",
+  "uv_lock_sha256": "6d736ec55887fa06a4b4ba29907c0f9e81a995566d60f8a26ecbba514a3ded8c",
+  "wheel_sha256": "4b6062dc9746a1f43827a18bdd17cb67dbed4be0fb4071d8565b06cb50bab37d",
+  "sdist_sha256": "63652e7efe45f7c721cb1629c773d313b3792a280d517199fb7b8be673250d62",
+  "wheel_source_comparison": {
+    "compared_files": 669,
+    "line_ending_only_difference_count": 391,
+    "line_ending_examples": [
+      "api/__init__.py",
+      "api/brep_gateway.py",
+      "api/composition.py",
+      "api/config.py",
+      "api/database/migrate.py"
+    ]
+  },
+  "sdist_source_comparison": {
+    "compared_files": 672,
+    "line_ending_only_difference_count": 394,
+    "line_ending_examples": [
+      "LICENSE",
+      "README.md",
+      "apps/api/src/api/__init__.py",
+      "apps/api/src/api/brep_gateway.py",
+      "apps/api/src/api/composition.py"
+    ]
+  },
+  "wheel_metadata_files": [
+    "wright_engineering-0.1.9.dist-info/METADATA",
+    "wright_engineering-0.1.9.dist-info/RECORD",
+    "wright_engineering-0.1.9.dist-info/WHEEL",
+    "wright_engineering-0.1.9.dist-info/entry_points.txt",
+    "wright_engineering-0.1.9.dist-info/licenses/LICENSE"
+  ],
+  "sdist_extra_files": [
+    ".gitignore",
+    "PKG-INFO"
+  ],
+  "verdict": "passed"
+}

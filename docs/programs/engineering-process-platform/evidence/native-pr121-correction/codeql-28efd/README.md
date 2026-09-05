@@ -1,0 +1,13 @@
+# Actual local Python CodeQL analysis: 28efd6cc
+
+This receipt records the fresh completed local analysis of `28efd6ccdc4a9e7900a4e50f9f323fd0865b9211`, tree `50900ed4a7a93c5018b9cd85660f7d7aa6d10c49`. **The five original H1 dashboard/native-route finding signatures are absent, two H1 findings remain in unchanged source, and no new local signature was found.** Actual H2 GitHub CodeQL clearance remains required. This receipt does not establish full-gate, task, whole-candidate, integration or deployment completion.
+
+The cached official CodeQL 2.26.4 bundle used the same Python query/library/threat-model pack versions and all 43 reported rule IDs as H1. Database creation exited 0 at `2026-09-05T09:19:31.874703Z`; analysis exited 0 at `09:20:48.154227Z`. It evaluated 45 queries including standard diagnostics and reported **934/934 Python files** and **17/17 GitHub Actions files** scanned. All 3,485 tracked source blobs matched Git before and after the run. The updated shared scan helper and four relevant application files were explicitly extracted. No setup retry or query change occurred in this fresh run.
+
+The remaining findings are `py/incomplete-url-substring-sanitization` at `packages/agent_adapters/tests/test_hermes_gateway_adapter.py:140` and `py/polynomial-redos` at `packages/tool_registry/src/tool_registry/config_import.py:236`. Their files have unchanged Git blobs relative to H1. They are retained without dismissal or a clearance claim.
+
+`codeql-28efd-public-projection.json.txt` contains the explicit source, tool, query population, original/remaining finding locations, counts, timestamps and raw-evidence hashes. The raw SARIF is privately retained: 979,559 bytes, SHA-256 `161081611d461441ca0c4dea3e29d3784d82f0fae555efc3793f6fdd9d18731b`. Raw logs, source manifests, environment, configuration dumps, snippets and traces are not copied into this public bundle.
+
+The original d734 analysis, its three earlier failed preparations and its public history remain byte-for-byte unchanged. This receipt binds that prior history separately and does not reuse its result for the corrected helper. `public-file-manifest.json.txt` identifies the exact generated UTF-8/LF files and producer; raw input hashes identify retained originals, not inferred future Git blobs.
+
+Prepared by `/root/dashboard_review` from retained observations. The bounded producer checks exact source/hash relationships, terminal outcomes, five/two/zero finding counts, actual coverage denominators, and preservation of the prior public history. It performs no new analysis, gate run, remote action or repository modification.

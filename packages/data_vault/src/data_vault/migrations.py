@@ -1085,6 +1085,112 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON model_leases(content_digest, state, expires_at)"""),
         ),
     ),
+    Migration(
+        17,
+        "native_engineering_processes",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS native_process_documents (
+                workspace_id TEXT NOT NULL,
+                process_id TEXT NOT NULL,
+                revision INTEGER NOT NULL CHECK(revision >= 1),
+                token TEXT NOT NULL CHECK(length(token) = 64),
+                semantic_digest TEXT NOT NULL CHECK(length(semantic_digest) = 64),
+                title TEXT NOT NULL,
+                envelope BLOB NOT NULL,
+                previous_envelope BLOB,
+                updated_at TEXT NOT NULL,
+                trace_id TEXT NOT NULL,
+                PRIMARY KEY (workspace_id, process_id),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS native_process_requests (
+                workspace_id TEXT NOT NULL,
+                request_id TEXT NOT NULL,
+                fingerprint TEXT NOT NULL CHECK(length(fingerprint) = 64),
+                result BLOB NOT NULL,
+                created_at TEXT NOT NULL,
+                trace_id TEXT NOT NULL,
+                PRIMARY KEY (workspace_id, request_id),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS native_process_runs (
+                workspace_id TEXT NOT NULL,
+                run_id TEXT NOT NULL,
+                process_id TEXT NOT NULL,
+                session_id TEXT NOT NULL,
+                snapshot BLOB NOT NULL,
+                bindings BLOB NOT NULL,
+                semantic_digest TEXT NOT NULL CHECK(length(semantic_digest) = 64),
+                derived_from_run_id TEXT,
+                actor TEXT NOT NULL,
+                trace_id TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN
+                    ('queued','running','succeeded','failed','cancelled','timed_out','interrupted')),
+                created_at TEXT NOT NULL,
+                started_at TEXT,
+                completed_at TEXT,
+                timeout_seconds INTEGER NOT NULL CHECK(timeout_seconds BETWEEN 1 AND 300),
+                reason BLOB,
+                PRIMARY KEY (workspace_id, run_id),
+                FOREIGN KEY (workspace_id, process_id)
+                    REFERENCES native_process_documents(workspace_id, process_id) ON DELETE RESTRICT,
+                FOREIGN KEY (workspace_id, derived_from_run_id)
+                    REFERENCES native_process_runs(workspace_id, run_id) ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS native_process_steps (
+                workspace_id TEXT NOT NULL,
+                run_id TEXT NOT NULL,
+                step_id TEXT NOT NULL,
+                ordinal INTEGER NOT NULL CHECK(ordinal >= 0),
+                operation TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN
+                    ('pending','running','succeeded','failed','blocked','cancelled')),
+                started_at TEXT,
+                completed_at TEXT,
+                inputs BLOB,
+                outputs BLOB,
+                reason BLOB,
+                PRIMARY KEY (workspace_id, run_id, step_id),
+                UNIQUE (workspace_id, run_id, ordinal),
+                FOREIGN KEY (workspace_id, run_id)
+                    REFERENCES native_process_runs(workspace_id, run_id) ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS native_process_events (
+                workspace_id TEXT NOT NULL,
+                run_id TEXT NOT NULL,
+                sequence INTEGER NOT NULL CHECK(sequence >= 1),
+                occurred_at TEXT NOT NULL,
+                kind TEXT NOT NULL,
+                payload BLOB NOT NULL,
+                trace_id TEXT NOT NULL,
+                PRIMARY KEY (workspace_id, run_id, sequence),
+                FOREIGN KEY (workspace_id, run_id)
+                    REFERENCES native_process_runs(workspace_id, run_id) ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS native_process_artifacts (
+                workspace_id TEXT NOT NULL,
+                run_id TEXT NOT NULL,
+                artifact_id TEXT NOT NULL,
+                step_id TEXT NOT NULL,
+                port_id TEXT NOT NULL,
+                filename TEXT NOT NULL,
+                storage_key TEXT NOT NULL,
+                content_digest TEXT NOT NULL CHECK(length(content_digest) = 64),
+                size INTEGER NOT NULL CHECK(size BETWEEN 0 AND 10485760),
+                media_type TEXT NOT NULL,
+                provenance BLOB NOT NULL,
+                created_at TEXT NOT NULL,
+                PRIMARY KEY (workspace_id, run_id, artifact_id),
+                UNIQUE (workspace_id, storage_key),
+                FOREIGN KEY (workspace_id, run_id, step_id)
+                    REFERENCES native_process_steps(workspace_id, run_id, step_id) ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_native_process_runs_history
+                ON native_process_runs(workspace_id, process_id, created_at DESC, run_id)"""),
+        ),
+    ),
 )
 
 

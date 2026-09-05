@@ -1,0 +1,3673 @@
+{
+  "presentation": "Constructed public failure projection; original log and HTML remain private and immutable.",
+  "prepared_by": "Codex dashboard_review",
+  "prepared_at": "2026-09-05T05:27:03.474500+00:00",
+  "candidate_commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+  "candidate_tree": "29f573a09d7e1cbe60351eb21065105286b008bc",
+  "gate": {
+    "result": "failed",
+    "exit_code": 1,
+    "started_at": "2026-09-05T04:50:44.7292602Z",
+    "terminal_observed_at": "2026-09-05T05:21:44Z",
+    "exit_observation_source": "Coordinator-reported terminal process result; log/report independently corroborate the one browser failure",
+    "clean_source_scope": "Gate start only; generated build manifest/artifact derivation is separately recorded"
+  },
+  "pytest_vitest_terminal_stages_in_order": [
+    {
+      "stage_index": 13,
+      "runner": "pytest",
+      "targets": [
+        "tests/program_control_plane"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 361,
+          "skipped": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 14,
+      "runner": "pytest",
+      "targets": [
+        "tests/release"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 102
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 15,
+      "runner": "pytest",
+      "targets": [
+        "tests/native_runtime",
+        "tests/release/test_native_release_evidence.py",
+        "tests/release/test_native_release_rehearsal.py",
+        "tests/release/test_native_workflow_policy.py",
+        "tests/test_public_python_distribution.py"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 153,
+          "skipped": 10
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 16,
+      "runner": "pytest",
+      "targets": [
+        "tests/release",
+        "tests/native_runtime"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 235,
+          "skipped": 10,
+          "warning": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 20,
+      "runner": "pytest",
+      "targets": [
+        "apps/api/tests/test_security.py",
+        "apps/api/tests/test_gateway_api.py",
+        "packages/workspace_service/tests/test_files.py",
+        "packages/workspace_service/tests/test_workspace_path.py",
+        "packages/workspace_service/tests/test_workspace_service.py"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 51,
+          "skipped": 2,
+          "warning": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 21,
+      "runner": "pytest",
+      "targets": [
+        "tests/program_hardening",
+        "tests/native_runtime/test_program_state_compatibility.py",
+        "tests/native_runtime/test_rollback.py",
+        "tests/native_runtime/test_security.py",
+        "tests/e2e/test_engineering_program_offline.py",
+        "tests/e2e/test_engineering_program_journey.py",
+        "packages/workspace_service/tests/test_engineering_program_recovery.py",
+        "packages/workspace_service/tests/test_engineering_scenario_performance.py",
+        "packages/workspace_service/tests/test_rivet_mcp_cancellation.py",
+        "packages/workspace_service/tests/test_support_diagnostics.py",
+        "packages/workspace_service/tests/test_support_diagnostic_service.py",
+        "packages/workspace_service/tests/test_support_diagnostics_performance.py",
+        "apps/api/tests/test_support_diagnostics_api.py",
+        "tests/release/test_program_compatibility_evidence.py",
+        "tests/packaging/test_program_hardening_contents.py"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 80,
+          "skipped": 2,
+          "warning": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 22,
+      "runner": "vitest",
+      "file_count": 5,
+      "counts": {
+        "passed": 19,
+        "total": 19
+      },
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 23,
+      "runner": "pytest",
+      "targets": [
+        "apps/api/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 447,
+          "skipped": 1,
+          "warnings": 11
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 24,
+      "runner": "pytest",
+      "targets": [
+        "packages/agent_adapters/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 111
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 25,
+      "runner": "pytest",
+      "targets": [
+        "packages/core/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 143
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 26,
+      "runner": "pytest",
+      "targets": [
+        "packages/data_vault/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 126,
+          "skipped": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 27,
+      "runner": "pytest",
+      "targets": [
+        "packages/model_registry/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 185,
+          "deselected": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 28,
+      "runner": "pytest",
+      "targets": [
+        "packages/tool_registry/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 411
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 29,
+      "runner": "pytest",
+      "targets": [
+        "packages/workspace_service/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 485,
+          "skipped": 9
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 30,
+      "runner": "pytest",
+      "targets": [
+        "tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 462,
+          "skipped": 39,
+          "warning": 1
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 31,
+      "runner": "pytest",
+      "targets": [
+        "hermes-plugin-wright",
+        "hermes-plugin-wright",
+        "hermes-plugin-wright/tests"
+      ],
+      "terminal_summaries": [
+        {
+          "passed": 13
+        }
+      ],
+      "gate_status": "completed_under_gate_policy"
+    },
+    {
+      "stage_index": 32,
+      "runner": "vitest",
+      "file_count": 108,
+      "counts": {
+        "passed": 547,
+        "total": 547
+      },
+      "gate_status": "completed_under_gate_policy"
+    }
+  ],
+  "count_semantics": "Stage populations can overlap. No sum across suites or promotion of acceptance/quality records is implied.",
+  "playwright": {
+    "stats": {
+      "total": 175,
+      "expected": 169,
+      "unexpected": 1,
+      "flaky": 0,
+      "skipped": 5,
+      "ok": false
+    },
+    "start_time_unix_ms": 1788585300007,
+    "duration_ms": 404494.712,
+    "cases": [
+      {
+        "id": "playwright:766b7eff3a84b8938aae-155385895e81901ec91b",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "keeps chat live through focus, resize, tab switch, and restoration",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:44.354Z",
+            "duration": 1428
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-8c71d0c24e059e3e5270",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "uses an explicit reversible Chat and Surface switcher when narrow",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:45.789Z",
+            "duration": 1158
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-114a98d553eceb3268f1",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "keeps chat live through focus, resize, tab switch, and restoration",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:34.955Z",
+            "duration": 2097
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-3ce44e086c648a7afa8d",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "uses an explicit reversible Chat and Surface switcher when narrow",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:37.064Z",
+            "duration": 1585
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-a9a70e1641e480333689",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "keeps chat live through focus, resize, tab switch, and restoration",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "unexpected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "failed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:32.737Z",
+            "duration": 17255
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-6ae6b90283bd14cf62ac",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "uses an explicit reversible Chat and Surface switcher when narrow",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:50.429Z",
+            "duration": 1720
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-ebee27b83b5e2094c59c",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "keeps chat live through focus, resize, tab switch, and restoration",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:00.166Z",
+            "duration": 1736
+          }
+        ]
+      },
+      {
+        "id": "playwright:766b7eff3a84b8938aae-68b69a3b818a27dce717",
+        "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+        "title": "uses an explicit reversible Chat and Surface switcher when narrow",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:01.914Z",
+            "duration": 1260
+          }
+        ]
+      },
+      {
+        "id": "playwright:6e39eaf9cb62a7381bdd-cb1c9a7686fba0d895ff",
+        "file": "tests/ui-integration/agent-chat.spec.ts",
+        "title": "should support session creation, messaging flow, and workspace toggle",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 4,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:01.496Z",
+            "duration": 4306
+          }
+        ]
+      },
+      {
+        "id": "playwright:6e39eaf9cb62a7381bdd-49935bd2912391af7dc6",
+        "file": "tests/ui-integration/agent-chat.spec.ts",
+        "title": "should support toggling between different sessions in a workspace",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 263,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:05.978Z",
+            "duration": 1254
+          }
+        ]
+      },
+      {
+        "id": "playwright:6e39eaf9cb62a7381bdd-9ae65dd8cd912f5cc48d",
+        "file": "tests/ui-integration/agent-chat.spec.ts",
+        "title": "should display MCP status button and show status details on click",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 426,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:07.247Z",
+            "duration": 4604
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-5e650bcefc261a38f0f0",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "discovers evidence and reasons without network-backed product calls",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 232,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:11.914Z",
+            "duration": 1002
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-b2c5135ff0c77c5e4b46",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "supports keyboard detail review and read-only observation",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 254,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:12.931Z",
+            "duration": 1509
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-2ce4a069fb708e978bf7",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "activates and rolls back signed metadata without installing anything",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 270,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:14.450Z",
+            "duration": 2027
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-a1ef3f798405b8cdc074",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "keeps URL-stable filters and renders an honest empty state",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 293,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:16.489Z",
+            "duration": 995
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-58b20484a8aab005f418",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "reports an empty-result need with structured context and no browser prompt",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 305,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:17.496Z",
+            "duration": 1578
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-b191b13362aaedb4d692",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "works at a narrow engineering-laptop layout with no critical a11y defects",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 350,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:19.083Z",
+            "duration": 1613
+          }
+        ]
+      },
+      {
+        "id": "playwright:84fdf6c62bcbcb8c1d84-72cf6aa6124c3663abd4",
+        "file": "tests/ui-integration/capability-library.spec.ts",
+        "title": "loads the actual local capability projection without vendor traffic @live",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 368,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:20.716Z",
+            "duration": 7831
+          }
+        ]
+      },
+      {
+        "id": "playwright:f55f15d7a2668ed00a24-391bbfb7611fe29521e0",
+        "file": "tests/ui-integration/capture-screenshot.spec.ts",
+        "title": "capture all screenshots",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 5,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:28.562Z",
+            "duration": 12907
+          }
+        ]
+      },
+      {
+        "id": "playwright:cbc737d9cc8ba58985c6-c713eb29f0a5f2b61269",
+        "file": "tests/ui-integration/create-session.spec.ts",
+        "title": "clicking '+' button successfully creates and selects a new session",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 161,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:41.482Z",
+            "duration": 1076
+          }
+        ]
+      },
+      {
+        "id": "playwright:8e70953060f18b7c4920-9c3c719c88f030ce26de",
+        "file": "tests/ui-integration/dashboard-real.spec.ts",
+        "title": "should support clicking + Create Workspace and selecting an existing workspace",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 4,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:42.573Z",
+            "duration": 2079
+          }
+        ]
+      },
+      {
+        "id": "playwright:90cda532ab82d274b30b-bd21fff9b3474c539c38",
+        "file": "tests/ui-integration/dashboard.spec.ts",
+        "title": "should load the dashboard layout and select an existing workspace",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 204,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:44.666Z",
+            "duration": 1382
+          }
+        ]
+      },
+      {
+        "id": "playwright:90cda532ab82d274b30b-068bf45a0d82c5c5130e",
+        "file": "tests/ui-integration/dashboard.spec.ts",
+        "title": "should open Create Workspace modal and submit",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 225,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:46.060Z",
+            "duration": 2030
+          }
+        ]
+      },
+      {
+        "id": "playwright:006bec2dce65fb8e4b07-12c4b8ebc848e2f3b725",
+        "file": "tests/ui-integration/engineering-model-library.spec.ts",
+        "title": "supports an instrumented no-download decision path while offline",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 423,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:48.111Z",
+            "duration": 1065
+          }
+        ]
+      },
+      {
+        "id": "playwright:006bec2dce65fb8e4b07-95d240e2256fd1daeb7a",
+        "file": "tests/ui-integration/engineering-model-library.spec.ts",
+        "title": "recovers from cancellation, proves readiness, and completes maintenance journeys",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 450,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:49.187Z",
+            "duration": 2286
+          }
+        ]
+      },
+      {
+        "id": "playwright:006bec2dce65fb8e4b07-84a94676d8ad9bdc2d6b",
+        "file": "tests/ui-integration/engineering-model-library.spec.ts",
+        "title": "supports keyboard-only modal use, focus restoration, 200% zoom, and accessible status",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 526,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:51.480Z",
+            "duration": 1414
+          }
+        ]
+      },
+      {
+        "id": "playwright:400ed28dfe928edf236e-54a7b7370787cc3a42ed",
+        "file": "tests/ui-integration/installed-hermes-walkthrough.spec.ts",
+        "title": "opens the packaged Wright UI through the local Hermes lifecycle",
+        "project": "chromium",
+        "outcome": "skipped",
+        "location": {
+          "line": 240,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "skipped",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:52.903Z",
+            "duration": 0
+          }
+        ]
+      },
+      {
+        "id": "playwright:6e3b951c0d73c276c33d-52ad9e1e3c4f9557cb0e",
+        "file": "tests/ui-integration/installed-rivet-file-open-walkthrough.spec.ts",
+        "title": "opens a saved Rivet project from Workspace Files",
+        "project": "chromium",
+        "outcome": "skipped",
+        "location": {
+          "line": 236,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "skipped",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:52.903Z",
+            "duration": 0
+          }
+        ]
+      },
+      {
+        "id": "playwright:c1bec523cd3679e61a34-b49c26ab18a8f8179edc",
+        "file": "tests/ui-integration/mcp-appliance.spec.ts",
+        "title": "opens Wright, starts bundled MCPs, and submits an MCP-oriented prompt",
+        "project": "chromium",
+        "outcome": "skipped",
+        "location": {
+          "line": 250,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "skipped",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:52.903Z",
+            "duration": 0
+          }
+        ]
+      },
+      {
+        "id": "playwright:2967a55b8fb6999aac71-06412be990bf86ad212d",
+        "file": "tests/ui-integration/mcp-directory.spec.ts",
+        "title": "previews an advanced local MCP without registering it",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:15:52.908Z",
+            "duration": 7174
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2aa01f930f5088cbc20-f59588e2f196fea4f48d",
+        "file": "tests/ui-integration/mcp-onboarding.spec.ts",
+        "title": "uses the keyboard for custom MCP review and exact apply",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 251,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:00.097Z",
+            "duration": 1519
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2aa01f930f5088cbc20-564465dac7a164f3a80e",
+        "file": "tests/ui-integration/mcp-onboarding.spec.ts",
+        "title": "normalizes pasted, remote, local, and host sources without preflight effects",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 280,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:01.625Z",
+            "duration": 5674
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2aa01f930f5088cbc20-32d7a757c63d77e907a2",
+        "file": "tests/ui-integration/mcp-onboarding.spec.ts",
+        "title": "completes local-package, remote-endpoint, and host-bridge journeys",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 312,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:07.309Z",
+            "duration": 5656
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2aa01f930f5088cbc20-3595ea36bc156c418dab",
+        "file": "tests/ui-integration/mcp-onboarding.spec.ts",
+        "title": "shows a changed-plan conflict and returns to review",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 358,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:12.976Z",
+            "duration": 2157
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2aa01f930f5088cbc20-249b63e4cc52c8aac812",
+        "file": "tests/ui-integration/mcp-onboarding.spec.ts",
+        "title": "opens the real read-only source step without applying effects @live",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 390,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:15.149Z",
+            "duration": 2176
+          }
+        ]
+      },
+      {
+        "id": "playwright:3b38bcc6526468725edf-060e209b605f496db668",
+        "file": "tests/ui-integration/native-process-live.spec.ts",
+        "title": "@live native saved process computes, preserves failure and links correction",
+        "project": "chromium",
+        "outcome": "skipped",
+        "location": {
+          "line": 64,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "skipped",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:17.336Z",
+            "duration": 0
+          }
+        ]
+      },
+      {
+        "id": "playwright:3b38bcc6526468725edf-68e5c9404a505613da5d",
+        "file": "tests/ui-integration/native-process-live.spec.ts",
+        "title": "@live native document and artifact-review examples produce exact files",
+        "project": "chromium",
+        "outcome": "skipped",
+        "location": {
+          "line": 152,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "skipped",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:17.336Z",
+            "duration": 0
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-4dbb67a2b23c7eca1b3e",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "creates and connects from keyboard controls, saves and reopens exact language identities",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 400,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:17.344Z",
+            "duration": 3830
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-fbfbd973da947464250f",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "projects programmatic endpoints, preserves semantics while moving, and reviews deletion with undo",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 457,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:21.183Z",
+            "duration": 2248
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-57ac343d4e0fddb13f3e",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "retains a stale writer's draft and traps confirmation focus",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 496,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:23.441Z",
+            "duration": 2168
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-28ec9bb8c34b4579ef15",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "supports narrow layout, 200 percent zoom and automated accessibility checks",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 521,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:25.617Z",
+            "duration": 2770
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-c86e22ddfc71bfe00521",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "records 20 warm opens of a 25-step fixture without losing identities",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 562,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:28.396Z",
+            "duration": 5068
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-954a9fc8db75a700014d",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "fails, corrects, saves a linked rerun and verifies/downloads actual artifact bytes",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 605,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:33.471Z",
+            "duration": 3317
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-75d935ee1b9b98549323",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "rejects altered artifact bytes without exposing a preview or download",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 658,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:36.796Z",
+            "duration": 1620
+          }
+        ]
+      },
+      {
+        "id": "playwright:818415bc50acc447479c-9d58581938fd7fcbb7c3",
+        "file": "tests/ui-integration/native-process.spec.ts",
+        "title": "reconnects to a retained running snapshot and cancels through the service",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 682,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:38.424Z",
+            "duration": 1822
+          }
+        ]
+      },
+      {
+        "id": "playwright:dc6b8babed156aba666e-6ce10b1c26dcc34b9400",
+        "file": "tests/ui-integration/navigation-redesign.spec.ts",
+        "title": "should load the new global sidebar navigation items and page views",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 218,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:40.263Z",
+            "duration": 1158
+          }
+        ]
+      },
+      {
+        "id": "playwright:dc6b8babed156aba666e-e7429c180db48de82887",
+        "file": "tests/ui-integration/navigation-redesign.spec.ts",
+        "title": "should display the redesigned workspace sidebar activity buttons inside a workspace",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 248,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:41.434Z",
+            "duration": 1936
+          }
+        ]
+      },
+      {
+        "id": "playwright:dc6b8babed156aba666e-8b68ce200c5dbb3b7f09",
+        "file": "tests/ui-integration/navigation-redesign.spec.ts",
+        "title": "should display the condensed dashboard cards with health statuses and system telemetry",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 282,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:43.379Z",
+            "duration": 992
+          }
+        ]
+      },
+      {
+        "id": "playwright:dc6b8babed156aba666e-38b9a2a04c5128c27d52",
+        "file": "tests/ui-integration/navigation-redesign.spec.ts",
+        "title": "should support logs filtering and launching Hermes Diagnostic drawer via selection context menu",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 363,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:44.382Z",
+            "duration": 1468
+          }
+        ]
+      },
+      {
+        "id": "playwright:dc6b8babed156aba666e-b5c5b61b7f6b58a2f881",
+        "file": "tests/ui-integration/navigation-redesign.spec.ts",
+        "title": "should support changing and saving custom workspace settings",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 490,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:45.862Z",
+            "duration": 1247
+          }
+        ]
+      },
+      {
+        "id": "playwright:5d2868f7d23420c27cca-eb7c6d122d9474d5cecf",
+        "file": "tests/ui-integration/navigation.spec.ts",
+        "title": "should navigate to all sections successfully and persist URLs",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 35,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:47.126Z",
+            "duration": 2998
+          }
+        ]
+      },
+      {
+        "id": "playwright:7f2ec64ceb94818a4480-06101ed14a816aa46956",
+        "file": "tests/ui-integration/process-definition.spec.ts",
+        "title": "opens from customer navigation and presents one matching text and diagram definition",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 223,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:50.147Z",
+            "duration": 1361
+          }
+        ]
+      },
+      {
+        "id": "playwright:7f2ec64ceb94818a4480-dcad53f4db59073be844",
+        "file": "tests/ui-integration/process-definition.spec.ts",
+        "title": "supports the native source disclosure by keyboard with no serious or critical Axe findings",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 268,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:51.519Z",
+            "duration": 1938
+          }
+        ]
+      },
+      {
+        "id": "playwright:7f2ec64ceb94818a4480-c07f1c0038f037d44d95",
+        "file": "tests/ui-integration/process-definition.spec.ts",
+        "title": "keeps the complete definition reachable at 200 percent zoom with reduced motion",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 297,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:53.468Z",
+            "duration": 1215
+          }
+        ]
+      },
+      {
+        "id": "playwright:7f2ec64ceb94818a4480-6ae1da0eb3a7a522559a",
+        "file": "tests/ui-integration/process-definition.spec.ts",
+        "title": "preserves explicit non-color meaning at 320 pixels with forced colors",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 353,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:54.698Z",
+            "duration": 1247
+          }
+        ]
+      },
+      {
+        "id": "playwright:8c9631dfa50c0a32b90c-9c74c18d112012b1415b",
+        "file": "tests/ui-integration/program-status.spec.ts",
+        "title": "answers the six operator questions and keeps exact fallbacks usable",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 118,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:16:55.962Z",
+            "duration": 5797
+          }
+        ]
+      },
+      {
+        "id": "playwright:8c9631dfa50c0a32b90c-3fe6a7ab4053712d0d19",
+        "file": "tests/ui-integration/program-status.spec.ts",
+        "title": "remains understandable when narrow, zoomed, reduced-motion, and graph code is unavailable",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 199,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:01.769Z",
+            "duration": 1025
+          }
+        ]
+      },
+      {
+        "id": "playwright:8c9631dfa50c0a32b90c-1b505408b8c09b80ea21",
+        "file": "tests/ui-integration/program-status.spec.ts",
+        "title": "refreshes atomically after an exact committed publication and observes its separate heartbeat",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 227,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:02.803Z",
+            "duration": 6463
+          }
+        ]
+      },
+      {
+        "id": "playwright:8c9631dfa50c0a32b90c-9ef6a0c4549f4b6c740a",
+        "file": "tests/ui-integration/program-status.spec.ts",
+        "title": "keeps last-valid evidence on refresh failure and stays honest with no prior bundle",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 331,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:09.278Z",
+            "duration": 7393
+          }
+        ]
+      },
+      {
+        "id": "playwright:cca0b3e1305f7160eea0-039548e5d3ca56155679",
+        "file": "tests/ui-integration/setup.spec.ts",
+        "title": "loads and saves LLM, theme, and credential preferences",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 53,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:16.686Z",
+            "duration": 1336
+          }
+        ]
+      },
+      {
+        "id": "playwright:e3361b769c2bf936c540-22517a82fb96f6cd9b0e",
+        "file": "tests/ui-integration/tool-registry.spec.ts",
+        "title": "shows the capability-first registry shell @smoke",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 4,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:18.035Z",
+            "duration": 859
+          }
+        ]
+      },
+      {
+        "id": "playwright:4adb78c2ab1b65469508-1fdc38e8f32e5ab162d7",
+        "file": "tests/ui-integration/ui-consistency-theme.spec.ts",
+        "title": "should propagate the backend-configured dark theme to the document element",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 127,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:18.910Z",
+            "duration": 841
+          }
+        ]
+      },
+      {
+        "id": "playwright:4adb78c2ab1b65469508-dc6c722cd189bcecec94",
+        "file": "tests/ui-integration/ui-consistency-theme.spec.ts",
+        "title": "should propagate the backend-configured light theme to the document element",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 157,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:19.760Z",
+            "duration": 863
+          }
+        ]
+      },
+      {
+        "id": "playwright:4adb78c2ab1b65469508-b6daad490ec35ecdab05",
+        "file": "tests/ui-integration/ui-consistency-theme.spec.ts",
+        "title": "should ensure cards do not overlap and elements align correctly",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 186,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:20.631Z",
+            "duration": 2182
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-5dfed6e27c46f1dac0be",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should open and mount the 3D STL viewer when clicking cube.stl",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 266,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:22.826Z",
+            "duration": 2518
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-41936198f60d6b0d755c",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should open and mount the Code Editor when clicking script.py",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 291,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:25.359Z",
+            "duration": 2040
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-8ce9174d142668f7ec63",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should open and mount the PDF Document Viewer when clicking document.pdf",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 345,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:27.411Z",
+            "duration": 1068
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-14f50aee7d8966092450",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should open and mount the Image Viewer when clicking image.png",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 369,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:28.490Z",
+            "duration": 1033
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-6bf4223e8237b3c36821",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should open and mount the HTML Previewer when clicking sandbox.html",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 396,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:29.534Z",
+            "duration": 1088
+          }
+        ]
+      },
+      {
+        "id": "playwright:00163640499838007b36-7574462309c9a2c8de1d",
+        "file": "tests/ui-integration/viewer-panel-lifecycle.spec.ts",
+        "title": "should show fix button on error output and trigger agent chat on click",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 423,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:30.633Z",
+            "duration": 1274
+          }
+        ]
+      },
+      {
+        "id": "playwright:f2d795cd01e9c96ab12d-8f81e1a3a3ad95a21fe5",
+        "file": "tests/ui-integration/viewer-panel-persistence.spec.ts",
+        "title": "should handle dirty indicator, backup, and save on Ctrl+S shortcut",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 197,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:31.926Z",
+            "duration": 1180
+          }
+        ]
+      },
+      {
+        "id": "playwright:f2d795cd01e9c96ab12d-e988a5ffa56ea89097a1",
+        "file": "tests/ui-integration/viewer-panel-persistence.spec.ts",
+        "title": "should handle revert edits to clear dirty changes",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 246,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:33.122Z",
+            "duration": 1026
+          }
+        ]
+      },
+      {
+        "id": "playwright:d1f0eab33d9df7c3dc62-6313039ca6091790b266",
+        "file": "tests/ui-integration/viewer-panel-watchdog.spec.ts",
+        "title": "should verify sandbox attributes on iframe",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 168,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:34.165Z",
+            "duration": 1165
+          }
+        ]
+      },
+      {
+        "id": "playwright:d1f0eab33d9df7c3dc62-722ea1490db5a4b197f5",
+        "file": "tests/ui-integration/viewer-panel-watchdog.spec.ts",
+        "title": "should trigger unresponsive watchdog overlay when iframe does not pong",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 191,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:35.343Z",
+            "duration": 4641
+          }
+        ]
+      },
+      {
+        "id": "playwright:d1f0eab33d9df7c3dc62-2ab8c4bb459bb27e02f8",
+        "file": "tests/ui-integration/viewer-panel-watchdog.spec.ts",
+        "title": "should open, interact with, and close the Developer Tools diagnostics panel",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 219,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:40.005Z",
+            "duration": 1392
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-2fdc798920cb2728fa0d",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "supports keyboard-only tabs, divider, F6 regions, and frame return",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 34,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:41.419Z",
+            "duration": 1405
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-539664a70b2a3ee03c42",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "has semantic host roles and zero serious or critical axe violations",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 64,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:42.839Z",
+            "duration": 1502
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-bce3c6cb43c0ef6ad567",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "supports keyboard-only tabs, divider, F6 regions, and frame return",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 34,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:28.246Z",
+            "duration": 3355
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-60d5a658ce962c420ea6",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "has semantic host roles and zero serious or critical axe violations",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 64,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:32.106Z",
+            "duration": 2831
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-fb334c0fb8e56b531de7",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "supports keyboard-only tabs, divider, F6 regions, and frame return",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 34,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:27.231Z",
+            "duration": 2525
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-773e3772413b627d59ec",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "has semantic host roles and zero serious or critical axe violations",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 64,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:29.839Z",
+            "duration": 2881
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-674a30107218e4f30b8f",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "supports keyboard-only tabs, divider, F6 regions, and frame return",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 34,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:56.306Z",
+            "duration": 1992
+          }
+        ]
+      },
+      {
+        "id": "playwright:2be35df75eddd1dc8b1b-34470e21ac97ae6644c0",
+        "file": "tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts",
+        "title": "has semantic host roles and zero serious or critical axe violations",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 64,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:58.427Z",
+            "duration": 1723
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2a9cb732f44527edc89-0cf55c60b59bfd1dd48c",
+        "file": "tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts",
+        "title": "framing refusal remains truthful and the browser fallback stays usable",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 10,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:46.959Z",
+            "duration": 1113
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2a9cb732f44527edc89-f9717505400f8de81683",
+        "file": "tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts",
+        "title": "framing refusal remains truthful and the browser fallback stays usable",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 10,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:38.666Z",
+            "duration": 1984
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2a9cb732f44527edc89-e43c13aeaacef112e4e5",
+        "file": "tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts",
+        "title": "framing refusal remains truthful and the browser fallback stays usable",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 10,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:52.221Z",
+            "duration": 2269
+          }
+        ]
+      },
+      {
+        "id": "playwright:a2a9cb732f44527edc89-20f9f903c9d94bb5f955",
+        "file": "tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts",
+        "title": "framing refusal remains truthful and the browser fallback stays usable",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 10,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:03.189Z",
+            "duration": 1200
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-f36e2cecf8dd1d65fa9f",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "blocks cross-origin, credential, API, popup, device and download attempts",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 19,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:48.087Z",
+            "duration": 1264
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-f98147516c93cd2a2c13",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "fixture audit expectations are stable and contain no sensitive values",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 109,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:49.361Z",
+            "duration": 5
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-880093f3970c48f1f51e",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "blocks cross-origin, credential, API, popup, device and download attempts",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 19,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:40.666Z",
+            "duration": 1745
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-80c9bd172be9a7b826a2",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "fixture audit expectations are stable and contain no sensitive values",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 109,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:42.425Z",
+            "duration": 8
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-8f75ebd87883d1b0e752",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "blocks cross-origin, credential, API, popup, device and download attempts",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 19,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:54.510Z",
+            "duration": 2278
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-c03a01ea9aa14ffd607d",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "fixture audit expectations are stable and contain no sensitive values",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 109,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:56.800Z",
+            "duration": 5
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-ec3a37d918d5a01404b2",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "blocks cross-origin, credential, API, popup, device and download attempts",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 19,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:04.407Z",
+            "duration": 1385
+          }
+        ]
+      },
+      {
+        "id": "playwright:67d07ab04b28978866fa-4fb3f66f6ba319097438",
+        "file": "tests/ui-integration/workspace-surfaces/hostile-surface.spec.ts",
+        "title": "fixture audit expectations are stable and contain no sensitive values",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 109,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:05.803Z",
+            "duration": 4
+          }
+        ]
+      },
+      {
+        "id": "playwright:4c5cb441d6287d28b4e5-10d8c66793b2fd20600a",
+        "file": "tests/ui-integration/workspace-surfaces/live-app.spec.ts",
+        "title": "recovers a crash and supports panel, browser, transports, navigation, restart, and stop",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 68,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:49.381Z",
+            "duration": 1776
+          }
+        ]
+      },
+      {
+        "id": "playwright:4c5cb441d6287d28b4e5-791a4c9c6a47715b3874",
+        "file": "tests/ui-integration/workspace-surfaces/live-app.spec.ts",
+        "title": "recovers a crash and supports panel, browser, transports, navigation, restart, and stop",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 68,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:42.451Z",
+            "duration": 2712
+          }
+        ]
+      },
+      {
+        "id": "playwright:4c5cb441d6287d28b4e5-2d731f51c0bc39afaff3",
+        "file": "tests/ui-integration/workspace-surfaces/live-app.spec.ts",
+        "title": "recovers a crash and supports panel, browser, transports, navigation, restart, and stop",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 68,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:56.822Z",
+            "duration": 4722
+          }
+        ]
+      },
+      {
+        "id": "playwright:4c5cb441d6287d28b4e5-a7738ab75d32fc153f94",
+        "file": "tests/ui-integration/workspace-surfaces/live-app.spec.ts",
+        "title": "recovers a crash and supports panel, browser, transports, navigation, restart, and stop",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 68,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:05.817Z",
+            "duration": 1965
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-1c4477fafaf811beccf2",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "uses a distinct-origin double iframe with restrictive defaults",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 95,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:51.172Z",
+            "duration": 1268
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-0adf40f12fab4c1a21b4",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "rejects invalid domain and permission declarations before mounting content",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 154,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:52.450Z",
+            "duration": 1372
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-455cc39a9404b8d21980",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "drops host messages sent before resource initialization",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 185,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:53.833Z",
+            "duration": 1209
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-a7d18cf45ebfac0ed0d9",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "uses a distinct-origin double iframe with restrictive defaults",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 95,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:45.180Z",
+            "duration": 1260
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-4d53daa5e455d72ddb6e",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "rejects invalid domain and permission declarations before mounting content",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 154,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:46.452Z",
+            "duration": 1368
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-db09ca0b776c646550d2",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "drops host messages sent before resource initialization",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 185,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:47.829Z",
+            "duration": 2075
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-6a0156e02c062c6ab17b",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "uses a distinct-origin double iframe with restrictive defaults",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 95,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:01.560Z",
+            "duration": 1795
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-bfc97bfdbe886249f036",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "rejects invalid domain and permission declarations before mounting content",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 154,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:03.366Z",
+            "duration": 2006
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-99aeb0c7a7be15740047",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "drops host messages sent before resource initialization",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 185,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:05.383Z",
+            "duration": 1843
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-a8d7020724787e7a938e",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "uses a distinct-origin double iframe with restrictive defaults",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 95,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:07.797Z",
+            "duration": 1336
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-56334256574c78c9b803",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "rejects invalid domain and permission declarations before mounting content",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 154,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:09.147Z",
+            "duration": 1600
+          }
+        ]
+      },
+      {
+        "id": "playwright:03787311aae2a0f9b6dc-c5cab4cd0821cc1d1259",
+        "file": "tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts",
+        "title": "drops host messages sent before resource initialization",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 185,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:10.757Z",
+            "duration": 1343
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-496856484699beb011b2",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "shares state, remembers choice, and closes a view without stopping",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 12,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:55.054Z",
+            "duration": 1362
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-8f192d3772be601c9cdb",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "browser-open failure preserves an already active panel",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 88,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:56.426Z",
+            "duration": 1112
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-0e6ce407bbbcb92e06d0",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "shares state, remembers choice, and closes a view without stopping",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 12,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:49.917Z",
+            "duration": 2009
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-112f9b89a80c3cc70000",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "browser-open failure preserves an already active panel",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 88,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:51.937Z",
+            "duration": 1459
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-f74750aff87456af197f",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "shares state, remembers choice, and closes a view without stopping",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 12,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:07.244Z",
+            "duration": 3458
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-28a5bc67a066cbff0dd1",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "browser-open failure preserves an already active panel",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 88,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:10.712Z",
+            "duration": 1908
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-a6284a15a038d7a83cd8",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "shares state, remembers choice, and closes a view without stopping",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 12,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:12.115Z",
+            "duration": 1439
+          }
+        ]
+      },
+      {
+        "id": "playwright:3000c795df2c1a110183-5d70e5620ab2f422c455",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts",
+        "title": "browser-open failure preserves an already active panel",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 88,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:13.565Z",
+            "duration": 1167
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-480e5187bf4bb26234c0",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "reload accepts only reconciled instance truth and never auto-restarts",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 5,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:57.551Z",
+            "duration": 1827
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-cbe7cee7ebb832a2539f",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "a reconciliation outage never exposes persisted ready authority",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 47,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:17:59.390Z",
+            "duration": 1027
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-6440304212ca77a0a826",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "reload accepts only reconciled instance truth and never auto-restarts",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 5,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:53.414Z",
+            "duration": 2055
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-2d2282b238206076f0ec",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "a reconciliation outage never exposes persisted ready authority",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 47,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:55.482Z",
+            "duration": 1288
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-62cd66a4fa49577619a9",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "reload accepts only reconciled instance truth and never auto-restarts",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 5,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:12.631Z",
+            "duration": 2177
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-9827ad47aca6de12de45",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "a reconciliation outage never exposes persisted ready authority",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 47,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:14.818Z",
+            "duration": 1192
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-ed67c87d7628b0e1ca61",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "reload accepts only reconciled instance truth and never auto-restarts",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 5,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:14.746Z",
+            "duration": 1869
+          }
+        ]
+      },
+      {
+        "id": "playwright:56bc6b8d8ba92f1f93b8-feb4429c932192ef6223",
+        "file": "tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts",
+        "title": "a reconciliation outage never exposes persisted ready authority",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 47,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:16.623Z",
+            "duration": 987
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-45bbd1be1a140e7924a3",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows, updates, preserves history, and discloses destructive retention",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 202,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:00.434Z",
+            "duration": 3727
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-7536502edfa631693b16",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows a stable actionable renderer error",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 268,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:04.170Z",
+            "duration": 1009
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-85a590c537350fdb5130",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "live installed-wheel display path",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 298,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:05.190Z",
+            "duration": 1113
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-7868f0a39207007f77f4",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows, updates, preserves history, and discloses destructive retention",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 202,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:56.788Z",
+            "duration": 2648
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-962fa52ba67837a507dd",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows a stable actionable renderer error",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 268,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:59.449Z",
+            "duration": 1183
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-461e83788982ebb26fd3",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "live installed-wheel display path",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 298,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:00.646Z",
+            "duration": 1221
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-9ede4775f547a540b608",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows, updates, preserves history, and discloses destructive retention",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 202,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:16.030Z",
+            "duration": 3809
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-b61ac82199a4f63c07ec",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows a stable actionable renderer error",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 268,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:19.849Z",
+            "duration": 1425
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-356a814ae51ac3d0d8eb",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "live installed-wheel display path",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 298,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:21.285Z",
+            "duration": 1376
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-f09df2230c66b2b01ed5",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows, updates, preserves history, and discloses destructive retention",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 202,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:17.626Z",
+            "duration": 3624
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-2c2338a112a014726cfa",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "shows a stable actionable renderer error",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 268,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:21.261Z",
+            "duration": 1032
+          }
+        ]
+      },
+      {
+        "id": "playwright:f5c8d6e99fbf004537e4-98e938e6c76018a42d3a",
+        "file": "tests/ui-integration/workspace-surfaces/python-display.spec.ts",
+        "title": "live installed-wheel display path",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 298,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:22.304Z",
+            "duration": 1030
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-56706bcd8db43ad0bc29",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "generates, applies, saves, and reloads a sparkle result",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 247,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:06.317Z",
+            "duration": 3150
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-70d1fbb3cd2fc3dd0ffc",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "keeps the canvas usable when Hermes is unavailable",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 272,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:09.475Z",
+            "duration": 1556
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-c553f0b77d3b6dcdce79",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "shows correlated canvas-run progress and terminal output",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 288,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:11.043Z",
+            "duration": 2133
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-1d36a6fc0918e927739c",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "generates, applies, saves, and reloads a sparkle result",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 247,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:01.883Z",
+            "duration": 3426
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-8a06780f8bcc4a274258",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "keeps the canvas usable when Hermes is unavailable",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 272,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:05.321Z",
+            "duration": 1633
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-651e31b1bcd801a613a1",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "shows correlated canvas-run progress and terminal output",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 288,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:06.964Z",
+            "duration": 3822
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-92d082bb069f65eb1fff",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "generates, applies, saves, and reloads a sparkle result",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 247,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:22.678Z",
+            "duration": 4683
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-43e8cb0dddae2c90d469",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "keeps the canvas usable when Hermes is unavailable",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 272,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:27.375Z",
+            "duration": 1998
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-c2cdd82692486e024b1c",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "shows correlated canvas-run progress and terminal output",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 288,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:29.382Z",
+            "duration": 3338
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-6faa4c198ca08eb0086c",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "generates, applies, saves, and reloads a sparkle result",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 247,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:23.348Z",
+            "duration": 2983
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-40cd0b8075a5389b9386",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "keeps the canvas usable when Hermes is unavailable",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 272,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:26.344Z",
+            "duration": 1230
+          }
+        ]
+      },
+      {
+        "id": "playwright:a03fe0b2b61b570f01ce-e8341d9b678cf9ea3e96",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-ai.spec.ts",
+        "title": "shows correlated canvas-run progress and terminal output",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 288,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:27.587Z",
+            "duration": 2213
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-d37b9f7d2bdb78a79d57",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "runs immediately, shows complete safe outputs, focuses a step, and reattaches after refresh",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:13.187Z",
+            "duration": 3022
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-036aca522e4e91653e4d",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "auto-opens a failed run with residue truth and safe full-rerun only",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:16.217Z",
+            "duration": 2127
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-8426a02b7b1c20dbfcf9",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "keeps controls accessible in narrow and maximized workspace layouts",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 50,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:18.356Z",
+            "duration": 1188
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-202d672317afff4007a3",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "runs immediately, shows complete safe outputs, focuses a step, and reattaches after refresh",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:10.802Z",
+            "duration": 3661
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-a08207f7ab8007a5094a",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "auto-opens a failed run with residue truth and safe full-rerun only",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:14.475Z",
+            "duration": 2451
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-a1413b6b0071d3d3755a",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "keeps controls accessible in narrow and maximized workspace layouts",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 50,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:16.936Z",
+            "duration": 1435
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-0f0fd9d82bd064d08126",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "runs immediately, shows complete safe outputs, focuses a step, and reattaches after refresh",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:32.734Z",
+            "duration": 4852
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-397518d3250ee8849650",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "auto-opens a failed run with residue truth and safe full-rerun only",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:37.595Z",
+            "duration": 2858
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-9dfc1ba1f45acdfb9702",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "keeps controls accessible in narrow and maximized workspace layouts",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 50,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:40.462Z",
+            "duration": 1881
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-d321646ed6e90d5511de",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "runs immediately, shows complete safe outputs, focuses a step, and reattaches after refresh",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 6,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:29.815Z",
+            "duration": 3212
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-6498f611596b55746a60",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "auto-opens a failed run with residue truth and safe full-rerun only",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 37,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:33.037Z",
+            "duration": 2084
+          }
+        ]
+      },
+      {
+        "id": "playwright:9ac27a049f1e7ea53857-5d033e51ef3959f57bc9",
+        "file": "tests/ui-integration/workspace-surfaces/rivet-run-inspector.spec.ts",
+        "title": "keeps controls accessible in narrow and maximized workspace layouts",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 50,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:35.131Z",
+            "duration": 1209
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-8430a17db8b1d9fb45f5",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "opens a saved workflow file from the explorer in Rivet",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 295,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:19.562Z",
+            "duration": 1459
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-abd039872e9392359864",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "keeps Wright authoritative while exposing only graph-authoring UI",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 378,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:21.031Z",
+            "duration": 2992
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-396b93079a6f9da30a1a",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "opens a saved workflow file from the explorer in Rivet",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 295,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:18.386Z",
+            "duration": 1746
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-75e3e414a8c5168592ec",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "keeps Wright authoritative while exposing only graph-authoring UI",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 378,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:20.142Z",
+            "duration": 3521
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-07e93dfe1dbbb31c6f6b",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "opens a saved workflow file from the explorer in Rivet",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 295,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:42.358Z",
+            "duration": 3277
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-54f6220b550a6f152f4d",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "keeps Wright authoritative while exposing only graph-authoring UI",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 378,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:45.643Z",
+            "duration": 5851
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-c7be0a666b8773e679be",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "opens a saved workflow file from the explorer in Rivet",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 295,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:36.354Z",
+            "duration": 1429
+          }
+        ]
+      },
+      {
+        "id": "playwright:97a720c7ee363c49452a-58067b6100b1c7e0d626",
+        "file": "tests/ui-integration/workspace-surfaces/rivet2-canvas.spec.ts",
+        "title": "keeps Wright authoritative while exposing only graph-authoring UI",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 378,
+          "column": 7
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:37.792Z",
+            "duration": 3011
+          }
+        ]
+      },
+      {
+        "id": "playwright:9b342856deca0431e322-38be5245551da6908597",
+        "file": "tests/ui-integration/workspace-surfaces/webmcp.spec.ts",
+        "title": "scopes identical tools, falls back without native WebMCP, denies stale scope, and tears down",
+        "project": "chromium",
+        "outcome": "expected",
+        "location": {
+          "line": 97,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:18:24.035Z",
+            "duration": 1215
+          }
+        ]
+      },
+      {
+        "id": "playwright:9b342856deca0431e322-bc26b2aa4082af380563",
+        "file": "tests/ui-integration/workspace-surfaces/webmcp.spec.ts",
+        "title": "scopes identical tools, falls back without native WebMCP, denies stale scope, and tears down",
+        "project": "firefox-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 97,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:19:23.675Z",
+            "duration": 2139
+          }
+        ]
+      },
+      {
+        "id": "playwright:9b342856deca0431e322-9047e4a3561cf0e9d458",
+        "file": "tests/ui-integration/workspace-surfaces/webmcp.spec.ts",
+        "title": "scopes identical tools, falls back without native WebMCP, denies stale scope, and tears down",
+        "project": "webkit-workspace-surfaces",
+        "outcome": "expected",
+        "location": {
+          "line": 97,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:20:51.509Z",
+            "duration": 4234
+          }
+        ]
+      },
+      {
+        "id": "playwright:9b342856deca0431e322-5c8e342909c1d4d6d3b9",
+        "file": "tests/ui-integration/workspace-surfaces/webmcp.spec.ts",
+        "title": "scopes identical tools, falls back without native WebMCP, denies stale scope, and tears down",
+        "project": "desktop-surface",
+        "outcome": "expected",
+        "location": {
+          "line": 97,
+          "column": 5
+        },
+        "results": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "startTime": "2026-09-05T05:21:40.816Z",
+            "duration": 1252
+          }
+        ]
+      }
+    ],
+    "failure": {
+      "id": "playwright:766b7eff3a84b8938aae-a9a70e1641e480333689",
+      "file": "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts",
+      "title": "keeps chat live through focus, resize, tab switch, and restoration",
+      "project": "webkit-workspace-surfaces",
+      "outcome": "unexpected",
+      "location": {
+        "line": 6,
+        "column": 7
+      },
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "startTime": "2026-09-05T05:19:32.737Z",
+          "duration": 17255
+        }
+      ],
+      "assertion_line": 17,
+      "assertion_column": 29,
+      "error_message": "Error: expect(locator).toHaveAttribute(expected) failed\n\nLocator:  getByTestId('workspace-panel')\nExpected: \"focus\"\nReceived: \"normal\"\nTimeout:  15000ms\n\nCall log:\n  - Expect \"toHaveAttribute\" with timeout 15000ms\n  - waiting for getByTestId('workspace-panel')\n    32 × locator resolved to <div data-layout-mode=\"normal\" data-testid=\"workspace-panel\" data-wide-layout-mode=\"normal\" class=\"workspace-surfaces-layout\" data-workspace-surfaces=\"enabled\">…</div>\n       - unexpected value \"normal\"\n\n\n  15 |     await expect(workspace).toHaveAttribute(\"data-layout-mode\", \"normal\");\n  16 |     await page.locator('[data-testid=\"surface-enter-focus\"]:visible').click();\n> 17 |     await expect(workspace).toHaveAttribute(\"data-layout-mode\", \"focus\");\n     |                             ^\n  18 |     await expect(page.getByTestId(\"composer-input\")).toBeVisible();\n  19 |     await expect(page.getByTestId(\"workspace-sidebar\")).toBeHidden();\n  20 |\n    at tests\\ui-integration\\workspace-surfaces\\focus-layout.spec.ts:17:29",
+      "original_error_message_sha256": "4f8495b095168f41c46af8c633f553e6b9d4d86b5ce619cc261783cca8009d5c",
+      "error_projection": "ANSI formatting removed and the verified private checkout prefix removed; assertion text preserved"
+    }
+  },
+  "earlier_gate_steps": {
+    "status": "completed_under_existing_gate_policy_before_Playwright",
+    "includes": [
+      "whitespace and environment setup",
+      "Ruff lint/format",
+      "ESLint and Prettier",
+      "TypeScript",
+      "existing mypy checks including warning-mode coverage",
+      "workflow/distribution metadata validation",
+      "frontend build",
+      "wheel and sdist build/validation",
+      "strict MkDocs"
+    ],
+    "limitation": "This projection does not replace the actual package identities, generated-manifest derivation, or warning-mode diagnostics in their separate evidence."
+  },
+  "private_raw_provenance": [
+    {
+      "file": "dev-merge-gate-40ebc645-webkit-failed.log",
+      "sha256": "312a22f2b314dc35e98085b551d9ceb205e790c36e40f968570e2ff4f0e5634b",
+      "bytes": 999430
+    },
+    {
+      "file": "playwright-report-40ebc645-webkit-failed.html",
+      "sha256": "d4bf193ea42c4fb291c4000046b4a888df55686f3ccceb7f2a17684f9cad0b02",
+      "bytes": 784807
+    }
+  ],
+  "log_decoding": "utf-16",
+  "selection_rule": "Only candidate/times, public test identities/outcomes, per-attempt status/timing, terminal counts, known failure assertion and raw-artifact integrity metadata. No reporter configuration, environments, attachments, traces, step trees, screenshots, response bodies or console logs copied.",
+  "pending": [
+    "WebKit focus-layout investigation/correction and required verification",
+    "successful complete gate on eligible candidate",
+    "final independent review and freeze",
+    "required push and terminal CI",
+    "dev integration and deployment verification",
+    "human follow-up"
+  ]
+}

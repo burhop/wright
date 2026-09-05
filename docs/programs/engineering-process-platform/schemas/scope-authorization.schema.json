@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/scope-authorization.schema.json",
+  "title": "Bounded native milestone user scope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "authorization_id",
+    "program_id",
+    "feature_id",
+    "authority_kind",
+    "recorded_by",
+    "effective_from_revision",
+    "allowed_scopes",
+    "excluded_scopes",
+    "exact_subject_approval",
+    "human_review_evidence",
+    "revoked",
+    "meaning",
+    "instruction",
+    "recorded_at",
+    "instruction_sha256"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "../../schemas/scope-authorization.schema.json"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "authorization_id": {
+      "const": "AUTH-EPP-N01-2026-001"
+    },
+    "program_id": {
+      "const": "EPP-2026"
+    },
+    "feature_id": {
+      "const": "EPP-N01"
+    },
+    "authority_kind": {
+      "const": "standing_user_scope"
+    },
+    "recorded_by": {
+      "const": "Codex coordinator"
+    },
+    "effective_from_revision": {
+      "const": 93
+    },
+    "allowed_scopes": {
+      "const": [
+        "bounded_planning",
+        "bounded_implementation",
+        "feature_push",
+        "dev_pr_integration"
+      ]
+    },
+    "excluded_scopes": {
+      "const": [
+        "direct_dev_push",
+        "main_integration",
+        "publication",
+        "paid_services",
+        "new_credentials",
+        "proprietary_installation",
+        "physical_actuation"
+      ]
+    },
+    "exact_subject_approval": {
+      "const": false
+    },
+    "human_review_evidence": {
+      "const": false
+    },
+    "revoked": {
+      "const": false
+    },
+    "meaning": {
+      "const": "Records the supplied user instruction and bounded scope. It is not a signature, exact-byte approval, review result, or release authority."
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30000
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "instruction_sha256": {
+      "const": "9ac96ec25630bba8ffe161d2536ce45659f1be4e65d9d01833e90b4f72d41d21"
+    }
+  }
+}

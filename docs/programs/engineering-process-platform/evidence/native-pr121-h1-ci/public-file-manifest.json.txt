@@ -1,0 +1,34 @@
+{
+  "format": "wright-native-pr121-h1-public-file-manifest-v1",
+  "projection_assembled_at": "2026-09-05T08:39:53.260665Z",
+  "producer": {
+    "retained_filename": "prepare-h1-public-receipt.py",
+    "raw_file_sha256": "56d8da48aed7732d3ac55383c5e1be23f0525f66eed201a6f2f0ca5f08408949",
+    "raw_bytes": 17722
+  },
+  "historical_subject": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+  "meaning": "Hashes below bind exact generated public projection bytes, UTF-8 with LF newlines. This manifest does not hash itself or claim a future Git blob identity.",
+  "files": [
+    {
+      "retained_filename": "README.md",
+      "raw_file_sha256": "4d168cee8872ea08715140d87c9600cd7ff8d9caeb373658f4e1c9a2209ad1ea",
+      "raw_bytes": 5650
+    },
+    {
+      "retained_filename": "terminal-ci-receipt.json.txt",
+      "raw_file_sha256": "88c59bd2d841c81862d2c0fcc36c9e84649d95a1fab073bf1eb6d54571019b70",
+      "raw_bytes": 38117
+    },
+    {
+      "retained_filename": "local-push-gate-receipt.json.txt",
+      "raw_file_sha256": "f65e0e1d8db40b23fde8c2d085d937627ba03ef45b39b926a002b972c3347d6a",
+      "raw_bytes": 4834
+    },
+    {
+      "retained_filename": "retained-public-files-newline-clarification.json.txt",
+      "raw_file_sha256": "8ebdf9cd424ecfcb3633db2584f9a83dae9ca94b3f899f9a1127a61f76eda996",
+      "raw_bytes": 9070
+    }
+  ],
+  "ci_outcome": "failed"
+}

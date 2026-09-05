@@ -1,0 +1,318 @@
+{
+  "base": "7caca82de47760b7d07150f921ca861abf82d8d7",
+  "old_tip": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860",
+  "new_tip": "de4189230bf13699bfd8f80a960ba79057baf4ee",
+  "old_freeze": "a495719fd815ece9e10fff4adf22b006d755bbf8",
+  "new_freeze": "94731459ab1b26d8885a0b398fdd430c75fed4b5",
+  "old_candidate": "0aae81db49fa5e2b5bb918337048ce7b41654936",
+  "new_candidate": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+  "commits": [
+    {
+      "old_commit": "ea9ad2680fe0b92b9388025162d6fd2eaccce2e4",
+      "new_commit": "b511443bac53b0420883dbbeb3e60ce29dd26a96",
+      "old_tree": "79dd6346a4ea8bef87a480b7b3ba7a2c6c4d86f1",
+      "new_tree": "796207d67e9908ef30e24a31ede0c9fc0f4c11d0",
+      "old_program_tree": "707c9470e2eea6a06739e7d42f9fbb85fc6ba9ea",
+      "new_program_tree": "9688184adb78ab4f7433055f9a7a8b8735d1c01d",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt"
+      ]
+    },
+    {
+      "old_commit": "b699191d763b30fbdce130a46d571a87446b2cae",
+      "new_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+      "old_tree": "18bb6b64c503c0c5e949b403b2d7d3e358da17a2",
+      "new_tree": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+      "old_program_tree": "4ada703759e0bffb6753e20655c10b64cce3c728",
+      "new_program_tree": "80ba8fdff092fc75a1fcbd41a00d93eaaf320ab7",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt"
+      ]
+    },
+    {
+      "old_commit": "22e5f1bcc39b3a163e1a1b9c0ccaa3d356258961",
+      "new_commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+      "old_tree": "3f7f2895a0b7d43824073e920aa583e4a78f535b",
+      "new_tree": "82643e2fc889eeb258e4d587c5b2d12dc5256c23",
+      "old_program_tree": "6004766c2f7415e98fa3576283522381fba319e7",
+      "new_program_tree": "1060567c30aab14eb224fd1cef2b048fc2ab836b",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt"
+      ]
+    },
+    {
+      "old_commit": "1401589399c121a2249ad0e9f5734f2c82380238",
+      "new_commit": "e6215e8c6276fe762c22c0084ad2102074d35814",
+      "old_tree": "500a6faad849774845c9c6a61c0b3e70138744a5",
+      "new_tree": "9753ccaffbd48359098799c134de6805b805c3b2",
+      "old_program_tree": "591f8f6d38a00d8e3ea1c58128c8e709ec0875c5",
+      "new_program_tree": "4c652dbace3824ad23d37d1aac7b5e9bd60f1f4b",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "0aae81db49fa5e2b5bb918337048ce7b41654936",
+      "new_commit": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+      "old_tree": "97fdc799ad17afc38d9f795d6d05e54fb9fce7f5",
+      "new_tree": "ebce3a4a68aaa62cff8b50444a727ef70233ba2d",
+      "old_program_tree": "2d1f7168050f760320f9e7b004011d79f15a0f21",
+      "new_program_tree": "7347a789e8bc5f60f9cb550b8f9354e0d17f60b3",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "70f1a89294a9ad5b5547a1e4c91cdb83dbc4d3d8",
+      "new_commit": "8b3f83d3c0096f437acb0e0acf0aa5ab63a76fbd",
+      "old_tree": "9332026fd09f0ec6889ed0dedfab7a52b64d118d",
+      "new_tree": "c0140dc8bb4c7d6475d79bbd326524420d522368",
+      "old_program_tree": "7fb318025039e4f4a90d9894a68be18f09cc868f",
+      "new_program_tree": "cf984ad95ff658f66f8d54939e175d6089d851fd",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "a495719fd815ece9e10fff4adf22b006d755bbf8",
+      "new_commit": "94731459ab1b26d8885a0b398fdd430c75fed4b5",
+      "old_tree": "0ad0b2cf541a484dcc023ad747c8a06ec637754a",
+      "new_tree": "a1fd7d306c52f96a1dea0ef039e79fd003b00b77",
+      "old_program_tree": "80227c1b625709ef5cfccd4718d51dcdd958e324",
+      "new_program_tree": "34df52eb8d688d15811f5e2713dadda13393efb9",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "56dc634a2a4677e5b122a59eee7c2b2c88b2937a",
+      "new_commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+      "old_tree": "743db9732f061b843a88dd41e76121cf599a2937",
+      "new_tree": "18e67a90dfbb1bbb0993931389d1b023315d8ef7",
+      "old_program_tree": "6fec25bc257bc0cf72521ad6af106e2c9eb40484",
+      "new_program_tree": "403885dfb8db590e2f0dc2085772e69ac2d46e56",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "f86c2ccf3e09c4a629b4f018bec4db17c1604ae1",
+      "new_commit": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+      "old_tree": "dfc1ae50fc6ac454b4b042792bce2a67ab082869",
+      "new_tree": "3d538ee7a338e924464060dd38150a10e923bf4f",
+      "old_program_tree": "d70be9eb2d795c25487c6ad15dd946e09d3f326b",
+      "new_program_tree": "515f099962d8abd8c02627a5ec4c70a2b483515f",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "d796e535790090d21dd269a2e89c8c1f797549ff",
+      "new_commit": "9c19245d0814700e33a1c71ecb1b6e07c912ea28",
+      "old_tree": "6d344e62b85e78c2a7d561b7a2b1b1c04083b682",
+      "new_tree": "5e335a5b324d9daae15e2992426878b5f01ccd40",
+      "old_program_tree": "901847d4fb557bb64b07f2bec83b5593987c56c8",
+      "new_program_tree": "fc5da873df14dd8ccb6efaf22de331419dfbefdb",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0110.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0109.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "3078605642f1f27c954bd7aff01957351be65191",
+      "new_commit": "8c326bfc17173fe9852fffa51ba5709c9bdef09c",
+      "old_tree": "631d9e9120b37e03b7827577ce23e6a192a898bb",
+      "new_tree": "ddd901c4835f078f2d40f42796d7063aafafc432",
+      "old_program_tree": "0e8338ebeb6990456cc151cf89658d3b143212a7",
+      "new_program_tree": "29ec11572ea9e0b02f429d369a3062c93fb07a5b",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0110.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0109.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "08a7135e2c0777f8ecf35c897d86bb3a68ce5860",
+      "new_commit": "de4189230bf13699bfd8f80a960ba79057baf4ee",
+      "old_tree": "f80e9861d068428104cd3464d02f3dbe94237c3f",
+      "new_tree": "9485a5242cf42be2abc295490dc85a3157813255",
+      "old_program_tree": "bc460b3cfa1310e4da578bebdb06a0e7bb8bfd1b",
+      "new_program_tree": "5451d8bec1711127d2af1c8513be33ca5c16cb01",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-gate-b699191d/acceptance.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0108.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0110.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0106.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0107.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0109.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    }
+  ],
+  "identity_map": {
+    "44bef130d1cf5d62676efe802aa9981c58f4b82dcc622f7d9dba1fde8ed5f67d": "a586bc540e21556f747d9524341662ceb21d566ce7742defb62dff5173494c96",
+    "298e3be0bda920792e8db805bc417c5e8f46b904": "bc8c089f0f6041007103350d20fc016b00077aa4",
+    "4d3bd20511056611da42940d6b372e38fe589b441861ef03abdae21e6235fe2e": "25b470c6a8f6e16d04ba1b4e021d4a17d1ad43bcc6396a618b07b0a8fad5f92f",
+    "ea9ad2680fe0b92b9388025162d6fd2eaccce2e4": "b511443bac53b0420883dbbeb3e60ce29dd26a96",
+    "79dd6346a4ea8bef87a480b7b3ba7a2c6c4d86f1": "796207d67e9908ef30e24a31ede0c9fc0f4c11d0",
+    "707c9470e2eea6a06739e7d42f9fbb85fc6ba9ea": "9688184adb78ab4f7433055f9a7a8b8735d1c01d",
+    "b699191d763b30fbdce130a46d571a87446b2cae": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
+    "18bb6b64c503c0c5e949b403b2d7d3e358da17a2": "24bf03f83a61d94cafa5279f8d5c40b677c05749",
+    "4ada703759e0bffb6753e20655c10b64cce3c728": "80ba8fdff092fc75a1fcbd41a00d93eaaf320ab7",
+    "913397dda6303a97626842be3ffa9f52a7c1697be0d58774bc2819fd58e14469": "84fbf941bfef4698279d7016a2387d5ef851ebdeffeb20bf06cabe582dc2b718",
+    "7c2ff7724b9b2d407beaa71ee3350e89d43849c4": "1bd932f7c21bfed1269921a626ff4f297d89d123",
+    "50f92a5266718538aac26223704ac4539bfb6ae0307cb3efc36fb218ee3f9688": "54698d8dfa35d331aeac664f1fe88f3807e0a8e8820920d91b6a863e59b7d5ec",
+    "22e5f1bcc39b3a163e1a1b9c0ccaa3d356258961": "0ec1378eab73f6610390d0abd579342234a520e2",
+    "3f7f2895a0b7d43824073e920aa583e4a78f535b": "82643e2fc889eeb258e4d587c5b2d12dc5256c23",
+    "6004766c2f7415e98fa3576283522381fba319e7": "1060567c30aab14eb224fd1cef2b048fc2ab836b",
+    "d951c5ed737463972f3b5da68abeec883ea644fa8cc10a710e7abf1d1a504623": "1d18ceae66def1b9c1debbf52a18c68cce054861538d9402b2c18407a6624054",
+    "e8fcc50a46202b136ae8d49667f7ccaa4e9f5de1": "38fa42388cb9a0e8096d690ccdf78ec5a3052c17",
+    "80ec4c5a3a9151b6581b195b2090bbbf82423160707da1cff60f389afedb508f": "bad0e08d298d8647af2a1877d15ce9c508f05df89534fa1e8f0c49db9095af97",
+    "1401589399c121a2249ad0e9f5734f2c82380238": "e6215e8c6276fe762c22c0084ad2102074d35814",
+    "500a6faad849774845c9c6a61c0b3e70138744a5": "9753ccaffbd48359098799c134de6805b805c3b2",
+    "591f8f6d38a00d8e3ea1c58128c8e709ec0875c5": "4c652dbace3824ad23d37d1aac7b5e9bd60f1f4b",
+    "0aae81db49fa5e2b5bb918337048ce7b41654936": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+    "97fdc799ad17afc38d9f795d6d05e54fb9fce7f5": "ebce3a4a68aaa62cff8b50444a727ef70233ba2d",
+    "2d1f7168050f760320f9e7b004011d79f15a0f21": "7347a789e8bc5f60f9cb550b8f9354e0d17f60b3",
+    "8bfc69bd3388d28592c31dbc9cf0489ead177299599ee9b12c7f3f18fb8ef37e": "f6cf37145b4ca59e83d4bd362239d470617fd3a8d4d97983b86b76b73aa8361b",
+    "dc733e6177318e8a3eea5c5a6e525c466000208c": "b507d635188ca510ed6f6e83caed54b105b56f77",
+    "24fb43d247d4b91e89fdd447a5e0f5097191dc25f5347a6cc928f0890702a9de": "7835365dde3ef6ce850274c1f5e6ef879eae2136963334f7fb6f5273aaa854a9",
+    "1f15601f6cae6cb51d76772c9064da0789fad9d4216f15a7043d1dd2887e2c35": "ce9d0e16d53669885d25ddfa36c6d67ef739493f5fee58bfbe197ca83f699b72",
+    "cdb27c0c2c612f57a80bfa2b63062cc4d16ad982": "a6419b74d22f6b52bf402dcbf8ee622b0d6ea6aa",
+    "bc1c14b1d5e676bb0d5b6d6b991fe554d07f30559e2b12e0b0e193a075f19087": "f27490bbc081d253f539911eb6bd8e165a9f445af9128f07cc8c12a0ed0fe9e7",
+    "70f1a89294a9ad5b5547a1e4c91cdb83dbc4d3d8": "8b3f83d3c0096f437acb0e0acf0aa5ab63a76fbd",
+    "9332026fd09f0ec6889ed0dedfab7a52b64d118d": "c0140dc8bb4c7d6475d79bbd326524420d522368",
+    "7fb318025039e4f4a90d9894a68be18f09cc868f": "cf984ad95ff658f66f8d54939e175d6089d851fd",
+    "02ee10e8cea03600c9d87b098bd61b3145decfb1ee2d0ad38d3fc365f959d688": "088cdd4af1b521fa9f1b4c443783c36b3f8185fff381f47a832ffd4870ee5dfb",
+    "949be30ace5f51c3e23cbb0074082df57ae4d0b3": "947cf8995dfc6eb9b7401004fe0d808391b47d7a",
+    "3ddcf8c53d4a95940d6d6490bb434644f85075e13c42135a9e244ee03f848b8a": "cc0695aaf0acabc3411fd78c880c9be7f5f127eb11d652ca6ca71d4c76ffaf4f",
+    "3f8ddfac3e59c5e9cd69589c7b86cff4904507520f10ba66b84b14a04d68e92b": "6186b425adaaddf7fc8be9c542810937e59c99258940172a62629e328bf46614",
+    "b2bea3daa9b1cfb4db8279d6ccf4d1cf8a5e5011": "af7004ca5eb5b07c78b8eb2e830f011581f6995b",
+    "7256eec8ea26e4fc3f58b5b4951ec0d9b12aafb2cf4336eacbfc222925b04333": "dd412487bc4d8eb71144faaa87ba8e6029082ec55e62531dd839a75d8db73f4c",
+    "a495719fd815ece9e10fff4adf22b006d755bbf8": "94731459ab1b26d8885a0b398fdd430c75fed4b5",
+    "0ad0b2cf541a484dcc023ad747c8a06ec637754a": "a1fd7d306c52f96a1dea0ef039e79fd003b00b77",
+    "80227c1b625709ef5cfccd4718d51dcdd958e324": "34df52eb8d688d15811f5e2713dadda13393efb9",
+    "56dc634a2a4677e5b122a59eee7c2b2c88b2937a": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+    "743db9732f061b843a88dd41e76121cf599a2937": "18e67a90dfbb1bbb0993931389d1b023315d8ef7",
+    "6fec25bc257bc0cf72521ad6af106e2c9eb40484": "403885dfb8db590e2f0dc2085772e69ac2d46e56",
+    "71f0af82e6b6b40cd8ab6b2c8339f209dba1ab7f73436d442f43d0602060ee2c": "770bd05bb16565524231588eae5d4ba073dcc01b2f5c4f0385ec74a8a44d7540",
+    "512122c1963f19a16a9865c8186226d575d11cbd": "abbfe23c5b3ec7f422f940379857957f88654d49",
+    "b6fadedc5b912e1f4fafd558820b91f12c0a91356dd7d377a9b09e8372db0763": "aa12a1e7f561fa5bae7f4145f14209636d56bf5fa87d639aece69ee28c46d3d0",
+    "e0bc9eded514bc536692f45a099a3183a4072fdb45e5882c6af708bbfaabdb17": "1beddb240f597380f0f876e5b32e7a2729e65d81c796faaabbf7544f16c2cea9",
+    "64b2ba1116d58ad355cd76eb4e780caa581ec776": "b512753c6abec49649c5cc844f95d13267832088",
+    "3a21e8c0af6440ac7b166c989779d42c38f90e029879d3b415e3f97a5dfe81b3": "61e9268ce6e9896bbeb8c390b51107a9c7995cfd7e0a558a7e021970e90dfa4e",
+    "ded2ebec507d15512d6edab6299a6c2f3d730a6ade2a5a0a5fd11bbfeb22ae7e": "54c2f89047a321525961c066cbbaf6a383226ae50c6be96cd30fa675a070ec16",
+    "dd5f9b1b342a7c86e7831275db50f637d259b976": "17dba11b8c77fed312dc9c491afb055600ab969d",
+    "952257c8cef3e4e3d55a5e3259be87ec8ed66119bbcb43e30fe866e139887419": "16a6eb498444da1f2a6cebec5b019bc63819feab03a09f5284363ab0a61286a2",
+    "f86c2ccf3e09c4a629b4f018bec4db17c1604ae1": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+    "dfc1ae50fc6ac454b4b042792bce2a67ab082869": "3d538ee7a338e924464060dd38150a10e923bf4f",
+    "d70be9eb2d795c25487c6ad15dd946e09d3f326b": "515f099962d8abd8c02627a5ec4c70a2b483515f",
+    "0a88d21fde00e32146bc636e6f67b48d7324823fb122fd4edaa245cbc230f22e": "43a6ed8af343ce3bdb3fd775f06b4f5ff80cada4cc878e64fa15ea850cd3d29f",
+    "8666062014bef968aa54722f4592e4e4bf8ea146": "58c9bc15b22af92368943c7aec22550b6beefec7",
+    "63c7604db7de0384367ec5ffd4c9ae559c3a714b7836f01f13448ac8475afd31": "d99a9815f6de87f6ed5a033e2cb4e0d036fec12d30384e6e20910b57e3304503",
+    "c5c49e46d7a5985beaff389644c55e3204a54397425f52b04da6ed6c745a26fb": "ed55effb19c5c4ba49ebd8d5562db41c6220504f76db2e891eee1630c636e518",
+    "cdefb59d2c468f81cb358028ae84d0500eac170d": "a6c3e4b9e688ebbb394a2a790b0985581c961ee5",
+    "df5d7533a77576c30950c05d07623d9ed3a8befb06195d4dca4c7f93843a7ba1": "5f81465b454ee2186dce2adde0d21528c28e8a84c0e4204a6357a9de0df73640",
+    "d796e535790090d21dd269a2e89c8c1f797549ff": "9c19245d0814700e33a1c71ecb1b6e07c912ea28",
+    "6d344e62b85e78c2a7d561b7a2b1b1c04083b682": "5e335a5b324d9daae15e2992426878b5f01ccd40",
+    "901847d4fb557bb64b07f2bec83b5593987c56c8": "fc5da873df14dd8ccb6efaf22de331419dfbefdb",
+    "3078605642f1f27c954bd7aff01957351be65191": "8c326bfc17173fe9852fffa51ba5709c9bdef09c",
+    "631d9e9120b37e03b7827577ce23e6a192a898bb": "ddd901c4835f078f2d40f42796d7063aafafc432",
+    "0e8338ebeb6990456cc151cf89658d3b143212a7": "29ec11572ea9e0b02f429d369a3062c93fb07a5b",
+    "ef11dcc10baa024c5519f8e3ddec4c3c36d3b28a7533618d2e1f0c8da62783a9": "7d29d2c0262076ca30ff23b0ea3830036a017cc7935f7c94b9c3d25141bf5eed",
+    "fbf4792a4a7d197f58aa0f27ba2e2ed16db77302": "097cea12655a07115030399640fab4d3660b715a",
+    "997f005ee250dcaed7bb48064b36857a2c52e89727ce1a518abe08e759d31f69": "edcf1f2c6a13712f6a43427be249d544dafc8779a9b13c5bb8e03a779e0d3a79",
+    "08a7135e2c0777f8ecf35c897d86bb3a68ce5860": "de4189230bf13699bfd8f80a960ba79057baf4ee",
+    "f80e9861d068428104cd3464d02f3dbe94237c3f": "9485a5242cf42be2abc295490dc85a3157813255",
+    "bc460b3cfa1310e4da578bebdb06a0e7bb8bfd1b": "5451d8bec1711127d2af1c8513be33ca5c16cb01"
+  },
+  "preservation_ref": "refs/codex/evidence/native-before-manifest-hook-repair-08a7135e",
+  "candidate_ref": "refs/codex/candidate/native-manifest-hook-repair-ready",
+  "projection": {
+    "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+    "renamed_key": [
+      "auth_addition_lf_sha256",
+      "source_hook_lf_sha256"
+    ],
+    "same_value": "f62195c547fae4fc4164f3d8d7bb7b7ac924acb4566a7fdb4fb7ae1c28d38277"
+  },
+  "new_review": {
+    "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+    "sha256": "93914c0803744f6af4dfda61aaf9ee2d107e825d4b922d631b4dcf8b2db1f7a5",
+    "reviewed_at": "2026-09-05T07:01:08.066459Z",
+    "original_review_preserved_verbatim": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-0AAE81DB.json"
+  },
+  "historical_transition_times": {
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0108.json": {
+      "started_at": "2026-09-05T06:29:50.763643Z",
+      "finished_at": "2026-09-05T06:29:50.763643Z"
+    },
+    "docs/programs/engineering-process-platform/evidence/transitions/TR-0109.json": {
+      "started_at": "2026-09-05T06:32:53.601642Z",
+      "finished_at": "2026-09-05T06:32:53.601642Z"
+    }
+  },
+  "pending": "Independent complete-reconstruction closure and authoritative exact-tip validator; owning branch has not moved"
+}

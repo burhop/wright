@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0106",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "AUTHOR_VERIFIED",
+  "prior_revision": 106,
+  "new_revision": 107,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "2bae239a9a964acc65ddb93973e8b6bfbccb23c8f08d3d4e0b97f3b357d510ca",
+  "new_state_digest": "7835365dde3ef6ce850274c1f5e6ef879eae2136963334f7fb6f5273aaa854a9",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "T001-T026 author verification is supported by reviewed composed local stages, exact Docker/native evidence and actual predecessor recovery/tracing supplements. Original failures remain preserved; final independent review, push/CI, dev delivery and human study remain pending.",
+  "started_at": "2026-09-05T06:15:36.361840Z",
+  "finished_at": "2026-09-05T06:15:36.361840Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+    "source_tree": "ebce3a4a68aaa62cff8b50444a727ef70233ba2d",
+    "source_program_tree": "7347a789e8bc5f60f9cb550b8f9354e0d17f60b3",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0107.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0106.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0106.json",
+      "sha256": "a650ef2d41416efbd89534290a206881108ef39e3f4729b7d0cac314a240a6f9",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0107.json",
+      "sha256": "f6cf37145b4ca59e83d4bd362239d470617fd3a8d4d97983b86b76b73aa8361b",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: T001-T026 author verification is supported by reviewed composed local stages, exact Docker/native evidence and actual predecessor recovery/tracing supplements. Original failures remain preserved; final independent review, push/CI, dev delivery and human study remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "7f55b31cb754421a605f2e7aff1d676ba501606d",
+        "7f55b31cb754421a605f2e7aff1d676ba501606d"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0106.json",
+  "next_action": "FREEZE_CURRENT_FEATURE_CANDIDATE"
+}

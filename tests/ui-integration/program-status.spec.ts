@@ -135,7 +135,7 @@ test.describe("Program status comprehension and accessibility", () => {
       page.getByText("0/100 qualified", { exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("program-work-summary")).toContainText(
-      "EPP-F01B tasks complete",
+      "EPP-F02 tasks complete",
     );
     await expect(page.getByTestId("active-work-summary")).toContainText(
       "Committed assignment unavailable",
@@ -155,7 +155,9 @@ test.describe("Program status comprehension and accessibility", () => {
     await expect(page.getByTestId("release-posture-summary")).toContainText(
       "feature task progress cannot compensate",
     );
-    await page.getByText("Historical dashboard action", { exact: true }).click();
+    await page
+      .getByText("Historical dashboard action", { exact: true })
+      .click();
     await expect(page.getByTestId("next-action-summary")).toContainText(
       "current program-state action above takes precedence",
     );
@@ -372,16 +374,16 @@ test.describe("Program status comprehension and accessibility", () => {
     });
 
     await page.goto("/program-status");
-    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
-      "Committed evidence current",
-    );
+    await expect(
+      page.getByTestId("program-status-refresh-state"),
+    ).toContainText("Committed evidence current");
     failRefresh = true;
     await expect
       .poll(() => bundleCalls, { timeout: 12_000 })
       .toBeGreaterThan(1);
-    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
-      "Showing last valid evidence",
-    );
+    await expect(
+      page.getByTestId("program-status-refresh-state"),
+    ).toContainText("Showing last valid evidence");
     await expect(page.getByTestId("program-work-summary")).toBeVisible();
 
     await page.unroute("**/api/program-status");
@@ -392,8 +394,8 @@ test.describe("Program status comprehension and accessibility", () => {
         name: "No validated program-status bundle is available yet",
       }),
     ).toBeVisible();
-    await expect(page.getByTestId("program-status-refresh-state")).toContainText(
-      "Program status unavailable",
-    );
+    await expect(
+      page.getByTestId("program-status-refresh-state"),
+    ).toContainText("Program status unavailable");
   });
 });

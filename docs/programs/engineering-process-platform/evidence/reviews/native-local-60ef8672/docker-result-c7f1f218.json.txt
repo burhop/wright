@@ -1,0 +1,103 @@
+{
+  "result": "passed",
+  "source_commit": "c7f1f218007e35dd2447329789ee95c91740ae4a",
+  "source_tree": "39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c",
+  "source_clean_before_and_after": true,
+  "platform": "linux/amd64",
+  "docker_server_version": "28.5.1",
+  "local_tag": "wright:native-c7f1f218",
+  "image_id_and_manifest_list": "sha256:455f0a756e098042dd34aca472875987cedd6708b3ada28949140625128748c8",
+  "platform_manifest": "sha256:da8c4c990f284173d5399055dfbe053a64e105908fa898c939d3039beb569cbb",
+  "config_digest": "sha256:0ec791b6f623f7d2db1da9a962680ed5abfc60937f377b18a48660f1eaca6adf",
+  "revision_and_version_labels_verified": true,
+  "version_label": "0.1.9",
+  "build_exit_code": 0,
+  "build_count_for_this_candidate": 1,
+  "build_log": "build-c7f1f218.log",
+  "standard_smoke": {
+    "exit_code": 0,
+    "log": "smoke-c7f1f218.log",
+    "immutable_image_reused": true,
+    "cold_start_network": "none",
+    "diagnostic_override": false,
+    "observed": [
+      "agent user",
+      "reviewed Hermes dependency contract",
+      "offline Rivet assets",
+      "manifest and entrypoint permissions",
+      "setup-pending and configured command execution",
+      "ephemeral write removal",
+      "entrypoint bypass",
+      "cold offline Wright API health",
+      "both supervised services",
+      "Wright-to-Hermes connected",
+      "direct Hermes health"
+    ],
+    "fresh_backup_restore": false,
+    "backup_restore_note": "Scenario E only prints a historical Phase8 statement."
+  },
+  "native_workflow": {
+    "exit_code": 0,
+    "log": "native-c7f1f218.log",
+    "baseline": "baseline-c7f1f218.json",
+    "probe": "native_http_probe.py",
+    "orchestration": "run-native-c7f1f218.ps1",
+    "network": "none",
+    "transport": "actual HTTP on container loopback",
+    "UV_NO_SYNC_environment_override": false,
+    "standard_entrypoint_and_supervisor": true,
+    "examples": [
+      "concept-brief",
+      "mass-check",
+      "package-review"
+    ],
+    "verified_artifacts": 4,
+    "verified": [
+      "same authority contract",
+      "structural readiness",
+      "save and reopen",
+      "actual execution",
+      "frozen expected final bytes",
+      "all artifact SHA256 and sizes",
+      "artifact provenance",
+      "immutable run snapshots",
+      "events and trace linkage",
+      "container restart retention",
+      "idempotent retry and singular history after restart",
+      "both services running",
+      "actual Hermes health and Wright connection"
+    ],
+    "proof_container": "wright-native-c7f1f218-proof",
+    "proof_container_stopped": true,
+    "retained_disposable_volume": "wright-native-c7f1f218-data"
+  },
+  "publication": false,
+  "audit_query": false,
+  "previous_failure_and_diagnostic_evidence_preserved": [
+    "result-99cee2dc.json",
+    "result-eb63344c.json",
+    "result-53ec6694.json"
+  ],
+  "scope_limits": [
+    "Linux amd64 on Docker Desktop only",
+    "No actual browser verification in this subtask",
+    "No engineering MCP catalog qualification",
+    "No paid or credentialed provider calls",
+    "No registry publication",
+    "No fresh backup/restore claim",
+    "Dependency audit classification remains separate"
+  ],
+  "recorded_at_utc": "2026-09-05T01:40:35.6259261Z",
+  "schema_discovery": {
+    "exit_code": 0,
+    "log": "schema-c7f1f218.log",
+    "probe": "native_schema_probe.py",
+    "source_sha256": "2ce89f07ede4b7b86ea78584369e8dea3c3576489aabafb260721cc6c1c473ec",
+    "schema_sha256": "a0ee35a6f1e410496300efafa0a7a1040b1861b3215d2f93b2ae2c5bd8a80583",
+    "exact_build_context_bytes": true,
+    "runtime_specs_tree_present": false,
+    "published_operations": 12,
+    "network": "none"
+  },
+  "build_metadata_note": "Initial unquoted PowerShell Git tree expression failed; the correctly quoted expression subsequently verified tree 39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c. The Docker build itself ran once and passed."
+}

@@ -68,7 +68,8 @@ def test_program_readme_local_links_resolve(repository_root) -> None:
     unresolved = [
         target
         for target in targets
-        if not (readme_path.parent / target).resolve().exists()
+        if not target.startswith(("https://", "http://"))
+        and not (readme_path.parent / target).resolve().exists()
     ]
     assert unresolved == []
 

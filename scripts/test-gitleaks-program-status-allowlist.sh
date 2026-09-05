@@ -53,3 +53,5 @@ if MSYS_NO_PATHCONV=1 docker run --rm \
 fi
 
 echo "Program-status Gitleaks allowlist contract passed."
+
+python "$ROOT_DIR/scripts/test-gitleaks-native-evidence.py"

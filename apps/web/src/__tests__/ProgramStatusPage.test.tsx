@@ -197,4 +197,17 @@ describe("program status contract and first viewport", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Historical dashboard action")).toBeInTheDocument();
   });
+
+  it("labels active feature counts from the current feature identity", () => {
+    const decoded = decodeProgramStatusBundle(bundle());
+    decoded.supplement.work.tasks.feature_id = "EPP-F02";
+    render(<AtAGlanceSummary bundle={decoded} />);
+    expect(screen.getByText(/EPP-F02 tasks complete/)).toBeVisible();
+    expect(
+      screen.getByRole("progressbar", { name: "EPP-F02 task completion" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("progressbar", { name: "EPP-F01B task completion" }),
+    ).not.toBeInTheDocument();
+  });
 });

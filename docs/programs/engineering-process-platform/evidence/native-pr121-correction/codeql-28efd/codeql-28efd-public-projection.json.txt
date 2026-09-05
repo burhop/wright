@@ -1,0 +1,207 @@
+{
+  "format": "wright-native-local-codeql-28efd-public-v1",
+  "projection_author": "/root/dashboard_review",
+  "evidence_status": "actual_completed_local_python_analysis",
+  "h2_github_clearance": "not_established_by_this_receipt",
+  "full_gate_completion": "not_established_by_this_receipt",
+  "whole_candidate_acceptance": false,
+  "task_or_delivery_completion_credit": false,
+  "source_commit": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+  "source_tree": "50900ed4a7a93c5018b9cd85660f7d7aa6d10c49",
+  "started_at": "2026-09-05T09:18:08.880181Z",
+  "completed_at": "2026-09-05T09:20:49.118675Z",
+  "outcome": "analysis_completed",
+  "official_bundle_url": "https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.26.4/codeql-bundle-win64.tar.zst",
+  "official_bundle_sha256": "a5ac7224b4045933dbada09a68321faa1f21e8a63359c73a009a23cc99672f76",
+  "cli_executable_sha256": "27e717cf02b6e866deef487019180b3af49e33ed793780ec0edf6ca566def1aa",
+  "workflow_sha256": "7605658feb141cf56fb9535b0ece74a475280a210cbfc562859cce65294e8610",
+  "configuration_sha256": "ccb787cb610d00e3febdd30fe30163b8f56cb7d8b308b7f559b9dff2bd732308",
+  "source_unchanged_after": true,
+  "tool": {
+    "cli_version": "2.26.4",
+    "packs": {
+      "codeql/python-queries": "1.8.9+1d123a2caa0e4e6256a49d963bfcbd51a01617e8",
+      "codeql/python-all": "7.2.4+1d123a2caa0e4e6256a49d963bfcbd51a01617e8",
+      "codeql/threat-models": "1.0.56+1d123a2caa0e4e6256a49d963bfcbd51a01617e8"
+    }
+  },
+  "platform": "Windows x64 local Python preflight; GitHub Ubuntu CI remains independently required",
+  "python_extractor_option": {
+    "name": "python.python_executable_name",
+    "value": "python",
+    "selection": "Existing interpreter on the subprocess PATH; no host registration or query modification."
+  },
+  "execution_steps": [
+    {
+      "name": "version",
+      "started_at": "2026-09-05T09:18:08.900511Z",
+      "completed_at": "2026-09-05T09:18:09.512942Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "version.log",
+        "raw_file_sha256": "6f4d6bdf6af9c7680b4550e452871c56b32b5e3d7edb20bef64ae9087f3de488",
+        "raw_bytes": 1542
+      }
+    },
+    {
+      "name": "create",
+      "started_at": "2026-09-05T09:18:09.530650Z",
+      "completed_at": "2026-09-05T09:19:31.874703Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "create.log",
+        "raw_file_sha256": "67298508a3a8e035c65843b109b037a96e4c6a6997b3e2c61a20c237bc370afa",
+        "raw_bytes": 215202
+      }
+    },
+    {
+      "name": "analyze",
+      "started_at": "2026-09-05T09:19:31.889128Z",
+      "completed_at": "2026-09-05T09:20:48.154227Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "analyze.log",
+        "raw_file_sha256": "98156e29c3abc1a8228576aa23d41332d24b91af0c45704b5fab1e3d9faf6486",
+        "raw_bytes": 21227
+      }
+    }
+  ],
+  "file_coverage_reported_by_analyzer": {
+    "python": {
+      "scanned": 934,
+      "total": 934
+    },
+    "github_actions": {
+      "scanned": 17,
+      "total": 17
+    }
+  },
+  "tracked_blobs_verified_before_and_after": 3485,
+  "identical_sarif_rule_population": 43,
+  "executed_queries_including_diagnostics": 45,
+  "successful_extraction_log_modules": 1226,
+  "critical_sources_explicitly_extracted": [
+    "apps/api/src/api/routers/native_process.py",
+    "packages/data_vault/src/data_vault/native_process_repository.py",
+    "packages/workspace_service/src/workspace_service/native_process_service.py",
+    "scripts/program_status/implementation-dashboard/server.py",
+    "scripts/release/scan_image.py"
+  ],
+  "source_submodule_recursion": false,
+  "sarif_execution_successful": true,
+  "sarif_warning_or_error_notifications": 0,
+  "original_h1_head": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+  "original_h1_actual_analysis_source": "055ca1058d202ae26d6b7cc329609bf84b062149",
+  "original_h1_sarif_sha256": "49e0d38a733b04425c81f6002f4296914b466add3deb5577857d1dd38525e231",
+  "h1_results": 7,
+  "current_results": 2,
+  "new_local_signatures": [],
+  "h1_signatures_absent_in_corrected_local_run": [
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 802,
+      "end_line": 802,
+      "count": 1
+    },
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 847,
+      "end_line": 847,
+      "count": 1
+    },
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 851,
+      "end_line": 851,
+      "count": 1
+    },
+    {
+      "rule_id": "py/http-response-splitting",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 807,
+      "end_line": 807,
+      "count": 1
+    },
+    {
+      "rule_id": "py/stack-trace-exposure",
+      "path": "apps/api/src/api/routers/native_process.py",
+      "start_line": 110,
+      "end_line": 116,
+      "count": 1
+    }
+  ],
+  "remaining_h1_findings_in_unchanged_source": [
+    {
+      "rule_id": "py/incomplete-url-substring-sanitization",
+      "path": "packages/agent_adapters/tests/test_hermes_gateway_adapter.py",
+      "start_line": 140,
+      "end_line": 140,
+      "count": 1,
+      "unchanged_source_blob": "ca819876a30fab5cd8c55d5f774f0ba2bdaaf212"
+    },
+    {
+      "rule_id": "py/polynomial-redos",
+      "path": "packages/tool_registry/src/tool_registry/config_import.py",
+      "start_line": 236,
+      "end_line": 236,
+      "count": 1,
+      "unchanged_source_blob": "e61a392e6850697d762fc04d76324b9c54122450"
+    }
+  ],
+  "comparison_totals": {
+    "h1_findings": 7,
+    "h1_signatures_absent_in_this_local_run": 5,
+    "unchanged_h1_findings_remaining": 2,
+    "new_local_signatures": 0
+  },
+  "retained_private_evidence": [
+    {
+      "filename": "observation.json",
+      "raw_file_sha256": "759938318ebd087c1316d81b23f27b43e69b291e0108dacea76fc0634a70ef2d",
+      "raw_bytes": 5531
+    },
+    {
+      "filename": "source-manifest.json",
+      "raw_file_sha256": "3765357c53fabf28f1c55bf8aa6f9c48567ad557d7c125be12dee9e5cf0c6d21",
+      "raw_bytes": 895102
+    },
+    {
+      "filename": "h1-comparison.json",
+      "raw_file_sha256": "8080f97c19b93e38ab49465eeba72e51f40063f70e996b784b77494f8137579d",
+      "raw_bytes": 3830
+    },
+    {
+      "filename": "python-analysis.sarif.json",
+      "raw_file_sha256": "161081611d461441ca0c4dea3e29d3784d82f0fae555efc3793f6fdd9d18731b",
+      "raw_bytes": 979559
+    },
+    {
+      "filename": "local-codeql-comparison.md",
+      "raw_file_sha256": "5f7003390336d808bc3ab5a4508fba717237e913b8c1b2b3c48a500db556ba6e",
+      "raw_bytes": 3702
+    }
+  ],
+  "prior_d734_history": {
+    "source_commit": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+    "status": "Historical separate analysis and preparation failures remain unchanged; no earlier result is substituted for this fresh execution.",
+    "retained_public_manifest": {
+      "filename": "public-file-manifest.json.txt",
+      "raw_file_sha256": "9bc5dc8085d0fc95fea91f4cc198955a0dbb647290f4d767e41da3874945919d",
+      "raw_bytes": 982
+    },
+    "retained_public_preparation_history": {
+      "filename": "host-preparation-history.json.txt",
+      "raw_file_sha256": "3a79d3b5b199b26359cbf1396f518f7c551f1607bf4e83a53106c7303eb185f8",
+      "raw_bytes": 2619
+    }
+  },
+  "limits": [
+    "The five original signatures are absent in this local run; actual H2 GitHub CodeQL clearance is still required.",
+    "Two H1 findings remain in unchanged source and are neither dismissed nor cleared.",
+    "CodeQL result comparison does not replace independent code review or confer full-gate, task, whole-milestone, integration or deployment completion."
+  ],
+  "projection_rule": "Explicit source/tool/rule/result/time/hash fields only. Raw SARIF, logs, absolute host paths, environment, configuration dumps, source snippets and traces stay private."
+}

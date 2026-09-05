@@ -14,7 +14,7 @@ Docker Hub as a required byte-identical distribution target.
 | `python-quality.yml`            | Push or pull request to `main` or `dev`                                  | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`.                                                                                                                                                                                |
 | `frontend-quality.yml`          | Push or pull request to `main` or `dev`                                  | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`.                                                                                                                                                           |
 | `test-windows.yml`              | Push or pull request to `main` or `dev`, or manual run                   | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow.                                                                                                                                                                         |
-| `public-alpha-safety.yml`       | Push, pull request, or manual run                                        | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan.                                                                                                                                                                                                      |
+| `public-alpha-safety.yml`       | Push, pull request, or manual run                                        | Repo-native public-alpha leak scan, locked Python runtime and npm dependency audits with expiring exceptions, Gitleaks history scan, and TruffleHog history scan. |
 | `codeql.yml`                    | Push or pull request to `main` or `dev`, plus weekly schedule            | Runs CodeQL for Python and JavaScript/TypeScript, cancelling superseded runs and excluding only pinned/generated bundles listed in `.github/codeql/codeql-config.yml`.                                                                                                                        |
 | `dependency-review.yml`         | Pull request to `main` or `dev`                                          | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories.                                                                                                                                                                                      |
 | `docker-pr.yml`                 | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images.                                                                                                         |
@@ -45,6 +45,13 @@ The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
 workflow runs Ruff and mypy in warning mode. The docs workflow builds strictly on
 pull requests and branch pushes but deploys only from `main`. Neither pull-request
 Docker gate publishes public images.
+
+The Python audit selects the root package's `runtime` extra with
+`uv run --locked --extra runtime --with pip-audit`. This audits Wright's core
+and runtime dependencies from the committed lockfile, including transitive
+dependencies. Optional engineering-model and external tool environments require
+their own validation. Audit findings are checked against the existing
+`.github/dependency-audit-policy.json` policy; expired exceptions remain blocking.
 
 ## Local Merge Gates
 

@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0098",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 98,
+  "new_revision": 99,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "01a4909a263afed8a005668e43adacdd6dbe482a0952ecf823d84c2e549add55",
+  "new_state_digest": "8f7211c06896cdfff73412be5b523c23c491717073f05999647c117363bf6249",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Freeze exact implementation candidate 60ef8672 after full local merge gate exit 0 and validated author record revision 98. Deliverable scope is T001-T026; T027-T032 remain pending. Independent entire-candidate typed review is required next; no human, CI, deployment or publication claim.",
+  "started_at": "2026-09-05T02:35:28.985680Z",
+  "finished_at": "2026-09-05T02:35:28.985680Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "51754dd8091f51c510d17a155fcc3f9746df9f8c",
+    "source_tree": "b4a2028c77b06fff3986e4926b9a40e225f25192",
+    "source_program_tree": "c1bc4eb6b62ccbbeddbc1e53facede5b1a07b8f9",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0099.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0098.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0098.json",
+      "sha256": "f86a87d927b8f5140212154509f49ca7a79875ce8f665073298c6eba6507bfa0",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0099.json",
+      "sha256": "3fc261c72bd1a1b4339c939304431895f7105c3841598cfe51f77ca8384dc23e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Freeze exact implementation candidate 60ef8672 after full local merge gate exit 0 and validated author record revision 98. Deliverable scope is T001-T026; T027-T032 remain pending. Independent entire-candidate typed review is required next; no human, CI, deployment or publication claim.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "51754dd8091f51c510d17a155fcc3f9746df9f8c",
+        "60ef8672f1f61c2f4942e618638ec8901e9aa9a0"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "F02 deployed browser verification remains pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0098.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}

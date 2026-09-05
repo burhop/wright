@@ -1,0 +1,24 @@
+{
+  "kind": "Public receipt file inventory; manifest excluded from its own recursive hash list",
+  "files": [
+    {
+      "filename": "full-gate-e15-receipt.json.txt",
+      "bytes": 16390,
+      "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+    },
+    {
+      "filename": "raw-evidence-hashes.json.txt",
+      "bytes": 2544,
+      "sha256": "8f2a87e65511190edf1a29bca32fa0cc03c4fa28b54f4d11970fb6e902e6836c"
+    },
+    {
+      "filename": "README.md",
+      "bytes": 3074,
+      "sha256": "317fa64c6271f318a1561d650fbca2ee04c372a62c2b6f4c71cfab92c9db14c6"
+    }
+  ],
+  "raw_source_files": 14,
+  "generator_sha256": "7a7eeeef2b8ade82e0afc73dc6f2497ca0fa811387dcdb789aa6920aaa6a10f1",
+  "transformation": "Explicit selected scalar fields, public test commands/identities/counts, warning summaries and authored prose. No raw payload copies. Original bytes verified unchanged before and after assembly.",
+  "public_encoding": "UTF-8 with LF newlines; exact bytes suitable for Git blob identity"
+}

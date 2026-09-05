@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0109",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED",
+  "to_state": "PUSH_AUTHORIZATION_PENDING",
+  "prior_revision": 109,
+  "new_revision": 110,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "aa12a1e7f561fa5bae7f4145f14209636d56bf5fa87d639aece69ee28c46d3d0",
+  "new_state_digest": "d99a9815f6de87f6ed5a033e2cb4e0d036fec12d30384e6e20910b57e3304503",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Actual independent metadata correspondence and candidate review passed for 7f55b31cb754421a605f2e7aff1d676ba501606d. Original review and execution evidence remain retained. Required push/CI, dev delivery and human acceptance remain pending.",
+  "started_at": "2026-09-05T07:01:57.156155Z",
+  "finished_at": "2026-09-05T07:01:57.156155Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+    "source_tree": "3d538ee7a338e924464060dd38150a10e923bf4f",
+    "source_program_tree": "515f099962d8abd8c02627a5ec4c70a2b483515f",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0110.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0109.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0109.json",
+      "sha256": "770bd05bb16565524231588eae5d4ba073dcc01b2f5c4f0385ec74a8a44d7540",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0110.json",
+      "sha256": "43a6ed8af343ce3bdb3fd775f06b4f5ff80cada4cc878e64fa15ea850cd3d29f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, retained scoped partition, exact reconstructed candidate and actual newly authored independent review. Actual independent metadata correspondence and candidate review passed for 7f55b31cb754421a605f2e7aff1d676ba501606d. Original review and execution evidence remain retained. Required push/CI, dev delivery and human acceptance remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "1d811f82bc2748729268ab5b45c852f1e255cc50",
+        "7f55b31cb754421a605f2e7aff1d676ba501606d"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0109.json",
+  "next_action": "OPEN_CURRENT_FEATURE_PR"
+}

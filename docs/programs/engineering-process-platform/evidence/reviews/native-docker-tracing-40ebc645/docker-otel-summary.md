@@ -1,0 +1,15 @@
+# Exact40 Docker tracing supplement — public projection
+
+**Passed:** 47 actual native OpenTelemetry spans were collected from the existing immutable Docker image `sha256:2347e29360668db4d6c67bc9475e9ca9ddd847fe5d8d56086c682505d0f1ba19`, built from `40ebc645ddb641503706dcb3a7d9c84a2b685359` / tree `29f573a09d7e1cbe60351eb21065105286b008bc`. The run occurred from `2026-09-05T06:08:28.010983+00:00` to `2026-09-05T06:08:29.966286+00:00`; the diagnostic container exited zero and is stopped.
+
+This was a **diagnostic Python entrypoint inside the image**, using its actual installed modules, ASGI lifespan, database, runtime and artifact storage with the SDK in-memory exporter. It supplements the previously retained standard supervisor/entrypoint proof; it is not another standard service boot or an external collector test. No image was rebuilt and no package was installed. Docker networking was `none`; socket connections were additionally blocked, with zero attempted connections. Remote export was disabled and the actual provider had only the in-memory processor/exporter.
+
+The real concept-brief run saved and executed, then returned the exact 43 artifact bytes with SHA-256 `2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407`. Collected span `native.artifact.promote` is a direct child of `native.run.execute` on the same numeric OTel trace, whose ancestry includes the submission service and HTTP route. `native.artifact.read` is a child of `native.run.artifact` on its request trace. Logical request trace propagation through the stored run and artifact was also checked separately; logical X-Trace-Id strings are not conflated with numeric OTel trace IDs.
+
+A real mass-check run with a 100 g maximum persisted `failed` / `ASSERTION_FAILED` with no artifact. Its execution span status is **OK**, reflecting the existing runtime's handling of the domain failure rather than an escaping exception. This observed status is preserved, not promoted to an ERROR-span claim.
+
+All 47 collected native spans had empty attributes, zero events and no status descriptions. Thus no arguments, exception messages or stack traces were copied into these spans. This bounded diagnostic does not repeat the separately retained escaping-exception security tests.
+
+The probe checked 282 loaded Wright module origins inside `/workspace` and matched seven critical module hashes to the exact image source. Native core SHA-256 is `2ce89f07ede4b7b86ea78584369e8dea3c3576489aabafb260721cc6c1c473ec`; packaged schema SHA-256 is `a0ee35a6f1e410496300efafa0a7a1040b1861b3215d2f93b2ae2c5bd8a80583`. There is no `/workspace/specs` fallback. Python inside the image is 3.13.15.
+
+The adjacent JSON is a selected public projection of static span names, numeric identifiers, statuses, module/resource hashes and checked outcomes. Raw spans, run responses, container configuration and logs remain private. The hash index publishes only original filenames, SHA-256 values and byte sizes. The prior Docker/browser evidence is unchanged. No human-study, other-platform, MCP qualification, paid/provider or whole-system telemetry-export claim is made.

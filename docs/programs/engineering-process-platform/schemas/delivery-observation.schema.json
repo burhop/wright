@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/delivery-observation.schema.json",
+  "title": "Exact F02 PR117 merge observation, September 4",
+  "const": {
+    "$schema": "../../schemas/delivery-observation.schema.json",
+    "schema_version": "1.0",
+    "observation_id": "OBS-F02-PR117-20260904",
+    "observed_at": "2026-09-04T21:37:44Z",
+    "observed_by": "Codex coordinator",
+    "pull_request": {
+      "baseRefName": "dev",
+      "headRefName": "codex/078-process-definition-view-current-dev",
+      "headRefOid": "aff8179b15f0064acf88d5f282ed5fdce3cf5900",
+      "mergeCommit": {
+        "oid": "a69cb74405350fc90f2c9ae91c82eec6fd17e91d"
+      },
+      "mergedAt": "2026-08-31T13:13:49Z",
+      "number": 117,
+      "state": "MERGED",
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:19Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239687/job/99481957540",
+          "name": "analyze (python)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "CodeQL"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:12:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239719/job/99481957445",
+          "name": "Build linux-amd64",
+          "startedAt": "2026-08-31T12:08:17Z",
+          "status": "COMPLETED",
+          "workflowName": "Engineering tools image family"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:10:51Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239781/job/99481958020",
+          "name": "build-smoke-scan",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "OCI pull-request validation"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:14Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239585/job/99481956808",
+          "name": "dependency-review",
+          "startedAt": "2026-08-31T12:08:08Z",
+          "status": "COMPLETED",
+          "workflowName": "dependency review"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:34Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239581/job/99481956763",
+          "name": "build",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "docs"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:10:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239627/job/99481957393",
+          "name": "frontend-quality",
+          "startedAt": "2026-08-31T12:08:10Z",
+          "status": "COMPLETED",
+          "workflowName": "frontend-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:57Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99481957206",
+          "name": "build-native-candidate",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:14:30Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239714/job/99481957444",
+          "name": "leak-scan",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "public-alpha-safety"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:18:10Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957520",
+          "name": "python-quality",
+          "startedAt": "2026-08-31T12:08:10Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:26:39Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239605/job/99481957552",
+          "name": "Backend Tests (Windows)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "test-windows"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:22Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239687/job/99481957431",
+          "name": "analyze (javascript-typescript)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "CodeQL"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:11:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239719/job/99481957619",
+          "name": "Build linux-arm64",
+          "startedAt": "2026-08-31T12:08:39Z",
+          "status": "COMPLETED",
+          "workflowName": "Engineering tools image family"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:35Z",
+          "conclusion": "SKIPPED",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239581/job/99482084865",
+          "name": "deploy",
+          "startedAt": "2026-08-31T12:08:35Z",
+          "status": "COMPLETED",
+          "workflowName": "docs"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:17:32Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239627/job/99481957069",
+          "name": "Playwright E2E",
+          "startedAt": "2026-08-31T12:08:08Z",
+          "status": "COMPLETED",
+          "workflowName": "frontend-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:10:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99482183872",
+          "name": "native-base-platform-matrix (ubuntu-24.04, 3.13)",
+          "startedAt": "2026-08-31T12:09:01Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:48Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957728",
+          "name": "public-package-matrix (ubuntu-latest, 3.11)",
+          "startedAt": "2026-08-31T12:08:14Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:10:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239605/job/99481957889",
+          "name": "Frontend Tests (Windows)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "test-windows"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:10:52Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99482183900",
+          "name": "native-base-platform-matrix (windows-latest, 3.13)",
+          "startedAt": "2026-08-31T12:09:01Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957926",
+          "name": "public-package-matrix (ubuntu-latest, 3.12)",
+          "startedAt": "2026-08-31T12:08:10Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:59Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99482184008",
+          "name": "native-base-platform-matrix (macos-14, 3.13)",
+          "startedAt": "2026-08-31T12:09:02Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:38Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957739",
+          "name": "public-package-matrix (ubuntu-latest, 3.13)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:08:46Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957713",
+          "name": "public-package-matrix (ubuntu-latest, 3.14)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:17Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957822",
+          "name": "public-package-matrix (windows-latest, 3.11)",
+          "startedAt": "2026-08-31T12:08:10Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481958176",
+          "name": "public-package-matrix (windows-latest, 3.12)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:12Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957915",
+          "name": "public-package-matrix (windows-latest, 3.13)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239700/job/99481957952",
+          "name": "public-package-matrix (windows-latest, 3.14)",
+          "startedAt": "2026-08-31T12:08:09Z",
+          "status": "COMPLETED",
+          "workflowName": "python-quality"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:11:22Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99482183842",
+          "name": "native-lifecycle-contract",
+          "startedAt": "2026-08-31T12:09:01Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:14:13Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/actions/runs/33390239624/job/99482815945",
+          "name": "native-candidate-required",
+          "startedAt": "2026-08-31T12:14:11Z",
+          "status": "COMPLETED",
+          "workflowName": "native Hermes candidate"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-08-31T12:09:13Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/burhop/wright/runs/99482237980",
+          "name": "CodeQL",
+          "startedAt": "2026-08-31T12:09:10Z",
+          "status": "COMPLETED",
+          "workflowName": ""
+        }
+      ],
+      "url": "https://github.com/burhop/wright/pull/117"
+    },
+    "head_tree": "bad0533c194f2996a738d7ca5387ec68156e0d0d",
+    "merged_tree": "bad0533c194f2996a738d7ca5387ec68156e0d0d",
+    "deployment_verification": "not_tested",
+    "skipped_dispositions": [
+      {
+        "check": "docs / deploy",
+        "reason": "PR workflow deployment is skipped; this does not establish deployed product verification."
+      }
+    ]
+  }
+}

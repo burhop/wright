@@ -312,6 +312,12 @@ Runs a local verification suite against a production Docker build to ensure envi
   5. Verifies that `/entrypoint.sh` is present and executable.
   6. Validates setup-pending behavior (warns and continues if no LLM provider is configured, succeeds when one is provided).
   7. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
+  8. Cold-starts the exact image with external networking disabled and verifies
+     both supervised services, Wright API health, Wright-to-Hermes connectivity,
+     and direct Hermes health through container-local requests. The standard
+     supervisor uses `uv run --no-sync` to consume the image-built environment;
+     startup cannot rely on fetching development or build dependencies. This
+     check publishes no host port and applies no diagnostic environment override.
 
 Host-side JSON and dependency assertions honor an explicit `PYTHON`
 interpreter, then fall back to `python3`, `python`, or `py -3`. This keeps the

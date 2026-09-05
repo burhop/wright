@@ -1,0 +1,95 @@
+{
+  "observed_at": "2026-09-05T10:00:16.757628Z",
+  "import_commit": "f8d31616ca3b0e9e9e12987dea241e16a2c0ad0c",
+  "meaning": "Original public manifests retain original file hashes. This separate record binds those preserved originals to actual committed Git blobs. No raw evidence or prior result is changed.",
+  "files": [
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/oci-history/README.md",
+      "original_sha256": "417d7253f6a3ab6d992be521ece8df3d856711eff51f26a18c5969fbe5d480b3",
+      "original_bytes": 3771,
+      "committed_blob_sha256": "6c5529bbea7f8ac8cf21fe1de1ab9de402dd2b493a04f80f6f0ed55487036d37",
+      "committed_bytes": 3746,
+      "transformation": "Git CRLF-to-LF normalization only"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/oci-history/bundle-manifest.json.txt",
+      "original_sha256": "3ce6ed93c2fd9827771903eeedd972975bb7858802c43d31e7d3fecc6057226e",
+      "original_bytes": 923,
+      "committed_blob_sha256": "e6682a429e0145400420dafb823216fd40bfb4e7b476784d58f13619084c5b3b",
+      "committed_bytes": 900,
+      "transformation": "Git CRLF-to-LF normalization only"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/oci-history/oci-correction-history.json.txt",
+      "original_sha256": "eda1529090ab22e4c33590648ebe5fdc7982f671a78dfb8d10365d3325a0a2e7",
+      "original_bytes": 16556,
+      "committed_blob_sha256": "6d9cadcb641006f4a61d91e3e7d3bbd96e033f8f432300224c44b9e5e5190e09",
+      "committed_bytes": 16131,
+      "transformation": "Git CRLF-to-LF normalization only"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/oci-history/raw-evidence-hashes.json.txt",
+      "original_sha256": "2a4374da8da0ed3dc8cf155c3438eaad9f6f2405b972eddba09641e8c7822ca9",
+      "original_bytes": 6948,
+      "committed_blob_sha256": "a3c09aa5bd733167f9358721c3b9cdb3a10415dbec16a490378598df053b78bb",
+      "committed_bytes": 6751,
+      "transformation": "Git CRLF-to-LF normalization only"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-d734-history/README.md",
+      "original_sha256": "163c50d04023662f7f7c7da2e3d618e73dd38a24eefffd9517f87960c645e39b",
+      "original_bytes": 2453,
+      "committed_blob_sha256": "163c50d04023662f7f7c7da2e3d618e73dd38a24eefffd9517f87960c645e39b",
+      "committed_bytes": 2453,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-d734-history/public-file-manifest.json.txt",
+      "original_sha256": "9bc5dc8085d0fc95fea91f4cc198955a0dbb647290f4d767e41da3874945919d",
+      "original_bytes": 982,
+      "committed_blob_sha256": "9bc5dc8085d0fc95fea91f4cc198955a0dbb647290f4d767e41da3874945919d",
+      "committed_bytes": 982,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-d734-history/codeql-d734-public-projection.json.txt",
+      "original_sha256": "8e3b2bd153823f7d3901a04b15cca56c39fb25fd997100b9dbb4045438adf73f",
+      "original_bytes": 6928,
+      "committed_blob_sha256": "8e3b2bd153823f7d3901a04b15cca56c39fb25fd997100b9dbb4045438adf73f",
+      "committed_bytes": 6928,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-d734-history/host-preparation-history.json.txt",
+      "original_sha256": "3a79d3b5b199b26359cbf1396f518f7c551f1607bf4e83a53106c7303eb185f8",
+      "original_bytes": 2619,
+      "committed_blob_sha256": "3a79d3b5b199b26359cbf1396f518f7c551f1607bf4e83a53106c7303eb185f8",
+      "committed_bytes": 2619,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-28efd/README.md",
+      "original_sha256": "a6dd659984f0b4a75614e0cab754fa0531e157fded074f7df126d73246e1b32c",
+      "original_bytes": 2623,
+      "committed_blob_sha256": "a6dd659984f0b4a75614e0cab754fa0531e157fded074f7df126d73246e1b32c",
+      "committed_bytes": 2623,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-28efd/public-file-manifest.json.txt",
+      "original_sha256": "7d57d710c69fe78a29de37c379d7ebd4227788441bf336b296789db2e7b4b11a",
+      "original_bytes": 855,
+      "committed_blob_sha256": "7d57d710c69fe78a29de37c379d7ebd4227788441bf336b296789db2e7b4b11a",
+      "committed_bytes": 855,
+      "transformation": "none"
+    },
+    {
+      "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/codeql-28efd/codeql-28efd-public-projection.json.txt",
+      "original_sha256": "f86895b710c06ed57fc74dc9e46636421f851eacf922f6bb30ff5fc5c0568c98",
+      "original_bytes": 8019,
+      "committed_blob_sha256": "f86895b710c06ed57fc74dc9e46636421f851eacf922f6bb30ff5fc5c0568c98",
+      "committed_bytes": 8019,
+      "transformation": "none"
+    }
+  ]
+}

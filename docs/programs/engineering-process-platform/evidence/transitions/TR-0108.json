@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0108",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "CANDIDATE_FROZEN",
+  "to_state": "INDEPENDENTLY_VERIFIED",
+  "prior_revision": 108,
+  "new_revision": 109,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cc0695aaf0acabc3411fd78c880c9be7f5f127eb11d652ca6ca71d4c76ffaf4f",
+  "new_state_digest": "aa12a1e7f561fa5bae7f4145f14209636d56bf5fa87d639aece69ee28c46d3d0",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Actual independent metadata correspondence and candidate review passed for 7f55b31cb754421a605f2e7aff1d676ba501606d. Original review and execution evidence remain retained. Required push/CI, dev delivery and human acceptance remain pending.",
+  "started_at": "2026-09-05T07:01:54.585375Z",
+  "finished_at": "2026-09-05T07:01:54.585375Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+    "source_tree": "18e67a90dfbb1bbb0993931389d1b023315d8ef7",
+    "source_program_tree": "403885dfb8db590e2f0dc2085772e69ac2d46e56",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0109.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/work-registry.json",
+      "specs/079-wright-native-authoring/tasks.md"
+    ],
+    "transition_path": "evidence/transitions/TR-0108.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0108.json",
+      "sha256": "088cdd4af1b521fa9f1b4c443783c36b3f8185fff381f47a832ffd4870ee5dfb",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0109.json",
+      "sha256": "770bd05bb16565524231588eae5d4ba073dcc01b2f5c4f0385ec74a8a44d7540",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, retained scoped partition, exact reconstructed candidate and actual newly authored independent review. Actual independent metadata correspondence and candidate review passed for 7f55b31cb754421a605f2e7aff1d676ba501606d. Original review and execution evidence remain retained. Required push/CI, dev delivery and human acceptance remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+        "7f55b31cb754421a605f2e7aff1d676ba501606d"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0108.json",
+  "next_action": "PREPARE_NATIVE_SCOPED_PR"
+}

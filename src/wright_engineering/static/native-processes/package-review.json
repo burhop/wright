@@ -1,0 +1,171 @@
+{
+  "format": "wright-native-process",
+  "schema_version": "1.0.0",
+  "id": "package-review",
+  "title": "Review and correct a local release note",
+  "steps": [
+    {
+      "id": "note-source",
+      "title": "note source",
+      "operation": "text.input@1",
+      "config": {
+        "value": "Part: BR-001\nUnits: mm\nRevision: A"
+      }
+    },
+    {
+      "id": "draft-file",
+      "title": "draft file",
+      "operation": "artifact.write-text@1",
+      "config": {
+        "filename": "release-note.txt"
+      }
+    },
+    {
+      "id": "note-read",
+      "title": "note read",
+      "operation": "artifact.read-text@1",
+      "config": {}
+    },
+    {
+      "id": "note-check",
+      "title": "note check",
+      "operation": "text.require@1",
+      "config": {
+        "terms": [
+          "BR-001",
+          "Units: mm",
+          "Revision: A"
+        ]
+      }
+    },
+    {
+      "id": "checked-file",
+      "title": "checked file",
+      "operation": "artifact.write-text@1",
+      "config": {
+        "filename": "checked-release-note.txt"
+      }
+    }
+  ],
+  "ports": [
+    {
+      "id": "note-source-output-value",
+      "step_id": "note-source",
+      "key": "value",
+      "label": "value",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "draft-file-input-text",
+      "step_id": "draft-file",
+      "key": "text",
+      "label": "text",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "draft-file-output-artifact",
+      "step_id": "draft-file",
+      "key": "artifact",
+      "label": "artifact",
+      "direction": "output",
+      "type": "artifact",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "note-read-input-artifact",
+      "step_id": "note-read",
+      "key": "artifact",
+      "label": "artifact",
+      "direction": "input",
+      "type": "artifact",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "note-read-output-text",
+      "step_id": "note-read",
+      "key": "text",
+      "label": "text",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "note-check-input-text",
+      "step_id": "note-check",
+      "key": "text",
+      "label": "text",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "note-check-output-text",
+      "step_id": "note-check",
+      "key": "text",
+      "label": "text",
+      "direction": "output",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "checked-file-input-text",
+      "step_id": "checked-file",
+      "key": "text",
+      "label": "text",
+      "direction": "input",
+      "type": "text",
+      "cardinality": "one",
+      "required": true
+    },
+    {
+      "id": "checked-file-output-artifact",
+      "step_id": "checked-file",
+      "key": "artifact",
+      "label": "artifact",
+      "direction": "output",
+      "type": "artifact",
+      "cardinality": "one",
+      "required": true
+    }
+  ],
+  "connections": [
+    {
+      "id": "link-1",
+      "source_port_id": "note-source-output-value",
+      "target_port_id": "draft-file-input-text"
+    },
+    {
+      "id": "link-2",
+      "source_port_id": "draft-file-output-artifact",
+      "target_port_id": "note-read-input-artifact"
+    },
+    {
+      "id": "link-3",
+      "source_port_id": "note-read-output-text",
+      "target_port_id": "note-check-input-text"
+    },
+    {
+      "id": "link-4",
+      "source_port_id": "note-check-output-text",
+      "target_port_id": "checked-file-input-text"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "checked-result",
+      "title": "Checked release note",
+      "port_id": "checked-file-output-artifact"
+    }
+  ]
+}

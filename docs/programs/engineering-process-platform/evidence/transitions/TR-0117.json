@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0117",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "BLOCKED",
+  "to_state": "IMPLEMENTATION_AUTHORIZED",
+  "prior_revision": 117,
+  "new_revision": 118,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "c8cc5f3f46a84a9edcd4087d2ceb015a299a5b2c6f11abaf52584c67fd615d43",
+  "new_state_digest": "f78a4a41b42408f597bf2f6ab97d89568fe9515351aa394b0f613b0418f1ac27",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Open bounded lease7 for campaign correction attempt2 under standing overnight authority. Fix OCI-SOURCE-01, OCI-REPORT-02 and OCI-DISPATCH-03 with exact negative controls and independent closure. Count the completed first correction honestly; no attempt reset or extra remote push. Preserve interruptedfcb gate, source-bound image and local CodeQL results; require a new full candidate gate.",
+  "started_at": "2026-09-05T09:11:39.382019Z",
+  "finished_at": "2026-09-05T09:11:39.382019Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "ea01b0d716f68a77e52c03461929a33b1f7d47bf",
+    "source_tree": "e42cdf87b124f4ae8720be2ec74359ac9b2233c3",
+    "source_program_tree": "8cfc68a957fee30df3d9ce936f6ac3536f703db9",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0118.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0117.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0117.json",
+      "sha256": "0e62194b36dba594aa5c5b6b6d8b49a47a89e025591eaa7f7fb34085b214dd83",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0118.json",
+      "sha256": "66ed064f83d7092efbe804a2e309c3e231678ad0b6bc3e3e96631671572bac5e",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-CI-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. Open bounded lease7 for campaign correction attempt2 under standing overnight authority. Fix OCI-SOURCE-01, OCI-REPORT-02 and OCI-DISPATCH-03 with exact negative controls and independent closure. Count the completed first correction honestly; no attempt reset or extra remote push. Preserve interruptedfcb gate, source-bound image and local CodeQL results; require a new full candidate gate.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "ea01b0d716f68a77e52c03461929a33b1f7d47bf",
+        "evidence/states/program-state-revision-0117.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": "NATIVE-PR121-CI-SECURITY-20260905",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0117.json",
+  "next_action": "START_CURRENT_FEATURE_IMPLEMENTATION"
+}

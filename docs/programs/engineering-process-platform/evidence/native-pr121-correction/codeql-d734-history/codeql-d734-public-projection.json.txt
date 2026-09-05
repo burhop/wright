@@ -1,0 +1,175 @@
+{
+  "format": "wright-native-historical-local-codeql-d734-public-v1",
+  "projection_author": "/root/dashboard_review",
+  "evidence_status": "historical_actual_local_analysis",
+  "delivery_credit": false,
+  "whole_candidate_acceptance": false,
+  "later_candidate_status": "Coordinator withdrew d734 after separate shared-scan-helper review findings. A corrected helper requires new exact-source analysis; this historical result is unchanged.",
+  "source_commit": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+  "source_tree": "0ad525b039858809a78e1fae1f8ae039d155a8aa",
+  "started_at": "2026-09-05T09:02:44.628370Z",
+  "completed_at": "2026-09-05T09:05:32.110114Z",
+  "outcome": "analysis_completed",
+  "official_bundle_url": "https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.26.4/codeql-bundle-win64.tar.zst",
+  "official_bundle_sha256": "a5ac7224b4045933dbada09a68321faa1f21e8a63359c73a009a23cc99672f76",
+  "cli_executable_sha256": "27e717cf02b6e866deef487019180b3af49e33ed793780ec0edf6ca566def1aa",
+  "workflow_sha256": "7605658feb141cf56fb9535b0ece74a475280a210cbfc562859cce65294e8610",
+  "configuration_sha256": "ccb787cb610d00e3febdd30fe30163b8f56cb7d8b308b7f559b9dff2bd732308",
+  "source_unchanged_after": true,
+  "tool": {
+    "cli_version": "2.26.4",
+    "packs": {
+      "codeql/python-queries": "1.8.9+1d123a2caa0e4e6256a49d963bfcbd51a01617e8",
+      "codeql/python-all": "7.2.4+1d123a2caa0e4e6256a49d963bfcbd51a01617e8",
+      "codeql/threat-models": "1.0.56+1d123a2caa0e4e6256a49d963bfcbd51a01617e8"
+    }
+  },
+  "python_extractor_option": {
+    "name": "python.python_executable_name",
+    "value": "python",
+    "selection": "Existing Python on the task subprocess PATH; no host registration or extractor/query change."
+  },
+  "execution_steps": [
+    {
+      "name": "version",
+      "started_at": "2026-09-05T09:02:44.649952Z",
+      "completed_at": "2026-09-05T09:02:45.231212Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "version.log",
+        "raw_file_sha256": "6f4d6bdf6af9c7680b4550e452871c56b32b5e3d7edb20bef64ae9087f3de488",
+        "raw_bytes": 1542
+      }
+    },
+    {
+      "name": "create",
+      "started_at": "2026-09-05T09:02:45.233769Z",
+      "completed_at": "2026-09-05T09:04:07.290306Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "create.log",
+        "raw_file_sha256": "3b446834051d896122cef79ce4ba2060fbd51d2547e01a680d3bec1db1c36f58",
+        "raw_bytes": 224593
+      }
+    },
+    {
+      "name": "analyze",
+      "started_at": "2026-09-05T09:04:07.308822Z",
+      "completed_at": "2026-09-05T09:05:30.041286Z",
+      "exit_code": 0,
+      "retained_private_log": {
+        "filename": "analyze.log",
+        "raw_file_sha256": "fe37ded3368519a31c678d7e0d81bd6631eb1a16456407eb97cc6f42984a20e5",
+        "raw_bytes": 21243
+      }
+    }
+  ],
+  "source_tracked_blobs_verified_before_and_after": 3475,
+  "identical_sarif_rule_population": 43,
+  "executed_queries_including_diagnostics": 45,
+  "successful_extraction_log_modules": 1226,
+  "critical_sources_explicitly_extracted": [
+    "apps/api/src/api/routers/native_process.py",
+    "packages/data_vault/src/data_vault/native_process_repository.py",
+    "packages/workspace_service/src/workspace_service/native_process_service.py",
+    "scripts/program_status/implementation-dashboard/server.py",
+    "scripts/release/scan_image.py"
+  ],
+  "source_submodule_recursion": false,
+  "sarif_execution_successful": true,
+  "sarif_warning_or_error_notifications": 0,
+  "original_h1_head": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+  "original_h1_actual_analysis_source": "055ca1058d202ae26d6b7cc329609bf84b062149",
+  "original_h1_sarif_sha256": "49e0d38a733b04425c81f6002f4296914b466add3deb5577857d1dd38525e231",
+  "h1_results": 7,
+  "current_results": 2,
+  "new_local_signatures": [],
+  "h1_signatures_absent_in_corrected_local_run": [
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 802,
+      "end_line": 802,
+      "count": 1
+    },
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 847,
+      "end_line": 847,
+      "count": 1
+    },
+    {
+      "rule_id": "py/path-injection",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 851,
+      "end_line": 851,
+      "count": 1
+    },
+    {
+      "rule_id": "py/http-response-splitting",
+      "path": "scripts/program_status/implementation-dashboard/server.py",
+      "start_line": 807,
+      "end_line": 807,
+      "count": 1
+    },
+    {
+      "rule_id": "py/stack-trace-exposure",
+      "path": "apps/api/src/api/routers/native_process.py",
+      "start_line": 110,
+      "end_line": 116,
+      "count": 1
+    }
+  ],
+  "remaining_h1_findings_in_unchanged_source": [
+    {
+      "rule_id": "py/incomplete-url-substring-sanitization",
+      "path": "packages/agent_adapters/tests/test_hermes_gateway_adapter.py",
+      "start_line": 140,
+      "end_line": 140,
+      "count": 1,
+      "unchanged_source_blob": "ca819876a30fab5cd8c55d5f774f0ba2bdaaf212"
+    },
+    {
+      "rule_id": "py/polynomial-redos",
+      "path": "packages/tool_registry/src/tool_registry/config_import.py",
+      "start_line": 236,
+      "end_line": 236,
+      "count": 1,
+      "unchanged_source_blob": "e61a392e6850697d762fc04d76324b9c54122450"
+    }
+  ],
+  "retained_private_evidence": [
+    {
+      "filename": "observation.json",
+      "raw_file_sha256": "38389b6ade60d0e87e1dbb6fb1eaf6151c4d78db25e0d8c2f23a9c5814c7ebf7",
+      "raw_bytes": 5585
+    },
+    {
+      "filename": "source-manifest.json",
+      "raw_file_sha256": "0dd1b7a14b52df1586234c8f7ec02da4e538be12e0d7ddb2410f025b5bcef26f",
+      "raw_bytes": 892267
+    },
+    {
+      "filename": "h1-comparison.json",
+      "raw_file_sha256": "fbbef22685381da497a5d28765231a831559b61530beaeb1d95ca4520d2410ef",
+      "raw_bytes": 3788
+    },
+    {
+      "filename": "python-analysis.sarif.json",
+      "raw_file_sha256": "fdd5753c43768e81179751ad004eaad27e9fa24361afcfb58c336581ea4454a7",
+      "raw_bytes": 979562
+    },
+    {
+      "filename": "local-codeql-comparison.md",
+      "raw_file_sha256": "d746e773a0815577e851b23b41edf8fb8e95fe20e6cbf139d8dca938a483a707",
+      "raw_bytes": 5260
+    }
+  ],
+  "limits": [
+    "Windows local preflight; actual H2 GitHub checks remain required.",
+    "Two unchanged H1 findings remain; they are neither dismissed nor cleared.",
+    "Absence of the original five scanner signatures does not close separate code-review findings or grant task, gate, integration or deployment completion."
+  ],
+  "projection_rule": "Explicit source/tool/rule/result/time/hash fields only. No raw SARIF, raw logs, absolute host paths, environment, configuration dump, source snippets or trace payloads are included."
+}

@@ -1,5 +1,7 @@
 # Virtual Mechanical Engineer Constitution v1.0.0
 
+The active constitution is [`.specify/memory/constitution.md`](.specify/memory/constitution.md). On 2026-09-05, this legacy copy's authentication paragraph was reconciled with the existing local bearer/session implementation and the active v3.1.1 clarification. Its other historical sections are unchanged.
+
 ## 1. Architectural Foundation
 * **Framework**: The backend API MUST be implemented using the strictly typed FastAPI framework to ensure native Pydantic data validation and fast local execution.
 * **Architecture**: The system MUST utilize a Modular Monorepo (using `uv` or `Poetry`). Code MUST follow strict boundaries: API routes must contain zero business logic and route immediately to the isolated `agent_adapters` and `tool_registry` packages.
@@ -16,7 +18,7 @@
 * **File Vault**: All generated physical artifacts (STEP, STL, G-code) MUST be saved to a structured local file system vault, with file paths indexed in SQLite.
 
 ## 4. Security & Identity
-* **Local Authentication**: The system MUST use FastAPI's native `OAuth2PasswordBearer` with `passlib` (bcrypt) and `python-jose` (JWT). No external identity providers (Auth0/Cognito) are permitted.
+* **Local Authentication**: The system MUST authenticate local control-plane callers using Wright's opaque bearer credential or its derived HMAC-SHA256 browser session, with constant-time credential validation and fail-closed origin checks. No external identity providers (Auth0/Cognito) are permitted.
 * **Storage**: User credentials MUST be securely hashed and stored in the local SQLite database.
 * **Role-Based Access Control (RBAC)**: The system MUST enforce basic roles, distinguishing between administrators (tool/user management) and standard engineers (task execution).
 

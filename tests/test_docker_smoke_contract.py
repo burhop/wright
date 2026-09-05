@@ -151,6 +151,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"cryptography==50.0.0"' in dockerfile
     assert '"pillow==12.3.0"' in dockerfile
     assert '"msgpack==1.2.1"' in dockerfile
+    assert '"tornado==6.5.8"' in dockerfile
     assert (
         "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
         in dockerfile

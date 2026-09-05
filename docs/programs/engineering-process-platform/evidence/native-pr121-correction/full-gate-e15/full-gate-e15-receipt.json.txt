@@ -1,0 +1,453 @@
+{
+  "projection_kind": "Public selected receipt for one actual completed full local gate; not full raw reports or CI/deployment acceptance",
+  "assembled_at": "2026-09-05T10:00:16.687879+00:00",
+  "product_candidate": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+  "full_gate": {
+    "candidate_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+    "candidate_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+    "command": "scripts/check-dev-merge.sh",
+    "started_at": "2026-09-05T09:18:33.3468613Z",
+    "completed_at": "2026-09-05T09:51:29.1779068Z",
+    "exit_code": 0,
+    "source_was_clean": true,
+    "source_clean_after": false,
+    "image": "sha256:336e4f0d0d479777da9a482586e779e52e286981f1ac04d905c8ab719226569f",
+    "log_sha256": "c8434a942852c669e7a4a8ace9fd93de2dca902d4143c3d11e7fa6238450ed06",
+    "evidence": [
+      "gate-log",
+      "gate-observation",
+      "gate-source-script"
+    ]
+  },
+  "python_stage_results": [
+    {
+      "command": "uv run --extra runtime python -m pytest -q tests/program_control_plane",
+      "stage_log_line": 68,
+      "summary_log_line": 75,
+      "counts": {
+        "passed": 376,
+        "skipped": 1
+      }
+    },
+    {
+      "command": "uv run python -m pytest -q tests/release",
+      "stage_log_line": 77,
+      "summary_log_line": 81,
+      "counts": {
+        "passed": 176
+      }
+    },
+    {
+      "command": "uv run python -m pytest -q tests/native_runtime tests/release/test_native_release_evidence.py tests/release/test_native_release_rehearsal.py tests/release/test_native_workflow_policy.py tests/test_public_python_distribution.py",
+      "stage_log_line": 83,
+      "summary_log_line": 87,
+      "counts": {
+        "passed": 153,
+        "skipped": 10
+      }
+    },
+    {
+      "command": "uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85",
+      "stage_log_line": 89,
+      "summary_log_line": 144,
+      "counts": {
+        "passed": 309,
+        "skipped": 10,
+        "warning": 1
+      }
+    },
+    {
+      "command": "uv run python -m pytest -q apps/api/tests/test_security.py apps/api/tests/test_gateway_api.py packages/workspace_service/tests/test_files.py packages/workspace_service/tests/test_workspace_path.py packages/workspace_service/tests/test_workspace_service.py",
+      "stage_log_line": 220,
+      "summary_log_line": 228,
+      "counts": {
+        "passed": 51,
+        "skipped": 2,
+        "warning": 1
+      }
+    },
+    {
+      "command": "uv run --extra runtime python -m pytest -q tests/program_hardening tests/native_runtime/test_program_state_compatibility.py tests/native_runtime/test_rollback.py tests/native_runtime/test_security.py tests/e2e/test_engineering_program_offline.py tests/e2e/test_engineering_program_journey.py packages/workspace_service/tests/test_engineering_program_recovery.py packages/workspace_service/tests/test_engineering_scenario_performance.py packages/workspace_service/tests/test_rivet_mcp_cancellation.py packages/workspace_service/tests/test_support_diagnostics.py packages/workspace_service/tests/test_support_diagnostic_service.py packages/workspace_service/tests/test_support_diagnostics_performance.py apps/api/tests/test_support_diagnostics_api.py tests/release/test_program_compatibility_evidence.py tests/packaging/test_program_hardening_contents.py",
+      "stage_log_line": 230,
+      "summary_log_line": 239,
+      "counts": {
+        "passed": 80,
+        "skipped": 2,
+        "warning": 1
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest apps/api/tests",
+      "stage_log_line": 259,
+      "summary_log_line": 367,
+      "counts": {
+        "passed": 449,
+        "skipped": 1,
+        "warnings": 11
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/agent_adapters/tests",
+      "stage_log_line": 369,
+      "summary_log_line": 395,
+      "counts": {
+        "passed": 111
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/core/tests",
+      "stage_log_line": 397,
+      "summary_log_line": 425,
+      "counts": {
+        "passed": 143
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/data_vault/tests",
+      "stage_log_line": 427,
+      "summary_log_line": 462,
+      "counts": {
+        "passed": 126,
+        "skipped": 1
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/model_registry/tests -m not performance",
+      "stage_log_line": 464,
+      "summary_log_line": 502,
+      "counts": {
+        "passed": 185,
+        "deselected": 1
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/tool_registry/tests",
+      "stage_log_line": 504,
+      "summary_log_line": 598,
+      "counts": {
+        "passed": 411
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest packages/workspace_service/tests",
+      "stage_log_line": 600,
+      "summary_log_line": 728,
+      "counts": {
+        "passed": 485,
+        "skipped": 9
+      }
+    },
+    {
+      "command": "uv run --extra runtime --extra engineering-models python -m pytest tests --ignore=tests/program_control_plane --ignore=tests/native_runtime",
+      "stage_log_line": 730,
+      "summary_log_line": 876,
+      "counts": {
+        "passed": 536,
+        "skipped": 39,
+        "warning": 1
+      }
+    },
+    {
+      "command": "uv run --isolated --reinstall-package hermes-plugin-wright --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML python -m pytest hermes-plugin-wright/tests",
+      "stage_log_line": 878,
+      "summary_log_line": 896,
+      "counts": {
+        "passed": 13
+      }
+    }
+  ],
+  "frontend_stage_results": [
+    {
+      "command": "npm run test --workspace=apps/web -- --run CapabilityLibrary RivetScenarioReport SupportDiagnosticsPanel workspace-service ToolRegistryLayout",
+      "stage_log_line": 241,
+      "summary_log_line": 254,
+      "passed": 19
+    },
+    {
+      "command": "npm run test --workspace=apps/web",
+      "stage_log_line": 898,
+      "summary_log_line": 911,
+      "passed": 547
+    }
+  ],
+  "counting_scope": "These are per-invocation results. Focused, coverage and broad suites overlap; counts are not summed into unique tests.",
+  "coverage": {
+    "percent": 85.34,
+    "required_percent": 85,
+    "log_line": 143,
+    "scope": "scripts.release and wright_engineering measured by the recorded coverage stage"
+  },
+  "browser": {
+    "stats": {
+      "total": 175,
+      "expected": 170,
+      "unexpected": 0,
+      "flaky": 0,
+      "skipped": 5,
+      "ok": true
+    },
+    "start_time_unix_ms": 1788601492816,
+    "duration_ms": 395737.892,
+    "all_175_original_case_identities_preserved": true,
+    "five_skips_identical_to_reviewed114": true,
+    "all_attempt_retries_zero": true,
+    "skipped_cases": [
+      {
+        "id": "playwright:3b38bcc6526468725edf-060e209b605f496db668",
+        "file": "native-process-live.spec.ts",
+        "title": "@live native saved process computes, preserves failure and links correction",
+        "project": "chromium",
+        "outcome": "skipped"
+      },
+      {
+        "id": "playwright:3b38bcc6526468725edf-68e5c9404a505613da5d",
+        "file": "native-process-live.spec.ts",
+        "title": "@live native document and artifact-review examples produce exact files",
+        "project": "chromium",
+        "outcome": "skipped"
+      },
+      {
+        "id": "playwright:400ed28dfe928edf236e-54a7b7370787cc3a42ed",
+        "file": "installed-hermes-walkthrough.spec.ts",
+        "title": "opens the packaged Wright UI through the local Hermes lifecycle",
+        "project": "chromium",
+        "outcome": "skipped"
+      },
+      {
+        "id": "playwright:6e3b951c0d73c276c33d-52ad9e1e3c4f9557cb0e",
+        "file": "installed-rivet-file-open-walkthrough.spec.ts",
+        "title": "opens a saved Rivet project from Workspace Files",
+        "project": "chromium",
+        "outcome": "skipped"
+      },
+      {
+        "id": "playwright:c1bec523cd3679e61a34-b49c26ab18a8f8179edc",
+        "file": "mcp-appliance.spec.ts",
+        "title": "opens Wright, starts bundled MCPs, and submits an MCP-oriented prompt",
+        "project": "chromium",
+        "outcome": "skipped"
+      }
+    ],
+    "skip_reason_scope": "Exact skipped identities are preserved. The terminal log/report does not supply a reason for each; no reason is inferred and no skipped specialized journey is counted as executed.",
+    "evidence": [
+      "browser-html-report",
+      "browser-case-projection",
+      "independent-gate-review"
+    ]
+  },
+  "other_required_stages": [
+    {
+      "stage": "Ruff lint and format",
+      "result": "passed",
+      "log_lines": [
+        22,
+        26
+      ]
+    },
+    {
+      "stage": "Frontend ESLint",
+      "result": "passed with three warnings and zero errors",
+      "log_lines": [
+        28,
+        39
+      ]
+    },
+    {
+      "stage": "Prettier and TypeScript",
+      "result": "passed",
+      "log_lines": [
+        42,
+        46
+      ]
+    },
+    {
+      "stage": "Blocking MyPy scope",
+      "result": "passed; 40 source files",
+      "log_lines": [
+        48,
+        49
+      ]
+    },
+    {
+      "stage": "Distribution dry run and workflow policy",
+      "result": "completed",
+      "log_lines": [
+        61,
+        66
+      ]
+    },
+    {
+      "stage": "Frontend production build",
+      "result": "completed with warnings",
+      "log_lines": [
+        146,
+        176
+      ]
+    },
+    {
+      "stage": "Fresh root wheel/sdist build and native distribution validation",
+      "result": "completed",
+      "log_lines": [
+        178,
+        218
+      ]
+    },
+    {
+      "stage": "Strict documentation build",
+      "result": "completed",
+      "log_lines": [
+        916,
+        1116
+      ]
+    }
+  ],
+  "recorded_warnings_and_limits": [
+    {
+      "kind": "broad-mypy-warning-mode",
+      "detail": "Broad MyPy stopped on duplicate conftest modules and was nonblocking under the existing warning mode. It is not a full broad-typecheck pass.",
+      "log_lines": [
+        51,
+        59
+      ]
+    },
+    {
+      "kind": "eslint",
+      "detail": "Three react-hooks/exhaustive-deps warnings in WorkspacePanel, LiveAppControls and LiveAppSurface; zero lint errors.",
+      "log_lines": [
+        28,
+        39
+      ]
+    },
+    {
+      "kind": "vite",
+      "detail": "Native configuration-loader compatibility and bundle chunks over 500 kB warnings were logged.",
+      "log_lines": [
+        151,
+        169
+      ]
+    },
+    {
+      "kind": "python",
+      "detail": "SQLite ResourceWarning and Starlette/httpx/status/cookie deprecations appear in stage output. Warning counts remain attached to their stage summaries.",
+      "log_lines": [
+        97,
+        224,
+        235,
+        344,
+        348,
+        352,
+        363,
+        872
+      ]
+    },
+    {
+      "kind": "browser-console-formatting",
+      "detail": "Color-formatting setting conflicts were logged; no private setting values are copied.",
+      "log_lines": [
+        1121,
+        1131
+      ]
+    },
+    {
+      "kind": "skips-and-deselection",
+      "detail": "Python stages retain their actual skipped counts; model_registry reports one performance test deselected. Optional native protocol and installed/external cases are not promoted to live qualification. The five browser skips include both native-process-live journeys.",
+      "log_lines": [
+        75,
+        87,
+        144,
+        228,
+        239,
+        367,
+        462,
+        502,
+        728,
+        876,
+        4532
+      ]
+    }
+  ],
+  "exact_image_scan": {
+    "status": "passed",
+    "started_at": "2026-09-05T09:18:39.972995+00:00",
+    "completed_at": "2026-09-05T09:19:28.323397+00:00",
+    "image_id": "sha256:336e4f0d0d479777da9a482586e779e52e286981f1ac04d905c8ab719226569f",
+    "image_source_commit": "40b1d97293aa0bba30f2a7a681afac58d9b48b0c",
+    "source_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+    "source_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+    "scanner_image": "docker.io/aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e",
+    "scanner_version": "0.70.0",
+    "policy_sha256": "654d26b26b36137052a2b29fc118cb908046a26202544afa10ecbfb9a44117ea",
+    "database": {
+      "Version": 2,
+      "UpdatedAt": "2026-09-05T07:05:47.425805327Z",
+      "NextUpdate": "2026-09-06T07:05:47.425805137Z",
+      "DownloadedAt": "2026-09-05T09:19:11.516138801Z"
+    },
+    "raw_report_sha256": "f1a142c138392452e69d7176340e7665d35ea15d31e66e5efefc1aea15fabc4f",
+    "builds": 0,
+    "publications": 0,
+    "result_sections": 3,
+    "reported_vulnerability_records": 0,
+    "scope": "Fresh scan of the existing immutable Linux/amd64 LF image336 under corrected helper and unchanged policy; no image rebuild. Scanner policy covers fixable High/Critical findings, not absence of every vulnerability.",
+    "evidence": [
+      "current-image-scan",
+      "current-image-scan-report",
+      "current-image-scan-log",
+      "current-image-scan-raw-hashes"
+    ]
+  },
+  "fresh_distributions": [
+    {
+      "evidence": "fresh-wheel",
+      "filename": "wright_engineering-0.1.9-py3-none-any.whl",
+      "bytes": 16186300,
+      "sha256": "fe2ca54fa1eb7bd005aa01518cfad4c369562f4af9c41f761b65c8279147dbbf",
+      "scope": "Locally emitted by this gate and validated by its native-distribution check; not published artifacts and not a reproducible-byte claim."
+    },
+    {
+      "evidence": "fresh-sdist",
+      "filename": "wright_engineering-0.1.9.tar.gz",
+      "bytes": 15787832,
+      "sha256": "a254bfe52f4413086832ad0b7effa244c0a4e07e9788a53a46defcebc8b7a4c1",
+      "scope": "Locally emitted by this gate and validated by its native-distribution check; not published artifacts and not a reproducible-byte claim."
+    }
+  ],
+  "generated_file_residue": {
+    "gate_source_clean_after": false,
+    "sole_changed_path": "src/wright_engineering/runtime-extra-lock.json",
+    "sole_changed_field": "uv_lock_sha256",
+    "committed_git_lf_digest": "284093f806d36c6b91aa7ffb057e03fad2bdc32ca18f8592ad1e0c299a79a3e1",
+    "generated_raw_crlf_digest": "f4a704d52588202bf157ab3f7ba49be3172b8a33d86c4a399d95c7898a9361f6",
+    "preserved_file_sha256": "21b215a971c189f30a649f86729146a219a1b7fe1c75d4bc7218be1c68edbf4a",
+    "other_fields_unchanged": true,
+    "independent_classification": "Only raw-checkout uv.lock provenance hash changed, exactly matching native builder output and reviewed archives. Other fields and all other tracked source unchanged. Restore only this preserved generated file to Git to obtain clean source; retain original gate source_clean_after=false.",
+    "evidence": [
+      "generated-lock-after-gate",
+      "independent-gate-review"
+    ]
+  },
+  "subsequent_cleanup": {
+    "observed_at": "2026-09-05T09:55:57.1897496Z",
+    "source_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+    "restored_path": "src/wright_engineering/runtime-extra-lock.json",
+    "preserved_raw_sha256": "21b215a971c189f30a649f86729146a219a1b7fe1c75d4bc7218be1c68edbf4a",
+    "source_clean_after_restore": true,
+    "actor": "coordinator",
+    "original_gate_observation_unchanged": true,
+    "scope": "Separate restoration after retaining exact generated bytes; does not revise the gate source_clean_after=false result.",
+    "evidence": [
+      "later-restoration"
+    ]
+  },
+  "independent_correspondence_review": {
+    "reviewed_at": "2026-09-05T09:55:08.144800+00:00",
+    "reviewer": "/root/native_candidate_review",
+    "verdict": "passed_actual_complete_local_gate_correspondence",
+    "new_gate_test_build_install_or_scan_runs": 0,
+    "original_gate_and_observation_bytes_unchanged": true,
+    "evidence": [
+      "independent-gate-review"
+    ]
+  },
+  "remaining_scope": "H2 GitHub CI, required push gate, published dev deployment, human study and production release acceptance are not established by this local gate receipt. Historical failures and the interrupted fcb gate remain separate."
+}

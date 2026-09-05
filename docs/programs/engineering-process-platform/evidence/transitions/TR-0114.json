@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0114",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTING",
+  "to_state": "AUTHOR_VERIFIED",
+  "prior_revision": 114,
+  "new_revision": 115,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "8738784592a0585d1434fcf9bedcf330eb4284e85c671a1707c2808a25ffded4",
+  "new_state_digest": "1a7e57f548c191de887c770e9b82f1477702e50e9761bcac96618a48b3db61ee",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Correction verified by15 dashboard tests,12 native API tests,18 independent critical reruns and68 scanner/gate regressions. Corrected container smoke/current-DB scan passed. Archive newline difference retained; exact-blob image rebuilding. Preserve26-task scope and prior failures. Revised full gates, final candidate review, CodeQL and H2 CI remain pending.",
+  "started_at": "2026-09-05T09:00:26.980424Z",
+  "finished_at": "2026-09-05T09:00:26.980424Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "d734f4c0955f1cce93855fab751cb3f64628dd79",
+    "source_tree": "0ad525b039858809a78e1fae1f8ae039d155a8aa",
+    "source_program_tree": "c6b2f3f0ede873d9b65285c0d2bb1a578e54187a",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0115.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0114.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0114.json",
+      "sha256": "4359370a79f0998c2822f2ef228c301bf180f6a6058462cb5841f158abf97f04",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0115.json",
+      "sha256": "cbab0ed3520ccda6f98cd2e7313234ef447a7df31f96fcf1ffadc6b6f5ddd0b2",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Correction verified by15 dashboard tests,12 native API tests,18 independent critical reruns and68 scanner/gate regressions. Corrected container smoke/current-DB scan passed. Archive newline difference retained; exact-blob image rebuilding. Preserve26-task scope and prior failures. Revised full gates, final candidate review, CodeQL and H2 CI remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "d734f4c0955f1cce93855fab751cb3f64628dd79",
+        "d734f4c0955f1cce93855fab751cb3f64628dd79"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0114.json",
+  "next_action": "FREEZE_CURRENT_FEATURE_CANDIDATE"
+}

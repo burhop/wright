@@ -1,0 +1,84 @@
+[
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/playwright-list.json",
+    "retained_filename": "playwright-list.json.txt",
+    "sha256": "8cc285e0ba50fa931e59ca0d870354859e2270e05cbae167d9c52897911c19bf",
+    "bytes": 15633,
+    "original_sha256": "9e270f657a9bf096ea5e2ce700735a9b63c21333763606d301a6a86796b6b7ad",
+    "original_bytes": 31677,
+    "original_git_sha256": "1d3e80ca941e3b0c0db1bcb886386021b7abe92b0e29e2e98a7b54630d294b8c",
+    "transformation": "Public projection omits the entire /config/webServer/env subtree (96 inherited environment entries); all test IDs, counts and remaining configuration are unchanged. Exact original retained privately."
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/pytest-api.json",
+    "retained_filename": "pytest-api.json.txt",
+    "sha256": "9ee17c81e712fb7c852c30b09cea51be67e44e6744fa4df285b60e34c30fd4a7",
+    "bytes": 9545
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/pytest-core.json",
+    "retained_filename": "pytest-core.json.txt",
+    "sha256": "62b8dd886366b1715d15d4c922c78ab25ef19a6119fea3ae7793b5a23af41000",
+    "bytes": 20552
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/pytest-dashboard.json",
+    "retained_filename": "pytest-dashboard.json.txt",
+    "sha256": "894106e395d56b063945f7ffa939fdc2e25a14e27a94ea1047792b4a29dbad66",
+    "bytes": 19566
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/pytest-data.json",
+    "retained_filename": "pytest-data.json.txt",
+    "sha256": "1ef0a685a5c694589331d17dfc2726ddbf373bdc4caf673477edc13011b9ea0a",
+    "bytes": 5972
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/pytest-workspace.json",
+    "retained_filename": "pytest-workspace.json.txt",
+    "sha256": "24ae658a88bd017838691383c45933268ad57bc9e6a48c373392f340d137d5da",
+    "bytes": 15266
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/required-acceptance-60ef8672.json",
+    "retained_filename": "required-acceptance-60ef8672.json.txt",
+    "sha256": "edd5891ba3bf2d9f4dc58e6f2630feb814786c71b48c29c4896318ba2bdc094e",
+    "bytes": 307574
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/terminal-native-process-live.spec.ts.json",
+    "retained_filename": "terminal-native-process-live.spec.ts.json.txt",
+    "sha256": "ff80041dec1c81dfa8be4e819ff55975724bb1b1622ed41530b1d971b7b03152",
+    "bytes": 3389
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/terminal-native-process.spec.ts.json",
+    "retained_filename": "terminal-native-process.spec.ts.json.txt",
+    "sha256": "e41b891b10e260cceb89a95fb3ce18caf7afd03df39ef3e40940bdb147322cd3",
+    "bytes": 238820
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/terminal-program-status.spec.ts.json",
+    "retained_filename": "terminal-program-status.spec.ts.json.txt",
+    "sha256": "ce2c99dc25584c024d0d8755ca2337bd8a8e3092b68404d2f4712cc42074f644",
+    "bytes": 359308
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-process-milestone/native-milestone-fixture/.local-run/checkpoint-proposal-60ef8672/acceptance-mapping/vitest.json",
+    "retained_filename": "vitest.json.txt",
+    "sha256": "a97dc5322d7cbcf99f8aa6c15fcfaf158ec7ce3230ea572945ad02ac07323ffc",
+    "bytes": 30455
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-candidate-review/.local-run/independent-planning-review-60ef8672.md",
+    "retained_filename": "independent-planning-review-60ef8672.md",
+    "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247",
+    "bytes": 9204
+  },
+  {
+    "original_local_path": "D:/repos/wright/.local-run/native-candidate-review/.local-run/review-planning-60ef8672.py",
+    "retained_filename": "independent-planning-probe-60ef8672.py.txt",
+    "sha256": "c2440cf71c9f5ca000dbe940618730d9a36d1b536ef1521cc3a814d7a85ebf68",
+    "bytes": 6537
+  }
+]

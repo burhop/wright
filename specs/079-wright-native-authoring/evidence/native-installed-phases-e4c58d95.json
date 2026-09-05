@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "create",
+    "pid": 20940,
+    "installed": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-packaging\\.local-run\\packaging-slice\\test_built_wheel_contains_publ0\\installed",
+    "wright_modules_checked": 282,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "1808587d-dff6-4de0-9fe7-16571d344928",
+    "offline": true,
+    "native_span_count": 30
+  },
+  {
+    "phase": "restart",
+    "pid": 29692,
+    "installed": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-packaging\\.local-run\\packaging-slice\\test_built_wheel_contains_publ0\\installed",
+    "wright_modules_checked": 282,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "1808587d-dff6-4de0-9fe7-16571d344928",
+    "offline": true,
+    "native_span_count": 12
+  },
+  {
+    "phase": "package-replacement",
+    "pid": 28360,
+    "installed": "D:\\TEMP\\wright-native-installed-review-w3ttu9ue\\proof\\replacement-package",
+    "wright_modules_checked": 282,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "1808587d-dff6-4de0-9fe7-16571d344928",
+    "offline": true,
+    "native_span_count": 12
+  }
+]

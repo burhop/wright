@@ -89,6 +89,20 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
             events.append("reconcile")
 
     monkeypatch.setattr(main, "McpEngine", FakeMcpEngine)
+
+    class FakeNative:
+        async def startup(self):
+            events.append("native-startup")
+
+        async def close(self):
+            events.append("native-close")
+
+    def native_service(db_path, gateway, workspace):
+        assert gateway.lifecycle is not None
+        events.append("native-build")
+        return FakeNative()
+
+    monkeypatch.setattr(main, "build_native_process_service", native_service)
     isolated_app = SimpleNamespace(state=SimpleNamespace())
 
     async with main.lifespan(isolated_app):
@@ -103,6 +117,9 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         "sync",
         "mcp",
         "reconcile",
+        "native-build",
+        "native-startup",
         "serving",
+        "native-close",
         "shutdown",
     ]

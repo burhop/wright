@@ -1,0 +1,622 @@
+[
+  {
+    "run_id": "b8021b78-bf3d-44f4-9823-5116c2ac9483",
+    "process_id": "process-e27f8e24-5d47-40d7-8a76-297f4c211676",
+    "state": "succeeded",
+    "semantic_digest": "d910c0dbcd92418ba02fc41559b2299fb132ccdcdc920b08c29028730bd4f9cc",
+    "created_at": "2026-09-05T01:35:48.650240+00:00",
+    "started_at": "2026-09-05T01:35:48.694899+00:00",
+    "completed_at": "2026-09-05T01:35:49.492277+00:00",
+    "derived_from_run_id": null,
+    "trace_id": "2ca843c929147a503d64594b99bc41f8",
+    "reason": null,
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "link-1",
+            "source_port_id": "need-source-output-value",
+            "target_port_id": "brief-compose-input-first"
+          },
+          {
+            "id": "link-2",
+            "source_port_id": "constraint-source-output-value",
+            "target_port_id": "brief-compose-input-second"
+          },
+          {
+            "id": "link-3",
+            "source_port_id": "brief-compose-output-text",
+            "target_port_id": "brief-check-input-text"
+          },
+          {
+            "id": "link-4",
+            "source_port_id": "brief-check-output-text",
+            "target_port_id": "brief-file-input-text"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "process-e27f8e24-5d47-40d7-8a76-297f4c211676",
+        "outputs": [
+          {
+            "id": "brief-result",
+            "port_id": "brief-file-output-artifact",
+            "title": "Concept brief"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "need-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "need-source",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "brief-compose-input-first",
+            "key": "first",
+            "label": "first",
+            "required": true,
+            "step_id": "brief-compose",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "constraint-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "constraint-source",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "brief-compose-input-second",
+            "key": "second",
+            "label": "second",
+            "required": true,
+            "step_id": "brief-compose",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "brief-compose-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "brief-compose",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "brief-check-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "brief-check",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "brief-check-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "brief-check",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "brief-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "brief-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "brief-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "brief-file",
+            "type": "artifact"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": "Design a desk bracket."
+            },
+            "id": "need-source",
+            "operation": "text.input@1",
+            "title": "need source"
+          },
+          {
+            "config": {
+              "value": "Maximum mass: 200 g."
+            },
+            "id": "constraint-source",
+            "operation": "text.input@1",
+            "title": "constraint source"
+          },
+          {
+            "config": {
+              "separator": "\n"
+            },
+            "id": "brief-compose",
+            "operation": "text.join@1",
+            "title": "brief compose"
+          },
+          {
+            "config": {
+              "terms": [
+                "desk bracket",
+                "200 g"
+              ]
+            },
+            "id": "brief-check",
+            "operation": "text.require@1",
+            "title": "brief check"
+          },
+          {
+            "config": {
+              "filename": "concept-brief.md"
+            },
+            "id": "brief-file",
+            "operation": "artifact.write-text@1",
+            "title": "brief file"
+          }
+        ],
+        "title": "Create a traceable concept brief"
+      },
+      "revision": 1,
+      "semantic_digest": "d910c0dbcd92418ba02fc41559b2299fb132ccdcdc920b08c29028730bd4f9cc",
+      "token": "[omitted: document revision CAS fingerprint; raw evidence retained locally]"
+    },
+    "bindings": {},
+    "actor": "local-operator",
+    "timeout_seconds": 60,
+    "steps": [
+      {
+        "step_id": "need-source",
+        "operation": "text.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:48.724733+00:00",
+        "completed_at": "2026-09-05T01:35:48.742050+00:00",
+        "inputs": {},
+        "outputs": {
+          "need-source-output-value": "Design a desk bracket."
+        },
+        "reason": null
+      },
+      {
+        "step_id": "constraint-source",
+        "operation": "text.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:48.768777+00:00",
+        "completed_at": "2026-09-05T01:35:48.784809+00:00",
+        "inputs": {},
+        "outputs": {
+          "constraint-source-output-value": "Maximum mass: 200 g."
+        },
+        "reason": null
+      },
+      {
+        "step_id": "brief-compose",
+        "operation": "text.join@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:48.810957+00:00",
+        "completed_at": "2026-09-05T01:35:49.247269+00:00",
+        "inputs": {
+          "brief-compose-input-first": "Design a desk bracket.",
+          "brief-compose-input-second": "Maximum mass: 200 g."
+        },
+        "outputs": {
+          "brief-compose-output-text": "Design a desk bracket.\nMaximum mass: 200 g."
+        },
+        "reason": null
+      },
+      {
+        "step_id": "brief-check",
+        "operation": "text.require@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:49.284826+00:00",
+        "completed_at": "2026-09-05T01:35:49.311310+00:00",
+        "inputs": {
+          "brief-check-input-text": "Design a desk bracket.\nMaximum mass: 200 g."
+        },
+        "outputs": {
+          "brief-check-output-text": "Design a desk bracket.\nMaximum mass: 200 g."
+        },
+        "reason": null
+      },
+      {
+        "step_id": "brief-file",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:49.350122+00:00",
+        "completed_at": "2026-09-05T01:35:49.470421+00:00",
+        "inputs": {
+          "brief-file-input-text": "Design a desk bracket.\nMaximum mass: 200 g."
+        },
+        "outputs": {
+          "brief-file-output-artifact": {
+            "artifact_id": "e20bb4ed-4acf-4371-ab7b-8763cffd211c",
+            "content_digest": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+            "filename": "concept-brief.md",
+            "size": 43
+          }
+        },
+        "reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "artifact_id": "e20bb4ed-4acf-4371-ab7b-8763cffd211c",
+        "step_id": "brief-file",
+        "port_id": "brief-file-output-artifact",
+        "filename": "concept-brief.md",
+        "content_digest": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+        "size": 43,
+        "media_type": "text/markdown",
+        "provenance": {
+          "actor": "local-operator",
+          "config": {
+            "filename": "concept-brief.md"
+          },
+          "inputs": {
+            "text": "Design a desk bracket.\nMaximum mass: 200 g."
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "b8021b78-bf3d-44f4-9823-5116c2ac9483",
+          "semantic_digest": "d910c0dbcd92418ba02fc41559b2299fb132ccdcdc920b08c29028730bd4f9cc",
+          "step_id": "brief-file",
+          "trace_id": "2ca843c929147a503d64594b99bc41f8"
+        }
+      }
+    ],
+    "last_sequence": 14
+  },
+  {
+    "run_id": "3e58ff13-1a53-4bf7-b56d-a13f4f5d71b2",
+    "process_id": "process-8fd6d7ad-f107-49c0-aae8-8615a2e609a3",
+    "state": "succeeded",
+    "semantic_digest": "a3fcd0707cc0225fdc491edf4b5204cd09c9b1d7ea228273f66c90d654c87376",
+    "created_at": "2026-09-05T01:35:51.865732+00:00",
+    "started_at": "2026-09-05T01:35:51.907281+00:00",
+    "completed_at": "2026-09-05T01:35:52.241271+00:00",
+    "derived_from_run_id": null,
+    "trace_id": "49c173414e3c2ea34798287a186a573f",
+    "reason": null,
+    "snapshot": {
+      "definition": {
+        "connections": [
+          {
+            "id": "link-1",
+            "source_port_id": "note-source-output-value",
+            "target_port_id": "draft-file-input-text"
+          },
+          {
+            "id": "link-2",
+            "source_port_id": "draft-file-output-artifact",
+            "target_port_id": "note-read-input-artifact"
+          },
+          {
+            "id": "link-3",
+            "source_port_id": "note-read-output-text",
+            "target_port_id": "note-check-input-text"
+          },
+          {
+            "id": "link-4",
+            "source_port_id": "note-check-output-text",
+            "target_port_id": "checked-file-input-text"
+          }
+        ],
+        "format": "wright-native-process",
+        "id": "process-8fd6d7ad-f107-49c0-aae8-8615a2e609a3",
+        "outputs": [
+          {
+            "id": "checked-result",
+            "port_id": "checked-file-output-artifact",
+            "title": "Checked release note"
+          }
+        ],
+        "ports": [
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "note-source-output-value",
+            "key": "value",
+            "label": "value",
+            "required": true,
+            "step_id": "note-source",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "draft-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "draft-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "draft-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "draft-file",
+            "type": "artifact"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "note-read-input-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "note-read",
+            "type": "artifact"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "note-read-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "note-read",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "note-check-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "note-check",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "note-check-output-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "note-check",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "input",
+            "id": "checked-file-input-text",
+            "key": "text",
+            "label": "text",
+            "required": true,
+            "step_id": "checked-file",
+            "type": "text"
+          },
+          {
+            "cardinality": "one",
+            "direction": "output",
+            "id": "checked-file-output-artifact",
+            "key": "artifact",
+            "label": "artifact",
+            "required": true,
+            "step_id": "checked-file",
+            "type": "artifact"
+          }
+        ],
+        "schema_version": "1.0.0",
+        "steps": [
+          {
+            "config": {
+              "value": "Part: BR-001\nUnits: mm\nRevision: A"
+            },
+            "id": "note-source",
+            "operation": "text.input@1",
+            "title": "note source"
+          },
+          {
+            "config": {
+              "filename": "release-note.txt"
+            },
+            "id": "draft-file",
+            "operation": "artifact.write-text@1",
+            "title": "draft file"
+          },
+          {
+            "config": {},
+            "id": "note-read",
+            "operation": "artifact.read-text@1",
+            "title": "note read"
+          },
+          {
+            "config": {
+              "terms": [
+                "BR-001",
+                "Units: mm",
+                "Revision: A"
+              ]
+            },
+            "id": "note-check",
+            "operation": "text.require@1",
+            "title": "note check"
+          },
+          {
+            "config": {
+              "filename": "checked-release-note.txt"
+            },
+            "id": "checked-file",
+            "operation": "artifact.write-text@1",
+            "title": "checked file"
+          }
+        ],
+        "title": "Review and correct a local release note"
+      },
+      "revision": 1,
+      "semantic_digest": "a3fcd0707cc0225fdc491edf4b5204cd09c9b1d7ea228273f66c90d654c87376",
+      "token": "[omitted: document revision CAS fingerprint; raw evidence retained locally]"
+    },
+    "bindings": {},
+    "actor": "local-operator",
+    "timeout_seconds": 60,
+    "steps": [
+      {
+        "step_id": "note-source",
+        "operation": "text.input@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:51.934025+00:00",
+        "completed_at": "2026-09-05T01:35:51.949264+00:00",
+        "inputs": {},
+        "outputs": {
+          "note-source-output-value": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "draft-file",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:51.973244+00:00",
+        "completed_at": "2026-09-05T01:35:52.047112+00:00",
+        "inputs": {
+          "draft-file-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "outputs": {
+          "draft-file-output-artifact": {
+            "artifact_id": "cfbf42d1-7c7a-4279-becd-c281abb81810",
+            "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+            "filename": "release-note.txt",
+            "size": 34
+          }
+        },
+        "reason": null
+      },
+      {
+        "step_id": "note-read",
+        "operation": "artifact.read-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:52.070932+00:00",
+        "completed_at": "2026-09-05T01:35:52.104303+00:00",
+        "inputs": {
+          "note-read-input-artifact": {
+            "artifact_id": "cfbf42d1-7c7a-4279-becd-c281abb81810",
+            "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+            "filename": "release-note.txt",
+            "size": 34
+          }
+        },
+        "outputs": {
+          "note-read-output-text": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "note-check",
+        "operation": "text.require@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:52.126824+00:00",
+        "completed_at": "2026-09-05T01:35:52.148874+00:00",
+        "inputs": {
+          "note-check-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "outputs": {
+          "note-check-output-text": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "reason": null
+      },
+      {
+        "step_id": "checked-file",
+        "operation": "artifact.write-text@1",
+        "state": "succeeded",
+        "started_at": "2026-09-05T01:35:52.171415+00:00",
+        "completed_at": "2026-09-05T01:35:52.223958+00:00",
+        "inputs": {
+          "checked-file-input-text": "Part: BR-001\nUnits: mm\nRevision: A"
+        },
+        "outputs": {
+          "checked-file-output-artifact": {
+            "artifact_id": "dd51c25e-7f3a-42e6-a1f1-415df75afb12",
+            "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+            "filename": "checked-release-note.txt",
+            "size": 34
+          }
+        },
+        "reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "artifact_id": "cfbf42d1-7c7a-4279-becd-c281abb81810",
+        "step_id": "draft-file",
+        "port_id": "draft-file-output-artifact",
+        "filename": "release-note.txt",
+        "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+        "size": 34,
+        "media_type": "text/plain",
+        "provenance": {
+          "actor": "local-operator",
+          "config": {
+            "filename": "release-note.txt"
+          },
+          "inputs": {
+            "text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "3e58ff13-1a53-4bf7-b56d-a13f4f5d71b2",
+          "semantic_digest": "a3fcd0707cc0225fdc491edf4b5204cd09c9b1d7ea228273f66c90d654c87376",
+          "step_id": "draft-file",
+          "trace_id": "49c173414e3c2ea34798287a186a573f"
+        }
+      },
+      {
+        "artifact_id": "dd51c25e-7f3a-42e6-a1f1-415df75afb12",
+        "step_id": "checked-file",
+        "port_id": "checked-file-output-artifact",
+        "filename": "checked-release-note.txt",
+        "content_digest": "d46c16b8cc9bf5bd45073453d535211e7754700821435b7769f9abef898dbc84",
+        "size": 34,
+        "media_type": "text/plain",
+        "provenance": {
+          "actor": "local-operator",
+          "config": {
+            "filename": "checked-release-note.txt"
+          },
+          "inputs": {
+            "text": "Part: BR-001\nUnits: mm\nRevision: A"
+          },
+          "mode": "local_computation",
+          "operation": "artifact.write-text@1",
+          "run_id": "3e58ff13-1a53-4bf7-b56d-a13f4f5d71b2",
+          "semantic_digest": "a3fcd0707cc0225fdc491edf4b5204cd09c9b1d7ea228273f66c90d654c87376",
+          "step_id": "checked-file",
+          "trace_id": "49c173414e3c2ea34798287a186a573f"
+        }
+      }
+    ],
+    "last_sequence": 15
+  }
+]

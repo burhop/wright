@@ -1,0 +1,16 @@
+{
+  "command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "scripts/validate-engineering-process-program.py",
+    "validate",
+    "--source",
+    "HEAD",
+    "--format",
+    "json"
+  ],
+  "cwd": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-metadata-freeze-review",
+  "source_commit": "94731459ab1b26d8885a0b398fdd430c75fed4b5",
+  "started_at": "2026-09-05T06:57:20.296826+00:00",
+  "finished_at": "2026-09-05T06:57:38.656695+00:00",
+  "exit_code": 0
+}

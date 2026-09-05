@@ -1,0 +1,27 @@
+{
+  "reviewer": "/root/native_candidate_review",
+  "candidate": "80eaef9c487715186f8b67d33423ef730f681b3b",
+  "tree": "c1c4403319a537c952fd30289b0a7cfb439085ec",
+  "checked_at": "2026-09-05T03:52:44.899806+00:00",
+  "scope": "All unique Git blobs reachable from this exact tip only; no --all, private backup refs, working tree, ignored files, network or service requests.",
+  "original_capture_commit": "c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba",
+  "original_capture_path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+  "sensitive_key_names": [
+    "WRIGHT_API_TOKEN",
+    "OPENAI_API_KEY",
+    "VLLM_API_KEY",
+    "HOOPS_AI_LICENSE"
+  ],
+  "original_capture_positive_controls_passed": true,
+  "encodings_checked": [
+    "literal UTF-8",
+    "JSON-escaped UTF-8",
+    "ASCII JSON escapes"
+  ],
+  "reachable_unique_blobs": 8840,
+  "bytes_inspected": 369076030,
+  "matched_unique_blobs": 0,
+  "matches": [],
+  "result": "no_captured_values_found",
+  "limitations": "Presence is not external credential validity or proof of public disclosure. Short values may be common fixtures and require context classification. One representative rev-list path is reported per matching blob; a blob may occur at other paths/commits too."
+}

@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "id": "concept-brief",
+      "artifact": "concept-brief.md",
+      "expected_text": "Design a desk bracket.\nMaximum mass: 200 g.",
+      "negative": "Remove 200 g from the source; text.require must fail before output."
+    },
+    {
+      "id": "mass-check",
+      "artifact": "mass-report.txt",
+      "expected_text": "Mass: 135 g",
+      "negative": "Set maximum to 100 g; range must fail before report/artifact."
+    },
+    {
+      "id": "package-review",
+      "artifact": "checked-release-note.txt",
+      "expected_text": "Part: BR-001\nUnits: mm\nRevision: A",
+      "negative": "Remove Units: mm; review must fail and retain original draft artifact."
+    }
+  ]
+}

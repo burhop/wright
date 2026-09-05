@@ -1,27 +1,27 @@
 <!--
 Sync Impact Report
-- Version change: 2.0.0 -> 3.0.0
+- Version change: 3.1.0 -> 3.1.1 (2026-09-05)
 - Modified principles:
-  - Production Distribution Strategy (Hermes-only prerequisites -> manager-owned prerequisites)
-  - Native Runtime Isolation (Hermes-owned runtime -> Wright-owned manager-neutral runtime)
-  - Agent Abstraction (explicit Codex and OpenClaw installation adapters)
+  - Local Authentication: reconcile the obsolete OAuth2/JWT library prescription with the existing opaque local credential and derived browser-session implementation.
 - Added sections: none
 - Removed sections: none
 - Templates:
   - .specify/templates/plan-template.md: validated; no structural change required
   - .specify/templates/spec-template.md: validated; no structural change required
   - .specify/templates/tasks-template.md: validated; no structural change required
-- Runtime guidance pending implementation evidence:
-  - README.md: describe the shared Wright runtime and manager-specific adapters
-  - docs/getting-started/install-matrix.md: document Hermes, Codex, and OpenClaw prerequisites separately
-  - docs/getting-started/hermes-plugin.md: document the supported Hermes Git plugin path
+- Feature guidance: the standing native-milestone security authorization covers removal of the unused python-jose dependency and its vulnerable ecdsa dependency; historical audit evidence remains unchanged.
+- Existing authentication, origin enforcement, RBAC, local-only identity and prior architecture/distribution obligations remain unchanged.
 - Deferred placeholders: none
 -->
-# Virtual Mechanical Engineer Constitution v3.0.0
+# Virtual Mechanical Engineer Constitution v3.1.1
+
+Amendment 2026-09-05: Reconcile the authentication wording with the already-shipped implementation in `apps/api/src/api/security.py` and `src/wright_engineering/runtime/auth.py`. Wright uses an opaque local credential and an HMAC-derived browser session, not JWT signing or verification. Removing unused `python-jose` also removes the vulnerable `ecdsa` dependency without changing authentication code, wire behavior, RBAC or audit acceptance rules. This PATCH clarifies the established mechanism under the user's standing security-fix authorization; it introduces no authentication redesign or weaker obligation. The separate credential-storage paragraph is outside this bounded amendment and retains its historical wording.
+
+Amendment 2026-09-04: Under the user's standing native-milestone architecture authorization, clarify the established modular application-service boundary. The prior wording named only adapter/registry packages despite the accepted workspace-service architecture. Independent planning review identified this contradiction (C1); this prospective clarification changes no historical approval or evidence and does not weaken thin routes, offline operation, or security gates.
 
 ## 1. Architectural Foundation
 * **Framework**: The backend API MUST be implemented using the strictly typed FastAPI framework to ensure native Pydantic data validation and fast local execution.
-* **Architecture**: The system MUST utilize a Modular Monorepo (using `uv` or `Poetry`). Code MUST follow strict boundaries: API routes must contain zero business logic and route immediately to the isolated `agent_adapters` and `tool_registry` packages.
+* **Architecture**: The system MUST utilize a Modular Monorepo (using `uv` or `Poetry`). API routes MUST contain no business logic and delegate to isolated application services in `workspace_service`, `agent_adapters`, or `tool_registry` according to ownership. Pure domain contracts belong in `core`; storage belongs in `data_vault`. Application services compose these boundaries without importing HTTP transport code. Existing dependency-direction and package-boundary checks remain mandatory.
 * **Offline-First Mandate**: The entire appliance MUST be capable of running fully air-gapped. No core functionality may rely on an external cloud API without a graceful local fallback.
 
 ## 2. Serving & Execution
@@ -63,7 +63,7 @@ Sync Impact Report
 * **File Vault**: All generated physical artifacts (STEP, STL, G-code) MUST be saved to a structured local file system vault, with file paths indexed in SQLite.
 
 ## 4. Security & Identity
-* **Local Authentication**: The system MUST use FastAPI's native `OAuth2PasswordBearer` with `passlib` (bcrypt) and `python-jose` (JWT). No external identity providers (Auth0/Cognito) are permitted.
+* **Local Authentication**: The system MUST authenticate local control-plane callers using Wright's opaque bearer credential or its derived HMAC-SHA256 browser session, with constant-time credential validation and fail-closed origin checks. No external identity providers (Auth0/Cognito) are permitted.
 * **Storage**: User credentials MUST be securely hashed and stored in the local SQLite database.
 * **Role-Based Access Control (RBAC)**: The system MUST enforce basic roles, distinguishing between administrators (tool/user management) and standard engineers (task execution).
 
@@ -105,4 +105,4 @@ and AI-generated change MUST identify applicable gates, and release changes
 MUST update the authoritative merge-gate scripts when new CI failures expose a
 missing local gate.
 
-**Version**: 3.0.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-07-29
+**Version**: 3.1.1 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-09-05

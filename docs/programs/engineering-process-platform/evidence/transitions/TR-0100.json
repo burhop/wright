@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0100",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "INDEPENDENTLY_VERIFIED",
+  "to_state": "PUSH_AUTHORIZATION_PENDING",
+  "prior_revision": 100,
+  "new_revision": 101,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "e8718e8ce1dba4a6e9da4b675ba8a6a4231e4631086ffa0affe97069489b3631",
+  "new_state_digest": "507827980d78ca673afe118b3a5241c030d77d94d4351159a22093bbe4066328",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Prepare the scoped native dev PR under standing user authority after full local gate and independent exact-candidate review passed. Lease is closed; ordinary push gate and CI remain required. Publication, human acceptance and actual dev deployment are not inferred.",
+  "started_at": "2026-09-05T02:53:25.818877Z",
+  "finished_at": "2026-09-05T02:53:25.818877Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "2b4cacef80a3ddc39172f9f59a90db96fca97f8f",
+    "source_tree": "f2f2d8072d89aff26dd45072bfe8e801618b434d",
+    "source_program_tree": "73fc8fe2f74acf0581ddbdfa48c1a7d4b3ed07f5",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0101.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0100.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0100.json",
+      "sha256": "e5ddee432f23ee108abcdf88b3a97d302799cd8798a00729503ad83aa22d5999",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0101.json",
+      "sha256": "a7e6f197fcdec188ae642f3e348c2e692bac93b70b1dce042b977634ed4d5e07",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Prepare the scoped native dev PR under standing user authority after full local gate and independent exact-candidate review passed. Lease is closed; ordinary push gate and CI remain required. Publication, human acceptance and actual dev deployment are not inferred.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "2b4cacef80a3ddc39172f9f59a90db96fca97f8f",
+        "60ef8672f1f61c2f4942e618638ec8901e9aa9a0"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "F02 deployed browser verification remains pending."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0100.json",
+  "next_action": "OPEN_CURRENT_FEATURE_PR"
+}

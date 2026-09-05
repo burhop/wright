@@ -1,0 +1,115 @@
+{
+  "source_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+  "files": [
+    {
+      "original_name": "docker-result-c7f1f218.json",
+      "original_sha256": "c20134766438401761597aef83649c1cfcf0a701b7a8615e4f4f53942fe8707e",
+      "original_bytes": 3993,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/docker-result-c7f1f218.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "147069fe95efbecd820e04eb4f1fdea3222258a56a9c105c9dce3e3e78b06a0c",
+      "retained_bytes": 3890,
+      "transformation": "Git CRLF/LF text normalization only"
+    },
+    {
+      "original_name": "docker-original-manifest-c7f1f218.json",
+      "original_sha256": "a4883cb9029a5065070fa535db5af8d7179debaf18789eafddddd926adf955fb",
+      "original_bytes": 1577,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/docker-original-manifest-c7f1f218.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "1807a15bf24217304ca63b03d5f3949ff8dd578ceb94eaeb3da9414ede1d14a9",
+      "retained_bytes": 1527,
+      "transformation": "Git CRLF/LF text normalization only"
+    },
+    {
+      "original_name": "docker-native-c7f1f218.log",
+      "original_sha256": "bde95377158bbb3f6e682ef26b9a3b678ad80510bf819b1dbf7e69dfaabf472c",
+      "original_bytes": 5445,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/docker-native-c7f1f218.log.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "7483ce90f738fea92bc72f21431f193d68714d76275952c167026783ad463de4",
+      "retained_bytes": 5417,
+      "transformation": "Git CRLF/LF text normalization only"
+    },
+    {
+      "original_name": "docker-schema-c7f1f218.log",
+      "original_sha256": "0e6f2f39090454a80ef8f8c3754c7de3d044de4ee17e00d7777de75642abd2a3",
+      "original_bytes": 889,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/docker-schema-c7f1f218.log.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "d9f395bcf7e7c5dd878f3b28e1235e77bbb9ed197e7af824355231eb226db527",
+      "retained_bytes": 886,
+      "transformation": "Git CRLF/LF text normalization only"
+    },
+    {
+      "original_name": "independent-assembled-candidate-review-60ef8672.md",
+      "original_sha256": "e85d4c7c5b85e4b67991c995a925813e9b748f003939c260d8cc1545d1e5739d",
+      "original_bytes": 3584,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/independent-assembled-candidate-review-60ef8672.md",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "e85d4c7c5b85e4b67991c995a925813e9b748f003939c260d8cc1545d1e5739d",
+      "retained_bytes": 3584,
+      "transformation": "none"
+    },
+    {
+      "original_name": "independent-artifact-result-60ef8672.json",
+      "original_sha256": "ec2e7d8aeb0cd9f00ce9ce5fca280f75bd525f1a4f0997199d6658951fb119f4",
+      "original_bytes": 1826,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/independent-artifact-result-60ef8672.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "a7591619bbff2108f651b0407096f8c31379ad50f8e0baadc763f9cab8901066",
+      "retained_bytes": 1774,
+      "transformation": "Git CRLF/LF text normalization only"
+    },
+    {
+      "original_name": "independent-core-resources-review-8fc1e207.md",
+      "original_sha256": "410d2ad09cc6d3ab995c1f95d51878f3b7bdbc871c21879c59e7bb074c957175",
+      "original_bytes": 3358,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/independent-core-resources-review-8fc1e207.md",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "410d2ad09cc6d3ab995c1f95d51878f3b7bdbc871c21879c59e7bb074c957175",
+      "retained_bytes": 3358,
+      "transformation": "none"
+    },
+    {
+      "original_name": "browser-last-run.json",
+      "original_sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "original_bytes": 45,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/browser-last-run.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "retained_bytes": 45,
+      "transformation": "none"
+    },
+    {
+      "original_name": "actual-native-runs.json",
+      "original_sha256": "b0a6c6dfb334a87409fb54371fddbf8b5935daed99568034220b7ed6a7cf33fb",
+      "original_bytes": 33113,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/actual-native-runs.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "c754f5d46374debf937141d987080cd0a96043f717a3b72a9b77ae568a9aed47",
+      "retained_bytes": 33146,
+      "transformation": "Explicit review projection: omit only snapshot CAS fields listed in projection-manifest.json.txt; Git text normalization may follow."
+    },
+    {
+      "original_name": "native-run-recovery.png",
+      "original_sha256": "bf6030467f0189e91a0f6890d35ea30a0133bdcf6abefae89d23eb5e8f4306bd",
+      "original_bytes": 71054,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/native-run-recovery.png",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "bf6030467f0189e91a0f6890d35ea30a0133bdcf6abefae89d23eb5e8f4306bd",
+      "retained_bytes": 71054,
+      "transformation": "none"
+    },
+    {
+      "original_name": "actual-native-example-runs.json",
+      "original_sha256": "a4663cf36d6345f27b9d0bf92992c117dd0fc35bee48bb9cce4dcb06f0fb14d3",
+      "original_bytes": 19985,
+      "retained_path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/actual-native-example-runs.json.txt",
+      "retained_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "retained_sha256": "81c33fe44a308ffccfbae9e60ea68c041cdec2bca3e8a3853c7aafc63e2beb5a",
+      "retained_bytes": 20007,
+      "transformation": "Explicit review projection: omit only snapshot CAS fields listed in projection-manifest.json.txt; Git text normalization may follow."
+    }
+  ]
+}

@@ -496,6 +496,30 @@
       "feature_state": "DEV_MERGE_READY",
       "action": "MERGE_CURRENT_FEATURE_TO_DEV",
       "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "DEV_INTEGRATED",
+      "action": "SELECT_NATIVE_MILESTONE_PLANNING",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "SELECTING_FEATURE",
+      "feature_state": "DEV_INTEGRATED",
+      "action": "ACTIVATE_NATIVE_MILESTONE_SCOPE",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "IMPLEMENTATION_AUTHORIZED",
+      "action": "START_NATIVE_MILESTONE_IMPLEMENTATION",
+      "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "INDEPENDENTLY_VERIFIED",
+      "action": "PREPARE_NATIVE_SCOPED_PR",
+      "requires_human_approval": false
     }
   ],
   "wip_limits": {
@@ -531,6 +555,15 @@
       "mutability": "lease_scoped",
       "allowed_actions": [
         "MATERIAL_CHANGE",
+        "VALIDATE_CONTROL_PLANE"
+      ]
+    },
+    {
+      "pattern": "docs/programs/engineering-process-platform/evidence/authorizations/**",
+      "role": "append_only_evidence",
+      "mutability": "append_only",
+      "allowed_actions": [
+        "RECORD_USER_SCOPE",
         "VALIDATE_CONTROL_PLANE"
       ]
     },

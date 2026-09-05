@@ -1,0 +1,229 @@
+{
+  "base": "b85ef464818251972903d6875db72e4198825e36",
+  "old_tip": "0c3875bcdcaa3ebeef84db40f0312082c48bc8cc",
+  "new_tip": "80eaef9c487715186f8b67d33423ef730f681b3b",
+  "commits": [
+    {
+      "old_commit": "c401712b5f6f30dc6c0685bbd4ae3ddc5cabdeba",
+      "new_commit": "be3922cd02568893f4a41edbb92d85047edff450",
+      "old_tree": "ad5d8119be8a18fcda5f4b7150e00980b6079dc4",
+      "new_tree": "96477d0e03ae90cd4bdb38e6c44e80b09a1d27f8",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt"
+      ]
+    },
+    {
+      "old_commit": "615538f66fa5c141b897b7241d8e37e4b5d0a5b2",
+      "new_commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+      "old_tree": "8fca4ac82632a4c2242cc14cc15733c5745a79ff",
+      "new_tree": "7fa9012dac44fdf94c7521baa2910b785211e7a7",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt"
+      ]
+    },
+    {
+      "old_commit": "b257440246aab35347336996527517cbb2942afb",
+      "new_commit": "425c2b346348fb68301fc0b7ed477a8e290f3abe",
+      "old_tree": "f0edeb16c020a9e5304f5b9ec026be4a43e47b74",
+      "new_tree": "f3d9108da737b557daeff91559f1ab59f61b5177",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "067d54b312fda0d06b845203085fa27e6ca0211a",
+      "new_commit": "2b4cacef80a3ddc39172f9f59a90db96fca97f8f",
+      "old_tree": "6815dceedeef84d68687e53d1602a273aee0b12a",
+      "new_tree": "f2f2d8072d89aff26dd45072bfe8e801618b434d",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "7c0d3ef3358b62493ac12e1bd823f901983e44f0",
+      "new_commit": "ee55d11f4c8d2d430224e43ed790b18a9a6b13a2",
+      "old_tree": "d4efea5f5c8ba6f2ca3018fedae24a74df2b2123",
+      "new_tree": "fd3536823dc93f39ac346d53096118adf7cbe281",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "0f594b764971d811a8fd3318d2f69874c4f027fd",
+      "new_commit": "38c27307169b29ad8f03b39b9b058a17ff3d7500",
+      "old_tree": "564d57756fff5af32cfb03345a8fc55ddcd599ec",
+      "new_tree": "f914f39bcc6b80bebfd82e6d3dd3567bc352adf9",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "defbe5bbc616308d8bb1689f4d052f067de6f446",
+      "new_commit": "51997a84f8982b6a4bd822880621826021a43e3e",
+      "old_tree": "54fe66795c1b60d012ee78e5e179a2546126aacc",
+      "new_tree": "37bfd1a319f5bf8598351052069f54c2ab16d42a",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "5b5e547f55e23c3ed3c3ee35e3154f38494fbfeb",
+      "new_commit": "112d86c6b1d2b71487d1cf92ea06bb7a6a9a5f19",
+      "old_tree": "2261eae3fbe794afcd1dde56c39d2bdb73ff3c46",
+      "new_tree": "7a94cb317f272752e1412c9c45853b95c2ffacbe",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "56dd6dd6c7ca14b7c7e258ea5a1e3638f444eab4",
+      "new_commit": "300d4380f494da91c70815b83e225ee819d721c8",
+      "old_tree": "c653751545283796e4ed57444329cb12f915b913",
+      "new_tree": "93fec53a5cbec730c493554eb02a1ab39d9e04bb",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "51776b7639bf11c7b419a4ece5ff84a320678b2a",
+      "new_commit": "e6a8596e6f58fdab5553b97707888a7122b077c4",
+      "old_tree": "1bd994b512143c6c4dfc2a252a607f31278e61ec",
+      "new_tree": "efefb5ff8945daf8e163445b006e797a7b24216d",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0102.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "2a1f0c7a132816821e35ed0ecccc1d2c42b1ba9f",
+      "new_commit": "ee9a65dea172e38a8eb7c61dea096be88f107d18",
+      "old_tree": "12d96feaf1cb06515dbbb3563b6d6bafda4e423e",
+      "new_tree": "a500d88cabc6aa032d604ba8b31c244d8b30d475",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0104.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0102.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "d30d4ec1b12577962a4cc1b745c91de3d0c7747b",
+      "new_commit": "fd21a697eac55183d72153677e5168e98d183eb7",
+      "old_tree": "63261e2cd0b174866edb43168715383ab806e305",
+      "new_tree": "c8b7dc81ef53ace295453ecbe4ceaecb0553c2c4",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0104.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0102.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "9b63647988b781ff02eb780fff40af5ff4c793ab",
+      "new_commit": "d6ac78df8ed4c853644c1568d15f7dbca3ae71da",
+      "old_tree": "f8c810065e2a2965edc0519e4cc54c45e3217a8c",
+      "new_tree": "7f4062d509f911cf1964712195e0d1c63189523d",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0104.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0102.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    },
+    {
+      "old_commit": "0c3875bcdcaa3ebeef84db40f0312082c48bc8cc",
+      "new_commit": "80eaef9c487715186f8b67d33423ef730f681b3b",
+      "old_tree": "5e4732d830112eb5e40a772673f9cd484747cb77",
+      "new_tree": "c1c4403319a537c952fd30289b0a7cfb439085ec",
+      "changed_metadata_paths": [
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/retained-files.json.txt",
+        "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/committed-attachment-map.json.txt",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0103.json",
+        "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0104.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0099.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0100.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0101.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0102.json",
+        "docs/programs/engineering-process-platform/evidence/transitions/TR-0103.json",
+        "docs/programs/engineering-process-platform/program-state.json",
+        "docs/programs/engineering-process-platform/work-registry.json"
+      ]
+    }
+  ],
+  "projection": {
+    "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/playwright-list.json.txt",
+    "original_git_sha256": "1d3e80ca941e3b0c0db1bcb886386021b7abe92b0e29e2e98a7b54630d294b8c",
+    "public_sha256": "8cc285e0ba50fa931e59ca0d870354859e2270e05cbae167d9c52897911c19bf",
+    "omitted_json_pointer": "/config/webServer/env",
+    "omitted_entries": 96
+  }
+}
