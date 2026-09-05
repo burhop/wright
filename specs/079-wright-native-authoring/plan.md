@@ -4,17 +4,17 @@
 
 ## Summary
 
-Deliver native create → save → validate → execute → inspect artifact → correct and rerun, with a truthful current browser dashboard. Original 079 proposal preserved at `6daeb214`. The user's September 4 standing goal authorizes this bounded scope and prospective roadmap amendments; it is not approval of unseen exact bytes or human evidence.
+Deliver native create â†’ save â†’ validate â†’ execute â†’ inspect artifact â†’ correct and rerun, with a truthful current browser dashboard. Original 079 proposal preserved at `6daeb214`. The user's September 4 standing goal authorizes this bounded scope and prospective roadmap amendments; it is not approval of unseen exact bytes or human evidence.
 
 ## Technical Context
 
-Python 3.11–3.14, Pydantic/FastAPI, SQLite WAL, React 19/TypeScript, pytest/Vitest/Playwright. Offline native and Docker paths use existing distribution. One Wright-owned native document; immutable 078 and Rivet formats remain unchanged. Initial scope: three deterministic development examples and one safe real local MCP integration. No arbitrary code/expressions, implicit conversions, parallel/cyclic scheduling or human-approval runtime step.
+Python 3.11â€“3.14, Pydantic/FastAPI, SQLite WAL, React 19/TypeScript, pytest/Vitest/Playwright. Offline native and Docker paths use existing distribution. One Wright-owned native document; immutable 078 and Rivet formats remain unchanged. Initial scope: three deterministic development examples and one safe real local MCP integration. No arbitrary code/expressions, implicit conversions, parallel/cyclic scheduling or human-approval runtime step.
 
 Maximum 1 MiB document, 100 steps; normal UI acceptance at 25 steps. Record 20 warm-open observations; functional deadlines gate delivery, microbenchmarks are diagnostic.
 
 ## Constitution Check
 
-Use `.specify/memory/constitution.md` v3.1.0. API routes remain thin; core/data-vault/workspace-service own domain, persistence and application logic using the established application-service architecture. Preserve offline operation, SQLite/vault confinement, role policy, traces, UI test IDs, component/browser/system tests, native/Docker distribution and data recovery. Before implementation, independently check the completed contracts/tasks in `analysis.md`.
+Use `.specify/memory/constitution.md` v3.1.1, including the September 5 reconciliation of authentication guidance with the existing local-token/session implementation; authentication behavior and security gates remain unchanged. API routes remain thin; core/data-vault/workspace-service own domain, persistence and application logic using the established application-service architecture. Preserve offline operation, SQLite/vault confinement, role policy, traces, UI test IDs, component/browser/system tests, native/Docker distribution and data recovery. Before implementation, independently check the completed contracts/tasks in `analysis.md`.
 
 The user's explicit advance authority covers bounded planning decisions, implementation, dependencies after review, commits, pushes and dev PR merges. Complete planning and independent analysis first; record authority accurately rather than requiring repeated routine approval. Main/release, paid/proprietary/credentialed and physical effects remain outside scope. Human study results must be real. Historic records are immutable.
 
@@ -41,7 +41,7 @@ The user's explicit advance authority covers bounded planning decisions, impleme
 
 ## Delivery Sequence
 
-Reconcile baseline/contracts/task plan/independent analysis → dashboard visibility → native model/storage/editor and early browser journey → runtime/artifacts/cancellation/recovery → exact local MCP and three examples → independent/human/packaging verification → required push/merge gates and PR integration → actual dev deployment verification and final dashboard.
+Reconcile baseline/contracts/task plan/independent analysis â†’ dashboard visibility â†’ native model/storage/editor and early browser journey â†’ runtime/artifacts/cancellation/recovery â†’ exact local MCP and three examples â†’ independent/human/packaging verification â†’ required push/merge gates and PR integration â†’ actual dev deployment verification and final dashboard.
 
 Keep each PR independently useful. Dashboard can ship before native execution; do not push bookkeeping-only changes per task. Existing `.specify/extensions.yml` planning/task/analysis/implementation hooks are optional; skip redundant automatic commits and perform deliberate scoped checkpoints.
 
