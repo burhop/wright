@@ -101,8 +101,11 @@ candidate. Repairs reopen a bounded lease through the existing repair edges;
 changed implementation requires a new candidate and independent review.
 
 The checkpoint names the candidate commit/tree and implemented task IDs. Its
-`pending_task_ids` must partition the complete registered 32-task milestone with
-the included IDs, and `whole_feature_complete` stays false. Author verification
+`pending_task_ids` records the tasks excluded from that frozen implementation
+scope; those IDs and the included IDs must partition the fixed T001–T032 task
+population. Later checkbox and evidence progress remains visible in the current
+registry without rewriting this original delivery scope.
+`whole_feature_complete` stays false for this scoped record. Author verification
 and freezing use `awaiting_independent_review`; independent verification and the
 subsequent delivery states require `independently_verified` and a digest-bound
 record under `evidence/reviews/NATIVE-REVIEW-*.json`, conforming to
@@ -112,8 +115,12 @@ review of the entire candidate, critical reruns, and closure of actionable
 findings. An agent technical review is not human usability evidence.
 
 Only status/evidence metadata may follow the reviewed candidate without a new
-review. A product, test, contract, policy, dependency, or packaging change
-invalidates the candidate; the validator compares actual Git paths and trees.
+review. Task text may change checkbox markers only. The fixed task population,
+task integration requirements, scope history, acceptance criteria, required
+checks and their code coverage, examples, and language authority must match the
+candidate registry. A product, test, contract, policy, dependency, or packaging
+change invalidates the candidate; the validator compares actual Git paths,
+trees, and these reviewed contract fields.
 At `INDEPENDENTLY_VERIFIED`, `PREPARE_NATIVE_SCOPED_PR` records the already-granted
 push/dev-PR authority. It does not invent an exact-subject approval or grant
 main, publication, or production authority.
@@ -128,10 +135,14 @@ The fast gate retains its existing delivery-state and closed-lease requirements.
 
 After merge, record the actual PR and dev commit before claiming integration;
 then verify the integrated build. `DEV_INTEGRATED` is not deployment evidence.
-The scoped path stops there: whole-milestone acceptance and
-`DEV_DEPLOYMENT_VERIFIED` require the outstanding acceptance and human evidence,
-with a truthful final registry/dashboard reconciliation. Do not remove a scoped
-checkpoint merely to evade its candidate/review checks or declare completion.
+At `DEV_DEPLOYMENT_VERIFIED`, retain the original scoped checkpoint and its exact
+independent review. The authoritative native milestone projection must also
+report complete: all 32 tasks implemented and verified, required integrations
+and actual deployment verified, all acceptance criteria passed, and genuine
+independent human evidence current. This uses the same evidence identity,
+coverage, independent-actor, artifact, and merge checks as the dashboard, not
+a separate completion flag. Missing evidence or removing the checkpoint fails
+closed; the original scope record alone never declares whole-milestone completion.
 
 For EPP-F01, planning-only repair evidence uses `BLOCKED` → `BLOCKED` with `state_domain=repair`, `event_kind=repair_checkpoint`, no lease, and a closed planning/re-analysis approval bound to the exact discovery checkpoint. It may amend and audit the future approval subject but cannot classify the committed-identity cause resolved or mutate implementation files.
 

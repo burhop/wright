@@ -4020,8 +4020,103 @@ NATIVE_REVIEWED_STATES = frozenset(
         "PR_READY",
         "DEV_MERGE_READY",
         "DEV_INTEGRATED",
+        "DEV_DEPLOYMENT_VERIFIED",
     }
 )
+NATIVE_TASK_IDS = frozenset(f"T{number:03}" for number in range(1, 33))
+
+
+def _native_task_contract(raw: bytes) -> tuple[str, set[str]]:
+    """Only checkbox progress may change after the task contract is reviewed."""
+
+    text = raw.decode("utf-8").replace("\r\n", "\n")
+    rows = re.findall(r"^- \[([ xX])\] (T\d{3})\b", text, re.MULTILINE)
+    if len(rows) != 32 or {identifier for _, identifier in rows} != NATIVE_TASK_IDS:
+        raise ValueError("native task population must remain the reviewed 32 tasks")
+    normalized = re.sub(
+        r"^(- \[)[ xX](\] T\d{3}\b)", r"\1 \2", text, flags=re.MULTILINE
+    )
+    return normalized, {identifier for checked, identifier in rows if checked != " "}
+
+
+def _native_registry_contract(registry: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep quality/acceptance semantics frozen while evidence and activity evolve."""
+
+    milestone = registry["milestone"]
+    rows = milestone["tasks"]
+    if len(rows) != 32 or {row["id"] for row in rows} != NATIVE_TASK_IDS:
+        raise ValueError("native registry must retain all 32 reviewed task identities")
+    contract = {
+        key: milestone[key]
+        for key in (
+            "id",
+            "title",
+            "feature_id",
+            "tasks_path",
+            "scope_revision",
+            "scope_history",
+            "language_authority",
+            "acceptance",
+            "checks",
+            "examples",
+        )
+    }
+    contract["tasks"] = [
+        {
+            key: row[key]
+            for key in ("id", "integration_required", "integration_exemption")
+        }
+        for row in rows
+    ]
+    return contract
+
+
+def _native_milestone_complete(
+    reader: GitReader,
+    source_commit: str,
+    state: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    observed_at: datetime,
+) -> bool:
+    """Use the existing evidence projection for final acceptance, not a new flag."""
+
+    from program_status import publisher
+
+    try:
+        if (
+            Path(publisher.__file__).resolve()
+            != (reader.repo_root / "scripts/program_status/publisher.py").resolve()
+        ):
+            return False
+        for path in (
+            "scripts/program_status/publisher.py",
+            "packages/tool_registry/src/tool_registry/milestone_status.py",
+        ):
+            if (reader.repo_root / path).read_bytes().replace(b"\r\n", b"\n") != (
+                reader.blob(source_commit, path).replace(b"\r\n", b"\n")
+            ):
+                return False
+        projected = publisher._project_native_milestone(
+            reader.repo_root,
+            {
+                "commit": source_commit,
+                "work_registry": registry,
+                "state": state,
+                "generated_at": observed_at.isoformat().replace("+00:00", "Z"),
+            },
+        )
+        return (
+            projected is not None
+            and projected["readiness"]["native_milestone"] == "complete"
+        )
+    except (
+        publisher.ProgramStatusPublishError,
+        ValueError,
+        KeyError,
+        TypeError,
+        OSError,
+    ):
+        return False
 
 
 def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
@@ -4063,6 +4158,7 @@ def _validate_native_delivery_review(
     if (
         included & pending
         or included | pending != registered
+        or registered != NATIVE_TASK_IDS
         or not pending
         or milestone.get("id") != "NATIVE-01"
         or milestone.get("feature_id") != "EPP-N01"
@@ -4342,16 +4438,35 @@ def validate_roadmap_approval_and_lease(
                         documents, program_root, state, observed_at
                     )
                 )
-                tasks_text = reader.blob(
-                    source_commit, "specs/079-wright-native-authoring/tasks.md"
-                ).decode("utf-8")
-                implemented = set(
-                    re.findall(r"^- \[[xX]\] (T\d{3})\b", tasks_text, re.MULTILINE)
+                tasks_contract, implemented = _native_task_contract(
+                    reader.blob(
+                        source_commit, "specs/079-wright-native-authoring/tasks.md"
+                    )
+                )
+                candidate_tasks, _ = _native_task_contract(
+                    reader.blob(
+                        identity.source_commit,
+                        "specs/079-wright-native-authoring/tasks.md",
+                    )
+                )
+                registry = documents[f"{program_root}/work-registry.json"]
+                candidate_registry = strict_loads(
+                    reader.blob(
+                        identity.source_commit, f"{program_root}/work-registry.json"
+                    )
                 )
                 valid_checkpoint = (
-                    valid_checkpoint and set(checkpoint["task_ids"]) <= implemented
+                    valid_checkpoint
+                    and set(checkpoint["task_ids"]) <= implemented
+                    and tasks_contract == candidate_tasks
+                    and _native_registry_contract(registry)
+                    == _native_registry_contract(candidate_registry)
                 )
-        except (GitSubjectError, KeyError, TypeError, UnicodeDecodeError):
+                if feature_state == "DEV_DEPLOYMENT_VERIFIED":
+                    valid_checkpoint = valid_checkpoint and _native_milestone_complete(
+                        reader, source_commit, state, registry, observed_at
+                    )
+        except (GitSubjectError, KeyError, TypeError, ValueError):
             valid_checkpoint = False
         if not valid_checkpoint:
             findings.append(
@@ -4550,6 +4665,13 @@ def validate_roadmap_approval_and_lease(
         if (
             len(matching) != 1
             or matching[0].get("requires_human_approval") != declared_human
+            or (
+                action == "PREPARE_NATIVE_SCOPED_PR"
+                and not (
+                    _native_scoped_checkpoint(state)
+                    and state["scoped_checkpoint"]["status"] == "independently_verified"
+                )
+            )
         ):
             findings.append(
                 _finding(

@@ -48,7 +48,13 @@ def candidate(git_builder, repository_root: Path):
     )
     git_builder.write_bytes("product.py", b"VALUE = 1\n")
     git_builder.write_bytes(
-        "specs/079-wright-native-authoring/tasks.md", b"- [x] T001 Implement baseline\n"
+        "specs/079-wright-native-authoring/tasks.md",
+        (
+            "- [x] T001 Implement baseline\n"
+            + "".join(
+                f"- [ ] T{i:03} Acceptance obligation {i}\n" for i in range(2, 33)
+            )
+        ).encode(),
     )
     commit = git_builder.commit("implementation candidate")
     reader = GitReader(git_builder.root)
@@ -110,7 +116,9 @@ def findings(candidate):
     )[0]
 
 
-@pytest.mark.parametrize("feature_state", sorted(NATIVE_REVIEWED_STATES))
+@pytest.mark.parametrize(
+    "feature_state", sorted(NATIVE_REVIEWED_STATES - {"DEV_DEPLOYMENT_VERIFIED"})
+)
 def test_reviewed_scoped_states_keep_human_and_final_tasks_pending(
     candidate, feature_state: str
 ):
@@ -216,6 +224,63 @@ def test_changes_after_review_require_new_candidate(candidate, path: str):
     builder, _, _ = candidate
     builder.write_bytes(path, b"changed\n")
     builder.commit("implementation changed after review")
+    assert any(
+        f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY" for f in findings(candidate)
+    )
+
+
+def test_checkbox_progress_remains_valid_under_the_same_review(candidate):
+    builder, _, docs = candidate
+    path = "specs/079-wright-native-authoring/tasks.md"
+    builder.mutate_raw(path, b"- [ ] T002", b"- [x] T002")
+    docs[f"{ROOT}/work-registry.json"]["milestone"]["tasks"][1]["activity"] = (
+        "verifying"
+    )
+    builder.write_json(f"{ROOT}/work-registry.json", docs[f"{ROOT}/work-registry.json"])
+    builder.commit("update checkbox and activity evidence only")
+    assert findings(candidate) == []
+
+
+@pytest.mark.parametrize(
+    "contract_change",
+    ["task_title", "human_kind", "source_scope", "integration_exemption"],
+)
+def test_reviewed_contract_cannot_be_changed_as_status_metadata(
+    candidate, contract_change
+):
+    builder, _, docs = candidate
+    registry = docs[f"{ROOT}/work-registry.json"]
+    milestone = registry["milestone"]
+    if contract_change == "task_title":
+        builder.mutate_raw(
+            "specs/079-wright-native-authoring/tasks.md",
+            b"Acceptance obligation 28",
+            b"Human study is waived",
+        )
+    elif contract_change == "human_kind":
+        next(row for row in milestone["checks"] if row["id"] == "Q-HUMAN")["kind"] = (
+            "automated_test"
+        )
+    elif contract_change == "source_scope":
+        next(row for row in milestone["checks"] if row["id"] == "Q-HUMAN")[
+            "source_paths"
+        ] = ["product.py"]
+    elif contract_change == "integration_exemption":
+        milestone["tasks"][0].update(
+            integration_required=False, integration_exemption="Waived"
+        )
+    builder.write_json(f"{ROOT}/work-registry.json", registry)
+    builder.commit("change a reviewed obligation")
+    assert any(
+        f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY" for f in findings(candidate)
+    )
+
+
+def test_retained_checkpoint_does_not_waive_final_acceptance(candidate):
+    _, _, docs = candidate
+    state = docs[f"{ROOT}/program-state.json"]
+    state["feature_state"] = "DEV_DEPLOYMENT_VERIFIED"
+    state["next_eligible_actions"][0].update(action="SELECT_NEXT_FEATURE_PLANNING")
     assert any(
         f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY" for f in findings(candidate)
     )
