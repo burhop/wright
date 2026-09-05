@@ -1,0 +1,23 @@
+{
+  "format": "wright-native-local-gate-acceptance-fresh-v1",
+  "recorded_at": "2026-09-05T10:42:18.4633057Z",
+  "candidate_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+  "candidate_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+  "product_candidate_commit": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+  "meaning": "Actual full command acceptance for the tested e15 source. Candidate_commit names the exact gate execution source; product candidate remains separately identified. No new execution or CI acceptance is inferred.",
+  "observation": {
+    "completed_at": "2026-09-05T09:51:29.1779068Z",
+    "source_clean_after": false,
+    "source_was_clean": true,
+    "gate_exit_code": 0,
+    "command": "scripts/check-dev-merge.sh",
+    "raw_log_sha256": "c8434a942852c669e7a4a8ace9fd93de2dca902d4143c3d11e7fa6238450ed06",
+    "started_at": "2026-09-05T09:18:33.3468613Z"
+  },
+  "public_receipt": {
+    "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e",
+    "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+    "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt"
+  },
+  "limits": "Original warnings and skips remain in the detailed receipt. Generated lock provenance and later restoration remain distinct. The original full HTML report was later overwritten; retention addendum preserves that limitation. Raw full-gate log, observation and independently extracted case results remain available."
+}

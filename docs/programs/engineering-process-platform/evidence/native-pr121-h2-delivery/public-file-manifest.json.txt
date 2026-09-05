@@ -1,0 +1,79 @@
+{
+  "observed_at": "2026-09-05T11:00:24.039449Z",
+  "meaning": "Actual observed CI and local evidence; original captured bytes remain separate. Public UTF-8/LF projections preserve all field values. No third feature push or published-image acceptance is claimed.",
+  "files": [
+    {
+      "filename": "ci-requirements.json.txt",
+      "original_filename": "ci-requirements.proposed.json.txt",
+      "original_sha256": "3cf2e80ead461c946e0dd80b95ec825d56fcc91992b9836338d4281a9755970b",
+      "original_bytes": 6887,
+      "public_sha256": "9430924a675b8755498ef2e877852391e56349df37eb56d68e90a835c87db03d",
+      "public_bytes": 6651,
+      "transformation": "CRLF-to-LF only; original retained separately"
+    },
+    {
+      "filename": "captured-ci-results.json.txt",
+      "original_filename": "ci-results.proposed.json.txt",
+      "original_sha256": "f85d0bbb591e0ea4ade23027af4ea991353ef9af214105ccfc91888a8db73776",
+      "original_bytes": 17790,
+      "public_sha256": "6e3dbbcff35c9c46a57d610ccd3dfd4b024823af5a007a76aacf457b6050c531",
+      "public_bytes": 17389,
+      "transformation": "CRLF-to-LF only; original retained separately"
+    },
+    {
+      "filename": "terminal-ci-summary.md",
+      "original_filename": "terminal-summary.md",
+      "original_sha256": "f45deed6d3082a9d5be9bdfa23503fa07c51c60eaf5916ccb6e8354cc7ac0058",
+      "original_bytes": 3724,
+      "public_sha256": "f45deed6d3082a9d5be9bdfa23503fa07c51c60eaf5916ccb6e8354cc7ac0058",
+      "public_bytes": 3724,
+      "transformation": "none"
+    },
+    {
+      "filename": "local-gate-acceptance-e15.json.txt",
+      "original_filename": "local-gate-acceptance-e15.json.txt",
+      "original_sha256": "5440759b792d668b4883103b383920b7b6b030ef100b2b36c96e79323944c95c",
+      "original_bytes": 1543,
+      "public_sha256": "fae499afac01841d3e79ff2f6bad50b01da0c454a96f71da06936866be164ae7",
+      "public_bytes": 1521,
+      "transformation": "CRLF-to-LF only; original retained separately"
+    },
+    {
+      "filename": "e15-browser-html-retention-addendum.json.txt",
+      "original_filename": "e15-browser-html-retention-addendum.json.txt",
+      "original_sha256": "7b7fe52727cdadb4644fea674ac5acd054d762b5dabc7af18a2f0ea2b1763b65",
+      "original_bytes": 2097,
+      "public_sha256": "47a532f34d60bb9d72b0dd7cf06eb3c17e4117b95a97c694714d1c5d9368fd6d",
+      "public_bytes": 2061,
+      "transformation": "CRLF-to-LF only; original retained separately"
+    },
+    {
+      "filename": "independent-retention-classification.md",
+      "original_filename": "independent-e15-browser-report-retention-classification.md",
+      "original_sha256": "714ade486c0a5e135b3b795abe7b78364f57e87057cc03a77a2cfed8a513ec17",
+      "original_bytes": 2207,
+      "public_sha256": "714ade486c0a5e135b3b795abe7b78364f57e87057cc03a77a2cfed8a513ec17",
+      "public_bytes": 2207,
+      "transformation": "none"
+    },
+    {
+      "filename": "independent-final-head-review.md",
+      "original_filename": "independent-final-evidence-and-delivery-review-7e484be7.md",
+      "original_sha256": "b4b55c9413296a85df40e6aa62d62f79ad547bb7409279bf189d4d28fa7f1da6",
+      "original_bytes": 2736,
+      "public_sha256": "b4b55c9413296a85df40e6aa62d62f79ad547bb7409279bf189d4d28fa7f1da6",
+      "public_bytes": 2736,
+      "transformation": "none"
+    },
+    {
+      "filename": "independent-quality-refresh-review.md",
+      "original_filename": "six-check-evidence-proposal-review-7e484be7.md",
+      "original_sha256": "d7fbea391c558aeb7b33df9e276a1598c833a353aaccc756d80dce6745853f99",
+      "original_bytes": 2746,
+      "public_sha256": "d7fbea391c558aeb7b33df9e276a1598c833a353aaccc756d80dce6745853f99",
+      "public_bytes": 2746,
+      "transformation": "none"
+    }
+  ],
+  "complete_private_ci_inventory_sha256": "589fffe4ee63196534f532dd4dfd7462e03bd5cc523863d5ead3ccfc6fc357cd"
+}
