@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0120",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "AUTHOR_VERIFIED",
+  "to_state": "CANDIDATE_FROZEN",
+  "prior_revision": 120,
+  "new_revision": 121,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "39941fae0fe2bb7ef9131f3c10f1c8fdc08ad0606db6ee1d8b5cfcad0d3cd5fe",
+  "new_state_digest": "9513345cf7b081470a3134b5314637b09547f321c4edb8a7feb9c767f756b263",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Freeze exact28efd26-task candidate with lease closed after108 focused tests and independent closure of all three scanner findings. Preserve interruptedfcb full gate and all original evidence. Exact-LF image remains source-bound; fresh full gate, matching local CodeQL, final entire-candidate review and H2 CI remain pending.",
+  "started_at": "2026-09-05T09:17:32.956467Z",
+  "finished_at": "2026-09-05T09:17:32.956467Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "7f8c5c5dd38bcfc8731948e921e781ff022ba994",
+    "source_tree": "7f6dc3b0aabeba0cab25bb461941010bb6f435af",
+    "source_program_tree": "ff311658f07f8ccc867b114dad582f0ce8d4c4a2",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0121.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0120.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0120.json",
+      "sha256": "d56699a0b95f53218079fddff429c0f1a39c13d8905fcda83885347da94ca36d",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0121.json",
+      "sha256": "52e0b7657984cfa430917eb165a435ef99fdbc39e1c1a911eef99b3ebce3fe6a",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Freeze exact28efd26-task candidate with lease closed after108 focused tests and independent closure of all three scanner findings. Preserve interruptedfcb full gate and all original evidence. Exact-LF image remains source-bound; fresh full gate, matching local CodeQL, final entire-candidate review and H2 CI remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "7f8c5c5dd38bcfc8731948e921e781ff022ba994",
+        "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": "NATIVE-PR121-CI-SECURITY-20260905",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0120.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CANDIDATE"
+}
