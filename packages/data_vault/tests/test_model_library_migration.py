@@ -35,7 +35,7 @@ def test_migration_16_is_additive_contiguous_and_preserves_legacy_state(
         )
         connection.commit()
 
-    result = upgrade_database(path)
+    result = upgrade_database(path, migrations=MIGRATIONS[:16])
 
     assert result.applied == (
         {"version": 16, "name": "local_engineering_model_library"},
@@ -51,13 +51,13 @@ def test_migration_16_is_additive_contiguous_and_preserves_legacy_state(
         assert connection.execute(
             "SELECT name FROM mcp_servers WHERE server_id='legacy-server'"
         ).fetchone() == ("Legacy Server",)
-    assert [item.version for item in MIGRATIONS] == list(range(1, 17))
+    assert [item.version for item in MIGRATIONS] == list(range(1, len(MIGRATIONS) + 1))
 
 
 def test_migration_16_is_idempotent(tmp_path) -> None:
     path = tmp_path / "models.db"
-    upgrade_database(path)
-    second = upgrade_database(path)
+    upgrade_database(path, migrations=MIGRATIONS[:16])
+    second = upgrade_database(path, migrations=MIGRATIONS[:16])
     assert second.applied == ()
     assert second.starting_version == second.ending_version == 16
 

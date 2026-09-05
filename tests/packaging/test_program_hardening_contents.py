@@ -41,7 +41,7 @@ def test_program_diagnostics_and_current_schema_ship_in_the_wheel(
         compatibility = json.loads(
             archive.read("wright_engineering/compatibility.json")
         )
-        assert compatibility["data_schema"]["max"] == 16
+        assert compatibility["data_schema"]["max"] == 17
         diagnostic_source = b"\n".join(
             archive.read(name)
             for name in (
