@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0113",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "IMPLEMENTATION_AUTHORIZED",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 113,
+  "new_revision": 114,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "cde7df421892f7d3f59e2c631611062844f4bb3a03cf94d6ffc9696776315b67",
+  "new_state_digest": "8738784592a0585d1434fcf9bedcf330eb4284e85c671a1707c2808a25ffded4",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Begin one consolidated correction of fully terminal PR121 OCI and CodeQL failures under bounded lease6. Keep exact prior failed CI and reviewed candidate historical. Make only allowlisted security-boundary, container dependency, regression and gate/runbook changes, then run full validation and freeze a new independently reviewed candidate.",
+  "started_at": "2026-09-05T08:29:26.069188Z",
+  "finished_at": "2026-09-05T08:29:26.069188Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "60d0f9cb056bb46ab61330278a05ff9ee54d7d5c",
+    "source_tree": "b1fa1459b3dce9fbfcb37a2dfddbc1d9a587a520",
+    "source_program_tree": "14c9c1a913d424ed021c0289232279948dcd5c94",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0114.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0113.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0113.json",
+      "sha256": "641af5b52a5f05cf1474354649cbef324d753a385e360a6d51e7bbbf9ec41856",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0114.json",
+      "sha256": "4359370a79f0998c2822f2ef228c301bf180f6a6058462cb5841f158abf97f04",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-CI-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. Begin one consolidated correction of fully terminal PR121 OCI and CodeQL failures under bounded lease6. Keep exact prior failed CI and reviewed candidate historical. Make only allowlisted security-boundary, container dependency, regression and gate/runbook changes, then run full validation and freeze a new independently reviewed candidate.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "60d0f9cb056bb46ab61330278a05ff9ee54d7d5c",
+        "evidence/states/program-state-revision-0113.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "OCI dependency and CodeQL boundary corrections remain open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0113.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
