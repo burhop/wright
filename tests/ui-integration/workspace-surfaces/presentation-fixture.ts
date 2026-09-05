@@ -242,6 +242,42 @@ export async function mockWorkspaceShell(
   await page.route("**/api/workspace/surfaces", (route) =>
     route.fulfill({ json: { items: surfaces } }),
   );
+  // Runtime controls inspect each listed live instance during mount. Keep those
+  // requests inside the fixture instead of accepting the dev server's HTML.
+  for (const item of surfaces) {
+    if (
+      (item.source as { kind?: string } | undefined)?.kind !== "live_app" ||
+      !item.instance
+    ) {
+      continue;
+    }
+    const surface = item as ReturnType<typeof liveSurface>;
+    const instance = surface.instance!;
+    await page.route(
+      `**/api/workspace/surfaces/${encodeURIComponent(surface.surfaceId)}/live-app`,
+      (route) =>
+        route.fulfill({
+          json: {
+            surfaceId: surface.surfaceId,
+            instanceId: instance.instanceId,
+            generation: instance.generation,
+            state: surface.lifecycle,
+            sharing: instance.sharing,
+            ownership: "launched",
+            platform: "test",
+            lifetimePolicy: "workspace",
+            failure: null,
+            actions:
+              surface.lifecycle === "ready" || surface.lifecycle === "unhealthy"
+                ? [
+                    { operation: "restart", label: "Restart application" },
+                    { operation: "stop", label: "Stop application" },
+                  ]
+                : [],
+          },
+        }),
+    );
+  }
   await page.route("**/api/workspace/surfaces/events", (route) =>
     route.fulfill({
       contentType: "text/event-stream",
