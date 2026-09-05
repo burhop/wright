@@ -42,6 +42,7 @@ class NativeServiceError(ValueError):
         findings: tuple[Finding, ...] = (),
     ):
         super().__init__(message)
+        self.public_message = message
         self.code = code
         self.recovery = recovery
         self.findings = findings

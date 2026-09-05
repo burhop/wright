@@ -60,7 +60,7 @@ class NativeRoute(APIRoute):
                 )
                 findings = [f.as_dict() for f in error.findings]
             except (NativeServiceError, NativeRepositoryError) as error:
-                code, message = error.code, str(error)
+                code, message = error.code, error.public_message
                 recovery = getattr(
                     error,
                     "recovery",

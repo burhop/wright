@@ -272,6 +272,36 @@ def test_internal_error_does_not_disclose_path_or_payload(service, monkeypatch):
     assert service.list_documents("session-one")["documents"] == []
 
 
+@pytest.mark.parametrize("error_kind", ["service", "repository"])
+def test_domain_error_response_uses_public_message_not_exception_text(
+    service, monkeypatch, error_kind
+):
+    from data_vault.native_process_repository import NativeRepositoryError
+    from workspace_service.native_process_service import NativeServiceError
+
+    public_message = "Reopen the current process."
+    error = (
+        NativeServiceError("NATIVE_CONFLICT", public_message, "Reload and retry.")
+        if error_kind == "service"
+        else NativeRepositoryError("NATIVE_CONFLICT", public_message)
+    )
+    # Internal exception diagnostics may evolve without becoming an HTTP field.
+    error.args = ("C:/private/internal-diagnostic",)
+
+    def fail(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(service, "list_documents", fail)
+    with client_for(service) as client:
+        response = client.get(BASE + "?session_id=session-one")
+    assert response.status_code == 409
+    assert response.json()["message"] == public_message
+    assert "private" not in response.text
+    assert response.json()["code"] == "NATIVE_CONFLICT"
+    assert response.json()["findings"] == []
+    assert response.json()["recovery"]
+
+
 def test_file_preflight_never_accepts_unavailable_input_or_caller_asserted_tool_binding(
     service,
 ):

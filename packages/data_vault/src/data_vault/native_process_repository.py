@@ -23,6 +23,7 @@ MAX_ENVELOPE_BYTES = 1100 * 1024
 class NativeRepositoryError(ValueError):
     def __init__(self, code: str, message: str):
         super().__init__(message)
+        self.public_message = message
         self.code = code
 
 

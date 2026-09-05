@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import mimetypes
 import os
 import re
 import subprocess
@@ -583,7 +582,6 @@ class StatusCache:
 
     def input_fingerprint(self) -> tuple[tuple[str, int, int], ...]:
         state_path = self.repo / PROGRAM / "program-state.json"
-        state = load_json(state_path)
         paths = [
             state_path,
             self.repo / WORK_REGISTRY,
@@ -800,12 +798,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def send_file(self, target: Path) -> None:
         body = target.read_bytes()
-        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        # Only trusted constants enter response headers, including for evidence files.
+        content_type = {
+            ".html": "text/html; charset=utf-8",
+            ".css": "text/css; charset=utf-8",
+            ".js": "text/javascript; charset=utf-8",
+            ".json": "application/json",
+            ".txt": "text/plain; charset=utf-8",
+            ".md": "text/markdown; charset=utf-8",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".svg": "image/svg+xml",
+            ".webp": "image/webp",
+            ".pdf": "application/pdf",
+        }.get(target.suffix.lower(), "application/octet-stream")
         self.send_response(HTTPStatus.OK)
-        self.send_header(
-            "Content-Type",
-            f"{content_type}; charset=utf-8" if content_type.startswith("text/") else content_type,
-        )
+        self.send_header("Content-Type", content_type)
         self.send_header("Cache-Control", "no-store")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -843,11 +852,12 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self.send_file(target)
             return
-        requested = "index.html" if parsed.path in {"", "/"} else unquote(parsed.path.lstrip("/"))
-        target = (ROOT / requested).resolve()
-        if ROOT not in target.parents and target != ROOT:
-            self.send_error(HTTPStatus.FORBIDDEN)
+        # The standalone page has one shipped asset; never map arbitrary URLs
+        # to files alongside the server or its operational status sidecars.
+        if parsed.path not in {"", "/", "/index.html"}:
+            self.send_error(HTTPStatus.NOT_FOUND)
             return
+        target = ROOT / "index.html"
         if not target.is_file():
             self.send_error(HTTPStatus.NOT_FOUND)
             return
