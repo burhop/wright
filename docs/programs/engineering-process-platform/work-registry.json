@@ -81,7 +81,7 @@
         "observed_at": "2026-09-04T23:58:03.057374Z",
         "added_task_ids": [],
         "removed_task_ids": [],
-        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02\u2013AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
+        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02–AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
       }
     ],
     "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
@@ -90,7 +90,7 @@
       "Invalid configuration remains buffered until corrected; the editor preserves and explains its 100-command undo history. The atomic path/producer and undo corrections are independently closed.",
       "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
       "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
-      "This is local feature-branch delivery. Complete candidate gates, offline Docker startup, human usability, dev PR/deployment and final acceptance remain pending; benchmark qualification remains 0/100."
+      "Linux amd64 cold offline Docker and actual native workflow/restart checks passed on the retained local c7 image. Complete gates, packaging scope consolidation, independent final approval, human study, CI, dev delivery and final reporting remain pending; benchmark qualification remains 0/100."
     ],
     "tasks": [
       {
@@ -325,9 +325,7 @@
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": [
-          "B-OFFLINE-DOCKER"
-        ]
+        "blocker_ids": []
       },
       {
         "id": "T030",
@@ -1378,6 +1376,287 @@
           }
         ],
         "counts": null
+      },
+      {
+        "id": "Q-PACKAGING-c7f1f218-3",
+        "check_id": "Q-PACKAGING",
+        "attempt": 3,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "c7f1f218007e35dd2447329789ee95c91740ae4a",
+        "tested_tree": "39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c",
+        "scope_sha256": "ffd4a5a8b4a3f4819eaceab08e8c47a879d462c8ccf155225b875740d856f5e6",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Cold network-none Docker startup, schema discovery and real native workflow/restart retention passed on image sha256:455f0a756e098042dd34aca472875987cedd6708b3ada28949140625128748c8. Independent exact 60 archive correspondence passed. Required packaging/compatibility matrix and documented host limits still need consolidation; no fresh backup/restore, different-version upgrade, other-OS, publication or dev deployment is inferred.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-c7f1f218-2",
+        "check_id": "Q-COMBINED",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "c7f1f218007e35dd2447329789ee95c91740ae4a",
+        "tested_tree": "39a3e9b1c1aeca09667d4e7c6c37ba002e47f11c",
+        "scope_sha256": "bf773d7708b16f1b51b63ca2afa0a5f711e57297284db5314d65f6b92d26ebfd",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Two actual Chromium native journeys passed in 25.5 seconds on the restarted c7 API: three example outputs and failure/correction/history with actual artifacts. These counts describe only those two live tests. Current combined required-suite acceptance awaits the terminal full gate and skip classification.",
+        "counts": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-60ef8672-4",
+        "check_id": "Q-REVIEW",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex implementation team",
+        "verifier_id": "native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent accumulated technical review found no open actionable P1/P2; exact committed frontend/runtime metadata and 669 wheel/672 sdist source/resource files correspond. The reviewed resource correction and prior findings are closed within their recorded scopes. Complete gate, frozen final candidate and typed independent review record remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-60ef8672-3",
+        "check_id": "Q-GATES",
+        "attempt": 3,
+        "result": "failed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "c782eba62209abb5090a4a3007ddf2b42d8d4e825bc02d9279ee89cd33e5443a",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The earlier complete-gate attempt stopped at API test_workspace_config_and_remote_operations: 446 passed, 1 skipped, 1 failed. Presence-only investigation attributed the failure to a previously reused fake test credential store; a fresh-store focused test passed without source changes. Preserve this failed attempt; counts refer only to the API suite.",
+        "counts": {
+          "total": 448,
+          "passed": 446,
+          "failed": 1,
+          "skipped": 1,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-60ef8672-4",
+        "check_id": "Q-GATES",
+        "attempt": 4,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "c782eba62209abb5090a4a3007ddf2b42d8d4e825bc02d9279ee89cd33e5443a",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Full local authoritative merge gate completed exit 0 on clean60ef8672; 170 browser passed and5 explicit skips, native live2passed separately. All blocking local stages passed; raw overlapping suite counts and existing warnings are retained in full-local-gate.md. Q-GATES remains inconclusive because the required push gate and terminal CI are not yet complete. No human or dev deployment claim.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/checkpoint.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "70a79bc1f90d8c078e63abc1f4e0a969089f0583e36faf8b4412cb403247306d"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-SEMANTICS-60ef8672-2",
+        "check_id": "Q-SEMANTICS",
+        "attempt": 2,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "39ac8928795494e83a2128f101ff360ff70a34dfc28d7e20083c8193322f9322",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All65 required language, quantity, resource and path-conformance cases passed. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 65,
+          "passed": 65,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-60ef8672-3",
+        "check_id": "Q-RUNTIME",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "bd06df10d526531cd2157832bc87aa418f3a5303b3fb4bc164a0cde5ad4a0fb1",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All204 required persistence, artifact, runtime, API, frontend and browser cases passed;2 actual c7 live cases are attributed separately from their default-gate skips. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 204,
+          "passed": 204,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-60ef8672-3",
+        "check_id": "Q-COMBINED",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "bf773d7708b16f1b51b63ca2afa0a5f711e57297284db5314d65f6b92d26ebfd",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All269 explicitly enumerated semantics and runtime acceptance cases passed. Fixed case population includes2 actual c7 live cases, with exact scope equivalence. Real MCP remains the separate current Q-MCP check. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 269,
+          "passed": 269,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-DASHBOARD-60ef8672-3",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/dashboard_review",
+        "verification_actor_kind": "agent",
+        "summary": "All124 publisher, reader, API, frontend and browser dashboard acceptance cases passed; independent source mapping retains exact case IDs and all raw suite skips. Counts describe the fixed required case population in acceptance-mapping.md, not whole-suite totals or repeated executions. Raw platform/opt-in skips remain visible; no CI, human, integration or benchmark credit.",
+        "counts": {
+          "total": 124,
+          "passed": 124,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/acceptance-mapping.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "32533a4f78ef5ddf1b6f768b023a4c4ef443ed1ea6ae6a431403238243539c55"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-local-60ef8672/full-local-gate.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "fc5642ca6f355ef6b6becbc582b2ac995ce63b8abee4b2876766cb43ff8a3712"
+          }
+        ]
+      },
+      {
+        "id": "Q-PLANNING-60ef8672-1",
+        "check_id": "Q-PLANNING",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-05T02:51:26.661930Z",
+        "tested_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
+        "tested_tree": "7b5747eb5cf79f8193c8561eea70dc813c4eaa50",
+        "scope_sha256": "0f32facf01d293314af410c5ba849ee7ba1a5b100a03898d6f179239d08b42d4",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent current-source planning review explicitly accepts T001/T002 against the exact079 scope. Shared official language, native/Rivet boundary, baseline, examples and26+6 task partition are consistent. This is current planning acceptance, not backdated approval or human/final implementation evidence.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -1404,19 +1683,6 @@
         ],
         "check_ids": [],
         "observed_at": "2026-09-04T21:37:44Z"
-      },
-      {
-        "id": "B-OFFLINE-DOCKER",
-        "summary": "The built eb63344c image passed networked smoke but failed cold startup with networking disabled during dependency synchronization.",
-        "owner": "native editor / coordinator",
-        "required_action": "Independently review correction 404269e9, integrate it deliberately, rebuild and verify cold startup and native process behavior with networking disabled.",
-        "task_ids": [
-          "T029"
-        ],
-        "check_ids": [
-          "Q-PACKAGING"
-        ],
-        "observed_at": "2026-09-05T00:54:27.426421Z"
       }
     ],
     "next_task_ids": [
@@ -1459,7 +1725,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "6d374726ad1602754bf7fcfdec1bfdd39937a866",
+      "candidate_commit": "60ef8672f1f61c2f4942e618638ec8901e9aa9a0",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
