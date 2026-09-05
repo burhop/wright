@@ -1,0 +1,37 @@
+{
+  "format": "wright-native-live-case-map-v1",
+  "tested_commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+  "tested_tree": "29f573a09d7e1cbe60351eb21065105286b008bc",
+  "original_spec_path": "tests/ui-integration/native-process-live.spec.ts",
+  "original_spec_git_sha256": "9120973e6e80f6ad700058a758d5b02ff0d0911a440acd375ae517734949fcff",
+  "adapted_spec_file": "native-process-live-docker-40ebc645.spec.ts",
+  "adapted_spec_sha256": "babdf36b0ae8544c5383774059c190cfe442b56311fdbd9d4a376f31a20c3978",
+  "adapted_spec_lf_sha256": "db299684d19c030ebfa38514253583ba7096a8bdca253177f22fd290f97006a4",
+  "source_hook_lf_sha256": "f62195c547fae4fc4164f3d8d7bb7b7ac924acb4566a7fdb4fb7ae1c28d38277",
+  "raw_report_file": "browser-40ebc645-authenticated-report.json",
+  "raw_report_sha256": "d67e2ff5b0a2208b1b3222b6342c24303b65d9dbb99aab3ce3325f8030ce1d67",
+  "raw_report_bytes": 8269,
+  "reviewer_id": "Codex dashboard_review independent reviewer",
+  "result": "passed",
+  "scope": "Read-only source reconstruction, case identity and recorded browser-result validation; no execution or whole Docker acceptance claim",
+  "cases": [
+    {
+      "actual_id": "playwright:3b38bcc6526468725edf-060e209b605f496db668",
+      "required_id": "playwright:3b38bcc6526468725edf-060e209b605f496db668",
+      "title": "@live native saved process computes, preserves failure and links correction",
+      "actual_file": "native-process-live.spec.ts",
+      "required_file": "tests/ui-integration/native-process-live.spec.ts",
+      "project": "chromium",
+      "result": "passed"
+    },
+    {
+      "actual_id": "playwright:3b38bcc6526468725edf-68e5c9404a505613da5d",
+      "required_id": "playwright:3b38bcc6526468725edf-68e5c9404a505613da5d",
+      "title": "@live native document and artifact-review examples produce exact files",
+      "actual_file": "native-process-live.spec.ts",
+      "required_file": "tests/ui-integration/native-process-live.spec.ts",
+      "project": "chromium",
+      "result": "passed"
+    }
+  ]
+}
