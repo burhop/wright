@@ -1,0 +1,62 @@
+[
+  {
+    "file": "docker_otel_probe.py",
+    "sha256": "1a6cfb2e3422f5772a6766675324121a4bd64fed24b21ea213a8194bf1916f3d",
+    "bytes": 12247
+  },
+  {
+    "file": "expected-source.json",
+    "sha256": "88913eedf52c7e197b2ea723dcf0ea9f3bcf6ddc8069ddecaf8f84f1af8841ea",
+    "bytes": 1066
+  },
+  {
+    "file": "prepare-public-projection.py",
+    "sha256": "7c8d4f80549e5ba67baf8f2e60d43226e0bc31476e83f27793be45d00371e8dd",
+    "bytes": 5476
+  },
+  {
+    "file": "prepare-source-identity.py",
+    "sha256": "27825ac96fe539114a8ad729b814f424ae7968b29dbc056e34dfbc026765f3be",
+    "bytes": 1596
+  },
+  {
+    "file": "private-container-inspect.json",
+    "sha256": "783f100217587f3f5292b8d3d869fc3b558b6acbbe98b6babe09e7298f6132a4",
+    "bytes": 9796
+  },
+  {
+    "file": "private-container.log",
+    "sha256": "cfe79c40b157cb2f365bfcdbea7ffc0313e81013c64c7bb031849954172ff022",
+    "bytes": 2138
+  },
+  {
+    "file": "private-failed-run.json",
+    "sha256": "6637c80b1f738ad28710c3c03c565e6e33182ec3051ae20c8dcae21cc7a86806",
+    "bytes": 9806
+  },
+  {
+    "file": "private-image-inspect.json",
+    "sha256": "b30bb790651f6b05a1f27c4e3f807beec84960294c4611bf4387d39b4a411d0a",
+    "bytes": 7492
+  },
+  {
+    "file": "private-run.json",
+    "sha256": "d912a645ca24d6edd15b94f7f9912a2ac26aeef39b85dc6d1945fe66fc56214c",
+    "bytes": 8605
+  },
+  {
+    "file": "private-spans.json",
+    "sha256": "78903c890e7c1e0ca1f4eb11d8b3b8aba3b704f937c27607202cd7aad9caabf8",
+    "bytes": 43602
+  },
+  {
+    "file": "selected-result.json",
+    "sha256": "867d6ab9cd195041322768cdc95246e7e1a505816b458aa37da53174b05ce214",
+    "bytes": 13467
+  },
+  {
+    "file": "raw-manifest.json",
+    "sha256": "cd7e7b02fd072b4585fc1b5eb706e59df42be3ca53856836e16d40c0994e1cbb",
+    "bytes": 1686
+  }
+]

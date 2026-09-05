@@ -1,0 +1,484 @@
+{
+  "presentation": "Selected diagnostic in-image OTel evidence; no raw configuration, authorization, CAS tokens, span attributes or event payloads.",
+  "scope": "Existing immutable Docker image, diagnostic Python entrypoint with actual ASGI lifespan and in-memory exporter; standard supervisor boot is separate prior evidence.",
+  "source": {
+    "commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+    "tree": "29f573a09d7e1cbe60351eb21065105286b008bc"
+  },
+  "image_id": "sha256:2347e29360668db4d6c67bc9475e9ca9ddd847fe5d8d56086c682505d0f1ba19",
+  "started_at_utc": "2026-09-05T06:08:28.010983+00:00",
+  "completed_at_utc": "2026-09-05T06:08:29.966286+00:00",
+  "result": "passed",
+  "network_mode": "none",
+  "network_connections_blocked_in_probe": true,
+  "blocked_socket_attempts": 0,
+  "external_exporter_used": false,
+  "python": "3.13.15",
+  "wright_prefix": "/workspace/.venv",
+  "import_origins_checked": 282,
+  "module_hashes": [
+    {
+      "module": "core.native_process",
+      "image_path": "/workspace/packages/core/src/core/native_process.py",
+      "sha256": "2ce89f07ede4b7b86ea78584369e8dea3c3576489aabafb260721cc6c1c473ec"
+    },
+    {
+      "module": "core.native_tracing",
+      "image_path": "/workspace/packages/core/src/core/native_tracing.py",
+      "sha256": "ad980be770d3bee087e22eefbf3b6c44d1a14b864156b3792f074a26b1543ff1"
+    },
+    {
+      "module": "workspace_service.native_process_runtime",
+      "image_path": "/workspace/packages/workspace_service/src/workspace_service/native_process_runtime.py",
+      "sha256": "0a50056cdaddf32a2f80d14025d82b3b1ae7d638a8752fb7514a484700da54fa"
+    },
+    {
+      "module": "workspace_service.native_process_service",
+      "image_path": "/workspace/packages/workspace_service/src/workspace_service/native_process_service.py",
+      "sha256": "ab80911ed4c7ccbe12d503a5b6ef2c633e3599f4da817fa14a911da93087be39"
+    },
+    {
+      "module": "data_vault.native_process_artifacts",
+      "image_path": "/workspace/packages/data_vault/src/data_vault/native_process_artifacts.py",
+      "sha256": "a2d0ecb4b9b351df6d03032879f7db0759b8b6994b8da7a87b849eefbaa96df4"
+    },
+    {
+      "module": "api.main",
+      "image_path": "/workspace/apps/api/src/api/main.py",
+      "sha256": "080a956f72c3f96cc44cf3807ad0dcfeef9a9478943eb4fca2bb6a140ea10c1d"
+    },
+    {
+      "module": "api.routers.native_process",
+      "image_path": "/workspace/apps/api/src/api/routers/native_process.py",
+      "sha256": "de02fd97e2ed40ad134066f7f90296fc55f6b68c29f4f9ed9b59dceba5cc2d52"
+    }
+  ],
+  "native_span_count": 47,
+  "spans": [
+    {
+      "name": "native.examples.read",
+      "trace_id": "33eafece4032e14d493417b3da563142",
+      "span_id": "d7f8b5f041e47f47",
+      "parent_span_id": "bf402626b0c5ebc2",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.save",
+      "trace_id": "9eb1c978e26592cb865f938868b316d5",
+      "span_id": "80f6f4e074ce77b4",
+      "parent_span_id": "06c4df03d3d7642e",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.save",
+      "trace_id": "9eb1c978e26592cb865f938868b316d5",
+      "span_id": "06c4df03d3d7642e",
+      "parent_span_id": "80a492a725dd4ba2",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.read",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "0e68bc0597a4e443",
+      "parent_span_id": "16cd915aed277349",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.check",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "61220abc5fa9f19d",
+      "parent_span_id": "16cd915aed277349",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.create",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "071e5d6b6df9e079",
+      "parent_span_id": "16cd915aed277349",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.submit",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "16cd915aed277349",
+      "parent_span_id": "3a9e461e88330fd4",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "f70b6f2425bc7153",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "8a825191d4b6318f",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "e9107cc72d799a0b",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "e56523ab2700baaf",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "6c348b695b8f9589",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "52501f11d4c1e2d4",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "e0d02c85f7b99592",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "9dfaba0c328b3a5d",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "80c4fcb47692c553",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "1f4d004eff15bac3",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "be9960074515c071",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "cebda9986bddb58ed1ddf4d4c93e4bb1",
+      "span_id": "0a6b97f257846203",
+      "parent_span_id": "dd6daf47a7a55b80",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "cebda9986bddb58ed1ddf4d4c93e4bb1",
+      "span_id": "dd6daf47a7a55b80",
+      "parent_span_id": "a895ecdf3b697470",
+      "status": "OK"
+    },
+    {
+      "name": "native.artifact.promote",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "3af3c652ca213e43",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "e94ce2716120b7cc",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.finish",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "ce2773fa106ccc92",
+      "parent_span_id": "cf555bdc563ee28e",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.execute",
+      "trace_id": "3ca7593007d4c8b2580bbc21f6f40ffa",
+      "span_id": "cf555bdc563ee28e",
+      "parent_span_id": "16cd915aed277349",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "e26d71693e85a8143f2261901cbdd93a",
+      "span_id": "f4c23eaf2bc1baa6",
+      "parent_span_id": "1781d40e0724906a",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "e26d71693e85a8143f2261901cbdd93a",
+      "span_id": "1781d40e0724906a",
+      "parent_span_id": "ee62660315104a8a",
+      "status": "OK"
+    },
+    {
+      "name": "native.artifact.read",
+      "trace_id": "7565b177bdbab90e8a6c7056afe027d9",
+      "span_id": "a2f176199ff33e5f",
+      "parent_span_id": "80268253a99fccb2",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.artifact",
+      "trace_id": "7565b177bdbab90e8a6c7056afe027d9",
+      "span_id": "80268253a99fccb2",
+      "parent_span_id": "cad62f8f32385cd9",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.save",
+      "trace_id": "c5116ab5fc481db21b293b4efd983b8c",
+      "span_id": "8aae0f94ae249b95",
+      "parent_span_id": "d455c95e054ce13e",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.save",
+      "trace_id": "c5116ab5fc481db21b293b4efd983b8c",
+      "span_id": "d455c95e054ce13e",
+      "parent_span_id": "bc241a06e60e4930",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.read",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "7074868553340752",
+      "parent_span_id": "94767a6c06ab8aa1",
+      "status": "OK"
+    },
+    {
+      "name": "native.document.check",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "e69409834b004946",
+      "parent_span_id": "94767a6c06ab8aa1",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.create",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "e7520f87e641f61c",
+      "parent_span_id": "94767a6c06ab8aa1",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.submit",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "94767a6c06ab8aa1",
+      "parent_span_id": "0cc39457430c9139",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "d80a7d650e583548",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.start",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "82cc37e083bde4c1",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "c847fa8921cff5f6",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "0b7c59000087868a",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "4553714616742f3b",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "4bff00419a4569ee",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "4713f03971f2fd23",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.complete",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "8f0b44f4e9263e0b",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.step.start",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "0e51c4fecf03d29e",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.finish",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "b1d701d59a753d83",
+      "parent_span_id": "089de53afff1f545",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.execute",
+      "trace_id": "c0427691c6a336bc173d9135487be84c",
+      "span_id": "089de53afff1f545",
+      "parent_span_id": "94767a6c06ab8aa1",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "f76b111f4dbd299e3dd226272be98de0",
+      "span_id": "a6967a335576cac4",
+      "parent_span_id": "3ee0fcf5c5279757",
+      "status": "OK"
+    },
+    {
+      "name": "native.run.inspect",
+      "trace_id": "f76b111f4dbd299e3dd226272be98de0",
+      "span_id": "3ee0fcf5c5279757",
+      "parent_span_id": "24b23c83ce03751e",
+      "status": "OK"
+    }
+  ],
+  "collected_native_attributes_and_events_checked": true,
+  "native_attribute_allowlist": [
+    "error.type"
+  ],
+  "native_event_count": 0,
+  "native_status_descriptions_absent": true,
+  "remote_export_disabled": true,
+  "only_in_memory_span_processor": true,
+  "schema_sha256": "a0ee35a6f1e410496300efafa0a7a1040b1861b3215d2f93b2ae2c5bd8a80583",
+  "run_execution_to_artifact_promotion_lineage_verified": true,
+  "promotion_ancestor_names": [
+    "native.run.execute",
+    "native.run.submit",
+    "post /api/native-processes/documents/concept-brief/runs"
+  ],
+  "artifact_read_service_parent_verified": true,
+  "logical_request_trace_matches_run_and_artifact": true,
+  "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+  "artifact_bytes": 43,
+  "handled_domain_failure": {
+    "state": "failed",
+    "code": "ASSERTION_FAILED",
+    "artifact_count": 0,
+    "execution_span_id": "089de53afff1f545",
+    "execution_span_status": "OK",
+    "explanation": "The runtime handles the domain assertion failure and persists a failed run; report the collected span status without treating it as an escaping exception."
+  },
+  "new_packages_installed": false,
+  "image_rebuilt": false,
+  "public_projection": true,
+  "container_exited_zero_and_stopped": true,
+  "actual_container_network_mode_verified": true,
+  "actual_image_revision_label_verified": true,
+  "all_collected_native_attributes_empty": true,
+  "raw_provenance": [
+    {
+      "file": "docker_otel_probe.py",
+      "sha256": "1a6cfb2e3422f5772a6766675324121a4bd64fed24b21ea213a8194bf1916f3d",
+      "bytes": 12247
+    },
+    {
+      "file": "expected-source.json",
+      "sha256": "88913eedf52c7e197b2ea723dcf0ea9f3bcf6ddc8069ddecaf8f84f1af8841ea",
+      "bytes": 1066
+    },
+    {
+      "file": "prepare-public-projection.py",
+      "sha256": "7c8d4f80549e5ba67baf8f2e60d43226e0bc31476e83f27793be45d00371e8dd",
+      "bytes": 5476
+    },
+    {
+      "file": "prepare-source-identity.py",
+      "sha256": "27825ac96fe539114a8ad729b814f424ae7968b29dbc056e34dfbc026765f3be",
+      "bytes": 1596
+    },
+    {
+      "file": "private-container-inspect.json",
+      "sha256": "783f100217587f3f5292b8d3d869fc3b558b6acbbe98b6babe09e7298f6132a4",
+      "bytes": 9796
+    },
+    {
+      "file": "private-container.log",
+      "sha256": "cfe79c40b157cb2f365bfcdbea7ffc0313e81013c64c7bb031849954172ff022",
+      "bytes": 2138
+    },
+    {
+      "file": "private-failed-run.json",
+      "sha256": "6637c80b1f738ad28710c3c03c565e6e33182ec3051ae20c8dcae21cc7a86806",
+      "bytes": 9806
+    },
+    {
+      "file": "private-image-inspect.json",
+      "sha256": "b30bb790651f6b05a1f27c4e3f807beec84960294c4611bf4387d39b4a411d0a",
+      "bytes": 7492
+    },
+    {
+      "file": "private-run.json",
+      "sha256": "d912a645ca24d6edd15b94f7f9912a2ac26aeef39b85dc6d1945fe66fc56214c",
+      "bytes": 8605
+    },
+    {
+      "file": "private-spans.json",
+      "sha256": "78903c890e7c1e0ca1f4eb11d8b3b8aba3b704f937c27607202cd7aad9caabf8",
+      "bytes": 43602
+    },
+    {
+      "file": "selected-result.json",
+      "sha256": "867d6ab9cd195041322768cdc95246e7e1a505816b458aa37da53174b05ce214",
+      "bytes": 13467
+    },
+    {
+      "file": "raw-manifest.json",
+      "sha256": "cd7e7b02fd072b4585fc1b5eb706e59df42be3ca53856836e16d40c0994e1cbb",
+      "bytes": 1686
+    }
+  ]
+}
