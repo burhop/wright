@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0101",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PUSH_AUTHORIZATION_PENDING",
+  "to_state": "BLOCKED",
+  "prior_revision": 101,
+  "new_revision": 102,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "507827980d78ca673afe118b3a5241c030d77d94d4351159a22093bbe4066328",
+  "new_state_digest": "3a80e11f6c3afd000eca4fc89cb3827f4c0f9ec2399790fc36ebcff0f9791fea",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Required npm audit found six high advisory blockers. Overnight authority covers bounded dependency repair. Preserve candidate 60 review as history; require a new full gate and independent review before dev delivery.",
+  "started_at": "2026-09-05T03:21:54.219291Z",
+  "finished_at": "2026-09-05T03:21:54.219291Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "112d86c6b1d2b71487d1cf92ea06bb7a6a9a5f19",
+    "source_tree": "7a94cb317f272752e1412c9c45853b95c2ffacbe",
+    "source_program_tree": "1e4326a510335cb6f88ce3621cb59feeaee4e3ad",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0102.json",
+      "docs/programs/engineering-process-platform/program-state.json",
+      "docs/programs/engineering-process-platform/roadmap.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0101.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0101.json",
+      "sha256": "a7e6f197fcdec188ae642f3e348c2e692bac93b70b1dce042b977634ed4d5e07",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0102.json",
+      "sha256": "affba6327e5f976fdd6e2c5542ed93ad21a393c7ce5a4f2c4cf5687c23182405",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-AUDIT-REOPEN-EDGE",
+      "method": "Validate the existing lifecycle edge and bounded lease against current policy; this transition records no passing audit, candidate review or implementation test. Required npm audit found six high advisory blockers. Overnight authority covers bounded dependency repair. Preserve candidate 60 review as history; require a new full gate and independent review before dev delivery.",
+      "environment": "Committed local Git and existing typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "112d86c6b1d2b71487d1cf92ea06bb7a6a9a5f19",
+        "evidence/states/program-state-revision-0101.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "New exact-candidate independent review remains required after correction; this lifecycle record creates no review verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required npm audit dependency correction remains open; a new full gate and exact-candidate independent review are required.",
+    "Actual human study remains FOLLOWUP-NATIVE-HUMAN-01; no acceptance result is claimed."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0101.json",
+  "next_action": "APPROVE_CURRENT_FEATURE_INTEGRATION_EVIDENCE"
+}
