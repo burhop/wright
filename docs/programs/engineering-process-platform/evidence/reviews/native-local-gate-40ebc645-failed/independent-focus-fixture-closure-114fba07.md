@@ -1,0 +1,32 @@
+# Independent closure of WebKit focus fixture correction
+
+Reviewer `/root/native_candidate_review`; exact correction `114fba07a1912a28c0251f1d24ece76c71447406`, tree `c66f2e3311a0b4cb164f1d486b458ff236c4d632`, based on `40ebc645ddb641503706dcb3a7d9c84a2b685359`.
+
+**Technical correction accepted, with no actionable P1/P2 finding.** The original40 full gate remains failed. Complete corrected browser-stage verification, required CI/push gates and final exact-candidate freeze/review remain separate pending obligations.
+
+The exact diff changes only `tests/ui-integration/workspace-surfaces/presentation-fixture.ts` and `focus-layout.spec.ts`. It adds per-declared-live-instance runtime routes with matching surface/instance/generation/lifecycle/sharing. Routes do not cover unknown runtime IDs, stopped/no-instance descriptors or non-live surfaces. Existing Playwright route precedence is preserved. The focus test registers response waits before navigation, checks JSON and both expected runtime identities, retains the original pointer click, focus/chat/sidebar, keyboard resize, tab switching and restoration checks, and adds a zero-runtime-alert assertion. The narrow-layout test has formatting changes only. No product code, browser configuration, retries, timeouts, dependency, packaging, public contract, security policy or substantive gate coverage changed.
+
+The original cause is independently established in `independent-focus-failure-classification-40ebc645.md`: unmocked runtime requests returned HTML during the pointer click, inserted error paragraphs above the button and redirected mouse-up/click to different nodes. The controlled reproduction proves this timing and target change. The standalone original test's passing retry is retained as diagnostic history and is not the basis of closure.
+
+I inspected the actual writer results and their raw trace sources:
+
+| Check | Actual result | Log SHA-256 |
+| --- | --- | --- |
+| Strengthened test before runtime fixture correction | Deterministic failure: HTML Content-Type | `c72562c492d1ec04390d39cd05ee80ceaa6e90da6fd42c9fbbca3862365d3b5f` |
+| Same corrected WebKit test | 1 passed, 4.9s | `669fde3683735db170d57343398491c73f109a1e51e286dc1a99a09be78b0786` |
+| Two focus-layout cases across Chromium, Firefox, WebKit, desktop | 8 passed, 20.7s | `0219fe182ea5e0c07611822e2b66d7c7ce64728a9b2e2a2007662b9f480e12f5` |
+| Later overriding runtime/lifecycle WebKit journey | 1 passed, 6.6s | `45101503428fd090de270c6db48b4037f258dce3ce9cea0e48500a5c541fce25` |
+
+The trace source text matches final114 after normalizing checkout newlines and nonsemantic formatting/trailing commas. The failed pre-correction fixture remains separately preserved. Writer commands use the installed Node24/Playwright runner, one worker, zero retries, trace recording and a task-specific Vite port; no full suite was repeated by the writer for this correction. These are writer execution results independently inspected, not browser executions by this reviewer.
+
+My bounded Node probe executes the exact fixture against a recording Page double and independently verifies ready/unhealthy identity variants and excluded stopped/non-live/unknown routes. Parsed TypeScript leaf-token comparisons establish that every original test statement and assertion remains, with only three added first-case statements and formatting. This probe passed at `2026-09-05T05:52:59.167Z`; no browser or server was started. Initial reviewer comparison failures caused by Prettier trailing commas and by standalone scanning of template interpolations were retained, corrected in the reviewer harness with parsed AST leaves, and are not product failures.
+
+## Consumer scope and required verification
+
+The shared fixture affects ready-instance consumers in focus-layout, focus-accessibility, frame-fallback, hostile-surface and presentation-choice. The live-app lifecycle test supplies a later exact override and its actual passing crash/retry/panel/browser/transport/navigation/restart/stop journey demonstrates that the new default does not hide its controlled runtime changes. Presentation-restore uses stopped/no-instance or empty lists; rivet-ai, rivet2-canvas and the Rivet run-inspector fixture use empty lists, so they receive no new route. This was checked against the current source call sites. The writer's eight focus passes alone do not claim all shared fixture consumers passed; the complete browser stage must include them under the existing project selection.
+
+The exact candidate's `docs/contributing/dev-push-runbook.md` allows a test-only correction to use directly affected deterministic checks and one CI cycle without restarting completed full local stages when shipped behavior, public contracts, dependency resolution, packaging, security policy and substantive gate coverage are unchanged. This exact two-file correction meets that condition. Reuse of40's successful backend/frontend/package/docs stage evidence is justified when bound to their exact input/source identities; its raw generated runtime-lock provenance distinction must remain explicit. All workspace-surfaces profiles required by the existing gate must remain selected. The complete failed browser stage must then pass on the corrected candidate, including the shared fixture consumers, with no added retries/skips or changed assertions.
+
+The resulting acceptance is a documented combination of unchanged-source completed stages and the corrected browser stage. It must preserve40's terminal exit1 and 169/5/1 result; it must not invent a successful exit for that original command. Required fast push checks, terminal CI, independently reviewed final candidate and dev deployment remain applicable. A subsequent substantive source change invalidates this bounded stage-reuse assessment for its affected stages.
+
+Reviewer artifacts under `D:/repos/wright/.local-run/native-candidate-review/.local-run/`: `review-focus-fixture-114fba07.cjs`, `review-focus-fixture-114fba07-result.json`, `review-focus-fixture-114fba07-output.txt`, the two preserved initial comparison outputs, `focus-fixture-114fba07-tested-sources.json` and `focus-fixture-114fba07-writer-evidence.json` (11 raw trace hashes and four log hashes). Writer raw evidence remains unchanged under `D:/repos/wright/.local-run/native-process-milestone/native-webkit-focus-evidence/`. No parent source, evidence or state was changed by this review.
