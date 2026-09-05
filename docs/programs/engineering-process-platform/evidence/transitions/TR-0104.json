@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0104",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "verification",
+  "from_state": "IMPLEMENTING",
+  "to_state": "IMPLEMENTING",
+  "prior_revision": 104,
+  "new_revision": 105,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "078f32df24fcc2a6889d1ff156a386b35704413c35fb75f296cd288019e97931",
+  "new_state_digest": "0df05caf683879a90fb69292f595d46d621d7d624f6ead51a81b0164abaff20f",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone sole writer"
+  },
+  "action": "Reconcile the standing N01 implementation lease with its full authorized task paths and narrowly scoped security correction. Retain the failed open-lease gate, sanitized private-history evidence, and pending full gates, final review and CI.",
+  "started_at": "2026-09-05T03:56:40.123644Z",
+  "finished_at": "2026-09-05T03:56:40.123644Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "80eaef9c487715186f8b67d33423ef730f681b3b",
+    "source_tree": "c1c4403319a537c952fd30289b0a7cfb439085ec",
+    "source_program_tree": "34942dab5a23dc6c5303c3e1a524bff258a0e9ad",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0105.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0104.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0104.json",
+      "sha256": "38f84ab75c0c862c44d89335be0d2b830cb579ef6661735f3b69bee01773b50c",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0105.json",
+      "sha256": "30c9c630ef74b23dafaf6ff32aa09c2387965485256473f4bf3df0fd66e70e93",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-WRITER-LEASE-IDENTITY",
+      "method": "Validate the existing same-state lease checkpoint, actual writer identity and authorized full native task coverage. Preserve the failed open-lease gate and all pending security/full-gate/review obligations. No gate result is inferred.",
+      "environment": "Current committed Git and typed policy records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "80eaef9c487715186f8b67d33423ef730f681b3b",
+        "evidence/states/program-state-revision-0097.json",
+        "evidence/authorizations/AUTH-EPP-N01-2026-002.md"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": null,
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0104.json",
+  "next_action": "EXECUTE_CURRENT_FEATURE_TASKS"
+}
