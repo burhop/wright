@@ -2469,6 +2469,56 @@
             "sha256": "a586bc540e21556f747d9524341662ceb21d566ce7742defb62dff5173494c96"
           }
         ]
+      },
+      {
+        "id": "Q-GATES-delivery-7e484be7-7",
+        "check_id": "Q-GATES",
+        "attempt": 7,
+        "result": "passed",
+        "observed_at": "2026-09-05T11:03:44.647228Z",
+        "tested_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+        "tested_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+        "scope_sha256": "0ad5063eab41749b659611fe67b1bd952123f4dc7772965e7f73189a531f6b65",
+        "author_id": "Codex delivery coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Observed local/composed verification, exact-head push gate and actual required CI contexts. Original failed full-script attempts remain historical. Missing, skipped or nonterminal required results receive no pass.",
+        "counts": {
+          "total": 31,
+          "passed": 31,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "commit": "a7443e1f2753085cbc0c8eaedc7f59d63e35aa2c",
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-h2-delivery/delivery-observation-ci-and-merge.json.txt",
+            "sha256": "77bff56886076a6e91359c37f8dcf4b6889ae3433370ad8ab4887f8f0695a4df"
+          }
+        ]
+      },
+      {
+        "id": "Q-INTEGRATION-delivery-7e484be7-1",
+        "check_id": "Q-INTEGRATION",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-05T11:03:44.647228Z",
+        "tested_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+        "tested_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+        "scope_sha256": "0ad5063eab41749b659611fe67b1bd952123f4dc7772965e7f73189a531f6b65",
+        "author_id": "Codex delivery coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual merged dev PR and Git parent/baseline evidence recorded. Only already implemented tasks receive integration credit; human and whole-milestone acceptance remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "commit": "a7443e1f2753085cbc0c8eaedc7f59d63e35aa2c",
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-h2-delivery/delivery-observation-ci-and-merge.json.txt",
+            "sha256": "77bff56886076a6e91359c37f8dcf4b6889ae3433370ad8ab4887f8f0695a4df"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -2498,24 +2548,20 @@
       },
       {
         "id": "B-FRESH-NATIVE-CANDIDATE",
-        "summary": "The frozen candidate passed independent review and bounded packaging acceptance. Required push checks, terminal CI and dev delivery remain pending.",
+        "summary": "Actual local gates and all H2 CI passed; PR #121 merged to dev. Published-image acceptance remains pending.",
         "owner": "coordinator and independent reviewer",
-        "required_action": "Run the required push gate, inspect all terminal PR CI, merge through the dev PR and verify the actual published development image. Human usability remains a separate follow-up.",
+        "required_action": "Verify actual immutable published development image source, service health and real browser journeys. Human usability remains a separate follow-up.",
         "task_ids": [
-          "T030",
           "T031",
           "T032"
         ],
         "check_ids": [
-          "Q-GATES",
-          "Q-INTEGRATION",
           "Q-DEV"
         ],
-        "observed_at": "2026-09-05T06:28:45.782409Z"
+        "observed_at": "2026-09-05T11:16:38.318006Z"
       }
     ],
     "next_task_ids": [
-      "T030",
       "T031",
       "T032"
     ],
@@ -2552,9 +2598,15 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
-      "pull_requests": [],
-      "merged_commit": null,
+      "candidate_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+      "pull_requests": [
+        {
+          "url": "https://github.com/burhop/wright/pull/121",
+          "head_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+          "observed_at": "2026-09-05T11:03:44.647228Z"
+        }
+      ],
+      "merged_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
       "deployment_check_ids": [
         "Q-DEV"
       ]
