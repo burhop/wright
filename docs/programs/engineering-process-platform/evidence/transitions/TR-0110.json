@@ -1,0 +1,90 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0110",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PUSH_AUTHORIZATION_PENDING",
+  "to_state": "PR_READY",
+  "prior_revision": 110,
+  "new_revision": 111,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "d99a9815f6de87f6ed5a033e2cb4e0d036fec12d30384e6e20910b57e3304503",
+  "new_state_digest": "da5b7e2db461805e53e25272f7405c5a57ecc157e9e5414c8639bae63421951e",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Standing overnight authority permits the scoped native dev PR. Exact candidate7f55 has fresh independent review; metadata reconstructionde418 and its full manifests passed independent review and authoritative validation. Original failed checks are retained. Run the required push gate on this exact PR-ready source before any push; CI, dev delivery and human acceptance remain pending.",
+  "started_at": "2026-09-05T07:08:23.035638Z",
+  "finished_at": "2026-09-05T07:08:23.035638Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "7ca0b63869716aabd207546d9e281c4daa1ec9da",
+    "source_tree": "7276a684f486db1910aad8140355b06ce2445b95",
+    "source_program_tree": "463d274d012e7e27575fea81633d0fd634cf78cb",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0111.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0110.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0110.json",
+      "sha256": "43a6ed8af343ce3bdb3fd775f06b4f5ff80cada4cc878e64fa15ea850cd3d29f",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0111.json",
+      "sha256": "3e18aa9074f58a0017d00f0d2157f27fb50210fc51a63d9b72b2024c6f8f3cda",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Standing overnight authority permits the scoped native dev PR. Exact candidate7f55 has fresh independent review; metadata reconstructionde418 and its full manifests passed independent review and authoritative validation. Original failed checks are retained. Run the required push gate on this exact PR-ready source before any push; CI, dev delivery and human acceptance remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "7ca0b63869716aabd207546d9e281c4daa1ec9da",
+        "7f55b31cb754421a605f2e7aff1d676ba501606d"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": null,
+    "attempt": 0,
+    "maximum": 2,
+    "remaining": 2
+  },
+  "blockers": [
+    "Required security correction and fresh full gate/independent review remain pending; prior open-lease gate failed its task-path coverage check.",
+    "Human study remains separately tracked without acceptance credit."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0110.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_CI"
+}
