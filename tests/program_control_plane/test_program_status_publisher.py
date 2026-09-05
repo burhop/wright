@@ -869,7 +869,15 @@ def test_history_series_have_fixed_semantics_and_causal_committed_order(
 
 
 def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
+    # Retain the closed historical checkpoint even while native implementation
+    # opens a new lease or advances to later delivery states.
     subject = publisher._load_subject(REPOSITORY, "HEAD")
+    subject["blobs"][publisher.STATE_PATH] = publisher._git_blob(
+        REPOSITORY,
+        "88d36f3793f05a29f10a210623788b93ed32cfcd",
+        publisher.STATE_PATH,
+    )
+    subject["state"] = json.loads(subject["blobs"][publisher.STATE_PATH])
     # This unit projection deliberately selects the preserved historical feature.
     subject["state"]["current_feature"] = "EPP-F02"
     subject["catalog_sources"] = publisher._load_closed_catalog_sources(
