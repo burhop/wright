@@ -1,0 +1,54 @@
+{
+  "source_commit": "ee246102acc94ce07cd6d2e604496d299b49fbd3",
+  "source_tree": "86bff565b8b3344f7c507cb200202a145ac6e6d0",
+  "observed_at": "2026-09-05T04:43:35.999256+00:00",
+  "audit_exit_code": 0,
+  "audited_package_count": 90,
+  "findings": 0,
+  "skipped_packages": 0,
+  "unchanged_policy_evaluator": "passed",
+  "removed_package_chain_absent": true,
+  "fresh_audit": true,
+  "historical_audit_projection_used_as_pass": false,
+  "audit_environment_python": "3.13.5",
+  "runtime_install_package_count": 69,
+  "focused_tests": {
+    "passed": 39,
+    "skipped": 1,
+    "python": "3.14.2",
+    "scope": "authentication, native API, packaging and existing audit policy"
+  },
+  "automatic_review": "Worker request rejected for destination authorization. Root retry accepted after a read-only public visibility check and exact tuple subset proof (73 external registry tuples are a subset of 78 on public dev7404). Fresh query explicitly selected the PyPI vulnerability service and fixed public indexes; common credential-named environment variables were removed. No additional user reply is attributed.",
+  "raw_provenance": [
+    {
+      "file": "pip-audit-ee246102-public.json",
+      "sha256": "f8264f779c9bf1726f7c6f82b1742b2dee21a3767b94f4ea94aeea1066e97dc2",
+      "bytes": 5362
+    },
+    {
+      "file": "pip-audit-ee246102-public.log",
+      "sha256": "300d7d85f883775ff9dec1c6fc1e47bba60caa7fb16ff16d7cc5e983c7605dd5",
+      "bytes": 455
+    },
+    {
+      "file": "clean-runtime-proof.json",
+      "sha256": "34362a7ed9f8a9b3ea8a5b822dbeb97f6d8790c301e2554361374b42766a04ec",
+      "bytes": 280
+    },
+    {
+      "file": "focused-auth-tests.log",
+      "sha256": "e243e97abcf9bf029c56d1e75af7a982d37873088d63a033770ec0546c7d19ed",
+      "bytes": 1053
+    },
+    {
+      "file": "public-locked-inventory-proof.json",
+      "sha256": "41ede6e65d546c08416ec74fa1decf74473d48d157a34e841767a2da33421e83",
+      "bytes": 478
+    }
+  ],
+  "remaining": [
+    "Exact patch independent closure",
+    "Combined candidate full gate and package/Docker proof",
+    "Final candidate review and required dev delivery checks"
+  ]
+}
