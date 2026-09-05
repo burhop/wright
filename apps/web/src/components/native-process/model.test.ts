@@ -9,9 +9,11 @@ import {
   redo,
   undo,
   validateDocument,
+  type NativeHistory,
 } from "./model";
 import { bufferConfig, stepBuffer } from "./NativeInspector";
 import { contract, example, fixtureJson } from "./native-process.fixture";
+import artifactPaths from "./native-paths.fixture.json";
 const vectors = fixtureJson<{
   accepted: {
     id: string;
@@ -51,6 +53,160 @@ describe("official language conformance (simulated programmatic clients)", () =>
   });
 });
 describe("atomic authoring commands", () => {
+  const artifactInput = applyCommand(
+    emptyDocument(),
+    {
+      type: "add-step",
+      operation: "artifact.input@1",
+      id: "file-input",
+      title: "File input",
+    },
+    contract,
+  );
+  const configuredInput = applyCommand(
+    artifactInput,
+    {
+      type: "step",
+      id: "file-input",
+      title: "File input",
+      config: { path: "safe.txt" },
+    },
+    contract,
+  );
+  it.each(artifactPaths.accepted)(
+    "accepts the core relative artifact path %s",
+    (path) => {
+      const next = applyCommand(
+        configuredInput,
+        {
+          type: "step",
+          id: "file-input",
+          title: "File input",
+          config: { path },
+        },
+        contract,
+      );
+      expect(next.definition.steps[0].config.path).toBe(path);
+    },
+  );
+  it.each(artifactPaths.rejected)(
+    "rejects the core-invalid artifact path %s atomically",
+    (path) => {
+      const history: NativeHistory = {
+        present: configuredInput,
+        past: [],
+        future: [artifactInput],
+      };
+      const before = structuredClone(history);
+      expect(() =>
+        pushCommand(
+          history,
+          {
+            type: "step",
+            id: "file-input",
+            title: "Invalid candidate",
+            config: { path },
+          },
+          contract,
+        ),
+      ).toThrow();
+      expect(history).toEqual(before);
+    },
+  );
+  it("rejects a second producer for a many-valued draft input without losing the first", () => {
+    const document: NativeDocument = {
+      definition: {
+        ...emptyDocument().definition,
+        steps: ["source-one", "source-two", "target-one"].map((id) => ({
+          id,
+          title: id,
+          operation: "custom.collect@1",
+          config: {},
+        })),
+        ports: [
+          { id: "out-one", step_id: "source-one", direction: "output" },
+          { id: "out-two", step_id: "source-two", direction: "output" },
+          { id: "in-one", step_id: "target-one", direction: "input" },
+        ].map((port) => ({
+          ...port,
+          direction: port.direction as "input" | "output",
+          type: "text",
+          cardinality: "many",
+          required: true,
+          key: "items",
+          label: port.id,
+        })),
+        connections: [
+          {
+            id: "edge-one",
+            source_port_id: "out-one",
+            target_port_id: "in-one",
+          },
+        ],
+      },
+      presentation: {},
+    };
+    expect(() => validateDocument(document, contract)).not.toThrow();
+    const before = canonicalJson(document);
+    expect(() =>
+      applyCommand(
+        document,
+        {
+          type: "connect",
+          id: "edge-two",
+          source: "out-two",
+          target: "in-one",
+        },
+        contract,
+      ),
+    ).toThrow(/already has a connection/);
+    expect(canonicalJson(document)).toBe(before);
+  });
+  it("undoes and redoes all 60 complete edits rather than dropping the earliest ten", () => {
+    const original = emptyDocument();
+    let history: NativeHistory = { present: original, past: [], future: [] };
+    for (let index = 1; index <= 60; index++)
+      history = pushCommand(
+        history,
+        { type: "title", title: `Edit ${index}` },
+        contract,
+      );
+    const edited = history.present;
+    for (let index = 0; index < 60; index++) history = undo(history);
+    expect(history.present).toEqual(original);
+    expect(undo(history)).toBe(history);
+    for (let index = 0; index < 60; index++) history = redo(history);
+    expect(history.present).toEqual(edited);
+    expect(redo(history)).toBe(history);
+  });
+  it("retains exactly the latest 100 edits and clears redo after a new branch", () => {
+    let history: NativeHistory = {
+      present: emptyDocument(),
+      past: [],
+      future: [],
+    };
+    for (let index = 1; index <= 110; index++)
+      history = pushCommand(
+        history,
+        { type: "title", title: `Edit ${index}` },
+        contract,
+      );
+    expect(history.past).toHaveLength(100);
+    for (let index = 0; index < 100; index++) history = undo(history);
+    expect(history.present.definition.title).toBe("Edit 10");
+    expect(undo(history)).toBe(history);
+    for (let index = 0; index < 100; index++) history = redo(history);
+    expect(history.present.definition.title).toBe("Edit 110");
+    history = undo(history);
+    history = pushCommand(
+      history,
+      { type: "title", title: "New branch" },
+      contract,
+    );
+    expect(redo(history)).toBe(history);
+    expect(undo(history).present.definition.title).toBe("Edit 109");
+    expect(history.past).toHaveLength(100);
+  });
   it("preserves explicitly configured empty text when editing a programmatic step", () => {
     const step = {
       id: "empty-input",

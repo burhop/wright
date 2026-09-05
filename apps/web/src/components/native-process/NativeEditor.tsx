@@ -15,6 +15,7 @@ import {
   canonicalJson,
   emptyDocument,
   newId,
+  NATIVE_UNDO_LIMIT,
   pushCommand,
   redo,
   undo,
@@ -652,6 +653,7 @@ export function NativeEditor({
               </button>
               <button
                 data-testid="native-undo"
+                aria-describedby="native-history-limit"
                 disabled={!history.past.length || hasBuffers}
                 onClick={() => {
                   const next = undo(history);
@@ -664,6 +666,7 @@ export function NativeEditor({
               </button>
               <button
                 data-testid="native-redo"
+                aria-describedby="native-history-limit"
                 disabled={!history.future.length || hasBuffers}
                 onClick={() => {
                   const next = redo(history);
@@ -675,6 +678,11 @@ export function NativeEditor({
                 Redo
               </button>
             </div>
+            <p id="native-history-limit" data-testid="native-history-limit">
+              Undo keeps the latest {NATIVE_UNDO_LIMIT} changes in this session;
+              older changes are discarded at the limit. {history.past.length}{" "}
+              available to undo · {history.future.length} available to redo.
+            </p>
             <p>
               <strong>
                 {dirty

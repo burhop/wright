@@ -345,7 +345,7 @@ export function validateDocument(
       throw new Error("Port types and cardinalities must match exactly.");
     if (source.step_id === target.step_id)
       throw new Error("A step cannot connect to itself.");
-    if (target.cardinality === "one" && incoming.has(target.id))
+    if (incoming.has(target.id))
       throw new Error("This input already has a connection. Remove it first.");
     const pair = `${source.id}/${target.id}`;
     if (pairs.has(pair))
@@ -387,8 +387,24 @@ export function validateDocument(
     )
       throw new Error("Invalid step position.");
   }
-  // Decimal lexical checks supplement the schema's intentionally broader pattern.
-  for (const step of definition.steps)
+  // Shared semantic constraints supplement the schema's broader field checks.
+  for (const step of definition.steps) {
+    // Mirror core.native_process._validate_relative_path; schema length checks
+    // run above. Workspace authorization and actual file checks stay in core/service.
+    if (step.operation === "artifact.input@1" && "path" in step.config) {
+      const path = step.config.path as string;
+      if (
+        path.includes(":") ||
+        path.includes("\0") ||
+        path
+          .replaceAll("\\", "/")
+          .split("/")
+          .some((part) => part === "" || part === "." || part === "..")
+      )
+        throw new Error(
+          "Artifact input requires a confined relative file path without empty, . or .. segments, a drive or a stream name.",
+        );
+    }
     for (const value of Object.values(step.config)) {
       if (value && typeof value === "object" && !Array.isArray(value)) {
         const decimal = value.value,
@@ -405,6 +421,7 @@ export function validateDocument(
           );
       }
     }
+  }
 }
 export type NativeCommand =
   | { type: "add-step"; operation: string; id: string; title: string }
@@ -528,6 +545,7 @@ export interface NativeHistory {
   past: NativeDocument[];
   future: NativeDocument[];
 }
+export const NATIVE_UNDO_LIMIT = 100;
 export function pushCommand(
   history: NativeHistory,
   command: NativeCommand,
@@ -537,7 +555,7 @@ export function pushCommand(
   if (canonicalJson(next) === canonicalJson(history.present)) return history;
   return {
     present: next,
-    past: [...history.past.slice(-49), history.present],
+    past: [...history.past.slice(-(NATIVE_UNDO_LIMIT - 1)), history.present],
     future: [],
   };
 }

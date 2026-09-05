@@ -9,6 +9,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NativeEditor } from "./NativeEditor";
 import { contract, example, savedProcess } from "./native-process.fixture";
+import { applyCommand } from "./model";
 import {
   nativeProcessApi,
   nativeRunApi,
@@ -76,6 +77,101 @@ async function renderExample(onDirtyChange?: (dirty: boolean) => void) {
   return screen;
 }
 describe("mocked authoring journeys", () => {
+  it("keeps an invalid artifact path buffered and the valid definition unchanged until corrected", async () => {
+    sessionStorage.clear();
+    const withInput = applyCommand(
+      example,
+      {
+        type: "add-step",
+        operation: "artifact.input@1",
+        id: "file-input",
+        title: "File input",
+      },
+      contract,
+    );
+    const configured = applyCommand(
+      withInput,
+      {
+        type: "step",
+        id: "file-input",
+        title: "File input",
+        config: { path: "safe.txt" },
+      },
+      contract,
+    );
+    vi.mocked(nativeProcessApi.examples).mockResolvedValue({
+      examples: [
+        { ...configured, id: "concept-brief", title: "Concept brief" },
+      ],
+    });
+    await renderExample();
+    fireEvent.change(screen.getByTestId("native-step-list"), {
+      target: { value: "file-input" },
+    });
+    const originalSource = (
+      screen.getByTestId("native-source") as HTMLTextAreaElement
+    ).value;
+    fireEvent.change(screen.getByTestId("native-config-path"), {
+      target: { value: "../outside.txt" },
+    });
+    fireEvent.click(screen.getByTestId("native-apply-step"));
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "confined relative file path",
+    );
+    expect(screen.getByTestId("native-source")).toHaveValue(originalSource);
+    expect(screen.getByTestId("native-save")).toBeDisabled();
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "0 available to undo",
+    );
+    fireEvent.change(screen.getByTestId("native-step-list"), {
+      target: { value: "need-source" },
+    });
+    fireEvent.change(screen.getByTestId("native-step-list"), {
+      target: { value: "file-input" },
+    });
+    expect(screen.getByTestId("native-config-path")).toHaveValue(
+      "../outside.txt",
+    );
+    expect(screen.getByTestId("native-discard-fields")).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId("native-config-path"), {
+      target: { value: "folder/safe.txt" },
+    });
+    fireEvent.click(screen.getByTestId("native-apply-step"));
+    expect(
+      screen.queryByTestId("native-discard-fields"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "1 available to undo",
+    );
+    fireEvent.click(screen.getByTestId("native-undo"));
+    expect(screen.getByTestId("native-source")).toHaveValue(originalSource);
+    expect(screen.getByTestId("native-config-path")).toHaveValue("safe.txt");
+  });
+  it("shows the session undo limit and available undo and redo counts", async () => {
+    sessionStorage.clear();
+    await renderExample();
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "latest 100 changes in this session",
+    );
+    expect(screen.getByTestId("native-undo")).toHaveAccessibleDescription(
+      /older changes are discarded/,
+    );
+    fireEvent.change(screen.getByTestId("native-process-title"), {
+      target: { value: "Changed title" },
+    });
+    fireEvent.click(screen.getByTestId("native-apply-title"));
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "1 available to undo · 0 available to redo",
+    );
+    fireEvent.click(screen.getByTestId("native-undo"));
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "0 available to undo · 1 available to redo",
+    );
+    fireEvent.click(screen.getByTestId("native-redo"));
+    expect(screen.getByTestId("native-history-limit")).toHaveTextContent(
+      "1 available to undo · 0 available to redo",
+    );
+  });
   it.each(["newer-version", "read-failure"])(
     "retains recovery and retry identity when save confirmation has %s",
     async (outcome) => {
