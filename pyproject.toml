@@ -41,7 +41,7 @@ runtime = [
     "httpx>=0.28,<1",
     "httpx-sse>=0.4,<1",
     "PyYAML>=6,<7",
-    "mcp>=1.27.2,<2",
+    "mcp>=1.27.2,<3",
     "jsonschema>=4.26,<5",
     "python-multipart>=0.0.32,<1",
 ]
