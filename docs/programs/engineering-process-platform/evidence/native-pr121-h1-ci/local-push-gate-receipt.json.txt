@@ -1,0 +1,87 @@
+{
+  "format": "wright-native-pr121-h1-local-push-public-receipt-v1",
+  "tested_head_commit": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+  "tested_head_tree": "4d47527149f1c4db3c1bcc9c56125ef4ea73b836",
+  "gate_entrypoint": "scripts/check-dev-push.sh",
+  "gate_entrypoint_git_blob_sha256": "52813f71ffdf10c9a989b376870adb75a161865eef9efa0823ef852ce8593584",
+  "scope": "Actual required local push fast gate on H1, including the unchanged retry. It is not a new full dev-merge gate claim and does not clear failed GitHub CI.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "candidate_commit": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+      "candidate_tree": "4d47527149f1c4db3c1bcc9c56125ef4ea73b836",
+      "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+      "source_was_clean": true,
+      "source_clean_after": true,
+      "started_at": "2026-09-05T07:10:47.0606506Z",
+      "completed_at": "2026-09-05T07:31:02.7248037Z",
+      "exit_code": 1,
+      "observed_result": "failed",
+      "retained_host_log_path": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-delivery-validation\\wright\\.local-run\\dev-push-gate-4480bf03.log",
+      "raw_observation": {
+        "retained_filename": "dev-push-observation-4480bf03.json",
+        "raw_file_sha256": "520a03a6d38bcba508bc4ff956552e0c69fd905ca0d526f26d51d030f95623f9",
+        "raw_bytes": 617
+      },
+      "raw_log": {
+        "retained_filename": "dev-push-gate-4480bf03.log",
+        "raw_file_sha256": "725fc14583767943dad3f6df74be746060c3020b3b59841cb40ed4925c8d9ca7",
+        "raw_bytes": 119080
+      },
+      "terminal_marker": "9 failed, 352 passed, 1 skipped in 267.92s (0:04:27)",
+      "failed_test_ids": [
+        "tests/program_control_plane/test_cli.py::test_container_is_explicit_or_only_constrained_head",
+        "tests/program_control_plane/test_cli.py::test_delivery_is_validated_only_when_explicit",
+        "tests/program_control_plane/test_cli.py::test_container_and_delivery_reject_non_allowlisted_diffs",
+        "tests/program_control_plane/test_determinism.py::test_delivery_observations_are_excluded_from_authoritative_manifest",
+        "tests/program_control_plane/test_program_status_publisher.py::test_publishes_exact_dashboard_and_deterministic_identity",
+        "tests/program_control_plane/test_program_status_publisher.py::test_replacement_failure_preserves_prior_bundle",
+        "tests/program_control_plane/test_program_status_publisher.py::test_bundle_identity_recomputes_from_canonical_payload",
+        "tests/program_control_plane/test_program_status_publisher.py::test_committed_watch_publishes_once_and_refreshes_heartbeat",
+        "tests/program_control_plane/test_program_status_publisher.py::test_history_series_have_fixed_semantics_and_causal_committed_order"
+      ],
+      "program_control_plane_summary": {
+        "failed": 9,
+        "passed": 352,
+        "skipped": 1
+      }
+    },
+    {
+      "attempt": 2,
+      "candidate_commit": "4480bf039c5c8fcc5d0270f5ab2e7117fbdb2fa1",
+      "candidate_tree": "4d47527149f1c4db3c1bcc9c56125ef4ea73b836",
+      "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+      "source_was_clean": true,
+      "source_clean_after": true,
+      "started_at": "2026-09-05T07:36:52.4178998Z",
+      "completed_at": "2026-09-05T08:00:19.7483560Z",
+      "exit_code": 0,
+      "observed_result": "passed",
+      "retained_host_log_path": "D:\\repos\\wright\\.local-run\\native-process-milestone\\native-delivery-validation\\wright\\.local-run\\dev-push-gate-4480bf03-attempt2.log",
+      "raw_observation": {
+        "retained_filename": "dev-push-observation-4480bf03-attempt2.json",
+        "raw_file_sha256": "db4108fc8501495d1da0432e48814990e1bfb079264307bd10b2624ec993d066",
+        "raw_bytes": 772
+      },
+      "raw_log": {
+        "retained_filename": "dev-push-gate-4480bf03-attempt2.log",
+        "raw_file_sha256": "2b02b760956aa42d1c8433f61a2a5da6447d292f8b13a9704921e1a5d0fd89cc",
+        "raw_bytes": 116517
+      },
+      "terminal_marker": "Dev push fast gate passed.",
+      "git_core_longpaths": true,
+      "host_correction": "Command-local Git long-path support; source, gate script and tests unchanged."
+    }
+  ],
+  "host_failure_classification": {
+    "reviewer": "/root/native_candidate_review",
+    "report": {
+      "retained_filename": "independent-push-longpaths-classification-4480bf03.md",
+      "raw_file_sha256": "8687bc37312415406243d079040c5c9153ddfe3fb1c0cb96b92146ef53e280b6",
+      "raw_bytes": 3759
+    },
+    "finding": "All nine attempt-1 control-plane failures were classified as Windows Git long-path handling. Command-local core.longpaths changed the host invocation only; original failure remains retained."
+  },
+  "ci_outcome_remains": "failed",
+  "source_gate_or_test_changes_for_retry": false
+}
