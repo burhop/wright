@@ -176,7 +176,7 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
-        "tornado==6.5.6" && \
+        "tornado==6.5.8" && \
     rm -rf /root/.cache/uv /home/agent/.cache/uv
 
 # Create agent user (UID 1000).
