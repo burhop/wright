@@ -87,9 +87,10 @@
     "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
     "capabilities": [
       "In the local feature build, create/configure/connect/save/reopen native processes with exact typed ports and one official language for programmatic clients, Inspector, canvas and runtime.",
+      "Invalid configuration remains buffered until corrected; the editor preserves and explains its 100-command undo history. The atomic path/producer and undo corrections are independently closed.",
       "Run all three development examples and inspect actual artifact bytes and provenance. Browser verification includes the 135 g mass result, a deliberate failure and a linked correction with the old snapshot preserved.",
       "The shared HTTP CLI and native runtime support durable evidence, cancellation/recovery and exact local MCP binding. A real disposable stdio tool process produced a verified artifact and exited cleanly.",
-      "This is local feature-branch delivery. Full candidate gates, human usability, dev PR/deployment and final acceptance remain pending; benchmark qualification remains 0/100."
+      "This is local feature-branch delivery. Complete candidate gates, offline Docker startup, human usability, dev PR/deployment and final acceptance remain pending; benchmark qualification remains 0/100."
     ],
     "tasks": [
       {
@@ -324,7 +325,9 @@
         "owner": "coordinator",
         "integration_required": true,
         "integration_exemption": null,
-        "blocker_ids": []
+        "blocker_ids": [
+          "B-OFFLINE-DOCKER"
+        ]
       },
       {
         "id": "T030",
@@ -1217,6 +1220,164 @@
           "skipped": 0,
           "not_run": 0
         }
+      },
+      {
+        "id": "Q-EDITOR-20260905-3",
+        "check_id": "Q-EDITOR",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "572a5802838a33bc887f00edc456ef7a6d6ead23",
+        "tested_tree": "c74798d9974ca343d1a819e047a965bb9bd767d8",
+        "scope_sha256": "d7b4a6dc53f7d560c9ae862df78212e33262a77335ae8f67f6465da42ea77011",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Independent review closed atomic path/producer validation and the disclosed 100-command undo history on 40826589. Reachable parent 572a5802 has the identical declared editor source scope, which still matches the current candidate. Focused authoring regressions and original model probes support this corrected scope; no new live-browser or human-study run is inferred.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/independent-editor-closure-40826589.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "171b755668bdc6069c2cd16f86789a20302be787d5e7dd4987d824554994f02a"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-DASHBOARD-20260905-2",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "0a6da0f128d9bfafc25d8f4edbeed19f0398b8ecd1e32ce32fea10f9b0402c2e",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Three independent schema-portability checks passed on b861d2ea; reachable parent eb63344c has identical declared dashboard source coverage. The frontend-local schema correction is accepted for that narrow scope. Current whole-dashboard/browser acceptance and complete delivery gates remain pending.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-web-schema-review-b861d2ea.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "13ca9ef21e0ac931ab2e3a60a0c40d831550aa6b88f1447aa1a0eba651466883"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-REVIEW-20260905-3",
+        "check_id": "Q-REVIEW",
+        "attempt": 3,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "984c1a3d643c14e94088ce11f6c0d3bed220b3764504b0f40be0248d9443185c",
+        "author_id": "Codex implementation team",
+        "verifier_id": "Independent candidate review agent",
+        "verification_actor_kind": "agent",
+        "summary": "Independent corrections closed CR-NATIVE-01/02 on 40826589 and GOV-NATIVE-01/02/03 on b3d33812, with four original governance probes passing unchanged. The b861d2ea schema review passed three focused checks. This partial checkpoint binds identical reachable eb63344c source coverage; an exact final combined-candidate review verdict and terminal delivery gates remain pending.",
+        "artifacts": [
+          {
+            "path": "specs/079-wright-native-authoring/evidence/independent-editor-closure-40826589.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "171b755668bdc6069c2cd16f86789a20302be787d5e7dd4987d824554994f02a"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-governance-closure-b3d33812.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "863717b02626527a0e017485554345895a6d82b81c0396094ef3343b1a161de4"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/independent-web-schema-review-b861d2ea.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "13ca9ef21e0ac931ab2e3a60a0c40d831550aa6b88f1447aa1a0eba651466883"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-GATES-20260905-1",
+        "check_id": "Q-GATES",
+        "attempt": 1,
+        "result": "failed",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "b85cb4ed1409471a53a5f0d1fb5eb4d215011e9214d304acc8608bb505df8b71",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "The eb63344c required gate stopped at a stale schema-16 assertion: program control 361 passed/1 skipped; release 102 passed; native slice 152 passed/10 skipped/1 failed. Original failure retained. Remaining mandatory gate work and skips are not treated as passed.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          }
+        ],
+        "counts": null
+      },
+      {
+        "id": "Q-GATES-20260905-2",
+        "check_id": "Q-GATES",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "6d374726ad1602754bf7fcfdec1bfdd39937a866",
+        "tested_tree": "9c0191e8d6f755b8c965409398e20181bf801410",
+        "scope_sha256": "7c8c86690799cb0cb09800ebbc2f3c2ff063d1fb56eb3ae0566e42c106c0fb4c",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Test-only correction 6d374726 passed 17 affected checks. A subsequent coverage slice reported 235 passed, 10 skipped, one resource warning and 85.28% coverage in 31.75s; counts here describe only that coverage slice. Full required-gate completion is not established, and the original failure remains attempt 1.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-coverage-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "b74367c2be23887b43aa879f073a4630901098b71bf6e8f1770a555c4cd28c38"
+          }
+        ],
+        "counts": {
+          "total": 245,
+          "passed": 235,
+          "failed": 0,
+          "skipped": 10,
+          "not_run": 0
+        }
+      },
+      {
+        "id": "Q-PACKAGING-20260905-2",
+        "check_id": "Q-PACKAGING",
+        "attempt": 2,
+        "result": "inconclusive",
+        "observed_at": "2026-09-05T00:54:27.426421Z",
+        "tested_commit": "eb63344cbebf18d7461fdbdacd7a2224ffe2bfac",
+        "tested_tree": "ae3f686e819bc0ed4fa8e1cd32de2327bb2eb326",
+        "scope_sha256": "9d3f67abf6a3ecb67d1c9ba9c0efad5d174995a013b1f998fafdbee99bd96b7b",
+        "author_id": "Codex implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "eb63344c built local image sha256:9b42a07d3ed4d24eb746daab9a05f5ed5e3a124f51a26c4042178275fa63dbfd and networked smoke exited 0. Cold network-none startup failed dependency synchronization. Correction 404269e9 awaits independent review and rebuilt-image verification. No offline Docker, different-version upgrade, other-OS, dev deployment or full packaging pass is claimed.",
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-image-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "02bd4cf5dac20f97565927bcd76f8a5650671d097428eb0318c0314fcdbaa236"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-gate-coverage-checkpoint-6d374726.md",
+            "commit": "a36dc98dd43a4a32a14b1a5bcd2adf23f06338bb",
+            "sha256": "b74367c2be23887b43aa879f073a4630901098b71bf6e8f1770a555c4cd28c38"
+          }
+        ],
+        "counts": null
       }
     ],
     "blockers": [
@@ -1243,12 +1404,25 @@
         ],
         "check_ids": [],
         "observed_at": "2026-09-04T21:37:44Z"
+      },
+      {
+        "id": "B-OFFLINE-DOCKER",
+        "summary": "The built eb63344c image passed networked smoke but failed cold startup with networking disabled during dependency synchronization.",
+        "owner": "native editor / coordinator",
+        "required_action": "Independently review correction 404269e9, integrate it deliberately, rebuild and verify cold startup and native process behavior with networking disabled.",
+        "task_ids": [
+          "T029"
+        ],
+        "check_ids": [
+          "Q-PACKAGING"
+        ],
+        "observed_at": "2026-09-05T00:54:27.426421Z"
       }
     ],
     "next_task_ids": [
-      "T027",
-      "T029",
       "T030",
+      "T029",
+      "T027",
       "T028",
       "T031"
     ],
@@ -1285,7 +1459,7 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "997e561088c6b39344aee77856b909f7cd69cbe2",
+      "candidate_commit": "6d374726ad1602754bf7fcfdec1bfdd39937a866",
       "pull_requests": [],
       "merged_commit": null,
       "deployment_check_ids": [
