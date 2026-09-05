@@ -514,6 +514,12 @@
       "feature_state": "IMPLEMENTATION_AUTHORIZED",
       "action": "START_NATIVE_MILESTONE_IMPLEMENTATION",
       "requires_human_approval": false
+    },
+    {
+      "program_state": "PROGRAM_ACTIVE",
+      "feature_state": "INDEPENDENTLY_VERIFIED",
+      "action": "PREPARE_NATIVE_SCOPED_PR",
+      "requires_human_approval": false
     }
   ],
   "wip_limits": {

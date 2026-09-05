@@ -97,6 +97,14 @@ the exact `HEAD`. This mirrors the non-mutating identity used by GitHub's synthe
 merge checkout and prevents a locally named implementation worktree from hiding a
 lease/worktree mismatch that would fail pull-request validation.
 
+EPP-N01 may use the [prospective scoped implementation delivery rule](../programs/engineering-process-platform/coordinator-state-machine.md#prospective-native-implementation-delivery-revision-98-onward).
+It passes through these same states and gates with an exact-candidate independent
+technical review, a closed lease, and an explicit partition of delivered and
+pending tasks. Human usability, actual dev deployment, and final reporting may
+remain pending without being counted as passed. This does not waive tests, CI,
+independent review, security/compatibility failures, or any required merge gate;
+the authoritative validator enforces the scoped record and code freshness.
+
 The full merge gate, Linux quality job, and Windows backend job fetch or retain
 full Git history because the program-control tests verify immutable historical
 objects. After their focused program-control and native-runtime runs, their broad

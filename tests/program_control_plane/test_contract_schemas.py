@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 from jsonschema.validators import validator_for
 
+from program_control.git_subject import GitReader
 from program_control.validation import _validate_documents
 
 
@@ -160,7 +161,7 @@ def test_epp_f01b_source_catalog_is_closed_to_twenty_sources(
     ]
 
 
-def test_epp_f02_source_admission_is_exact_and_parity_bound(
+def test_native_source_admission_preserves_closed_catalog_and_f02_evidence(
     repository_root: Path,
 ) -> None:
     planning = repository_root / "specs/077-browser-program-status/contracts"
@@ -195,9 +196,19 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     assert planning_catalog == packaged_catalog
     assert len(planning_catalog["sources"]) == 20
     feature_tasks = planning_catalog["sources"]["feature_tasks"]
-    assert feature_tasks["path"] == "specs/078-process-definition-view/tasks.md"
-    assert "EPP-F02" in feature_tasks["selection_rule"]
+    assert feature_tasks["path"] == "specs/079-wright-native-authoring/tasks.md"
+    assert "EPP-N01" in feature_tasks["selection_rule"]
     assert "EPP-F01B task graph" not in feature_tasks["selection_rule"]
+    historic_catalog = json.loads(
+        GitReader(repository_root).blob(
+            "a69cb74405350fc90f2c9ae91c82eec6fd17e91d",
+            "specs/077-browser-program-status/contracts/program-status-source-catalog.json",
+        )
+    )
+    assert len(historic_catalog["sources"]) == 20
+    assert historic_catalog["sources"]["feature_tasks"]["path"] == (
+        "specs/078-process-definition-view/tasks.md"
+    )
 
     work_registry = load(program / "work-registry.json")
     active = [
@@ -205,9 +216,9 @@ def test_epp_f02_source_admission_is_exact_and_parity_bound(
     ]
     assert active == [
         {
-            "feature_id": "EPP-F02",
-            "tasks_path": "specs/078-process-definition-view/tasks.md",
-            "roadmap_item_id": "EPP-F02",
+            "feature_id": "EPP-N01",
+            "tasks_path": "specs/079-wright-native-authoring/tasks.md",
+            "roadmap_item_id": "EPP-N01",
             "active_feature": True,
         }
     ]
@@ -506,6 +517,7 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
     if lease is None:
         assert current["feature_state"] in {
             "BLOCKED",
+            "AUTHOR_VERIFIED",
             "CANDIDATE_FROZEN",
             "INDEPENDENTLY_VERIFIED",
             "PUSH_AUTHORIZATION_PENDING",
@@ -521,7 +533,10 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             )
         return
     allowed = lease["allowed_paths"]
-    assert "docs/programs/engineering-process-platform/**" in allowed
+    assert any(
+        path.rstrip("/*") == "docs/programs/engineering-process-platform"
+        for path in allowed
+    )
     assert "src/**" not in allowed
     if lease["lease_mode"] == "planning":
         assert any(path.startswith("specs/") for path in allowed)
@@ -530,13 +545,14 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
     else:
         assert lease["feature_id"] == current["current_feature"]
         assert "edit_allowlisted_paths" in lease["allowed_actions"]
+        registry = load(
+            repository_root
+            / "docs/programs/engineering-process-platform/work-registry.json"
+        )
         task_contracts = [
-            path
-            for path in (repository_root / "specs").glob("*/tasks.md")
-            if any(
-                line.startswith("**Authority**:") and lease["feature_id"] in line
-                for line in path.read_text("utf-8").splitlines()
-            )
+            repository_root / row["tasks_path"]
+            for row in registry["task_sources"]
+            if row["feature_id"] == lease["feature_id"]
         ]
         assert len(task_contracts) == 1
         task_text = task_contracts[0].read_text("utf-8")
@@ -565,6 +581,10 @@ def test_task_implementation_paths_stay_inside_lease(repository_root: Path) -> N
             if not any(
                 fnmatch.fnmatchcase(path, pattern)
                 or (pattern.endswith("/**") and path == pattern[:-3])
+                or (
+                    not any(char in pattern for char in "*?[")
+                    and path.startswith(pattern + "/")
+                )
                 for pattern in allowed
             )
         }

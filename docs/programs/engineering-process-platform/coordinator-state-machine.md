@@ -82,6 +82,57 @@ The current state is authoritative only in [`program-state.json`](program-state.
 | `ROLLED_BACK` | Restore recorded prior exact subject and verify health/state. | terminal or new proposed repair feature |
 | `BLOCKED` / `STOPPED` | Preserve evidence and request exact missing authority/decision. | explicit recovery/restart transition only |
 
+### Prospective native implementation delivery (revision 98 onward)
+
+The [standing native goal](evidence/authorizations/AUTH-EPP-N01-2026-001.json)
+permits delivery of an independently useful implementation before every milestone
+acceptance obligation is complete. For EPP-N01 only, the ordinary feature states
+above describe the exact **scoped implementation candidate** when
+`scoped_checkpoint` is present. They do not assert whole-milestone completion.
+Historical approvals, transitions, and the revision 94–96 dashboard checkpoints
+retain their original meanings.
+
+Use the existing edges: `IMPLEMENTING` → `AUTHOR_VERIFIED` → `CANDIDATE_FROZEN`
+→ `INDEPENDENTLY_VERIFIED` → `PUSH_AUTHORIZATION_PENDING` → `PR_READY`
+→ `DEV_MERGE_READY` → `DEV_INTEGRATED`. Each edge has its own append-only state
+snapshot and transition. Verification events may preserve a state but cannot
+jump between these states. Close the mutating lease before freezing the scoped
+candidate. Repairs reopen a bounded lease through the existing repair edges;
+changed implementation requires a new candidate and independent review.
+
+The checkpoint names the candidate commit/tree and implemented task IDs. Its
+`pending_task_ids` must partition the complete registered 32-task milestone with
+the included IDs, and `whole_feature_complete` stays false. Author verification
+and freezing use `awaiting_independent_review`; independent verification and the
+subsequent delivery states require `independently_verified` and a digest-bound
+record under `evidence/reviews/NATIVE-REVIEW-*.json`, conforming to
+`schemas/native-candidate-review.schema.json`. The separate reviewer records
+their own identity, all implementation author identities, the exact candidate,
+review of the entire candidate, critical reruns, and closure of actionable
+findings. An agent technical review is not human usability evidence.
+
+Only status/evidence metadata may follow the reviewed candidate without a new
+review. A product, test, contract, policy, dependency, or packaging change
+invalidates the candidate; the validator compares actual Git paths and trees.
+At `INDEPENDENTLY_VERIFIED`, `PREPARE_NATIVE_SCOPED_PR` records the already-granted
+push/dev-PR authority. It does not invent an exact-subject approval or grant
+main, publication, or production authority.
+
+Human study T028, postintegration deployment T031, final reporting T032, and
+other explicitly pending task obligations remain visible. Pending human study
+does not block a scoped implementation PR; failures that affect safe or correct
+delivery do. Every required push/merge test, security and compatibility check,
+independent review, and required terminal CI result still applies to the full
+candidate. T030 cannot be marked complete before its gates and CI are complete.
+The fast gate retains its existing delivery-state and closed-lease requirements.
+
+After merge, record the actual PR and dev commit before claiming integration;
+then verify the integrated build. `DEV_INTEGRATED` is not deployment evidence.
+The scoped path stops there: whole-milestone acceptance and
+`DEV_DEPLOYMENT_VERIFIED` require the outstanding acceptance and human evidence,
+with a truthful final registry/dashboard reconciliation. Do not remove a scoped
+checkpoint merely to evade its candidate/review checks or declare completion.
+
 For EPP-F01, planning-only repair evidence uses `BLOCKED` → `BLOCKED` with `state_domain=repair`, `event_kind=repair_checkpoint`, no lease, and a closed planning/re-analysis approval bound to the exact discovery checkpoint. It may amend and audit the future approval subject but cannot classify the committed-identity cause resolved or mutate implementation files.
 
 After exact V4 approval, the feature recovery edge is `BLOCKED` → `IMPLEMENTATION_AUTHORIZED`. It is legal only when separate same-subject material-change and feature-implementation records accept DEC-P0-016, bind the frozen 69-task subject and exact correction-profile digest, all manifest digests match, and the bounded lease is reactivated atomically. The sole action is `START_EPP_F01_IMPLEMENTATION`. The coordinator then passes the existing preflight edge `IMPLEMENTATION_AUTHORIZED` → `IMPLEMENTING` and, before any correction mutation, records `IMPLEMENTING` → `REPAIRING` for stable cause `EPP-F01-US1-COMMITTED-IDENTITY-001`. Recovery never jumps directly from `BLOCKED` to `IMPLEMENTING`, never consumes a repair attempt during planning, and never expands the approved task/path envelope.

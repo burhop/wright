@@ -3811,6 +3811,20 @@ def _validate_state_chain(
                             "POLICY_EDGE",
                         )
                     )
+            elif (
+                transition.get("feature_id") == "EPP-N01"
+                and new_revision >= 98
+                and domain == "feature"
+                and pair[0] != pair[1]
+            ):
+                findings.append(
+                    _finding(
+                        "LIFECYCLE_EDGE_INVALID",
+                        "fatal",
+                        transition_id,
+                        "NATIVE_DELIVERY_USES_EXISTING_LIFECYCLE",
+                    )
+                )
             if isinstance(prior, Mapping) and isinstance(new, Mapping):
                 if (
                     prior.get("schema_version") == "1.0"
@@ -3996,17 +4010,95 @@ def evaluate_approval_history(
     return sorted(findings, key=Finding.sort_key), selected
 
 
+NATIVE_FROZEN_STATES = frozenset(
+    {"IMPLEMENTING", "AUTHOR_VERIFIED", "CANDIDATE_FROZEN"}
+)
+NATIVE_REVIEWED_STATES = frozenset(
+    {
+        "INDEPENDENTLY_VERIFIED",
+        "PUSH_AUTHORIZATION_PENDING",
+        "PR_READY",
+        "DEV_MERGE_READY",
+        "DEV_INTEGRATED",
+    }
+)
+
+
 def _native_scoped_checkpoint(state: Mapping[str, Any]) -> bool:
     checkpoint = state.get("scoped_checkpoint")
     return (
         state.get("current_feature") == "EPP-N01"
         and state.get("revision", 0) >= 94
-        and state.get("feature_state") == "IMPLEMENTING"
         and isinstance(checkpoint, Mapping)
-        and checkpoint.get("status") == "awaiting_independent_review"
+        and (
+            (
+                state.get("feature_state") in NATIVE_FROZEN_STATES
+                and checkpoint.get("status") == "awaiting_independent_review"
+            )
+            or (
+                state.get("revision", 0) >= 98
+                and state.get("feature_state") in NATIVE_REVIEWED_STATES
+                and checkpoint.get("status") == "independently_verified"
+            )
+        )
         and bool(checkpoint.get("task_ids"))
         and checkpoint.get("whole_feature_complete") is False
         and state.get("approval", {}).get("authority_kind") == "standing_user_scope"
+    )
+
+
+def _validate_native_delivery_review(
+    documents: Mapping[str, Any],
+    program_root: str,
+    state: Mapping[str, Any],
+    observed_at: datetime,
+) -> bool:
+    """Bind a scoped delivery claim to independent review, never human acceptance."""
+
+    checkpoint = state["scoped_checkpoint"]
+    milestone = documents[f"{program_root}/work-registry.json"]["milestone"]
+    registered = {row["id"] for row in milestone["tasks"]}
+    included = set(checkpoint["task_ids"])
+    pending = set(checkpoint.get("pending_task_ids", []))
+    if (
+        included & pending
+        or included | pending != registered
+        or not pending
+        or milestone.get("id") != "NATIVE-01"
+        or milestone.get("feature_id") != "EPP-N01"
+    ):
+        return False
+    review_ref = checkpoint.get("independent_review")
+    if checkpoint["status"] == "awaiting_independent_review":
+        return review_ref is None
+    if not isinstance(review_ref, Mapping):
+        return False
+    path = review_ref.get("path", "")
+    if not re.fullmatch(r"evidence/reviews/NATIVE-REVIEW-[A-Z0-9-]+\.json", path):
+        return False
+    review = documents.get(f"{program_root}/{path}")
+    schema = documents.get(
+        f"{program_root}/schemas/native-candidate-review.schema.json"
+    )
+    if (
+        not isinstance(review, Mapping)
+        or not isinstance(schema, Mapping)
+        or validate_schema(schema, review)
+    ):
+        return False
+    reviewed_at = _parse_utc(review["reviewed_at"])
+    return (
+        review_ref.get("record_digest") == canonical_digest(review)
+        and review["candidate_commit"] == checkpoint["candidate_commit"]
+        and review["candidate_tree"] == checkpoint["candidate_tree"]
+        and set(review["task_ids"]) == included
+        and bool(review["reviewer_identity"].strip())
+        and review["reviewer_identity"].strip().casefold()
+        not in {
+            author.strip().casefold() for author in review["implementation_authors"]
+        }
+        and reviewed_at is not None
+        and reviewed_at <= observed_at.astimezone(timezone.utc)
     )
 
 
@@ -4179,6 +4271,23 @@ def validate_roadmap_approval_and_lease(
                     )
                 )
     lease = state.get("active_mutating_lease")
+    native_delivery = (
+        current_feature == "EPP-N01"
+        and state.get("revision", 0) >= 98
+        and feature_state
+        in (NATIVE_FROZEN_STATES | NATIVE_REVIEWED_STATES) - {"IMPLEMENTING"}
+    )
+    if (
+        "scoped_checkpoint" in state or native_delivery
+    ) and not _native_scoped_checkpoint(state):
+        findings.append(
+            _finding(
+                "NATIVE_SCOPED_DELIVERY_INVALID",
+                "fatal",
+                "program-state.json",
+                "NATIVE_SCOPED_STATE_AND_REVIEW_REQUIRED",
+            )
+        )
     lease_closed = feature_state in {
         "BLOCKED",
         "CANDIDATE_FROZEN",
@@ -4226,7 +4335,23 @@ def validate_roadmap_approval_and_lease(
                     for path in changes
                 )
             )
-        except (GitSubjectError, KeyError, TypeError):
+            if state.get("revision", 0) >= 98:
+                valid_checkpoint = (
+                    valid_checkpoint
+                    and _validate_native_delivery_review(
+                        documents, program_root, state, observed_at
+                    )
+                )
+                tasks_text = reader.blob(
+                    source_commit, "specs/079-wright-native-authoring/tasks.md"
+                ).decode("utf-8")
+                implemented = set(
+                    re.findall(r"^- \[[xX]\] (T\d{3})\b", tasks_text, re.MULTILINE)
+                )
+                valid_checkpoint = (
+                    valid_checkpoint and set(checkpoint["task_ids"]) <= implemented
+                )
+        except (GitSubjectError, KeyError, TypeError, UnicodeDecodeError):
             valid_checkpoint = False
         if not valid_checkpoint:
             findings.append(

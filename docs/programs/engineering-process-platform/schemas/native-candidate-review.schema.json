@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/programs/epp/native-candidate-review.schema.json",
+  "title": "Native implementation candidate independent technical review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "feature_id",
+    "review_type",
+    "review_scope",
+    "candidate_commit",
+    "candidate_tree",
+    "task_ids",
+    "reviewer_identity",
+    "implementation_authors",
+    "reviewed_at",
+    "result",
+    "open_actionable_findings",
+    "human_study_evidence",
+    "evidence"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "../../schemas/native-candidate-review.schema.json"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "feature_id": {
+      "const": "EPP-N01"
+    },
+    "review_type": {
+      "const": "independent_technical"
+    },
+    "review_scope": {
+      "const": "entire_candidate"
+    },
+    "candidate_commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "candidate_tree": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "task_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^T0(?:0[1-9]|[12][0-9]|3[0-2])$"
+      }
+    },
+    "reviewer_identity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "implementation_authors": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "result": {
+      "const": "passed"
+    },
+    "open_actionable_findings": {
+      "const": 0
+    },
+    "human_study_evidence": {
+      "const": false
+    },
+    "evidence": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000,
+      "description": "Independent reviewer records inspected scope, focused reruns, retained original findings and their exact-candidate closure evidence. This is technical review, not a signature or human study."
+    }
+  }
+}
