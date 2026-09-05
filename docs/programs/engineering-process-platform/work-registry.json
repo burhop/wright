@@ -2126,6 +2126,65 @@
             "sha256": "6069172a0aa78b0d79399be0e359a41e3370876788b914f604efde31bf6c159f"
           }
         ]
+      },
+      {
+        "id": "Q-REVIEW-0aae81db-7",
+        "check_id": "Q-REVIEW",
+        "attempt": 7,
+        "result": "passed",
+        "observed_at": "2026-09-05T07:01:08.066459Z",
+        "tested_commit": "7f55b31cb754421a605f2e7aff1d676ba501606d",
+        "tested_tree": "ebce3a4a68aaa62cff8b50444a727ef70233ba2d",
+        "scope_sha256": "f26b7e58035039b4f74c4d732c5b217cd3c2b06e92b4895b0ebe08506bc0f317",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Actual independent entire-candidate review and metadata correspondence passed for the reconstructed frozen subject. The original typed review is retained verbatim; no old execution is presented as a new run. Human acceptance, required push/CI and dev delivery remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-7F55B31C.json",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "93914c0803744f6af4dfda61aaf9ee2d107e825d4b922d631b4dcf8b2db1f7a5"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-40ebc645-6",
+        "check_id": "Q-PACKAGING",
+        "attempt": 6,
+        "result": "passed",
+        "observed_at": "2026-09-05T06:20:50.823991Z",
+        "tested_commit": "40ebc645ddb641503706dcb3a7d9c84a2b685359",
+        "tested_tree": "29f573a09d7e1cbe60351eb21065105286b008bc",
+        "scope_sha256": "e372ec8017f1fdea928801e82b3076ee2afc589d5d80d73519d39b1dda4ab7b6",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Bounded Windows-native/Linux-amd64-Docker packaging acceptance passed: actual archives, offline startup, legacy/retention, actual predecessor16/current17 recovery and in-image native tracing. Exact source/artifact distinctions, original setup failures and host limits remain explicit; no broader platform or publication claim.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-tracing-40ebc645/independent-docker-otel-closure-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "41cbef7de9bf71ce82f54c1e5968b6fbd3f8646d9fa610180dcf1e40bb866e35"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-predecessor-recovery-20260905/independent-packaged-recovery-closure-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "0ef0a297d4c23a985b1f08a11a8e1d86b9a60066b6855e82b6210bbe8e23242d"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-package-provenance-review-40ebc645.md",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "64176a506281e8c5182f93d33e725a13f96d37152224fcd6c08565e9f3172274"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/docker-browser-public-projection.json.txt",
+            "commit": "e161a886a8b28c51bead23db6d4fd6bfb5fa5103",
+            "sha256": "d6dc82d5d5a002fc2d7725ad3032b401d3b924a06507099e60342b032c2499a1"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -2155,25 +2214,23 @@
       },
       {
         "id": "B-FRESH-NATIVE-CANDIDATE",
-        "summary": "Bounded composed verification completed; final exact-candidate review, packaging consolidation and required push/CI checks remain pending. No later full-script exit0 is claimed.",
+        "summary": "The frozen candidate passed independent review and bounded packaging acceptance. Required push checks, terminal CI and dev delivery remain pending.",
         "owner": "coordinator and independent reviewer",
-        "required_action": "Finish the independent exact-candidate review and packaging scope assessment, run required push/history checks and inspect terminal dev PR CI. Preserve the separate human follow-up.",
+        "required_action": "Run the required push gate, inspect all terminal PR CI, merge through the dev PR and verify the actual published development image. Human usability remains a separate follow-up.",
         "task_ids": [
-          "T027",
-          "T029",
-          "T030"
+          "T030",
+          "T031",
+          "T032"
         ],
         "check_ids": [
-          "Q-REVIEW",
-          "Q-PACKAGING",
-          "Q-GATES"
+          "Q-GATES",
+          "Q-INTEGRATION",
+          "Q-DEV"
         ],
-        "observed_at": "2026-09-05T05:59:48.311128+00:00"
+        "observed_at": "2026-09-05T06:28:45.782409Z"
       }
     ],
     "next_task_ids": [
-      "T027",
-      "T029",
       "T030",
       "T031",
       "T032"
