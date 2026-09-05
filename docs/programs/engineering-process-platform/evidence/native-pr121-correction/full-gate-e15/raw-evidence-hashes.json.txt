@@ -1,0 +1,72 @@
+{
+  "gate-log": {
+    "filename": "dev-merge-gate-e15c0749-20260905T091833Z.log",
+    "bytes": 504047,
+    "sha256": "c8434a942852c669e7a4a8ace9fd93de2dca902d4143c3d11e7fa6238450ed06"
+  },
+  "gate-observation": {
+    "filename": "dev-merge-gate-e15c0749-20260905T091833Z.log.observation.json",
+    "bytes": 848,
+    "sha256": "c96151f756bd18b28ea6c0f83be7b1db1a5bd51d7c4806cc7523612f3bbddcf5"
+  },
+  "gate-source-script": {
+    "filename": "check-dev-merge.sh",
+    "bytes": 9317,
+    "sha256": "10ff885e81f7ad53e14f1c907a6a8125f316e0a0544a79383e2af8847fdc2e3d"
+  },
+  "current-image-scan": {
+    "filename": "scan.json",
+    "bytes": 1011,
+    "sha256": "4cda4e8b862da116af200b501dd6a06a21dafe8cc3a508290c11502a53ba19d9"
+  },
+  "current-image-scan-report": {
+    "filename": "trivy-private.json",
+    "bytes": 919182,
+    "sha256": "f1a142c138392452e69d7176340e7665d35ea15d31e66e5efefc1aea15fabc4f"
+  },
+  "current-image-scan-log": {
+    "filename": "trivy.log",
+    "bytes": 14704,
+    "sha256": "b8a1ab3b092067914b31c52d728795cae7bf8b94aa3e01cae76e2e684c5c0714"
+  },
+  "current-image-scan-raw-hashes": {
+    "filename": "raw-hashes.json",
+    "bytes": 2277,
+    "sha256": "12b35a53c06a1c2829d5f237042c0d6271dea29603bb06e620384eaf497ab40e"
+  },
+  "generated-lock-after-gate": {
+    "filename": "runtime-extra-lock-after-e15-gate.json",
+    "bytes": 632,
+    "sha256": "21b215a971c189f30a649f86729146a219a1b7fe1c75d4bc7218be1c68edbf4a"
+  },
+  "later-restoration": {
+    "filename": "e15-generated-lock-restoration.json",
+    "bytes": 505,
+    "sha256": "f1e020bf615ddc847340a6127ad8a6243e5eaf60ab164261f5d49d908c36ceae"
+  },
+  "independent-gate-review": {
+    "filename": "complete-gate-e15-independent-review.json",
+    "bytes": 7070,
+    "sha256": "aec1c77af0b06ae07025db9508ed4e5d81537ec54848589f87f9a3af5014f184"
+  },
+  "browser-case-projection": {
+    "filename": "terminal-browser-cases.json.txt",
+    "bytes": 83485,
+    "sha256": "3e2c49e95defe02ed26adeb8048f8c1adfb6febf26611802060b40ec067dd151"
+  },
+  "browser-html-report": {
+    "filename": "index.html",
+    "bytes": 784443,
+    "sha256": "f9ef58bf63af4f2bafa5753c5699d92f44c96db9d998e35ec204668278cf7772"
+  },
+  "fresh-wheel": {
+    "filename": "wright_engineering-0.1.9-py3-none-any.whl",
+    "bytes": 16186300,
+    "sha256": "fe2ca54fa1eb7bd005aa01518cfad4c369562f4af9c41f761b65c8279147dbbf"
+  },
+  "fresh-sdist": {
+    "filename": "wright_engineering-0.1.9.tar.gz",
+    "bytes": 15787832,
+    "sha256": "a254bfe52f4413086832ad0b7effa244c0a4e07e9788a53a46defcebc8b7a4c1"
+  }
+}
