@@ -2185,6 +2185,38 @@
             "sha256": "d6dc82d5d5a002fc2d7725ad3032b401d3b924a06507099e60342b032c2499a1"
           }
         ]
+      },
+      {
+        "id": "Q-PLANNING-f86c2ccf-3",
+        "check_id": "Q-PLANNING",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T06:34:38.611598Z",
+        "tested_commit": "1d811f82bc2748729268ab5b45c852f1e255cc50",
+        "tested_tree": "3d538ee7a338e924464060dd38150a10e923bf4f",
+        "scope_sha256": "3457699a31cf4134936f0ee34238beeae7a974ebc6de38f3dc6ba8ac4a9c30fb",
+        "author_id": "Codex implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Independent current-scope planning rebind passed: only the actually completed T027/T029 checkboxes changed across079; all wording/contracts remain identical. Current28/32 progress and immutable frozen26+6 partition remain distinct. No gate/CI/dev/human completion is inferred.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-acceptance-60ef8672/independent-planning-review-60ef8672.md",
+            "commit": "fe3e1176ebae5501013d4752158dec656ddee0bd",
+            "sha256": "6d0f0f20c0bfbb261d22f1107e07cfe7d2feb8ffbdb071bcd8ab193224112247"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-4419a3c3.md",
+            "commit": "0ec1378eab73f6610390d0abd579342234a520e2",
+            "sha256": "6069172a0aa78b0d79399be0e359a41e3370876788b914f604efde31bf6c159f"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-dependency-and-security-20260905/independent-planning-rebind-f86c2ccf.md",
+            "commit": "8c326bfc17173fe9852fffa51ba5709c9bdef09c",
+            "sha256": "bba40076517e89fa6415f763470a014541229468a8367c8997e7b5fd2193833a"
+          }
+        ]
       }
     ],
     "blockers": [
