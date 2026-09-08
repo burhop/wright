@@ -135,15 +135,17 @@ cannot do so. Reinstatement requires fresh evidence and an explicit review.
 
 ## Initial qualification runner
 
-`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with five
+`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with six
 fixed recipes: public Autodesk help product discovery, OpenSCAD and FreeCAD
 10 × 8 × 6 mm cube exports, a BREP 40 × 20 × 10 mm STEP/STL export, and an
-OASiS scikit-fem Poisson solve. It uses
+OASiS scikit-fem Poisson solve, plus a known-message query against a generated
+ROS 2 SQLite bag. It uses
 actual protocol clients and Wright's production gateway composition; it refuses
 Wright's mock-runner environment. It records three direct sessions, the gateway
 service result, and the actual gateway MCP result. The artifact oracles inspect
-STL dimensions and volume, BREP STEP exchange-file boundaries, or the OASiS VTU
-mesh, field finiteness, boundary values, and expected solution range.
+STL dimensions and volume, BREP STEP exchange-file boundaries, the OASiS VTU
+mesh, field finiteness, boundary values, and expected solution range, or the
+ROSBag SQLite schema, CDR payloads, types, and nanosecond timestamps.
 
 Run the script inside a newly created Intel Linux Wright container, with candidate
 source mounted read-only at `/candidate`, evidence output mounted at `/evidence`,
@@ -186,6 +188,16 @@ OASiS publishes generic top-level `core`, `tools`, and `server` modules which ca
 otherwise collide with Wright's packages. The runner also starts a deliberately
 slow solve with a one-second Wright deadline and verifies that no solver process
 remains after the stdio transport is retired.
+
+For `rosbag-mcp-pypi`, install no system prerequisite. The catalog pins the
+`rosbag-mcp==0.2.0` wheel, MCP SDK 1.28.1, `rosbags==0.11.5`, NumPy 2.5.3,
+Matplotlib 3.11.1, and Pillow 12.3.0 under uv-managed Python 3.12. Keep the
+child `PYTHONPATH` empty. The runner creates a deterministic two-message ROS 2
+SQLite bag, queries the first message through three direct sessions and both
+gateway layers, and checks the database and CDR bytes independently. The
+package's repository link is unavailable and repeat adoption is unknown, so the
+qualification expires after 30 days and remains limited to Linux known-message
+retrieval.
 
 ## Protocol boundaries
 

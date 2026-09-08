@@ -3554,6 +3554,128 @@ servers:
     replacement_ids:
     - freecad-mcp-nekanat
     - freecad-addon-robust
+- id: rosbag-mcp-pypi
+  name: ROSBag MCP
+  vendor: Junhyeok Choi
+  description: Packaged MCP server for offline ROS 1, ROS 2 SQLite, and MCAP inspection, message queries, analysis, filtering, and export.
+  domains:
+  - robotics
+  - engineering-data
+  tags:
+  - open-source
+  - local
+  - rosbag
+  - test-data
+  transport: stdio
+  command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - rosbag-mcp==0.2.0
+  - --with
+  - mcp==1.28.1
+  - --with
+  - rosbags==0.11.5
+  - --with
+  - numpy==2.5.3
+  - --with
+  - matplotlib==3.11.1
+  - --with
+  - pillow==12.3.0
+  - rosbag-mcp
+  launch_env:
+    PYTHONPATH: ''
+  source_url: https://pypi.org/project/rosbag-mcp/
+  package_url: https://pypi.org/project/rosbag-mcp/0.2.0/
+  image_url: https://pypi.org/static/images/logo-small.8998e9d1.svg
+  locality: local
+  weight: medium
+  env_vars: []
+  dependencies:
+    system: []
+    python:
+    - python==3.12.*
+    - rosbag-mcp==0.2.0
+    - mcp==1.28.1
+    - rosbags==0.11.5
+    - numpy==2.5.3
+    - matplotlib==3.11.1
+    - pillow==12.3.0
+    node: []
+  aliases:
+  - rosbag-mcp
+  verification_state: community_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-only
+  platform_support:
+    windows_11_x64:
+      status: unknown
+      tested: false
+      notes: Package publishes a universal wheel, but Wright has not qualified Windows path and artifact behavior.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Clean Wright Intel Linux qualification passed three direct known-message queries and both Wright gateway layers with independent SQLite and CDR inspection.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Python wheel availability and ROS bag behavior are not tested.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Universal wheel is published; Wright qualification is pending.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Universal wheel is published; Wright qualification is pending.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_read_approval
+  - workspace_write_approval
+  validation_result:
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Clean Wright Intel Linux qualification installed the exact rosbag-mcp 0.2.0 wheel and pinned MCP SDK 1.28.1 plus its data stack. Three direct sessions and both Wright gateway layers retrieved a known std_msgs/msg/String from a generated ROS 2 bag. Independent SQLite and CDR inspection confirmed the topic, type, two timestamps, and hello/world payloads. A missing bag was reported in tool content and disposable cleanup passed.
+    environment: clean-wright-linux-x64-container
+    missing_dependencies: []
+  engineering_stages:
+  - test_quality
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649
+      workflow: ROS 2 known-message retrieval
+      source_revision: rosbag-mcp 0.2.0 wheel 92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0; Python 3.12.12; MCP SDK 1.28.1; rosbags 0.11.5
+      wright_revision: 9442680a-plus-rosbag-qualification
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/rosbag-pypi-linux.json
+      evidence_sha256: 6779ea5e6750199e1f283cd59bb950b30dabf2b5662ac87f7379654895649462
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: rosbag-mcp-binabik
   name: ROSBag MCP
   vendor: github.com
@@ -3577,7 +3699,7 @@ servers:
     node: []
   aliases: []
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: non_working
   risk_level: low
   deployment_mode: local-only
   platform_support:
@@ -3607,11 +3729,11 @@ servers:
   approval_gates:
   - workspace_read_approval
   validation_result:
-    status: passed
-    validated_at: '2026-07-10'
+    status: failed
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed with caveat: cloned binabik-ai/mcp-rosbags at 9b6b3b7a7b10d2ef004c1b50d38395d07e0b47b6, installed `requirements.txt`, then pinned `rosbags==0.10.10` because the current unpinned rosbags release no longer exports `deserialize_cdr`. The source command `python src/server.py` initialized MCP serverInfo `rosbag-memory` 1.28.1, listed 15 tools, discovered generated ROS 2 bag `wright_chatter`, `bag_info` reported `/chatter` with 2 messages over 1 second, and `get_message_at_time` returned `std_msgs/msg/String` data `hello`.'
-    environment: ubuntu-linux-x64-container
+    message: Fresh packaging review confirmed that commit 9b6b3b7a7b10d2ef004c1b50d38395d07e0b47b6 still pins neither MCP nor rosbags. Its setup.py advertises mcp-rosbag-server=server:main but omits top-level server.py from the built package, so a clean installed launch fails with ModuleNotFoundError. Historical source-checkout operation remains recorded, but the distributable is not dependable.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: null
@@ -3621,13 +3743,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Confirm the rosbags dependency pin or upstream repair, then repeat known-message parsing through the gateway.
+    next_action: Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package.
     adoption: unknown
+    replacement_ids:
+    - rosbag-mcp-pypi
 - id: calculix-simulation
   name: CalculiX Simulation
   vendor: github.com

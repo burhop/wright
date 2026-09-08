@@ -17,6 +17,8 @@ import math
 import os
 from pathlib import Path
 import re
+import shutil
+import sqlite3
 import struct
 import sys
 import tempfile
@@ -36,7 +38,7 @@ def digest(value):
 
 
 @asynccontextmanager
-async def client_session(command, env_overrides=None):
+async def client_session(command, env_overrides=None, cwd=None):
     if isinstance(command, str):
         async with httpx.AsyncClient(
             timeout=60, trust_env=False, follow_redirects=False
@@ -53,7 +55,7 @@ async def client_session(command, env_overrides=None):
         child_env.update(env_overrides or {})
         async with stdio_client(
             StdioServerParameters(
-                command=command[0], args=command[1:], env=child_env
+                command=command[0], args=command[1:], env=child_env, cwd=cwd
             )
         ) as (read, write):
             async with ClientSession(read, write) as client:
@@ -257,6 +259,113 @@ def oasis_oracle(result, expected_job_name):
     }
 
 
+async def generate_rosbag_fixture(root):
+    bag_path = root / "wright_chatter"
+    script = '''from pathlib import Path
+from rosbags.rosbag2 import Writer
+from rosbags.typesys import Stores, get_typestore
+
+bag = Path(__import__("sys").argv[1])
+typestore = get_typestore(Stores.ROS2_HUMBLE)
+String = typestore.types["std_msgs/msg/String"]
+with Writer(bag, version=9) as writer:
+    connection = writer.add_connection(
+        "/chatter", String.__msgtype__, typestore=typestore
+    )
+    for timestamp, value in [
+        (1700000000000000000, "hello"),
+        (1700000001000000000, "world"),
+    ]:
+        message = String(data=value)
+        writer.write(
+            connection,
+            timestamp,
+            typestore.serialize_cdr(message, String.__msgtype__),
+        )
+'''
+    fixture_env = dict(os.environ)
+    fixture_env["PYTHONPATH"] = ""
+    process = await asyncio.create_subprocess_exec(
+        "uv",
+        "run",
+        "--isolated",
+        "--python",
+        "3.12",
+        "--with",
+        "rosbags==0.11.5",
+        "python",
+        "-c",
+        script,
+        str(bag_path),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        env=fixture_env,
+    )
+    stdout, stderr = await process.communicate()
+    assert process.returncode == 0, (
+        "ROSBag fixture generation failed: "
+        + (stderr or stdout).decode(errors="replace")[-500:]
+    )
+    return bag_path
+
+
+def rosbag_artifact_oracle(bag_path):
+    metadata = bag_path / "metadata.yaml"
+    databases = list(bag_path.glob("*.db3"))
+    assert metadata.is_file() and len(databases) == 1, "Incomplete ROS 2 bag"
+    database = databases[0]
+    with sqlite3.connect(database) as connection:
+        topics = connection.execute(
+            "SELECT id, name, type, serialization_format FROM topics ORDER BY id"
+        ).fetchall()
+        messages = connection.execute(
+            "SELECT topic_id, timestamp, data FROM messages ORDER BY timestamp"
+        ).fetchall()
+    assert topics == [(1, "/chatter", "std_msgs/msg/String", "cdr")], (
+        "Unexpected ROS 2 topic schema"
+    )
+    assert [row[1] for row in messages] == [
+        1700000000000000000,
+        1700000001000000000,
+    ], "Unexpected ROS 2 timestamps"
+    decoded = []
+    for _, _, data in messages:
+        raw = bytes(data)
+        assert raw[:4] == b"\x00\x01\x00\x00", "Unexpected CDR encoding"
+        length = struct.unpack_from("<I", raw, 4)[0]
+        assert length > 1 and raw[8 + length - 1] == 0, "Invalid CDR string"
+        decoded.append(raw[8 : 8 + length - 1].decode("utf-8"))
+    assert decoded == ["hello", "world"], "Unexpected ROS 2 message content"
+    return {
+        "database_bytes": database.stat().st_size,
+        "database_sha256": hashlib.sha256(database.read_bytes()).hexdigest(),
+        "metadata_sha256": hashlib.sha256(metadata.read_bytes()).hexdigest(),
+        "topic": topics[0][1],
+        "message_type": topics[0][2],
+        "timestamps_ns": [row[1] for row in messages],
+        "messages": decoded,
+    }
+
+
+def rosbag_result_oracle(result):
+    payload = _json_result(result)
+    assert payload["topic"] == "/chatter", "ROSBag MCP returned another topic"
+    assert abs(payload["timestamp"] - 1700000000.0) < 1e-9, (
+        "ROSBag MCP returned another timestamp"
+    )
+    assert payload["msg_type"] == "std_msgs/msg/String", (
+        "ROSBag MCP returned another message type"
+    )
+    message = payload["data"]
+    assert message.get("data") == "hello", "ROSBag MCP returned another message"
+    return {
+        "topic": payload["topic"],
+        "timestamp": payload["timestamp"],
+        "message_type": payload["msg_type"],
+        "message": message,
+    }
+
+
 def exception_leaves(error):
     leaves = []
     stack = [error]
@@ -300,8 +409,6 @@ async def run(args, root, report):
     from data_vault.workspace_repository import WorkspaceRepository
     from data_vault.secret_provider import FileSecretProvider
     from data_vault import install_default_secret_provider
-    import sqlite3
-
     install_default_secret_provider()
     entry = next(entry for entry in load_canonical_entries() if entry.id == args.server)
     from tool_registry.curation_models import qualification_configuration
@@ -355,6 +462,32 @@ async def run(args, root, report):
         if command != expected:
             raise ValueError("Catalog must pin the reviewed OASiS MCP commit")
         os.environ["PYVISTA_OFF_SCREEN"] = "true"
+    elif args.server == "rosbag-mcp-pypi":
+        expected = [
+            "uv",
+            "run",
+            "--isolated",
+            "--python",
+            "3.12",
+            "--with",
+            "rosbag-mcp==0.2.0",
+            "--with",
+            "mcp==1.28.1",
+            "--with",
+            "rosbags==0.11.5",
+            "--with",
+            "numpy==2.5.3",
+            "--with",
+            "matplotlib==3.11.1",
+            "--with",
+            "pillow==12.3.0",
+            "rosbag-mcp",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed ROSBag MCP package")
+        rosbag_path = await generate_rosbag_fixture(root)
+    else:
+        rosbag_path = None
     report.update(
         {
             "server_id": entry.id,
@@ -373,6 +506,7 @@ async def run(args, root, report):
                 "brep-mcp": "BREP box STEP and STL export",
                 "freecad-mcp-nekanat": "FreeCAD box creation and STL export",
                 "oasis-open-fem-agent": "OASiS scikit-fem Poisson solve",
+                "rosbag-mcp-pypi": "ROS 2 known-message retrieval",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -382,9 +516,11 @@ async def run(args, root, report):
     )
     discovered = None
     probe = None
-    direct_env = {"PYTHONPATH": ""} if args.server == "oasis-open-fem-agent" else None
+    isolated_python = {"oasis-open-fem-agent", "rosbag-mcp-pypi"}
+    direct_env = {"PYTHONPATH": ""} if args.server in isolated_python else None
+    direct_cwd = str(root) if args.server == "rosbag-mcp-pypi" else None
     for attempt in range(3):
-        async with client_session(command, direct_env) as client:
+        async with client_session(command, direct_env, direct_cwd) as client:
             info = await client.initialize()
             tools = await client.list_tools()
             selected = {tool.name: tool for tool in tools.tools}
@@ -448,11 +584,29 @@ async def run(args, root, report):
                 report["execute_schema"] = selected["execute_code"].inputSchema
                 output = root / f"direct-{attempt}.stl"
                 probe = freecad_probe(output, f"WrightDirect{attempt}")
-            else:
+            elif args.server == "oasis-open-fem-agent":
                 required = {"discover", "prepare_simulation", "run_simulation"}
                 assert required <= selected.keys(), "OASiS tool surface is incomplete"
                 report["run_schema"] = selected["run_simulation"].inputSchema
                 probe = oasis_probe(f"wright-direct-{attempt}")
+            else:
+                required = {"list_bags", "bag_info", "get_message_at_time"}
+                assert required <= selected.keys(), "ROSBag MCP tool surface is incomplete"
+                report["message_schema"] = selected["get_message_at_time"].inputSchema
+                info = await client.call_tool("bag_info", {"bag_path": str(rosbag_path)})
+                info_payload = _json_result(info)
+                assert info_payload["message_count"] == 2, (
+                    "ROSBag MCP returned the wrong message count"
+                )
+                probe = (
+                    "get_message_at_time",
+                    {
+                        "topic": "/chatter",
+                        "timestamp": 1700000000.0,
+                        "bag_path": str(rosbag_path),
+                        "tolerance": 0.01,
+                    },
+                )
             result = await client.call_tool(*probe)
             assert not result.isError, "Backend reported an error"
             if args.server == "autodesk-product-help-mcp":
@@ -474,8 +628,13 @@ async def run(args, root, report):
                     "FreeCAD result did not report the created box"
                 )
                 report["outcome"] = cube_oracle(output)
-            else:
+            elif args.server == "oasis-open-fem-agent":
                 report["outcome"] = oasis_oracle(result, f"wright-direct-{attempt}")
+            else:
+                report["outcome"] = {
+                    "artifact": rosbag_artifact_oracle(rosbag_path),
+                    "server": rosbag_result_oracle(result),
+                }
             report["steps"].append(
                 {
                     "stage": "direct_protocol_backend_outcome",
@@ -553,6 +712,25 @@ async def run(args, root, report):
                 report["steps"].append(
                     {"stage": "controlled_solver_error", "status": "passed"}
                 )
+            if args.server == "rosbag-mcp-pypi" and attempt == 0:
+                missing = await client.call_tool(
+                    "bag_info", {"bag_path": str(root / "missing-bag")}
+                )
+                missing_text = missing.model_dump_json().lower()
+                assert (
+                    missing.isError
+                    or "not found" in missing_text
+                    or "exist" in missing_text
+                    or "no such file" in missing_text
+                ), (
+                    "ROSBag MCP did not report a missing bag"
+                )
+                report["steps"].append(
+                    {
+                        "stage": "controlled_missing_bag_error_in_content",
+                        "status": "passed",
+                    }
+                )
 
     run_migrations()
     db = str(root / "wright.db")
@@ -586,6 +764,9 @@ async def run(args, root, report):
     )
     workspace = root / "workspace"
     workspace.mkdir()
+    if args.server == "rosbag-mcp-pypi":
+        workspace_bag = workspace / "wright_chatter"
+        shutil.copytree(rosbag_path, workspace_bag)
     WorkspaceRepository(db, secrets=FileSecretProvider(root / "secrets.json")).create(
         "qualification-workspace",
         "qualification-session",
@@ -647,6 +828,16 @@ async def run(args, root, report):
             probe = freecad_probe(workspace / "gateway.stl", "WrightGateway")
         elif args.server == "oasis-open-fem-agent":
             probe = oasis_probe("wright-gateway")
+        elif args.server == "rosbag-mcp-pypi":
+            probe = (
+                "get_message_at_time",
+                {
+                    "topic": "/chatter",
+                    "timestamp": 1700000000.0,
+                    "bag_path": str(workspace_bag),
+                    "tolerance": 0.01,
+                },
+            )
         result = await gateway.call_tool(
             "qualification-session",
             "qualification-call",
@@ -672,8 +863,13 @@ async def run(args, root, report):
             report["gateway_outcome"] = brep_oracle(gateway_output)
         elif args.server == "freecad-mcp-nekanat":
             report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
-        else:
+        elif args.server == "oasis-open-fem-agent":
             report["gateway_outcome"] = oasis_oracle(result, "wright-gateway")
+        else:
+            report["gateway_outcome"] = {
+                "artifact": rosbag_artifact_oracle(workspace_bag),
+                "server": rosbag_result_oracle(result),
+            }
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -748,10 +944,15 @@ async def run(args, root, report):
             report["gateway_mcp_outcome"] = cube_oracle(
                 workspace / "gateway-mcp.stl"
             )
-        else:
+        elif args.server == "oasis-open-fem-agent":
             report["gateway_mcp_outcome"] = oasis_oracle(
                 result, "wright-gateway-mcp"
             )
+        else:
+            report["gateway_mcp_outcome"] = {
+                "artifact": rosbag_artifact_oracle(workspace_bag),
+                "server": rosbag_result_oracle(result),
+            }
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
         )
@@ -801,6 +1002,7 @@ def main():
             "brep-mcp",
             "freecad-mcp-nekanat",
             "oasis-open-fem-agent",
+            "rosbag-mcp-pypi",
         ],
         required=True,
     )

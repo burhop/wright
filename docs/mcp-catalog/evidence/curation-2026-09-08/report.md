@@ -2,11 +2,11 @@
 
 As of 2026-09-08 · policy 2026-09-08.1
 
-Catalog digest: `31fe2323d823ebe4406464567024a80a97db5309f308614a12b9a8839bfedb01`
+Catalog digest: `066a47e6d6ec414c33b355be5e784fda403da3f708ccc90bc8f0abc3ddcfb9c5`
 
 Recorded decisions only; no MCP was installed or tested by this report.
 
-## Curated (5)
+## Curated (6)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -15,8 +15,9 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | freecad-mcp-nekanat | After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown. | Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors. | 2026-10-08 |
 | oasis-open-fem-agent | The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven. | Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout. | 2026-10-08 |
 | openscad-mcp | Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only to the listed environments; repeat user adoption is unknown. | Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation. | 2026-10-08 |
+| rosbag-mcp-pypi | The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven. | Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools. | 2026-10-08 |
 
-## Follow up (60)
+## Follow up (59)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -64,7 +65,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | rescale-mcp-hosted | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | rhino-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | rhino-mcp-easehee | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
-| rosbag-mcp-binabik | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Confirm the rosbags dependency pin or upstream repair, then repeat known-message parsing through the gateway. | 2026-10-08 |
 | siemens-element-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | siemens-xcelerator-developer-portal-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | simscale-api-candidate | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -81,7 +81,7 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | wincc-unified-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | zoo-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | The publisher moved the repository to KittyCAD/mcp; pin a current release and qualify using a dedicated Zoo account. | 2026-10-08 |
 
-## Remove from discovery (9)
+## Remove from discovery (10)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -92,6 +92,7 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | mcp-ui-shopify | MCP Apps/UI infrastructure is not a standalone engineering MCP server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | nvidia-kit-cae-agent-skills | Agent skills and host tooling are not a separately installable MCP server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | revit-mcp | The repository is archived; the desktop-dependent integration has no current Wright workflow qualification. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
+| rosbag-mcp-binabik | The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow. | Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package. | 2026-10-08 |
 | trikos529-openscad | The listing points to a GitHub topic instead of a verified implementation and failed prior validation. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | webmcp-standard | WebMCP is a browser standard; its former cookbook link is not an installable server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 
@@ -105,9 +106,9 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | Analysis and simulation | 1 | 13 |
 | BOM and sourcing | 0 | 1 |
 | Manufacturing and assembly | 0 | 4 |
-| Test and quality | 0 | 7 |
+| Test and quality | 1 | 6 |
 | Release and change management | 0 | 5 |
-| Operations and service | 0 | 8 |
+| Operations and service | 1 | 7 |
 
 This report evaluates recorded evidence; it does not run live qualification.
 Candidate stage assignments describe intended coverage, not proven end-to-end handoffs.

@@ -1563,7 +1563,7 @@ Known problems:
 
 Follow-up: `docs/mcp-catalog/followups/kicad-mcp-lamaalrajih.md`
 
-## ROSBag MCP (`rosbag-mcp-binabik`)
+## ROSBag MCP, historical source checkout (`rosbag-mcp-binabik`)
 
 Source: https://github.com/binabik-ai/mcp-rosbags
 
@@ -1606,16 +1606,68 @@ Known result:
 - `bag_info` reported `/chatter`, 2 messages, and 1 second duration.
 - `get_message_at_time` returned message data `hello`.
 
-Known notes:
+Known problems:
 
-- No published `mcp-rosbags` or `mcp_rosbags` tool package was found in the
-  Python registry during validation.
-- The documented source path works, but `PYTHONPATH` must include
-  `/tmp/rosbag-mcp/src`.
-- `requirements.txt` currently leaves `rosbags` unpinned. The latest resolved
-  version, `rosbags==0.11.3`, failed at MCP startup because
-  `rosbags.serde.deserialize_cdr` is no longer exported.
-- Pinning `rosbags==0.10.10` restored the API and read the generated ROS 2 bag.
+- The documented source-checkout path works only when `PYTHONPATH` includes
+  `/tmp/rosbag-mcp/src` and `rosbags==0.10.10` restores the removed
+  `deserialize_cdr` API.
+- `requirements.txt` leaves both MCP and rosbags unpinned.
+- `setup.py` advertises `mcp-rosbag-server=server:main`, but its package layout
+  omits top-level `server.py`. A clean install therefore fails with
+  `ModuleNotFoundError: No module named 'server'`.
+- This entry is removed from ordinary discovery. Preserve existing source
+  checkouts and historical evidence; use `rosbag-mcp-pypi` for new setups.
+
+## ROSBag MCP, packaged replacement (`rosbag-mcp-pypi`)
+
+Package: https://pypi.org/project/rosbag-mcp/0.2.0/
+
+Run MCP:
+
+```bash
+PYTHONPATH= uv run --isolated --python 3.12 \
+  --with rosbag-mcp==0.2.0 \
+  --with mcp==1.28.1 \
+  --with rosbags==0.11.5 \
+  --with numpy==2.5.3 \
+  --with matplotlib==3.11.1 \
+  --with pillow==12.3.0 \
+  rosbag-mcp
+```
+
+Validation probes:
+
+- `initialize`, `notifications/initialized`, and `tools/list`
+- Three fresh `bag_info` and `get_message_at_time` queries against a generated
+  ROS 2 SQLite bag with two `/chatter` `std_msgs/msg/String` messages
+- The same known-message query through Wright `GatewayService` and
+  `api.gateway_stdio`
+- Direct SQLite and CDR inspection for topic, type, timestamps, and `hello` /
+  `world` payloads
+- A controlled missing-bag call and disposable-container cleanup
+
+Known result:
+
+- `rosbag-mcp==0.2.0` wheel SHA256:
+  `92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0`.
+- MCP initialized and listed 31 tools.
+- Three direct sessions and both Wright gateway layers returned the known
+  `/chatter` message `hello` at `1700000000.0` seconds.
+- Independent inspection found one SQLite topic, two messages at
+  `1700000000000000000` and `1700000001000000000` nanoseconds, and matching CDR
+  strings `hello` and `world`.
+- No MCP-specific host package was installed in the standard Wright base image.
+
+Known limits:
+
+- Keep the MCP 1.28.1 pin. An unconstrained install resolves MCP SDK 2.x, while
+  this server expects the 1.x `Server` API.
+- The PyPI source repository link was unavailable during review. The immutable
+  wheel and its hash support this narrow qualification, but source recovery,
+  maintenance continuity, broader analysis/export behavior, large-bag
+  performance, and repeat user adoption remain follow-up.
+- Missing-bag failures are returned in normal tool content rather than MCP
+  `isError` metadata.
 
 ## OASiS Open FEM Agent (`oasis-open-fem-agent`)
 

@@ -2,11 +2,11 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-08",
   "platform": null,
-  "catalog_sha256": "31fe2323d823ebe4406464567024a80a97db5309f308614a12b9a8839bfedb01",
+  "catalog_sha256": "066a47e6d6ec414c33b355be5e784fda403da3f708ccc90bc8f0abc3ddcfb9c5",
   "counts": {
-    "curated": 5,
-    "follow_up": 60,
-    "removed": 9
+    "curated": 6,
+    "follow_up": 59,
+    "removed": 10
   },
   "lists": {
     "curated": [
@@ -14,7 +14,8 @@
       "brep-mcp",
       "freecad-mcp-nekanat",
       "oasis-open-fem-agent",
-      "openscad-mcp"
+      "openscad-mcp",
+      "rosbag-mcp-pypi"
     ],
     "follow_up": [
       "ansys-fluent-mcp",
@@ -61,7 +62,6 @@
       "rescale-mcp-hosted",
       "rhino-mcp",
       "rhino-mcp-easehee",
-      "rosbag-mcp-binabik",
       "siemens-element-mcp",
       "siemens-xcelerator-developer-portal-mcp",
       "simscale-api-candidate",
@@ -86,6 +86,7 @@
       "mcp-ui-shopify",
       "nvidia-kit-cae-agent-skills",
       "revit-mcp",
+      "rosbag-mcp-binabik",
       "trikos529-openscad",
       "webmcp-standard"
     ]
@@ -211,14 +212,15 @@
     {
       "stage": "test_quality",
       "label": "Test and quality",
-      "curated": [],
+      "curated": [
+        "rosbag-mcp-pypi"
+      ],
       "follow_up": [
         "github-official-mcp",
         "grafana-official-mcp",
         "nvidia-elements-mcp",
         "nvidia-omniverse-isaac-sim-mcp",
         "playwright-mcp",
-        "rosbag-mcp-binabik",
         "solidworks-mcp-python"
       ]
     },
@@ -237,14 +239,15 @@
     {
       "stage": "operations",
       "label": "Operations and service",
-      "curated": [],
+      "curated": [
+        "rosbag-mcp-pypi"
+      ],
       "follow_up": [
         "atlassian-rovo-mcp",
         "grafana-official-mcp",
         "nvidia-elements-mcp",
         "nvidia-omniverse-isaac-sim-mcp",
         "nvidia-omniverse-kit-mcp",
-        "rosbag-mcp-binabik",
         "thingworx-mcp",
         "wincc-unified-mcp"
       ]
@@ -2029,19 +2032,69 @@
         "test_quality",
         "operations"
       ],
-      "validation_status": "passed",
+      "validation_status": "failed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Confirm the rosbags dependency pin or upstream repair, then repeat known-message parsing through the gateway.",
-        "replacement_ids": [],
+        "next_action": "Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package.",
+        "replacement_ids": [
+          "rosbag-mcp-pypi"
+        ],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
+        "review_overdue": false,
+        "limitations": [
+          "Repeat user adoption has not been measured."
+        ]
+      },
+      "concerns": []
+    },
+    {
+      "id": "rosbag-mcp-pypi",
+      "name": "ROSBag MCP",
+      "source_url": "https://pypi.org/project/rosbag-mcp/",
+      "integration_kind": "mcp_server",
+      "hardware_standard": "none",
+      "engineering_stages": [
+        "test_quality",
+        "operations"
+      ],
+      "validation_status": "passed",
+      "curation": {
+        "disposition": "curated",
+        "reason": "The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven.",
+        "owner": "Wright catalog maintainers",
+        "reviewed_at": "2026-09-08",
+        "review_due": "2026-10-08",
+        "next_action": "Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.",
+        "replacement_ids": [],
+        "adoption": "unknown",
+        "adoption_evidence": [],
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "clean-wright-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649",
+            "workflow": "ROS 2 known-message retrieval",
+            "source_revision": "rosbag-mcp 0.2.0 wheel 92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0; Python 3.12.12; MCP SDK 1.28.1; rosbags 0.11.5",
+            "wright_revision": "9442680a-plus-rosbag-qualification",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/rosbag-pypi-linux.json",
+            "evidence_sha256": "6779ea5e6750199e1f283cd59bb950b30dabf2b5662ac87f7379654895649462",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."

@@ -1919,3 +1919,24 @@ Result:
   Only this scikit-fem Linux configuration is curated; OASiS's other solver
   backends remain unqualified. Evidence:
   evidence/curation-2026-09-08/oasis-linux.json.
+
+Problem:
+  The existing `binabik-ai/mcp-rosbags` entry still leaves MCP and rosbags
+  unpinned. Its setup advertises `mcp-rosbag-server=server:main`, but the built
+  package omits top-level `server.py`; a clean installed launch failed with
+  `ModuleNotFoundError`. Its historical source-checkout path also needs obsolete
+  `rosbags==0.10.10`.
+Solution:
+  Removed that broken distribution from ordinary discovery and qualified the
+  separately packaged `rosbag-mcp==0.2.0` wheel with exact MCP and data-stack
+  pins under uv-managed Python 3.12. The test created a deterministic two-message
+  ROS 2 SQLite bag and inspected both SQLite rows and CDR bytes independently.
+Result:
+  Three direct sessions and both Wright gateway layers retrieved `/chatter`
+  message `hello` at the expected timestamp. Independent inspection confirmed
+  the topic type, both nanosecond timestamps, and `hello`/`world` strings. A
+  missing bag produced a diagnostic in normal tool content and cleanup passed.
+  The replacement is curated only for this Linux known-message workflow; its
+  unavailable source-repository link, maintenance continuity, broader tools,
+  large-bag performance, and repeat adoption remain follow-up. Evidence:
+  evidence/curation-2026-09-08/rosbag-pypi-linux.json.
