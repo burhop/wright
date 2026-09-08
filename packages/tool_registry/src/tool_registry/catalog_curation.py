@@ -432,12 +432,14 @@ def main(argv: list[str] | None = None) -> int:
     destination = args.output_dir / f"{filename}.json"
     temporary = destination.with_suffix(".tmp")
     temporary.write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     temporary.replace(destination)
     if args.command == "report":
         (args.output_dir / "report.md").write_text(
-            report_markdown(report), encoding="utf-8"
+            report_markdown(report), encoding="utf-8", newline="\n"
         )
     print(
         json.dumps(

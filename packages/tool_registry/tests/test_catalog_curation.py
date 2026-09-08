@@ -272,6 +272,9 @@ def test_bundled_qualifications_are_bound_to_real_passing_evidence():
             path = (root / scope.evidence_path).resolve()
             assert path.is_relative_to(root)
             raw = path.read_bytes()
+            assert b"\r\n" not in raw, (
+                "Qualification evidence must retain UTF-8/LF bytes across checkouts"
+            )
             assert hashlib.sha256(raw).hexdigest() == scope.evidence_sha256
             evidence = json.loads(raw)
             assert evidence["status"] == "passed" and evidence["cleanup"] == "passed"

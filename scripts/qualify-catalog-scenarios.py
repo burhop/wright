@@ -446,6 +446,7 @@ def main():
     args.output.write_text(
         json.dumps(redact_mapping(report), indent=2, default=str) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(
         json.dumps(

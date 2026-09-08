@@ -3413,7 +3413,7 @@ servers:
       verified_at: '2026-09-08'
       expires_at: '2026-10-08'
       evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/autodesk-help-windows.json
-      evidence_sha256: c321fef95c394689b1b0e5922b41006273392136f64b006206a926f43f3a66ce
+      evidence_sha256: bac35d609c99dd1d350571b9a3951d990ed50308c622fd1f4ef30aa2606ebd0e
       protocol: passed
       backend: passed
       gateway: passed
