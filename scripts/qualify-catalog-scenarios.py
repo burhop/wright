@@ -1,8 +1,8 @@
 """Opt-in real MCP qualification. Run in a disposable Wright environment.
 
-Only two reviewed, credential-free scenarios are allowed. Host prerequisites
-must be installed in the selected disposable container, never the base image.
-This runner produces evidence; it never promotes a catalog entry.
+Only reviewed, credential-free scenarios are allowed. Host prerequisites must
+be installed in the selected disposable container, never the base image. This
+runner produces evidence; it never promotes a catalog entry.
 """
 
 from __future__ import annotations
@@ -13,12 +13,15 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
 import struct
 import sys
 import tempfile
+import traceback
+import xml.etree.ElementTree as ET
 
 import httpx
 from mcp import ClientSession, StdioServerParameters
@@ -33,7 +36,7 @@ def digest(value):
 
 
 @asynccontextmanager
-async def client_session(command):
+async def client_session(command, env_overrides=None):
     if isinstance(command, str):
         async with httpx.AsyncClient(
             timeout=60, trust_env=False, follow_redirects=False
@@ -46,16 +49,18 @@ async def client_session(command):
                 async with ClientSession(read, write) as client:
                     yield client
     else:
+        child_env = dict(os.environ)
+        child_env.update(env_overrides or {})
         async with stdio_client(
             StdioServerParameters(
-                command=command[0], args=command[1:], env=dict(os.environ)
+                command=command[0], args=command[1:], env=child_env
             )
         ) as (read, write):
             async with ClientSession(read, write) as client:
                 yield client
 
 
-def cube_oracle(path):
+def cube_oracle(path, expected_dimensions=(10, 8, 6), expected_volume=480):
     raw = path.read_bytes()
     assert 0 < len(raw) < 1024 * 1024, "Missing or oversized STL"
     if len(raw) >= 84 and 84 + 50 * struct.unpack_from("<I", raw, 80)[0] == len(raw):
@@ -77,7 +82,8 @@ def cube_oracle(path):
         for i in range(3)
     ]
     assert all(
-        abs(actual - expected) < 0.001 for actual, expected in zip(bounds, (10, 8, 6))
+        abs(actual - expected) < 0.001
+        for actual, expected in zip(bounds, expected_dimensions)
     ), "Incorrect cube dimensions"
     volume = 0.0
     for offset in range(0, len(points), 3):
@@ -87,13 +93,186 @@ def cube_oracle(path):
             + a[1] * (b[2] * c[0] - b[0] * c[2])
             + a[2] * (b[0] * c[1] - b[1] * c[0])
         ) / 6
-    assert abs(abs(volume) - 480) < 0.01, "Incorrect mesh volume"
+    assert abs(abs(volume) - expected_volume) < 0.01, "Incorrect mesh volume"
     return {
         "bytes": len(raw),
         "sha256": hashlib.sha256(raw).hexdigest(),
         "dimensions_mm": bounds,
         "volume_mm3": abs(volume),
     }
+
+
+def brep_oracle(path):
+    stl_files = list(path.glob("*.stl"))
+    step_files = list(path.glob("*.step")) + list(path.glob("*.stp"))
+    assert len(stl_files) == 1, "BREP export did not produce exactly one STL"
+    assert len(step_files) == 1, "BREP export did not produce exactly one STEP file"
+    result = cube_oracle(
+        stl_files[0], expected_dimensions=(40, 20, 10), expected_volume=8000
+    )
+    step = step_files[0].read_bytes()
+    assert 500 < len(step) < 10 * 1024 * 1024, "Missing or oversized STEP artifact"
+    assert step.startswith(b"ISO-10303-21;"), "Invalid STEP exchange-file header"
+    assert b"END-ISO-10303-21;" in step, "Incomplete STEP exchange file"
+    result.update(
+        {
+            "step_bytes": len(step),
+            "step_sha256": hashlib.sha256(step).hexdigest(),
+        }
+    )
+    return result
+
+
+def freecad_probe(output, document_name):
+    rendered_path = json.dumps(str(output))
+    return (
+        "execute_code",
+        {
+            "code": (
+                "import FreeCAD, Mesh\n"
+                f'doc = FreeCAD.newDocument("{document_name}")\n'
+                'obj = doc.addObject("Part::Box", "WrightBox")\n'
+                "obj.Length = 10\n"
+                "obj.Width = 8\n"
+                "obj.Height = 6\n"
+                "doc.recompute()\n"
+                f"Mesh.export([obj], {rendered_path})\n"
+                'print({"name": obj.Name, "volume_mm3": obj.Shape.Volume})\n'
+            )
+        },
+    )
+
+
+def oasis_probe(job_name, *, slow=False):
+    if slow:
+        script = (
+            "import time\n"
+            "from skfem import MeshTri\n"
+            "time.sleep(30)\n"
+            'open("result.vtu", "w").write("late artifact")\n'
+        )
+    else:
+        script = '''from skfem import MeshTri, Basis, ElementTriP1, asm, solve, condense
+from skfem.models.poisson import laplace, unit_load
+import meshio
+import numpy as np
+
+m = MeshTri.init_symmetric().refined(5)
+basis = Basis(m, ElementTriP1())
+A = asm(laplace, basis)
+b = asm(unit_load, basis)
+phi = solve(*condense(A, b, D=basis.get_dofs()))
+points = np.column_stack([m.p.T, np.zeros(m.p.shape[1])])
+meshio.write(
+    "result.vtu",
+    meshio.Mesh(points, [("triangle", m.t.T)], point_data={"phi": phi}),
+    binary=False,
+)
+print({"max_phi": float(phi.max()), "min_phi": float(phi.min()), "nodes": len(phi)})
+'''
+    return (
+        "run_simulation",
+        {
+            "solver": "skfem",
+            "input_content": script,
+            "job_name": job_name,
+            # The fixed scenario and its independent mesh/field oracle below are
+            # the qualification critic for this one deterministic solve.
+            "critic_approved": not slow,
+        },
+    )
+
+
+def _result_text(result):
+    values = []
+    for item in result.content:
+        value = item.get("text") if isinstance(item, dict) else getattr(item, "text", None)
+        if value is not None:
+            values.append(value)
+    return "\n".join(values)
+
+
+def _json_result(result):
+    payload = json.loads(_result_text(result))
+    if isinstance(payload, str):
+        payload = json.loads(payload)
+    assert isinstance(payload, dict), "Tool did not return a JSON object"
+    return payload
+
+
+def oasis_oracle(result, expected_job_name):
+    payload = _json_result(result)
+    assert payload["status"] == "completed", "OASiS simulation did not complete"
+    assert payload["output_files"] == ["result.vtu"], (
+        "OASiS did not return the expected result artifact"
+    )
+    assert payload["trustworthy_result"] is True, (
+        "OASiS verification did not bind the result to run evidence"
+    )
+    assert payload["verification"].startswith("VERIFIED"), (
+        "OASiS did not attest its automated checks"
+    )
+    work_dir = Path(payload["work_dir"])
+    assert work_dir.name == expected_job_name, "OASiS returned another job's output"
+    result_path = work_dir / "result.vtu"
+    raw = result_path.read_bytes()
+    assert 1000 < len(raw) < 10 * 1024 * 1024, "Missing or oversized VTU result"
+
+    tree = ET.fromstring(raw)
+    point_data = next(
+        node
+        for node in tree.findall(".//{*}PointData/{*}DataArray")
+        if node.attrib.get("Name") == "phi"
+    )
+    phi = [float(value) for value in (point_data.text or "").split()]
+    points_node = tree.find(".//{*}Points/{*}DataArray")
+    assert points_node is not None, "VTU has no mesh points"
+    coordinates = [float(value) for value in (points_node.text or "").split()]
+    assert len(coordinates) == len(phi) * 3 and len(phi) > 500, (
+        "VTU mesh or solution field is incomplete"
+    )
+    assert all(math.isfinite(value) for value in phi + coordinates), (
+        "VTU contains non-finite values"
+    )
+    axes = [coordinates[index::3] for index in range(3)]
+    bounds = [[min(axis), max(axis)] for axis in axes]
+    assert all(abs(bounds[index][0]) < 1e-12 for index in range(3)), (
+        "Unexpected VTU lower bounds"
+    )
+    assert abs(bounds[0][1] - 1) < 1e-12 and abs(bounds[1][1] - 1) < 1e-12, (
+        "Unexpected unit-square mesh bounds"
+    )
+    assert abs(bounds[2][1]) < 1e-12, "2D solution has a non-zero Z extent"
+    assert abs(min(phi)) < 1e-12 and 0.07 < max(phi) < 0.08, (
+        "Poisson result is outside the independently expected range"
+    )
+    return {
+        "bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "nodes": len(phi),
+        "bounds": bounds,
+        "min_phi": min(phi),
+        "max_phi": max(phi),
+        "verification": payload["verification"],
+    }
+
+
+def exception_leaves(error):
+    leaves = []
+    stack = [error]
+    while stack and len(leaves) < 10:
+        item = stack.pop()
+        if isinstance(item, BaseExceptionGroup):
+            stack.extend(reversed(item.exceptions))
+        else:
+            leaves.append(
+                {
+                    "type": type(item).__name__,
+                    "message": str(item)[:1000],
+                    "traceback": "".join(traceback.format_exception(item))[-3000:],
+                }
+            )
+    return leaves
 
 
 async def run(args, root, report):
@@ -108,6 +287,7 @@ async def run(args, root, report):
     from tool_registry.db import insert_server, insert_tools
     from tool_registry.models import McpServer, McpTool
     from tool_registry.manager import McpEngine
+    from tool_registry.runners.stdio import StdioRunner
     from tool_registry.gateway_adapters import (
         DatabaseGatewayWorkspace,
         DatabaseGatewayAudit,
@@ -136,6 +316,45 @@ async def run(args, root, report):
         ):
             raise ValueError("Catalog must pin the reviewed OpenSCAD repository commit")
         os.environ["OPENSCAD_WORKSPACE"] = str(root)
+    elif args.server == "brep-mcp":
+        if command != ["brep-mcp-wrapped"]:
+            raise ValueError("Catalog must use the reviewed BREP compatibility launcher")
+        os.environ["BREP_WORKSPACE"] = str(root)
+    elif args.server == "freecad-mcp-nekanat":
+        expected = [
+            "uv",
+            "tool",
+            "run",
+            "--with",
+            "mcp[cli]==1.28.1",
+            "--from",
+            "git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f",
+            "freecad-mcp",
+            "--only-text-feedback",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed FreeCAD MCP commit")
+        os.environ["FREECAD_MCP_WORK_DIR"] = str(root / "freecad-work")
+    elif args.server == "oasis-open-fem-agent":
+        expected = [
+            "uv",
+            "run",
+            "--isolated",
+            "--python",
+            "3.12",
+            "--with",
+            "git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780",
+            "--with",
+            "mcp[cli]==1.28.1",
+            "--with",
+            "scikit-fem==12.0.2",
+            "python",
+            "-m",
+            "server",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed OASiS MCP commit")
+        os.environ["PYVISTA_OFF_SCREEN"] = "true"
     report.update(
         {
             "server_id": entry.id,
@@ -148,16 +367,24 @@ async def run(args, root, report):
             "status": "partial",
             "steps": [],
             "adoption": "unknown",
-            "scope": "Autodesk help product discovery"
-            if args.server == "autodesk-product-help-mcp"
-            else "OpenSCAD cube STL export",
+            "scope": {
+                "autodesk-product-help-mcp": "Autodesk help product discovery",
+                "openscad-mcp": "OpenSCAD cube STL export",
+                "brep-mcp": "BREP box STEP and STL export",
+                "freecad-mcp-nekanat": "FreeCAD box creation and STL export",
+                "oasis-open-fem-agent": "OASiS scikit-fem Poisson solve",
+            }[args.server],
             "configuration_sha256": qualification_configuration(entry),
+            "installed_items": args.installed_item,
+            "source_references": args.source_reference,
+            "prerequisites": args.prerequisite,
         }
     )
     discovered = None
     probe = None
+    direct_env = {"PYTHONPATH": ""} if args.server == "oasis-open-fem-agent" else None
     for attempt in range(3):
-        async with client_session(command) as client:
+        async with client_session(command, direct_env) as client:
             info = await client.initialize()
             tools = await client.list_tools()
             selected = {tool.name: tool for tool in tools.tools}
@@ -169,7 +396,7 @@ async def run(args, root, report):
             discovered = tools.tools
             if args.server == "autodesk-product-help-mcp":
                 probe = ("get_available_products", {})
-            else:
+            elif args.server == "openscad-mcp":
                 report["export_schema"] = selected["export_model"].inputSchema
                 output = root / f"direct-{attempt}.stl"
                 properties = selected["export_model"].inputSchema.get("properties", {})
@@ -194,6 +421,38 @@ async def run(args, root, report):
                         "Export output parameter changed; recipe review required"
                     )
                 probe = ("export_model", values)
+            elif args.server == "brep-mcp":
+                report["export_schema"] = selected["export_part"].inputSchema
+                output = root / f"direct-{attempt}"
+                output.mkdir()
+                probe = (
+                    "export_part",
+                    {
+                        "code": (
+                            'import { box } from "brepjs";\n'
+                            "export const expected = { volume: 8000, tolerancePct: 0.1 };\n"
+                            "export default () => box(40, 20, 10);\n"
+                        ),
+                        "outDir": str(output),
+                        "formats": {"step": True, "stl": True},
+                    },
+                )
+            elif args.server == "freecad-mcp-nekanat":
+                required = {
+                    "create_document",
+                    "create_object",
+                    "get_objects",
+                    "execute_code",
+                }
+                assert required <= selected.keys(), "FreeCAD tool surface is incomplete"
+                report["execute_schema"] = selected["execute_code"].inputSchema
+                output = root / f"direct-{attempt}.stl"
+                probe = freecad_probe(output, f"WrightDirect{attempt}")
+            else:
+                required = {"discover", "prepare_simulation", "run_simulation"}
+                assert required <= selected.keys(), "OASiS tool surface is incomplete"
+                report["run_schema"] = selected["run_simulation"].inputSchema
+                probe = oasis_probe(f"wright-direct-{attempt}")
             result = await client.call_tool(*probe)
             assert not result.isError, "Backend reported an error"
             if args.server == "autodesk-product-help-mcp":
@@ -205,8 +464,18 @@ async def run(args, root, report):
                     "result_sha256": hashlib.sha256(serialized.encode()).hexdigest(),
                     "contains_fusion": True,
                 }
-            else:
+            elif args.server == "openscad-mcp":
                 report["outcome"] = cube_oracle(output)
+            elif args.server == "brep-mcp":
+                report["outcome"] = brep_oracle(output)
+            elif args.server == "freecad-mcp-nekanat":
+                serialized = result.model_dump_json()
+                assert "wrightbox" in serialized.lower() and "480" in serialized, (
+                    "FreeCAD result did not report the created box"
+                )
+                report["outcome"] = cube_oracle(output)
+            else:
+                report["outcome"] = oasis_oracle(result, f"wright-direct-{attempt}")
             report["steps"].append(
                 {
                     "stage": "direct_protocol_backend_outcome",
@@ -214,6 +483,76 @@ async def run(args, root, report):
                     "status": "passed",
                 }
             )
+            if args.server == "brep-mcp" and attempt == 0:
+                invalid_output = root / "controlled-error"
+                invalid_output.mkdir()
+                invalid = await client.call_tool(
+                    "export_part",
+                    {
+                        "code": "export default () => null;\n",
+                        "outDir": str(invalid_output),
+                        "formats": {"step": True},
+                    },
+                )
+                assert invalid.isError, "Invalid BREP program was reported as successful"
+                assert not list(invalid_output.iterdir()), (
+                    "Invalid BREP program left an export artifact"
+                )
+                report["steps"].append(
+                    {"stage": "controlled_error_behavior", "status": "passed"}
+                )
+                timeout = await client.call_tool(
+                    "run_program",
+                    {
+                        "code": (
+                            "export default () => { while (true) {} };\n"
+                        ),
+                        "timeoutMs": 250,
+                    },
+                )
+                timeout_text = timeout.model_dump_json().lower()
+                assert timeout.isError and "timeout" in timeout_text, (
+                    "BREP sandbox did not report its bounded timeout"
+                )
+                report["steps"].append(
+                    {"stage": "bounded_timeout_cancellation", "status": "passed"}
+                )
+            if args.server == "freecad-mcp-nekanat" and attempt == 0:
+                invalid = await client.call_tool(
+                    "execute_code", {"code": 'raise RuntimeError("wright-controlled-error")'}
+                )
+                invalid_text = invalid.model_dump_json().lower()
+                assert "wright-controlled-error" in invalid_text, (
+                    "FreeCAD MCP did not return the controlled backend error"
+                )
+                report["steps"].append(
+                    {
+                        "stage": "controlled_error_reported_in_content",
+                        "status": "passed",
+                    }
+                )
+            if args.server == "oasis-open-fem-agent" and attempt == 0:
+                invalid = await client.call_tool(
+                    "run_simulation",
+                    {
+                        "solver": "skfem",
+                        "input_content": "from skfem import MeshTri\nthis is invalid python\n",
+                        "job_name": "wright-controlled-error",
+                    },
+                )
+                invalid_payload = _json_result(invalid)
+                assert invalid_payload["status"] == "failed", (
+                    "OASiS did not report the controlled solver failure"
+                )
+                assert invalid_payload["trustworthy_result"] is False, (
+                    "OASiS treated a failed solve as verified"
+                )
+                assert not (Path(invalid_payload["work_dir"]) / "result.vtu").exists(), (
+                    "Failed OASiS solve left a result artifact"
+                )
+                report["steps"].append(
+                    {"stage": "controlled_solver_error", "status": "passed"}
+                )
 
     run_migrations()
     db = str(root / "wright.db")
@@ -300,6 +639,14 @@ async def run(args, root, report):
             for field in ("output_path", "output_file"):
                 if field in probe[1]:
                     probe[1][field] = str(workspace / "gateway.stl")
+        elif args.server == "brep-mcp":
+            gateway_output = workspace / "gateway-brep"
+            gateway_output.mkdir()
+            probe[1]["outDir"] = str(gateway_output)
+        elif args.server == "freecad-mcp-nekanat":
+            probe = freecad_probe(workspace / "gateway.stl", "WrightGateway")
+        elif args.server == "oasis-open-fem-agent":
+            probe = oasis_probe("wright-gateway")
         result = await gateway.call_tool(
             "qualification-session",
             "qualification-call",
@@ -310,7 +657,7 @@ async def run(args, root, report):
         assert not result.is_error, f"Gateway failed: {result.error_code}"
         if args.server == "openscad-mcp":
             report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
-        else:
+        elif args.server == "autodesk-product-help-mcp":
             assert (
                 "fusion"
                 in json.dumps(
@@ -321,6 +668,12 @@ async def run(args, root, report):
                     default=str,
                 ).lower()
             ), "Gateway result lost the expected product"
+        elif args.server == "brep-mcp":
+            report["gateway_outcome"] = brep_oracle(gateway_output)
+        elif args.server == "freecad-mcp-nekanat":
+            report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
+        else:
+            report["gateway_outcome"] = oasis_oracle(result, "wright-gateway")
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -369,19 +722,71 @@ async def run(args, root, report):
         assert name in {tool.name for tool in listed.tools}, (
             "Prefixed tool missing from gateway MCP"
         )
+        if args.server == "brep-mcp":
+            gateway_mcp_output = workspace / "gateway-mcp-brep"
+            gateway_mcp_output.mkdir()
+            probe[1]["outDir"] = str(gateway_mcp_output)
+        elif args.server == "freecad-mcp-nekanat":
+            probe = freecad_probe(
+                workspace / "gateway-mcp.stl", "WrightGatewayMcp"
+            )
+        elif args.server == "oasis-open-fem-agent":
+            probe = oasis_probe("wright-gateway-mcp")
         result = await client.call_tool(name, probe[1])
         assert not result.isError, (
             f"Gateway MCP rejected the scenario: {result.model_dump_json()[:300]}"
         )
         if args.server == "openscad-mcp":
             report["gateway_mcp_outcome"] = cube_oracle(workspace / "gateway.stl")
-        else:
+        elif args.server == "autodesk-product-help-mcp":
             assert "fusion" in result.model_dump_json().lower(), (
                 "Gateway MCP lost the expected product"
+            )
+        elif args.server == "brep-mcp":
+            report["gateway_mcp_outcome"] = brep_oracle(gateway_mcp_output)
+        elif args.server == "freecad-mcp-nekanat":
+            report["gateway_mcp_outcome"] = cube_oracle(
+                workspace / "gateway-mcp.stl"
+            )
+        else:
+            report["gateway_mcp_outcome"] = oasis_oracle(
+                result, "wright-gateway-mcp"
             )
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
         )
+    if args.server == "oasis-open-fem-agent" and os.name != "nt":
+        timeout_runner = StdioRunner(
+            command, env={"PYTHONPATH": ""}, operation_timeout=1
+        )
+        await timeout_runner.start()
+        try:
+            try:
+                await timeout_runner.call_tool(*oasis_probe("wright-timeout", slow=True))
+            except TimeoutError:
+                pass
+            else:
+                raise AssertionError("OASiS slow solve exceeded Wright's deadline")
+            assert not timeout_runner.is_running(), (
+                "Wright kept the timed-out OASiS transport running"
+            )
+            await asyncio.sleep(0.25)
+            remaining = []
+            for cmdline_path in Path("/proc").glob("[0-9]*/cmdline"):
+                try:
+                    cmdline = cmdline_path.read_bytes().replace(b"\0", b" ")
+                except (FileNotFoundError, PermissionError, ProcessLookupError):
+                    continue
+                if b"simulation_outputs/wright-timeout/solve.py" in cmdline:
+                    remaining.append(cmdline_path.parent.name)
+            assert not remaining, (
+                f"Timed-out OASiS solver processes remain: {remaining}"
+            )
+            report["steps"].append(
+                {"stage": "wright_timeout_process_tree_cleanup", "status": "passed"}
+            )
+        finally:
+            await timeout_runner.stop()
     return report
 
 
@@ -389,12 +794,23 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute", action="store_true", required=True)
     parser.add_argument(
-        "--server", choices=["openscad-mcp", "autodesk-product-help-mcp"], required=True
+        "--server",
+        choices=[
+            "openscad-mcp",
+            "autodesk-product-help-mcp",
+            "brep-mcp",
+            "freecad-mcp-nekanat",
+            "oasis-open-fem-agent",
+        ],
+        required=True,
     )
     parser.add_argument("--wright-revision", required=True)
     parser.add_argument("--environment", required=True)
     parser.add_argument("--platform", required=True)
     parser.add_argument("--container-image")
+    parser.add_argument("--installed-item", action="append", default=[])
+    parser.add_argument("--source-reference", action="append", default=[])
+    parser.add_argument("--prerequisite", action="append", default=[])
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--work-parent", type=Path)
     args = parser.parse_args()
@@ -425,10 +841,7 @@ def main():
             cause = cause.__cause__
         report["causes"] = causes
         if isinstance(error, BaseExceptionGroup):
-            report["sub_errors"] = [
-                {"type": type(item).__name__, "message": str(item)[:500]}
-                for item in error.exceptions[:5]
-            ]
+            report["sub_errors"] = exception_leaves(error)
     finally:
         import gc
 

@@ -2,18 +2,21 @@
 
 As of 2026-09-08 · policy 2026-09-08.1
 
-Catalog digest: `c025e809277793f6aaff1e53104be008a57b127ec81352aabdcb3f96efcf6f56`
+Catalog digest: `31fe2323d823ebe4406464567024a80a97db5309f308614a12b9a8839bfedb01`
 
 Recorded decisions only; no MCP was installed or tested by this report.
 
-## Curated (2)
+## Curated (5)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
 | autodesk-product-help-mcp | Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only to the listed environments; repeat user adoption is unknown. | Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation. | 2026-10-08 |
+| brep-mcp | Three fresh direct MCP sessions and both Wright gateway layers exported valid STEP and STL artifacts in a clean Intel Linux container. The recommendation is scoped to the reviewed launcher and Linux configuration; Windows still has a recorded upstream-entry failure and repeat user adoption is unknown. | Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation. | 2026-10-08 |
+| freecad-mcp-nekanat | After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown. | Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors. | 2026-10-08 |
+| oasis-open-fem-agent | The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven. | Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout. | 2026-10-08 |
 | openscad-mcp | Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only to the listed environments; repeat user adoption is unknown. | Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation. | 2026-10-08 |
 
-## Follow up (63)
+## Follow up (60)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -27,7 +30,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | backflip-ai-watchlist | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | blender-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | blender-mcp-harveyxiacn | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
-| brep-mcp | Windows protocol discovery passed, but the backend probe failed; broader historical tested labeling does not establish qualification. | Resolve the documented entry-point defect, then rerun STEP export and Wright gateway qualification on each advertised platform. | 2026-10-08 |
 | cad-mcp-daobataotie | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | caid-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | comsol-multiphysics-mcp-suzysa | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
@@ -38,7 +40,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | flexcompute-flow360-api-candidate | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-addon-robust | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-mcp-contextform | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
-| freecad-mcp-nekanat | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-mcp-proximile | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-mcp-sandraschi | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
 | freecad-mcp-sergiudanstan | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -55,7 +56,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | nvidia-omniverse-kit-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | nvidia-omniverse-omniui-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | nvidia-omniverse-usd-code-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
-| oasis-open-fem-agent | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | onshape-labs-featurescript-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | onshape-mcp-hedless | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | openfoam-mcp-webworn | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -101,8 +101,8 @@ Recorded decisions only; no MCP was installed or tested by this report.
 |---|---:|---:|
 | Requirements | 1 | 4 |
 | Concept and architecture | 0 | 3 |
-| Detailed design | 2 | 43 |
-| Analysis and simulation | 0 | 14 |
+| Detailed design | 4 | 41 |
+| Analysis and simulation | 1 | 13 |
 | BOM and sourcing | 0 | 1 |
 | Manufacturing and assembly | 0 | 4 |
 | Test and quality | 0 | 7 |

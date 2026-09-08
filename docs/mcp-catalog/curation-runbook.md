@@ -135,12 +135,15 @@ cannot do so. Reinstatement requires fresh evidence and an explicit review.
 
 ## Initial qualification runner
 
-`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with only two
-fixed recipes: public Autodesk help product discovery and an OpenSCAD
-10 × 8 × 6 mm cube export. It uses actual protocol clients and Wright's production
-gateway composition; it refuses Wright's mock-runner environment. It records
-three direct sessions, the gateway service result, and the actual gateway MCP
-result. The STL oracle checks dimensions and 480 mm³ volume, not a success string.
+`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with five
+fixed recipes: public Autodesk help product discovery, OpenSCAD and FreeCAD
+10 × 8 × 6 mm cube exports, a BREP 40 × 20 × 10 mm STEP/STL export, and an
+OASiS scikit-fem Poisson solve. It uses
+actual protocol clients and Wright's production gateway composition; it refuses
+Wright's mock-runner environment. It records three direct sessions, the gateway
+service result, and the actual gateway MCP result. The artifact oracles inspect
+STL dimensions and volume, BREP STEP exchange-file boundaries, or the OASiS VTU
+mesh, field finiteness, boundary values, and expected solution range.
 
 Run the script inside a newly created Intel Linux Wright container, with candidate
 source mounted read-only at `/candidate`, evidence output mounted at `/evidence`,
@@ -162,6 +165,27 @@ Neither `uvx` nor Git is assumed present in the base image. Record prerequisite
 versions. Discard the container after each server. Never modify the base Docker
 image to satisfy a catalog test. See the setup recipes and problem log for the
 observed results and any outstanding blockers.
+
+For BREP, install only `brepjs-cad@0.103.0` and copy the reviewed
+`docker/mcp/brep-mcp-launcher.cjs` to `brep-mcp-wrapped` on `PATH`. The launcher
+works around the published package's data-URL entry defect without modifying the
+third-party package. The runner also checks invalid-program cleanup and the
+server's bounded sandbox timeout.
+
+For `freecad-mcp-nekanat`, install the FreeCAD 1.1.1 AppImage, its documented
+Xvfb/OpenGL libraries, and addon commit
+`63acb305573194a011641ab13ccfb391fe95769f`. Start the localhost-only addon bridge,
+then run the catalog command. The command pins `mcp[cli]==1.28.1`; a fresh
+unconstrained install resolves MCP SDK 2.x and fails before initialization because
+the server still imports the 1.x `FastMCP` API.
+
+For `oasis-open-fem-agent`, install Git only. The catalog uses uv-managed Python
+3.12 and pins OASiS commit `7c184d5b7ca5cda6086f3912d1c7923c58307780`,
+`mcp[cli]==1.28.1`, and `scikit-fem==12.0.2`. Keep its child `PYTHONPATH` empty:
+OASiS publishes generic top-level `core`, `tools`, and `server` modules which can
+otherwise collide with Wright's packages. The runner also starts a deliberately
+slow solve with a one-second Wright deadline and verifies that no solver process
+remains after the stdio transport is retired.
 
 ## Protocol boundaries
 

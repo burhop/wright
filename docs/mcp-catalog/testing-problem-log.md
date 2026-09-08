@@ -1867,3 +1867,55 @@ Result:
   The catalog, signed updates, installation, backward compatibility and API suite
   passed 119 tests before final qualification records were added; the final
   evidence-binding and environment checks are recorded in the curation report notes.
+
+Problem:
+  BREP 0.103.0 initialized and listed tools, but its published CommonJS MCP bundle
+  still maps an embedded data URL through `fileURLToPath`, preventing real export.
+Solution:
+  Installed only the pinned npm package in a clean standard Wright Intel Linux
+  container and launched it through Wright's source-controlled compatibility
+  wrapper. The installed third-party files were not edited. Added independent
+  STEP/STL, controlled-error, bounded-timeout, gateway, and cleanup checks.
+Result:
+  Three direct sessions and both Wright gateway layers exported a 40 x 20 x 10
+  mm solid. Parsed STL volume was 8000 mm3 and every STEP file had complete
+  ISO-10303-21 framing. Invalid input left no artifact, and the sandbox stopped
+  an infinite program at its configured timeout. BREP is curated for this Linux
+  configuration. Evidence: evidence/curation-2026-09-08/brep-linux.json.
+
+Problem:
+  A fresh launch of FreeCAD MCP commit
+  63acb305573194a011641ab13ccfb391fe95769f resolved MCP SDK 2.x from its open
+  `mcp[cli]>=1.12.2` dependency and failed before initialization because the
+  source imports `mcp.server.fastmcp` from the 1.x API.
+Solution:
+  Pinned Wright's catalog command and Linux engineering bundles to
+  `mcp[cli]==1.28.1`, preserving the exact upstream server commit. Installed only
+  FreeCAD 1.1.1, its Xvfb/OpenGL prerequisites, and that server in a fresh
+  standard Wright Intel Linux container.
+Result:
+  Three direct sessions and both gateway layers created a 10 x 8 x 6 mm
+  `Part::Box` and exported identical 684-byte STL files independently measured at
+  480 mm3. A controlled exception was returned in tool content, cleanup passed,
+  and the disposable container was removed. FreeCAD is curated only for the
+  pinned Linux configuration; structured error signaling and cancellation remain
+  follow-up. Evidence: evidence/curation-2026-09-08/freecad-linux.json.
+
+Problem:
+  A fresh OASiS install had three integration defects: its open MCP constraint
+  selected incompatible SDK 2.x, its NumPy cap had no Python 3.13 wheel, and its
+  generic top-level `core` package collided with Wright's inherited Python path.
+  The simulation API also supplied no backend timeout.
+Solution:
+  Pinned OASiS commit `7c184d5b7ca5cda6086f3912d1c7923c58307780`, uv-managed
+  Python 3.12, `mcp[cli]==1.28.1`, and `scikit-fem==12.0.2`; cleared the child
+  `PYTHONPATH`; and changed Wright's POSIX stdio runner to place servers in a
+  dedicated process group and retire that group after an operation timeout.
+Result:
+  Three direct sessions and both Wright gateway layers solved the fixed Poisson
+  case. Independent VTU parsing found 2,113 finite nodes on the unit square,
+  zero boundary values, and max phi 0.0735750773202. A controlled invalid script
+  produced no VTU, and a one-second Wright deadline left no solver process.
+  Only this scikit-fem Linux configuration is curated; OASiS's other solver
+  backends remain unqualified. Evidence:
+  evidence/curation-2026-09-08/oasis-linux.json.

@@ -15,7 +15,7 @@ The original bundle contained 70 records. Four sourced candidates were added:
 documentation establishes availability, not Wright qualification or repeat use.
 Partuno is a community integration, not a DigiKey/Mouser official implementation.
 
-The [report](report.md) lists **2 curated, 63 follow-up, and 9 removed** records.
+The [report](report.md) lists **5 curated, 60 follow-up, and 9 removed** records.
 These counts are distinct from installations, custom records, managed tools, and
 active signed catalog versions in a deployed Wright instance.
 
@@ -23,6 +23,9 @@ active signed catalog versions in a deployed Wright instance.
 |---|---|---|
 | Autodesk Product Help | Product discovery through direct MCP and the Hermes-facing gateway; native Windows x64 and Linux x64 container | Read-only public service 3.2.0; applicable publisher terms remain an independent onboarding step; not CAD authoring |
 | OpenSCAD | Three direct cube exports and gateway exports; dimensions and 480 mm³ volume verified | Linux x64 container; pinned Git source; no native Windows/macOS or complex geometry claim |
+| BREP MCP | Three direct and two gateway STEP/STL exports of a 40 x 20 x 10 mm solid; independent 8000 mm3 volume, file framing, error, and timeout checks | Linux x64 container; `brepjs-cad@0.103.0`; Wright launcher required; native Windows remains failed |
+| FreeCAD MCP | Three direct and two gateway FreeCAD box/STL tasks; independent 10 x 8 x 6 mm and 480 mm3 inspection | Linux x64 container; FreeCAD 1.1.1; pinned server commit and MCP SDK 1.28.1; backend errors use tool content |
+| OASiS | Three direct and two gateway scikit-fem Poisson solves; independent 2,113-node VTU, boundary, finiteness, and solution-range inspection; controlled failure and process-tree timeout cleanup | Linux x64 container; pinned Python 3.12, OASiS commit, MCP SDK 1.28.1, and scikit-fem 12.0.2; other solver backends remain unqualified |
 
 Nine records were removed from ordinary uninstalled discovery:
 `mcp-ui-shopify`, `webmcp-standard`, `calculix-simulation`,
@@ -53,9 +56,10 @@ added to the user catalog. Publisher-source verification remains required.
 
 - 119 backend/API tests passed across catalog distribution, signed updates,
   preservation, install plans, compatibility, and the local child-MCP API journey.
-- After the last validation changes and final qualification records, 49 targeted
+- After the last validation changes and final qualification records, 66 targeted
   tests passed, including legacy signed metadata, invalid curation rejection,
-  real evidence hashes, deployment/configuration binding, and API retirement.
+  real evidence hashes, deployment/configuration binding, API retirement, stdio
+  timeout retirement, and the relevant runner lifecycle behavior.
 - Seven Chromium library tests passed, including three-list navigation, lifecycle
   gaps, installed-state access, signed metadata activation/rollback, and a narrow
   layout accessibility check. These browser tests use mocked API responses.
@@ -65,9 +69,11 @@ added to the user catalog. Publisher-source verification remains required.
   production `api.gateway_stdio` gateway on the three environments above. The
   API/browser test fixtures are not used as evidence of vendor compatibility.
 
-The isolated base image was
-`sha256:70df876f46133fc44bf6f448ca37a16fade3bbb3f5293290065b0a3e1e559d29`.
-OpenSCAD-specific dependencies were installed only in disposable containers.
+The first isolated base image was
+`sha256:70df876f46133fc44bf6f448ca37a16fade3bbb3f5293290065b0a3e1e559d29`;
+the later BREP, FreeCAD, and OASiS clean runs used standard image
+`sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73`.
+Selected-server dependencies were installed only in disposable containers.
 No base image, shared Python environment, vendor account, or physical device was
 modified. Existing Vite chunk-size/config-loader and Starlette deprecation warnings
 remain; the checks passed.

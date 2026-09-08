@@ -210,6 +210,7 @@ mcp_servers:
           target: /opt/wright/mcp/src/freecad-mcp
       python_tools:
         - git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f
+        - mcp[cli]==1.28.1
       freecad_addon:
         source: /opt/wright/mcp/src/freecad-mcp/addon/FreeCADMCP
     launch:

@@ -16,9 +16,23 @@ servers:
   - scikit-fem
   transport: stdio
   command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780
+  - --with
+  - mcp[cli]==1.28.1
+  - --with
+  - scikit-fem==12.0.2
   - python
   - -m
   - server
+  launch_env:
+    PYVISTA_OFF_SCREEN: 'true'
+    PYTHONPATH: ''
   source_url: https://github.com/Hereon-InstituteMS/OASiS
   image_url: https://avatars.githubusercontent.com/u/139527664?s=64
   locality: local
@@ -32,8 +46,10 @@ servers:
   dependencies:
     system: []
     python:
-    - oasis-mcp
-    - scikit-fem
+    - python==3.12.*
+    - oasis-mcp@7c184d5b7ca5cda6086f3912d1c7923c58307780
+    - mcp[cli]==1.28.1
+    - scikit-fem==12.0.2
     node: []
   aliases:
   - open-fem-agent
@@ -51,7 +67,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation passed with scikit-fem backend
+      notes: Clean Wright Intel Linux qualification passed three direct sessions and both Wright gateway layers with the pinned scikit-fem configuration and independent VTU inspection.
     linux_arm64:
       status: unknown
       tested: false
@@ -73,23 +89,41 @@ servers:
   - execute_code_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: Clean Intel Ubuntu validation passed with source install, 15 MCP tools, scikit-fem discovery, Poisson prepare_simulation, Poisson run_simulation, result.vtu output, and upstream MCP stdio tests 5/5.
-    environment: ubuntu-linux-x64-container
+    message: Clean Wright Intel Linux qualification pinned Python 3.12, OASiS commit 7c184d5b7ca5cda6086f3912d1c7923c58307780, MCP SDK 1.28.1, and scikit-fem 12.0.2. Three direct sessions and both Wright gateway layers solved a unit-square Poisson problem; independent VTU inspection found 2,113 finite solution nodes, zero boundary values, and max phi 0.0735750773202. A controlled solver error produced no result artifact, and Wright killed the complete process group after a one-second timeout.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   engineering_stages:
   - simulation
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: curated
+    reason: The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.
+    replacement_ids: []
     adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e
+      workflow: OASiS scikit-fem Poisson solve
+      source_revision: 7c184d5b7ca5cda6086f3912d1c7923c58307780; Python 3.12.12; MCP SDK 1.28.1; scikit-fem 12.0.2
+      wright_revision: deec4940-plus-engineering-qualification
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/oasis-linux.json
+      evidence_sha256: d998c9a90a69abc395cda15c82f203e4df3cd9e2652fa53fe30acb3c7680b093
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: freecad-mcp-sandraschi
   name: FreeCAD Engineering
   vendor: sandraschi
@@ -1983,7 +2017,13 @@ servers:
   - tested
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
+  - --with
+  - mcp[cli]==1.28.1
+  - --from
+  - git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f
   - freecad-mcp
   - --only-text-feedback
   source_url: https://github.com/neka-nat/freecad-mcp
@@ -2039,7 +2079,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box
+      notes: Clean Wright Intel Linux qualification installed FreeCAD 1.1.1, Xvfb, and the pinned FreeCADMCP addon; direct and both Wright gateway paths created a Part::Box and exported an independently verified STL.
     linux_arm64:
       status: likely
       tested: false
@@ -2063,10 +2103,10 @@ servers:
   - machine_control_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: cloned neka-nat/freecad-mcp at commit 63acb305573194a011641ab13ccfb391fe95769f; package `freecad-mcp` version 0.1.18 exposes console script `freecad-mcp`; no upstream tests were present. `uv tool run --from /tmp/freecad-nekanat-src freecad-mcp --help` built and installed the source package and showed `--only-text-feedback` and `--host`. Ubuntu apt had no `freecad` package candidate, so validation installed FreeCAD 1.1.1 revision 20260414 from the Linux x86_64 AppImage, copied `addon/FreeCADMCP` into FreeCAD user Mod paths, wrote localhost-only `freecad_mcp_settings.json` with `auto_start_rpc: true`, and launched FreeCAD under Xvfb. MCP stdio initialized as serverInfo `FreeCADMCP` version 1.28.1 and listed 14 tools. `list_documents` returned `[]`; backend operations passed: `create_document` created `WrightDoc`, `create_object` created `WrightBox` as `Part::Box`, and `get_objects` reported `WrightBox` with volume 480.0.'
-    environment: ubuntu-linux-x64-container
+    message: 'Fresh installation exposed an upstream dependency defect because the server allows incompatible MCP SDK 2.x. Wright now pins MCP SDK 1.28.1 with server commit 63acb305573194a011641ab13ccfb391fe95769f. In a clean standard Wright Intel Linux container with only FreeCAD 1.1.1 and its selected prerequisites, three direct sessions and both Wright gateway layers created a 10 by 8 by 6 mm Part::Box and exported STL files independently measured at 480 mm3. The server listed 14 tools, returned a controlled backend exception in tool content, and disposable cleanup passed.'
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   headless_ok: yes-with-xvfb
   engineering_stages:
@@ -2074,13 +2114,31 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: curated
+    reason: After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.
+    replacement_ids: []
     adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: a0a8a5eed836de890672310b8e92926c6d3ee18cb0452f0ce2dae5d210d6bbe8
+      workflow: FreeCAD box creation and STL export
+      source_revision: 63acb305573194a011641ab13ccfb391fe95769f; FreeCAD 1.1.1; MCP SDK 1.28.1
+      wright_revision: deec4940-plus-engineering-qualification
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/freecad-linux.json
+      evidence_sha256: d46454a2289cbb498ac0193a0808101861a071b6da772c2c2bf5023376f88faf
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: caid-mcp
   name: CAiD OCCT Kernel Bridge
   vendor: dreliq9
@@ -3991,7 +4049,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: Wright Linux MCP bundle declares brepjs-cad 0.103.0 and a launcher wrapper.
+      notes: Clean Wright Intel Linux qualification installed only brepjs-cad 0.103.0, used the reviewed launcher, and passed direct and Wright-gateway STEP/STL export with independent geometry inspection.
     linux_arm64:
       status: likely
       tested: false
@@ -4012,9 +4070,11 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Catalog entry added from Wright bundle metadata; run clean-container MCP protocol and safe STEP export probes before marking passed.
-    environment: null
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Clean Wright Intel Linux qualification initialized brepjs-cad 0.103.0, listed two tools, exported a 40 by 20 by 10 mm box as STEP and STL in three fresh direct sessions and through both Wright gateway layers, and independently measured 8000 mm3 STL volume. Controlled invalid input produced no artifact, the sandbox bounded an infinite program by timeout, and disposable state cleanup passed.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   windows_qualification:
     observed_at: '2026-08-14T03:13:43.976756Z'
@@ -4059,13 +4119,31 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Windows protocol discovery passed, but the backend probe failed; broader historical tested labeling does not establish qualification.
+    disposition: curated
+    reason: Three fresh direct MCP sessions and both Wright gateway layers exported valid STEP and STL artifacts in a clean Intel Linux container. The recommendation is scoped to the reviewed launcher and Linux configuration; Windows still has a recorded upstream-entry failure and repeat user adoption is unknown.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Resolve the documented entry-point defect, then rerun STEP export and Wright gateway qualification on each advertised platform.
+    next_action: Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.
+    replacement_ids: []
     adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b
+      workflow: BREP box STEP and STL export
+      source_revision: brepjs-cad 0.103.0; 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      wright_revision: deec4940-plus-engineering-qualification
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/brep-linux.json
+      evidence_sha256: 80c516a066aec4724dddd7711f115f8bd175f70bec3d4963af7f1b1ab4a4ce22
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: solid-edge-mcp-burhop
   name: SolidEdgeMCP
   vendor: burhop

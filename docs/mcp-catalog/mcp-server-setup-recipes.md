@@ -303,9 +303,9 @@ Source: https://github.com/neka-nat/freecad-mcp
 Run MCP:
 
 ```bash
-uvx freecad-mcp --only-text-feedback
-# Equivalent in the Wright Ubuntu validation container:
-uv tool run freecad-mcp --only-text-feedback
+uv tool run --with 'mcp[cli]==1.28.1' \
+  --from 'git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f' \
+  freecad-mcp --only-text-feedback
 ```
 
 Install selected-server FreeCAD dependency:
@@ -326,7 +326,9 @@ chmod +x FreeCAD.AppImage
 Install the addon into FreeCAD user Mod paths and enable the local RPC server:
 
 ```bash
-git clone --depth 1 https://github.com/neka-nat/freecad-mcp /tmp/mcp-freecad-core
+git clone https://github.com/neka-nat/freecad-mcp /tmp/mcp-freecad-core
+git -C /tmp/mcp-freecad-core checkout --detach \
+  63acb305573194a011641ab13ccfb391fe95769f
 
 mkdir -p ~/.local/share/FreeCAD/Mod ~/.local/share/FreeCAD/v1-1/Mod ~/.FreeCAD/Mod
 cp -R /tmp/mcp-freecad-core/addon/FreeCADMCP ~/.local/share/FreeCAD/Mod/FreeCADMCP
@@ -356,6 +358,10 @@ Validation probes:
 - `create_object` with `doc_name=WrightDoc`, `obj_type=Part::Box`,
   `obj_name=WrightBox`, and `obj_properties` of 10 x 8 x 6 mm.
 - `get_objects` with `{"doc_name":"WrightDoc"}`.
+- Run the fixed `execute_code` probe to create a 10 x 8 x 6 mm `Part::Box`,
+  export STL, and independently measure its dimensions and 480 mm3 volume.
+- Repeat that export in three fresh direct sessions, the Wright gateway service,
+  and the Hermes-facing `wrightgateway` MCP.
 
 Known result:
 
@@ -368,6 +374,8 @@ Known result:
 - Ubuntu 24.04 `apt install freecad` had no package candidate in the clean
   validation container, so validation used the FreeCAD Linux x86_64 AppImage.
 - FreeCAD 1.1.1 AppImage reported revision `20260414`.
+- The AppImage SHA-256 was
+  `e2006138400b2fa85fa2e160e872d00767eb32964e85075830f7e198a3a876e1`.
 - FreeCAD RPC became ready on localhost port 9875 after 4 seconds.
 - MCP serverInfo was `FreeCADMCP` version `1.28.1`.
 - MCP listed 14 tools.
@@ -375,6 +383,10 @@ Known result:
 - `create_document` created `WrightDoc`.
 - `create_object` created `WrightBox`.
 - `get_objects` reported `WrightBox` as `Part::Box` with volume `480.0`.
+- On 8 September 2026, the clean standard Wright image passed all five direct
+  and gateway export paths; every independently parsed STL measured 10 x 8 x 6
+  mm and 480 mm3. Evidence is
+  `evidence/curation-2026-09-08/freecad-linux.json`.
 
 Known notes:
 
@@ -383,6 +395,10 @@ Known notes:
   diagnostic when FreeCAD is not installed or the addon is not running.
 - The FreeCAD AppImage emitted locale/fontconfig warnings in the minimal Ubuntu
   container, but those warnings did not block RPC startup or modeling commands.
+- The server's declared `mcp[cli]>=1.12.2` range currently resolves incompatible
+  MCP SDK 2.x. Keep the Wright launch and bundle pin at `mcp[cli]==1.28.1` until
+  upstream migrates or constrains its dependency. Controlled backend exceptions
+  are returned in tool content rather than with MCP `isError`.
 
 ## FreeCAD Robust (`freecad-robust-spkane`)
 
@@ -1613,24 +1629,17 @@ Legacy/search names:
 Setup:
 
 ```bash
-git clone --depth 1 https://github.com/Hereon-InstituteMS/OASiS /tmp/oasis
-cd /tmp/oasis
-python3 -m venv .venv
-. .venv/bin/activate
-pip install --upgrade pip
-pip install -e .
-```
-
-Validated lightweight backend:
-
-```bash
-pip install scikit-fem
+apt-get update
+apt-get install -y --no-install-recommends git
 ```
 
 Run MCP:
 
 ```bash
-PYVISTA_OFF_SCREEN=true /tmp/oasis/.venv/bin/python -m server
+PYTHONPATH= PYVISTA_OFF_SCREEN=true uv run --isolated --python 3.12 \
+  --with git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780 \
+  --with 'mcp[cli]==1.28.1' --with 'scikit-fem==12.0.2' \
+  python -m server
 ```
 
 Validation probes:
@@ -1638,32 +1647,38 @@ Validation probes:
 - `initialize`
 - `notifications/initialized`
 - `tools/list`
-- `discover`
-- `prepare_simulation` with `solver=skfem`, `physics=poisson`
-- `run_simulation` with `solver=skfem` and a fixed Poisson smoke script
-- Upstream focused tests: `PYTHONPATH=src PYVISTA_OFF_SCREEN=true pytest tests/test_mcp_stdio.py -q`
+- Three fresh `run_simulation` calls with `solver=skfem` and a fixed unit-square
+  Poisson script
+- Independent ASCII VTU parsing for mesh bounds, node count, finite values,
+  Dirichlet boundary values, and expected maximum solution range
+- The same solve through Wright `GatewayService` and `api.gateway_stdio`
+- Controlled invalid Python with no result artifact
+- A one-second Wright deadline followed by `/proc` inspection for an orphaned
+  solver process
 
 Known result:
 
-- Repository commit `117c35769c0eb00181db003e8dcdc305546b08b7`.
+- Repository commit `7c184d5b7ca5cda6086f3912d1c7923c58307780`.
 - MCP initialized as server `OASiS` version `1.28.1`.
-- MCP listed 15 tools.
-- With only the base package installed, `discover` returned clear
-  not-installed diagnostics for optional backends including FEniCSx, deal.II,
-  FEBio, NGSolve, scikit-fem, Kratos, DUNE-fem, and 4C.
-- After installing `scikit-fem==12.0.2`, `discover` reported `skfem`
-  available.
-- `prepare_simulation` returned Poisson knowledge and pitfalls for `skfem`.
-- `run_simulation` completed a scikit-fem Poisson solve in 0.46 seconds,
-  wrote `result.vtu`, and reported `max_phi 0.07389930610869422`.
-- Upstream focused MCP stdio tests passed: 5 passed.
+- MCP listed 17 tools.
+- Direct and gateway solves produced byte-identical 237,184-byte VTU files with
+  2,113 solution nodes, `[0,1] x [0,1]` bounds, zero Z extent, finite values,
+  minimum phi 0, and maximum phi 0.0735750773202.
+- The server's own verification gate attested each fixed solve, and the separate
+  Wright oracle verified the artifact rather than trusting that attestation.
+- A controlled solver failure produced no VTU. Wright's one-second timeout
+  retired the OASiS process group and left no matching solver process.
 
 Known notes:
 
 - The original research name `Open FEM Agent` now redirects to the canonical
   OASiS repository.
-- `pip install -e .` does not install the upstream test runner. Install
-  `pytest` before running upstream tests.
+- OASiS currently allows MCP SDK 2.x although its imports require the 1.x
+  `mcp.server.fastmcp` API. Keep the exact 1.28.1 pin.
+- OASiS requires NumPy below 2; use Python 3.12 because the selected NumPy has no
+  Python 3.13 wheel. Do not add a compiler to Wright's base image for this.
+- Clear the child `PYTHONPATH`. OASiS publishes generic top-level `core`, `tools`,
+  and `server` packages which otherwise collide with Wright's `core` package.
 - Do not install every advertised solver backend by default. Install only the
   backend the user selects. The Linux x64 catalog validation fully tested the
   lightweight `scikit-fem` backend; other backends remain optional and
@@ -2357,12 +2372,20 @@ SQLite state, and generated geometry under the ignored
 ### BREP MCP (`brep-mcp`)
 
 - Install only `brepjs-cad@0.103.0` with the recorded npm integrity and
-  `--ignore-scripts` into the disposable root.
+  blocked install scripts into the disposable root.
 - MCP initialization and `tools/list` pass on native Windows; the server reports
   version `0.103.0` and publishes 2 tools.
 - The source-controlled 1 mm cube probe fails in the upstream package because
   its entry point passes a `data:` URL to Node's `fileURLToPath`, which requires
   a `file:` URL. Do not patch the installed package during qualification.
+- On clean Intel Linux, copy Wright's reviewed
+  `docker/mcp/brep-mcp-launcher.cjs` to `brep-mcp-wrapped` on `PATH`. With the
+  third-party package still unmodified, three direct sessions and both Wright
+  gateway layers exported a 40 x 20 x 10 mm box as STEP and STL. The STL oracle
+  measured 8000 mm3; the STEP oracle verified complete ISO-10303-21 framing.
+  Invalid input left no artifact, and an infinite program was stopped by the
+  server's 250 ms sandbox timeout. Evidence is
+  `evidence/curation-2026-09-08/brep-linux.json`.
 
 ### SolidEdgeMCP (`solid-edge-mcp-burhop`)
 

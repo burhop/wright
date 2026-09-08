@@ -2,15 +2,18 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-08",
   "platform": null,
-  "catalog_sha256": "c025e809277793f6aaff1e53104be008a57b127ec81352aabdcb3f96efcf6f56",
+  "catalog_sha256": "31fe2323d823ebe4406464567024a80a97db5309f308614a12b9a8839bfedb01",
   "counts": {
-    "curated": 2,
-    "follow_up": 63,
+    "curated": 5,
+    "follow_up": 60,
     "removed": 9
   },
   "lists": {
     "curated": [
       "autodesk-product-help-mcp",
+      "brep-mcp",
+      "freecad-mcp-nekanat",
+      "oasis-open-fem-agent",
       "openscad-mcp"
     ],
     "follow_up": [
@@ -24,7 +27,6 @@
       "backflip-ai-watchlist",
       "blender-mcp",
       "blender-mcp-harveyxiacn",
-      "brep-mcp",
       "cad-mcp-daobataotie",
       "caid-mcp",
       "comsol-multiphysics-mcp-suzysa",
@@ -35,7 +37,6 @@
       "flexcompute-flow360-api-candidate",
       "freecad-addon-robust",
       "freecad-mcp-contextform",
-      "freecad-mcp-nekanat",
       "freecad-mcp-proximile",
       "freecad-mcp-sandraschi",
       "freecad-mcp-sergiudanstan",
@@ -52,7 +53,6 @@
       "nvidia-omniverse-kit-mcp",
       "nvidia-omniverse-omniui-mcp",
       "nvidia-omniverse-usd-code-mcp",
-      "oasis-open-fem-agent",
       "onshape-labs-featurescript-mcp",
       "onshape-mcp-hedless",
       "openfoam-mcp-webworn",
@@ -119,6 +119,8 @@
       "label": "Detailed design",
       "curated": [
         "autodesk-product-help-mcp",
+        "brep-mcp",
+        "freecad-mcp-nekanat",
         "openscad-mcp"
       ],
       "follow_up": [
@@ -129,7 +131,6 @@
         "backflip-ai-watchlist",
         "blender-mcp",
         "blender-mcp-harveyxiacn",
-        "brep-mcp",
         "cad-mcp-daobataotie",
         "caid-mcp",
         "creo-mcp",
@@ -137,7 +138,6 @@
         "easy-mcp-autocad",
         "freecad-addon-robust",
         "freecad-mcp-contextform",
-        "freecad-mcp-nekanat",
         "freecad-mcp-proximile",
         "freecad-mcp-sandraschi",
         "freecad-mcp-sergiudanstan",
@@ -170,7 +170,9 @@
     {
       "stage": "simulation",
       "label": "Analysis and simulation",
-      "curated": [],
+      "curated": [
+        "oasis-open-fem-agent"
+      ],
       "follow_up": [
         "ansys-fluent-mcp",
         "ansys-mcp-server-community",
@@ -181,7 +183,6 @@
         "freecad-mcp-sergiudanstan",
         "matlab-mcp-server",
         "nvidia-omniverse-isaac-sim-mcp",
-        "oasis-open-fem-agent",
         "openfoam-mcp-webworn",
         "rescale-mcp-hosted",
         "simscale-api-candidate",
@@ -683,19 +684,37 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "passed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Windows protocol discovery passed, but the backend probe failed; broader historical tested labeling does not establish qualification.",
+        "disposition": "curated",
+        "reason": "Three fresh direct MCP sessions and both Wright gateway layers exported valid STEP and STL artifacts in a clean Intel Linux container. The recommendation is scoped to the reviewed launcher and Linux configuration; Windows still has a recorded upstream-entry failure and repeat user adoption is unknown.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Resolve the documented entry-point defect, then rerun STEP export and Wright gateway qualification on each advertised platform.",
+        "next_action": "Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
-        "qualifications": [],
-        "effective_disposition": "follow_up",
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "clean-wright-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b",
+            "workflow": "BREP box STEP and STL export",
+            "source_revision": "brepjs-cad 0.103.0; 2cfc880f517e82cfc4bbafed36ce55afa27daa12",
+            "wright_revision": "deec4940-plus-engineering-qualification",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/brep-linux.json",
+            "evidence_sha256": "80c516a066aec4724dddd7711f115f8bd175f70bec3d4963af7f1b1ab4a4ce22",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -1067,17 +1086,35 @@
       ],
       "validation_status": "passed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "curated",
+        "reason": "After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "next_action": "Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
-        "qualifications": [],
-        "effective_disposition": "follow_up",
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "clean-wright-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "a0a8a5eed836de890672310b8e92926c6d3ee18cb0452f0ce2dae5d210d6bbe8",
+            "workflow": "FreeCAD box creation and STL export",
+            "source_revision": "63acb305573194a011641ab13ccfb391fe95769f; FreeCAD 1.1.1; MCP SDK 1.28.1",
+            "wright_revision": "deec4940-plus-engineering-qualification",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/freecad-linux.json",
+            "evidence_sha256": "d46454a2289cbb498ac0193a0808101861a071b6da772c2c2bf5023376f88faf",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -1637,17 +1674,35 @@
       ],
       "validation_status": "passed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "curated",
+        "reason": "The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "next_action": "Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
-        "qualifications": [],
-        "effective_disposition": "follow_up",
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "clean-wright-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e",
+            "workflow": "OASiS scikit-fem Poisson solve",
+            "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780; Python 3.12.12; MCP SDK 1.28.1; scikit-fem 12.0.2",
+            "wright_revision": "deec4940-plus-engineering-qualification",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/oasis-linux.json",
+            "evidence_sha256": "d998c9a90a69abc395cda15c82f203e4df3cd9e2652fa53fe30acb3c7680b093",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
