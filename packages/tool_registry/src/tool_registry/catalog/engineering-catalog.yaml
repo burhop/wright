@@ -2403,9 +2403,9 @@ servers:
       tested: false
       notes: Headless ezdxf is expected to work; live COM automation remains unqualified and requires AutoCAD.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Source and upstream suite reviewed; Wright workflow qualification pending.
+      status: 'yes'
+      tested: true
+      notes: Pinned headless ezdxf source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, file reopen, path-boundary, and independent DXF geometry checks.
     linux_arm64:
       status: unknown
       tested: false
@@ -2424,9 +2424,11 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: not_tested
-    message: Upstream locked suite passed 1,359 tests; Wright backend and gateway qualification pending.
-    environment: null
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned source passed 1,359 upstream tests plus three direct Wright sessions, the gateway service, and Hermes-facing gateway. Each route wrote the expected 100 x 60 outline, two radius-5 holes, and centerline; out-of-workspace writes were rejected.
+    environment: fresh-standard-linux-x64-container
     missing_dependencies: []
   engineering_stages:
   - design
@@ -2434,13 +2436,29 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and upstream suite reviewed; a scoped Wright workflow qualification is pending.
+    disposition: curated
+    reason: The pinned 47-tool lean profile passed a useful headless mechanical DXF workflow through direct MCP and both Wright gateway paths with independent artifact inspection.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Run the fixed headless mechanical DXF scenario through the server and both Wright gateway paths.
+    next_action: Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.
     adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: 18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee
+      workflow: Create a 100 x 60 mechanical DXF with two radius-5 holes and a centerline; save, reopen, reject an out-of-workspace write, and inspect the DXF geometry independently.
+      source_revision: abc2a82e7128358b9e228a7d9442b37019aa3fe5
+      wright_revision: 610d2fcd
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/autocad-u-c4n-linux.json
+      evidence_sha256: 683a09cb3677f5bed5a7d41484513556d9987a9db1cebe1c7db5c846a83a3dcc
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: easy-mcp-autocad
   name: Easy-MCP-AutoCAD
   vendor: zh19980811
@@ -5434,9 +5452,9 @@ servers:
       tested: false
       notes: Standalone Python expected; full bridge requires Rhino 8 and optional .NET plugin.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Standalone source and upstream suite reviewed; Wright workflow qualification pending.
+      status: 'yes'
+      tested: true
+      notes: Pinned standalone source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, reopen, schema-error, and independent 3DM solid inspection checks.
     linux_arm64:
       status: unknown
       tested: false
@@ -5458,22 +5476,40 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Upstream locked suite passed 296 tests; Wright standalone solid 3DM qualification pending. A Wright probe found inconsistent face winding in standalone rhino_mesh_box STL output, so mesh volume and STL are excluded from the candidate scope.
-    environment: null
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned source passed 296 upstream tests plus three direct Wright sessions, the gateway service, and Hermes-facing gateway for a solid 3DM workflow. Independent rhino3dm inspection confirmed millimetre units, exact 10 x 8 x 6 bounds, a valid closed six-face/twelve-edge Brep, and file reopen. Standalone mesh volume/STL and live bridge features remain unqualified.
+    environment: fresh-standard-linux-x64-container
     missing_dependencies: []
   engineering_stages:
   - design
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and upstream suite reviewed; a scoped standalone Wright workflow qualification is pending.
+    disposition: curated
+    reason: The pinned standalone server passed a useful solid 3DM workflow through direct MCP and both Wright gateway paths with independent file inspection. The recommendation excludes standalone mesh-volume/STL and live bridge features.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Run the fixed millimetre solid 3DM scenario through the server and both Wright gateway paths; keep standalone mesh-volume/STL plus live Rhino and Grasshopper out of scope.
+    next_action: Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.
     adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18
+      workflow: Author and save a millimetre 10 x 8 x 6 solid Brep, reopen it in fresh sessions, reject an invalid dimension, and independently inspect the 3DM object, topology, units, validity, and bounds.
+      source_revision: 3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46
+      wright_revision: '77189624'
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/rhino-easehee-linux.json
+      evidence_sha256: 2f36f623e4a9d84e61be0f94c81d7c0c7633ef3742c4342f725607aada785a33
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: blender-mcp-harveyxiacn
   name: Blender MCP Comprehensive Server
   vendor: harveyxiacn
