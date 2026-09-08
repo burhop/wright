@@ -5392,7 +5392,8 @@ servers:
   capability_summary:
   - Standalone rhino3dm geometry authoring
   - Rhino 8 and Grasshopper bridge automation
-  - STEP, IGES, STL, OBJ, IFC, and gbXML workflows
+  - Standalone 3DM authoring plus OBJ and STL export for mesh objects
+  - Bridge-only STEP, IGES, IFC, gbXML, and advanced modeling workflows
   - Geometry validation and schedule extraction
   source_records:
   - url: https://github.com/easehee/rhino-mcp
@@ -5458,7 +5459,7 @@ servers:
   - execute_code_approval
   validation_result:
     status: not_tested
-    message: Upstream locked suite passed 296 tests; Wright standalone backend and gateway qualification pending.
+    message: Upstream locked suite passed 296 tests; Wright standalone solid 3DM qualification pending. A Wright probe found inconsistent face winding in standalone rhino_mesh_box STL output, so mesh volume and STL are excluded from the candidate scope.
     environment: null
     missing_dependencies: []
   engineering_stages:
@@ -5471,7 +5472,7 @@ servers:
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Run the fixed millimetre 3DM and STL scenario through the server and both Wright gateway paths; keep live Rhino and Grasshopper out of scope.
+    next_action: Run the fixed millimetre solid 3DM scenario through the server and both Wright gateway paths; keep standalone mesh-volume/STL plus live Rhino and Grasshopper out of scope.
     adoption: unknown
 - id: blender-mcp-harveyxiacn
   name: Blender MCP Comprehensive Server

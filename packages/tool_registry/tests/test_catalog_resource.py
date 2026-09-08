@@ -115,7 +115,9 @@ def test_researched_entries_carry_source_and_runtime_metadata() -> None:
 
     rhino = entries["rhino-mcp-easehee"]
     assert rhino.runtime_requirements.docker == "yes"
-    assert "STEP, IGES, STL, OBJ, IFC, and gbXML workflows" in rhino.capability_summary
+    assert "Standalone 3DM authoring plus OBJ and STL export for mesh objects" in (
+        rhino.capability_summary
+    )
     assert rhino.launch_env == {"RHINO_MCP_FORCE_MODE": "standalone"}
     assert "3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46" in " ".join(rhino.command)
 

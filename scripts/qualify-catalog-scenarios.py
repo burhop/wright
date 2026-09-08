@@ -21,6 +21,7 @@ import shutil
 import signal
 import sqlite3
 import struct
+import subprocess
 import sys
 import tempfile
 import traceback
@@ -182,18 +183,59 @@ def autocad_dxf_oracle(path):
     }
 
 
-def rhino_artifact_oracle(model_path, mesh_path):
-    """Check the 3DM container and independently integrate the exported mesh."""
+def rhino_artifact_oracle(model_path):
+    """Reload the 3DM with a separately installed reader and inspect the Brep."""
     raw = model_path.read_bytes()
     assert 500 < len(raw) < 10 * 1024 * 1024, "Missing or oversized 3DM"
     assert raw.startswith(b"3D Geometry File Format"), "Invalid 3DM header"
+    reader = (
+        "import json,sys,rhino3dm as r3;"
+        "f=r3.File3dm.Read(sys.argv[1]);"
+        "assert f is not None and len(f.Objects)==1;"
+        "g=f.Objects[0].Geometry; b=g.GetBoundingBox();"
+        "print(json.dumps({'object_count':len(f.Objects),"
+        "'units_mm':int(f.Settings.ModelUnitSystem)==int(r3.UnitSystem.Millimeters),"
+        "'kind':type(g).__name__,'is_valid':bool(g.IsValid),"
+        "'is_solid':bool(g.IsSolid),'face_count':len(g.Faces),"
+        "'edge_count':len(g.Edges),'bounds':[[b.Min.X,b.Min.Y,b.Min.Z],"
+        "[b.Max.X,b.Max.Y,b.Max.Z]]}))"
+    )
+    completed = subprocess.run(
+        [
+            "uv",
+            "run",
+            "--isolated",
+            "--python",
+            "3.11",
+            "--with",
+            "rhino3dm==8.17.0",
+            "python",
+            "-c",
+            reader,
+            str(model_path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=90,
+    )
+    inspected = json.loads(completed.stdout)
+    assert inspected == {
+        "object_count": 1,
+        "units_mm": True,
+        "kind": "Brep",
+        "is_valid": True,
+        "is_solid": True,
+        "face_count": 6,
+        "edge_count": 12,
+        "bounds": [[0.0, 0.0, 0.0], [10.0, 8.0, 6.0]],
+    }, "Independent 3DM inspection did not find the expected solid"
     return {
-        "model": {
-            "bytes": len(raw),
-            "sha256": hashlib.sha256(raw).hexdigest(),
-            "header": raw[:32].decode("ascii", errors="replace").rstrip("\x00"),
-        },
-        "mesh": cube_oracle(mesh_path),
+        "bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "header": raw[:32].decode("ascii", errors="replace").rstrip("\x00"),
+        "independent_reader": "rhino3dm==8.17.0",
+        "solid": inspected,
     }
 
 
@@ -780,7 +822,7 @@ async def run(args, root, report):
                 "rosbag-mcp-pypi": "ROS 2 known-message retrieval",
                 "blender-mcp": "Blender dimensioned box STL export",
                 "autocad-mcp-u-c4n": "AutoCAD headless mechanical DXF authoring",
-                "rhino-mcp-easehee": "Rhino standalone 3DM and mesh authoring",
+                "rhino-mcp-easehee": "Rhino standalone solid Brep 3DM authoring",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -955,10 +997,9 @@ async def run(args, root, report):
                 required = {
                     "rhino_open",
                     "rhino_save",
-                    "rhino_export_stl",
                     "rhino_document_units_set",
                     "rhino_document_summary",
-                    "rhino_mesh_box",
+                    "rhino_box",
                     "rhino_object_info",
                 }
                 assert required <= selected.keys(), "Rhino tool surface is incomplete"
@@ -973,7 +1014,7 @@ async def run(args, root, report):
                     prior_summary = await client.call_tool(
                         "rhino_document_summary", {"args": {"doc_id": f"reopen-{attempt}"}}
                     )
-                    assert not prior_summary.isError and "mesh" in _result_text(prior_summary).lower(), (
+                    assert not prior_summary.isError and "brep" in _result_text(prior_summary).lower(), (
                         "Rhino reopened a different object inventory"
                     )
                 units = await client.call_tool(
@@ -982,7 +1023,7 @@ async def run(args, root, report):
                 )
                 assert not units.isError, "Rhino could not set millimetre units"
                 created = await client.call_tool(
-                    "rhino_mesh_box",
+                    "rhino_box",
                     {
                         "args": {
                             "doc_id": "active",
@@ -1003,18 +1044,18 @@ async def run(args, root, report):
                 )
                 object_text = _result_text(object_info).lower()
                 assert not object_info.isError and all(
-                    marker in object_text for marker in ("mesh", "vertex_count", "face_count")
+                    marker in object_text for marker in ("brep", "is_solid", "face_count")
                 ), "Rhino object inspection is incomplete"
                 model_output = root / f"direct-{attempt}.3dm"
-                saved = await client.call_tool(
-                    "rhino_save",
-                    {"args": {"doc_id": "active", "path": str(model_output), "version": 8}},
-                )
-                assert not saved.isError, "Rhino could not save the 3DM"
-                output = root / f"direct-{attempt}.stl"
                 probe = (
-                    "rhino_export_stl",
-                    {"args": {"doc_id": "active", "path": str(output)}},
+                    "rhino_save",
+                    {
+                        "args": {
+                            "doc_id": "active",
+                            "path": str(model_output),
+                            "version": 8,
+                        }
+                    },
                 )
             else:
                 raise ValueError("Qualification recipe is incomplete")
@@ -1067,7 +1108,7 @@ async def run(args, root, report):
                 )
                 report["outcome"] = autocad_dxf_oracle(output)
             elif args.server == "rhino-mcp-easehee":
-                report["outcome"] = rhino_artifact_oracle(model_output, output)
+                report["outcome"] = rhino_artifact_oracle(model_output)
             report["steps"].append(
                 {
                     "stage": "direct_protocol_backend_outcome",
@@ -1225,7 +1266,7 @@ async def run(args, root, report):
                 )
             if args.server == "rhino-mcp-easehee" and attempt == 0:
                 invalid = await client.call_tool(
-                    "rhino_mesh_box",
+                    "rhino_box",
                     {
                         "args": {
                             "doc_id": "active",
@@ -1335,7 +1376,7 @@ async def run(args, root, report):
                 f"{entry.id}__{tool_name}"
                 for tool_name in (
                     "rhino_document_units_set",
-                    "rhino_mesh_box",
+                    "rhino_box",
                     "rhino_save",
                 )
             )
@@ -1406,7 +1447,6 @@ async def run(args, root, report):
             )
         elif args.server == "rhino-mcp-easehee":
             gateway_model_output = workspace / "gateway.3dm"
-            gateway_mesh_output = workspace / "gateway.stl"
             for step, (tool_name, values) in enumerate(
                 (
                     (
@@ -1414,7 +1454,7 @@ async def run(args, root, report):
                         {"args": {"doc_id": "active", "units": "mm", "scale_existing": False}},
                     ),
                     (
-                        "rhino_mesh_box",
+                        "rhino_box",
                         {
                             "args": {
                                 "doc_id": "active",
@@ -1423,16 +1463,6 @@ async def run(args, root, report):
                                 "size_y": 8,
                                 "size_z": 6,
                                 "name": "WrightGateway",
-                            }
-                        },
-                    ),
-                    (
-                        "rhino_save",
-                        {
-                            "args": {
-                                "doc_id": "active",
-                                "path": str(gateway_model_output),
-                                "version": 8,
                             }
                         },
                     ),
@@ -1447,8 +1477,14 @@ async def run(args, root, report):
                 )
                 assert not setup_result.is_error, f"Gateway failed at {tool_name}"
             probe = (
-                "rhino_export_stl",
-                {"args": {"doc_id": "active", "path": str(gateway_mesh_output)}},
+                "rhino_save",
+                {
+                    "args": {
+                        "doc_id": "active",
+                        "path": str(gateway_model_output),
+                        "version": 8,
+                    }
+                },
             )
         result = await gateway.call_tool(
             "qualification-session",
@@ -1491,9 +1527,7 @@ async def run(args, root, report):
         elif args.server == "autocad-mcp-u-c4n":
             report["gateway_outcome"] = autocad_dxf_oracle(gateway_output)
         elif args.server == "rhino-mcp-easehee":
-            report["gateway_outcome"] = rhino_artifact_oracle(
-                gateway_model_output, gateway_mesh_output
-            )
+            report["gateway_outcome"] = rhino_artifact_oracle(gateway_model_output)
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -1587,14 +1621,13 @@ async def run(args, root, report):
             )
         elif args.server == "rhino-mcp-easehee":
             gateway_mcp_model_output = workspace / "gateway-mcp.3dm"
-            gateway_mcp_mesh_output = workspace / "gateway-mcp.stl"
             for tool_name, values in (
                 (
                     "rhino_document_units_set",
                     {"args": {"doc_id": "active", "units": "mm", "scale_existing": False}},
                 ),
                 (
-                    "rhino_mesh_box",
+                    "rhino_box",
                     {
                         "args": {
                             "doc_id": "active",
@@ -1606,24 +1639,20 @@ async def run(args, root, report):
                         }
                     },
                 ),
-                (
-                    "rhino_save",
-                    {
-                        "args": {
-                            "doc_id": "active",
-                            "path": str(gateway_mcp_model_output),
-                            "version": 8,
-                        }
-                    },
-                ),
             ):
                 setup_result = await client.call_tool(
                     f"{entry.id}__{tool_name}", values
                 )
                 assert not setup_result.isError, f"Gateway MCP failed at {tool_name}"
             probe = (
-                "rhino_export_stl",
-                {"args": {"doc_id": "active", "path": str(gateway_mcp_mesh_output)}},
+                "rhino_save",
+                {
+                    "args": {
+                        "doc_id": "active",
+                        "path": str(gateway_mcp_model_output),
+                        "version": 8,
+                    }
+                },
             )
         result = await client.call_tool(name, probe[1])
         assert not result.isError, (
@@ -1661,7 +1690,7 @@ async def run(args, root, report):
             report["gateway_mcp_outcome"] = autocad_dxf_oracle(gateway_mcp_output)
         elif args.server == "rhino-mcp-easehee":
             report["gateway_mcp_outcome"] = rhino_artifact_oracle(
-                gateway_mcp_model_output, gateway_mcp_mesh_output
+                gateway_mcp_model_output
             )
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
