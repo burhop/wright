@@ -1008,7 +1008,12 @@ async def run(args, root, report):
                     previous = root / f"direct-{attempt - 1}.3dm"
                     reopened = await client.call_tool(
                         "rhino_open",
-                        {"path": str(previous), "doc_id": f"reopen-{attempt}"},
+                        {
+                            "args": {
+                                "path": str(previous),
+                                "doc_id": f"reopen-{attempt}",
+                            }
+                        },
                     )
                     assert not reopened.isError, "Rhino could not reopen its prior 3DM"
                     prior_summary = await client.call_tool(

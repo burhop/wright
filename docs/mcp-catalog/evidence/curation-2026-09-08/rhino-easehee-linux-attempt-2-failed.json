@@ -1,0 +1,126 @@
+{
+  "server_id": "rhino-mcp-easehee",
+  "observed_at": "2026-09-08T23:45:39.096141+00:00",
+  "wright_revision": "58986f94",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/easehee/rhino-mcp",
+  "status": "failed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_schema_error",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "Rhino standalone solid Brep 3DM authoring",
+  "configuration_sha256": "cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18",
+  "installed_items": [
+    "rhino3dm-mcp 0.6.0 source 3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46; upstream locked suite 296 passed"
+  ],
+  "source_references": [
+    "https://github.com/EaseHee/rhino-mcp/tree/3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46"
+  ],
+  "prerequisites": [
+    "git installed only in disposable container; RHINO_MCP_FORCE_MODE=standalone; independent rhino3dm 8.17.0 artifact reader; no Rhino desktop host"
+  ],
+  "server_info": {
+    "name": "rhino-mcp",
+    "title": null,
+    "version": "1.30.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "c37a6fb99c95eebd7b67fcd56baa8a448d518f2d919a0ba69464448adde9406b",
+  "tool_count": 244,
+  "save_schema": {
+    "$defs": {
+      "_SaveIn": {
+        "properties": {
+          "doc_id": {
+            "default": "active",
+            "description": "Document handle id; 'active' targets the current document.",
+            "title": "Doc Id",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Absolute path; defaults to the previously opened file.",
+            "title": "Path"
+          },
+          "version": {
+            "default": 8,
+            "maximum": 8,
+            "minimum": 2,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "_SaveIn",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "args": {
+        "$ref": "#/$defs/_SaveIn"
+      }
+    },
+    "required": [
+      "args"
+    ],
+    "title": "rhino_saveArguments",
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 19589,
+    "sha256": "07e6bebba4e52227f27b6c5f0b4a6c536ac054416067ebbaf44c414998a960d6",
+    "header": "3D Geometry File Format       80",
+    "independent_reader": "rhino3dm==8.17.0",
+    "solid": {
+      "object_count": 1,
+      "units_mm": true,
+      "kind": "Brep",
+      "is_valid": true,
+      "is_solid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          8.0,
+          6.0
+        ]
+      ]
+    }
+  },
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "causes": [],
+  "sub_errors": [
+    {
+      "type": "AssertionError",
+      "message": "Rhino could not reopen its prior 3DM",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 66, in client_session\n    yield client\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 1013, in run\n    assert not reopened.isError, \"Rhino could not reopen its prior 3DM\"\n           ^^^^^^^^^^^^^^^^^^^^\nAssertionError: Rhino could not reopen its prior 3DM\n"
+    }
+  ],
+  "cleanup": "passed"
+}
