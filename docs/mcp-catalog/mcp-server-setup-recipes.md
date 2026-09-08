@@ -1082,7 +1082,10 @@ Source: https://github.com/ahujasid/blender-mcp
 Run MCP from a clean Wright container:
 
 ```bash
-uvx --python 3.11 blender-mcp
+BLENDER_MCP_DISABLE_TELEMETRY=true BLENDER_MCP_SAFE_MODE=true \
+  uv tool run --python 3.11 \
+  --from git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477 \
+  blender-mcp
 ```
 
 Install selected-server Blender dependencies:
@@ -1096,9 +1099,15 @@ sudo apt-get install -y --no-install-recommends \
 Start the Blender add-on under Xvfb:
 
 ```bash
-git clone --depth 1 https://github.com/ahujasid/blender-mcp /tmp/mcp-blender
+git clone https://github.com/ahujasid/blender-mcp /tmp/mcp-blender
+git -C /tmp/mcp-blender checkout 5f8ddaf6e987c4aa0c3467fcc548838b28f64477
 cat >/tmp/start_blendermcp.py <<'PY'
 import sys
+from pathlib import Path
+
+debian_packages = Path("/usr/lib/python3/dist-packages")
+if debian_packages.is_dir():
+    sys.path.insert(0, str(debian_packages))
 sys.path.insert(0, "/tmp/mcp-blender")
 import addon
 addon.register()
@@ -1112,30 +1121,39 @@ Validation probes:
 - `initialize`
 - `notifications/initialized`
 - `tools/list`
-- Without Blender/add-on socket: `get_scene_info` should return
-  `Could not connect to Blender. Make sure the Blender addon is running.`
-- With Blender/add-on socket: `get_scene_info` should return the default
-  scene containing `Cube`, `Light`, and `Camera`.
-- With Blender/add-on socket: `execute_blender_code` can create a temporary
-  cube and `get_object_info` should verify its mesh data.
+- Three fresh direct MCP sessions, Wright `GatewayService`, and the Hermes-facing
+  `wrightgateway` MCP each create and export a 10 x 8 x 6 mm mesh.
+- Parse each STL independently and require dimensions 10 x 8 x 6 mm, volume
+  480 mm3, and identical 684-byte output.
+- Require `get_object_info` to report 8 vertices, 12 edges, 6 polygons, and world
+  bounds `[-5, -4, -3]` to `[5, 4, 3]`.
+- Raise a controlled Blender exception and require its diagnostic in MCP content.
+- Stop the add-on bridge, require a connection-loss diagnostic, restart it,
+  verify reconnection, and confirm port and process-group cleanup.
 
 Known notes:
 
-- Repository commit `6e99eb5a442b83766a5796975ec7bb5bfc791341`.
-- There are no upstream test files in the cloned repository.
-- Clean Intel Ubuntu validation installed `uv`/`uvx` 0.11.25 using the official
-  installer and used `uvx --python 3.11 blender-mcp`.
-- The package downloaded CPython 3.11.15 and installed 37 Python packages.
-- MCP initialized as server `BlenderMCP` version `1.28.1`.
-- MCP lists 22 tools, including `get_scene_info`, `get_object_info`,
+- Current qualification pins repository commit
+  `5f8ddaf6e987c4aa0c3467fcc548838b28f64477` and source package 1.9.1.
+- All 113 upstream tests passed before Wright's integration scenario ran.
+- The clean standard Wright container used Blender 4.3.2,
+  `python3-requests 2.32.3+dfsg-5+deb13u1`, uv 0.9.26, and uv-managed
+  CPython 3.11.14. The base image was not modified.
+- MCP initialized as server `BlenderMCP` version `1.30.0`.
+- MCP lists 28 tools, including `get_scene_info`, `get_object_info`,
   `get_viewport_screenshot`, `execute_blender_code`, Poly Haven tools,
   Sketchfab tools, Hyper3D tools, and Hunyuan3D tools.
 - The add-on refuses `blender -b` background mode because commands would not
   execute. Use a normal Blender process inside `xvfb-run`.
-- Ubuntu 24.04 installed Blender 4.0.2. Its Python environment did not include
-  `requests` by default. Install `python3-requests` before loading `addon.py`.
-- Backend validation created `WrightValidationCube` at `(1.0, 2.0, 3.0)` and
-  verified it with `get_object_info`: 8 vertices, 12 edges, 6 polygons.
+- Debian's Blender interpreter does not include `/usr/lib/python3/dist-packages`
+  on its default path. The clean-container bootstrap exposes that directory so
+  the declared `python3-requests` package is the dependency under test.
+- The server warns that the add-on is not installed because the qualification
+  mounts the exact reviewed `addon.py` read-only and imports it directly. Its
+  protocol handshake still confirmed add-on protocol 5, add-on 1.6, and Blender
+  4.3.2.
+- `get_scene_info` currently requires a `user_prompt` field in its published tool
+  schema; the qualification sends an empty value.
 - Cloud/asset features such as Poly Haven, Sketchfab, Hyper3D, and Hunyuan3D
   were disabled for this local backend validation and still need separate
   credential/network testing.

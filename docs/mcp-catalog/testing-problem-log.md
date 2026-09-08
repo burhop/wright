@@ -1940,3 +1940,28 @@ Result:
   unavailable source-repository link, maintenance continuity, broader tools,
   large-bag performance, and repeat adoption remain follow-up. Evidence:
   evidence/curation-2026-09-08/rosbag-pypi-linux.json.
+
+Problem:
+  The prior Blender record followed a mutable package launch and old source
+  revision. Current Blender 4.3 removed the old STL export option used by the
+  first qualification probe. Wright's injected source `PYTHONPATH` also hid the
+  dependencies of Blender's embedded interpreter, while Debian installs
+  `python3-requests` outside Blender's default module path.
+Solution:
+  Pinned source commit `5f8ddaf6e987c4aa0c3467fcc548838b28f64477`, disabled
+  telemetry, enabled safe mode, used Blender 4.3's `wm.stl_export` signature,
+  cleared Wright's source path for the Blender process, and exposed Debian's
+  declared system-package directory in the test bootstrap. Installed Blender,
+  `python3-requests`, Xvfb, xauth, and procps only in a fresh standard Wright
+  Intel Linux container.
+Result:
+  All 113 upstream tests passed. Three direct MCP sessions and both Wright
+  gateway layers created identical 684-byte 10 x 8 x 6 mm STL files measured at
+  480 mm3. Object inspection confirmed 8 vertices, 12 edges, 6 polygons, and
+  expected bounds. A controlled exception was reported, a dropped add-on bridge
+  was diagnosed and reconnected after restart, and no live Blender/Xvfb process
+  or listening port remained. Defunct children were visible until the disposable
+  container's init exited; the process group and port were inactive, and the
+  container was removed. Optional network services and native desktop hosts
+  remain follow-up. Evidence:
+  evidence/curation-2026-09-08/blender-linux.json.

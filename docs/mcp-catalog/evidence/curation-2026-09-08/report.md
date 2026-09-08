@@ -2,22 +2,23 @@
 
 As of 2026-09-08 · policy 2026-09-08.1
 
-Catalog digest: `066a47e6d6ec414c33b355be5e784fda403da3f708ccc90bc8f0abc3ddcfb9c5`
+Catalog digest: `d63f3f9b3ea696bfc4c45c510d917a968eef3b430d9608fbcaf3de7430a415fb`
 
 Recorded decisions only; no MCP was installed or tested by this report.
 
-## Curated (6)
+## Curated (7)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
 | autodesk-product-help-mcp | Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only to the listed environments; repeat user adoption is unknown. | Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation. | 2026-10-08 |
+| blender-mcp | The exact source revision passed its 113-test upstream suite, three fresh direct MCP sessions, both Wright gateway layers, independent mesh and STL checks, controlled-error handling, add-on restart recovery, and cleanup. The recommendation is limited to Linux, local polygonal mesh inspection and workspace-bound STL export; optional network services and repeat user adoption remain unproven. | Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation. | 2026-10-08 |
 | brep-mcp | Three fresh direct MCP sessions and both Wright gateway layers exported valid STEP and STL artifacts in a clean Intel Linux container. The recommendation is scoped to the reviewed launcher and Linux configuration; Windows still has a recorded upstream-entry failure and repeat user adoption is unknown. | Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation. | 2026-10-08 |
 | freecad-mcp-nekanat | After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown. | Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors. | 2026-10-08 |
 | oasis-open-fem-agent | The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven. | Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout. | 2026-10-08 |
 | openscad-mcp | Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only to the listed environments; repeat user adoption is unknown. | Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation. | 2026-10-08 |
 | rosbag-mcp-pypi | The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven. | Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools. | 2026-10-08 |
 
-## Follow up (59)
+## Follow up (58)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -29,7 +30,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | autodesk-fusion-desktop-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | autodesk-fusion-mcp-python | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
 | backflip-ai-watchlist | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
-| blender-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | blender-mcp-harveyxiacn | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | cad-mcp-daobataotie | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | caid-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -102,7 +102,7 @@ Recorded decisions only; no MCP was installed or tested by this report.
 |---|---:|---:|
 | Requirements | 1 | 4 |
 | Concept and architecture | 0 | 3 |
-| Detailed design | 4 | 41 |
+| Detailed design | 5 | 40 |
 | Analysis and simulation | 1 | 13 |
 | BOM and sourcing | 0 | 1 |
 | Manufacturing and assembly | 0 | 4 |

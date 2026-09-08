@@ -19,7 +19,7 @@ DigiKey/Mouser official implementation. The ROSBag package replaces the broken
 installed distribution of the older catalog entry and has a narrow live
 qualification described below.
 
-The [report](report.md) lists **6 curated, 59 follow-up, and 10 removed** records.
+The [report](report.md) lists **7 curated, 58 follow-up, and 10 removed** records.
 These counts are distinct from installations, custom records, managed tools, and
 active signed catalog versions in a deployed Wright instance.
 
@@ -31,6 +31,7 @@ active signed catalog versions in a deployed Wright instance.
 | FreeCAD MCP | Three direct and two gateway FreeCAD box/STL tasks; independent 10 x 8 x 6 mm and 480 mm3 inspection | Linux x64 container; FreeCAD 1.1.1; pinned server commit and MCP SDK 1.28.1; backend errors use tool content |
 | OASiS | Three direct and two gateway scikit-fem Poisson solves; independent 2,113-node VTU, boundary, finiteness, and solution-range inspection; controlled failure and process-tree timeout cleanup | Linux x64 container; pinned Python 3.12, OASiS commit, MCP SDK 1.28.1, and scikit-fem 12.0.2; other solver backends remain unqualified |
 | ROSBag MCP | Three direct and two gateway known-message queries; independently inspected ROS 2 SQLite schema, CDR payloads, types, and timestamps | Linux x64 container; exact PyPI wheel and Python stack; source link unavailable, missing-bag errors use normal content, and broader tools remain unqualified |
+| Blender MCP | Three direct and two gateway dimensioned mesh/STL tasks; independent 10 x 8 x 6 mm dimensions, 480 mm3 volume, topology and bounds; controlled error and add-on restart recovery | Linux x64 container; exact source commit, Blender 4.3.2, telemetry disabled, safe mode enabled; network asset/generation tools and native desktop hosts remain unqualified |
 
 Ten records were removed from ordinary uninstalled discovery:
 `mcp-ui-shopify`, `webmcp-standard`, `calculix-simulation`,
@@ -71,12 +72,12 @@ added to the user catalog. Publisher-source verification remains required.
 - Ten frontend component and WebMCP adapter tests passed. The production web build,
   changed Python lint checks, and changed frontend lint checks passed.
 - Live external qualification separately passed the actual MCP backend and
-  production `api.gateway_stdio` gateway for the six scoped integrations above. The
+  production `api.gateway_stdio` gateway for the seven scoped integrations above. The
   API/browser test fixtures are not used as evidence of vendor compatibility.
 
 The first isolated base image was
 `sha256:70df876f46133fc44bf6f448ca37a16fade3bbb3f5293290065b0a3e1e559d29`;
-the later BREP, FreeCAD, OASiS, and ROSBag clean runs used standard image
+the later BREP, FreeCAD, OASiS, ROSBag, and Blender clean runs used standard image
 `sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73`.
 Selected-server dependencies were installed only in disposable containers.
 No base image, shared Python environment, vendor account, or physical device was

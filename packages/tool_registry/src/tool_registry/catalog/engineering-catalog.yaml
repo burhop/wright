@@ -2806,11 +2806,33 @@ servers:
   - xvfb
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
   - --python
   - '3.11'
+  - --from
+  - git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477
   - blender-mcp
+  launch_env:
+    BLENDER_MCP_DISABLE_TELEMETRY: 'true'
+    BLENDER_MCP_SAFE_MODE: 'true'
   source_url: https://github.com/ahujasid/blender-mcp
+  repository_url: https://github.com/ahujasid/blender-mcp
+  license: MIT
+  auth_model: local-host
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Blender scene and object inspection through a localhost add-on bridge
+  - Polygonal mesh creation and workspace-bound STL export
+  - Optional network asset and generation services excluded from core qualification
+  source_records:
+  - url: https://github.com/ahujasid/blender-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-09-08'
+    notes: Current 1.9.1 source has a pinned MCP 1.x constraint, upstream tests, explicit telemetry disable controls, and an opt-in safe mode for code execution.
   locality: local
   weight: medium
   env_vars:
@@ -2835,7 +2857,7 @@ servers:
     - python3-requests
     - xvfb
     python:
-    - blender-mcp
+    - git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477
     node: []
   aliases:
   - blender-mcp-ahujasid
@@ -2852,7 +2874,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed Blender 4.0.2, python3-requests, and Xvfb; add-on socket started and MCP executed read/write Blender operations
+      notes: clean Wright Linux validation pinned source commit 5f8ddaf6e987c4aa0c3467fcc548838b28f64477, installed Blender 4.3.2 with python3-requests and Xvfb, and passed direct and gateway geometry workflows
     linux_arm64:
       status: unknown
       tested: false
@@ -2871,13 +2893,14 @@ servers:
   approval_gates:
   - workspace_write_approval
   - machine_control_approval
+  - execute_code_approval
   - network_asset_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: Clean Intel Ubuntu validation cloned commit 6e99eb5a442b83766a5796975ec7bb5bfc791341, found no upstream tests, installed Blender 4.0.2, python3-requests, Xvfb, and uvx 0.11.25 only for this MCP, and launched the add-on under Xvfb. Without the add-on socket, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, and get_scene_info/execute_blender_code returned the expected diagnostic that the Blender add-on is not running. With the add-on socket live, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, get_scene_info returned the default Cube/Light/Camera scene, execute_blender_code created WrightValidationCube at (1.0, 2.0, 3.0), and get_object_info verified the cube mesh with 8 vertices, 12 edges, and 6 polygons.
-    environment: ubuntu-linux-x64-container
+    message: Exact source commit 5f8ddaf6e987c4aa0c3467fcc548838b28f64477 passed all 113 upstream tests, then initialized three fresh direct MCP sessions plus Wright GatewayService and the Hermes-facing gateway in a clean Linux container. Every path created the same 10x8x6 mm STL with independently verified 480 mm3 volume; object inspection confirmed 8 vertices, 12 edges, 6 polygons, and expected bounds. A controlled backend error was surfaced, a dropped add-on connection was diagnosed, the MCP reconnected after restart, and the Blender/Xvfb process group and port were cleaned up.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   headless_ok: yes-with-xvfb
   engineering_stages:
@@ -2885,13 +2908,31 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: curated
+    reason: The exact source revision passed its 113-test upstream suite, three fresh direct MCP sessions, both Wright gateway layers, independent mesh and STL checks, controlled-error handling, add-on restart recovery, and cleanup. The recommendation is limited to Linux, local polygonal mesh inspection and workspace-bound STL export; optional network services and repeat user adoption remain unproven.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation.
+    replacement_ids: []
     adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: d86d79c78bc685db520975d0ac644d51634dda834bab97e0e66a8fe5546b9a38
+      workflow: Blender dimensioned box STL export
+      source_revision: 5f8ddaf6e987c4aa0c3467fcc548838b28f64477; package 1.9.1; BlenderMCP 1.30.0; Blender 4.3.2
+      wright_revision: cc11341f-plus-blender-qualification
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/blender-linux.json
+      evidence_sha256: 82d5b59a976a2d55e596cb94b5a7e69428ec81a6afbcb573eb9bea9694d2c4e2
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: rhino-mcp
   name: Rhino NURBS C# MCP
   vendor: jingcheng-chen

@@ -135,11 +135,11 @@ cannot do so. Reinstatement requires fresh evidence and an explicit review.
 
 ## Initial qualification runner
 
-`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with six
+`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with seven
 fixed recipes: public Autodesk help product discovery, OpenSCAD and FreeCAD
 10 × 8 × 6 mm cube exports, a BREP 40 × 20 × 10 mm STEP/STL export, and an
 OASiS scikit-fem Poisson solve, plus a known-message query against a generated
-ROS 2 SQLite bag. It uses
+ROS 2 SQLite bag and a Blender 10 × 8 × 6 mm mesh/STL export. It uses
 actual protocol clients and Wright's production gateway composition; it refuses
 Wright's mock-runner environment. It records three direct sessions, the gateway
 service result, and the actual gateway MCP result. The artifact oracles inspect
@@ -198,6 +198,17 @@ gateway layers, and checks the database and CDR bytes independently. The
 package's repository link is unavailable and repeat adoption is unknown, so the
 qualification expires after 30 days and remains limited to Linux known-message
 retrieval.
+
+For `blender-mcp`, install Blender 4.3.2, `python3-requests`, Xvfb, xauth, and
+procps only in the disposable container. The catalog pins source commit
+`5f8ddaf6e987c4aa0c3467fcc548838b28f64477`, disables telemetry, and enables
+the server's safe mode. The runner mounts that revision's add-on read-only,
+exposes Debian's system Python packages to Blender's embedded interpreter, and
+starts the UI process under Xvfb. It verifies 28 tools, three direct sessions,
+both gateway layers, STL dimensions and volume, object topology and bounds, a
+controlled backend error, add-on disconnect/reconnect, and process-group/port
+cleanup. The 113 upstream tests also pass. Optional network asset and generation
+features remain outside this qualification.
 
 ## Protocol boundaries
 

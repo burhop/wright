@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import sqlite3
 import struct
 import sys
@@ -29,6 +30,8 @@ import httpx
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.client.streamable_http import streamable_http_client
+
+_blender_process_groups: set[int] = set()
 
 
 def digest(value):
@@ -102,6 +105,127 @@ def cube_oracle(path, expected_dimensions=(10, 8, 6), expected_volume=480):
         "dimensions_mm": bounds,
         "volume_mm3": abs(volume),
     }
+
+
+def blender_probe(output, object_name):
+    rendered_path = json.dumps(str(output))
+    return (
+        "execute_blender_code",
+        {
+            "code": (
+                "import bpy\n"
+                "bpy.ops.object.select_all(action='SELECT')\n"
+                "bpy.ops.object.delete(use_global=False)\n"
+                "bpy.context.scene.unit_settings.system = 'METRIC'\n"
+                "bpy.context.scene.unit_settings.length_unit = 'MILLIMETERS'\n"
+                "bpy.context.scene.unit_settings.scale_length = 0.001\n"
+                "bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))\n"
+                "obj = bpy.context.active_object\n"
+                f"obj.name = {json.dumps(object_name)}\n"
+                "obj.dimensions = (10, 8, 6)\n"
+                "bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\n"
+                "bpy.ops.object.select_all(action='DESELECT')\n"
+                "obj.select_set(True)\n"
+                "bpy.context.view_layer.objects.active = obj\n"
+                f"bpy.ops.wm.stl_export(filepath={rendered_path}, "
+                "export_selected_objects=True, global_scale=1.0)\n"
+                "print({'name': obj.name, 'dimensions_mm': list(obj.dimensions)})\n"
+            )
+        },
+    )
+
+
+def blender_object_oracle(result, expected_name):
+    payload = _json_result(result)
+    assert payload["name"] == expected_name, "Blender returned another object"
+    assert payload["type"] == "MESH", "Blender object is not a mesh"
+    assert payload["mesh"] == {"vertices": 8, "edges": 12, "polygons": 6}, (
+        "Blender box topology changed"
+    )
+    assert payload["world_bounding_box"] == [
+        [-5.0, -4.0, -3.0],
+        [5.0, 4.0, 3.0],
+    ], "Blender box bounds are incorrect"
+    return {
+        "name": payload["name"],
+        "type": payload["type"],
+        "mesh": payload["mesh"],
+        "world_bounding_box": payload["world_bounding_box"],
+    }
+
+
+async def start_blender_bridge(root, addon_path, label):
+    bootstrap = root / f"start-blender-{label}.py"
+    bootstrap.write_text(
+        "import sys\n"
+        "from pathlib import Path\n"
+        "debian_packages = Path('/usr/lib/python3/dist-packages')\n"
+        "if debian_packages.is_dir():\n"
+        "    sys.path.insert(0, str(debian_packages))\n"
+        f"sys.path.insert(0, {json.dumps(str(addon_path.parent))})\n"
+        "import addon\n"
+        "addon.register()\n"
+        "print('WRIGHT_BLENDER_BRIDGE_READY', flush=True)\n",
+        encoding="utf-8",
+    )
+    log_path = root / f"blender-{label}.log"
+    blender_env = dict(os.environ)
+    # Blender embeds its own interpreter. Wright's source path belongs only to
+    # the qualification process and can hide Blender's normal site packages.
+    blender_env["PYTHONPATH"] = ""
+    with log_path.open("wb") as log:
+        process = await asyncio.create_subprocess_exec(
+            "xvfb-run",
+            "-a",
+            "blender",
+            "--factory-startup",
+            "--python",
+            str(bootstrap),
+            stdout=log,
+            stderr=asyncio.subprocess.STDOUT,
+            start_new_session=True,
+            env=blender_env,
+        )
+    _blender_process_groups.add(process.pid)
+    deadline = asyncio.get_running_loop().time() + 60
+    while asyncio.get_running_loop().time() < deadline:
+        if process.returncode is not None:
+            diagnostic = log_path.read_text(encoding="utf-8", errors="replace")[-2000:]
+            raise RuntimeError(f"Blender bridge exited before startup: {diagnostic}")
+        try:
+            _reader, writer = await asyncio.open_connection("127.0.0.1", 9876)
+            writer.close()
+            await writer.wait_closed()
+            return process, log_path
+        except OSError:
+            await asyncio.sleep(0.25)
+    await stop_blender_bridge(process)
+    diagnostic = log_path.read_text(encoding="utf-8", errors="replace")[-2000:]
+    raise TimeoutError(f"Blender bridge did not listen on port 9876: {diagnostic}")
+
+
+async def stop_blender_bridge(process):
+    if process is None:
+        return
+    process_group = process.pid
+    if process.returncode is not None:
+        _blender_process_groups.discard(process_group)
+        return
+    try:
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+    except ProcessLookupError:
+        _blender_process_groups.discard(process_group)
+        return
+    try:
+        await asyncio.wait_for(process.wait(), timeout=15)
+    except TimeoutError:
+        try:
+            os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        await process.wait()
+    finally:
+        _blender_process_groups.discard(process_group)
 
 
 def brep_oracle(path):
@@ -414,6 +538,9 @@ async def run(args, root, report):
     from tool_registry.curation_models import qualification_configuration
 
     command = entry.command
+    rosbag_path = None
+    blender_process = None
+    blender_log = None
     if args.server == "openscad-mcp":
         if not isinstance(command, list) or not any(
             re.fullmatch(
@@ -486,8 +613,28 @@ async def run(args, root, report):
         if command != expected:
             raise ValueError("Catalog must pin the reviewed ROSBag MCP package")
         rosbag_path = await generate_rosbag_fixture(root)
-    else:
-        rosbag_path = None
+    elif args.server == "blender-mcp":
+        expected = [
+            "uv",
+            "tool",
+            "run",
+            "--python",
+            "3.11",
+            "--from",
+            "git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+            "blender-mcp",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed Blender MCP commit")
+        addon_path_value = os.getenv("BLENDER_MCP_ADDON_PATH")
+        if not addon_path_value:
+            raise ValueError("BLENDER_MCP_ADDON_PATH is required for Blender qualification")
+        addon_path = Path(addon_path_value).resolve()
+        if not addon_path.is_file():
+            raise ValueError("Reviewed Blender MCP addon source is unavailable")
+        blender_process, blender_log = await start_blender_bridge(
+            root, addon_path, "initial"
+        )
     report.update(
         {
             "server_id": entry.id,
@@ -507,6 +654,7 @@ async def run(args, root, report):
                 "freecad-mcp-nekanat": "FreeCAD box creation and STL export",
                 "oasis-open-fem-agent": "OASiS scikit-fem Poisson solve",
                 "rosbag-mcp-pypi": "ROS 2 known-message retrieval",
+                "blender-mcp": "Blender dimensioned box STL export",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -517,7 +665,10 @@ async def run(args, root, report):
     discovered = None
     probe = None
     isolated_python = {"oasis-open-fem-agent", "rosbag-mcp-pypi"}
-    direct_env = {"PYTHONPATH": ""} if args.server in isolated_python else None
+    direct_env = dict(entry.launch_env or {})
+    if args.server in isolated_python:
+        direct_env["PYTHONPATH"] = ""
+    direct_env = direct_env or None
     direct_cwd = str(root) if args.server == "rosbag-mcp-pypi" else None
     for attempt in range(3):
         async with client_session(command, direct_env, direct_cwd) as client:
@@ -589,7 +740,7 @@ async def run(args, root, report):
                 assert required <= selected.keys(), "OASiS tool surface is incomplete"
                 report["run_schema"] = selected["run_simulation"].inputSchema
                 probe = oasis_probe(f"wright-direct-{attempt}")
-            else:
+            elif args.server == "rosbag-mcp-pypi":
                 required = {"list_bags", "bag_info", "get_message_at_time"}
                 assert required <= selected.keys(), "ROSBag MCP tool surface is incomplete"
                 report["message_schema"] = selected["get_message_at_time"].inputSchema
@@ -607,6 +758,24 @@ async def run(args, root, report):
                         "tolerance": 0.01,
                     },
                 )
+            elif args.server == "blender-mcp":
+                required = {
+                    "get_scene_info",
+                    "get_object_info",
+                    "execute_blender_code",
+                }
+                assert required <= selected.keys(), "Blender MCP tool surface is incomplete"
+                report["execute_schema"] = selected["execute_blender_code"].inputSchema
+                scene_result = await client.call_tool(
+                    "get_scene_info", {"user_prompt": ""}
+                )
+                assert not scene_result.isError and "scene" in _result_text(
+                    scene_result
+                ).lower(), "Blender scene inspection failed"
+                output = root / f"direct-{attempt}.stl"
+                probe = blender_probe(output, f"WrightDirect{attempt}")
+            else:
+                raise ValueError("Qualification recipe is incomplete")
             result = await client.call_tool(*probe)
             assert not result.isError, "Backend reported an error"
             if args.server == "autodesk-product-help-mcp":
@@ -630,10 +799,24 @@ async def run(args, root, report):
                 report["outcome"] = cube_oracle(output)
             elif args.server == "oasis-open-fem-agent":
                 report["outcome"] = oasis_oracle(result, f"wright-direct-{attempt}")
-            else:
+            elif args.server == "rosbag-mcp-pypi":
                 report["outcome"] = {
                     "artifact": rosbag_artifact_oracle(rosbag_path),
                     "server": rosbag_result_oracle(result),
+                }
+            elif args.server == "blender-mcp":
+                assert "executed successfully" in _result_text(result).lower(), (
+                    "Blender did not report successful code execution"
+                )
+                object_result = await client.call_tool(
+                    "get_object_info", {"object_name": f"WrightDirect{attempt}"}
+                )
+                assert not object_result.isError, "Blender object inspection failed"
+                report["outcome"] = {
+                    "artifact": cube_oracle(output),
+                    "object": blender_object_oracle(
+                        object_result, f"WrightDirect{attempt}"
+                    ),
                 }
             report["steps"].append(
                 {
@@ -728,6 +911,53 @@ async def run(args, root, report):
                 report["steps"].append(
                     {
                         "stage": "controlled_missing_bag_error_in_content",
+                        "status": "passed",
+                    }
+                )
+            if args.server == "blender-mcp" and attempt == 0:
+                invalid = await client.call_tool(
+                    "execute_blender_code",
+                    {"code": 'raise RuntimeError("wright-controlled-error")'},
+                )
+                assert "wright-controlled-error" in invalid.model_dump_json().lower(), (
+                    "Blender MCP did not report the controlled backend error"
+                )
+                report["steps"].append(
+                    {
+                        "stage": "controlled_error_reported_in_content",
+                        "status": "passed",
+                    }
+                )
+                await stop_blender_bridge(blender_process)
+                disconnected = await client.call_tool(
+                    "get_scene_info", {"user_prompt": ""}
+                )
+                disconnect_text = disconnected.model_dump_json().lower()
+                report["disconnect_diagnostic"] = disconnect_text[:500]
+                assert disconnected.isError or any(
+                    marker in disconnect_text
+                    for marker in (
+                        "could not connect",
+                        "connection",
+                        "broken pipe",
+                        "reset by peer",
+                        "refused",
+                    )
+                ), (
+                    "Blender MCP did not report the disconnected add-on"
+                )
+                blender_process, blender_log = await start_blender_bridge(
+                    root, addon_path, "recovered"
+                )
+                recovered = await client.call_tool(
+                    "get_scene_info", {"user_prompt": ""}
+                )
+                assert "cube" in _result_text(recovered).lower(), (
+                    "Blender MCP did not reconnect to the restarted add-on"
+                )
+                report["steps"].append(
+                    {
+                        "stage": "addon_disconnect_and_recovery",
                         "status": "passed",
                     }
                 )
@@ -838,6 +1068,8 @@ async def run(args, root, report):
                     "tolerance": 0.01,
                 },
             )
+        elif args.server == "blender-mcp":
+            probe = blender_probe(workspace / "gateway.stl", "WrightGateway")
         result = await gateway.call_tool(
             "qualification-session",
             "qualification-call",
@@ -865,11 +1097,17 @@ async def run(args, root, report):
             report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
         elif args.server == "oasis-open-fem-agent":
             report["gateway_outcome"] = oasis_oracle(result, "wright-gateway")
-        else:
+        elif args.server == "rosbag-mcp-pypi":
             report["gateway_outcome"] = {
                 "artifact": rosbag_artifact_oracle(workspace_bag),
                 "server": rosbag_result_oracle(result),
             }
+        elif args.server == "blender-mcp":
+            assert "executed successfully" in json.dumps(
+                {"content": result.content, "structured": result.structured_content},
+                default=str,
+            ).lower(), "Blender gateway did not report successful execution"
+            report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -928,6 +1166,10 @@ async def run(args, root, report):
             )
         elif args.server == "oasis-open-fem-agent":
             probe = oasis_probe("wright-gateway-mcp")
+        elif args.server == "blender-mcp":
+            probe = blender_probe(
+                workspace / "gateway-mcp.stl", "WrightGatewayMcp"
+            )
         result = await client.call_tool(name, probe[1])
         assert not result.isError, (
             f"Gateway MCP rejected the scenario: {result.model_dump_json()[:300]}"
@@ -948,11 +1190,18 @@ async def run(args, root, report):
             report["gateway_mcp_outcome"] = oasis_oracle(
                 result, "wright-gateway-mcp"
             )
-        else:
+        elif args.server == "rosbag-mcp-pypi":
             report["gateway_mcp_outcome"] = {
                 "artifact": rosbag_artifact_oracle(workspace_bag),
                 "server": rosbag_result_oracle(result),
             }
+        elif args.server == "blender-mcp":
+            assert "executed successfully" in result.model_dump_json().lower(), (
+                "Blender gateway MCP did not report successful execution"
+            )
+            report["gateway_mcp_outcome"] = cube_oracle(
+                workspace / "gateway-mcp.stl"
+            )
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
         )
@@ -988,6 +1237,23 @@ async def run(args, root, report):
             )
         finally:
             await timeout_runner.stop()
+    if args.server == "blender-mcp":
+        await stop_blender_bridge(blender_process)
+        await asyncio.sleep(0.25)
+        try:
+            _reader, writer = await asyncio.open_connection("127.0.0.1", 9876)
+        except OSError:
+            pass
+        else:
+            writer.close()
+            await writer.wait_closed()
+            raise AssertionError("Blender add-on port remained open after cleanup")
+        report["blender_log_sha256"] = hashlib.sha256(
+            blender_log.read_bytes()
+        ).hexdigest()
+        report["steps"].append(
+            {"stage": "blender_process_group_cleanup", "status": "passed"}
+        )
     return report
 
 
@@ -1003,6 +1269,7 @@ def main():
             "freecad-mcp-nekanat",
             "oasis-open-fem-agent",
             "rosbag-mcp-pypi",
+            "blender-mcp",
         ],
         required=True,
     )
@@ -1047,6 +1314,14 @@ def main():
     finally:
         import gc
 
+        if os.name != "nt":
+            for process_group in tuple(_blender_process_groups):
+                try:
+                    os.killpg(process_group, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                finally:
+                    _blender_process_groups.discard(process_group)
         gc.collect()
         try:
             temporary.cleanup()
