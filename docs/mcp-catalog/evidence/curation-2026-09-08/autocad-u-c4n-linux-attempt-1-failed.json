@@ -1,0 +1,34 @@
+{
+  "server_id": "autocad-mcp-u-c4n",
+  "observed_at": "2026-09-08T23:30:17.812975+00:00",
+  "wright_revision": "d3c80d74",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/U-C4N/Autocad-MCP",
+  "status": "failed",
+  "steps": [],
+  "adoption": "unknown",
+  "scope": "AutoCAD headless mechanical DXF authoring",
+  "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+  "installed_items": [
+    "autocad-mcp-pro 1.5.1 source abc2a82e7128358b9e228a7d9442b37019aa3fe5; upstream locked suite 1359 passed, 9 skipped, 1 xfailed"
+  ],
+  "source_references": [
+    "https://github.com/U-C4N/Autocad-MCP/tree/abc2a82e7128358b9e228a7d9442b37019aa3fe5"
+  ],
+  "prerequisites": [
+    "git and uv from disposable container; ezdxf backend; lean tool profile; workspace-scoped ALLOWED_PATHS"
+  ],
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "causes": [],
+  "sub_errors": [
+    {
+      "type": "McpError",
+      "message": "Connection closed",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 65, in client_session\n    yield client\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 796, in run\n    info = await client.initialize()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venv/lib/python3.13/site-packages/mcp/client/session.py\", line 183, in initialize\n    result = await self.send_request(\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<16 lines>...\n    )\n    ^\n  File \"/workspace/.venv/lib/python3.13/site-packages/mcp/shared/session.py\", line 306, in send_request\n    raise McpError(response_or_error.error)\nmcp.shared.exceptions.McpError: Connection closed\n"
+    }
+  ],
+  "cleanup": "passed"
+}

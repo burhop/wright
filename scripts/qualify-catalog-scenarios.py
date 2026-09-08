@@ -739,6 +739,13 @@ async def run(args, root, report):
         if command != expected:
             raise ValueError("Catalog must pin the reviewed AutoCAD MCP commit")
         os.environ["ALLOWED_PATHS"] = str(root)
+        # Structured required environment variables are intentionally loaded
+        # through Wright's credential store rather than inherited ambient env.
+        # This is non-secret configuration, but recording it exercises the same
+        # production path users use for required per-installation values.
+        from tool_registry.secrets import write_secrets
+
+        write_secrets(entry.id, {"ALLOWED_PATHS": str(root)})
     elif args.server == "rhino-mcp-easehee":
         expected = [
             "uv",

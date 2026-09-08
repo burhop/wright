@@ -1,0 +1,128 @@
+{
+  "server_id": "autocad-mcp-u-c4n",
+  "observed_at": "2026-09-08T23:33:28.456912+00:00",
+  "wright_revision": "d3c80d74",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/U-C4N/Autocad-MCP",
+  "status": "failed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_path_boundary_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "AutoCAD headless mechanical DXF authoring",
+  "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+  "installed_items": [
+    "autocad-mcp-pro 1.5.1 source abc2a82e7128358b9e228a7d9442b37019aa3fe5; upstream locked suite 1359 passed, 9 skipped, 1 xfailed"
+  ],
+  "source_references": [
+    "https://github.com/U-C4N/Autocad-MCP/tree/abc2a82e7128358b9e228a7d9442b37019aa3fe5"
+  ],
+  "prerequisites": [
+    "git installed only in disposable container; ezdxf backend; lean tool profile; workspace-scoped ALLOWED_PATHS"
+  ],
+  "server_info": {
+    "name": "AutoCAD MCP Pro",
+    "title": null,
+    "version": "3.4.7",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "04d85c86a8331dd9f96b6edf3434fe0cb36735934032fce0fe08a8f369f89bf2",
+  "tool_count": 47,
+  "save_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "path": {
+        "description": "Full destination path including extension",
+        "type": "string"
+      },
+      "format": {
+        "default": "",
+        "description": "Output format override: dwg, dxf, dwt. Default: derive from the path extension (the extension is authoritative).",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 15712,
+    "sha256": "09562a975f385d5caad1f09de4d4a2ec7e9fa53cedb3bb983ffdfa0bfa2dd087",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_child": {
+    "status": "inactive",
+    "diagnostic": null
+  },
+  "error": "GatewayError",
+  "diagnostic": "Tool execution failed",
+  "causes": [
+    {
+      "type": "RuntimeError",
+      "message": "MCP server 'AutoCAD MCP Pro' is missing required credentials."
+    }
+  ],
+  "cleanup": "passed"
+}
