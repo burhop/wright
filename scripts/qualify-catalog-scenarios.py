@@ -107,6 +107,96 @@ def cube_oracle(path, expected_dimensions=(10, 8, 6), expected_volume=480):
     }
 
 
+def autocad_dxf_oracle(path):
+    """Inspect the fixed drafting scenario without trusting the MCP response."""
+    raw = path.read_bytes()
+    assert 500 < len(raw) < 5 * 1024 * 1024, "Missing or oversized DXF"
+    text = raw.decode("utf-8", errors="replace")
+    lines = text.splitlines()
+    assert len(lines) % 2 == 0, "DXF group-code stream is incomplete"
+    pairs = []
+    for offset in range(0, len(lines), 2):
+        try:
+            code = int(lines[offset].strip())
+        except ValueError as error:
+            raise AssertionError("DXF contains an invalid group code") from error
+        pairs.append((code, lines[offset + 1].strip()))
+
+    entities = []
+    in_entities = False
+    current = None
+    for index, pair in enumerate(pairs):
+        if pair == (0, "SECTION") and index + 1 < len(pairs):
+            in_entities = pairs[index + 1] == (2, "ENTITIES")
+            continue
+        if in_entities and pair == (0, "ENDSEC"):
+            if current:
+                entities.append(current)
+            break
+        if not in_entities:
+            continue
+        if pair[0] == 0:
+            if current:
+                entities.append(current)
+            current = {"type": pair[1], "pairs": []}
+        elif current:
+            current["pairs"].append(pair)
+
+    by_type = {}
+    for entity in entities:
+        by_type.setdefault(entity["type"], []).append(entity["pairs"])
+    assert {key: len(value) for key, value in by_type.items()} == {
+        "LWPOLYLINE": 1,
+        "CIRCLE": 2,
+        "LINE": 1,
+    }, "DXF entity inventory changed"
+
+    rectangle = by_type["LWPOLYLINE"][0]
+    xs = [float(value) for code, value in rectangle if code == 10]
+    ys = [float(value) for code, value in rectangle if code == 20]
+    vertices = {(round(x, 6), round(y, 6)) for x, y in zip(xs, ys)}
+    assert vertices == {(0.0, 0.0), (100.0, 0.0), (100.0, 60.0), (0.0, 60.0)}
+    flags = [int(value) for code, value in rectangle if code == 70]
+    assert flags and flags[-1] & 1, "DXF rectangle is not closed"
+
+    circles = set()
+    for values in by_type["CIRCLE"]:
+        grouped = {code: value for code, value in values if code in {10, 20, 40}}
+        circles.add(tuple(round(float(grouped[code]), 6) for code in (10, 20, 40)))
+    assert circles == {(20.0, 30.0, 5.0), (80.0, 30.0, 5.0)}
+
+    line = {code: value for code, value in by_type["LINE"][0] if code in {10, 20, 11, 21}}
+    assert tuple(round(float(line[code]), 6) for code in (10, 20, 11, 21)) == (
+        50.0,
+        0.0,
+        50.0,
+        60.0,
+    )
+    return {
+        "bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "entity_counts": {key: len(value) for key, value in by_type.items()},
+        "rectangle": sorted([list(point) for point in vertices]),
+        "circles": sorted([list(circle) for circle in circles]),
+        "centerline": [50.0, 0.0, 50.0, 60.0],
+    }
+
+
+def rhino_artifact_oracle(model_path, mesh_path):
+    """Check the 3DM container and independently integrate the exported mesh."""
+    raw = model_path.read_bytes()
+    assert 500 < len(raw) < 10 * 1024 * 1024, "Missing or oversized 3DM"
+    assert raw.startswith(b"3D Geometry File Format"), "Invalid 3DM header"
+    return {
+        "model": {
+            "bytes": len(raw),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "header": raw[:32].decode("ascii", errors="replace").rstrip("\x00"),
+        },
+        "mesh": cube_oracle(mesh_path),
+    }
+
+
 def blender_probe(output, object_name):
     rendered_path = json.dumps(str(output))
     return (
@@ -635,6 +725,33 @@ async def run(args, root, report):
         blender_process, blender_log = await start_blender_bridge(
             root, addon_path, "initial"
         )
+    elif args.server == "autocad-mcp-u-c4n":
+        expected = [
+            "uv",
+            "tool",
+            "run",
+            "--python",
+            "3.11",
+            "--from",
+            "git+https://github.com/U-C4N/Autocad-MCP.git@abc2a82e7128358b9e228a7d9442b37019aa3fe5",
+            "autocad-mcp",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed AutoCAD MCP commit")
+        os.environ["ALLOWED_PATHS"] = str(root)
+    elif args.server == "rhino-mcp-easehee":
+        expected = [
+            "uv",
+            "tool",
+            "run",
+            "--python",
+            "3.11",
+            "--from",
+            "git+https://github.com/EaseHee/rhino-mcp.git@3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46",
+            "rhino3dm-mcp",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed Rhino MCP commit")
     report.update(
         {
             "server_id": entry.id,
@@ -655,6 +772,8 @@ async def run(args, root, report):
                 "oasis-open-fem-agent": "OASiS scikit-fem Poisson solve",
                 "rosbag-mcp-pypi": "ROS 2 known-message retrieval",
                 "blender-mcp": "Blender dimensioned box STL export",
+                "autocad-mcp-u-c4n": "AutoCAD headless mechanical DXF authoring",
+                "rhino-mcp-easehee": "Rhino standalone 3DM and mesh authoring",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -668,6 +787,8 @@ async def run(args, root, report):
     direct_env = dict(entry.launch_env or {})
     if args.server in isolated_python:
         direct_env["PYTHONPATH"] = ""
+    if args.server == "autocad-mcp-u-c4n":
+        direct_env["ALLOWED_PATHS"] = str(root)
     direct_env = direct_env or None
     direct_cwd = str(root) if args.server == "rosbag-mcp-pypi" else None
     for attempt in range(3):
@@ -774,6 +895,120 @@ async def run(args, root, report):
                 ).lower(), "Blender scene inspection failed"
                 output = root / f"direct-{attempt}.stl"
                 probe = blender_probe(output, f"WrightDirect{attempt}")
+            elif args.server == "autocad-mcp-u-c4n":
+                required = {
+                    "drawing_new",
+                    "drawing_open",
+                    "drawing_info",
+                    "drawing_save_as",
+                    "entity_create_rectangle",
+                    "entity_create_circle",
+                    "entity_create_line",
+                }
+                assert required <= selected.keys(), "AutoCAD lean tool surface is incomplete"
+                assert len(tools.tools) == 47, "AutoCAD lean profile changed"
+                report["save_schema"] = selected["drawing_save_as"].inputSchema
+                if attempt:
+                    previous = root / f"direct-{attempt - 1}.dxf"
+                    reopened = await client.call_tool(
+                        "drawing_open", {"path": str(previous)}
+                    )
+                    assert not reopened.isError, "AutoCAD could not reopen its prior DXF"
+                    prior_info = await client.call_tool("drawing_info", {})
+                    assert not prior_info.isError and "4" in _result_text(prior_info), (
+                        "AutoCAD reopened a different entity inventory"
+                    )
+                created = await client.call_tool(
+                    "drawing_new", {"template": None, "bootstrap": False}
+                )
+                assert not created.isError, "AutoCAD could not create a drawing"
+                for tool_name, values in (
+                    (
+                        "entity_create_rectangle",
+                        {"x1": 0, "y1": 0, "x2": 100, "y2": 60},
+                    ),
+                    (
+                        "entity_create_circle",
+                        {"cx": 20, "cy": 30, "radius": 5},
+                    ),
+                    (
+                        "entity_create_circle",
+                        {"cx": 80, "cy": 30, "radius": 5},
+                    ),
+                    (
+                        "entity_create_line",
+                        {"x1": 50, "y1": 0, "x2": 50, "y2": 60},
+                    ),
+                ):
+                    created = await client.call_tool(tool_name, values)
+                    assert not created.isError, f"AutoCAD failed at {tool_name}"
+                output = root / f"direct-{attempt}.dxf"
+                probe = ("drawing_save_as", {"path": str(output), "format": "dxf"})
+            elif args.server == "rhino-mcp-easehee":
+                required = {
+                    "rhino_open",
+                    "rhino_save",
+                    "rhino_export_stl",
+                    "rhino_document_units_set",
+                    "rhino_document_summary",
+                    "rhino_mesh_box",
+                    "rhino_object_info",
+                }
+                assert required <= selected.keys(), "Rhino tool surface is incomplete"
+                report["save_schema"] = selected["rhino_save"].inputSchema
+                if attempt:
+                    previous = root / f"direct-{attempt - 1}.3dm"
+                    reopened = await client.call_tool(
+                        "rhino_open",
+                        {"path": str(previous), "doc_id": f"reopen-{attempt}"},
+                    )
+                    assert not reopened.isError, "Rhino could not reopen its prior 3DM"
+                    prior_summary = await client.call_tool(
+                        "rhino_document_summary", {"args": {"doc_id": f"reopen-{attempt}"}}
+                    )
+                    assert not prior_summary.isError and "mesh" in _result_text(prior_summary).lower(), (
+                        "Rhino reopened a different object inventory"
+                    )
+                units = await client.call_tool(
+                    "rhino_document_units_set",
+                    {"args": {"doc_id": "active", "units": "mm", "scale_existing": False}},
+                )
+                assert not units.isError, "Rhino could not set millimetre units"
+                created = await client.call_tool(
+                    "rhino_mesh_box",
+                    {
+                        "args": {
+                            "doc_id": "active",
+                            "corner": {"x": 0, "y": 0, "z": 0},
+                            "size_x": 10,
+                            "size_y": 8,
+                            "size_z": 6,
+                            "name": f"WrightDirect{attempt}",
+                        }
+                    },
+                )
+                assert not created.isError, "Rhino could not create the mesh box"
+                created_payload = _json_result(created)
+                object_id = created_payload["summary"]["object_id"]
+                object_info = await client.call_tool(
+                    "rhino_object_info",
+                    {"args": {"doc_id": "active", "object_id": object_id}},
+                )
+                object_text = _result_text(object_info).lower()
+                assert not object_info.isError and all(
+                    marker in object_text for marker in ("mesh", "vertex_count", "face_count")
+                ), "Rhino object inspection is incomplete"
+                model_output = root / f"direct-{attempt}.3dm"
+                saved = await client.call_tool(
+                    "rhino_save",
+                    {"args": {"doc_id": "active", "path": str(model_output), "version": 8}},
+                )
+                assert not saved.isError, "Rhino could not save the 3DM"
+                output = root / f"direct-{attempt}.stl"
+                probe = (
+                    "rhino_export_stl",
+                    {"args": {"doc_id": "active", "path": str(output)}},
+                )
             else:
                 raise ValueError("Qualification recipe is incomplete")
             result = await client.call_tool(*probe)
@@ -818,6 +1053,14 @@ async def run(args, root, report):
                         object_result, f"WrightDirect{attempt}"
                     ),
                 }
+            elif args.server == "autocad-mcp-u-c4n":
+                info_result = await client.call_tool("drawing_info", {})
+                assert not info_result.isError and "ezdxf" in _result_text(info_result).lower(), (
+                    "AutoCAD did not report the reviewed headless backend"
+                )
+                report["outcome"] = autocad_dxf_oracle(output)
+            elif args.server == "rhino-mcp-easehee":
+                report["outcome"] = rhino_artifact_oracle(model_output, output)
             report["steps"].append(
                 {
                     "stage": "direct_protocol_backend_outcome",
@@ -961,6 +1204,35 @@ async def run(args, root, report):
                         "status": "passed",
                     }
                 )
+            if args.server == "autocad-mcp-u-c4n" and attempt == 0:
+                outside = root.parent / f"{root.name}-outside.dxf"
+                outside.unlink(missing_ok=True)
+                invalid = await client.call_tool(
+                    "drawing_save_as", {"path": str(outside), "format": "dxf"}
+                )
+                assert invalid.isError and not outside.exists(), (
+                    "AutoCAD path boundary did not reject an out-of-workspace write"
+                )
+                report["steps"].append(
+                    {"stage": "controlled_path_boundary_error", "status": "passed"}
+                )
+            if args.server == "rhino-mcp-easehee" and attempt == 0:
+                invalid = await client.call_tool(
+                    "rhino_mesh_box",
+                    {
+                        "args": {
+                            "doc_id": "active",
+                            "corner": {"x": 0, "y": 0, "z": 0},
+                            "size_x": -1,
+                            "size_y": 8,
+                            "size_z": 6,
+                        }
+                    },
+                )
+                assert invalid.isError, "Rhino accepted an invalid negative dimension"
+                report["steps"].append(
+                    {"stage": "controlled_schema_error", "status": "passed"}
+                )
 
     run_migrations()
     db = str(root / "wright.db")
@@ -1040,10 +1312,30 @@ async def run(args, root, report):
             tool.name for tool in gateway.list_tools("qualification-session")
         }
         # Only the fixed disposable scenario is approved by this opt-in operator run.
+        scenario_tool_names = {name}
+        if args.server == "autocad-mcp-u-c4n":
+            scenario_tool_names.update(
+                f"{entry.id}__{tool_name}"
+                for tool_name in (
+                    "drawing_new",
+                    "entity_create_rectangle",
+                    "entity_create_circle",
+                    "entity_create_line",
+                )
+            )
+        elif args.server == "rhino-mcp-easehee":
+            scenario_tool_names.update(
+                f"{entry.id}__{tool_name}"
+                for tool_name in (
+                    "rhino_document_units_set",
+                    "rhino_mesh_box",
+                    "rhino_save",
+                )
+            )
         approvals = {
             gate
             for tool in gateway.list_tools("qualification-session")
-            if tool.name == name
+            if tool.name in scenario_tool_names
             for gate in tool.required_approvals
         }
         if args.server == "openscad-mcp":
@@ -1070,6 +1362,87 @@ async def run(args, root, report):
             )
         elif args.server == "blender-mcp":
             probe = blender_probe(workspace / "gateway.stl", "WrightGateway")
+        elif args.server == "autocad-mcp-u-c4n":
+            gateway_output = workspace / "gateway.dxf"
+            for step, (tool_name, values) in enumerate(
+                (
+                    ("drawing_new", {"template": None, "bootstrap": False}),
+                    (
+                        "entity_create_rectangle",
+                        {"x1": 0, "y1": 0, "x2": 100, "y2": 60},
+                    ),
+                    (
+                        "entity_create_circle",
+                        {"cx": 20, "cy": 30, "radius": 5},
+                    ),
+                    (
+                        "entity_create_circle",
+                        {"cx": 80, "cy": 30, "radius": 5},
+                    ),
+                    (
+                        "entity_create_line",
+                        {"x1": 50, "y1": 0, "x2": 50, "y2": 60},
+                    ),
+                )
+            ):
+                setup_result = await gateway.call_tool(
+                    "qualification-session",
+                    f"qualification-setup-{step}",
+                    f"{entry.id}__{tool_name}",
+                    values,
+                    workspace_approvals=approvals,
+                )
+                assert not setup_result.is_error, f"Gateway failed at {tool_name}"
+            probe = (
+                "drawing_save_as",
+                {"path": str(gateway_output), "format": "dxf"},
+            )
+        elif args.server == "rhino-mcp-easehee":
+            gateway_model_output = workspace / "gateway.3dm"
+            gateway_mesh_output = workspace / "gateway.stl"
+            for step, (tool_name, values) in enumerate(
+                (
+                    (
+                        "rhino_document_units_set",
+                        {"args": {"doc_id": "active", "units": "mm", "scale_existing": False}},
+                    ),
+                    (
+                        "rhino_mesh_box",
+                        {
+                            "args": {
+                                "doc_id": "active",
+                                "corner": {"x": 0, "y": 0, "z": 0},
+                                "size_x": 10,
+                                "size_y": 8,
+                                "size_z": 6,
+                                "name": "WrightGateway",
+                            }
+                        },
+                    ),
+                    (
+                        "rhino_save",
+                        {
+                            "args": {
+                                "doc_id": "active",
+                                "path": str(gateway_model_output),
+                                "version": 8,
+                            }
+                        },
+                    ),
+                )
+            ):
+                setup_result = await gateway.call_tool(
+                    "qualification-session",
+                    f"qualification-setup-{step}",
+                    f"{entry.id}__{tool_name}",
+                    values,
+                    workspace_approvals=approvals,
+                )
+                assert not setup_result.is_error, f"Gateway failed at {tool_name}"
+            probe = (
+                "rhino_export_stl",
+                {"args": {"doc_id": "active", "path": str(gateway_mesh_output)}},
+            )
         result = await gateway.call_tool(
             "qualification-session",
             "qualification-call",
@@ -1108,6 +1481,12 @@ async def run(args, root, report):
                 default=str,
             ).lower(), "Blender gateway did not report successful execution"
             report["gateway_outcome"] = cube_oracle(workspace / "gateway.stl")
+        elif args.server == "autocad-mcp-u-c4n":
+            report["gateway_outcome"] = autocad_dxf_oracle(gateway_output)
+        elif args.server == "rhino-mcp-easehee":
+            report["gateway_outcome"] = rhino_artifact_oracle(
+                gateway_model_output, gateway_mesh_output
+            )
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -1170,6 +1549,75 @@ async def run(args, root, report):
             probe = blender_probe(
                 workspace / "gateway-mcp.stl", "WrightGatewayMcp"
             )
+        elif args.server == "autocad-mcp-u-c4n":
+            gateway_mcp_output = workspace / "gateway-mcp.dxf"
+            for tool_name, values in (
+                ("drawing_new", {"template": None, "bootstrap": False}),
+                (
+                    "entity_create_rectangle",
+                    {"x1": 0, "y1": 0, "x2": 100, "y2": 60},
+                ),
+                (
+                    "entity_create_circle",
+                    {"cx": 20, "cy": 30, "radius": 5},
+                ),
+                (
+                    "entity_create_circle",
+                    {"cx": 80, "cy": 30, "radius": 5},
+                ),
+                (
+                    "entity_create_line",
+                    {"x1": 50, "y1": 0, "x2": 50, "y2": 60},
+                ),
+            ):
+                setup_result = await client.call_tool(
+                    f"{entry.id}__{tool_name}", values
+                )
+                assert not setup_result.isError, f"Gateway MCP failed at {tool_name}"
+            probe = (
+                "drawing_save_as",
+                {"path": str(gateway_mcp_output), "format": "dxf"},
+            )
+        elif args.server == "rhino-mcp-easehee":
+            gateway_mcp_model_output = workspace / "gateway-mcp.3dm"
+            gateway_mcp_mesh_output = workspace / "gateway-mcp.stl"
+            for tool_name, values in (
+                (
+                    "rhino_document_units_set",
+                    {"args": {"doc_id": "active", "units": "mm", "scale_existing": False}},
+                ),
+                (
+                    "rhino_mesh_box",
+                    {
+                        "args": {
+                            "doc_id": "active",
+                            "corner": {"x": 0, "y": 0, "z": 0},
+                            "size_x": 10,
+                            "size_y": 8,
+                            "size_z": 6,
+                            "name": "WrightGatewayMcp",
+                        }
+                    },
+                ),
+                (
+                    "rhino_save",
+                    {
+                        "args": {
+                            "doc_id": "active",
+                            "path": str(gateway_mcp_model_output),
+                            "version": 8,
+                        }
+                    },
+                ),
+            ):
+                setup_result = await client.call_tool(
+                    f"{entry.id}__{tool_name}", values
+                )
+                assert not setup_result.isError, f"Gateway MCP failed at {tool_name}"
+            probe = (
+                "rhino_export_stl",
+                {"args": {"doc_id": "active", "path": str(gateway_mcp_mesh_output)}},
+            )
         result = await client.call_tool(name, probe[1])
         assert not result.isError, (
             f"Gateway MCP rejected the scenario: {result.model_dump_json()[:300]}"
@@ -1201,6 +1649,12 @@ async def run(args, root, report):
             )
             report["gateway_mcp_outcome"] = cube_oracle(
                 workspace / "gateway-mcp.stl"
+            )
+        elif args.server == "autocad-mcp-u-c4n":
+            report["gateway_mcp_outcome"] = autocad_dxf_oracle(gateway_mcp_output)
+        elif args.server == "rhino-mcp-easehee":
+            report["gateway_mcp_outcome"] = rhino_artifact_oracle(
+                gateway_mcp_model_output, gateway_mcp_mesh_output
             )
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
@@ -1270,6 +1724,8 @@ def main():
             "oasis-open-fem-agent",
             "rosbag-mcp-pypi",
             "blender-mcp",
+            "autocad-mcp-u-c4n",
+            "rhino-mcp-easehee",
         ],
         required=True,
     )

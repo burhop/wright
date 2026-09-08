@@ -2173,7 +2173,7 @@ servers:
   - CAiD OpenCASCADE
   - CAiD OCCT
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: blocked
   risk_level: medium
   deployment_mode: local-only
   platform_support:
@@ -2184,7 +2184,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed libGL, CAiD from GitHub source, and caid-mcp; tests passed and create_box returned validated geometry
+      notes: Historical clean-container validation passed, but the source repository is now unavailable and every PyPI release is yanked.
     linux_arm64:
       status: unknown
       tested: false
@@ -2204,26 +2204,29 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: passed
+    status: blocked
     validated_at: '2026-07-10'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: installed libgl1, CAiD from GitHub commit 840d9ece24499dca4d1cc6b7a7aef2b88a203f14, and caid-mcp from commit bb863e9fe64f951fac9d59daed26254544682bc3; upstream MCP tests passed 72/72, MCP initialized, listed 107 tools, create_box returned ok with volume 480 mm^3, and scene query reported the 10 x 8 x 6 mm box.'
+    message: 'Historical clean Intel Ubuntu validation passed 72 tests and a 480 mm^3 box workflow at source commit bb863e9fe64f951fac9d59daed26254544682bc3. Current qualification is blocked: the repository is unavailable, all five PyPI releases are yanked, and the latest wheel has no console entry point.'
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
+  install_blocked_reason: The source repository is unavailable; all PyPI releases are yanked and the latest wheel has no server entry point.
   headless_ok: 'yes'
   engineering_stages:
   - design
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The source repository is unavailable, every PyPI release is yanked, and the latest wheel has no server entry point.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current
-      source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Preserve historical evidence; review a maintained successor before reinstatement.
     adoption: unknown
+    replacement_ids:
+    - brep-mcp
+    - freecad-mcp-nekanat
 - id: autocad-mcp
   name: AutoCAD MCP
   vendor: puran-water
@@ -2313,12 +2316,130 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: This proof-of-concept implementation is superseded by the maintained U-C4N headless drafting integration.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups.
+    adoption: unknown
+    replacement_ids:
+    - autocad-mcp-u-c4n
+- id: autocad-mcp-u-c4n
+  name: AutoCAD MCP Pro
+  vendor: U-C4N
+  description: Headless engineering DXF authoring and inspection through ezdxf, with an optional Windows COM backend for live AutoCAD.
+  domains:
+  - drafting
+  - cad
+  tags:
+  - autocad
+  - dxf
+  - ezdxf
+  - drafting
+  - 2D
+  - headless
+  transport: stdio
+  command:
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.11'
+  - --from
+  - git+https://github.com/U-C4N/Autocad-MCP.git@abc2a82e7128358b9e228a7d9442b37019aa3fe5
+  - autocad-mcp
+  source_url: https://github.com/U-C4N/Autocad-MCP
+  repository_url: https://github.com/U-C4N/Autocad-MCP
+  license: MIT
+  auth_model: none
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Lean 47-tool drafting and inspection profile
+  - Headless DXF create, edit, validate, and export workflows
+  - Optional live AutoCAD COM backend on Windows
+  - Scoped filesystem access through ALLOWED_PATHS
+  source_records:
+  - url: https://github.com/U-C4N/Autocad-MCP
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-08'
+    notes: Revision abc2a82e7128358b9e228a7d9442b37019aa3fe5 declares MIT and provides locked dependencies, an ezdxf backend, a 47-tool lean profile, and Windows COM as an optional extra.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: ALLOWED_PATHS
+    label: Allowed drawing paths
+    description: Comma-separated workspace roots that the server may read and write.
+    required: true
+    secret: false
+  launch_env:
+    AUTOCAD_MCP_BACKEND: ezdxf
+    TOOL_PROFILE: lean
+    EZDXF_CALL_TIMEOUT: '120'
+  dependencies:
+    system:
+    - git
+    python:
+    - autocad-mcp-pro from pinned source revision
+    - ezdxf>=1.4,<2
+    node: []
+  aliases:
+  - AutoCAD MCP Pro
+  verification_state: community_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: standard CPU for headless drafting; CAD workstation CPU for optional COM mode
+    gpu: not required for the qualified headless workflow
+    docker: 'yes'
+    notes: The curated scope uses only the credential-free ezdxf backend and lean tool profile.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf is expected to work; live COM automation remains unqualified and requires AutoCAD.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Source and upstream suite reviewed; Wright workflow qualification pending.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Python wheel availability has not been checked on Linux ARM64.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf should be host-independent but is not qualified on macOS.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf should be host-independent but is not qualified on macOS ARM64.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  validation_result:
+    status: not_tested
+    message: Upstream locked suite passed 1,359 tests; Wright backend and gateway qualification pending.
+    environment: null
+    missing_dependencies: []
+  engineering_stages:
+  - design
+  - manufacturing
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and upstream suite reviewed; a scoped Wright workflow qualification is pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Run the fixed headless mechanical DXF scenario through the server and both Wright gateway paths.
     adoption: unknown
 - id: easy-mcp-autocad
   name: Easy-MCP-AutoCAD
@@ -5252,7 +5373,13 @@ servers:
   - docker
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.11'
+  - --from
+  - git+https://github.com/EaseHee/rhino-mcp.git@3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46
   - rhino3dm-mcp
   source_url: https://github.com/easehee/rhino-mcp
   repository_url: https://github.com/easehee/rhino-mcp
@@ -5260,7 +5387,7 @@ servers:
   container_url: https://github.com/easehee/rhino-mcp/tree/main/docker
   license: MIT
   auth_model: local-host
-  install_method: uvx
+  install_method: source
   maturity: community
   capability_summary:
   - Standalone rhino3dm geometry authoring
@@ -5281,15 +5408,18 @@ servers:
     description: Optional runtime mode such as standalone, bridge, or auto.
     required: false
     secret: false
+  launch_env:
+    RHINO_MCP_FORCE_MODE: standalone
   dependencies:
     system:
     - optional Rhino 8
     - optional .NET 8 SDK
     python:
-    - rhino3dm-mcp
+    - rhino3dm-mcp from pinned source revision
+    - rhino3dm>=8.9,<9
     node: []
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: tested
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -5305,7 +5435,7 @@ servers:
     linux_x64:
       status: likely
       tested: false
-      notes: Standalone rhino3dm mode and Docker path are documented upstream; not validated by Wright.
+      notes: Standalone source and upstream suite reviewed; Wright workflow qualification pending.
     linux_arm64:
       status: unknown
       tested: false
@@ -5328,7 +5458,7 @@ servers:
   - execute_code_approval
   validation_result:
     status: not_tested
-    message: Not yet validated by Wright; validate standalone rhino3dm mode before bridge mode.
+    message: Upstream locked suite passed 296 tests; Wright standalone backend and gateway qualification pending.
     environment: null
     missing_dependencies: []
   engineering_stages:
@@ -5337,11 +5467,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    reason: Source and upstream suite reviewed; a scoped standalone Wright workflow qualification is pending.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    next_action: Run the fixed millimetre 3DM and STL scenario through the server and both Wright gateway paths; keep live Rhino and Grasshopper out of scope.
     adoption: unknown
 - id: blender-mcp-harveyxiacn
   name: Blender MCP Comprehensive Server
