@@ -10,6 +10,7 @@ import { CapabilityDetails } from "./CapabilityDetails";
 import {
   CapabilityFilters,
   readCapabilityFilters,
+  writeCapabilityFilters,
   type CapabilityFilterState,
 } from "./CapabilityFilters";
 
@@ -38,6 +39,9 @@ export function CapabilityLibrary({
 
   const query = useMemo(
     () => ({
+      curation: [filters.curation],
+      engineering_stage: filters.engineeringStage ? [filters.engineeringStage] : undefined,
+      protocol: filters.protocol ? [filters.protocol] : undefined,
       search: filters.search || undefined,
       domain: filters.domain ? [filters.domain] : undefined,
       lifecycle_stage: filters.lifecycleStage
@@ -66,6 +70,9 @@ export function CapabilityLibrary({
     () => ({
       query: filters.search,
       filters: {
+        curation: filters.curation,
+        engineering_stage: filters.engineeringStage,
+        protocol: filters.protocol,
         domain: filters.domain,
         lifecycle_stage: filters.lifecycleStage,
         platform: filters.platform,
@@ -116,7 +123,9 @@ export function CapabilityLibrary({
         : "recorded MCP server evidence"
     : null;
   const primaryAction = firstMatch
-    ? firstMatch.compatibility.status === "incompatible"
+    ? !firstMatch.available_actions.includes("plan_onboarding")
+      ? { label: "Review catalog decision", consequence: "View the reason, next review action, and existing installation details." }
+      : firstMatch.compatibility.status === "incompatible"
       ? {
           label: "Review setup requirements",
           consequence:
@@ -248,9 +257,34 @@ export function CapabilityLibrary({
           data-testid="capability-offline-source"
           style={{ color: "var(--color-text-muted)", fontSize: "0.82rem" }}
         >
-          Using the complete bundled catalog · {result.total} matching MCP
+          Using the complete bundled catalog with reviewed lists · {result.total} matching MCP
           servers
         </div>
+      )}
+      {result?.curation_counts && !loading && !error && (
+        <div data-testid="capability-curation-summary" role="status">
+          {result.curation_counts.curated || 0} curated for this environment · {result.curation_counts.follow_up || 0} follow up · {result.curation_counts.removed || 0} removed from discovery
+          {" "}<button type="button" onClick={() => {
+            const next = { ...filters, curation: "all" as const, installed: "true" as const };
+            writeCapabilityFilters(next);
+            setFilters(next);
+          }}>Show installed integrations</button>
+        </div>
+      )}
+      <p data-testid="capability-protocol-support" style={{ color: "var(--color-text-muted)" }}>
+        MCP and scoped WebMCP integrations are supported. Native WebMCP depends on the browser.
+        {" "}<a href="https://www.anthropic.com/news/model-hardware-standard-research-preview" target="_blank" rel="noopener noreferrer">MHS hardware access is a research preview</a>; physical operation is not qualified.
+      </p>
+      {result?.lifecycle_coverage && !loading && !error && (
+        <details data-testid="capability-lifecycle-coverage">
+          <summary>Engineering lifecycle coverage</summary>
+          <p>Counts describe individual integration scopes. Complete process handoffs require separate validation.</p>
+          <table><thead><tr><th scope="col">Stage</th><th scope="col">Curated</th><th scope="col">Follow up</th></tr></thead>
+            <tbody>{result.lifecycle_coverage.map((row) => <tr key={row.stage}>
+              <th scope="row">{row.label}</th><td>{row.curated || "Gap"}</td><td>{row.follow_up}</td>
+            </tr>)}</tbody>
+          </table>
+        </details>
       )}
       {loading && <div role="status">Loading MCP servers…</div>}
       {error && (
@@ -286,6 +320,7 @@ export function CapabilityLibrary({
               if (
                 onPlanOnboarding &&
                 firstMatch.compatibility.status === "compatible" &&
+                firstMatch.available_actions.includes("plan_onboarding") &&
                 !firstMatch.user_state?.active
               ) {
                 setSelected(null);
@@ -303,6 +338,16 @@ export function CapabilityLibrary({
         <div data-testid="capability-empty-state">
           <h2>No MCP servers match these filters</h2>
           <p>Clear one or more filters, or report a missing MCP candidate.</p>
+          {filters.curation === "curated" && (
+            <div>
+              <p>No current recommendation matches this environment and selection.</p>
+              <button type="button" onClick={() => {
+                const next = { ...filters, curation: "follow_up" as const };
+                writeCapabilityFilters(next);
+                setFilters(next);
+              }}>Review follow-up candidates</button>
+            </div>
+          )}
           {onReportMissing && (
             <button
               type="button"

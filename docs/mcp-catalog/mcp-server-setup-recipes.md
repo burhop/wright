@@ -2410,3 +2410,25 @@ SQLite state, and generated geometry under the ignored
   labels the MCP as **Coming Soon**.
 - Do not authenticate, accept subscription terms, submit FeatureScript, or bind
   an Onshape document during this qualification.
+
+## September curation qualification recipes
+
+The current opt-in runner and container mounts are documented in
+[curation-runbook.md](curation-runbook.md#initial-qualification-runner).
+
+- Autodesk Product Help: launch the public Streamable HTTP URL recorded in the
+  catalog. The safe call is get_available_products with empty arguments; verify
+  the result contains Fusion, then repeat through
+  autodesk-product-help-mcp__get_available_products on Wright's actual stdio MCP.
+  Windows native and Linux x64 container evidence passed on 8 September. User
+  onboarding must still independently satisfy applicable publisher terms.
+- OpenSCAD: install git, openscad, xvfb and xauth only in the selected disposable
+  Intel Linux container. Launch `uv tool run --from
+  git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+  openscad-mcp`. The export_model call uses scad_content `cube([10,8,6]);`,
+  output_format `stl`, and an output_path in the disposable workspace. Verify
+  actual triangles, dimensions 10 x 8 x 6 mm and volume 480 mm3, then repeat through
+  openscad-mcp__export_model. The 8 September run passed with a 1467-byte STL.
+  Do not assume a PyPI package or uvx executable exists. The upstream dependency
+  resolution selected FastMCP 4.0.3; source pinning alone does not lock transitive
+  dependencies. Review resolved dependencies during each retest.

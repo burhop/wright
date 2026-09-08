@@ -14,6 +14,7 @@ from data_vault.secret_provider import (
 )
 from fastapi.testclient import TestClient
 from tool_registry import McpEngine
+from tool_registry.canonical_catalog import load_canonical_entries
 from tool_registry.capability_services import CapabilityServiceDependencies
 from tool_registry.catalog_reconcile import reconcile_active_engineering_catalog
 from tool_registry.secrets import write_secrets
@@ -43,7 +44,7 @@ def migrated_legacy_client(tmp_path, monkeypatch):
     database = create_capability_library_v12_database(tmp_path / "legacy-api.db")
     upgrade_database(database)
     count, diagnostic = reconcile_active_engineering_catalog(str(database))
-    assert count == 70
+    assert count == len(load_canonical_entries())
     assert diagnostic is None
 
     configure_default_secret_provider(

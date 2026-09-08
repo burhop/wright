@@ -14,6 +14,7 @@ from tool_registry.capability_views import (
 from tool_registry.catalog_models import CatalogEntry
 from tool_registry.compatibility import observe_machine
 from tool_registry.models import McpServer
+from tool_registry.curation_models import CurationDecision
 
 
 def _observation():
@@ -64,6 +65,29 @@ def _server(server_id: str, name: str = "Canonical CAD") -> McpServer:
         installed_version="1.2.3",
         credentials_configured={"TOKEN": True},
     )
+
+
+def test_retired_discovery_is_hidden_but_installed_state_and_history_are_preserved():
+    entry = _entry()
+    entry.curation = CurationDecision(
+        disposition="removed",
+        reason="Replaced",
+        reviewed_at="2026-09-08",
+    )
+    views = build_capability_views([entry], [], _observation())
+    assert paginate_capabilities([entry], views).total == 0
+    assert (
+        paginate_capabilities(
+            [entry], views, filters=CapabilityFilters(curation=frozenset({"removed"}))
+        ).total
+        == 1
+    )
+    assert "plan_onboarding" not in views[0].available_actions
+    installed = build_capability_views([entry], [_server("legacy-cad")], _observation())
+    assert paginate_capabilities([entry], installed).total == 1
+    assert installed[0].user_state.credentials_configured == {"TOKEN": True}
+    assert installed[0].user_state.explicit_disabled
+    assert "manage_installation" in installed[0].available_actions
 
 
 def test_projection_merges_alias_user_state_and_retains_custom_rows() -> None:

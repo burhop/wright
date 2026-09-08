@@ -28,6 +28,17 @@ _PACKAGE_MANAGER_COMMANDS = {"uv": "uv", "pip": "pip", "npm": "npm"}
 _CONTAINER_COMMAND = "docker"
 
 
+def _distribution_mode() -> str:
+    explicit = os.getenv("WRIGHT_DISTRIBUTION_MODE")
+    if explicit:
+        return explicit
+    if platform.system() == "Linux" and (
+        Path("/.dockerenv").is_file() or Path("/run/.containerenv").is_file()
+    ):
+        return "docker"
+    return "native"
+
+
 def _canonical_json(value: Any) -> bytes:
     return json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=True
@@ -155,8 +166,7 @@ def observe_machine(
         "os_name": system,
         "os_version": version_system_reader(),
         "architecture": architecture,
-        "distribution_mode": distribution_mode
-        or os.getenv("WRIGHT_DISTRIBUTION_MODE", "native"),
+        "distribution_mode": distribution_mode or _distribution_mode(),
         "runtimes": runtimes,
         "package_managers": package_managers,
         "container_runtime": container_runtime,

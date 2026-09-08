@@ -1,0 +1,188 @@
+# Maintaining Wright's integration shortlist
+
+Updated 8 September 2026. This is the operating procedure for the implemented
+catalog review fields, API, library filters, and curation commands. The separate
+[research plan](curation-research-plan-2026-09-08.md) records the original proposal
+and its source research. The [dated report](evidence/curation-2026-09-08/report.md)
+contains the first inventory decisions. Its counts are evidence dated to that run,
+not a claim that every integration has been exercised.
+
+## What users see
+
+The library opens on **Curated**, evaluated for the current machine's platform,
+deployment, launch configuration, and review date. **Follow up** contains useful
+candidates needing evidence, credentials, a host application, fixes, or an owner.
+**Removed from discovery** retains the reason and any replacement identities but
+does not offer catalog installation. **Show installed integrations** includes
+retired records. Reviews never uninstall, disable, replace, or delete user work,
+credentials, workspace bindings, or custom integrations.
+
+The nine engineering stages are requirements, concept/architecture, detailed
+design, analysis/simulation, BOM/sourcing, manufacturing/assembly, test/quality,
+release/change management, and operations/service. A stage count is potential
+coverage by individual integrations. It does not prove handoffs between systems.
+Source verification, transport, installation readiness, and curation remain
+separate dimensions. An old `tested` label cannot promote an entry.
+
+## The repeatable cycle
+
+1. **Inventory.** Review the bundled catalog, active signed snapshot, managed
+   servers, custom records, and installed state separately. The September bundle
+   began with 70 records, not 75 distinct qualified implementations. The API
+   preserves deployed and custom records; this first desk review covers the
+   bundle, not the user's production database.
+2. **Discover.** Search publisher release notes and developer documentation,
+   the official MCP Registry, and primary GitHub repositories. Search gaps first:
+   requirements/traceability, component sourcing, manufacturing data, inspection,
+   and service. User requests and documented repeat use are additional inputs.
+   Directories and stars are leads, never proof of use or quality.
+3. **Resolve identity.** Identify publisher, exact implementation, release,
+   endpoint/package, license, and supported host. Multiple servers can share a
+   repository. Aliases, API candidates, protocol references, and agent skills are
+   not interchangeable with installable MCP servers. Never revive a retired
+   identity automatically because a registry lists a new version.
+4. **Desk review.** Assign intended lifecycle stages, reason, owner, next action,
+   review date and due date. Review maintenance, source changes, release and issue
+   history, security advisories, authentication, account cost, data access, and
+   setup burden. A failed fetch, redirect, rate limit, or quiet repository does
+   not itself justify removal. Stable software need not commit every month.
+5. **Qualify.** Follow the required [clean-container process](mcp-server-testing-process.md).
+   Pin the implementation, install only its prerequisites in a disposable Intel
+   Linux Wright container, initialize the MCP session, list tools, perform a safe
+   real backend task, verify the artifact or expected result, then repeat through
+   the Hermes-facing `wrightgateway` MCP. Run three fresh direct sessions; add
+   separate native/platform qualification for every additional recommendation.
+   Authentication expiry, timeout, cancellation, failure recovery, and uninstall
+   behavior belong in each integration's complete acceptance recipe.
+6. **Decide.** Publish Curated only for a useful, currently qualified workflow.
+   Use Follow up for an unresolved gap with a concrete next action. Remove from
+   discovery for a verified obsolete/non-server entry, an archived unsupported
+   implementation with no current qualification, or a documented serious defect
+   without an acceptable supported path. Preserve history and replacement limits.
+7. **Publish and monitor.** Review the catalog diff and evidence together, run
+   schema and application checks, then distribute through Wright's existing
+   signed catalog update mechanism. Activation changes metadata. Installation
+   and workspace enablement retain their existing explicit workflow.
+
+Plan for 15–20 integration families, normally one preferred choice per capability
+and at most one justified alternative. This is a selection ceiling, not a quota.
+The September implementation establishes the review system and initial technical
+qualification; it does not claim a finished, broadly adopted portfolio across
+all nine stages. Do not fill gaps with weak recommendations.
+
+## Evidence and renewal
+
+`curation` records the reviewed disposition and its rationale. A qualification
+records platform, `native` or `docker`, workflow, source and Wright revision,
+verification and expiry dates, configuration digest, and evidence file/digest.
+All four results—protocol, backend, gateway, and outcome—must be passed. Evidence
+expires after at most 60 days; the initial review cycle is 30 days. Changing a
+launch command, endpoint, dependency, host requirement, credentials, or safety
+gates makes the existing qualification inapplicable. Runtime evaluation demotes
+stale recommendations to Follow up while retaining the original decision.
+
+The publication tests verify the committed evidence hashes, configuration
+binding, passing cleanup, platform, and Hermes-facing gateway result. Runtime
+clients trust the signed metadata; they do not fetch arbitrary evidence paths.
+Mutable remote services must be retested on reported version/schema changes and
+within the renewal window. This implementation does not continuously fingerprint
+each running remote service or attest local host versions on every call.
+
+`adoption: unknown` is honest and visible. Technical qualification can establish
+a narrow recommendation while repeat adoption is still unknown. Prefer those
+with measured adoption when selecting between similarly qualified integrations.
+Record publisher reports separately from independent reports and Wright repeat
+use. A later opt-in usage study should count successful sessions and repeat
+workspaces without collecting prompts, designs, tokens, or credentials. No new
+user telemetry is collected by this change.
+
+## Commands and cadence
+
+Run from the repository with its normal Python environment:
+
+```bash
+uv run python -m tool_registry.catalog_curation report --as-of 2026-09-08 --output-dir artifacts/mcp-curation
+uv run python -m tool_registry.catalog_curation report --output-dir artifacts/mcp-curation-next --previous artifacts/mcp-curation/report.json
+uv run python -m tool_registry.catalog_curation research --output-dir artifacts/mcp-curation
+uv run python -m tool_registry.catalog_curation discover --search sourcing --output-dir artifacts/mcp-curation/discovery-sourcing
+```
+
+`report` is deterministic for the same catalog, policy, date, and optional
+platform. It emits JSON and Markdown with all three lists, reasons, next actions,
+due dates, gaps, and an optional delta. `research` observes public GitHub metadata
+without credentials. `discover` reads one bounded Registry page; pass its
+`next_cursor` with `--cursor` to explicitly review another page. It strips package
+commands and does not install, register, or execute discovered content.
+
+Only the two fixed public HTTPS origins are permitted for intake. Redirects are
+not followed, reads are bounded, and GitHub concurrency is limited to three.
+Unavailable sources are recorded as unavailable. Partial/failed network runs
+write `research.attempt.json` or `discover.attempt.json`, return exit code 2, and
+preserve the last good result. Reports do not change catalog decisions.
+
+The existing MCP catalog workflow now saves a report on relevant PR/push runs.
+Its Monday schedule and manual dispatch additionally observe repositories and
+search five lifecycle terms. Artifacts are retained for 90 days. Partial source
+checks emit a CI warning with the attempted observations. There is no automatic
+promotion, retirement, PR publication, package installation, or hardware action.
+The schedule takes effect when this workflow reaches the default branch.
+
+Assign one maintainer to weekly source triage, integration owners to monthly
+qualification renewal, and a quarterly portfolio review to remove duplication
+and reassess lifecycle gaps. Urgent verified breakage can retire a recommendation
+immediately through the reviewed signed-update process. A fetch failure alone
+cannot do so. Reinstatement requires fresh evidence and an explicit review.
+
+## Initial qualification runner
+
+`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with only two
+fixed recipes: public Autodesk help product discovery and an OpenSCAD
+10 × 8 × 6 mm cube export. It uses actual protocol clients and Wright's production
+gateway composition; it refuses Wright's mock-runner environment. It records
+three direct sessions, the gateway service result, and the actual gateway MCP
+result. The STL oracle checks dimensions and 480 mm³ volume, not a success string.
+
+Run the script inside a newly created Intel Linux Wright container, with candidate
+source mounted read-only at `/candidate`, evidence output mounted at `/evidence`,
+and `PYTHONPATH` including `apps/api/src`, every `packages/*/src`, and `src` from
+that candidate. Use the image's Python with Wright runtime dependencies. Record
+the resolved image digest and candidate revision in the arguments:
+
+```bash
+python /candidate/scripts/qualify-catalog-scenarios.py --execute \
+  --server autodesk-product-help-mcp --platform linux_x64 \
+  --environment clean-wright-container --wright-revision REVIEWED_REVISION \
+  --container-image REVIEWED_IMAGE_DIGEST --output /evidence/autodesk-help-linux.json
+```
+
+For OpenSCAD, first install `git openscad xvfb xauth` using the container's package
+manager, then select `--server openscad-mcp`. The catalog pins Git commit
+`d438b84fff8af9d646c2bcb76fe58fa4ad387de0` and launches it using `uv tool run`.
+Neither `uvx` nor Git is assumed present in the base image. Record prerequisite
+versions. Discard the container after each server. Never modify the base Docker
+image to satisfy a catalog test. See the setup recipes and problem log for the
+observed results and any outstanding blockers.
+
+## Protocol boundaries
+
+- **MCP:** Existing stdio and remote HTTP runtime support remains in place.
+  Streamable HTTP and legacy SSE are distinct catalog values; Autodesk help's
+  metadata now names its actual Streamable HTTP protocol.
+- **WebMCP:** The browser adapter follows the current draft registration shape:
+  `document.modelContext.registerTool(tool, {signal})` returns a promise, and abort
+  removes the native registration. Disposal and per-call cancellation propagate.
+  Native registration remains opt-in and permission/feature checked. Wright's
+  workspace-bound surface bridge remains separately identified; its tests do
+  not claim browser-wide conformance or support for arbitrary third-party pages.
+  Source: [WebMCP draft](https://webmachinelearning.github.io/webmcp/).
+- **MHS:** Anthropic calls this the Model Hardware Standard. Its August 27
+  announcement describes a research preview with MCP, CLI, and API access and
+  future open sourcing. There is no verified public driver contract in this
+  research from which to implement a conforming Wright driver. The catalog can
+  represent `mhs_preview` separately from generic `hardware_mcp` and prevents
+  either from becoming an ordinary curated/installable integration. No fake
+  MHS transport or physical-device support is claimed. A later integration needs
+  the published/partner specification, device inventory, exclusive control,
+  deterministic limits and interlocks, calibration, approved read/simulation
+  modes, cancellation, emergency-stop semantics, and device-specific qualification.
+  Source: [Anthropic announcement](https://www.anthropic.com/news/model-hardware-standard-research-preview).

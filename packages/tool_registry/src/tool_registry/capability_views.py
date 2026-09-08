@@ -19,6 +19,11 @@ from .canonical_catalog import LEGACY_SERVER_IDS
 from .catalog_models import CatalogEntry, PlatformSupportRecord
 from .compatibility import evaluate_compatibility
 from .models import McpServer
+from .curation_models import (
+    ENGINEERING_STAGES,
+    evaluate_curation,
+    qualification_configuration,
+)
 
 EVIDENCE_RANK = {
     "official_production": 0,
@@ -53,6 +58,9 @@ class CapabilityFilters:
     hosts: frozenset[str] = field(default_factory=frozenset)
     validation: frozenset[str] = field(default_factory=frozenset)
     installed: bool | None = None
+    curation: frozenset[str] = field(default_factory=frozenset)
+    engineering_stages: frozenset[str] = field(default_factory=frozenset)
+    protocols: frozenset[str] = field(default_factory=frozenset)
 
 
 def _canonical_digest(entries: Sequence[CatalogEntry]) -> str:
@@ -155,7 +163,12 @@ def _available_actions(
     user: CapabilityUserState,
 ) -> list[str]:
     actions = ["view_details", "observe"]
-    if entry.installability_tier not in {"blocked", "non_working"}:
+    if (
+        entry.installability_tier not in {"blocked", "non_working"}
+        and entry.curation.disposition != "removed"
+        and entry.integration_kind in {"mcp_server", "webmcp_application"}
+        and entry.hardware_standard == "none"
+    ):
         actions.append("plan_onboarding")
     if user.installed:
         actions.append("manage_installation")
@@ -170,6 +183,7 @@ def _catalog_view(
     server: McpServer | None,
     observation,
     workspace_membership: Mapping[str, list[dict[str, str]]],
+    now: datetime,
 ) -> CapabilityView:
     compatibility = evaluate_compatibility(entry, observation)
     user = _user_state(server, workspace_membership)
@@ -180,6 +194,23 @@ def _catalog_view(
         vendor=entry.vendor,
         description=entry.description,
         domains=entry.domains,
+        engineering_stages=entry.engineering_stages,
+        integration_kind=entry.integration_kind,
+        hardware_standard=entry.hardware_standard,
+        protocol_family=(
+            "mhs"
+            if entry.hardware_standard == "mhs_preview"
+            else "webmcp"
+            if entry.transport == "webmcp"
+            else "mcp"
+        ),
+        curation=evaluate_curation(
+            entry.curation,
+            today=now.date(),
+            platform=observation.platform_key,
+            distribution_mode=observation.distribution_mode,
+            configuration_sha256=qualification_configuration(entry),
+        ),
         tags=entry.tags,
         aliases=sorted(entry.aliases),
         capability_summary=entry.capability_summary,
@@ -277,7 +308,9 @@ def build_capability_views(
     *,
     workspace_membership: Mapping[str, list[dict[str, str]]] | None = None,
     known_catalog_ids: frozenset[str] = frozenset(),
+    now: datetime | None = None,
 ) -> list[CapabilityView]:
+    now = now or datetime.now(UTC)
     membership = workspace_membership or {}
     indexed = _server_index(servers)
     consumed: set[str] = set()
@@ -287,7 +320,7 @@ def build_capability_views(
         server = next((indexed[key] for key in identities if key in indexed), None)
         if server:
             consumed.add(server.server_id)
-        views.append(_catalog_view(entry, server, observation, membership))
+        views.append(_catalog_view(entry, server, observation, membership, now))
 
     for server in servers:
         if server.server_id in consumed:
@@ -297,13 +330,16 @@ def build_capability_views(
         ):
             continue
         entry = _custom_entry(server, observation)
-        view = _catalog_view(entry, server, observation, membership)
+        view = _catalog_view(entry, server, observation, membership, now)
         view.custom = True
         views.append(view)
 
     compatible_by_domain: dict[str, list[str]] = {}
     for view in views:
-        if view.compatibility.status == "compatible":
+        if (
+            view.compatibility.status == "compatible"
+            and view.curation.effective_disposition != "removed"
+        ):
             for domain in view.domains:
                 compatible_by_domain.setdefault(domain, []).append(view.capability_id)
     for view in views:
@@ -317,6 +353,9 @@ def build_capability_views(
     return sorted(
         views,
         key=lambda view: (
+            {"curated": 0, "follow_up": 1, "removed": 2}[
+                view.curation.effective_disposition
+            ],
             EVIDENCE_RANK.get(view.evidence_class, 99),
             INSTALLABILITY_RANK.get(view.installability_tier, 99),
             view.name.casefold(),
@@ -342,6 +381,7 @@ def _search_text(view: CapabilityView) -> str:
             *view.capability_summary,
             *view.data_touched,
             *view.examples,
+            *view.engineering_stages,
             source_text,
             requirements,
         ]
@@ -349,6 +389,18 @@ def _search_text(view: CapabilityView) -> str:
 
 
 def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
+    disposition = view.curation.effective_disposition
+    if filters.curation:
+        if disposition not in filters.curation and "all" not in filters.curation:
+            return False
+    elif disposition == "removed" and not view.user_state.installed:
+        return False
+    if filters.engineering_stages and not filters.engineering_stages.intersection(
+        view.engineering_stages
+    ):
+        return False
+    if filters.protocols and view.protocol_family not in filters.protocols:
+        return False
     if filters.search and filters.search.casefold() not in _search_text(view):
         return False
     if filters.domains and not filters.domains.intersection(view.domains):
@@ -428,6 +480,29 @@ def paginate_capabilities(
         if next_offset < len(selected)
         else None,
         total=len(selected),
+        curation_counts={
+            disposition: sum(
+                view.curation.effective_disposition == disposition for view in views
+            )
+            for disposition in ("curated", "follow_up", "removed")
+        },
+        lifecycle_coverage=[
+            {
+                "stage": stage,
+                "label": label,
+                "curated": sum(
+                    stage in view.engineering_stages
+                    and view.curation.effective_disposition == "curated"
+                    for view in views
+                ),
+                "follow_up": sum(
+                    stage in view.engineering_stages
+                    and view.curation.effective_disposition == "follow_up"
+                    for view in views
+                ),
+            }
+            for stage, label in ENGINEERING_STAGES.items()
+        ],
     )
 
 

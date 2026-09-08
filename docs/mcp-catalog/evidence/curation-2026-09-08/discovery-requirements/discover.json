@@ -1,0 +1,48 @@
+{
+  "search": "requirements",
+  "next_cursor": null,
+  "candidates": [
+    {
+      "registry_name": "com.entalpa/requirements",
+      "version": "0.1.1",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.jojapi/visa-requirements",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.micarequirements/site",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/joeetdev/venture-estate",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.dotrequirements/dotrequirements",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.pipeworx-io/visa-requirements",
+      "version": "0.1.0",
+      "repository_url": "https://github.com/pipeworx-io/mcp-visa-requirements",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    }
+  ],
+  "observed_at": "2026-09-08T19:32:36.575146+00:00",
+  "complete": true
+}

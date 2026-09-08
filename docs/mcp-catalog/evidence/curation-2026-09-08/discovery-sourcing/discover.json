@@ -1,0 +1,40 @@
+{
+  "search": "sourcing",
+  "next_cursor": null,
+  "candidates": [
+    {
+      "registry_name": "com.gamedevoutsourcing.www/directory",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/quodsoler/gamedev-connect",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.getstarhunt/github-developer-sourcing",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.supplyslate/sourcing",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.supplyslate/sourcing",
+      "version": "2.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    }
+  ],
+  "observed_at": "2026-09-08T19:32:43.264798+00:00",
+  "complete": true
+}

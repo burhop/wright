@@ -1,0 +1,192 @@
+{
+  "search": "operations",
+  "next_cursor": null,
+  "candidates": [
+    {
+      "registry_name": "com.burnesatelier/operations-reconciliation",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.digitalpublic/marketing-operations",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/cnavarro/digitalpublic-platform",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.digitalpublic/marketing-operations",
+      "version": "1.1.0",
+      "repository_url": "https://github.com/cnavarro/digitalpublic-platform",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.hitsteps/analytics-operations",
+      "version": "1.1.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.hitsteps/analytics-operations",
+      "version": "1.1.1",
+      "repository_url": "https://github.com/Hitsteps/MCP",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.hitsteps/analytics-operations",
+      "version": "1.1.4",
+      "repository_url": "https://github.com/Hitsteps/MCP",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.0.1",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.3.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.4.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.5.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.6.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+      "version": "1.7.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Advanced-Binary-Operations/quredec",
+      "version": "0.1.1",
+      "repository_url": "https://github.com/Advanced-Binary-Operations/QuReDec_MCP",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Wxt-ai/operations-digest-composer",
+      "version": "1.0.7",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Wxt-ai/operations-schedule-builder",
+      "version": "1.0.7",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.atul0016/amazon-seller-operations",
+      "version": "0.1.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.atul0016/amazon-seller-operations",
+      "version": "0.1.1",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.hiroshic9-png/japan-business-operations",
+      "version": "0.4.0",
+      "repository_url": "https://github.com/hiroshic9-png/edition-api",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.hiroshic9-png/japan-business-operations",
+      "version": "0.5.0",
+      "repository_url": "https://github.com/hiroshic9-png/edition-api",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.jpka/shopify-operations-mcp",
+      "version": "0.1.1",
+      "repository_url": "https://github.com/jpka/shopify-operations-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.jpka/shopify-operations-mcp",
+      "version": "0.1.2",
+      "repository_url": "https://github.com/jpka/shopify-operations-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "org.openlyuseful/operations-pulse",
+      "version": "0.1.0",
+      "repository_url": "https://github.com/Openly-Useful/operations-pulse",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    }
+  ],
+  "observed_at": "2026-09-08T19:32:51.856563+00:00",
+  "complete": true
+}

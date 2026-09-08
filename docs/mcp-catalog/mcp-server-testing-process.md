@@ -93,6 +93,12 @@ redaction helpers before writing JSON or Markdown artifacts.
 
 ## Ordering Policy
 
+The user-facing recommendation lists now follow the [curation runbook](curation-runbook.md):
+Curated, Follow up, and Removed from discovery. The historical installability
+tiers below remain compatibility metadata and do not imply current qualification.
+Non-server and retired records remain reviewable, and installed records remain
+manageable, but are excluded from ordinary uninstalled discovery.
+
 Catalog entries must remain sorted as:
 
 1. Fully tested MCP servers.

@@ -163,6 +163,19 @@ export function CapabilityDetails({
             </section>
 
             <section className="capability-dialog__requirements">
+              {capability.curation && (
+                <section data-testid="capability-curation-details">
+                  <h3>Catalog review</h3>
+                  <p>{capability.curation.reason}</p>
+                  <p>Next action: {capability.curation.next_action}</p>
+                  <p>Owner: {capability.curation.owner} · Reviewed: {capability.curation.reviewed_at || "Pending"} · Review due: {capability.curation.review_due || "Unscheduled"}</p>
+                  {capability.curation.limitations.map((limitation) => <p key={limitation}>{limitation}</p>)}
+                  {capability.curation.replacement_ids.length > 0 && <p>Replacement identities: {capability.curation.replacement_ids.join(", ")}</p>}
+                  {capability.curation.qualifications.map((scope, index) => (
+                    <p key={index}>{scope.workflow} · {scope.platform} · {scope.environment} · Verified {scope.verified_at}, expires {scope.expires_at}</p>
+                  ))}
+                </section>
+              )}
               <div className="capability-dialog__section-label">
                 Requirements
               </div>
@@ -331,7 +344,7 @@ export function CapabilityDetails({
           >
             Not now
           </button>
-          {onPlan ? (
+          {onPlan && capability.available_actions.includes("plan_onboarding") ? (
             <button
               type="button"
               className="capability-dialog__install"

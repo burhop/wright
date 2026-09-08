@@ -9,8 +9,8 @@ interface NativeModelContext {
     name: string;
     description: string;
     inputSchema: Readonly<Record<string, unknown>>;
-    execute: (argumentsValue: Readonly<Record<string, unknown>>) => unknown;
-  }): Promise<{ unregister?: () => void | Promise<void> } | void>;
+    execute: (argumentsValue: Readonly<Record<string, unknown>>, options?: { signal?: AbortSignal }) => unknown;
+  }, options: { signal: AbortSignal }): Promise<void>;
 }
 
 interface NativeDocument extends Document {
@@ -48,25 +48,38 @@ export async function registerWebMcpTool(
   const documentValue = (options.document || document) as NativeDocument;
   const detected = detectNativeWebMcp(documentValue);
   let nativeState: NativeWebMcpState | "rejected" = detected;
-  let nativeHandle: { unregister?: () => void | Promise<void> } | void;
+  const lifetime = new AbortController();
+  const abortNative = () => lifetime.abort(tool.signal.reason);
+  tool.signal.addEventListener("abort", abortNative, { once: true });
+  if (tool.signal.aborted) abortNative();
   if (options.dualRegisterNative && detected === "available") {
     try {
-      nativeHandle = await documentValue.modelContext!.registerTool({
+      await documentValue.modelContext!.registerTool({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
-        execute: (argumentsValue) =>
-          tool.handler(argumentsValue, { signal: tool.signal }),
-      });
+        execute: (argumentsValue, callOptions) => {
+          const signal = callOptions?.signal
+            ? AbortSignal.any([lifetime.signal, callOptions.signal])
+            : lifetime.signal;
+          signal.throwIfAborted();
+          return tool.handler(argumentsValue, { signal });
+        },
+      }, { signal: lifetime.signal });
     } catch {
       nativeState = "rejected";
     }
   }
+  let disposal: Promise<void> | undefined;
   return {
     nativeState,
-    dispose: async () => {
-      await nativeHandle?.unregister?.();
-      await stable.dispose();
+    dispose: () => {
+      if (!disposal) {
+        lifetime.abort();
+        tool.signal.removeEventListener("abort", abortNative);
+        disposal = stable.dispose();
+      }
+      return disposal;
     },
   };
 }

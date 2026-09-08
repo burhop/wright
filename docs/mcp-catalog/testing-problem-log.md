@@ -1821,3 +1821,49 @@ Result:
   `external_license_incomplete`. The remote MCP is operational on Windows, but
   Wright registration and gateway qualification remain blocked until the user
   independently completes and records any applicable Autodesk service terms.
+
+## Curation qualification, 8 September 2026
+
+Problem:
+  The new Autodesk help runner passed three direct sessions but failed at the
+  gateway with "server is not active" on Windows and Intel Linux.
+Solution:
+  Installed Wright's normal secret-provider composition in the disposable runner,
+  seeded an inactive installed server, and exercised both GatewayService and the
+  actual api.gateway_stdio MCP endpoint. Corrected catalog transport metadata to
+  Streamable HTTP. No service terms or account settings were accepted or changed.
+Result:
+  Public product discovery passed on native Windows x64 and clean Linux x64
+  containers, including prefixed tools, a real call, and cleanup. Technical
+  qualification does not waive the onboarding planner's publisher-terms step.
+  Evidence: evidence/curation-2026-09-08/autodesk-help-{windows,linux}.json.
+
+Problem:
+  OpenSCAD qualification initially failed because openscad-mcp has no verified
+  PyPI distribution, the base image lacks uvx and Git, and the export recipe used
+  an unsupported format argument.
+Solution:
+  Used the repository's existing reviewed Git commit
+  d438b84fff8af9d646c2bcb76fe58fa4ad387de0 with uv tool run. Installed Git, OpenSCAD,
+  Xvfb and xauth only in each disposable selected-server container. Updated the
+  recipe to the observed output_format and output_path schema. A transient
+  unquoted YAML 'no' value was corrected before final qualification.
+Result:
+  Three direct sessions and both gateway layers exported a 1467-byte STL with
+  dimensions 10 x 8 x 6 mm and volume 480 mm3. Cleanup passed. The resolved
+  FastMCP runtime reported 4.0.3 and emitted logging deprecation warnings on
+  stderr. This qualifies the recorded cube export on Linux x64 containers only;
+  cancellation, recovery, other artifacts and native platforms remain follow-up.
+  Evidence: evidence/curation-2026-09-08/openscad-linux.json.
+
+Problem:
+  The shared Windows Python environment has an incomplete cryptography package
+  and the default pytest temporary directory is inaccessible in the sandbox.
+Solution:
+  Used an isolated Wright Linux runtime with pytest, pytest-asyncio and respx
+  installed only inside the disposable container. No shared Python environment
+  or base image was modified. Native focused checks use a private workspace temp.
+Result:
+  The catalog, signed updates, installation, backward compatibility and API suite
+  passed 119 tests before final qualification records were added; the final
+  evidence-binding and environment checks are recorded in the curation report notes.

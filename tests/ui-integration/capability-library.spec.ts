@@ -64,6 +64,8 @@ const capability = {
 test.describe("Offline Capability Library", () => {
   test.beforeEach(async ({ page }) => {
     let catalogActivated = false;
+    await page.route("**/api/agent/sessions", route => route.fulfill({ json: { sessions: [] } }));
+    await page.route(/\/api\/(agent\/|inference\/)?health$/, route => route.fulfill({ json: { status: "healthy" } }));
     await page.route("**/api/auth/session/status", async (route) => {
       await route.fulfill({
         json: { auth_required: false, authenticated: true },
@@ -229,6 +231,41 @@ test.describe("Offline Capability Library", () => {
     });
   });
 
+  test("reviews the three lists, lifecycle gaps, and preserved installations", async ({ page }) => {
+    await page.route("**/api/mcp/capabilities?*", async route => {
+      const list = new URL(route.request().url()).searchParams.get("curation");
+      const selected = list === "removed" ? { ...capability,
+        available_actions: ["view_details", "observe"],
+        curation: { disposition: "removed", effective_disposition: "removed", reason: "Publisher archived this implementation.",
+          owner: "Wright maintainers", reviewed_at: "2026-09-08", review_due: "2026-10-08", next_action: "Review the replacement.",
+          replacement_ids: [], qualifications: [], limitations: [], review_overdue: false },
+      } : capability;
+      await route.fulfill({ json: {
+        snapshot: { snapshot_id: "curation", channel: "bundled", sequence: 1, offline: true },
+        capabilities: list === "curated" ? [] : [selected], total: list === "curated" ? 0 : 1, next_cursor: null,
+        curation_counts: { curated: 0, follow_up: 1, removed: 1 },
+        lifecycle_coverage: [{ stage: "manufacturing", label: "Manufacturing and assembly", curated: 0, follow_up: 1 }],
+      }});
+    });
+    await page.goto("/tool-registry");
+    await expect(page.getByLabel("Catalog list")).toHaveValue("curated");
+    await page.getByRole("button", { name: "Review follow-up candidates" }).click();
+    await expect(page).toHaveURL(/curation=follow_up/);
+    await page.getByLabel("Engineering process stage").selectOption("manufacturing");
+    await expect(page).toHaveURL(/engineering_stage=manufacturing/);
+    await page.getByText("Engineering lifecycle coverage", { exact: true }).click();
+    await expect(page.getByTestId("capability-lifecycle-coverage")).toContainText("Gap");
+    await page.getByLabel("Catalog list").selectOption("removed");
+    await page.getByRole("button", { name: /View MCP server details for/ }).click();
+    await expect(page.getByRole("dialog")).toContainText("Publisher archived this implementation.");
+    await expect(page.getByRole("dialog").getByRole("button", { name: "Install MCP server", exact: true })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "Show installed integrations" }).click();
+    await expect(page).toHaveURL(/curation=all/);
+    await expect(page).toHaveURL(/installed=true/);
+    await page.screenshot({ path: "test-results/mcp-curation-library.png", fullPage: true });
+  });
+
   test("discovers evidence and reasons without network-backed product calls", async ({
     page,
   }) => {
@@ -329,7 +366,7 @@ test.describe("Offline Capability Library", () => {
     });
     await expect(
       form.getByTestId("missing-capability-search-context"),
-    ).toContainText("no result · domain: cfd");
+    ).toContainText("no result · curation: curated · domain: cfd");
     await form.getByLabel("MCP server name").fill("Requested CFD MCP");
     await form
       .getByLabel("What engineering task should it perform?")

@@ -9,6 +9,7 @@ from data_vault import upgrade_database
 from fastapi.testclient import TestClient
 from tool_registry import McpEngine
 from tool_registry.capability_services import CapabilityServiceDependencies
+from tool_registry.canonical_catalog import load_canonical_entries
 from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 from tool_registry.catalog_reconcile import reconcile_wright_managed_servers
 
@@ -65,7 +66,9 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
     assert body["capabilities"][0]["requirements"]["supported_platforms"]
 
     first = client.get("/api/mcp/capabilities", params={"limit": 1}).json()
-    assert first["total"] == 70
+    assert first["total"] == sum(
+        entry.curation.disposition != "removed" for entry in load_canonical_entries()
+    )
     assert first["next_cursor"]
     second = client.get(
         "/api/mcp/capabilities",
@@ -74,6 +77,39 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
     assert (
         second["capabilities"][0]["capability_id"]
         != (first["capabilities"][0]["capability_id"])
+    )
+
+
+def test_curation_lists_and_retirement_are_enforced_by_the_api(capability_client):
+    client, _ = capability_client
+    all_records = client.get(
+        "/api/mcp/capabilities", params={"curation": "all", "limit": 200}
+    ).json()
+    assert all_records["total"] == len(load_canonical_entries())
+    assert len(all_records["lifecycle_coverage"]) == 9
+    retired = client.get("/api/mcp/capabilities", params={"curation": "removed"}).json()
+    assert retired["total"] == all_records["curation_counts"]["removed"]
+    assert all(
+        "plan_onboarding" not in item["available_actions"]
+        for item in retired["capabilities"]
+    )
+    response = client.post("/api/mcp/servers/revit-mcp/install")
+    assert response.status_code == 400
+    assert "Catalog installation is unavailable" in response.text
+    sourcing = client.get(
+        "/api/mcp/capabilities",
+        params={
+            "curation": "follow_up",
+            "engineering_stage": "sourcing",
+            "protocol": "mcp",
+        },
+    ).json()
+    assert any(
+        item["canonical_id"] == "partuno-mcp" for item in sourcing["capabilities"]
+    )
+    assert (
+        client.get("/api/mcp/capabilities", params={"curation": "bogus"}).status_code
+        == 422
     )
 
 

@@ -14,6 +14,12 @@ from .models import (
     VerificationState,
 )
 from .windows_qualification_models import WindowsQualificationSummary
+from .curation_models import (
+    CurationDecision,
+    EngineeringStage,
+    HardwareStandard,
+    IntegrationKind,
+)
 
 EvidenceClass = Literal[
     "official_production",
@@ -176,6 +182,10 @@ class CatalogEntry(BaseModel):
     vendor: str
     description: str
     domains: list[str]
+    engineering_stages: list[EngineeringStage] = Field(default_factory=list)
+    integration_kind: IntegrationKind = "mcp_server"
+    hardware_standard: HardwareStandard = "none"
+    curation: CurationDecision = Field(default_factory=CurationDecision)
     tags: list[str] = Field(default_factory=list)
     transport: Literal["stdio", "streamable_http", "sse", "webmcp"]
     command: Union[list[str], str]
@@ -255,6 +265,20 @@ class CatalogEntry(BaseModel):
 
         if self.evidence_class is None:
             self.evidence_class = conservative_evidence_class(self)
+
+        if self.curation.disposition == "curated":
+            if self.integration_kind not in {"mcp_server", "webmcp_application"}:
+                raise ValueError("only implemented integrations can be curated")
+            if self.hardware_standard != "none" or self.risk_level == "safety-critical":
+                raise ValueError(
+                    "hardware requires separate physical qualification; keep in follow up"
+                )
+            if self.installability_tier in {"blocked", "non_working"}:
+                raise ValueError("blocked or non-working entries cannot be curated")
+            if not self.engineering_stages or not self.source_url:
+                raise ValueError(
+                    "curated entries require lifecycle coverage and a source"
+                )
 
         return self
 

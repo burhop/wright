@@ -1,5 +1,5 @@
 import structlog
-from typing import List, Optional
+from typing import List, Literal, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, Response
 from pydantic import BaseModel, Field, model_validator
 from tool_registry import (
@@ -306,6 +306,11 @@ async def rollback_catalog_endpoint(
 @traced("mcp.capability.list")
 async def list_capabilities(
     search: str | None = None,
+    curation: list[Literal["curated", "follow_up", "removed", "all"]] | None = Query(
+        default=None
+    ),
+    engineering_stage: list[str] | None = Query(default=None),
+    protocol: list[Literal["mcp", "webmcp", "mhs"]] | None = Query(default=None),
     domain: list[str] | None = Query(default=None),
     platform: list[str] | None = Query(default=None),
     lifecycle_stage: list[str] | None = Query(default=None),
@@ -325,6 +330,9 @@ async def list_capabilities(
         return service.list_capabilities(
             filters=CapabilityFilters(
                 search=search,
+                curation=frozenset(curation or []),
+                engineering_stages=frozenset(engineering_stage or []),
+                protocols=frozenset(protocol or []),
                 domains=frozenset(domain or []),
                 platforms=frozenset(platform or []),
                 lifecycle_stages=frozenset(lifecycle_stage or []),

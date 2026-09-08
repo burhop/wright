@@ -106,6 +106,31 @@ def test_local_remote_host_and_command_plans_are_complete(plan_database) -> None
     assert "advanced_local_command_approval" in imported.approval_gates
 
 
+@pytest.mark.parametrize(
+    "identity,code",
+    [
+        ("revit-mcp", "catalog_retired"),
+        ("webmcp-standard", "catalog_not_an_implementation"),
+    ],
+)
+def test_research_records_cannot_create_an_executable_install_plan(
+    plan_database, identity, code
+):
+    database, snapshot, current_observation = plan_database
+    entry = next(item for item in load_canonical_entries() if item.id == identity)
+    plan = create_install_plan(
+        database,
+        snapshot_id=snapshot.snapshot_id,
+        observation=current_observation,
+        entry=entry,
+        actor="engineer",
+        requested_scope="global_registered",
+        now=NOW,
+    )
+    assert plan.state == "blocked"
+    assert any(reason.code == code for reason in plan.blocking_reasons)
+
+
 def test_autocad_mcp_license_metadata_allows_review(plan_database) -> None:
     database, snapshot, current_observation = plan_database
     entry = next(item for item in load_canonical_entries() if item.id == "autocad-mcp")

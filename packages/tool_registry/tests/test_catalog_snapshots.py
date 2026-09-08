@@ -4,6 +4,7 @@ import sqlite3
 from datetime import UTC, datetime
 
 from data_vault import upgrade_database
+from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.catalog_signing import CatalogTrustRoot, verify_catalog_envelope
 from tool_registry.catalog_snapshots import (
     bootstrap_bundled_snapshot,
@@ -71,6 +72,6 @@ def test_corrupt_active_snapshot_falls_back_read_only_to_packaged_catalog(
         )
 
     document, diagnostic = load_active_catalog(database)
-    assert len(document["servers"]) == 70
+    assert len(document["servers"]) == len(load_catalog_document()["servers"])
     assert diagnostic["code"] == "catalog_recovery_bundled"
     assert get_catalog_state(database)["active_snapshot_id"] == bundled.snapshot_id

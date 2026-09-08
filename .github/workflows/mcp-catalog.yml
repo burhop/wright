@@ -13,6 +13,8 @@ on:
       - packages/tool_registry/src/tool_registry/canonical_catalog.py
       - packages/tool_registry/src/tool_registry/catalog_bundle.py
       - packages/tool_registry/src/tool_registry/catalog_models.py
+      - packages/tool_registry/src/tool_registry/curation_models.py
+      - packages/tool_registry/src/tool_registry/catalog_curation.py
       - packages/tool_registry/src/tool_registry/catalog_platforms.py
       - packages/tool_registry/tests/test_catalog_*.py
       - tests/docker/test_mcp_bundle.py
@@ -30,6 +32,8 @@ on:
       - packages/tool_registry/src/tool_registry/canonical_catalog.py
       - packages/tool_registry/src/tool_registry/catalog_bundle.py
       - packages/tool_registry/src/tool_registry/catalog_models.py
+      - packages/tool_registry/src/tool_registry/curation_models.py
+      - packages/tool_registry/src/tool_registry/catalog_curation.py
       - packages/tool_registry/src/tool_registry/catalog_platforms.py
       - packages/tool_registry/tests/test_catalog_*.py
       - tests/docker/test_mcp_bundle.py
@@ -71,7 +75,33 @@ jobs:
             packages/tool_registry/tests/test_engineering_catalog.py \
             packages/tool_registry/tests/test_catalog_platforms.py \
             packages/tool_registry/tests/test_catalog_distribution.py \
+            packages/tool_registry/tests/test_catalog_curation.py \
             tests/docker/test_mcp_bundle.py
           uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
           uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.linux-arm64.yaml
           uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.windows-amd64.yaml
+
+      - name: Report review decisions and lifecycle gaps
+        run: uv run python -m tool_registry.catalog_curation report --output-dir artifacts/mcp-curation
+
+      - name: Observe public sources and discover lifecycle candidates
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          status=0
+          uv run python -m tool_registry.catalog_curation research --output-dir artifacts/mcp-curation || status=1
+          for query in requirements sourcing manufacturing testing operations; do
+            uv run python -m tool_registry.catalog_curation discover --search "$query" --output-dir "artifacts/mcp-curation/discovery-$query" || status=1
+          done
+          if [ "$status" -ne 0 ]; then
+            echo '::warning::Some public sources were unavailable. Inspect attempt artifacts; no catalog decisions were changed.'
+          fi
+
+      - name: Preserve curation evidence for review
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mcp-curation-review
+          path: artifacts/mcp-curation
+          if-no-files-found: warn
+          retention-days: 90
