@@ -15,6 +15,11 @@ src/wright_engineering/static/process-definitions/*.json text eol=lf
 # canonical UTF-8/LF bytes used to calculate each recorded evidence digest.
 docs/mcp-catalog/evidence/** text eol=lf
 
+# Office deliverables are ZIP packages. Keep them byte-for-byte intact even
+# when they live beside canonical text evidence.
+docs/mcp-catalog/evidence/**/deliverables/*.docx binary
+docs/mcp-catalog/evidence/**/deliverables/*.pptx binary
+
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace
