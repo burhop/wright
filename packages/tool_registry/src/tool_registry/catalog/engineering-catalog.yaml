@@ -274,7 +274,7 @@ servers:
   - onshape-mcp-jarvis
   - Jarvis Onshape MCP
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: tested
   risk_level: medium
   deployment_mode: cloud-saas
   credentials_required:
@@ -4363,9 +4363,9 @@ servers:
       tested: false
       notes: Upstream documents Windows support; Wright qualification is pending.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Pinned source and real KiCad 9 backend tests passed. A Wright DRC attempt found stdout protocol contamination; narrower board, audit, and fabrication-export qualification is pending.
+      status: 'yes'
+      tested: true
+      notes: Pinned source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, native PCB reopen, audit, manufacturing export, and independent KiCad/Gerber checks. DRC remains excluded because it contaminates stdout.
     linux_arm64:
       status: unknown
       tested: false
@@ -4387,10 +4387,10 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: failed
+    status: passed
     validated_at: '2026-09-08'
     evidence_status: recorded
-    message: Pinned release passed 2,503 upstream tests and seven real KiCad 9 integration tests, but the first Wright run found that DRC prints a history message to stdout and corrupts the MCP stream. DRC is excluded while a narrower board, audit, and Gerber workflow is qualified.
+    message: Pinned release passed 2,503 upstream tests, seven real KiCad 9 integration tests, three direct Wright sessions, the gateway service, and Hermes-facing gateway. Each Wright route created and reopened a 40 x 30 mm native PCB with a searched two-pad footprint, audited it, and produced an independently checked fabrication archive. DRC remains excluded because it prints to stdout and corrupts the MCP stream.
     environment: fresh-standard-linux-x64-container
     missing_dependencies: []
   engineering_stages:
@@ -4401,13 +4401,29 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source, locked tests, and the real KiCad backend are healthy, but DRC corrupts the MCP stream; a narrower Wright workflow qualification is pending.
+    disposition: curated
+    reason: The pinned release passed a useful native PCB authoring, audit, and fabrication-export workflow through direct MCP and both Wright gateway paths. The recommendation explicitly excludes DRC and FreeRouter.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Run a fixed PCB creation, footprint, audit, and Gerber export scenario through direct MCP and both Wright gateway paths; keep DRC and FreeRouter excluded.
+    next_action: Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.
     adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc
+      workflow: Search the installed footprint libraries, create a 40 x 30 mm native PCB, place a two-pad resistor at 20 x 15 mm, reopen and audit the board, reject a missing board, export Gerbers and drill data, and independently inspect the KiCad file and fabrication archive.
+      source_revision: bcc6f11de92e5f47cb7dde1d24565f7779b2fbed
+      wright_revision: ec915dbd
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/kicad-blwfish-linux.json
+      evidence_sha256: 27997565ea3a5a1aafbed1862e7b86236edb09d2bef811dd7c067be548c977fd
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: brep-mcp
   name: BREP MCP
   vendor: andymai

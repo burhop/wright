@@ -1,0 +1,871 @@
+{
+  "server_id": "kicad-mcp-blwfish",
+  "observed_at": "2026-09-09T00:35:42.157913+00:00",
+  "wright_revision": "ec915dbd",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/blwfish/kicad-mcp",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_missing_board_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "KiCad PCB authoring, audit, and Gerber export",
+  "configuration_sha256": "d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc",
+  "installed_items": [
+    "kicad-mcp 0.13.0 at bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+    "KiCad 9.0.2+dfsg-1",
+    "kicad-symbols 9.0.2-1",
+    "kicad-footprints 9.0.2-1"
+  ],
+  "source_references": [
+    "https://github.com/blwfish/kicad-mcp/tree/v0.13.0",
+    "https://github.com/blwfish/kicad-mcp/commit/bcc6f11de92e5f47cb7dde1d24565f7779b2fbed"
+  ],
+  "prerequisites": [
+    "KiCad 9.0.2 CLI and pcbnew Python bindings",
+    "KiCad 9.0.2 standard symbol and footprint libraries",
+    "git only inside the disposable qualification container"
+  ],
+  "server_info": {
+    "name": "KiCad",
+    "title": null,
+    "version": "4.0.3",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8119d98d08d5cfa61702ce68f6b152462507346f19acd83d2a483a5760d14ae0",
+  "tool_count": 17,
+  "pcb_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "height_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "min_track_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "min_via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_hole_to_hole_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "min_through_hole_diameter_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_copper_edge_clearance_mm": {
+        "default": 0.5,
+        "type": "number"
+      },
+      "fix_silkscreen": {
+        "default": true,
+        "type": "boolean"
+      },
+      "fill_zones_flag": {
+        "default": true,
+        "type": "boolean"
+      },
+      "library": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "footprint_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "reference": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "layer": {
+        "default": "F.Cu",
+        "type": "string"
+      },
+      "check_keepouts": {
+        "default": true,
+        "type": "boolean"
+      },
+      "net_name": {
+        "default": "",
+        "type": "string"
+      },
+      "old_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "class_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "nets": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "track_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "pad_number": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "assignments": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "trace_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "size_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_type": {
+        "default": "through",
+        "type": "string"
+      },
+      "clear_tracks": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_vias": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_zones_flag": {
+        "default": false,
+        "type": "boolean"
+      },
+      "new_width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "net_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "layer_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "corners": {
+        "anyOf": [
+          {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "zone_clearance_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "connect_pads": {
+        "default": "thermal",
+        "type": "string"
+      },
+      "priority": {
+        "default": 0,
+        "type": "integer"
+      },
+      "text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "text_size_mm": {
+        "default": 1.0,
+        "type": "number"
+      },
+      "thickness_mm": {
+        "default": 0.15,
+        "type": "number"
+      },
+      "silk_field": {
+        "default": "reference",
+        "type": "string"
+      },
+      "visible": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "angle_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_layer": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "export_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "project_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "output_dir": {
+        "default": "",
+        "type": "string"
+      },
+      "create_zip": {
+        "default": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "outcome": {
+    "board_bytes": 6369,
+    "board_sha256": "7677cdc8e264f64f7dd8846d82f2a1dc96dbe8929f24724b48b0cc816c557036",
+    "board": {
+      "kicad_version": "9.0.2",
+      "footprints": [
+        {
+          "reference": "R1",
+          "value": "10k",
+          "pads": 2,
+          "position_mm": [
+            20.0,
+            15.0
+          ]
+        }
+      ],
+      "tracks": 0,
+      "edge_bounds_mm": [
+        40.1,
+        30.1
+      ]
+    },
+    "gerber_count": 13,
+    "gerber_sha256": {
+      "direct-2-B_Courtyard.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-B_Fab.gbr": "494b6058dbf003d483df08055a553899ec47f715172df3c75301f46d9946a149",
+      "direct-2-F_Courtyard.gbr": "7f83596f0d97f7e524b35761ceefe9ea2d2f9c91969c387dc815b4b8b2bbc913",
+      "direct-2-F_Fab.gbr": "a550091bfbfb382d513d4d41d853d85c0838f4d21f9d744602749274a441551c",
+      "direct-2-Margin.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-User_1.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-User_2.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-User_3.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-User_4.gbr": "00d4d0e8b37ac4998b6c6b51afac253afbbd84efa15a5239d4ddfaaea149b7f3",
+      "direct-2-User_Comments.gbr": "5b47f611f3771137c00853f87dc04ad8d163da79bbbcfa17ec7eca16f4addb08",
+      "direct-2-User_Drawings.gbr": "556c5c643d074f0d1de1dba42e9afd7878ebd3f73700f59dad9989cd64b783db",
+      "direct-2-User_Eco1.gbr": "249713decf7f96a59e124c8abdf20479149affb7e7b61c773480a98fdf272d59",
+      "direct-2-User_Eco2.gbr": "06f47016e00df1db259bb07f9fe72a954989679c810d87c05f0eda2f1d11a15a"
+    },
+    "archive": "direct-2-gerbers.zip",
+    "archive_sha256": "12ff81f0f321d7917e3450a93704668d13a0317f5ba41fbdee8e2c7da5d8ec6d",
+    "archive_entries": [
+      "direct-2-B_Adhesive.gba",
+      "direct-2-B_Courtyard.gbr",
+      "direct-2-B_Cu.gbl",
+      "direct-2-B_Fab.gbr",
+      "direct-2-B_Mask.gbs",
+      "direct-2-B_Paste.gbp",
+      "direct-2-B_Silkscreen.gbo",
+      "direct-2-Edge_Cuts.gm1",
+      "direct-2-F_Adhesive.gta",
+      "direct-2-F_Courtyard.gbr",
+      "direct-2-F_Cu.gtl",
+      "direct-2-F_Fab.gbr",
+      "direct-2-F_Mask.gts",
+      "direct-2-F_Paste.gtp",
+      "direct-2-F_Silkscreen.gto",
+      "direct-2-Margin.gbr",
+      "direct-2-User_1.gbr",
+      "direct-2-User_2.gbr",
+      "direct-2-User_3.gbr",
+      "direct-2-User_4.gbr",
+      "direct-2-User_Comments.gbr",
+      "direct-2-User_Drawings.gbr",
+      "direct-2-User_Eco1.gbr",
+      "direct-2-User_Eco2.gbr",
+      "direct-2-job.gbrjob",
+      "direct-2.drl"
+    ]
+  },
+  "gateway_outcome": {
+    "board_bytes": 6369,
+    "board_sha256": "af9589a0621abc19726c6681321d371d645264def55f1f3b636bbd4756ce1828",
+    "board": {
+      "kicad_version": "9.0.2",
+      "footprints": [
+        {
+          "reference": "R1",
+          "value": "10k",
+          "pads": 2,
+          "position_mm": [
+            20.0,
+            15.0
+          ]
+        }
+      ],
+      "tracks": 0,
+      "edge_bounds_mm": [
+        40.1,
+        30.1
+      ]
+    },
+    "gerber_count": 13,
+    "gerber_sha256": {
+      "gateway-B_Courtyard.gbr": "6b3f84afcb22c6f994fd0a04535e3c0dca7c2cdbbdc297dcb044b73561412547",
+      "gateway-B_Fab.gbr": "1c4601c23b88e577567e34f5c3a47f148a07401324d9b5120f56cf1c401a2890",
+      "gateway-F_Courtyard.gbr": "44ebf1f3d57cb61f0da3511929909daff0ea83ddc966bc2bfb3ecddd5a6ae035",
+      "gateway-F_Fab.gbr": "c1f149c43297032d2d33f186a839d7e650e33fd9a845eee3e1c44e608a6f765d",
+      "gateway-Margin.gbr": "6b3f84afcb22c6f994fd0a04535e3c0dca7c2cdbbdc297dcb044b73561412547",
+      "gateway-User_1.gbr": "6b3f84afcb22c6f994fd0a04535e3c0dca7c2cdbbdc297dcb044b73561412547",
+      "gateway-User_2.gbr": "6b3f84afcb22c6f994fd0a04535e3c0dca7c2cdbbdc297dcb044b73561412547",
+      "gateway-User_3.gbr": "6b3f84afcb22c6f994fd0a04535e3c0dca7c2cdbbdc297dcb044b73561412547",
+      "gateway-User_4.gbr": "9c820d934daf3f3864ad7d4b06bc83b43f51bc37a5b269ba8f739eebe0aed1b6",
+      "gateway-User_Comments.gbr": "7cb88fcf6234eeba41aa5b1b23be6c3811c4d49928af19b7ec9a3728e80362a0",
+      "gateway-User_Drawings.gbr": "bfee23676762f9b7ef711e4147233d39547d1f97a5cf865755413d82add43765",
+      "gateway-User_Eco1.gbr": "e3aa7ca4c312610fb752a54c038cfee0e838a451bee954e265e4ec861e96045c",
+      "gateway-User_Eco2.gbr": "8f1617dbffd9dd77ba59f7f4d3b01dd9cae90f1174fc66890071c1d885789fc1"
+    },
+    "archive": "gateway-gerbers.zip",
+    "archive_sha256": "cdd805b1d636ec5d84786734005801f436c85a714806cf59c7cef0f8492a3267",
+    "archive_entries": [
+      "gateway-B_Adhesive.gba",
+      "gateway-B_Courtyard.gbr",
+      "gateway-B_Cu.gbl",
+      "gateway-B_Fab.gbr",
+      "gateway-B_Mask.gbs",
+      "gateway-B_Paste.gbp",
+      "gateway-B_Silkscreen.gbo",
+      "gateway-Edge_Cuts.gm1",
+      "gateway-F_Adhesive.gta",
+      "gateway-F_Courtyard.gbr",
+      "gateway-F_Cu.gtl",
+      "gateway-F_Fab.gbr",
+      "gateway-F_Mask.gts",
+      "gateway-F_Paste.gtp",
+      "gateway-F_Silkscreen.gto",
+      "gateway-Margin.gbr",
+      "gateway-User_1.gbr",
+      "gateway-User_2.gbr",
+      "gateway-User_3.gbr",
+      "gateway-User_4.gbr",
+      "gateway-User_Comments.gbr",
+      "gateway-User_Drawings.gbr",
+      "gateway-User_Eco1.gbr",
+      "gateway-User_Eco2.gbr",
+      "gateway-job.gbrjob",
+      "gateway.drl"
+    ]
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "board_bytes": 6369,
+    "board_sha256": "4fca938591b809bde74e51469b1db5f2f9cb29ae08a64ad6b47e5e1bcfa82aeb",
+    "board": {
+      "kicad_version": "9.0.2",
+      "footprints": [
+        {
+          "reference": "R1",
+          "value": "10k",
+          "pads": 2,
+          "position_mm": [
+            20.0,
+            15.0
+          ]
+        }
+      ],
+      "tracks": 0,
+      "edge_bounds_mm": [
+        40.1,
+        30.1
+      ]
+    },
+    "gerber_count": 13,
+    "gerber_sha256": {
+      "gateway-mcp-B_Courtyard.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-B_Fab.gbr": "1187dfb78c52d5477c92d2719ea3ca258bd7d4dde903727351f7f182fee8b743",
+      "gateway-mcp-F_Courtyard.gbr": "94f748460600fa6b3fbfcc037e7eddb875e3405963fff096ebeb9fd2bf75a957",
+      "gateway-mcp-F_Fab.gbr": "2f8f879989c0043d861a3c4f73cf0f675bf9912049fb989a95a04fc3e72cad48",
+      "gateway-mcp-Margin.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-User_1.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-User_2.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-User_3.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-User_4.gbr": "b40ecf6ac6f0ec82830c1ef555b95bb1d60da9eb0398345322522fed5407631e",
+      "gateway-mcp-User_Comments.gbr": "4d842865fa5304e8a69ed3496159c4b6e6872c5efc4a2c7c0336cae9eef4ad6c",
+      "gateway-mcp-User_Drawings.gbr": "e4ee93c11cf55d6be134b5b4b4d4611ce1d59d813c55136c5334447875281b67",
+      "gateway-mcp-User_Eco1.gbr": "cc680902e2b2667e55d4aae636db81d21d2d141c58f54483c241270006c6e485",
+      "gateway-mcp-User_Eco2.gbr": "adc5419b3188f199a1c0fc944572eb5cf8055791790d9f833f0da5eb90d33e7a"
+    },
+    "archive": "gateway-mcp-gerbers.zip",
+    "archive_sha256": "d03350b238dee71a0ce73164aa606507a8290839da47acb5365bc28e3c4583d0",
+    "archive_entries": [
+      "gateway-mcp-B_Adhesive.gba",
+      "gateway-mcp-B_Courtyard.gbr",
+      "gateway-mcp-B_Cu.gbl",
+      "gateway-mcp-B_Fab.gbr",
+      "gateway-mcp-B_Mask.gbs",
+      "gateway-mcp-B_Paste.gbp",
+      "gateway-mcp-B_Silkscreen.gbo",
+      "gateway-mcp-Edge_Cuts.gm1",
+      "gateway-mcp-F_Adhesive.gta",
+      "gateway-mcp-F_Courtyard.gbr",
+      "gateway-mcp-F_Cu.gtl",
+      "gateway-mcp-F_Fab.gbr",
+      "gateway-mcp-F_Mask.gts",
+      "gateway-mcp-F_Paste.gtp",
+      "gateway-mcp-F_Silkscreen.gto",
+      "gateway-mcp-Margin.gbr",
+      "gateway-mcp-User_1.gbr",
+      "gateway-mcp-User_2.gbr",
+      "gateway-mcp-User_3.gbr",
+      "gateway-mcp-User_4.gbr",
+      "gateway-mcp-User_Comments.gbr",
+      "gateway-mcp-User_Drawings.gbr",
+      "gateway-mcp-User_Eco1.gbr",
+      "gateway-mcp-User_Eco2.gbr",
+      "gateway-mcp-job.gbrjob",
+      "gateway-mcp.drl"
+    ]
+  },
+  "cleanup": "passed"
+}
