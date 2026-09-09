@@ -907,7 +907,7 @@ async def run(args, root, report):
                 "blender-mcp": "Blender dimensioned box STL export",
                 "autocad-mcp-u-c4n": "AutoCAD headless mechanical DXF authoring",
                 "rhino-mcp-easehee": "Rhino standalone solid Brep 3DM authoring",
-                "kicad-mcp-blwfish": "KiCad PCB authoring, audit, DRC, and Gerber export",
+                "kicad-mcp-blwfish": "KiCad PCB authoring, audit, and Gerber export",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -1222,20 +1222,6 @@ async def run(args, root, report):
                         "silkscreen_overlaps",
                     )
                 ), "KiCad audit result is incomplete"
-                checked = await client.call_tool(
-                    "drc",
-                    {
-                        "operation": "run",
-                        "project_path": str(board_output.with_suffix(".kicad_pro")),
-                    },
-                )
-                check_payload = _json_result(checked)
-                assert not checked.isError and (
-                    "violations" in check_payload
-                    or "drc_results" in check_payload
-                    or check_payload.get("status") == "ok"
-                    or check_payload.get("success") is True
-                ), "KiCad DRC result is incomplete"
                 probe = (
                     "export",
                     {
@@ -1590,7 +1576,7 @@ async def run(args, root, report):
         elif args.server == "kicad-mcp-blwfish":
             scenario_tool_names.update(
                 f"{entry.id}__{tool_name}"
-                for tool_name in ("library", "pcb", "audit", "drc", "export")
+                for tool_name in ("library", "pcb", "audit", "export")
             )
         approvals = {
             gate
@@ -1749,31 +1735,14 @@ async def run(args, root, report):
                 assert not setup_result.is_error, (
                     f"Gateway KiCad failed at {values['operation']}"
                 )
-            for step, (tool_name, values) in enumerate(
-                (
-                    (
-                        "audit",
-                        {"operation": "all", "pcb_path": str(gateway_board_output)},
-                    ),
-                    (
-                        "drc",
-                        {
-                            "operation": "run",
-                            "project_path": str(
-                                gateway_board_output.with_suffix(".kicad_pro")
-                            ),
-                        },
-                    ),
-                )
-            ):
-                setup_result = await gateway.call_tool(
-                    "qualification-session",
-                    f"qualification-kicad-check-{step}",
-                    f"{entry.id}__{tool_name}",
-                    values,
-                    workspace_approvals=approvals,
-                )
-                assert not setup_result.is_error, f"Gateway KiCad {tool_name} failed"
+            setup_result = await gateway.call_tool(
+                "qualification-session",
+                "qualification-kicad-audit",
+                f"{entry.id}__audit",
+                {"operation": "all", "pcb_path": str(gateway_board_output)},
+                workspace_approvals=approvals,
+            )
+            assert not setup_result.is_error, "Gateway KiCad audit failed"
             probe = (
                 "export",
                 {
@@ -1995,27 +1964,11 @@ async def run(args, root, report):
                 assert not setup_result.isError, (
                     f"Gateway MCP KiCad failed at {values['operation']}"
                 )
-            for tool_name, values in (
-                (
-                    "audit",
-                    {"operation": "all", "pcb_path": str(gateway_mcp_board_output)},
-                ),
-                (
-                    "drc",
-                    {
-                        "operation": "run",
-                        "project_path": str(
-                            gateway_mcp_board_output.with_suffix(".kicad_pro")
-                        ),
-                    },
-                ),
-            ):
-                setup_result = await client.call_tool(
-                    f"{entry.id}__{tool_name}", values
-                )
-                assert not setup_result.isError, (
-                    f"Gateway MCP KiCad {tool_name} failed"
-                )
+            setup_result = await client.call_tool(
+                f"{entry.id}__audit",
+                {"operation": "all", "pcb_path": str(gateway_mcp_board_output)},
+            )
+            assert not setup_result.isError, "Gateway MCP KiCad audit failed"
             probe = (
                 "export",
                 {

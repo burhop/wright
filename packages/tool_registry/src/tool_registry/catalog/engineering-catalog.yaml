@@ -4326,6 +4326,7 @@ servers:
   - KiCad-native PCB creation, footprint placement, board inspection, and Gerber generation
   - Locked Python dependency graph and real KiCad integration tests
   - Optional FreeRouter workflow requires Java and a separately installed router JAR
+  - DRC is excluded from the candidate scope because release 0.13.0 writes a history message to stdout and corrupts the MCP stream
   source_records:
   - url: https://github.com/blwfish/kicad-mcp
     kind: repository
@@ -4355,7 +4356,7 @@ servers:
     cpu: engineering workstation CPU
     gpu: not required for the candidate headless PCB workflow
     docker: 'yes'
-    notes: Qualification installs KiCad and its standard symbol and footprint libraries only inside a disposable container. Java and FreeRouter are outside the candidate scope.
+    notes: Qualification installs KiCad and its standard symbol and footprint libraries only inside a disposable container. DRC, Java, and FreeRouter are outside the candidate scope.
   platform_support:
     windows_11_x64:
       status: likely
@@ -4364,7 +4365,7 @@ servers:
     linux_x64:
       status: likely
       tested: false
-      notes: Pinned source and real KiCad 9 backend tests passed; Wright direct and gateway qualification is pending.
+      notes: Pinned source and real KiCad 9 backend tests passed. A Wright DRC attempt found stdout protocol contamination; narrower board, audit, and fabrication-export qualification is pending.
     linux_arm64:
       status: unknown
       tested: false
@@ -4386,9 +4387,11 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Pinned release passed 2,503 upstream tests and seven real KiCad 9 integration tests in the disposable qualification container; Wright direct and gateway workflow qualification is pending.
-    environment: null
+    status: failed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned release passed 2,503 upstream tests and seven real KiCad 9 integration tests, but the first Wright run found that DRC prints a history message to stdout and corrupts the MCP stream. DRC is excluded while a narrower board, audit, and Gerber workflow is qualified.
+    environment: fresh-standard-linux-x64-container
     missing_dependencies: []
   engineering_stages:
   - design
@@ -4399,11 +4402,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: Source, locked tests, and real KiCad backend are healthy; Wright protocol and gateway workflow qualification is pending.
+    reason: Source, locked tests, and the real KiCad backend are healthy, but DRC corrupts the MCP stream; a narrower Wright workflow qualification is pending.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-08'
     review_due: '2026-10-08'
-    next_action: Run a fixed PCB creation, footprint, audit, DRC, and Gerber export scenario through direct MCP and both Wright gateway paths.
+    next_action: Run a fixed PCB creation, footprint, audit, and Gerber export scenario through direct MCP and both Wright gateway paths; keep DRC and FreeRouter excluded.
     adoption: unknown
 - id: brep-mcp
   name: BREP MCP
