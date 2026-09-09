@@ -280,6 +280,9 @@ def kicad_artifact_oracle(board_path, gerber_dir):
 
     gerbers = sorted(gerber_dir.glob("*.gbr"))
     archives = sorted(gerber_dir.glob("*.zip"))
+    sibling_archive = gerber_dir.parent / f"{board_path.stem}-gerbers.zip"
+    if sibling_archive.is_file():
+        archives.append(sibling_archive)
     assert gerbers, "KiCad export produced no Gerbers"
     assert len(archives) == 1 and zipfile.is_zipfile(archives[0]), (
         "KiCad export produced no valid fabrication archive"

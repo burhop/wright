@@ -1,0 +1,642 @@
+{
+  "server_id": "kicad-mcp-blwfish",
+  "observed_at": "2026-09-09T00:33:47.858263+00:00",
+  "wright_revision": "22e3562e",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/blwfish/kicad-mcp",
+  "status": "failed",
+  "steps": [],
+  "adoption": "unknown",
+  "scope": "KiCad PCB authoring, audit, and Gerber export",
+  "configuration_sha256": "d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc",
+  "installed_items": [
+    "kicad-mcp 0.13.0 at bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+    "KiCad 9.0.2+dfsg-1",
+    "kicad-symbols 9.0.2-1",
+    "kicad-footprints 9.0.2-1"
+  ],
+  "source_references": [
+    "https://github.com/blwfish/kicad-mcp/tree/v0.13.0",
+    "https://github.com/blwfish/kicad-mcp/commit/bcc6f11de92e5f47cb7dde1d24565f7779b2fbed"
+  ],
+  "prerequisites": [
+    "KiCad 9.0.2 CLI and pcbnew Python bindings",
+    "KiCad 9.0.2 standard symbol and footprint libraries",
+    "git only inside the disposable qualification container"
+  ],
+  "server_info": {
+    "name": "KiCad",
+    "title": null,
+    "version": "4.0.3",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8119d98d08d5cfa61702ce68f6b152462507346f19acd83d2a483a5760d14ae0",
+  "tool_count": 17,
+  "pcb_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "height_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "min_track_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "min_via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_hole_to_hole_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "min_through_hole_diameter_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_copper_edge_clearance_mm": {
+        "default": 0.5,
+        "type": "number"
+      },
+      "fix_silkscreen": {
+        "default": true,
+        "type": "boolean"
+      },
+      "fill_zones_flag": {
+        "default": true,
+        "type": "boolean"
+      },
+      "library": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "footprint_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "reference": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "layer": {
+        "default": "F.Cu",
+        "type": "string"
+      },
+      "check_keepouts": {
+        "default": true,
+        "type": "boolean"
+      },
+      "net_name": {
+        "default": "",
+        "type": "string"
+      },
+      "old_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "class_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "nets": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "track_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "pad_number": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "assignments": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "trace_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "size_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_type": {
+        "default": "through",
+        "type": "string"
+      },
+      "clear_tracks": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_vias": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_zones_flag": {
+        "default": false,
+        "type": "boolean"
+      },
+      "new_width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "net_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "layer_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "corners": {
+        "anyOf": [
+          {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "zone_clearance_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "connect_pads": {
+        "default": "thermal",
+        "type": "string"
+      },
+      "priority": {
+        "default": 0,
+        "type": "integer"
+      },
+      "text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "text_size_mm": {
+        "default": 1.0,
+        "type": "number"
+      },
+      "thickness_mm": {
+        "default": 0.15,
+        "type": "number"
+      },
+      "silk_field": {
+        "default": "reference",
+        "type": "string"
+      },
+      "visible": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "angle_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_layer": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "export_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "project_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "output_dir": {
+        "default": "",
+        "type": "string"
+      },
+      "create_zip": {
+        "default": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "causes": [],
+  "sub_errors": [
+    {
+      "type": "AssertionError",
+      "message": "KiCad export produced no valid fabrication archive",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 67, in client_session\n    yield client\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 1287, in run\n    report[\"outcome\"] = kicad_artifact_oracle(\n                        ~~~~~~~~~~~~~~~~~~~~~^\n        board_output, gerber_output\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 284, in kicad_artifact_oracle\n    assert len(archives) == 1 and zipfile.is_zipfile(archives[0]), (\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: KiCad export produced no valid fabrication archive\n"
+    }
+  ],
+  "cleanup": "passed"
+}
