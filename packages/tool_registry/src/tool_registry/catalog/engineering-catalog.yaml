@@ -4291,6 +4291,120 @@ servers:
     review_due: '2026-10-08'
     next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
     adoption: unknown
+- id: kicad-mcp-blwfish
+  name: KiCad MCP by blwfish
+  vendor: blwfish
+  description: Community KiCad electronics-design MCP with consolidated tools for schematic capture, PCB layout, libraries, audit, DRC, autorouting, and manufacturing export.
+  domains:
+  - ecad
+  - pcb
+  - manufacturing
+  tags:
+  - open-source
+  - kicad
+  - electronics
+  - pcb
+  - manufacturing
+  transport: stdio
+  command:
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.13'
+  - --from
+  - git+https://github.com/blwfish/kicad-mcp.git@bcc6f11de92e5f47cb7dde1d24565f7779b2fbed
+  - kicad-mcp
+  source_url: https://github.com/blwfish/kicad-mcp
+  repository_url: https://github.com/blwfish/kicad-mcp
+  license: MIT
+  auth_model: none
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Seventeen consolidated tools spanning schematic, PCB, library, audit, DRC, routing, and export operations
+  - KiCad-native PCB creation, footprint placement, board inspection, and Gerber generation
+  - Locked Python dependency graph and real KiCad integration tests
+  - Optional FreeRouter workflow requires Java and a separately installed router JAR
+  source_records:
+  - url: https://github.com/blwfish/kicad-mcp
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-08'
+    notes: Release 0.13.0 at bcc6f11de92e5f47cb7dde1d24565f7779b2fbed provides a locked Python environment, 17-tool MCP surface, and real KiCad integration tests.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - KiCad 9 with pcbnew Python bindings
+    - KiCad symbol libraries
+    - KiCad footprint libraries
+    - git
+    python:
+    - kicad-mcp 0.13.0 from pinned source revision
+    node: []
+  aliases:
+  - blwfish/kicad-mcp
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: engineering workstation CPU
+    gpu: not required for the candidate headless PCB workflow
+    docker: 'yes'
+    notes: Qualification installs KiCad and its standard symbol and footprint libraries only inside a disposable container. Java and FreeRouter are outside the candidate scope.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Upstream documents Windows support; Wright qualification is pending.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Pinned source and real KiCad 9 backend tests passed; Wright direct and gateway qualification is pending.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: KiCad and locked Python dependency availability have not been checked.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Upstream is developed for macOS; Wright qualification is pending.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Upstream is developed for macOS ARM64; Wright qualification is pending.
+  host_software_required:
+  - KiCad 9
+  - KiCad symbol and footprint libraries
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Pinned release passed 2,503 upstream tests and seven real KiCad 9 integration tests in the disposable qualification container; Wright direct and gateway workflow qualification is pending.
+    environment: null
+    missing_dependencies: []
+  engineering_stages:
+  - design
+  - manufacturing
+  - test_quality
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source, locked tests, and real KiCad backend are healthy; Wright protocol and gateway workflow qualification is pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Run a fixed PCB creation, footprint, audit, DRC, and Gerber export scenario through direct MCP and both Wright gateway paths.
+    adoption: unknown
 - id: brep-mcp
   name: BREP MCP
   vendor: andymai

@@ -26,6 +26,7 @@ import sys
 import tempfile
 import traceback
 import xml.etree.ElementTree as ET
+import zipfile
 
 import httpx
 from mcp import ClientSession, StdioServerParameters
@@ -236,6 +237,76 @@ def rhino_artifact_oracle(model_path):
         "header": raw[:32].decode("ascii", errors="replace").rstrip("\x00"),
         "independent_reader": "rhino3dm==8.17.0",
         "solid": inspected,
+    }
+
+
+def kicad_artifact_oracle(board_path, gerber_dir):
+    """Reload a native board with KiCad and inspect its fabrication package."""
+    raw = board_path.read_bytes()
+    assert 500 < len(raw) < 10 * 1024 * 1024, "Missing or oversized KiCad PCB"
+    assert raw.lstrip().startswith(b"(kicad_pcb"), "Invalid KiCad PCB header"
+    inspector = (
+        "import json,sys,pcbnew;"
+        "b=pcbnew.LoadBoard(sys.argv[1]);"
+        "e=b.GetBoardEdgesBoundingBox();"
+        "fps=[{'reference':f.GetReference(),'value':f.GetValue(),"
+        "'pads':f.GetPadCount(),'position_mm':[pcbnew.ToMM(f.GetPosition().x),"
+        "pcbnew.ToMM(f.GetPosition().y)]} for f in b.GetFootprints()];"
+        "print(json.dumps({'kicad_version':pcbnew.Version(),"
+        "'footprints':fps,'tracks':len(list(b.GetTracks())),"
+        "'edge_bounds_mm':[pcbnew.ToMM(e.GetWidth()),pcbnew.ToMM(e.GetHeight())]}))"
+    )
+    completed = subprocess.run(
+        ["/usr/bin/python3", "-c", inspector, str(board_path)],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    inspected = json.loads(completed.stdout)
+    assert inspected["kicad_version"].startswith("9."), "Unexpected KiCad backend"
+    assert len(inspected["footprints"]) == 1, "PCB footprint inventory changed"
+    footprint = inspected["footprints"][0]
+    assert footprint["reference"] == "R1" and footprint["value"] == "10k"
+    assert footprint["pads"] == 2, "Expected a two-pad resistor footprint"
+    assert all(
+        abs(actual - expected) < 0.01
+        for actual, expected in zip(footprint["position_mm"], (20.0, 15.0))
+    ), "Footprint position changed"
+    assert all(
+        abs(actual - expected) < 0.2
+        for actual, expected in zip(inspected["edge_bounds_mm"], (40.0, 30.0))
+    ), "Board outline dimensions changed"
+
+    gerbers = sorted(gerber_dir.glob("*.gbr"))
+    archives = sorted(gerber_dir.glob("*.zip"))
+    assert gerbers, "KiCad export produced no Gerbers"
+    assert len(archives) == 1 and zipfile.is_zipfile(archives[0]), (
+        "KiCad export produced no valid fabrication archive"
+    )
+    for gerber in gerbers:
+        gerber_raw = gerber.read_bytes()
+        assert 100 < len(gerber_raw) < 10 * 1024 * 1024, "Invalid Gerber size"
+        assert b"%FSLAX" in gerber_raw and b"%MOMM" in gerber_raw, (
+            "Gerber header is incomplete"
+        )
+    with zipfile.ZipFile(archives[0]) as package:
+        packaged = sorted(package.namelist())
+    assert all(path.name in packaged for path in gerbers), (
+        "Fabrication archive is missing generated Gerbers"
+    )
+    return {
+        "board_bytes": len(raw),
+        "board_sha256": hashlib.sha256(raw).hexdigest(),
+        "board": inspected,
+        "gerber_count": len(gerbers),
+        "gerber_sha256": {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in gerbers
+        },
+        "archive": archives[0].name,
+        "archive_sha256": hashlib.sha256(archives[0].read_bytes()).hexdigest(),
+        "archive_entries": packaged,
     }
 
 
@@ -801,6 +872,19 @@ async def run(args, root, report):
         ]
         if command != expected:
             raise ValueError("Catalog must pin the reviewed Rhino MCP commit")
+    elif args.server == "kicad-mcp-blwfish":
+        expected = [
+            "uv",
+            "tool",
+            "run",
+            "--python",
+            "3.13",
+            "--from",
+            "git+https://github.com/blwfish/kicad-mcp.git@bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+            "kicad-mcp",
+        ]
+        if command != expected:
+            raise ValueError("Catalog must pin the reviewed KiCad MCP release")
     report.update(
         {
             "server_id": entry.id,
@@ -823,6 +907,7 @@ async def run(args, root, report):
                 "blender-mcp": "Blender dimensioned box STL export",
                 "autocad-mcp-u-c4n": "AutoCAD headless mechanical DXF authoring",
                 "rhino-mcp-easehee": "Rhino standalone solid Brep 3DM authoring",
+                "kicad-mcp-blwfish": "KiCad PCB authoring, audit, DRC, and Gerber export",
             }[args.server],
             "configuration_sha256": qualification_configuration(entry),
             "installed_items": args.installed_item,
@@ -1062,6 +1147,104 @@ async def run(args, root, report):
                         }
                     },
                 )
+            elif args.server == "kicad-mcp-blwfish":
+                required = {"library", "pcb", "audit", "drc", "export"}
+                assert required <= selected.keys(), "KiCad tool surface is incomplete"
+                assert len(tools.tools) == 17, "KiCad consolidated tool surface changed"
+                report["pcb_schema"] = selected["pcb"].inputSchema
+                report["export_schema"] = selected["export"].inputSchema
+                if attempt:
+                    previous = root / f"direct-{attempt - 1}.kicad_pcb"
+                    reopened = await client.call_tool(
+                        "pcb", {"operation": "load", "pcb_path": str(previous)}
+                    )
+                    reopened_payload = _json_result(reopened)
+                    assert not reopened.isError and reopened_payload.get(
+                        "footprint_count"
+                    ) == 1, "KiCad could not reopen its prior PCB"
+                searched = await client.call_tool(
+                    "library",
+                    {
+                        "operation": "search",
+                        "query": "0603 resistor",
+                        "type": "footprint",
+                        "limit": 5,
+                    },
+                )
+                searched_payload = _json_result(searched)
+                assert not searched.isError and searched_payload.get("results"), (
+                    "KiCad footprint search returned no result"
+                )
+                footprint = searched_payload["results"][0]
+                board_output = root / f"direct-{attempt}.kicad_pcb"
+                gerber_output = root / f"direct-{attempt}-gerbers"
+                gerber_output.mkdir()
+                for tool_name, values in (
+                    ("pcb", {"operation": "create", "pcb_path": str(board_output)}),
+                    (
+                        "pcb",
+                        {
+                            "operation": "set_outline",
+                            "pcb_path": str(board_output),
+                            "x_mm": 0,
+                            "y_mm": 0,
+                            "width_mm": 40,
+                            "height_mm": 30,
+                        },
+                    ),
+                    (
+                        "pcb",
+                        {
+                            "operation": "place_footprint",
+                            "pcb_path": str(board_output),
+                            "library": footprint["library"],
+                            "footprint_name": footprint["name"],
+                            "reference": "R1",
+                            "value": "10k",
+                            "x_mm": 20,
+                            "y_mm": 15,
+                        },
+                    ),
+                ):
+                    created = await client.call_tool(tool_name, values)
+                    assert not created.isError and "error" not in _json_result(created), (
+                        f"KiCad failed at {values['operation']}"
+                    )
+                audited = await client.call_tool(
+                    "audit", {"operation": "all", "pcb_path": str(board_output)}
+                )
+                audit_payload = _json_result(audited)
+                assert not audited.isError and all(
+                    isinstance(audit_payload.get(key), list)
+                    for key in (
+                        "footprint_overlaps",
+                        "keepout_violations",
+                        "silkscreen_overlaps",
+                    )
+                ), "KiCad audit result is incomplete"
+                checked = await client.call_tool(
+                    "drc",
+                    {
+                        "operation": "run",
+                        "project_path": str(board_output.with_suffix(".kicad_pro")),
+                    },
+                )
+                check_payload = _json_result(checked)
+                assert not checked.isError and (
+                    "violations" in check_payload
+                    or "drc_results" in check_payload
+                    or check_payload.get("status") == "ok"
+                    or check_payload.get("success") is True
+                ), "KiCad DRC result is incomplete"
+                probe = (
+                    "export",
+                    {
+                        "operation": "gerbers",
+                        "pcb_path": str(board_output),
+                        "output_dir": str(gerber_output),
+                        "create_zip": True,
+                    },
+                )
             else:
                 raise ValueError("Qualification recipe is incomplete")
             result = await client.call_tool(*probe)
@@ -1114,6 +1297,10 @@ async def run(args, root, report):
                 report["outcome"] = autocad_dxf_oracle(output)
             elif args.server == "rhino-mcp-easehee":
                 report["outcome"] = rhino_artifact_oracle(model_output)
+            elif args.server == "kicad-mcp-blwfish":
+                report["outcome"] = kicad_artifact_oracle(
+                    board_output, gerber_output
+                )
             report["steps"].append(
                 {
                     "stage": "direct_protocol_backend_outcome",
@@ -1286,6 +1473,21 @@ async def run(args, root, report):
                 report["steps"].append(
                     {"stage": "controlled_schema_error", "status": "passed"}
                 )
+            if args.server == "kicad-mcp-blwfish" and attempt == 0:
+                missing = await client.call_tool(
+                    "pcb",
+                    {
+                        "operation": "load",
+                        "pcb_path": str(root / "missing.kicad_pcb"),
+                    },
+                )
+                missing_payload = _json_result(missing)
+                assert missing.isError or "error" in missing_payload, (
+                    "KiCad did not report a missing board"
+                )
+                report["steps"].append(
+                    {"stage": "controlled_missing_board_error", "status": "passed"}
+                )
 
     run_migrations()
     db = str(root / "wright.db")
@@ -1384,6 +1586,11 @@ async def run(args, root, report):
                     "rhino_box",
                     "rhino_save",
                 )
+            )
+        elif args.server == "kicad-mcp-blwfish":
+            scenario_tool_names.update(
+                f"{entry.id}__{tool_name}"
+                for tool_name in ("library", "pcb", "audit", "drc", "export")
             )
         approvals = {
             gate
@@ -1491,6 +1698,91 @@ async def run(args, root, report):
                     }
                 },
             )
+        elif args.server == "kicad-mcp-blwfish":
+            gateway_board_output = workspace / "gateway.kicad_pcb"
+            gateway_gerber_output = workspace / "gateway-gerbers"
+            gateway_gerber_output.mkdir()
+            searched = await gateway.call_tool(
+                "qualification-session",
+                "qualification-kicad-search",
+                f"{entry.id}__library",
+                {
+                    "operation": "search",
+                    "query": "0603 resistor",
+                    "type": "footprint",
+                    "limit": 5,
+                },
+                workspace_approvals=approvals,
+            )
+            assert not searched.is_error, "Gateway KiCad footprint search failed"
+            footprint = _json_result(searched)["results"][0]
+            for step, values in enumerate(
+                (
+                    {"operation": "create", "pcb_path": str(gateway_board_output)},
+                    {
+                        "operation": "set_outline",
+                        "pcb_path": str(gateway_board_output),
+                        "x_mm": 0,
+                        "y_mm": 0,
+                        "width_mm": 40,
+                        "height_mm": 30,
+                    },
+                    {
+                        "operation": "place_footprint",
+                        "pcb_path": str(gateway_board_output),
+                        "library": footprint["library"],
+                        "footprint_name": footprint["name"],
+                        "reference": "R1",
+                        "value": "10k",
+                        "x_mm": 20,
+                        "y_mm": 15,
+                    },
+                )
+            ):
+                setup_result = await gateway.call_tool(
+                    "qualification-session",
+                    f"qualification-kicad-pcb-{step}",
+                    f"{entry.id}__pcb",
+                    values,
+                    workspace_approvals=approvals,
+                )
+                assert not setup_result.is_error, (
+                    f"Gateway KiCad failed at {values['operation']}"
+                )
+            for step, (tool_name, values) in enumerate(
+                (
+                    (
+                        "audit",
+                        {"operation": "all", "pcb_path": str(gateway_board_output)},
+                    ),
+                    (
+                        "drc",
+                        {
+                            "operation": "run",
+                            "project_path": str(
+                                gateway_board_output.with_suffix(".kicad_pro")
+                            ),
+                        },
+                    ),
+                )
+            ):
+                setup_result = await gateway.call_tool(
+                    "qualification-session",
+                    f"qualification-kicad-check-{step}",
+                    f"{entry.id}__{tool_name}",
+                    values,
+                    workspace_approvals=approvals,
+                )
+                assert not setup_result.is_error, f"Gateway KiCad {tool_name} failed"
+            probe = (
+                "export",
+                {
+                    "operation": "gerbers",
+                    "pcb_path": str(gateway_board_output),
+                    "output_dir": str(gateway_gerber_output),
+                    "create_zip": True,
+                },
+            )
         result = await gateway.call_tool(
             "qualification-session",
             "qualification-call",
@@ -1533,6 +1825,10 @@ async def run(args, root, report):
             report["gateway_outcome"] = autocad_dxf_oracle(gateway_output)
         elif args.server == "rhino-mcp-easehee":
             report["gateway_outcome"] = rhino_artifact_oracle(gateway_model_output)
+        elif args.server == "kicad-mcp-blwfish":
+            report["gateway_outcome"] = kicad_artifact_oracle(
+                gateway_board_output, gateway_gerber_output
+            )
         report["steps"].append(
             {"stage": "wright_gateway_backend_outcome", "status": "passed"}
         )
@@ -1659,6 +1955,76 @@ async def run(args, root, report):
                     }
                 },
             )
+        elif args.server == "kicad-mcp-blwfish":
+            gateway_mcp_board_output = workspace / "gateway-mcp.kicad_pcb"
+            gateway_mcp_gerber_output = workspace / "gateway-mcp-gerbers"
+            gateway_mcp_gerber_output.mkdir()
+            searched = await client.call_tool(
+                f"{entry.id}__library",
+                {
+                    "operation": "search",
+                    "query": "0603 resistor",
+                    "type": "footprint",
+                    "limit": 5,
+                },
+            )
+            assert not searched.isError, "Gateway MCP KiCad footprint search failed"
+            footprint = _json_result(searched)["results"][0]
+            for values in (
+                {"operation": "create", "pcb_path": str(gateway_mcp_board_output)},
+                {
+                    "operation": "set_outline",
+                    "pcb_path": str(gateway_mcp_board_output),
+                    "x_mm": 0,
+                    "y_mm": 0,
+                    "width_mm": 40,
+                    "height_mm": 30,
+                },
+                {
+                    "operation": "place_footprint",
+                    "pcb_path": str(gateway_mcp_board_output),
+                    "library": footprint["library"],
+                    "footprint_name": footprint["name"],
+                    "reference": "R1",
+                    "value": "10k",
+                    "x_mm": 20,
+                    "y_mm": 15,
+                },
+            ):
+                setup_result = await client.call_tool(f"{entry.id}__pcb", values)
+                assert not setup_result.isError, (
+                    f"Gateway MCP KiCad failed at {values['operation']}"
+                )
+            for tool_name, values in (
+                (
+                    "audit",
+                    {"operation": "all", "pcb_path": str(gateway_mcp_board_output)},
+                ),
+                (
+                    "drc",
+                    {
+                        "operation": "run",
+                        "project_path": str(
+                            gateway_mcp_board_output.with_suffix(".kicad_pro")
+                        ),
+                    },
+                ),
+            ):
+                setup_result = await client.call_tool(
+                    f"{entry.id}__{tool_name}", values
+                )
+                assert not setup_result.isError, (
+                    f"Gateway MCP KiCad {tool_name} failed"
+                )
+            probe = (
+                "export",
+                {
+                    "operation": "gerbers",
+                    "pcb_path": str(gateway_mcp_board_output),
+                    "output_dir": str(gateway_mcp_gerber_output),
+                    "create_zip": True,
+                },
+            )
         result = await client.call_tool(name, probe[1])
         assert not result.isError, (
             f"Gateway MCP rejected the scenario: {result.model_dump_json()[:300]}"
@@ -1696,6 +2062,10 @@ async def run(args, root, report):
         elif args.server == "rhino-mcp-easehee":
             report["gateway_mcp_outcome"] = rhino_artifact_oracle(
                 gateway_mcp_model_output
+            )
+        elif args.server == "kicad-mcp-blwfish":
+            report["gateway_mcp_outcome"] = kicad_artifact_oracle(
+                gateway_mcp_board_output, gateway_mcp_gerber_output
             )
         report["steps"].append(
             {"stage": "hermes_facing_gateway_mcp_backend_outcome", "status": "passed"}
@@ -1767,6 +2137,7 @@ def main():
             "blender-mcp",
             "autocad-mcp-u-c4n",
             "rhino-mcp-easehee",
+            "kicad-mcp-blwfish",
         ],
         required=True,
     )
