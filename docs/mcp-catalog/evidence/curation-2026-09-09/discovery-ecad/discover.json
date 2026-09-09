@@ -1,0 +1,160 @@
+{
+  "search": "ecad",
+  "next_cursor": null,
+  "candidates": [
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "1.5.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.0.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.1.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.2.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.1",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.2",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.3",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.4",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.5",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "5.6.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "5.7.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "5.8.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.0.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.1.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.2.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.3.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.4.0",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.blwfish/freecad-mcp",
+      "version": "7.4.1",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    }
+  ],
+  "observed_at": "2026-09-09T22:34:38.446256+00:00",
+  "complete": true
+}

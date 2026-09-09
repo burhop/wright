@@ -1,6 +1,6 @@
 # Maintaining Wright's integration shortlist
 
-Updated 8 September 2026. This is the operating procedure for the implemented
+Updated 9 September 2026. This is the operating procedure for the implemented
 catalog review fields, API, library filters, and curation commands. The separate
 [research plan](curation-research-plan-2026-09-08.md) records the original proposal
 and its source research. The [dated report](evidence/curation-2026-09-08/report.md)
@@ -272,6 +272,62 @@ python /candidate/scripts/qualify-catalog-process-chains.py --execute \
   --prerequisite system-python-pcbnew-oracle \
   --output /evidence/process-chains-linux.json
 ```
+
+## Publishing the Engineering MCP Status dashboard
+
+The Tool Registry page reads one packaged status artifact generated from the
+catalog, its qualification evidence, the latest process-chain evidence, and the
+preceding dated report. Do not edit `engineering-status.json` by hand.
+
+After every qualification or catalog decision:
+
+1. Preserve the raw JSON evidence in a dated directory. For an existing curated
+   scope, update only the matching catalog qualification with its new Wright
+   revision, dates, evidence path, and SHA-256. A changed launch configuration
+   needs a new qualification rather than renewal of the old one.
+2. Run the three Tier 1 chains when any of their five inputs changed. Keep their
+   result labeled as a synthetic integration fixture; it is not production or
+   physical test evidence.
+3. Generate the dated report and then the served dashboard artifact:
+
+```bash
+uv run python -m tool_registry.catalog_curation report \
+  --as-of 2026-09-09 \
+  --output-dir docs/mcp-catalog/evidence/curation-2026-09-09 \
+  --previous docs/mcp-catalog/evidence/curation-2026-09-08/report.json
+
+uv run python scripts/generate-engineering-mcp-status.py \
+  --as-of 2026-09-09 \
+  --process-chains docs/mcp-catalog/evidence/curation-2026-09-09/process-chains-linux.json \
+  --previous-report docs/mcp-catalog/evidence/curation-2026-09-08/report.json
+```
+
+The generator refuses missing, altered, or non-passing current qualification
+evidence and refuses process-chain evidence whose status, cleanup, or call count
+does not match the regression contract. The API serves the summary at
+`GET /api/mcp/status` and the exact embedded evidence at
+`GET /api/mcp/status/evidence/{evidence_id}`. The Tool Registry dashboard shows
+the complete evidence table, qualification and disposition counts, changes from the
+previous report, protocol boundaries, and the latest chain outcomes.
+
+Review both generated files, run the catalog and application checks, and verify
+the dashboard through Wright's served Tool Registry route. A test component or
+raw JSON response does not establish served-UI completion.
+
+With the API and web application running, capture the served verification and
+screenshots with:
+
+```bash
+node scripts/verify-engineering-mcp-dashboard.mjs \
+  --base-url http://127.0.0.1:5173 \
+  --output-dir docs/mcp-catalog/evidence/curation-YYYY-MM-DD
+```
+
+The verifier derives expected counts from the served status payload, checks all
+protocol and Tier 1 cards, opens exact embedded evidence, filters the complete
+server table, records dashboard HTTP failures separately from unavailable
+optional agent/LLM services, and writes three screenshots plus
+`served-dashboard-verification.json`.
 
 ## Protocol boundaries
 

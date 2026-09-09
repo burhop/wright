@@ -23,6 +23,7 @@ import sqlite3
 import struct
 import subprocess
 import tempfile
+import time
 import traceback
 import xml.etree.ElementTree as ET
 import zipfile
@@ -1370,6 +1371,7 @@ def main() -> int:
         "installed_items": args.installed_item,
         "prerequisites": args.prerequisite,
     }
+    started = time.monotonic()
     temporary = tempfile.TemporaryDirectory(
         prefix="wright-process-chains-", dir=args.work_parent
     )
@@ -1395,6 +1397,9 @@ def main() -> int:
                 cleanup="failed",
                 cleanup_reason="Disposable chain files remain locked",
             )
+    report["finished_at"] = datetime.now(UTC).isoformat()
+    report["duration_seconds"] = round(time.monotonic() - started, 3)
+    report["duration_source"] = "monotonic_clock"
     report["evidence_sha256"] = digest(
         {key: value for key, value in report.items() if key != "evidence_sha256"}
     )

@@ -115,11 +115,11 @@ servers:
       configuration_sha256: 58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e
       workflow: OASiS scikit-fem Poisson solve
       source_revision: 7c184d5b7ca5cda6086f3912d1c7923c58307780; Python 3.12.12; MCP SDK 1.28.1; scikit-fem 12.0.2
-      wright_revision: deec4940-plus-engineering-qualification
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/oasis-linux.json
-      evidence_sha256: d998c9a90a69abc395cda15c82f203e4df3cd9e2652fa53fe30acb3c7680b093
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/oasis-linux.json
+      evidence_sha256: 3a7a664bfcbb7ccaca97cd2963b32270dd9d7093f2a1b63ab18b1501bf2b158e
       protocol: passed
       backend: passed
       gateway: passed
@@ -2130,11 +2130,11 @@ servers:
       configuration_sha256: a0a8a5eed836de890672310b8e92926c6d3ee18cb0452f0ce2dae5d210d6bbe8
       workflow: FreeCAD box creation and STL export
       source_revision: 63acb305573194a011641ab13ccfb391fe95769f; FreeCAD 1.1.1; MCP SDK 1.28.1
-      wright_revision: deec4940-plus-engineering-qualification
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/freecad-linux.json
-      evidence_sha256: d46454a2289cbb498ac0193a0808101861a071b6da772c2c2bf5023376f88faf
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/freecad-linux.json
+      evidence_sha256: 4f8d760d7991331470c0d0801310d01e3faab73faff47a1a0d332f3de6d6caad
       protocol: passed
       backend: passed
       gateway: passed
@@ -2450,11 +2450,11 @@ servers:
       configuration_sha256: 18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee
       workflow: Create a 100 x 60 mechanical DXF with two radius-5 holes and a centerline; save, reopen, reject an out-of-workspace write, and inspect the DXF geometry independently.
       source_revision: abc2a82e7128358b9e228a7d9442b37019aa3fe5
-      wright_revision: 610d2fcd
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/autocad-u-c4n-linux.json
-      evidence_sha256: 683a09cb3677f5bed5a7d41484513556d9987a9db1cebe1c7db5c846a83a3dcc
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/autocad-u-c4n-linux.json
+      evidence_sha256: 7d691ad806e792b089095df67a6141b081d1ab8e76c5b436c51bf3a5ab7a8c46
       protocol: passed
       backend: passed
       gateway: passed
@@ -2850,11 +2850,11 @@ servers:
       configuration_sha256: b67b5122df53bac0a60e3e11bbbde535213d0f45b11d0bd5c2571d2107fb7dd3
       workflow: OpenSCAD cube STL export
       source_revision: d438b84fff8af9d646c2bcb76fe58fa4ad387de0
-      wright_revision: 1ada5de0-plus-curation
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/openscad-linux.json
-      evidence_sha256: 3d97a474315e0813a4d37099f88291ad2fe4d25cc1c205e79cc1e6527a5eef2b
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/openscad-linux.json
+      evidence_sha256: 35c190d94e390594b97681f07ba14568c58a6aecb1f6876839faf3c28c02a58a
       protocol: passed
       backend: passed
       gateway: passed
@@ -3063,11 +3063,11 @@ servers:
       configuration_sha256: d86d79c78bc685db520975d0ac644d51634dda834bab97e0e66a8fe5546b9a38
       workflow: Blender dimensioned box STL export
       source_revision: 5f8ddaf6e987c4aa0c3467fcc548838b28f64477; package 1.9.1; BlenderMCP 1.30.0; Blender 4.3.2
-      wright_revision: cc11341f-plus-blender-qualification
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/blender-linux.json
-      evidence_sha256: 82d5b59a976a2d55e596cb94b5a7e69428ec81a6afbcb573eb9bea9694d2c4e2
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/blender-linux.json
+      evidence_sha256: b4d3a088ec0dad4c1a2730732cb02753070bf48a07ccf1b9634e836834f75a40
       protocol: passed
       backend: passed
       gateway: passed
@@ -3632,11 +3632,11 @@ servers:
       configuration_sha256: 5bcfe938ca239b10cb6067ce975185b99ca286cb72fb9ac0d948021f56f106bf
       workflow: Autodesk help product discovery
       source_revision: service 3.2.0; schema 8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61
-      wright_revision: 1ada5de0-plus-curation
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/autodesk-help-linux.json
-      evidence_sha256: 21e6967b0e50b516a40a874c901d8ba7004fbd2626f792d3bf170b08c04db059
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-help-linux.json
+      evidence_sha256: 6aaa435055430675864953d6c7a3cafebfe77f8470ccda375fbbb78b3db98d4d
       protocol: passed
       backend: passed
       gateway: passed
@@ -3847,11 +3847,11 @@ servers:
       configuration_sha256: 19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649
       workflow: ROS 2 known-message retrieval
       source_revision: rosbag-mcp 0.2.0 wheel 92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0; Python 3.12.12; MCP SDK 1.28.1; rosbags 0.11.5
-      wright_revision: 9442680a-plus-rosbag-qualification
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/rosbag-pypi-linux.json
-      evidence_sha256: 6779ea5e6750199e1f283cd59bb950b30dabf2b5662ac87f7379654895649462
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/rosbag-pypi-linux.json
+      evidence_sha256: 780ea67288e2e909ee351393af112c872e49e4dfee9276967e24da669287a5db
       protocol: passed
       backend: passed
       gateway: passed
@@ -4415,11 +4415,11 @@ servers:
       configuration_sha256: d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc
       workflow: Search the installed footprint libraries, create a 40 x 30 mm native PCB, place a two-pad resistor at 20 x 15 mm, reopen and audit the board, reject a missing board, export Gerbers and drill data, and independently inspect the KiCad file and fabrication archive.
       source_revision: bcc6f11de92e5f47cb7dde1d24565f7779b2fbed
-      wright_revision: ec915dbd
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/kicad-blwfish-linux.json
-      evidence_sha256: 27997565ea3a5a1aafbed1862e7b86236edb09d2bef811dd7c067be548c977fd
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/kicad-blwfish-linux.json
+      evidence_sha256: 16edf15a0905f255adc1c6cd6e88829dfc7298d6da9a4a0842b36c57f5df8ca9
       protocol: passed
       backend: passed
       gateway: passed
@@ -4572,11 +4572,11 @@ servers:
       configuration_sha256: 676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b
       workflow: BREP box STEP and STL export
       source_revision: brepjs-cad 0.103.0; 2cfc880f517e82cfc4bbafed36ce55afa27daa12
-      wright_revision: deec4940-plus-engineering-qualification
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/brep-linux.json
-      evidence_sha256: 80c516a066aec4724dddd7711f115f8bd175f70bec3d4963af7f1b1ab4a4ce22
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/brep-linux.json
+      evidence_sha256: dbbd0722fc1515dfeec44a9c9865a2b1a1aab289f324f702681e6b7f2967b917
       protocol: passed
       backend: passed
       gateway: passed
@@ -4742,7 +4742,7 @@ servers:
   - matlab-mcp-server
   source_url: https://github.com/matlab/matlab-mcp-server
   repository_url: https://github.com/matlab/matlab-mcp-server
-  package_url: https://github.com/matlab/matlab-mcp-server/releases/latest
+  package_url: https://github.com/matlab/matlab-mcp-server/releases/tag/v0.13.0
   license: MathWorks repository license
   auth_model: license-server
   install_method: packaged-binary
@@ -4756,8 +4756,13 @@ servers:
   - url: https://github.com/matlab/matlab-mcp-server
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Official MathWorks MCP server repository and README.
+    observed_at: '2026-09-09'
+    notes: Official MathWorks repository; release v0.13.0 is the reviewed candidate.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/matlab-v0.13.0-linux.json
+    kind: evidence
+    primary: false
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux preflight of the immutable v0.13.0 vendor binary.
   locality: local
   weight: heavy
   env_vars:
@@ -4791,9 +4796,9 @@ servers:
       tested: false
       notes: Official release provides Windows setup; requires local licensed MATLAB and WINDIR passthrough for Codex on Windows.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Official release supports Linux setup; requires local licensed MATLAB.
+      status: host-dependent
+      tested: true
+      notes: Vendor binary v0.13.0 initialized and listed five tools in a fresh Wright container; a useful task remains blocked without licensed MATLAB.
     linux_arm64:
       status: unknown
       tested: false
@@ -4814,11 +4819,15 @@ servers:
   - execute_code_approval
   - proprietary_license_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; requires licensed MATLAB host installation.
-    environment: null
+    status: dependency_missing
+    validated_at: '2026-09-09'
+    evidence_status: partial
+    message: Fresh Intel Linux preflight verified the SHA-256-pinned official v0.13.0 binary, MCP initialization, and five tool schemas. The read-only detect_matlab_toolboxes call returned "no valid MATLAB environments found". No MATLAB computation or Wright gateway path was claimed.
+    environment: fresh-disposable-wright-engineering-container
     missing_dependencies:
-    - MATLAB
+    - licensed MATLAB R2021a or later
+    - Wright gateway and numerical artifact evidence
+  follow_up_url: docs/mcp-catalog/followups/matlab-mcp-server.md
   engineering_stages:
   - concept
   - simulation
@@ -4826,11 +4835,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    reason: The current official MCP binary passes protocol and tool discovery, but a useful engineering calculation cannot be qualified without a licensed MATLAB host.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Install licensed MATLAB R2021a or later outside Wright, set MW_MCP_SERVER_MATLAB_ROOT, and rerun v0.13.0 through Wright GatewayService with a deterministic numerical artifact oracle.
     adoption: unknown
 - id: simulink-agentic-toolkit
   name: Simulink Agentic Toolkit
@@ -5634,11 +5643,11 @@ servers:
       configuration_sha256: cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18
       workflow: Author and save a millimetre 10 x 8 x 6 solid Brep, reopen it in fresh sessions, reject an invalid dimension, and independently inspect the 3DM object, topology, units, validity, and bounds.
       source_revision: 3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46
-      wright_revision: '77189624'
-      verified_at: '2026-09-08'
-      expires_at: '2026-10-08'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/rhino-easehee-linux.json
-      evidence_sha256: 2f36f623e4a9d84e61be0f94c81d7c0c7633ef3742c4342f725607aada785a33
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/rhino-easehee-linux.json
+      evidence_sha256: 757f967b3bf7b495b0a746ce8caf48e79933e2369f83a669bde455ce901fd14a
       protocol: passed
       backend: passed
       gateway: passed
@@ -6079,7 +6088,7 @@ servers:
   - ansys-fluent-mcp
   source_url: https://github.com/ansys/pyfluent-mcp
   repository_url: https://github.com/ansys/pyfluent-mcp
-  package_url: https://pypi.org/project/ansys-fluent-mcp/
+  package_url: https://pypi.org/project/ansys-fluent-mcp/0.4.0/
   license: Apache-2.0
   auth_model: license-server
   install_method: pip
@@ -6093,8 +6102,8 @@ servers:
   - url: https://github.com/ansys/pyfluent-mcp
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Official Ansys repository documents PyFluent-MCP, supported transports, requirements, and tool surface.
+    observed_at: '2026-09-09'
+    notes: Official Ansys repository; package 0.4.0 is the reviewed candidate.
   - url: https://fluent-mcp.docs.pyansys.com/
     kind: vendor_docs
     primary: true
@@ -6110,6 +6119,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Clean Wright ARM64 container installed the package, initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/ansys-fluent-0.4.0-offline.json
+    kind: evidence
+    primary: false
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux preflight of package 0.4.0 and its offline Fluent code validator.
   locality: local
   weight: heavy
   env_vars:
@@ -6127,8 +6141,8 @@ servers:
     system:
     - Ansys Fluent 2024 R1 or newer for live solver tools
     python:
-    - ansys-fluent-mcp
-    - ansys-fluent-core
+    - ansys-fluent-mcp==0.4.0
+    - ansys-fluent-core>=0.27
     node: []
   verification_state: verified_mcp
   installability_tier: might_work
@@ -6147,8 +6161,8 @@ servers:
       notes: Requires licensed Fluent/PyFluent environment or remote Fluent.
     linux_x64:
       status: host-dependent
-      tested: false
-      notes: MCP package should run on Linux x64; live solver tools require licensed Fluent or remote Fluent.
+      tested: true
+      notes: Package 0.4.0 initialized, listed 25 tools, and validated a small PyFluent script offline in a fresh Wright container; live solver tools require licensed Fluent or remote Fluent.
     linux_arm64:
       status: host-dependent
       tested: false
@@ -6172,13 +6186,14 @@ servers:
   - license_server_approval
   validation_result:
     status: dependency_missing
-    message: Clean Wright ARM64 container installed PyFluent MCP, initialized it, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires Wright/Hermes gateway evidence and a licensed local or remote Fluent session for live solver tools.
-    environment: gb10-linux-arm64-clean-container
+    message: Fresh Intel Linux validation pinned the official 0.4.0 wheel digest, initialized MCP, listed 25 tools, and used validate_code to parse a small PyFluent launch script successfully. No solver was connected, so CFD correctness, artifacts, and Wright gateway operation remain unproven.
+    environment: fresh-disposable-wright-engineering-container
     missing_dependencies:
     - Ansys Fluent license for live solve tools
-    - gateway proxy evidence
-    validated_at: '2026-08-12'
+    - Wright gateway and solver artifact evidence
+    validated_at: '2026-09-09'
     evidence_status: partial
+  follow_up_url: docs/mcp-catalog/followups/ansys-fluent-mcp.md
   engineering_stages:
   - simulation
   integration_kind: mcp_server
@@ -6187,9 +6202,9 @@ servers:
     disposition: follow_up
     reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Connect package 0.4.0 to licensed Fluent 2024 R1 or newer and run a deterministic CFD case through Wright GatewayService with mesh, residual, field, export, timeout, and cleanup oracles.
     adoption: unknown
 - id: ansys-mcp-server-community
   name: Ansys MCP Server
@@ -7809,4 +7824,96 @@ servers:
   package_url: https://pypi.org/project/partuno/
   credentials_required:
   - DigiKey and/or Mouser API credentials
+- id: kernelcad-mcp
+  name: kernelCAD MCP
+  vendor: w1ne
+  description: Open-source, source-first mechanical CAD runtime with MCP review tools and deterministic STEP/STL export workflows.
+  domains:
+  - cad
+  - mechanical
+  - manufacturing
+  engineering_stages:
+  - concept
+  - design
+  - manufacturing
+  transport: stdio
+  command:
+  - npx
+  - --yes
+  - kernelcad@0.11.2
+  - mcp
+  source_url: https://github.com/w1ne/kernelCAD-web
+  repository_url: https://github.com/w1ne/kernelCAD-web
+  package_url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.11.2.tgz
+  license: MIT
+  auth_model: none
+  install_method: npm
+  maturity: community
+  evidence_class: blocked_validation
+  capability_summary:
+  - Evaluate editable .kcad.ts mechanical models
+  - Review CAD constraints and geometry through MCP tools
+  - Export deterministic STEP and STL manufacturing artifacts
+  data_touched:
+  - Workspace-scoped CAD source and generated geometry
+  examples:
+  - Create and review a parameterized mounting bracket, then export STEP and STL
+  source_records:
+  - url: https://github.com/w1ne/kernelCAD-web
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-09'
+    notes: Publisher repository documents the local MCP command, editable source, deterministic review, and STEP/STL exports.
+  - url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.11.2.tgz
+    kind: package
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: Reviewed npm 0.11.2 tarball; SHA-256 faf3b230d45c1d0095a8555312719cc64b969e37d88b43c30108ad857bf1488a.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/kernelcad-0.11.2-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux attempt records the clean-container package-install blocker and cleanup.
+  runtime_requirements:
+    cpu: standard x64 workstation CPU
+    gpu: not required for headless evaluation
+    docker: partial
+    notes: The reviewed npm release cannot currently install under Wright's clean-container package policy because it fetches a GitHub dependency.
+  locality: local
+  weight: medium
+  dependencies:
+    node:
+    - kernelcad@0.11.2
+    - replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.23.1
+  verification_state: community_mcp
+  installability_tier: blocked
+  risk_level: medium
+  deployment_mode: local-stdio
+  platform_support:
+    linux_x64:
+      status: host-dependent
+      tested: true
+      notes: Package initialization failed before MCP startup because npm rejected the package's GitHub dependency under the clean-container policy.
+  default_enabled: false
+  validation_result:
+    status: failed
+    message: kernelCAD 0.11.2 could not initialize in the fresh Wright container because npm rejected its replicad-opencascadejs GitHub dependency with EALLOWGIT; no protocol or CAD task was executed.
+    environment: fresh-disposable-wright-engineering-container
+    missing_dependencies:
+    - Registry-published immutable replicad-opencascadejs dependency
+    validated_at: '2026-09-09'
+    evidence_status: partial
+  follow_up_url: docs/mcp-catalog/followups/kernelcad-mcp.md
+  install_blocked_reason: The reviewed npm package depends on a GitHub fetch that Wright's clean-container npm policy rejects; publishing that dependency as an immutable registry artifact is required before MCP qualification.
+  curation:
+    disposition: follow_up
+    reason: This is a relevant newly discovered CAD MCP, but its reviewed package does not install under Wright's clean-container dependency policy.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Recheck for a release with registry-published immutable dependencies; then run a parameterized bracket review and STEP/STL export through Wright GatewayService with independent geometry, error, timeout, and cleanup checks.
+    adoption: unknown
 format_version: 1

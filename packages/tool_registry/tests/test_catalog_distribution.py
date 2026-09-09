@@ -19,6 +19,7 @@ def test_wheel_and_sdist_contain_canonical_catalog_resources(tmp_path) -> None:
     required = {
         "tool_registry/catalog/catalog-snapshot-envelope.schema.json",
         "tool_registry/catalog/engineering-catalog.yaml",
+        "tool_registry/catalog/engineering-status.json",
         "tool_registry/catalog/import-preview.schema.json",
         "tool_registry/catalog/install-plan.schema.json",
         "tool_registry/catalog/schema.json",
@@ -31,6 +32,7 @@ def test_wheel_and_sdist_contain_canonical_catalog_resources(tmp_path) -> None:
         assert {
             "src/tool_registry/catalog/catalog-snapshot-envelope.schema.json",
             "src/tool_registry/catalog/engineering-catalog.yaml",
+            "src/tool_registry/catalog/engineering-status.json",
             "src/tool_registry/catalog/import-preview.schema.json",
             "src/tool_registry/catalog/install-plan.schema.json",
             "src/tool_registry/catalog/schema.json",

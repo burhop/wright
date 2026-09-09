@@ -1,0 +1,112 @@
+{
+  "server_id": "freecad-mcp-nekanat",
+  "observed_at": "2026-09-09T21:42:25.440144+00:00",
+  "finished_at": "2026-09-09T21:43:23.384468+00:00",
+  "duration_seconds": 57.944,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/neka-nat/freecad-mcp",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_error_reported_in_content",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "FreeCAD box creation and STL export",
+  "configuration_sha256": "a0a8a5eed836de890672310b8e92926c6d3ee18cb0452f0ce2dae5d210d6bbe8",
+  "installed_items": [
+    "FreeCAD=1.1.1",
+    "git=2.47.3"
+  ],
+  "source_references": [
+    "freecad-mcp@63acb305573194a011641ab13ccfb391fe95769f"
+  ],
+  "prerequisites": [
+    "FreeCADMCP-addon-localhost-only"
+  ],
+  "server_info": {
+    "name": "FreeCADMCP",
+    "title": null,
+    "version": "1.28.1",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "37e97a4dac094aedd15ccac59dd937000e14d4b11311333742322d8351c94fd4",
+  "tool_count": 14,
+  "execute_schema": {
+    "properties": {
+      "code": {
+        "title": "Code",
+        "type": "string"
+      }
+    },
+    "required": [
+      "code"
+    ],
+    "title": "execute_codeArguments",
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 684,
+    "sha256": "1e88ae5dc2c4e215350cf40aaa2fc6b83ef7a6faa36828f68c0a65c359682295",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "gateway_outcome": {
+    "bytes": 684,
+    "sha256": "1e88ae5dc2c4e215350cf40aaa2fc6b83ef7a6faa36828f68c0a65c359682295",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 684,
+    "sha256": "1e88ae5dc2c4e215350cf40aaa2fc6b83ef7a6faa36828f68c0a65c359682295",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "cleanup": "passed"
+}

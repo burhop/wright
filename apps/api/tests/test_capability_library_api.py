@@ -113,6 +113,23 @@ def test_curation_lists_and_retirement_are_enforced_by_the_api(capability_client
     )
 
 
+def test_engineering_mcp_status_and_embedded_evidence_are_served(capability_client):
+    client, _ = capability_client
+    response = client.get("/api/mcp/status")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["counts"] == {"curated": 10, "follow_up": 56, "removed": 12}
+    assert body["qualification_counts"]["passing"] == 10
+    assert len(body["chains"]) == 3
+    assert "evidence_payloads" not in body
+
+    evidence = client.get("/api/mcp/status/evidence/server-openscad-mcp")
+    assert evidence.status_code == 200
+    assert evidence.json()["server_id"] == "openscad-mcp"
+    assert evidence.headers["etag"]
+    assert client.get("/api/mcp/status/evidence/unknown").status_code == 404
+
+
 def test_fresh_start_managed_server_does_not_overclaim_legacy_validation(
     capability_client,
 ) -> None:

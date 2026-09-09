@@ -155,6 +155,7 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
         "wright_engineering/static/native-processes/package-review.json",
         "tool_registry/catalog/catalog-snapshot-envelope.schema.json",
         "tool_registry/catalog/engineering-catalog.yaml",
+        "tool_registry/catalog/engineering-status.json",
         "tool_registry/catalog/import-preview.schema.json",
         "tool_registry/catalog/install-plan.schema.json",
         "tool_registry/catalog/schema.json",

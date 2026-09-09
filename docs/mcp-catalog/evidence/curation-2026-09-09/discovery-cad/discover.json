@@ -1,0 +1,870 @@
+{
+  "search": "cad",
+  "next_cursor": "io.github.KittyCAD/zoo-mcp:0.22.0",
+  "candidates": [
+    {
+      "registry_name": "ai.getfacade/mcp",
+      "version": "0.1.0",
+      "repository_url": "https://github.com/getfacade/mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "ai.getfacade/mcp",
+      "version": "0.1.1",
+      "repository_url": "https://github.com/getfacade/mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "ai.smithery/IlyaGusev-academia_mcp",
+      "version": "1.14.0",
+      "repository_url": "https://github.com/IlyaGusev/academia_mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "ai.smithery/IlyaGusev-academia_mcp",
+      "version": "1.16.0",
+      "repository_url": "https://github.com/IlyaGusev/academia_mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "ai.tokenarcade/tokenarcade",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "ar.indicadores/empresas",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "br.app.classificado/meta-agent-tools",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.angelmoncada/consulting",
+      "version": "0.1.1",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.arcadedb/mcp-server",
+      "version": "26.4.1-SNAPSHOT",
+      "repository_url": "https://github.com/ArcadeData/arcadedb",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.cadencercs/cadence",
+      "version": "0.3.1",
+      "repository_url": "https://github.com/dwixom/rcs-agent-mvp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.cadencz/cadencz",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.kernelcad/kernelcad",
+      "version": "0.11.1",
+      "repository_url": "https://github.com/w1ne/kernelCAD-web",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.kernelcad/kernelcad",
+      "version": "0.11.2",
+      "repository_url": "https://github.com/w1ne/kernelCAD-web",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.mambabuilt/mcp-publication-cadence-tracker",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/mambalabsdev/mcp-publication-cadence-tracker",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.mambabuilt/mcp-publication-cadence-tracker",
+      "version": "1.1.1",
+      "repository_url": "https://github.com/mambalabsdev/mcp-publication-cadence-tracker",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.quillcaddie.www/mcp",
+      "version": "0.8.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.scadaminer/nem-explorer",
+      "version": "0.1.0",
+      "repository_url": "https://github.com/brensch/scadaminer-ai-toolkit",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.shamra-academia/research",
+      "version": "0.1.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.shamra-academia/research",
+      "version": "0.1.1",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.teclazo/mercadolibre",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/georgelawrence/kwp-mercadolibre",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.themineworks/academic-research-mcp",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/themineworks/mcp-servers",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.thenextgennexus/academic-research-mcp-server",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "com.trycadbury/netsuite",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "1.5.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.0.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.1.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.2.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.0",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.1",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.2",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.3",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.4",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "version": "2.3.5",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "fr.aucadastre/aucadastre",
+      "version": "0.1.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "golf.caddence/caddence",
+      "version": "1.0.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.1",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.2",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.3",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.4",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.5",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.6",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.7",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.8",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.1.9",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "version": "0.2.0",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Africa-Data-Bank/africadb",
+      "version": "1.0.1",
+      "repository_url": "https://github.com/Africa-Data-Bank/afridb-platform",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.ArcadeData/arcadedb",
+      "version": "26.3.1",
+      "repository_url": "https://github.com/ArcadeData/arcadedb",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.BharatDharmaAcademy/bda-mcp",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/BharatDharmaAcademy/bda-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.0.4",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.1.1",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.2.0",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.2.1",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.3.0",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.3.1",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.3.2",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "version": "1.4.0",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Damso74/arcadeops-public-discovery",
+      "version": "1.2.0",
+      "repository_url": null,
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.FoundryNet/academic-intel-mcp",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/FoundryNet/academic-intel-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.Gunsmith-Academy/woody-mcp",
+      "version": "1.0.3",
+      "repository_url": "https://github.com/Gunsmith-Academy/woody-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.10.0",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.10.1",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.10.2",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.10.3",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.11.0",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.11.1",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.12.0",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.12.1",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.12.2",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.13.0",
+      "repository_url": "https://github.com/KittyCAD/zoo-mcp",
+      "related_catalog_ids": [],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.13.1",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.13.2",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.13.3",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.13.4",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.14.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.14.1",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.14.2",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.15.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.15.2",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.15.3",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.15.4",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.15.5",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.1",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.10",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.2",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.3",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.4",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.5",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.6",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.8",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.16.9",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.17.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.18.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.18.1",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.18.2",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.18.3",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.19.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.20.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.21.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    },
+    {
+      "registry_name": "io.github.KittyCAD/zoo-mcp",
+      "version": "0.22.0",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "related_catalog_ids": [
+        "zoo-mcp"
+      ],
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted lead. A shared repository does not prove server identity; preserve all existing review decisions until a reviewer matches the implementation."
+    }
+  ],
+  "observed_at": "2026-09-09T22:34:21.145973+00:00",
+  "complete": true
+}

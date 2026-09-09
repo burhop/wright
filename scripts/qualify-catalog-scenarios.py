@@ -24,6 +24,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import time
 import traceback
 import xml.etree.ElementTree as ET
 import zipfile
@@ -2113,6 +2114,7 @@ def main():
     from core.redaction import redact_mapping
 
     report = {}
+    started = time.monotonic()
     temporary = tempfile.TemporaryDirectory(
         prefix="wright-qualification-", dir=args.work_parent
     )
@@ -2156,6 +2158,9 @@ def main():
                 cleanup="failed",
                 cleanup_reason="Disposable files remain locked",
             )
+    report["finished_at"] = datetime.now(UTC).isoformat()
+    report["duration_seconds"] = round(time.monotonic() - started, 3)
+    report["duration_source"] = "monotonic_clock"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(redact_mapping(report), indent=2, default=str) + "\n",

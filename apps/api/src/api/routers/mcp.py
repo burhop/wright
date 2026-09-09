@@ -28,10 +28,45 @@ from tool_registry.install_plans import InstallPlanError
 from tool_registry.onboarding import OnboardingError
 from tool_registry.validation_evidence import ValidationEvidenceError
 from tool_registry.missing_reports import MissingCapabilityReportError
+from tool_registry.engineering_status import (
+    EngineeringStatusError,
+    load_engineering_status,
+    load_engineering_status_evidence,
+)
 from api.security import require_admin
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
+
+@router.get("/status")
+@traced("mcp.engineering_status")
+async def engineering_mcp_status():
+    try:
+        return load_engineering_status()
+    except EngineeringStatusError as error:
+        logger.exception("engineering_mcp_status_unavailable")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(error),
+        ) from error
+
+
+@router.get("/status/evidence/{evidence_id}")
+@traced("mcp.engineering_status.evidence")
+async def engineering_mcp_status_evidence(evidence_id: str):
+    try:
+        content, digest = load_engineering_status_evidence(evidence_id)
+    except EngineeringStatusError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error),
+        ) from error
+    return Response(
+        content=content,
+        media_type="application/json",
+        headers={"ETag": f'"{digest}"', "Cache-Control": "no-cache"},
+    )
 
 
 # ── REST Models ──────────────────────────────────────────────────────────────

@@ -1,0 +1,148 @@
+#!/usr/bin/env node
+
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import process from "node:process";
+import { chromium } from "playwright";
+
+const option = (name, fallback) => {
+  const index = process.argv.indexOf(name);
+  return index === -1 ? fallback : process.argv[index + 1];
+};
+
+const baseUrl = option("--base-url", "http://127.0.0.1:5173").replace(/\/$/, "");
+const outputDir = path.resolve(option("--output-dir", "artifacts/engineering-mcp-status"));
+await mkdir(outputDir, { recursive: true });
+
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const consoleErrors = [];
+const pageErrors = [];
+const failedResponses = [];
+page.on("console", (message) => {
+  if (message.type() === "error") consoleErrors.push(message.text());
+});
+page.on("pageerror", (error) => pageErrors.push(error.message));
+page.on("response", (response) => {
+  if (response.status() >= 400) {
+    failedResponses.push({ status: response.status(), url: response.url() });
+  }
+});
+
+const assertText = async (testId, expected) => {
+  const value = await page.getByTestId(testId).innerText();
+  if (!value.includes(expected)) {
+    throw new Error(`${testId} did not contain ${JSON.stringify(expected)}: ${value}`);
+  }
+};
+
+try {
+  await page.goto(`${baseUrl}/tool-registry`, { waitUntil: "networkidle" });
+  await page.getByTestId("engineering-mcp-status").waitFor();
+
+  const statusResponse = await page.request.get(`${baseUrl}/api/mcp/status`);
+  if (!statusResponse.ok()) throw new Error(`Status API returned ${statusResponse.status()}`);
+  const status = await statusResponse.json();
+  const dispositionTotal = Object.values(status.counts).reduce(
+    (total, value) => total + value,
+    0,
+  );
+  if (status.records.length !== dispositionTotal) {
+    throw new Error("Status records do not match disposition counts");
+  }
+  await assertText("engineering-count-curated", String(status.counts.curated));
+  await assertText("engineering-count-follow_up", String(status.counts.follow_up));
+  await assertText("engineering-count-removed", String(status.counts.removed));
+  await assertText(
+    "engineering-status-passing",
+    `${status.qualification_counts.passing} Passing`,
+  );
+  for (const protocol of status.protocol_status) {
+    await assertText(
+      `engineering-protocol-${protocol.protocol}`,
+      `${protocol.known} known`,
+    );
+  }
+  await assertText(
+    "engineering-protocol-hardware_mcp",
+    "has not qualified physical operation",
+  );
+  await assertText("engineering-protocol-mhs", "Research preview");
+
+  const chainCards = page.locator('[data-testid^="engineering-chain-"]');
+  if ((await chainCards.count()) !== status.chains.length) {
+    throw new Error("Served Tier 1 chain count does not match status evidence");
+  }
+  for (let index = 0; index < status.chains.length; index += 1) {
+    if (!(await chainCards.nth(index).innerText()).includes("PASSED")) {
+      throw new Error(`Tier 1 chain ${index + 1} is not passing`);
+    }
+  }
+
+  const evidenceRecord =
+    status.records.find((record) => record.server_id === "kernelcad-mcp") ||
+    status.records.find((record) => record.evidence_href?.startsWith("/api/"));
+  if (!evidenceRecord?.evidence_href) throw new Error("No embedded server evidence found");
+  const evidenceResponse = await page.request.get(`${baseUrl}${evidenceRecord.evidence_href}`);
+  const evidenceText = await evidenceResponse.text();
+  if (!evidenceResponse.ok()) throw new Error("Exact server evidence is unavailable");
+  if (evidenceRecord.server_id === "kernelcad-mcp" && !evidenceText.includes("EALLOWGIT")) {
+    throw new Error("Exact kernelCAD package failure is missing from its evidence");
+  }
+
+  const overviewPath = path.join(outputDir, "engineering-mcp-dashboard.png");
+  await page.screenshot({ path: overviewPath });
+
+  const changes = page.getByTestId("engineering-status-changes");
+  await changes.locator("summary").click();
+  await changes.scrollIntoViewIfNeeded();
+  const changesPath = path.join(outputDir, "engineering-mcp-changes.png");
+  await page.screenshot({ path: changesPath });
+
+  const records = page.getByTestId("engineering-status-records");
+  await records.getByLabel("Search", { exact: true }).fill(evidenceRecord.server_id);
+  await records.scrollIntoViewIfNeeded();
+  await assertText("engineering-status-records", evidenceRecord.name);
+  const recordPath = path.join(outputDir, "engineering-mcp-server-evidence.png");
+  await page.screenshot({ path: recordPath });
+
+  const dashboardResponseErrors = failedResponses.filter((value) =>
+    value.url.includes("/api/mcp/status"),
+  );
+  const result = {
+    observed_at: new Date().toISOString(),
+    base_url: baseUrl,
+    status: "passed",
+    counts: status.counts,
+    qualification_counts: status.qualification_counts,
+    chains: status.chains.map((chain) => ({
+      chain_id: chain.chain_id,
+      status: chain.status,
+      call_count: chain.call_count,
+    })),
+    protocol_status: status.protocol_status,
+    evidence_server_id: evidenceRecord.server_id,
+    evidence_etag: evidenceResponse.headers()["etag"],
+    console_errors: consoleErrors,
+    page_errors: pageErrors,
+    dashboard_response_errors: dashboardResponseErrors,
+    isolated_environment_response_errors: failedResponses.filter(
+      (value) => !value.url.includes("/api/mcp/status"),
+    ),
+    screenshots: [overviewPath, changesPath, recordPath].map((value) => path.basename(value)),
+  };
+  if (pageErrors.length || dashboardResponseErrors.length) {
+    result.status = "failed";
+  }
+  await writeFile(
+    path.join(outputDir, "served-dashboard-verification.json"),
+    `${JSON.stringify(result, null, 2)}\n`,
+    "utf8",
+  );
+  if (result.status === "failed") {
+    throw new Error(`Dashboard diagnostics contain errors: ${JSON.stringify(result)}`);
+  }
+  console.log(JSON.stringify(result));
+} finally {
+  await browser.close();
+}
