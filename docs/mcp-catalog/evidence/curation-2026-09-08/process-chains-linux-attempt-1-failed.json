@@ -1,0 +1,296 @@
+{
+  "installed_items": [
+    "kicad-cli=9.0.2+dfsg-1",
+    "kicad-symbols=9.0.2-1",
+    "kicad-footprints=9.0.2-1",
+    "brepjs-cad=0.103.0"
+  ],
+  "prerequisites": [
+    "reviewed-brep-compatibility-launcher",
+    "system-python-pcbnew-oracle"
+  ],
+  "observed_at": "2026-09-09T01:05:57.334771+00:00",
+  "wright_revision": "WORKTREE-08b94217",
+  "environment": "disposable-wright-kicad-brep-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "status": "failed",
+  "calls": [
+    {
+      "sequence": 1,
+      "server_id": "brep-mcp",
+      "tool": "export_part",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 2,
+      "server_id": "oasis-open-fem-agent",
+      "tool": "run_simulation",
+      "approvals": [
+        "execute_code_approval",
+        "workspace_write_approval"
+      ],
+      "status": "passed"
+    },
+    {
+      "sequence": 3,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_new",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 4,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_rectangle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 5,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 6,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 7,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_line",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 8,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_save_as",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 9,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "library",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 10,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 11,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 12,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 13,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "audit",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 14,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "export",
+      "approvals": [],
+      "status": "passed"
+    }
+  ],
+  "chains": [
+    {
+      "id": "mechanical-cad-fea-review",
+      "status": "passed",
+      "design_id": "MECH-BRACKET",
+      "revision": "A",
+      "geometry": {
+        "stl": {
+          "path": "part.stl",
+          "format": "STL",
+          "bytes": 1121,
+          "sha256": "322d286a3e953c3b8897466cec819e6b9f6b8b23f45ef4fe7a71b373fcf123d4",
+          "dimensions_mm": [
+            100.0,
+            30.0,
+            8.0
+          ],
+          "volume_mm3": 24000.0
+        },
+        "step": {
+          "path": "part.step",
+          "format": "STEP AP242",
+          "bytes": 15416,
+          "sha256": "750aacd4c4dafd2d4d34884463f0c33b413f20810d4c55e886463c2d4f19f245"
+        }
+      },
+      "simulation": {
+        "path": "result.vtu",
+        "format": "VTU",
+        "bytes": 76396,
+        "sha256": "40cd83773e12d817cf234943e171c19a19d5b8145fd7bb19bc535d2efb2906b0",
+        "point_count": 533,
+        "components": 3,
+        "bounds": [
+          [
+            0.0,
+            0.1
+          ],
+          [
+            0.0,
+            0.03
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "field": "displacement_m",
+        "field_min": -6.19025955644e-05,
+        "field_max": 1.30595958607e-05,
+        "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself.",
+        "job_name": "mechanical-bracket-A"
+      },
+      "review_drawing": {
+        "path": "mechanical-review-A.dxf",
+        "format": "DXF",
+        "bytes": 15712,
+        "sha256": "097b2de57affeaef3aa086658a8bf658737ea040a0bfd6ebf8b45376fbc2d9b1",
+        "entity_counts": {
+          "LWPOLYLINE": 1,
+          "CIRCLE": 2,
+          "LINE": 1
+        },
+        "outline_mm": [
+          100.0,
+          30.0
+        ],
+        "holes_mm": [
+          [
+            15.0,
+            15.0,
+            4.0
+          ],
+          [
+            85.0,
+            15.0,
+            4.0
+          ]
+        ],
+        "centerline_mm": [
+          50.0,
+          0.0,
+          50.0,
+          30.0
+        ]
+      },
+      "handoffs": [
+        {
+          "status": "accepted",
+          "manifest_sha256": "67731672269e12816ebecd9088d27a4b592eceea826258acd883c0db7db2c768",
+          "artifact_count": 2,
+          "identity": [
+            "brep-mcp",
+            "oasis-open-fem-agent",
+            "MECH-BRACKET-A"
+          ],
+          "units": {
+            "geometry": "mm",
+            "analysis": "m-N-Pa"
+          },
+          "corrupted_manifest_rejected": true
+        },
+        {
+          "status": "accepted",
+          "manifest_sha256": "4558c65ac655abed950ac20d4c19bc34860919983e1de138b8929060f95dbc60",
+          "artifact_count": 3,
+          "identity": [
+            "oasis-open-fem-agent",
+            "autocad-mcp-u-c4n",
+            "MECH-BRACKET-A"
+          ],
+          "units": {
+            "drawing": "mm",
+            "displacement": "m"
+          },
+          "corrupted_manifest_rejected": true
+        }
+      ]
+    }
+  ],
+  "portfolio_inputs": {
+    "brep-mcp": {
+      "configuration_sha256": "676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b",
+      "source_url": "https://github.com/andymai/brepjs",
+      "tool_schema_sha256": "c39b1af77e33ec5bad0a4dc8f7313de27d55e02aad67e16fd3316a464b37a4bb",
+      "tool_count": 2
+    },
+    "oasis-open-fem-agent": {
+      "configuration_sha256": "58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e",
+      "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+      "tool_schema_sha256": "4245cad52960571e4bccd6f0aec3eae5039bca378e236a91f1ebfa924bdbe489",
+      "tool_count": 17
+    },
+    "autocad-mcp-u-c4n": {
+      "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+      "source_url": "https://github.com/U-C4N/Autocad-MCP",
+      "tool_schema_sha256": "a9e48d10fa5abee3275bf352d8d31c9878297d517e26e543fd53c9a7f5fd4ab8",
+      "tool_count": 47
+    },
+    "kicad-mcp-blwfish": {
+      "configuration_sha256": "d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc",
+      "source_url": "https://github.com/blwfish/kicad-mcp",
+      "tool_schema_sha256": "7a54defba181f5aa3f48da9c73e635e35523d3f625435684eacf84f0b2aec3f3",
+      "tool_count": 17
+    },
+    "rosbag-mcp-pypi": {
+      "configuration_sha256": "19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649",
+      "source_url": "https://pypi.org/project/rosbag-mcp/",
+      "tool_schema_sha256": "ad265dfd228c3d0254fae608e052d08f60e89c66d97c407dcf624def09c61130",
+      "tool_count": 31
+    }
+  },
+  "workspace_policy": {
+    "workspace_id": "process-chain-workspace",
+    "principal_id": "curation-operator",
+    "enabled_server_ids": [
+      "brep-mcp",
+      "oasis-open-fem-agent",
+      "autocad-mcp-u-c4n",
+      "kicad-mcp-blwfish",
+      "rosbag-mcp-pypi"
+    ],
+    "visible_tool_count": 114
+  },
+  "error": "CalledProcessError",
+  "diagnostic": "Command '['/usr/bin/python3', '-c', 'import json, pcbnew, sys\\nboard = pcbnew.LoadBoard(sys.argv[1])\\nbox = board.GetBoardEdgesBoundingBox()\\nscale = pcbnew.IU_PER_MM\\nfootprints = []\\nfor item in board.GetFootprints():\\n    pos = item.GetPosition()\\n    footprints.append({\\n        \"reference\": item.GetReference(),\\n        \"value\": item.GetValue(),\\n        \"x_mm\": pos.x / scale,\\n        \"y_mm\": pos.y / scale,\\n        \"pads\": item.GetPadCount(),\\n    })\\nprint(json.dumps({\\n    \"width_mm\": box.GetWidth() / scale,\\n    \"height_mm\": box.GetHeight() / scale,\\n    \"footprints\": footprints,\\n}))\\n', '/tmp/wright-process-chains-c96mpd3a/workspace/chain-2/controller-A.kicad_pcb']' returned non-zero exit status 1.",
+  "errors": [
+    {
+      "type": "CalledProcessError",
+      "message": "Command '['/usr/bin/python3', '-c', 'import json, pcbnew, sys\\nboard = pcbnew.LoadBoard(sys.argv[1])\\nbox = board.GetBoardEdgesBoundingBox()\\nscale = pcbnew.IU_PER_MM\\nfootprints = []\\nfor item in board.GetFootprints():\\n    pos = item.GetPosition()\\n    footprints.append({\\n        \"reference\": item.GetReference(),\\n        \"value\": item.GetValue(),\\n        \"x_mm\": pos.x / scale,\\n        \"y_mm\": pos.y / scale,\\n        \"pads\": item.GetPadCount(),\\n    })\\nprint(json.dumps({\\n    \"width_mm\": box.GetWidth() / scale,\\n    \"height_mm\": box.GetHeight() / scale,\\n    \"footprints\": footprints,\\n}))\\n', '/tmp/wright-process-chains-c96mpd3a/workspace/chain-2/controller-A.kicad_pcb']' returned non-zero exit status 1.",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/scripts/qualify-catalog-process-chains.py\", line 1285, in main\n    asyncio.run(asyncio.wait_for(run(args, Path(temporary.name), report), timeout=900))\n    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/usr/local/lib/python3.13/asyncio/tasks.py\", line 507, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-process-chains.py\", line 1229, in run\n    report[\"chains\"].append(await electronics_chain(gateway, workspace / \"chain-2\"))\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-process-chains.py\", line 855, in electronics_chain\n    board_result = await create_board(gateway, root)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-process-chains.py\", line 752, in create_board\n    \"board\": inspect_board(board, width_mm=50, height_mm=40),\n             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-process-chains.py\", line 312, in inspect_board\n    process = subprocess.run(\n        [\"/usr/bin/python3\", \"-c\", script, str(path)],\n    ...<3 lines>...\n        timeout=30,\n    )\n  File \"/usr/local/lib/python3.13/subprocess.py\", line 577, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/bin/python3', '-c', 'import json, pcbnew, sys\\nboard = pcbnew.LoadBoard(sys.argv[1])\\nbox = board.GetBoardEdgesBoundingBox()\\nscale = pcbnew.IU_PER_MM\\nfootprints = []\\nfor item in board.GetFootprints():\\n    pos = item.GetPosition()\\n    footprints.append({\\n        \"reference\": item.GetReference(),\\n        \"value\": item.GetValue(),\\n        \"x_mm\": pos.x / scale,\\n        \"y_mm\": pos.y / scale,\\n        \"pads\": item.GetPadCount(),\\n    })\\nprint(json.dumps({\\n    \"width_mm\": box.GetWidth() / scale,\\n    \"height_mm\": box.GetHeight() / scale,\\n    \"footprints\": footprints,\\n}))\\n', '/tmp/wright-process-chains-c96mpd3a/workspace/chain-2/controller-A.kicad_pcb']' returned non-zero exit status 1.\n"
+    }
+  ],
+  "cleanup": "passed",
+  "evidence_sha256": "eb2d315c55004ccb3b3cf85ad8a3c753146c8fa686a2bf6ae93b0ec47ec7084b"
+}

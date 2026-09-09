@@ -2,34 +2,35 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-08",
   "platform": null,
-  "catalog_sha256": "d63f3f9b3ea696bfc4c45c510d917a968eef3b430d9608fbcaf3de7430a415fb",
+  "catalog_sha256": "4962ba4b4b9b931526a72624d3d4e5f73f5dd3a68d89213b81c89ecc0d6a080a",
   "counts": {
-    "curated": 7,
-    "follow_up": 58,
-    "removed": 10
+    "curated": 10,
+    "follow_up": 55,
+    "removed": 12
   },
   "lists": {
     "curated": [
+      "autocad-mcp-u-c4n",
       "autodesk-product-help-mcp",
       "blender-mcp",
       "brep-mcp",
       "freecad-mcp-nekanat",
+      "kicad-mcp-blwfish",
       "oasis-open-fem-agent",
       "openscad-mcp",
+      "rhino-mcp-easehee",
       "rosbag-mcp-pypi"
     ],
     "follow_up": [
       "ansys-fluent-mcp",
       "ansys-mcp-server-community",
       "atlassian-rovo-mcp",
-      "autocad-mcp",
       "autodesk-fusion-data-mcp",
       "autodesk-fusion-desktop-mcp",
       "autodesk-fusion-mcp-python",
       "backflip-ai-watchlist",
       "blender-mcp-harveyxiacn",
       "cad-mcp-daobataotie",
-      "caid-mcp",
       "comsol-multiphysics-mcp-suzysa",
       "comsol-multiphysics-mcp-wjc9011",
       "creo-mcp",
@@ -61,7 +62,6 @@
       "playwright-mcp",
       "rescale-mcp-hosted",
       "rhino-mcp",
-      "rhino-mcp-easehee",
       "siemens-element-mcp",
       "siemens-xcelerator-developer-portal-mcp",
       "simscale-api-candidate",
@@ -81,6 +81,8 @@
     "removed": [
       "aps-mcp-server-nodejs",
       "aps-mcp-server-petr",
+      "autocad-mcp",
+      "caid-mcp",
       "calculix-simulation",
       "freecad-booleans-lucygoodchild",
       "mcp-ui-shopify",
@@ -119,21 +121,22 @@
       "stage": "design",
       "label": "Detailed design",
       "curated": [
+        "autocad-mcp-u-c4n",
         "autodesk-product-help-mcp",
         "blender-mcp",
         "brep-mcp",
         "freecad-mcp-nekanat",
-        "openscad-mcp"
+        "kicad-mcp-blwfish",
+        "openscad-mcp",
+        "rhino-mcp-easehee"
       ],
       "follow_up": [
-        "autocad-mcp",
         "autodesk-fusion-data-mcp",
         "autodesk-fusion-desktop-mcp",
         "autodesk-fusion-mcp-python",
         "backflip-ai-watchlist",
         "blender-mcp-harveyxiacn",
         "cad-mcp-daobataotie",
-        "caid-mcp",
         "creo-mcp",
         "creoson-mcp-bridge",
         "easy-mcp-autocad",
@@ -155,7 +158,6 @@
         "onshape-mcp-hedless",
         "partuno-mcp",
         "rhino-mcp",
-        "rhino-mcp-easehee",
         "siemens-element-mcp",
         "sketchup-mcp",
         "solid-edge-mcp-burhop",
@@ -201,7 +203,10 @@
     {
       "stage": "manufacturing",
       "label": "Manufacturing and assembly",
-      "curated": [],
+      "curated": [
+        "autocad-mcp-u-c4n",
+        "kicad-mcp-blwfish"
+      ],
       "follow_up": [
         "autodesk-fusion-data-mcp",
         "autodesk-fusion-desktop-mcp",
@@ -213,6 +218,7 @@
       "stage": "test_quality",
       "label": "Test and quality",
       "curated": [
+        "kicad-mcp-blwfish",
         "rosbag-mcp-pypi"
       ],
       "follow_up": [
@@ -227,7 +233,9 @@
     {
       "stage": "release",
       "label": "Release and change management",
-      "curated": [],
+      "curated": [
+        "kicad-mcp-blwfish"
+      ],
       "follow_up": [
         "atlassian-rovo-mcp",
         "autodesk-fusion-data-mcp",
@@ -418,17 +426,67 @@
       ],
       "validation_status": "passed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "This proof-of-concept implementation is superseded by the maintained U-C4N headless drafting integration.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
-        "replacement_ids": [],
+        "next_action": "Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups.",
+        "replacement_ids": [
+          "autocad-mcp-u-c4n"
+        ],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
+        "review_overdue": false,
+        "limitations": [
+          "Repeat user adoption has not been measured."
+        ]
+      },
+      "concerns": []
+    },
+    {
+      "id": "autocad-mcp-u-c4n",
+      "name": "AutoCAD MCP Pro",
+      "source_url": "https://github.com/U-C4N/Autocad-MCP",
+      "integration_kind": "mcp_server",
+      "hardware_standard": "none",
+      "engineering_stages": [
+        "design",
+        "manufacturing"
+      ],
+      "validation_status": "passed",
+      "curation": {
+        "disposition": "curated",
+        "reason": "The pinned 47-tool lean profile passed a useful headless mechanical DXF workflow through direct MCP and both Wright gateway paths with independent artifact inspection.",
+        "owner": "Wright catalog maintainers",
+        "reviewed_at": "2026-09-08",
+        "review_due": "2026-10-08",
+        "next_action": "Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.",
+        "replacement_ids": [],
+        "adoption": "unknown",
+        "adoption_evidence": [],
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "fresh-standard-linux-x64-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+            "workflow": "Create a 100 x 60 mechanical DXF with two radius-5 holes and a centerline; save, reopen, reject an out-of-workspace write, and inspect the DXF geometry independently.",
+            "source_revision": "abc2a82e7128358b9e228a7d9442b37019aa3fe5",
+            "wright_revision": "610d2fcd",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/autocad-u-c4n-linux.json",
+            "evidence_sha256": "683a09cb3677f5bed5a7d41484513556d9987a9db1cebe1c7db5c846a83a3dcc",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -781,19 +839,22 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "passed",
+      "validation_status": "blocked",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "The source repository is unavailable, every PyPI release is yanked, and the latest wheel has no server entry point.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
-        "replacement_ids": [],
+        "next_action": "Preserve historical evidence; review a maintained successor before reinstatement.",
+        "replacement_ids": [
+          "brep-mcp",
+          "freecad-mcp-nekanat"
+        ],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -1348,6 +1409,58 @@
         "adoption_evidence": [],
         "qualifications": [],
         "effective_disposition": "follow_up",
+        "review_overdue": false,
+        "limitations": [
+          "Repeat user adoption has not been measured."
+        ]
+      },
+      "concerns": [
+        "tested_label_without_passing_validation"
+      ]
+    },
+    {
+      "id": "kicad-mcp-blwfish",
+      "name": "KiCad MCP by blwfish",
+      "source_url": "https://github.com/blwfish/kicad-mcp",
+      "integration_kind": "mcp_server",
+      "hardware_standard": "none",
+      "engineering_stages": [
+        "design",
+        "manufacturing",
+        "test_quality",
+        "release"
+      ],
+      "validation_status": "passed",
+      "curation": {
+        "disposition": "curated",
+        "reason": "The pinned release passed a useful native PCB authoring, audit, and fabrication-export workflow through direct MCP and both Wright gateway paths. The recommendation explicitly excludes DRC and FreeRouter.",
+        "owner": "Wright catalog maintainers",
+        "reviewed_at": "2026-09-08",
+        "review_due": "2026-10-08",
+        "next_action": "Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.",
+        "replacement_ids": [],
+        "adoption": "unknown",
+        "adoption_evidence": [],
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "fresh-standard-linux-x64-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc",
+            "workflow": "Search the installed footprint libraries, create a 40 x 30 mm native PCB, place a two-pad resistor at 20 x 15 mm, reopen and audit the board, reject a missing board, export Gerbers and drill data, and independently inspect the KiCad file and fabrication archive.",
+            "source_revision": "bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+            "wright_revision": "ec915dbd",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/kicad-blwfish-linux.json",
+            "evidence_sha256": "27997565ea3a5a1aafbed1862e7b86236edb09d2bef811dd7c067be548c977fd",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -2020,19 +2133,37 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "passed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "curated",
+        "reason": "The pinned standalone server passed a useful solid 3DM workflow through direct MCP and both Wright gateway paths with independent file inspection. The recommendation excludes standalone mesh-volume/STL and live bridge features.",
         "owner": "Wright catalog maintainers",
         "reviewed_at": "2026-09-08",
         "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "next_action": "Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
-        "qualifications": [],
-        "effective_disposition": "follow_up",
+        "qualifications": [
+          {
+            "platform": "linux_x64",
+            "environment": "fresh-standard-linux-x64-container",
+            "distribution_mode": "docker",
+            "configuration_sha256": "cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18",
+            "workflow": "Author and save a millimetre 10 x 8 x 6 solid Brep, reopen it in fresh sessions, reject an invalid dimension, and independently inspect the 3DM object, topology, units, validity, and bounds.",
+            "source_revision": "3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46",
+            "wright_revision": "77189624",
+            "verified_at": "2026-09-08",
+            "expires_at": "2026-10-08",
+            "evidence_path": "docs/mcp-catalog/evidence/curation-2026-09-08/rhino-easehee-linux.json",
+            "evidence_sha256": "2f36f623e4a9d84e61be0f94c81d7c0c7633ef3742c4342f725607aada785a33",
+            "protocol": "passed",
+            "backend": "passed",
+            "gateway": "passed",
+            "outcome": "passed"
+          }
+        ],
+        "effective_disposition": "curated",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."

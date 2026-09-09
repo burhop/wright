@@ -135,11 +135,11 @@ cannot do so. Reinstatement requires fresh evidence and an explicit review.
 
 ## Initial qualification runner
 
-`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with seven
-fixed recipes: public Autodesk help product discovery, OpenSCAD and FreeCAD
-10 × 8 × 6 mm cube exports, a BREP 40 × 20 × 10 mm STEP/STL export, and an
-OASiS scikit-fem Poisson solve, plus a known-message query against a generated
-ROS 2 SQLite bag and a Blender 10 × 8 × 6 mm mesh/STL export. It uses
+`scripts/qualify-catalog-scenarios.py` is an opt-in operator runner with ten
+fixed recipes: public Autodesk help product discovery; OpenSCAD, BREP, FreeCAD,
+and Blender geometry workflows; an OASiS scikit-fem solve; ROS 2 bag retrieval;
+headless AutoCAD DXF authoring; standalone Rhino solid 3DM authoring; and KiCad
+PCB authoring, audit, and fabrication export. It uses
 actual protocol clients and Wright's production gateway composition; it refuses
 Wright's mock-runner environment. It records three direct sessions, the gateway
 service result, and the actual gateway MCP result. The artifact oracles inspect
@@ -209,6 +209,69 @@ both gateway layers, STL dimensions and volume, object topology and bounds, a
 controlled backend error, add-on disconnect/reconnect, and process-group/port
 cleanup. The 113 upstream tests also pass. Optional network asset and generation
 features remain outside this qualification.
+
+For `autocad-mcp-u-c4n`, the catalog pins source commit
+`abc2a82e7128358b9e228a7d9442b37019aa3fe5` and its 47-tool lean profile. Save
+`ALLOWED_PATHS` through Wright's per-installation configuration path. The
+qualified Linux scope uses the ezdxf backend to create, reopen, and independently
+inspect a mechanical DXF and to reject an out-of-workspace save. Live AutoCAD COM
+mode requires a separate Windows qualification.
+
+For `rhino-mcp-easehee`, the catalog pins source commit
+`3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46`. The qualified scope is standalone
+rhino3dm authoring of a millimetre solid Brep, native 3DM save/reopen, and
+independent topology and bounds inspection. Live Rhino/Grasshopper bridge mode
+and standalone mesh/STL output remain outside the recommendation.
+
+For `kicad-mcp-blwfish`, install KiCad 9, its symbol and footprint libraries,
+and Git only in the disposable container. The catalog pins release commit
+`bcc6f11de92e5f47cb7dde1d24565f7779b2fbed`. The qualified scope searches an
+installed footprint, authors and reopens a native PCB, audits it, exports Gerber
+and drill data, and validates the board and archive independently. DRC is excluded
+because release 0.13.0 writes a history message to stdout and corrupts the MCP
+JSON stream. FreeRouter is also excluded.
+
+## Product-design process-chain runner
+
+After ten integrations have current scoped evidence, run
+`scripts/qualify-catalog-process-chains.py`. It refuses mock mode and refuses any
+input whose Linux Docker qualification is no longer current or no longer matches
+its catalog configuration hash. It discovers the exact tool schemas, enables
+only BREP, OASiS, AutoCAD, KiCad, and ROSBag in one disposable Wright workspace,
+and makes every engineering call through `GatewayService`.
+
+The fixed chains are:
+
+1. a two-hole mechanical bracket from STEP/STL authoring through a scoped
+   scikit-fem structural screening solve to an independently inspected review DXF;
+2. a native KiCad controller board and fabrication package through a board-driven
+   enclosure envelope and thermal solve to a provenance-bound ROS 2 validation
+   trace; and
+3. a field deflection record bound to drawing revision A, retrieved through
+   ROSBag MCP, which triggers and preserves a controlled revision B DXF.
+
+Each handoff verifies design/revision identity, units, artifact bytes and hashes,
+declared Wright approvals, a fail-closed corrupted-manifest probe, and cleanup.
+The FEA is a screening model: the structural solve uses an equivalent solid
+section and excludes the mounting holes, while the electronics solve uses a 2D
+conductive board with ambient edges. The ROS 2 records are deterministic
+qualification fixtures, not physical test results.
+
+Prepare a fresh container with the selected KiCad packages and the same reviewed
+BREP launcher described above, then run:
+
+```bash
+python /candidate/scripts/qualify-catalog-process-chains.py --execute \
+  --platform linux_x64 --environment clean-wright-container \
+  --wright-revision REVIEWED_REVISION --container-image REVIEWED_IMAGE_DIGEST \
+  --installed-item kicad-cli=REVIEWED_VERSION \
+  --installed-item kicad-symbols=REVIEWED_VERSION \
+  --installed-item kicad-footprints=REVIEWED_VERSION \
+  --installed-item brepjs-cad=0.103.0 \
+  --prerequisite reviewed-brep-compatibility-launcher \
+  --prerequisite system-python-pcbnew-oracle \
+  --output /evidence/process-chains-linux.json
+```
 
 ## Protocol boundaries
 
