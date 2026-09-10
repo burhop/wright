@@ -2,7 +2,7 @@
 
 As of 2026-09-09 · policy 2026-09-08.1
 
-Catalog digest: `e787811cd7a537a94869dd688c549ed93ed1ca7b11be0759d5b250e86e381d6e`
+Catalog digest: `39031d642187dd40bff40930c6c906201faec99b6e1756f74f8d43dbb592e619`
 
 Recorded decisions only; no MCP was installed or tested by this report.
 
@@ -21,7 +21,7 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | rhino-mcp-easehee | The pinned standalone server passed a useful solid 3DM workflow through direct MCP and both Wright gateway paths with independent file inspection. The recommendation excludes standalone mesh-volume/STL and live bridge features. | Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately. | 2026-10-08 |
 | rosbag-mcp-pypi | The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven. | Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools. | 2026-10-08 |
 
-## Follow up (56)
+## Follow up (52)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
@@ -31,15 +31,12 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | autodesk-fusion-data-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | autodesk-fusion-desktop-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | autodesk-fusion-mcp-python | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
-| backflip-ai-watchlist | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | blender-mcp-harveyxiacn | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | cad-mcp-daobataotie | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | comsol-multiphysics-mcp-suzysa | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
 | comsol-multiphysics-mcp-wjc9011 | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | creo-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
-| creoson-mcp-bridge | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | easy-mcp-autocad | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
-| flexcompute-flow360-api-candidate | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-addon-robust | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | freecad-mcp-contextform | Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated. | Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists. | 2026-10-08 |
 | freecad-mcp-proximile | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -68,7 +65,6 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | rhino-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | siemens-element-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | siemens-xcelerator-developer-portal-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
-| simscale-api-candidate | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | simulink-agentic-toolkit | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | sketchup-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure. | 2026-10-08 |
 | solid-edge-mcp-burhop | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
@@ -82,20 +78,24 @@ Recorded decisions only; no MCP was installed or tested by this report.
 | wincc-unified-mcp | Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required. | Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario. | 2026-10-08 |
 | zoo-mcp | A host application, account, license, or dependency is needed before Wright can verify the workflow. | The publisher moved the repository to KittyCAD/mcp; pin a current release and qualify using a dedicated Zoo account. | 2026-10-08 |
 
-## Remove from discovery (12)
+## Remove from discovery (16)
 
 | Identity | Reason | Next action | Review due |
 |---|---|---|---|
 | aps-mcp-server-nodejs | The publisher repository is archived and no current backend/gateway qualification establishes a supported workflow. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | aps-mcp-server-petr | The source is archived and this entry is blocked without a qualified workflow. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | autocad-mcp | This proof-of-concept implementation is superseded by the maintained U-C4N headless drafting integration. | Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups. | 2026-10-08 |
+| backflip-ai-watchlist | No public Backflip MCP server exists; retain the vendor integration lead in the excluded archive rather than presenting it as an MCP. | Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper. | 2026-12-09 |
 | caid-mcp | The source repository is unavailable, every PyPI release is yanked, and the latest wheel has no server entry point. | Preserve historical evidence; review a maintained successor before reinstatement. | 2026-10-08 |
 | calculix-simulation | No standalone MCP source was established; the recorded source returns 404. CalculiX remains a solver capability. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
+| creoson-mcp-bridge | CREOSON is a Creo JSON/JLINK dependency, not an MCP server; retain its decision and validation evidence in the excluded archive. | Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations. | 2026-12-09 |
+| flexcompute-flow360-api-candidate | Flow360 provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP. | Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper. | 2026-12-09 |
 | freecad-booleans-lucygoodchild | Overlapping FreeCAD capability with recorded protocol stdout contamination. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | mcp-ui-shopify | MCP Apps/UI infrastructure is not a standalone engineering MCP server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | nvidia-kit-cae-agent-skills | Agent skills and host tooling are not a separately installable MCP server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | revit-mcp | The repository is archived; the desktop-dependent integration has no current Wright workflow qualification. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | rosbag-mcp-binabik | The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow. | Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package. | 2026-10-08 |
+| simscale-api-candidate | SimScale provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP. | Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper. | 2026-12-09 |
 | trikos529-openscad | The listing points to a GitHub topic instead of a verified implementation and failed prior validation. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 | webmcp-standard | WebMCP is a browser standard; its former cookbook link is not an installable server. | Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement. | 2026-10-08 |
 
@@ -105,8 +105,8 @@ Recorded decisions only; no MCP was installed or tested by this report.
 |---|---:|---:|
 | Requirements | 1 | 4 |
 | Concept and architecture | 0 | 4 |
-| Detailed design | 8 | 38 |
-| Analysis and simulation | 1 | 13 |
+| Detailed design | 8 | 36 |
+| Analysis and simulation | 1 | 11 |
 | BOM and sourcing | 0 | 1 |
 | Manufacturing and assembly | 2 | 5 |
 | Test and quality | 2 | 6 |

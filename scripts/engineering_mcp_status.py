@@ -39,6 +39,46 @@ CHAIN_CALL_COUNTS = {
     "field-evidence-controlled-revision": 7,
 }
 
+PORTFOLIO_CATEGORIES = (
+    {
+        "id": "qualified",
+        "label": "Qualified",
+        "definition": "Current evidence proves the scoped protocol, backend, and Wright gateway workflow.",
+        "action": "Keep the evidence fresh and monitor upstream changes.",
+    },
+    {
+        "id": "preflight_passed",
+        "label": "Preflight passed",
+        "definition": "The implementation passed useful checks, but its complete Wright workflow is not currently qualified.",
+        "action": "Complete the backend and gateway scenario.",
+    },
+    {
+        "id": "environment_required",
+        "label": "Environment required",
+        "definition": "Qualification needs a host application, license, account, hardware, or connected browser environment.",
+        "action": "Run the scenario in a dedicated environment with the recorded prerequisites.",
+    },
+    {
+        "id": "untested",
+        "label": "Untested",
+        "definition": "No useful current execution evidence establishes how far the implementation works.",
+        "action": "Run the clean-environment preflight.",
+    },
+    {
+        "id": "failed",
+        "label": "Failed",
+        "definition": "Current evidence shows an implementation, packaging, startup, or protocol failure.",
+        "action": "Fix, replace, or exclude the implementation.",
+    },
+    {
+        "id": "excluded_archive",
+        "label": "Excluded archive",
+        "definition": "Retired, superseded, unavailable, duplicate, or not actually an MCP server.",
+        "action": "Hide from discovery and retain the decision record to prevent repeated review.",
+    },
+)
+PORTFOLIO_CATEGORY_IDS = tuple(item["id"] for item in PORTFOLIO_CATEGORIES)
+
 
 def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
@@ -81,6 +121,37 @@ def _qualification_status(entry: CatalogEntry, as_of: date) -> str:
     return "untested"
 
 
+def _portfolio_category(
+    entry: CatalogEntry, *, disposition: str, qualification_status: str
+) -> tuple[str, str]:
+    """Classify portfolio action separately from the raw validation result."""
+    if disposition == "removed":
+        return "excluded_archive", entry.curation.reason
+    if qualification_status == "passing":
+        return (
+            "qualified",
+            "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+        )
+    if entry.validation_result.status == "failed":
+        return "failed", "Current validation failed; see the latest technical result."
+    if entry.validation_result.status == "passed" or qualification_status == "stale":
+        return (
+            "preflight_passed",
+            "Useful validation passed, but a complete current scoped Wright qualification is still required.",
+        )
+    if entry.validation_result.status in {"dependency_missing", "blocked"}:
+        requirements = sorted(
+            set(entry.host_software_required + entry.credentials_required)
+        )
+        suffix = f" Primary requirements: {', '.join(requirements)}." if requirements else ""
+        return (
+            "environment_required",
+            "Qualification reached an external environment or access boundary."
+            + suffix,
+        )
+    return "untested", "No useful current execution evidence has been recorded."
+
+
 def _dependency_groups(entry: CatalogEntry) -> list[str]:
     groups = []
     if entry.dependencies.system:
@@ -114,21 +185,14 @@ def _breakdown(records: list[dict[str, Any]], field: str) -> list[dict[str, Any]
         raw = record[field]
         values: Iterable[str] = raw if isinstance(raw, list) else [raw]
         for value in values:
-            rows[value][record["qualification_status"]] += 1
+            rows[value][record["portfolio_category"]] += 1
             rows[value]["total"] += 1
     return [
         {
             "key": key,
             **{
                 state: counts[state]
-                for state in (
-                    "passing",
-                    "failing",
-                    "blocked",
-                    "stale",
-                    "untested",
-                    "total",
-                )
+                for state in (*PORTFOLIO_CATEGORY_IDS, "total")
             },
         }
         for key, counts in sorted(rows.items())
@@ -277,6 +341,7 @@ def build_engineering_status(
     previous_report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     report = build_report(entries, as_of=as_of)
+    report_records = {row["id"]: row for row in report["records"]}
     embedded: dict[str, dict[str, str]] = {}
     records = []
     for entry in sorted(entries, key=lambda item: item.id):
@@ -285,7 +350,11 @@ def build_engineering_status(
         evidence_href = None
         evidence_age_days = None
         source_revision = None
-        scope = entry.curation.next_action
+        scope = (
+            entry.capability_summary[0]
+            if entry.capability_summary
+            else entry.description
+        )
         last_qualified_at = None
         expires_at = None
         evidence_sha256 = None
@@ -323,6 +392,12 @@ def build_engineering_status(
             last_qualified_at = qualification.verified_at.isoformat()
             expires_at = qualification.expires_at.isoformat()
         latest = entry.validation_result
+        disposition = report_records[entry.id]["curation"]["effective_disposition"]
+        portfolio_category, portfolio_category_reason = _portfolio_category(
+            entry,
+            disposition=disposition,
+            qualification_status=status,
+        )
         records.append(
             {
                 "server_id": entry.id,
@@ -332,10 +407,12 @@ def build_engineering_status(
                 "source_revision": source_revision,
                 "scope": scope,
                 "implementation_mode": IMPLEMENTATION_MODES.get(entry.id, "unknown"),
-                "disposition": next(
-                    row for row in report["records"] if row["id"] == entry.id
-                )["curation"]["effective_disposition"],
+                "disposition": disposition,
+                "curation_reason": entry.curation.reason,
+                "integration_kind": entry.integration_kind,
                 "qualification_status": status,
+                "portfolio_category": portfolio_category,
+                "portfolio_category_reason": portfolio_category_reason,
                 "protocol_family": _protocol_family(entry),
                 "transport": entry.transport,
                 "disciplines": sorted(entry.domains),
@@ -408,6 +485,7 @@ def build_engineering_status(
         )
 
     status_counts = Counter(record["qualification_status"] for record in records)
+    category_counts = Counter(record["portfolio_category"] for record in records)
     curated = report["counts"]["curated"]
     protocol_rows = []
     for family, label in (
@@ -452,6 +530,10 @@ def build_engineering_status(
             key: status_counts[key]
             for key in ("passing", "failing", "blocked", "stale", "untested")
         },
+        "category_counts": {
+            key: category_counts[key] for key in PORTFOLIO_CATEGORY_IDS
+        },
+        "category_key": list(PORTFOLIO_CATEGORIES),
         "target": {
             "minimum": 10,
             "ideal": 15,

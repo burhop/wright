@@ -312,6 +312,19 @@ and exact evidence files below `dashboard/evidence/`. The standalone page shows
 the complete evidence table, qualification and disposition counts, changes from
 the previous report, protocol boundaries, and the latest chain outcomes.
 
+The dashboard assigns one portfolio category to every record. These categories
+describe the next curation action and do not replace the exact technical result:
+
+- **Qualified:** current scoped protocol, backend, gateway, and outcome evidence.
+- **Preflight passed:** useful checks passed; complete Wright qualification remains.
+- **Environment required:** a host application, license, account, hardware, or
+  connected browser environment is needed.
+- **Untested:** no useful current execution evidence is recorded.
+- **Failed:** current evidence shows an implementation, packaging, startup, or
+  protocol failure.
+- **Excluded archive:** retired, superseded, unavailable, duplicate, or not an
+  MCP server. Hide it from discovery and retain the decision record.
+
 Review the generated directory, run the catalog checks, and verify the dashboard
 through a local static HTTP server:
 

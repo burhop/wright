@@ -2,11 +2,11 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-09",
   "platform": null,
-  "catalog_sha256": "e787811cd7a537a94869dd688c549ed93ed1ca7b11be0759d5b250e86e381d6e",
+  "catalog_sha256": "39031d642187dd40bff40930c6c906201faec99b6e1756f74f8d43dbb592e619",
   "counts": {
     "curated": 10,
-    "follow_up": 56,
-    "removed": 12
+    "follow_up": 52,
+    "removed": 16
   },
   "lists": {
     "curated": [
@@ -28,15 +28,12 @@
       "autodesk-fusion-data-mcp",
       "autodesk-fusion-desktop-mcp",
       "autodesk-fusion-mcp-python",
-      "backflip-ai-watchlist",
       "blender-mcp-harveyxiacn",
       "cad-mcp-daobataotie",
       "comsol-multiphysics-mcp-suzysa",
       "comsol-multiphysics-mcp-wjc9011",
       "creo-mcp",
-      "creoson-mcp-bridge",
       "easy-mcp-autocad",
-      "flexcompute-flow360-api-candidate",
       "freecad-addon-robust",
       "freecad-mcp-contextform",
       "freecad-mcp-proximile",
@@ -65,7 +62,6 @@
       "rhino-mcp",
       "siemens-element-mcp",
       "siemens-xcelerator-developer-portal-mcp",
-      "simscale-api-candidate",
       "simulink-agentic-toolkit",
       "sketchup-mcp",
       "solid-edge-mcp-burhop",
@@ -83,13 +79,17 @@
       "aps-mcp-server-nodejs",
       "aps-mcp-server-petr",
       "autocad-mcp",
+      "backflip-ai-watchlist",
       "caid-mcp",
       "calculix-simulation",
+      "creoson-mcp-bridge",
+      "flexcompute-flow360-api-candidate",
       "freecad-booleans-lucygoodchild",
       "mcp-ui-shopify",
       "nvidia-kit-cae-agent-skills",
       "revit-mcp",
       "rosbag-mcp-binabik",
+      "simscale-api-candidate",
       "trikos529-openscad",
       "webmcp-standard"
     ]
@@ -136,11 +136,9 @@
         "autodesk-fusion-data-mcp",
         "autodesk-fusion-desktop-mcp",
         "autodesk-fusion-mcp-python",
-        "backflip-ai-watchlist",
         "blender-mcp-harveyxiacn",
         "cad-mcp-daobataotie",
         "creo-mcp",
-        "creoson-mcp-bridge",
         "easy-mcp-autocad",
         "freecad-addon-robust",
         "freecad-mcp-contextform",
@@ -184,14 +182,12 @@
         "ansys-mcp-server-community",
         "comsol-multiphysics-mcp-suzysa",
         "comsol-multiphysics-mcp-wjc9011",
-        "flexcompute-flow360-api-candidate",
         "freecad-mcp-sandraschi",
         "freecad-mcp-sergiudanstan",
         "matlab-mcp-server",
         "nvidia-omniverse-isaac-sim-mcp",
         "openfoam-mcp-webworn",
         "rescale-mcp-hosted",
-        "simscale-api-candidate",
         "simulink-agentic-toolkit"
       ]
     },
@@ -657,24 +653,24 @@
       "id": "backflip-ai-watchlist",
       "name": "Backflip AI CAD Candidate",
       "source_url": "https://www.backflip.ai/",
-      "integration_kind": "mcp_server",
+      "integration_kind": "api_candidate",
       "hardware_standard": "none",
       "engineering_stages": [
         "design"
       ],
       "validation_status": "blocked",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "No public Backflip MCP server exists; retain the vendor integration lead in the excluded archive rather than presenting it as an MCP.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-12-09",
+        "next_action": "Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -988,24 +984,24 @@
       "id": "creoson-mcp-bridge",
       "name": "CREOSON JSON-RPC Server",
       "source_url": "https://github.com/SimplifiedLogic/creoson",
-      "integration_kind": "mcp_server",
+      "integration_kind": "capability_alias",
       "hardware_standard": "none",
       "engineering_stages": [
         "design"
       ],
       "validation_status": "blocked",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "CREOSON is a Creo JSON/JLINK dependency, not an MCP server; retain its decision and validation evidence in the excluded archive.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-12-09",
+        "next_action": "Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -1053,17 +1049,17 @@
       ],
       "validation_status": "blocked",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "Flow360 provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-12-09",
+        "next_action": "Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -2355,17 +2351,17 @@
       ],
       "validation_status": "blocked",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "SimScale provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-12-09",
+        "next_action": "Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -2790,6 +2786,76 @@
     "This report evaluates recorded evidence; it does not run live qualification.",
     "Candidate stage assignments describe intended coverage, not proven end-to-end handoffs.",
     "MHS is a research preview; Wright has not qualified physical device operation."
+  ],
+  "delta": [
+    {
+      "id": "ansys-fluent-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "autocad-mcp-u-c4n",
+      "change": "changed"
+    },
+    {
+      "id": "autodesk-product-help-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "backflip-ai-watchlist",
+      "change": "changed"
+    },
+    {
+      "id": "blender-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "brep-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "creoson-mcp-bridge",
+      "change": "changed"
+    },
+    {
+      "id": "flexcompute-flow360-api-candidate",
+      "change": "changed"
+    },
+    {
+      "id": "freecad-mcp-nekanat",
+      "change": "changed"
+    },
+    {
+      "id": "kernelcad-mcp",
+      "change": "added"
+    },
+    {
+      "id": "kicad-mcp-blwfish",
+      "change": "changed"
+    },
+    {
+      "id": "matlab-mcp-server",
+      "change": "changed"
+    },
+    {
+      "id": "oasis-open-fem-agent",
+      "change": "changed"
+    },
+    {
+      "id": "openscad-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "rhino-mcp-easehee",
+      "change": "changed"
+    },
+    {
+      "id": "rosbag-mcp-pypi",
+      "change": "changed"
+    },
+    {
+      "id": "simscale-api-candidate",
+      "change": "changed"
+    }
   ],
   "complete": true
 }

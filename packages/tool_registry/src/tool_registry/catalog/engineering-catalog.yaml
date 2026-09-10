@@ -1441,15 +1441,15 @@ servers:
   headless_ok: 'no'
   engineering_stages:
   - design
-  integration_kind: mcp_server
+  integration_kind: capability_alias
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: CREOSON is a Creo JSON/JLINK dependency, not an MCP server; retain its decision and validation evidence in the excluded archive.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations.
     adoption: unknown
 - id: solidworks-mcp-python
   name: SolidWorks Python COM
@@ -5954,15 +5954,15 @@ servers:
     - public MCP server
   engineering_stages:
   - design
-  integration_kind: mcp_server
+  integration_kind: api_candidate
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: No public Backflip MCP server exists; retain the vendor integration lead in the excluded archive rather than presenting it as an MCP.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper.
     adoption: unknown
 - id: rescale-mcp-hosted
   name: Rescale Hosted MCP Server
@@ -7389,12 +7389,12 @@ servers:
   integration_kind: api_candidate
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: SimScale provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper.
     adoption: unknown
 - id: flexcompute-flow360-api-candidate
   name: Flexcompute Flow360 API Candidate
@@ -7500,12 +7500,12 @@ servers:
   integration_kind: api_candidate
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: Flow360 provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper.
     adoption: unknown
 - id: onshape-labs-featurescript-mcp
   name: Onshape Labs FeatureScript MCP

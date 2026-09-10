@@ -43,11 +43,14 @@ try {
   const status = await statusResponse.json();
   const dispositionTotal = Object.values(status.counts).reduce((total, value) => total + value, 0);
   if (status.records.length !== dispositionTotal) throw new Error("Status records do not match disposition counts");
+  const categoryTotal = Object.values(status.category_counts).reduce((total, value) => total + value, 0);
+  if (status.records.length !== categoryTotal) throw new Error("Status records do not match portfolio category counts");
 
-  await assertText("engineering-count-curated", status.counts.curated);
-  await assertText("engineering-count-follow_up", status.counts.follow_up);
-  await assertText("engineering-count-removed", status.counts.removed);
-  await assertText("engineering-status-passing", status.qualification_counts.passing);
+  await page.getByTestId("engineering-category-key").waitFor();
+  for (const category of status.category_key) {
+    await assertText(`engineering-category-${category.id}`, status.category_counts[category.id]);
+    await assertText(`category-key-${category.id}`, category.definition);
+  }
   for (const protocol of status.protocol_status) {
     await assertText(`engineering-protocol-${protocol.protocol}`, `${protocol.known} known`);
   }
@@ -93,6 +96,7 @@ try {
     dashboard_url: `${baseUrl}/index.html`,
     status: "passed",
     counts: status.counts,
+    category_counts: status.category_counts,
     qualification_counts: status.qualification_counts,
     chains: status.chains.map((chain) => ({
       chain_id: chain.chain_id,

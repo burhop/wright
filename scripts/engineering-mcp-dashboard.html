@@ -75,6 +75,7 @@
     .kpi.good { border-color: var(--green); }
     .kpi.warn { border-color: var(--amber); }
     .kpi.bad { border-color: var(--red); }
+    .kpi.archive { border-color: #71808d; }
     .kpi-label { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
     .kpi-value { display: block; margin-top: 4px; font-size: 29px; font-weight: 800; letter-spacing: -.04em; }
     .kpi-note { color: var(--muted); font-size: 11px; }
@@ -82,6 +83,11 @@
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 11px; }
     h2 { margin: 0; color: var(--navy); font-size: 19px; letter-spacing: -.015em; }
     .section-copy { color: var(--muted); margin: 3px 0 0; }
+    .category-key { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .category-item { padding: 15px 17px; }
+    .category-item h3 { margin: 0; color: var(--navy); font-size: 14px; }
+    .category-item p { color: var(--muted); margin: 7px 0; line-height: 1.45; }
+    .category-action { font-size: 11px; font-weight: 700; color: #365364; }
     .protocols { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .protocol { padding: 16px; min-height: 152px; }
     .protocol-top { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
@@ -89,10 +95,11 @@
     .big-number { display: block; font-size: 26px; font-weight: 800; margin: 14px 0 1px; }
     .small-row { color: var(--muted); line-height: 1.55; }
     .pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: #e7ecef; color: #4a5966; }
-    .pill.passing, .pill.curated, .pill.passed, .pill.implemented { background: #dff3e9; color: #086942; }
-    .pill.follow_up, .pill.blocked, .pill.qualification_required { background: #fff0d8; color: #8c4e00; }
+    .pill.passing, .pill.curated, .pill.passed, .pill.implemented, .pill.qualified { background: #dff3e9; color: #086942; }
+    .pill.follow_up, .pill.blocked, .pill.dependency_missing, .pill.qualification_required, .pill.environment_required { background: #fff0d8; color: #8c4e00; }
     .pill.removed, .pill.failing, .pill.failed { background: #fde6e6; color: #9c2424; }
-    .pill.untested, .pill.stale, .pill.research_preview { background: #e7edf4; color: #405569; }
+    .pill.untested, .pill.stale, .pill.research_preview, .pill.excluded_archive { background: #e7edf4; color: #405569; }
+    .pill.preflight_passed { background: #dff0f5; color: #0a6177; }
     .chains { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .chain { padding: 18px; border-left: 4px solid var(--green); }
     .chain .route { color: var(--muted); min-height: 40px; margin: 7px 0 14px; line-height: 1.45; }
@@ -135,8 +142,8 @@
     .limits { margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.6; }
     .fatal { max-width: 760px; margin: 80px auto; padding: 24px; border: 1px solid #efb2b2; background: #fff; border-radius: 12px; color: #8b2222; }
     footer { color: var(--muted); text-align: center; padding: 22px; font-size: 11px; }
-    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, 1fr); } .protocols, .breakdowns { grid-template-columns: repeat(2, 1fr); } .chains { grid-template-columns: 1fr; } }
-    @media (max-width: 680px) { main { padding: 18px 14px 36px; } header { padding: 25px 18px; } .kpis, .protocols, .breakdowns, .change-grid { grid-template-columns: repeat(2, 1fr); } .toolbar { grid-template-columns: 1fr; } }
+    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, 1fr); } .protocols, .breakdowns, .category-key { grid-template-columns: repeat(2, 1fr); } .chains { grid-template-columns: 1fr; } }
+    @media (max-width: 680px) { main { padding: 18px 14px 36px; } header { padding: 25px 18px; } .kpis, .protocols, .breakdowns, .category-key, .change-grid { grid-template-columns: repeat(2, 1fr); } .toolbar { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -149,6 +156,11 @@
   <main id="dashboard" data-testid="engineering-mcp-dashboard">
     <div class="notice"><strong>Independent report</strong><span>This dashboard is generated from repository evidence. It is not part of Wright’s user-facing Tool Registry.</span></div>
     <div class="grid kpis" id="kpis"></div>
+
+    <section>
+      <div class="section-head"><div><h2>Category key</h2><p class="section-copy">Portfolio categories describe the next curation action. Technical validation results remain visible in the evidence table.</p></div></div>
+      <div class="grid category-key" id="category-key" data-testid="engineering-category-key"></div>
+    </section>
 
     <section>
       <div class="section-head"><div><h2>Protocol readiness</h2><p class="section-copy">What is represented in the catalog and what has current qualification evidence.</p></div></div>
@@ -178,13 +190,13 @@
       <div class="section-head"><div><h2>Complete server evidence</h2><p class="section-copy" id="record-count"></p></div></div>
       <div class="toolbar">
         <label><span>Search</span><input id="search" aria-label="Search" placeholder="Server, vendor, scope, prerequisite…"></label>
-        <label><span>Disposition</span><select id="disposition"><option value="">All dispositions</option></select></label>
-        <label><span>Qualification</span><select id="qualification"><option value="">All qualification states</option></select></label>
+        <label><span>Category</span><select id="category"><option value="">All categories</option></select></label>
+        <label><span>Curation</span><select id="disposition"><option value="">All curation decisions</option></select></label>
         <label><span>Protocol</span><select id="protocol"><option value="">All protocols</option></select></label>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Server</th><th>Decision</th><th>Evidence status</th><th>Scope and mode</th><th>Coverage</th><th>Prerequisites</th><th>Owner / next action</th><th>Links</th></tr></thead>
+          <thead><tr><th>Server</th><th>Portfolio category</th><th>Latest technical result</th><th>Scope and mode</th><th>Coverage</th><th>Prerequisites</th><th>Owner / next action</th><th>Links</th></tr></thead>
           <tbody id="records"></tbody>
         </table>
         <div class="empty" id="empty" hidden>No servers match the current filters.</div>
@@ -217,17 +229,19 @@
       return element;
     };
     const formatDate = (value) => value ? new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }) : "—";
-    const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
+    const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, record.portfolio_category, record.portfolio_category_reason, record.curation_reason, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
 
     function renderKpis(status) {
-      const rows = [
-        ["Curated", status.counts.curated, `Target ${status.target.minimum}–${status.target.maximum}`, "good", "engineering-count-curated"],
-        ["Follow up", status.counts.follow_up, "Candidates needing work", "warn", "engineering-count-follow_up"],
-        ["Removed", status.counts.removed, "Excluded from discovery", "bad", "engineering-count-removed"],
-        ["Passing", status.qualification_counts.passing, "Current scoped evidence", "good", "engineering-status-passing"],
-        ["Blocked / failing", status.qualification_counts.blocked + status.qualification_counts.failing, "Actionable constraints", "warn", "engineering-status-blocked"],
-        ["Tier 1 chains", status.chains.filter((item) => item.status === "passed").length, `${status.chains.length} checked`, "good", "engineering-chain-count"],
-      ];
+      const tones = { qualified: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
+      const notes = {
+        qualified: `Target ${status.target.minimum}–${status.target.maximum}`,
+        preflight_passed: "Complete full qualification",
+        environment_required: "Host, access, or hardware needed",
+        untested: "Run initial preflight",
+        failed: "Fix, replace, or exclude",
+        excluded_archive: "Hidden from discovery",
+      };
+      const rows = status.category_key.map((item) => [item.label, status.category_counts[item.id], notes[item.id], tones[item.id] || "", `engineering-category-${item.id}`]);
       for (const [label, value, note, tone, testid] of rows) {
         const card = node("div", `card kpi ${tone}`);
         card.dataset.testid = testid;
@@ -235,6 +249,20 @@
         appendText(card, "strong", "kpi-value", String(value));
         appendText(card, "span", "kpi-note", note);
         byId("kpis").appendChild(card);
+      }
+    }
+
+    function renderCategoryKey(status) {
+      for (const item of status.category_key) {
+        const card = node("article", "card category-item");
+        card.dataset.testid = `category-key-${item.id}`;
+        const top = node("div", "protocol-top");
+        appendText(top, "h3", "", item.label);
+        appendText(top, "strong", "", String(status.category_counts[item.id]));
+        card.appendChild(top);
+        appendText(card, "p", "", item.definition);
+        appendText(card, "div", "category-action", `Next: ${item.action}`);
+        byId("category-key").appendChild(card);
       }
     }
 
@@ -302,7 +330,7 @@
         for (const item of rows) {
           const row = node("div", "breakdown-row");
           appendText(row, "span", "", item.key);
-          appendText(row, "span", "", `${item.passing}/${item.total}`);
+          appendText(row, "span", "", `${item.qualified}/${item.total} qualified`);
           group.appendChild(row);
         }
         byId("breakdowns").appendChild(group);
@@ -329,12 +357,12 @@
       tbody.replaceChildren();
       const query = byId("search").value.trim().toLowerCase();
       const disposition = byId("disposition").value;
-      const qualification = byId("qualification").value;
+      const category = byId("category").value;
       const protocol = byId("protocol").value;
       const filtered = status.records.filter((item) =>
         (!query || values(item).includes(query)) &&
         (!disposition || item.disposition === disposition) &&
-        (!qualification || item.qualification_status === qualification) &&
+        (!category || item.portfolio_category === category) &&
         (!protocol || item.protocol_family === protocol));
       byId("record-count").textContent = `${filtered.length} of ${status.records.length} servers shown`;
       byId("empty").hidden = filtered.length !== 0;
@@ -345,11 +373,13 @@
         appendText(identity, "div", "server-id", item.server_id);
         appendText(identity, "div", "dim", item.vendor);
         row.appendChild(identity);
-        const decision = node("td"); decision.appendChild(pill(item.disposition)); row.appendChild(decision);
+        const decision = node("td");
+        decision.appendChild(pill(item.portfolio_category));
+        appendText(decision, "div", "dim", item.portfolio_category_reason);
+        row.appendChild(decision);
         const state = node("td");
-        state.appendChild(pill(item.qualification_status));
-        appendText(state, "div", "dim", item.last_qualified_at ? `Qualified ${formatDate(item.last_qualified_at)}` : item.latest_result);
-        if (item.failure) appendText(state, "div", "dim", item.failure);
+        state.appendChild(pill(item.latest_result));
+        appendText(state, "div", "dim", item.last_qualified_at ? `Qualified ${formatDate(item.last_qualified_at)}` : item.latest_message);
         row.appendChild(state);
         const scope = node("td");
         appendText(scope, "div", "", item.scope || "—");
@@ -378,16 +408,18 @@
         node("span", "", `Policy ${status.policy_version}`),
         node("span", "", `Catalog ${status.catalog_sha256.slice(0, 12)}…`),
         node("span", "", `${status.records.length} records`),
+        node("span", "", `${status.counts.curated} curated · ${status.counts.follow_up} follow-up · ${status.counts.removed} archived`),
       );
       renderKpis(status);
+      renderCategoryKey(status);
       renderProtocols(status);
       renderChains(status);
       renderChanges(status);
       renderBreakdowns(status);
       addOptions("disposition", status.records, "disposition");
-      addOptions("qualification", status.records, "qualification_status");
+      addOptions("category", status.records, "portfolio_category");
       addOptions("protocol", status.records, "protocol_family");
-      for (const id of ["search", "disposition", "qualification", "protocol"]) byId(id).addEventListener("input", () => renderRecords(status));
+      for (const id of ["search", "category", "disposition", "protocol"]) byId(id).addEventListener("input", () => renderRecords(status));
       renderRecords(status);
       for (const text of status.limitations) appendText(byId("limitations"), "li", "", text);
     }

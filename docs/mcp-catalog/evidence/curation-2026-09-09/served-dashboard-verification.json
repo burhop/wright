@@ -1,11 +1,19 @@
 {
-  "observed_at": "2026-09-10T00:37:36.219Z",
+  "observed_at": "2026-09-10T01:08:17.497Z",
   "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "counts": {
     "curated": 10,
-    "follow_up": 56,
-    "removed": 12
+    "follow_up": 52,
+    "removed": 16
+  },
+  "category_counts": {
+    "qualified": 10,
+    "preflight_passed": 3,
+    "environment_required": 20,
+    "untested": 20,
+    "failed": 9,
+    "excluded_archive": 16
   },
   "qualification_counts": {
     "passing": 10,
