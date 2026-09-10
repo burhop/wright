@@ -155,6 +155,10 @@
   </header>
   <main id="dashboard" data-testid="engineering-mcp-dashboard">
     <div class="notice"><strong>Independent report</strong><span>This dashboard is generated from repository evidence. It is not part of Wright’s user-facing Tool Registry.</span></div>
+    <section>
+      <div class="section-head"><div><h2>Product view</h2><p class="section-copy">Only Available servers are ready for ordinary product discovery. The other groups require progressively more validation.</p></div></div>
+      <div class="grid kpis" id="product-groups" data-testid="engineering-product-groups"></div>
+    </section>
     <div class="grid kpis" id="kpis"></div>
 
     <section>
@@ -232,11 +236,11 @@
     const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, record.portfolio_category, record.portfolio_category_reason, record.curation_reason, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
 
     function renderKpis(status) {
-      const tones = { qualified: "good", credential_ready: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
+      const tones = { qualified: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
       const notes = {
         qualified: `Target ${status.target.minimum}–${status.target.maximum}`,
         preflight_passed: "Complete full qualification",
-        credential_ready: "Release with guided authentication",
+        authentication_required: "Authentication challenge only",
         environment_required: "Host, license, hardware, or lab needed",
         untested: "Run initial preflight",
         failed: "Fix, replace, or exclude",
@@ -250,6 +254,23 @@
         appendText(card, "strong", "kpi-value", String(value));
         appendText(card, "span", "kpi-note", note);
         byId("kpis").appendChild(card);
+      }
+    }
+
+    function renderProductGroups(status) {
+      const notes = {
+        available: "Release now",
+        preview: "Protocol works; backend qualification remains",
+        connect_and_verify: "Do not release until authenticated read + gateway pass",
+        lab_integrations: "Requires host, license, hardware, or lab",
+      };
+      for (const item of status.product_groups) {
+        const card = node("div", `card kpi ${item.id === "available" ? "good" : item.id === "lab_integrations" ? "warn" : ""}`);
+        card.dataset.testid = `engineering-product-${item.id}`;
+        appendText(card, "span", "kpi-label", item.label);
+        appendText(card, "strong", "kpi-value", String(item.count));
+        appendText(card, "span", "kpi-note", notes[item.id]);
+        byId("product-groups").appendChild(card);
       }
     }
 
@@ -411,6 +432,7 @@
         node("span", "", `${status.records.length} records`),
         node("span", "", `${status.counts.curated} curated · ${status.counts.follow_up} follow-up · ${status.counts.removed} archived`),
       );
+      renderProductGroups(status);
       renderKpis(status);
       renderCategoryKey(status);
       renderProtocols(status);

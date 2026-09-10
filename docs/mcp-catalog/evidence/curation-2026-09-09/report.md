@@ -2,7 +2,7 @@
 
 As of 2026-09-09 · policy 2026-09-08.1
 
-Catalog digest: `37026675fd9d9a3e1f532cea81682c9d89f384e1bdfcbc164a1aa44018803402`
+Catalog digest: `7cde2237d88f5ba7549f5b5d8738eebafe26358fd955cc7d8f58d347ab595f4f`
 
 Recorded decisions only; no MCP was installed or tested by this report.
 

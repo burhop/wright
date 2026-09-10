@@ -1971,15 +1971,14 @@ Problem:
   endpoints awaiting ordinary user authentication with servers needing CAD/CAE
   hosts, commercial licenses, GPU hardware, or a lab.
 Solution:
-  Added Credential ready as a distinct portfolio category. It requires a current
-  endpoint or server to reach the expected key, login, or OAuth boundary without
-  an additional host dependency. Product release eligibility is now exactly
-  Qualified plus Credential ready; post-login task and gateway proof remain
-  visible as incomplete.
+  Added Connect and verify as a distinct portfolio category. It records a current
+  endpoint or server reaching the expected key, login, or OAuth boundary without
+  treating the challenge as proof of post-login behavior. Product release
+  eligibility now requires full qualification.
 Result:
-  The dashboard reports 10 Qualified and 10 Credential ready servers in the
-  20-server product release set. Environment required now means host, license,
-  hardware, or dedicated-lab work.
+  The dashboard reports 10 Available servers, 4 Preview servers, 10 Connect and
+  verify candidates, and 26 Lab integrations. Only the 10 fully Qualified
+  servers are release eligible.
 
 Problem:
   Twenty catalog entries had no useful current execution classification.
@@ -1990,7 +1989,7 @@ Solution:
   Fusion desktop command-boundary check. No credentials, paid jobs, external
   writes, CAD mutations, or hardware operations were used.
 Result:
-  All 20 left Untested: 6 are Credential ready, 1 Preflight passed, 10
+  All 20 left Untested: 6 are Connect and verify, 1 Preflight passed, 10
   Environment required, 1 Failed, and 2 Excluded archive. Exact per-server JSON
   and the reviewed result manifest are under
   `evidence/curation-2026-09-09/`.

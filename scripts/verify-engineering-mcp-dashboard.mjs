@@ -51,6 +51,13 @@ try {
     await assertText(`engineering-category-${category.id}`, status.category_counts[category.id]);
     await assertText(`category-key-${category.id}`, category.definition);
   }
+  await page.getByTestId("engineering-product-groups").waitFor();
+  for (const group of status.product_groups) {
+    await assertText(`engineering-product-${group.id}`, group.count);
+  }
+  if (status.product_release.count !== status.category_counts.qualified) {
+    throw new Error("Product release count must include only fully qualified servers");
+  }
   for (const protocol of status.protocol_status) {
     await assertText(`engineering-protocol-${protocol.protocol}`, `${protocol.known} known`);
   }

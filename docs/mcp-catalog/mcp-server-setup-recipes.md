@@ -2536,8 +2536,8 @@ evidence linked from each catalog entry.
 
 | Servers | Launch or probe | Safe backend proof | Current boundary |
 |---|---|---|---|
-| Atlassian Rovo, GitHub, NVIDIA CUDA Docs, Onshape Labs, Rescale | `python scripts/probe-mcp-remote-http.py --endpoint <catalog-url> ...` | After guided authentication, list tools and perform one read-only fetch in a dedicated test account | Anonymous endpoint returned 401; **Credential ready** |
-| Partuno 4.0.1 | `uv tool run --from partuno==4.0.1 partuno-mcp` | `list_manufacturers {"limit":1,"offset":0}` | Initialize and 50 tools passed; DigiKey returned structured 401; **Credential ready** |
+| Atlassian Rovo, GitHub, NVIDIA CUDA Docs, Onshape Labs, Rescale | `python scripts/probe-mcp-remote-http.py --endpoint <catalog-url> ...` | After guided authentication, list tools and perform one read-only fetch in a dedicated test account | Anonymous endpoint returned 401; **Connect and verify** |
+| Partuno 4.0.1 | `uv tool run --from partuno==4.0.1 partuno-mcp` | `list_manufacturers {"limit":1,"offset":0}` | Initialize and 50 tools passed; DigiKey returned structured 401; **Connect and verify** |
 | Playwright MCP 0.0.80 | `npx -y @playwright/mcp@0.0.80 --headless --isolated --browser chromium` | Navigate to a deterministic local page, snapshot, then repeat through Wright | Initialize and tools/list passed; **Preflight passed** |
 | Grafana MCP | `docker run --rm -i grafana/mcp-grafana@sha256:5114852743e450fe5186b6c1712419843eb4bd295e47e64c452c3aa0fab3c42e -t stdio --disable-write` | Query one known metric and log stream with a read-only service token | Initialize and tools/list passed; Grafana backend absent; **Environment required** |
 | Fusion desktop, Blender, FreeCAD (Proximile and Danstan), OpenFOAM, Simulink, Omniverse Kit/OmniUI/Isaac Sim | Resolve the pinned publisher source, install only in the selected host/lab, then launch the catalog command | Status/list first; then the smallest disposable model or solver fixture | Required desktop, solver, license, or GPU host absent; **Environment required** |

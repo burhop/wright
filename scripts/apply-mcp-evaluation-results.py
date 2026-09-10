@@ -41,7 +41,7 @@ def main() -> int:
             "validated_at": results["as_of"],
             "evidence_status": "recorded",
         }
-        if result["category"] == "Credential ready":
+        if result["category"] == "Connect and verify":
             entry["credentials_required"] = result["missing"]
         sources = entry.setdefault("source_records", [])
         sources[:] = [source for source in sources if source.get("kind") != "evidence"]
@@ -57,7 +57,7 @@ def main() -> int:
         entry["curation"]["review_due"] = "2026-10-09"
         entry["curation"]["next_action"] = (
             "Review exact evidence at " + result["evidence"] + ". "
-            + ("Complete authentication and a read-only Wright gateway task." if result["category"] == "Credential ready" else
+            + ("Complete authentication and a read-only Wright gateway task." if result["category"] == "Connect and verify" else
                "Run the smallest recorded host/backend and Wright gateway scenario." if result["category"] == "Environment required" else
                "Complete a deterministic local-page browser task through Wright." if result["category"] == "Preflight passed" else
                "Correct the endpoint or source identity before another execution attempt.")

@@ -2,7 +2,7 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-09",
   "platform": null,
-  "catalog_sha256": "37026675fd9d9a3e1f532cea81682c9d89f384e1bdfcbc164a1aa44018803402",
+  "catalog_sha256": "7cde2237d88f5ba7549f5b5d8738eebafe26358fd955cc7d8f58d347ab595f4f",
   "counts": {
     "curated": 10,
     "follow_up": 50,

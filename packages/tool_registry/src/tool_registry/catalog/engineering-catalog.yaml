@@ -6083,7 +6083,7 @@ servers:
     primary: false
     authority: publisher
     observed_at: '2026-09-09'
-    notes: 'SHA-256 9ada8321a7cc97be1123dec04758a0a0a94764a90e7a99407e35357a0819b10f; portfolio category: Credential ready.'
+    notes: 'SHA-256 9ada8321a7cc97be1123dec04758a0a0a94764a90e7a99407e35357a0819b10f; portfolio category: Connect and verify.'
   locality: remote
   weight: medium
   env_vars:
@@ -7128,7 +7128,7 @@ servers:
     primary: false
     authority: publisher
     observed_at: '2026-09-09'
-    notes: 'SHA-256 499cdcfe145b266feb18aa9d7c31abcb6d93e41a2519172af65849f84eb99548; portfolio category: Credential ready.'
+    notes: 'SHA-256 499cdcfe145b266feb18aa9d7c31abcb6d93e41a2519172af65849f84eb99548; portfolio category: Connect and verify.'
   locality: remote
   weight: light
   env_vars: []
@@ -7673,7 +7673,7 @@ servers:
     primary: false
     authority: publisher
     observed_at: '2026-09-09'
-    notes: 'SHA-256 82ff6de9816ae2c03b0d1d869e5ebccfebea98804e2a6522a532baab4a984733; portfolio category: Credential ready.'
+    notes: 'SHA-256 82ff6de9816ae2c03b0d1d869e5ebccfebea98804e2a6522a532baab4a984733; portfolio category: Connect and verify.'
   runtime_requirements:
     cpu: standard CPU locally
     gpu: not required locally
@@ -7818,7 +7818,7 @@ servers:
     primary: false
     authority: publisher
     observed_at: '2026-09-09'
-    notes: 'SHA-256 0ab2440a23d01d82f645b4675b7356d08418793fead39253bf3621dbd81f4919; portfolio category: Credential ready.'
+    notes: 'SHA-256 0ab2440a23d01d82f645b4675b7356d08418793fead39253bf3621dbd81f4919; portfolio category: Connect and verify.'
   curation:
     disposition: follow_up
     reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
@@ -7874,7 +7874,7 @@ servers:
     primary: false
     authority: publisher
     observed_at: '2026-09-09'
-    notes: 'SHA-256 67df25fa5a29b22abace76ab6324defc6abad439ffcb4c4eece27ee45addc332; portfolio category: Credential ready.'
+    notes: 'SHA-256 67df25fa5a29b22abace76ab6324defc6abad439ffcb4c4eece27ee45addc332; portfolio category: Connect and verify.'
   curation:
     disposition: follow_up
     reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
@@ -8001,7 +8001,7 @@ servers:
     primary: false
     authority: community
     observed_at: '2026-09-09'
-    notes: 'SHA-256 815ec01328df9071edd1c538279114b758663011d927f5f8e1fc34346b0083cc; portfolio category: Credential ready.'
+    notes: 'SHA-256 815ec01328df9071edd1c538279114b758663011d927f5f8e1fc34346b0083cc; portfolio category: Connect and verify.'
   curation:
     disposition: follow_up
     reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.

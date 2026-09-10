@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-09-10T02:07:08.032Z",
+  "observed_at": "2026-09-10T13:02:50.787Z",
   "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "counts": {
@@ -10,7 +10,7 @@
   "category_counts": {
     "qualified": 10,
     "preflight_passed": 4,
-    "credential_ready": 10,
+    "authentication_required": 10,
     "environment_required": 26,
     "untested": 0,
     "failed": 10,

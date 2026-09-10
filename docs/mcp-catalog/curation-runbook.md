@@ -317,9 +317,10 @@ describe the next curation action and do not replace the exact technical result:
 
 - **Qualified:** current scoped protocol, backend, gateway, and outcome evidence.
 - **Preflight passed:** useful checks passed; complete Wright qualification remains.
-- **Credential ready:** a current server reached its expected authentication
-  boundary. It is eligible for product release with guided key, login, or OAuth
-  setup, while post-login task and gateway qualification remain visible.
+- **Connect and verify:** a current server reached an authentication challenge.
+  This proves the access boundary, not post-login tools, backend behavior, or
+  Wright gateway operation. Keep it out of ordinary product discovery until an
+  authenticated read and gateway call pass.
 - **Environment required:** host software, a license, hardware, or a dedicated
   lab environment beyond ordinary user authentication is needed.
 - **Untested:** no useful current execution evidence is recorded.

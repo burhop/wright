@@ -42,25 +42,25 @@ CHAIN_CALL_COUNTS = {
 PORTFOLIO_CATEGORIES = (
     {
         "id": "qualified",
-        "label": "Qualified",
+        "label": "Available (Qualified)",
         "definition": "Current evidence proves the scoped protocol, backend, and Wright gateway workflow.",
         "action": "Keep the evidence fresh and monitor upstream changes.",
     },
     {
         "id": "preflight_passed",
-        "label": "Preflight passed",
+        "label": "Preview (Preflight passed)",
         "definition": "The implementation passed useful checks, but its complete Wright workflow is not currently qualified.",
         "action": "Complete the backend and gateway scenario.",
     },
     {
-        "id": "credential_ready",
-        "label": "Credential ready",
-        "definition": "A current server reached its expected authentication boundary; full use requires a user key, login, or OAuth grant.",
-        "action": "Include in the product with guided authentication, then complete a read-only post-login qualification.",
+        "id": "authentication_required",
+        "label": "Connect and verify",
+        "definition": "The current endpoint or server reached an authentication challenge. Post-login tools, backend behavior, and Wright gateway operation remain unproven.",
+        "action": "Authenticate a dedicated test account, then require tools/list, one safe read, and a Wright gateway call before release.",
     },
     {
         "id": "environment_required",
-        "label": "Environment required",
+        "label": "Lab integrations",
         "definition": "Qualification needs host software, a license, hardware, or a dedicated lab environment beyond ordinary user authentication.",
         "action": "Run the scenario in a dedicated environment with the recorded prerequisites.",
     },
@@ -148,7 +148,7 @@ def _portfolio_category(
     if entry.validation_result.status in {"dependency_missing", "blocked"}:
         if entry.credentials_required and not entry.host_software_required:
             return (
-                "credential_ready",
+                "authentication_required",
                 "The current server reached an authentication boundary and requires "
                 + ", ".join(sorted(set(entry.credentials_required)))
                 + ".",
@@ -426,8 +426,7 @@ def build_engineering_status(
                 "qualification_status": status,
                 "portfolio_category": portfolio_category,
                 "portfolio_category_reason": portfolio_category_reason,
-                "release_eligible": portfolio_category
-                in {"qualified", "credential_ready"},
+                "release_eligible": portfolio_category == "qualified",
                 "protocol_family": _protocol_family(entry),
                 "transport": entry.transport,
                 "disciplines": sorted(entry.domains),
@@ -550,12 +549,30 @@ def build_engineering_status(
         },
         "category_key": list(PORTFOLIO_CATEGORIES),
         "product_release": {
-            "categories": ["qualified", "credential_ready"],
+            "categories": ["qualified"],
             "count": sum(record["release_eligible"] for record in records),
             "server_ids": [
                 record["server_id"] for record in records if record["release_eligible"]
             ],
         },
+        "product_groups": [
+            {
+                "id": group_id,
+                "label": label,
+                "count": sum(record["portfolio_category"] == category for record in records),
+                "server_ids": [
+                    record["server_id"]
+                    for record in records
+                    if record["portfolio_category"] == category
+                ],
+            }
+            for group_id, label, category in (
+                ("available", "Available", "qualified"),
+                ("preview", "Preview", "preflight_passed"),
+                ("connect_and_verify", "Connect and verify", "authentication_required"),
+                ("lab_integrations", "Lab integrations", "environment_required"),
+            )
+        ],
         "target": {
             "minimum": 10,
             "ideal": 15,

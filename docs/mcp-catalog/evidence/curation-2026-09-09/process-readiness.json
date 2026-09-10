@@ -1,10 +1,10 @@
 {
   "as_of": "2026-09-09",
   "release_policy": {
-    "eligible_categories": ["Qualified", "Credential ready"],
+    "eligible_categories": ["Qualified"],
     "qualified_count": 10,
-    "credential_ready_count": 10,
-    "rule": "Credential-ready servers may ship with guided authentication, but their post-login task and Wright gateway proof remains visible as incomplete."
+    "connect_and_verify_count": 10,
+    "rule": "Only Qualified servers are release eligible. Connect-and-verify servers remain hidden from ordinary product discovery until authenticated tools/list, one safe backend read, and a Wright gateway call pass."
   },
   "processes": [
     {
@@ -14,7 +14,7 @@
       "lifecycle_stages": ["design", "sourcing", "manufacturing"],
       "mcp_roles": [
         {"server": "kicad-mcp-blwfish", "category": "Qualified", "role": "Read the reviewed schematic/PCB BOM and reference designators."},
-        {"server": "partuno-mcp", "category": "Credential ready", "role": "Analyze DigiKey/Mouser stock, lifecycle, lead time, compliance, packaging, and substitutes."}
+        {"server": "partuno-mcp", "category": "Connect and verify", "role": "Analyze DigiKey/Mouser stock, lifecycle, lead time, compliance, packaging, and substitutes."}
       ],
       "inputs": ["KiCad project", "approved quantities", "target build date", "approved distributors"],
       "outputs": ["CSV/JSON sourcing report", "risk-ranked BOM", "substitution proposals"],
@@ -32,9 +32,9 @@
       "engineer_task": "Turn an approved requirement change into a traceable CAD revision and review package.",
       "lifecycle_stages": ["requirements", "design", "test_quality", "release"],
       "mcp_roles": [
-        {"server": "atlassian-rovo-mcp", "category": "Credential ready", "role": "Read the approved Jira requirement and linked Confluence rationale."},
+        {"server": "atlassian-rovo-mcp", "category": "Connect and verify", "role": "Read the approved Jira requirement and linked Confluence rationale."},
         {"server": "openscad-mcp", "category": "Qualified", "role": "Apply a parameterized geometry change and export a review artifact."},
-        {"server": "github-official-mcp", "category": "Credential ready", "role": "Read or stage traceability between requirement, model revision, checks, and review."}
+        {"server": "github-official-mcp", "category": "Connect and verify", "role": "Read or stage traceability between requirement, model revision, checks, and review."}
       ],
       "inputs": ["Approved requirement ID", "parameterized CAD source", "acceptance limits"],
       "outputs": ["Revised CAD source", "STL/PNG review artifact", "change evidence JSON"],
@@ -52,7 +52,7 @@
       "engineer_task": "Create a parameterized Onshape feature, evaluate the resulting part, and retain a reproducible design review.",
       "lifecycle_stages": ["concept", "design", "test_quality"],
       "mcp_roles": [
-        {"server": "onshape-labs-featurescript-mcp", "category": "Credential ready", "role": "Generate or inspect FeatureScript in the official Labs service."},
+        {"server": "onshape-labs-featurescript-mcp", "category": "Connect and verify", "role": "Generate or inspect FeatureScript in the official Labs service."},
         {"server": "onshape-mcp-hedless", "category": "Qualified", "role": "Exercise the reviewed Onshape document workflow and inspect resulting model properties."}
       ],
       "inputs": ["Part intent", "dimensions and units", "Onshape test document"],
@@ -72,7 +72,7 @@
       "lifecycle_stages": ["simulation", "test_quality", "release"],
       "mcp_roles": [
         {"server": "oasis-open-fem-agent", "category": "Qualified", "role": "Run the deterministic local FEA screening case and produce VTU evidence."},
-        {"server": "rescale-mcp-hosted", "category": "Credential ready", "role": "Read cloud job capabilities and status; submission remains approval-gated."}
+        {"server": "rescale-mcp-hosted", "category": "Connect and verify", "role": "Read cloud job capabilities and status; submission remains approval-gated."}
       ],
       "inputs": ["Solver deck", "material allowables", "mesh policy", "budget ceiling"],
       "outputs": ["Local baseline VTU", "cloud job status", "solver result manifest", "comparison report"],
@@ -91,7 +91,7 @@
       "lifecycle_stages": ["test_quality", "operations"],
       "mcp_roles": [
         {"server": "grafana-official-mcp", "category": "Environment required", "role": "Query read-only dashboards, alerts, Prometheus, and Loki evidence."},
-        {"server": "github-official-mcp", "category": "Credential ready", "role": "Read the workflow run and owning revision."}
+        {"server": "github-official-mcp", "category": "Connect and verify", "role": "Read the workflow run and owning revision."}
       ],
       "inputs": ["Run ID", "time window", "service labels", "revision SHA"],
       "outputs": ["Incident timeline", "query evidence", "suspect revision links"],
