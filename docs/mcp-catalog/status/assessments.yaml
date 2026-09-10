@@ -17,11 +17,12 @@ assessments:
   kernelcad-mcp:
     category: in_progress
     substatus: needs_repair
-    reason: The clean-container run found a repairable package dependency failure before protocol initialization; evaluation remains open.
+    reason: The new 0.15.0 release still fails before protocol initialization because its OpenCascade runtime is fetched from GitHub and Wright's package policy rejects mutable git dependencies.
     reviewed_at: "2026-09-10"
-    priority: normal
+    priority: high
     tests_completed:
-      - Clean-container package installation attempt
+      - Current npm metadata and integrity review
+      - Clean-container install attempts for 0.11.2 and 0.15.0
     tests_remaining:
       - Confirm an immutable registry-published dependency release
       - Run protocol, bracket workflow, export, gateway, outcome, and cleanup checks
@@ -57,3 +58,415 @@ assessments:
     limitations:
       - The clean-container dependency audit reported 33 vulnerabilities.
       - Startup failed on Node 18 despite the upstream Node 18+ statement.
+  ansys-fluent-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The official package passes protocol discovery and code validation, but no licensed Fluent solver, generated field result, or Wright gateway solver call has been proven.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Pinned 0.4.0 package, 25-tool discovery, and validate_code probe
+    tests_remaining:
+      - Run a deterministic licensed Fluent case through Wright with mesh, residual, field, export, timeout, and cleanup assertions
+    limitations:
+      - Current evidence does not prove CFD correctness.
+  ansys-mcp-server-community:
+    category: abandoned
+    substatus: closed
+    reason: The community server cannot import against current MCP SDK releases and never initializes; the official PyFluent MCP is the stronger maintained Ansys path.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Startup attempts on Python 3.12 and 3.13
+    tests_remaining: []
+    limitations:
+      - Preserved evidence ends before MCP initialization.
+  autodesk-fusion-data-mcp:
+    category: abandoned
+    substatus: closed
+    reason: The configured Autodesk API origin is not an MCP endpoint and no installable server or corrected endpoint identity was found.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Remote initialize attempt and endpoint identity review
+    tests_remaining: []
+    limitations:
+      - Reinstatement requires a concrete Autodesk-published MCP endpoint or package.
+  autodesk-fusion-desktop-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The proprietary desktop command is correctly absent from Linux; no disposable Fusion session has yet proven a safe backend call or Wright gateway path.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Clean-container host boundary and source review
+    tests_remaining:
+      - Run one deterministic model inspection and export through Wright on a disposable Fusion host
+    limitations:
+      - Requires Autodesk Fusion desktop and a suitable test license.
+  autodesk-fusion-mcp-python:
+    category: abandoned
+    substatus: closed
+    reason: The only advertised modeling tool fails before its Autodesk request because the package uses a nonexistent httpx BasicAuth API; fusion360-mcp-server is the stronger follow-up candidate.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Source install, protocol discovery, and generate_cube failure reproduction
+    tests_remaining: []
+    limitations:
+      - Preserved evidence contains no successful Autodesk backend operation.
+  blender-mcp-harveyxiacn:
+    category: in_progress
+    substatus: environment_needed
+    reason: The authoritative source is current, but this duplicate Blender bridge has only reached the host boundary and has no backend or Wright gateway result.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Current source identity and clean-container host boundary
+    tests_remaining:
+      - Compare its smallest Blender modeling task with the already qualified blender-mcp integration
+    limitations:
+      - Do not duplicate the qualified Blender integration without a material capability advantage.
+  cad-mcp-daobataotie:
+    category: in_progress
+    substatus: environment_needed
+    reason: The package requires Windows COM and a supported CAD host and cannot initialize on Linux; no Windows backend or gateway evidence exists.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Source install attempt and pywin32/win32com boundary
+    tests_remaining:
+      - Run one read-only drawing inspection on Windows and compare coverage with the qualified AutoCAD integration
+    limitations:
+      - Requires Windows plus AutoCAD, GstarCAD, or ZWCAD.
+  comsol-multiphysics-mcp-suzysa:
+    category: abandoned
+    substatus: closed
+    reason: The test suite passes but the server imports a removed MCP SDK module and cannot initialize; the wjc9011 COMSOL candidate remains the active evaluation path.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Seventy-six package tests and startup failure reproduction
+    tests_remaining: []
+    limitations:
+      - No MCP or licensed COMSOL operation completed.
+  comsol-multiphysics-mcp-wjc9011:
+    category: in_progress
+    substatus: evidence_review
+    reason: Source is known, but the dependency set begins a large ML/CUDA download and bundled COMSOL files require review before a safe selected-server install.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Source preflight and dependency boundary review
+    tests_remaining:
+      - Isolate a minimal server dependency set, review bundled artifacts, then test protocol before arranging licensed COMSOL
+    limitations:
+      - No package install or MCP initialization has completed.
+  creo-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: Local CadQuery export and MCP discovery work, but Creo/CREOSON is absent and the knowledge-base call lacks valid Volcengine credentials and Wright gateway proof.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Three-tool discovery, local STEP export, missing CREOSON diagnostic, and authentication boundary
+    tests_remaining:
+      - Run a controlled Creo open/import operation and knowledge lookup through Wright with real test credentials
+    limitations:
+      - Current evidence proves the local fallback, not Creo automation.
+  easy-mcp-autocad:
+    category: in_progress
+    substatus: environment_needed
+    reason: Windows-only pywin32 and AutoCAD COM requirements prevent Linux initialization; the live Windows workflow remains untested.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Source install attempts on Python 3.12 and 3.13
+    tests_remaining:
+      - Compare one Windows AutoCAD read and write task with Wright's qualified headless AutoCAD scope
+    limitations:
+      - Requires Windows and AutoCAD 2018 or later.
+  freecad-mcp-contextform:
+    category: abandoned
+    substatus: closed
+    reason: With FreeCAD installed and connected, the first modeling call hangs on invalid GUI-thread dispatch; Wright already qualifies freecad-mcp-nekanat.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Installer tests, FreeCAD connection, echo, and backend timeout reproduction
+    tests_remaining: []
+    limitations:
+      - Preserved evidence records host-thread errors and no modeling artifact.
+  freecad-mcp-proximile:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current but only the source boundary has been reviewed; package startup, FreeCAD operation, and Wright gateway behavior remain unknown.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Current source identity review
+    tests_remaining:
+      - Run the smallest FreeCAD operation and compare differentiated capability with freecad-mcp-nekanat
+    limitations:
+      - Avoid another FreeCAD recommendation without a clear capability advantage.
+  freecad-mcp-sandraschi:
+    category: abandoned
+    substatus: closed
+    reason: The server reports successful STL creation while producing no artifact and logging a mesh error; Wright already qualifies freecad-mcp-nekanat.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Ninety-four tests, protocol discovery, direct FreeCAD export, and false-success reproduction
+    tests_remaining: []
+    limitations:
+      - Preserved evidence records an unsafe success signal.
+  freecad-mcp-sergiudanstan:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current but only the source boundary has been reviewed; no package, FreeCAD backend, artifact, or Wright gateway evidence exists.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Current source identity review
+    tests_remaining:
+      - Run a minimal FreeCAD artifact task and compare differentiated capability with freecad-mcp-nekanat
+    limitations:
+      - Avoid another FreeCAD recommendation without a clear capability advantage.
+  fusion360-mcp-server:
+    category: in_progress
+    substatus: environment_needed
+    reason: The package passes 282 tests, protocol discovery, and mock operations, but no real Fusion add-in operation or Wright gateway artifact has been proven.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Upstream suite, 85-tool discovery, mock ping and create_box, and missing-add-in diagnostic
+    tests_remaining:
+      - Run a deterministic create, inspect, and export task through Wright on disposable Fusion
+    limitations:
+      - Mock mode does not establish Fusion backend correctness.
+  grafana-official-mcp:
+    category: preview
+    substatus: verification_incomplete
+    reason: Pinned Grafana MCP 1.0.0 authenticated to disposable Grafana 13.2 and passed read-only datasource discovery directly and through GatewayService; the Hermes-facing gateway and seeded-result oracle remain.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Fifty-two-tool discovery and authenticated list_datasources through direct MCP and Wright gateway
+      - Short-lived token, private Docker network, matching result hashes, and cleanup
+    tests_remaining:
+      - Repeat through the Hermes-facing Wright gateway and add a seeded engineering dashboard query with independent result assertions
+    limitations:
+      - Preview covers the proven read-only scope; users must supply their own Grafana URL and service token.
+  kicad-mcp-lamaalrajih:
+    category: abandoned
+    substatus: closed
+    reason: Eleven of sixteen advertised tools expose an unusable required context argument and normal MCP clients cannot call them; kicad-mcp-blwfish is already qualified.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Protocol discovery, sample project reads, schema failure, and upstream test review
+    tests_remaining: []
+    limitations:
+      - Preserved evidence records the client-visible ctx schema defect.
+  matlab-mcp-server:
+    category: in_progress
+    substatus: environment_needed
+    reason: The official binary and five tool schemas pass preflight, but MATLAB detection stops at the expected licensed-host boundary and no computation or gateway path is proven.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - SHA-pinned v0.13.0 startup, protocol discovery, and detect_matlab_toolboxes boundary
+    tests_remaining:
+      - Run a deterministic numerical calculation and artifact through Wright on licensed MATLAB
+    limitations:
+      - Requires MATLAB R2021a or later and an appropriate license.
+  multicad-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The maintained package declares a Windows COM boundary and cannot initialize on Linux; no supported CAD host has been exercised through Wright.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Current source review, package install boundary, and explicit non-Windows diagnostic
+    tests_remaining:
+      - Run one read-only document task on Windows against one supported CAD host through Wright
+    limitations:
+      - Requires Windows and AutoCAD, ZWCAD, GstarCAD, or BricsCAD.
+  nvidia-elements-mcp:
+    category: preview
+    substatus: verification_incomplete
+    reason: Pinned NVIDIA Elements CLI 2.2.2 passed all 18 tool schemas and skills_list directly and through Wright; its scope is useful but narrow and has no representative engineering UI task yet.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Pinned npm integrity, 18-tool discovery, direct skills_list, Wright gateway call, matching hashes, and cleanup
+    tests_remaining:
+      - Add one representative NVIDIA engineering UI guidance scenario and renew the qualification
+    limitations:
+      - Preview covers read-only design-system guidance and does not establish repeat user adoption.
+  nvidia-omniverse-isaac-sim-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current, but Isaac Sim, NVIDIA GPU execution, a backend tool call, and Wright gateway behavior require a dedicated lab host.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Current source and dedicated-host boundary review
+    tests_remaining:
+      - Run one read-only scene or simulation inspection through Wright on a supported GPU host
+    limitations:
+      - Requires Isaac Sim and supported NVIDIA GPU infrastructure.
+  nvidia-omniverse-kit-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current, but Omniverse Kit startup, a safe extension query, and Wright gateway behavior require a dedicated Kit host.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Current source and dedicated-host boundary review
+    tests_remaining:
+      - Run extension discovery and one read-only API documentation task through Wright on Omniverse Kit
+    limitations:
+      - Requires an Omniverse Kit environment.
+  nvidia-omniverse-omniui-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current, but OmniUI execution and Wright gateway behavior have not been tested on an Omniverse host.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Current source and dedicated-host boundary review
+    tests_remaining:
+      - Prove a differentiated OmniUI task through Wright or consolidate this record with the Kit integration
+    limitations:
+      - Requires Omniverse and must demonstrate value beyond the broader Kit server.
+  nvidia-omniverse-usd-code-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: Source wheels build successfully, but Docker startup, tool discovery, read-only USD search, credentials, and Wright gateway operation remain unproven.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Source build with Git LFS data resolved
+    tests_remaining:
+      - Start the recommended deployment and run read-only USD search through Wright with a dedicated NVIDIA credential
+    limitations:
+      - Requires NVIDIA_API_KEY for the recommended NGC-backed deployment.
+  openfoam-mcp-webworn:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current, but only the OpenFOAM 12 host boundary has been reviewed; protocol, solver execution, artifact checks, and Wright gateway behavior remain unknown.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Current source and clean-container host boundary review
+    tests_remaining:
+      - Run a small deterministic OpenFOAM case with mesh, residual, field, export, timeout, and cleanup assertions through Wright
+    limitations:
+      - OpenFOAM 12 is deliberately not part of Wright's base image.
+  rhino-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The package passes 192 tests and lists 66 tools with clear missing-bridge diagnostics, but live Rhino 8 backend and Wright gateway operations remain unproven.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Upstream suite, protocol discovery, and three missing-bridge backend calls
+    tests_remaining:
+      - Run one live Rhino object inspection and controlled edit through Wright and compare with the qualified headless Rhino scope
+    limitations:
+      - Requires Rhino 8 with the plugin and mcpstart bridge running.
+  simulink-agentic-toolkit:
+    category: in_progress
+    substatus: environment_needed
+    reason: The source is current, but licensed MATLAB/Simulink startup, model execution, result artifacts, and Wright gateway behavior require a dedicated host.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Current source and licensed-host boundary review
+    tests_remaining:
+      - Run a deterministic Simulink model, inspect signals, and export results through Wright
+    limitations:
+      - Requires licensed MATLAB and Simulink.
+  sketchup-mcp:
+    category: in_progress
+    substatus: needs_repair
+    reason: MCP starts and reports the missing SketchUp extension clearly, but the repository has no usable test suite and the advertised get_scene_info tool is absent from discovery.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Source install, 10-tool discovery, missing-extension read and eval diagnostics, and test-suite review
+    tests_remaining:
+      - Reconcile documented and actual tools, then run a small SketchUp scene task through Wright on the desktop host
+    limitations:
+      - Requires SketchUp desktop and its extension server.
+  solidworks-mcp-alisamsam:
+    category: abandoned
+    substatus: closed
+    reason: The documented requirements include an unavailable package and unconditional Windows COM imports, preventing installation and initialization; solidworks-mcp-ts is the stronger candidate.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Declared install path and reduced-dependency startup failure reproduction
+    tests_remaining: []
+    limitations:
+      - Preserved evidence ends before MCP initialization.
+  solidworks-mcp-python:
+    category: abandoned
+    substatus: closed
+    reason: The current dependency range cannot import the server, so MCP never initializes; solidworks-mcp-ts has a healthy suite and reaches the expected host boundary.
+    reviewed_at: "2026-09-10"
+    priority: low
+    tests_completed:
+      - Editable install, focused test import, CLI startup, and dependency mismatch reproduction
+    tests_remaining: []
+    limitations:
+      - Preserved evidence ends before MCP initialization.
+  solidworks-mcp-ts:
+    category: in_progress
+    substatus: environment_needed
+    reason: The package builds, passes 52 tests, lists 86 tools, and reports the missing Windows COM host correctly; live SolidWorks and Wright gateway behavior remain unproven.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Build, mock suite, protocol discovery, and two expected non-Windows backend diagnostics
+    tests_remaining:
+      - Run a deterministic part inspection and controlled edit through Wright on Windows with SolidWorks
+    limitations:
+      - Requires Windows, SolidWorks, and a working winax native module.
+  thingworx-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: Official documentation establishes the product-hosted Hardware MCP endpoint, but no live ThingWorx 10.1 endpoint, authenticated discovery, or Wright gateway call is available.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Official endpoint documentation and nonexistent local-package review
+    tests_remaining:
+      - Authenticate to a disposable ThingWorx 10.1 MCPServices endpoint and run one read-only resource query through Wright
+    limitations:
+      - Requires a live ThingWorx deployment and credentials.
+  webmcp-openscad:
+    category: in_progress
+    substatus: needs_repair
+    reason: The page builds, its OpenSCAD worker starts, and all 16 browser tools register, but relay 5.1.0 does not attach the page or expose those tools to MCP clients.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Pinned source build, Chromium page load, 16-tool browser discovery, OpenSCAD worker start, and relay protocol discovery
+    tests_remaining:
+      - Fix browser-to-relay attachment, then run render status and STL export through Wright with independent geometry inspection
+    limitations:
+      - The current failure is in the documented relay path, after the browser surface succeeds.
+  wincc-unified-mcp:
+    category: in_progress
+    substatus: environment_needed
+    reason: The official Siemens support artifact is login-gated and no public package exists; a Windows WinCC Unified host is required before protocol or backend testing.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Official documentation lookup and npm/PyPI/package-path preflight
+    tests_remaining:
+      - Obtain the official support artifact through an authorized account and test one read-only runtime query on Windows
+    limitations:
+      - This is an access and proprietary-host boundary, not a vendor prohibition.

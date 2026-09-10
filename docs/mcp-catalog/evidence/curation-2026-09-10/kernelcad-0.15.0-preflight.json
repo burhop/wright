@@ -1,0 +1,25 @@
+{
+  "server_id": "kernelcad-mcp",
+  "observed_at": "2026-09-10T20:02:37Z",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/w1ne/kernelCAD-web",
+  "package_revision": "kernelcad@0.15.0",
+  "package_integrity": "sha512-ZDdFsCX5ewTrhb8Hs9F+0psNW0QLCdIcTzX04BOLf3XUjDBGd+1630YqVg8Zt2oT0W5E3Rw/7HcNGAtyNV8HmA==",
+  "status": "failed",
+  "steps": [
+    {"stage": "registry_metadata", "status": "passed"},
+    {
+      "stage": "clean_container_install",
+      "status": "failed",
+      "diagnostic": "npm EALLOWGIT: fetching git dependencies is disabled"
+    },
+    {"stage": "mcp_protocol", "status": "not_reached"}
+  ],
+  "blocking_dependency": "replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.24.0",
+  "cleanup": "passed",
+  "limitations": [
+    "The current release still requires a GitHub-fetched runtime dependency and cannot be installed under Wright's clean-container package policy."
+  ]
+}

@@ -69,10 +69,10 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
     assert len(ids) == len(set(ids)) == status["total"] == 78
     assert status["category_counts"] == {
         "works": 10,
-        "preview": 4,
+        "preview": 6,
         "requires_login": 10,
-        "in_progress": 36,
-        "abandoned": 18,
+        "in_progress": 25,
+        "abandoned": 27,
         "vendor_blocked": 0,
     }
     assert sum(status["category_counts"].values()) == len(ids)
@@ -85,7 +85,15 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         for category in PORTFOLIO_CATEGORY_IDS
     }
     assert "kernelcad-mcp" in by_category["in_progress"]
-    assert "web3d-mcp" in by_category["preview"]
+    assert {"web3d-mcp", "grafana-official-mcp", "nvidia-elements-mcp"} <= (
+        by_category["preview"]
+    )
+    assert {
+        "ansys-mcp-server-community",
+        "freecad-mcp-contextform",
+        "kicad-mcp-lamaalrajih",
+        "solidworks-mcp-python",
+    } <= by_category["abandoned"]
     assert {"autocad-mcp-u-c4n", "rhino-mcp-easehee"} <= by_category["works"]
     assert set().union(*by_category.values()) == set(ids)
     assert {record["protocol_family"] for record in status["records"]} == {
@@ -96,35 +104,123 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
     assert status["chain_diagnostic"]["status"] == "not_supplied"
 
 
+def test_former_in_progress_batch_has_fresh_review_metadata():
+    reviewed_ids = {
+        "ansys-fluent-mcp",
+        "ansys-mcp-server-community",
+        "autodesk-fusion-data-mcp",
+        "autodesk-fusion-desktop-mcp",
+        "autodesk-fusion-mcp-python",
+        "blender-mcp-harveyxiacn",
+        "cad-mcp-daobataotie",
+        "comsol-multiphysics-mcp-suzysa",
+        "comsol-multiphysics-mcp-wjc9011",
+        "creo-mcp",
+        "easy-mcp-autocad",
+        "freecad-mcp-contextform",
+        "freecad-mcp-proximile",
+        "freecad-mcp-sandraschi",
+        "freecad-mcp-sergiudanstan",
+        "fusion360-mcp-server",
+        "grafana-official-mcp",
+        "kernelcad-mcp",
+        "kicad-mcp-lamaalrajih",
+        "matlab-mcp-server",
+        "multicad-mcp",
+        "nvidia-elements-mcp",
+        "nvidia-omniverse-isaac-sim-mcp",
+        "nvidia-omniverse-kit-mcp",
+        "nvidia-omniverse-omniui-mcp",
+        "nvidia-omniverse-usd-code-mcp",
+        "openfoam-mcp-webworn",
+        "rhino-mcp",
+        "simulink-agentic-toolkit",
+        "sketchup-mcp",
+        "solidworks-mcp-alisamsam",
+        "solidworks-mcp-python",
+        "solidworks-mcp-ts",
+        "thingworx-mcp",
+        "webmcp-openscad",
+        "wincc-unified-mcp",
+    }
+    records = {record["server_id"]: record for record in build_current()["records"]}
+    assert len(reviewed_ids) == 36
+    assert all(
+        records[item]["assessment_reviewed_at"] == "2026-09-10" for item in reviewed_ids
+    )
+    assert all(records[item]["tests_completed"] for item in reviewed_ids)
+    assert all(
+        records[item]["priority"] in {"low", "normal", "high", "urgent"}
+        for item in reviewed_ids
+    )
+
+
 def test_precedence_separates_vendor_restriction_abandonment_and_repair():
-    failed = sample_entry(validation_result={"status": "failed", "message": "startup failed"})
-    assert _portfolio_category(failed, disposition="follow_up", qualification_status="failing")[0] == "in_progress"
-    assert _portfolio_category(failed, disposition="removed", qualification_status="failing")[0] == "abandoned"
+    failed = sample_entry(
+        validation_result={"status": "failed", "message": "startup failed"}
+    )
+    assert (
+        _portfolio_category(
+            failed, disposition="follow_up", qualification_status="failing"
+        )[0]
+        == "in_progress"
+    )
+    assert (
+        _portfolio_category(
+            failed, disposition="removed", qualification_status="failing"
+        )[0]
+        == "abandoned"
+    )
     vendor = {
         "category": "vendor_blocked",
         "substatus": "restricted",
         "reason": "The vendor explicitly requested that this integration use stop.",
         "restriction_reference": "restricted-reference-1",
     }
-    assert _portfolio_category(failed, disposition="removed", qualification_status="failing", assessment=vendor)[0] == "vendor_blocked"
+    assert (
+        _portfolio_category(
+            failed,
+            disposition="removed",
+            qualification_status="failing",
+            assessment=vendor,
+        )[0]
+        == "vendor_blocked"
+    )
 
 
 def test_authentication_requires_an_observed_blocked_result():
     credential_only = sample_entry(credentials_required=["API_TOKEN"])
-    assert _portfolio_category(credential_only, disposition="follow_up", qualification_status="untested")[0] == "in_progress"
+    assert (
+        _portfolio_category(
+            credential_only, disposition="follow_up", qualification_status="untested"
+        )[0]
+        == "in_progress"
+    )
     observed = credential_only.model_copy(
         update={
             "validation_result": credential_only.validation_result.model_copy(
-                update={"status": "blocked", "message": "Authentication challenge observed"}
+                update={
+                    "status": "blocked",
+                    "message": "Authentication challenge observed",
+                }
             )
         }
     )
-    assert _portfolio_category(observed, disposition="follow_up", qualification_status="blocked")[0] == "requires_login"
+    assert (
+        _portfolio_category(
+            observed, disposition="follow_up", qualification_status="blocked"
+        )[0]
+        == "requires_login"
+    )
 
 
 def test_expired_works_become_review_needed_without_erasing_past_success():
     status = build_current(date(2026, 10, 10))
-    autocad = next(record for record in status["records"] if record["server_id"] == "autocad-mcp-u-c4n")
+    autocad = next(
+        record
+        for record in status["records"]
+        if record["server_id"] == "autocad-mcp-u-c4n"
+    )
     assert autocad["portfolio_category"] == "in_progress"
     assert autocad["progress_substatus"] == "renewal_due"
     assert autocad["latest_result"] == "passed"
@@ -170,8 +266,13 @@ def test_public_projection_is_an_allowlist_with_matching_membership_and_counts()
     assert [row["server_id"] for row in public["records"]] == [
         row["server_id"] for row in qa["records"]
     ]
-    assert all("owner" not in row and "evidence_href" not in row for row in public["records"])
-    assert all(not row.get("source_url") or row["source_url"].startswith("https://") for row in public["records"])
+    assert all(
+        "owner" not in row and "evidence_href" not in row for row in public["records"]
+    )
+    assert all(
+        not row.get("source_url") or row["source_url"].startswith("https://")
+        for row in public["records"]
+    )
     public_schema = json.loads((STATUS_ROOT / "status.schema.json").read_text("utf-8"))
     assert not list(Draft202012Validator(public_schema).iter_errors(public))
 
@@ -190,7 +291,10 @@ def test_history_is_idempotent_supports_corrections_and_declines():
     declined["observed_at"] = "2026-09-11T12:00:00Z"
     declined["assessed_as_of"] = "2026-09-11"
     declined["green_count"] -= 1
-    declined["green_components"] = dict(declined["green_components"], preview=declined["green_components"]["preview"] - 1)
+    declined["green_components"] = dict(
+        declined["green_components"],
+        preview=declined["green_components"]["preview"] - 1,
+    )
     corrected, added = record_history(
         history,
         declined,
@@ -208,7 +312,9 @@ def test_invalid_input_preserves_last_good_output(tmp_path):
     sentinel = destination / "status.json"
     sentinel.write_text('{"last_good": true}\n', encoding="utf-8")
     invalid = tmp_path / "invalid.yaml"
-    invalid.write_text("schema_version: 1\npolicy_version: wrong\nassessments: {}\n", encoding="utf-8")
+    invalid.write_text(
+        "schema_version: 1\npolicy_version: wrong\nassessments: {}\n", encoding="utf-8"
+    )
     process = subprocess.run(
         [
             sys.executable,

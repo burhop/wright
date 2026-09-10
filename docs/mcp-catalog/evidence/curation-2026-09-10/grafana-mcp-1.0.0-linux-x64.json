@@ -1,0 +1,42 @@
+{
+  "server_id": "grafana-official-mcp",
+  "observed_at": "2026-09-10T20:00:39Z",
+  "finished_at": "2026-09-10T20:00:39Z",
+  "duration_seconds": 0.843,
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "source_url": "https://github.com/grafana/mcp-grafana",
+  "source_revision": "1.0.0",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "package_integrity": "grafana/mcp-grafana@sha256:5efeafd01cd7e1aea9c4b0f03305951f2944db8f43e5ae290cce9578c977f241",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_and_discovery",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_safe_backend_call",
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_discovery",
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_safe_backend_call",
+      "status": "passed"
+    }
+  ],
+  "tool_count": 52,
+  "tool_schema_sha256": "33127e1d1b60eda54e1b59094456b8900f17e8a6b2bbacd2cf30e7d6f0ff7b28",
+  "safe_tool": "list_datasources",
+  "safe_result_sha256": "83ac6549d6e6b8b3cfc388cc3549a4f39c8d79d9458f53eb9410b6e2dfbadfc6",
+  "gateway_tool_count": 52,
+  "gateway_result_sha256": "83ac6549d6e6b8b3cfc388cc3549a4f39c8d79d9458f53eb9410b6e2dfbadfc6",
+  "audit_event_count": 106,
+  "cleanup": "passed",
+  "limitations": [
+    "This run proves the selected read-only scope; it does not establish repeat user adoption."
+  ]
+}

@@ -221,13 +221,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: Current validation reports successful STL creation when no artifact exists. Wright already qualifies the maintained FreeCAD Python Server for the same core modeling workflow.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; reconsider only after an upstream release fixes artifact verification and is materially better than the qualified FreeCAD integration.
     adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: jarvis-onshape-mcp
   name: Jarvis OnShape MCP
   vendor: ReshefElisha
@@ -875,13 +877,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: The current package fails its only advertised modeling call before any Autodesk request because it uses a nonexistent httpx BasicAuth API; a better-maintained Fusion bridge remains under evaluation.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; reconsider only after a tested upstream authentication fix and a current Fusion backend workflow are available.
     adoption: unknown
+    replacement_ids:
+    - fusion360-mcp-server
 - id: revit-mcp
   name: Revit BIM MCP
   vendor: mcp-servers-for-revit
@@ -1540,13 +1544,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: The current declared dependency range cannot import the server, so MCP never initializes. The TypeScript SolidWorks integration has a healthy test suite and reaches the expected host boundary.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the import-failure evidence; reconsider after an upstream dependency fix and live Windows/SolidWorks proof.
     adoption: unknown
+    replacement_ids:
+    - solidworks-mcp-ts
 - id: solidworks-mcp-ts
   name: SolidWorks TypeScript COM
   vendor: vespo92
@@ -1720,13 +1726,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: The documented requirements include an unavailable package and unconditional Windows COM imports, preventing installation and MCP initialization. The TypeScript SolidWorks integration is the stronger follow-up candidate.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the install-failure evidence; reconsider after corrected dependency metadata and live Windows/SolidWorks proof.
     adoption: unknown
+    replacement_ids:
+    - solidworks-mcp-ts
 - id: solidworks-api-mcp
   name: SolidWorks API Knowledge Base
   vendor: kilwizac
@@ -1891,13 +1899,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: With FreeCAD installed and connected, the first modeling call hangs on invalid GUI-thread dispatch. Wright already qualifies the maintained FreeCAD Python Server for the same core workflow.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the thread-failure evidence; reconsider only after upstream provides a safe host-thread implementation with artifact proof.
     adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: freecad-addon-robust
   name: FreeCAD Robust Server
   vendor: spkane
@@ -3175,6 +3185,7 @@ servers:
   - python
   - local
   - dependency-missing
+  - needs-repair
   transport: stdio
   command:
   - uvx
@@ -3349,6 +3360,19 @@ servers:
   - -y
   - '@mcp-b/webmcp-local-relay@latest'
   source_url: https://github.com/jherr/webmcp-openscad
+  source_records:
+  - url: https://github.com/jherr/webmcp-openscad
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Commit a3acb68578701001f0251459c75716a55aadfa10 documents the browser surface and local relay path.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/webmcp-openscad-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: The browser registered all 16 tools and started the OpenSCAD worker, but relay 5.1.0 exposed only four management tools and did not attach the page.
   locality: local
   weight: light
   env_vars: []
@@ -3364,7 +3388,7 @@ servers:
   - webmcp-openscad-jherr
   - scad-webmcp
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: non_working
   risk_level: medium
   deployment_mode: browser-bridge
   platform_support:
@@ -3373,9 +3397,9 @@ servers:
       tested: false
       notes: requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge
     linux_x64:
-      status: host-dependent
+      status: 'no'
       tested: true
-      notes: clean Intel Ubuntu validation installed Node 22 and pnpm, built the app, initialized the local relay MCP, and confirmed page tools require a connected browser source
+      notes: The page registered 16 tools in Chromium, but the documented local relay did not attach the browser source or expose those tools to MCP.
     linux_arm64:
       status: unknown
       tested: false
@@ -3394,13 +3418,15 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: dependency_missing
-    message: 'Clean Intel Ubuntu validation cloned jherr/webmcp-openscad at commit a3acb68578701001f0251459c75716a55aadfa10. Ubuntu''s default Node 18 could not run pnpm 11.9.0, so validation installed Node 22.23.1 with `n` after adding curl. `pnpm install --frozen-lockfile` succeeded with pnpm 11.9.0. `pnpm test` did not find any test files and exited 1, with additional Vitest/Vite shutdown noise `ReferenceError: module is not defined`; this repo does not currently provide a usable upstream test suite. `pnpm build` succeeded for the TanStack/Nitro app. Serving `node .output/server/index.mjs` produced a 7156-byte HTML page titled `scad-webmcp · agent-driven parametric CAD` that embeds `@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js`. MCP stdio probing `npx -y @mcp-b/webmcp-local-relay@latest` initialized serverInfo `webmcp-local-relay` version 0.0.0, listed 4 relay tools, and calls to `webmcp_list_sources` and `webmcp_list_tools` returned zero sources/tools because no browser page
-      was connected. Full validation of the advertised 16 OpenSCAD browser tools requires a browser tab connected through MCP-B or native WebMCP.'
-    environment: ubuntu-linux-x64-container
+    status: failed
+    message: Fresh Intel Linux validation built the pinned page, loaded it in Chromium, observed all 16 tools on navigator.modelContext, and observed the OpenSCAD worker mount 56 BOSL2 files. The pinned relay 5.1.0 initialized and listed four management tools, but it did not attach the page or expose get_render_status to MCP or Wright GatewayService.
+    environment: clean-wright-derived-linux-x64-container
     missing_dependencies:
-    - browser tab running scad-webmcp
-    - MCP-B extension or native WebMCP bridge
+    - functioning browser-to-relay attachment
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  follow_up_url: docs/mcp-catalog/followups/webmcp-openscad.md
+  install_blocked_reason: The browser WebMCP surface registers correctly, but the documented local relay path does not attach the page or project its CAD tools to MCP clients.
   headless_ok: 'no'
   engineering_stages:
   - design
@@ -3408,11 +3434,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The browser surface works, but the documented local relay failed to expose its registered OpenSCAD tools to Wright, so the integration needs a bridge repair.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Diagnose relay embed attachment with pinned 5.1.0, then require get_render_status and an STL export through Wright GatewayService before release.
     adoption: unknown
 - id: web3d-mcp
   name: React Three Fiber Web3D
@@ -4294,13 +4320,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: Eleven of sixteen advertised tools expose an unusable required context argument and normal MCP clients cannot call them. Wright already qualifies the blwfish KiCad integration.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the schema-failure evidence; reconsider after upstream removes the client-visible context argument and demonstrates KiCad 9 backend calls.
     adoption: unknown
+    replacement_ids:
+    - kicad-mcp-blwfish
 - id: kicad-mcp-blwfish
   name: KiCad MCP by blwfish
   vendor: blwfish
@@ -5248,13 +5276,14 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The configured Autodesk API origin is not an MCP endpoint and no installable server or corrected endpoint identity was found, so this record cannot initialize.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-data-mcp-remote.json. Correct the endpoint or source identity before another execution attempt.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the endpoint evidence; reinstate only when Autodesk publishes a concrete MCP endpoint or distributable server with current documentation.
     adoption: unknown
+    replacement_ids: []
 - id: openfoam-mcp-webworn
   name: OpenFOAM MCP Server
   vendor: webworn
@@ -6402,14 +6431,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: The community server cannot import against current MCP SDK releases and never initializes; the official PyFluent MCP is the stronger maintained Ansys path.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Resolve or reproduce
-      the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the import-failure evidence; reconsider after a compatible upstream release demonstrates capabilities beyond the official PyFluent server.
     adoption: unknown
+    replacement_ids:
+    - ansys-fluent-mcp
 - id: comsol-multiphysics-mcp-wjc9011
   name: COMSOL MCP Server
   vendor: wjc9011
@@ -6639,13 +6669,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Previous validation failed. This integration is excluded from recommendations while the recorded failure is investigated.
+    disposition: removed
+    reason: The package tests pass but the server imports a removed MCP SDK module and cannot initialize; the other COMSOL candidate remains the active evaluation path.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Resolve or reproduce the failure in the existing follow-up record; retire by the review deadline if no viable repair exists.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the startup evidence; reconsider after an upstream MCP SDK compatibility release and licensed COMSOL backend proof.
     adoption: unknown
+    replacement_ids:
+    - comsol-multiphysics-mcp-wjc9011
 - id: nvidia-omniverse-kit-mcp
   name: NVIDIA Omniverse Kit MCP
   vendor: NVIDIA Omniverse
@@ -7208,7 +7240,8 @@ servers:
   transport: stdio
   command:
   - npx
-  - '@nvidia-elements/cli'
+  - --yes
+  - '@nvidia-elements/cli@2.2.2'
   - mcp
   source_url: https://nvidia.github.io/elements/docs/mcp/
   repository_url: https://github.com/NVIDIA/elements
@@ -7242,6 +7275,12 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/nvidia-elements-2.2.2-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Pinned npm 2.2.2 passed MCP discovery and skills_list directly and through Wright GatewayService on Intel Linux.
   locality: local
   weight: light
   env_vars: []
@@ -7251,8 +7290,8 @@ servers:
     python: []
     node:
     - '@nvidia-elements/cli'
-  verification_state: verified_docs_mcp
-  installability_tier: might_work
+  verification_state: verified_mcp
+  installability_tier: tested
   risk_level: read-only
   deployment_mode: local-docs
   runtime_requirements:
@@ -7266,9 +7305,9 @@ servers:
       tested: false
       notes: npm command should run with Node.js; validation needed.
     linux_x64:
-      status: likely
-      tested: false
-      notes: npm command should run with Node.js; validation needed.
+      status: 'yes'
+      tested: true
+      notes: Pinned npm 2.2.2 listed 18 tools and returned identical skills_list results directly and through Wright GatewayService.
     linux_arm64:
       status: likely
       tested: false
@@ -7281,19 +7320,17 @@ servers:
       status: likely
       tested: false
       notes: npm command should run with Node.js; validation needed.
-  host_software_required:
-  - Node.js
+  host_software_required: []
   credentials_required: []
   default_enabled: false
   approval_gates: []
   validation_result:
-    status: dependency_missing
-    message: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs Wright/Hermes gateway evidence.
-    environment: gb10-linux-arm64-clean-container
-    missing_dependencies:
-    - gateway proxy evidence
-    validated_at: '2026-08-12'
-    evidence_status: partial
+    status: passed
+    message: Pinned NVIDIA Elements CLI 2.2.2 initialized in a clean Wright Intel Linux container, listed 18 tools, and returned the same skills_list result directly and through Wright GatewayService. The qualified scope is read-only design-system guidance; repeat user adoption is unknown.
+    environment: clean-wright-container-linux-x64
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
   engineering_stages:
   - test_quality
   - operations
@@ -7301,11 +7338,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The pinned current package passed protocol discovery and a read-only design-system call directly and through Wright's gateway. The useful but narrow documentation scope is released as Preview.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Renew the pinned package qualification and add a representative NVIDIA engineering UI guidance task before promoting beyond Preview.
     adoption: unknown
 - id: nvidia-kit-cae-agent-skills
   name: NVIDIA Omniverse Kit-CAE Agent Skills
@@ -7913,7 +7950,7 @@ servers:
   - GRAFANA_URL
   - -e
   - GRAFANA_SERVICE_ACCOUNT_TOKEN
-  - grafana/mcp-grafana
+  - grafana/mcp-grafana@sha256:5efeafd01cd7e1aea9c4b0f03305951f2944db8f43e5ae290cce9578c977f241
   - -t
   - stdio
   - --disable-write
@@ -7922,7 +7959,7 @@ servers:
   weight: light
   maturity: official
   verification_state: verified_mcp
-  installability_tier: might_work
+  installability_tier: tested
   risk_level: medium
   default_enabled: false
   install_method: docker
@@ -7940,13 +7977,19 @@ servers:
     authority: publisher
     observed_at: '2026-09-09'
     notes: 'SHA-256 ec5f0e08abcb3f413830c83140444f742629995ead54e04e2a308b8573efa84b; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/grafana-mcp-1.0.0-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Pinned 1.0.0 image authenticated to disposable Grafana 13.2 and passed list_datasources directly and through Wright GatewayService.
   curation:
     disposition: follow_up
-    reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
+    reason: The pinned read-only server authenticated to Grafana 13.2 and passed protocol discovery plus a backend datasource query directly and through Wright's gateway.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/grafana-official-mcp-preflight.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Renew the pinned read-only qualification against a seeded engineering dashboard and add independent query-result assertions.
     adoption: unknown
   repository_url: https://github.com/grafana/mcp-grafana
   credentials_required:
@@ -7955,13 +7998,11 @@ servers:
   - Docker
   - Grafana 9 or later
   validation_result:
-    status: dependency_missing
-    message: The digest-pinned official container passed initialize and tools/list in read-only mode; a Grafana instance and service token are required for a backend call.
-    environment: wright-clean-debian13-x64
-    missing_dependencies:
-    - Grafana 9 or later
-    - GRAFANA_SERVICE_ACCOUNT_TOKEN
-    validated_at: '2026-09-09'
+    status: passed
+    message: The digest-pinned Grafana MCP 1.0.0 server authenticated with a short-lived service token to disposable Grafana 13.2, listed 52 read-only tools, and returned identical list_datasources results directly and through Wright GatewayService.
+    environment: clean-wright-container-linux-x64
+    missing_dependencies: []
+    validated_at: '2026-09-10'
     evidence_status: recorded
 - id: partuno-mcp
   name: Partuno component sourcing MCP
@@ -8038,11 +8079,11 @@ servers:
   command:
   - npx
   - --yes
-  - kernelcad@0.11.2
+  - kernelcad@0.15.0
   - mcp
   source_url: https://github.com/w1ne/kernelCAD-web
   repository_url: https://github.com/w1ne/kernelCAD-web
-  package_url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.11.2.tgz
+  package_url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.15.0.tgz
   license: MIT
   auth_model: none
   install_method: npm
@@ -8075,6 +8116,12 @@ servers:
     authority: publisher
     observed_at: '2026-09-09'
     notes: Fresh Intel Linux attempt records the clean-container package-install blocker and cleanup.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Current npm 0.15.0 still fails with EALLOWGIT before MCP startup because its OpenCascade runtime is fetched from GitHub.
   runtime_requirements:
     cpu: standard x64 workstation CPU
     gpu: not required for headless evaluation
@@ -8084,8 +8131,8 @@ servers:
   weight: medium
   dependencies:
     node:
-    - kernelcad@0.11.2
-    - replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.23.1
+    - kernelcad@0.15.0
+    - replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.24.0
   verification_state: community_mcp
   installability_tier: blocked
   risk_level: medium
@@ -8098,11 +8145,11 @@ servers:
   default_enabled: false
   validation_result:
     status: failed
-    message: kernelCAD 0.11.2 could not initialize in the fresh Wright container because npm rejected its replicad-opencascadejs GitHub dependency with EALLOWGIT; no protocol or CAD task was executed.
+    message: Current kernelCAD 0.15.0 could not initialize in the fresh Wright container because npm rejected its replicad-opencascadejs GitHub dependency with EALLOWGIT; no protocol or CAD task was executed.
     environment: fresh-disposable-wright-engineering-container
     missing_dependencies:
     - Registry-published immutable replicad-opencascadejs dependency
-    validated_at: '2026-09-09'
+    validated_at: '2026-09-10'
     evidence_status: partial
   follow_up_url: docs/mcp-catalog/followups/kernelcad-mcp.md
   install_blocked_reason: The reviewed npm package depends on a GitHub fetch that Wright's clean-container npm policy rejects; publishing that dependency as an immutable registry artifact is required before MCP qualification.
@@ -8110,8 +8157,8 @@ servers:
     disposition: follow_up
     reason: This is a relevant newly discovered CAD MCP, but its reviewed package does not install under Wright's clean-container dependency policy.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
     next_action: Recheck for a release with registry-published immutable dependencies; then run a parameterized bracket review and STEP/STL export through Wright GatewayService with independent geometry, error, timeout, and cleanup checks.
     adoption: unknown
 format_version: 1

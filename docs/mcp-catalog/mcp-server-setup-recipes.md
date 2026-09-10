@@ -2544,3 +2544,43 @@ evidence linked from each catalog entry.
 | Autodesk Fusion Data | Replace the API origin with the publisher-documented MCP endpoint before retrying | Read one project/document metadata record | Current catalog URL terminates before MCP initialize; **Failed** |
 | Siemens Xcelerator Developer Portal | Do not launch the web portal URL as MCP | None until the publisher documents an MCP endpoint | Non-MCP URL; **Excluded archive** |
 | SolidEdgeMCP (burhop) | Do not distribute from an unavailable source | Retain old Windows diagnostics only as history | Canonical public repository remains 404; **Excluded archive** |
+
+## 10 September focused qualification recipes
+
+### NVIDIA Elements MCP
+
+- Launch the integrity-pinned npm package with `npx --yes
+  @nvidia-elements/cli@2.2.2 mcp` in a fresh standard Wright container.
+- Require initialization, exactly 18 tools, and `skills_list {}` directly and
+  through `nvidia-elements-mcp__skills_list` on Wright GatewayService.
+- Hash the tool schemas and both results; require matching direct and gateway
+  result hashes and disposable-container cleanup.
+- The released Preview scope is read-only NVIDIA Elements design-system
+  guidance. It does not claim a solver, CAD backend, or repeat user adoption.
+
+### Grafana MCP
+
+- Pin `grafana/mcp-grafana:1.0.0` by digest and launch with `-t stdio
+  --disable-write`.
+- Start a disposable official Grafana 13.2 container on a private Docker network,
+  create a Viewer service account and short-lived token, and never record the
+  token in evidence or logs.
+- Require 52-tool discovery and `list_datasources {}` directly and through
+  `grafana-official-mcp__list_datasources` on Wright GatewayService. Require
+  matching result hashes, then remove the token, backend, network, extracted
+  binary, and containers.
+- The Works scope is authenticated read-only observability. A seeded engineering
+  dashboard query and independent result assertion remain useful renewal work.
+
+### Web OpenSCAD
+
+- Pin source commit `a3acb68578701001f0251459c75716a55aadfa10`, pnpm 11.9.0,
+  relay 5.1.0, and a recorded Chromium/Playwright version in a disposable
+  Wright-derived container. Do not add browser or OpenSCAD dependencies to the
+  base image.
+- Build and serve the app, start the stdio relay first, then load the page. Check
+  both `navigator.modelContext.listTools()` and MCP `tools/list`.
+- The current page boundary passes with 16 tools, while the relay exposes only
+  four management tools. Diagnose that attachment before attempting
+  `get_render_status`, deterministic render, STL export, independent mesh
+  inspection, and Wright gateway calls.

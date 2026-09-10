@@ -64,7 +64,7 @@ try{
   await page.getByLabel("Search integrations").fill("kernelcad-mcp");
   if(await page.locator("details.record").count()!==1)throw new Error("Search did not find exact integration");
   const kernel=page.getByTestId("integration-kernelcad-mcp");await kernel.locator("summary").click();
-  if(!(await kernel.innerText()).includes("repairable package dependency failure"))throw new Error("Reviewed kernelCAD reason is missing");
+  if(!(await kernel.innerText()).includes("OpenCascade runtime is fetched from GitHub"))throw new Error("Reviewed kernelCAD reason is missing");
 
   const corrected=new Set(history.snapshots.map(item=>item.corrects).filter(Boolean));
   const effectiveHistory=history.snapshots.filter(item=>!corrected.has(item.snapshot_id));

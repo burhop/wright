@@ -1993,3 +1993,32 @@ Result:
   Environment required, 1 Failed, and 2 Excluded archive. Exact per-server JSON
   and the reviewed result manifest are under
   `evidence/curation-2026-09-09/`.
+
+Problem:
+  The Web OpenSCAD source built and registered 16 tools in Chromium, but the
+  documented extension-free relay exposed only its four management tools and
+  never attached the page. Wright could not call `get_render_status` or reach an
+  STL export through MCP.
+Solution:
+  Pinned source commit `a3acb68578701001f0251459c75716a55aadfa10` and relay
+  5.1.0, installed Git, pnpm, Playwright, and Chromium only in a disposable
+  Wright-derived container, and instrumented both the browser WebMCP surface and
+  stdio relay boundary. No base-image dependency changed.
+Result:
+  The page, 16 browser tools, and OpenSCAD worker passed. Browser-to-relay
+  attachment failed, so the integration remains In progress / Needs repair with
+  exact follow-up and cleanup evidence in
+  `evidence/curation-2026-09-10/webmcp-openscad-linux-x64.json`.
+
+Problem:
+  kernelCAD 0.11.2 could not install because Wright's clean npm policy rejects
+  its GitHub-fetched OpenCascade runtime. A newer release was available, so the
+  old failure no longer established the current package state.
+Solution:
+  Reviewed and attempted the integrity-pinned `kernelcad@0.15.0` tarball in a
+  fresh standard Wright Intel Linux container without weakening npm policy.
+Result:
+  Version 0.15.0 still fails with `EALLOWGIT` on
+  `replicad-opencascadejs#kcad-v0.24.0`; protocol and CAD stages remain
+  unreachable. The record stays In progress / Needs repair and points to
+  `evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json`.
