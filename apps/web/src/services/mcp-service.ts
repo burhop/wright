@@ -303,108 +303,6 @@ export interface CapabilityListResponse {
   total: number;
 }
 
-export type EngineeringQualificationStatus =
-  | "passing"
-  | "failing"
-  | "blocked"
-  | "stale"
-  | "untested";
-
-export interface EngineeringStatusBreakdown {
-  key: string;
-  passing: number;
-  failing: number;
-  blocked: number;
-  stale: number;
-  untested: number;
-  total: number;
-}
-
-export interface EngineeringMcpStatus {
-  schema_version: 1;
-  generated_at: string;
-  as_of: string;
-  policy_version: string;
-  counts: { curated: number; follow_up: number; removed: number };
-  qualification_counts: Record<EngineeringQualificationStatus, number>;
-  target: {
-    minimum: number;
-    ideal: number;
-    maximum: number;
-    curated: number;
-    minimum_met: boolean;
-    ideal_met: boolean;
-  };
-  breakdowns: Record<
-    "disciplines" | "protocols" | "transports" | "platforms" | "dependencies",
-    EngineeringStatusBreakdown[]
-  >;
-  protocol_status: Array<{
-    protocol: "mcp" | "webmcp" | "hardware_mcp" | "mhs";
-    label: string;
-    known: number;
-    curated: number;
-    passing: number;
-    status: string;
-    physical_operation_qualified: boolean | null;
-  }>;
-  changes: {
-    previous_as_of: string | null;
-    count: number;
-    summary: Record<"promotion" | "demotion" | "new" | "failure" | "recovery" | "removal", number>;
-    items: Array<{
-      server_id: string;
-      change: string;
-      before?: string;
-      after?: string;
-    }>;
-  };
-  chains: Array<{
-    chain_id: string;
-    name: string;
-    status: string;
-    call_count: number;
-    handoffs_accepted: number;
-    corrupt_handoffs_rejected: number;
-    artifact_checks: number;
-    cleanup: string;
-    last_run: string;
-    evidence_href: string;
-    scenario_kind: string;
-  }>;
-  records: Array<{
-    server_id: string;
-    name: string;
-    vendor: string;
-    source_url: string | null;
-    source_revision: string | null;
-    scope: string;
-    implementation_mode: "native" | "fallback" | "wrapper" | "synthetic" | "unknown";
-    disposition: "curated" | "follow_up" | "removed";
-    qualification_status: EngineeringQualificationStatus;
-    protocol_family: "mcp" | "webmcp" | "hardware_mcp" | "mhs";
-    transport: string;
-    disciplines: string[];
-    engineering_stages: string[];
-    platforms: string[];
-    dependency_groups: string[];
-    prerequisites: string[];
-    credentials: string[];
-    last_qualified_at: string | null;
-    expires_at: string | null;
-    evidence_age_days: number | null;
-    latest_result: string;
-    latest_message: string;
-    failure: string | null;
-    evidence_href: string | null;
-    evidence_sha256: string | null;
-    owner: string;
-    review_due: string | null;
-    next_action: string;
-  }>;
-  limitations: string[];
-}
-
 export interface CatalogActivationHistory {
   activation_id: string;
   from_snapshot_id: string | null;
@@ -779,10 +677,6 @@ export class McpService {
 
   async getCatalogState(): Promise<CatalogStateResponse> {
     return this.catalogRequest("/api/mcp/catalog/state");
-  }
-
-  async getEngineeringStatus(): Promise<EngineeringMcpStatus> {
-    return this.catalogRequest("/api/mcp/status");
   }
 
   async previewCatalogUpdate(

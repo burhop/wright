@@ -1,6 +1,6 @@
 {
-  "observed_at": "2026-09-09T23:21:59.764Z",
-  "base_url": "http://127.0.0.1:15173",
+  "observed_at": "2026-09-10T00:37:36.219Z",
+  "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "counts": {
     "curated": 10,
@@ -70,25 +70,10 @@
     }
   ],
   "evidence_server_id": "kernelcad-mcp",
-  "evidence_etag": "\"d79a75be699827d7ccfc992c177148c5f3ec363253478a876079e337ad190f3d\"",
-  "console_errors": [
-    "Failed to load resource: the server responded with a status of 502 (Bad Gateway)",
-    "Failed to sync sessions with backend, falling back to localStorage Error: Failed to list sessions: Bad Gateway\n    at HermesAgentService.listSessions (http://127.0.0.1:15173/src/services/agent-service.ts:125:10)\n    at async http://127.0.0.1:15173/src/store/sessions.tsx:394:28",
-    "Failed to load resource: the server responded with a status of 502 (Bad Gateway)",
-    "Failed to sync sessions with backend, falling back to localStorage Error: Failed to list sessions: Bad Gateway\n    at HermesAgentService.listSessions (http://127.0.0.1:15173/src/services/agent-service.ts:125:10)\n    at async http://127.0.0.1:15173/src/store/sessions.tsx:394:28"
-  ],
+  "evidence_sha256": "d79a75be699827d7ccfc992c177148c5f3ec363253478a876079e337ad190f3d",
+  "console_errors": [],
   "page_errors": [],
-  "dashboard_response_errors": [],
-  "isolated_environment_response_errors": [
-    {
-      "status": 502,
-      "url": "http://127.0.0.1:15173/api/agent/sessions"
-    },
-    {
-      "status": 502,
-      "url": "http://127.0.0.1:15173/api/agent/sessions"
-    }
-  ],
+  "failed_responses": [],
   "screenshots": [
     "engineering-mcp-dashboard.png",
     "engineering-mcp-changes.png",

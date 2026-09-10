@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wright Engineering MCP Curation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #64707d;
+      --line: #dbe2e8;
+      --paper: #ffffff;
+      --wash: #f3f6f8;
+      --navy: #102a43;
+      --blue: #176b87;
+      --cyan: #41b3c4;
+      --green: #14845a;
+      --amber: #b46808;
+      --red: #b53a3a;
+      --shadow: 0 10px 30px rgba(16, 42, 67, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+    }
+    header {
+      background: linear-gradient(118deg, #0f273d 0%, #143e59 65%, #176b87 100%);
+      color: white;
+      padding: 32px max(28px, calc((100vw - 1360px) / 2));
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      right: -130px;
+      top: -235px;
+      border: 52px solid rgba(87, 210, 222, .15);
+      border-radius: 50%;
+    }
+    .eyebrow {
+      color: #8de0e7;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 7px 0 8px; font-size: clamp(27px, 3vw, 42px); letter-spacing: -.035em; }
+    .lede { margin: 0; max-width: 790px; color: #d8e7ef; font-size: 16px; line-height: 1.5; }
+    .meta { display: flex; flex-wrap: wrap; gap: 9px 24px; margin-top: 18px; color: #bcd1dd; font-size: 12px; }
+    main { max-width: 1416px; margin: 0 auto; padding: 26px 28px 50px; }
+    .notice {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #e8f4f6;
+      border: 1px solid #b5dce2;
+      border-radius: 10px;
+      padding: 12px 15px;
+      color: #174b5b;
+      margin-bottom: 20px;
+    }
+    .notice strong { color: #11394a; }
+    .grid { display: grid; gap: 14px; }
+    .kpis { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+    .kpi { padding: 17px 18px; border-top: 4px solid var(--blue); }
+    .kpi.good { border-color: var(--green); }
+    .kpi.warn { border-color: var(--amber); }
+    .kpi.bad { border-color: var(--red); }
+    .kpi-label { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .kpi-value { display: block; margin-top: 4px; font-size: 29px; font-weight: 800; letter-spacing: -.04em; }
+    .kpi-note { color: var(--muted); font-size: 11px; }
+    section { margin-top: 24px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 11px; }
+    h2 { margin: 0; color: var(--navy); font-size: 19px; letter-spacing: -.015em; }
+    .section-copy { color: var(--muted); margin: 3px 0 0; }
+    .protocols { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .protocol { padding: 16px; min-height: 152px; }
+    .protocol-top { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+    .protocol h3, .chain h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .big-number { display: block; font-size: 26px; font-weight: 800; margin: 14px 0 1px; }
+    .small-row { color: var(--muted); line-height: 1.55; }
+    .pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: #e7ecef; color: #4a5966; }
+    .pill.passing, .pill.curated, .pill.passed, .pill.implemented { background: #dff3e9; color: #086942; }
+    .pill.follow_up, .pill.blocked, .pill.qualification_required { background: #fff0d8; color: #8c4e00; }
+    .pill.removed, .pill.failing, .pill.failed { background: #fde6e6; color: #9c2424; }
+    .pill.untested, .pill.stale, .pill.research_preview { background: #e7edf4; color: #405569; }
+    .chains { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .chain { padding: 18px; border-left: 4px solid var(--green); }
+    .chain .route { color: var(--muted); min-height: 40px; margin: 7px 0 14px; line-height: 1.45; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .metric { background: var(--wash); border-radius: 8px; padding: 9px; }
+    .metric strong { display: block; font-size: 17px; }
+    .metric span { color: var(--muted); font-size: 10px; }
+    a { color: #086984; text-underline-offset: 2px; }
+    a:hover { color: #034c63; }
+    .evidence-link { display: inline-block; margin-top: 13px; font-weight: 700; }
+    details.card { box-shadow: none; }
+    details > summary { cursor: pointer; list-style: none; padding: 16px 18px; color: var(--navy); font-size: 16px; font-weight: 750; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::after { content: "+"; float: right; color: var(--blue); font-size: 22px; line-height: 16px; }
+    details[open] > summary::after { content: "−"; }
+    .details-body { padding: 0 18px 18px; }
+    .change-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+    .change { padding: 12px; background: var(--wash); border-radius: 9px; text-align: center; }
+    .change strong { display: block; font-size: 22px; }
+    .change span { color: var(--muted); font-size: 11px; text-transform: capitalize; }
+    .breakdowns { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .breakdown h3 { margin: 0 0 8px; font-size: 13px; }
+    .breakdown-row { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-size: 11px; }
+    .breakdown-row span:last-child { font-weight: 750; }
+    .toolbar { display: grid; grid-template-columns: minmax(260px, 2fr) repeat(3, minmax(140px, 1fr)); gap: 10px; margin-bottom: 12px; }
+    input, select { width: 100%; border: 1px solid #bdc8d0; border-radius: 8px; background: white; padding: 10px 11px; color: var(--ink); font: inherit; }
+    label { color: var(--muted); font-size: 11px; font-weight: 700; }
+    label span { display: block; margin-bottom: 4px; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: white; }
+    table { width: 100%; border-collapse: collapse; min-width: 1180px; }
+    th { position: sticky; top: 0; background: #edf2f5; color: #3a4b59; text-align: left; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; padding: 10px 11px; z-index: 1; }
+    td { border-top: 1px solid #e3e8ec; padding: 11px; vertical-align: top; font-size: 12px; line-height: 1.42; }
+    tbody tr:hover { background: #f7fafb; }
+    .server-name { font-weight: 750; color: var(--navy); }
+    .server-id { color: var(--muted); font: 10px ui-monospace, SFMono-Regular, Consolas, monospace; margin-top: 2px; }
+    .dim { color: var(--muted); }
+    .tags { display: flex; flex-wrap: wrap; gap: 3px; }
+    .tag { background: #edf2f5; color: #475967; border-radius: 4px; padding: 2px 5px; font-size: 10px; }
+    .empty { padding: 26px; color: var(--muted); text-align: center; }
+    .limits { margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.6; }
+    .fatal { max-width: 760px; margin: 80px auto; padding: 24px; border: 1px solid #efb2b2; background: #fff; border-radius: 12px; color: #8b2222; }
+    footer { color: var(--muted); text-align: center; padding: 22px; font-size: 11px; }
+    @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(3, 1fr); } .protocols, .breakdowns { grid-template-columns: repeat(2, 1fr); } .chains { grid-template-columns: 1fr; } }
+    @media (max-width: 680px) { main { padding: 18px 14px 36px; } header { padding: 25px 18px; } .kpis, .protocols, .breakdowns, .change-grid { grid-template-columns: repeat(2, 1fr); } .toolbar { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Internal qualification dashboard</div>
+    <h1>Wright Engineering MCP Curation</h1>
+    <p class="lede">Evidence-backed status for the engineering MCP portfolio, protocol coverage, and early end-to-end qualification chains.</p>
+    <div class="meta" id="header-meta"></div>
+  </header>
+  <main id="dashboard" data-testid="engineering-mcp-dashboard">
+    <div class="notice"><strong>Independent report</strong><span>This dashboard is generated from repository evidence. It is not part of Wright’s user-facing Tool Registry.</span></div>
+    <div class="grid kpis" id="kpis"></div>
+
+    <section>
+      <div class="section-head"><div><h2>Protocol readiness</h2><p class="section-copy">What is represented in the catalog and what has current qualification evidence.</p></div></div>
+      <div class="grid protocols" id="protocols"></div>
+    </section>
+
+    <section>
+      <div class="section-head"><div><h2>Tier 1 process chains</h2><p class="section-copy">Deterministic integration fixtures for handoffs and artifact integrity, not production engineering validation.</p></div></div>
+      <div class="grid chains" id="chains"></div>
+    </section>
+
+    <section>
+      <details class="card" data-testid="engineering-status-changes">
+        <summary id="changes-summary">Changes since the previous curation report</summary>
+        <div class="details-body"><div class="grid change-grid" id="changes"></div><div id="change-items"></div></div>
+      </details>
+    </section>
+
+    <section>
+      <details class="card" data-testid="engineering-status-breakdowns">
+        <summary>Coverage breakdowns</summary>
+        <div class="details-body grid breakdowns" id="breakdowns"></div>
+      </details>
+    </section>
+
+    <section data-testid="engineering-status-records">
+      <div class="section-head"><div><h2>Complete server evidence</h2><p class="section-copy" id="record-count"></p></div></div>
+      <div class="toolbar">
+        <label><span>Search</span><input id="search" aria-label="Search" placeholder="Server, vendor, scope, prerequisite…"></label>
+        <label><span>Disposition</span><select id="disposition"><option value="">All dispositions</option></select></label>
+        <label><span>Qualification</span><select id="qualification"><option value="">All qualification states</option></select></label>
+        <label><span>Protocol</span><select id="protocol"><option value="">All protocols</option></select></label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Server</th><th>Decision</th><th>Evidence status</th><th>Scope and mode</th><th>Coverage</th><th>Prerequisites</th><th>Owner / next action</th><th>Links</th></tr></thead>
+          <tbody id="records"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>No servers match the current filters.</div>
+      </div>
+    </section>
+
+    <section>
+      <details class="card">
+        <summary>Evidence limits</summary>
+        <div class="details-body"><ul class="limits" id="limitations"></ul></div>
+      </details>
+    </section>
+  </main>
+  <footer>Generated artifact · source of truth remains the reviewed catalog and exact qualification evidence</footer>
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const node = (tag, className, text) => {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    };
+    const appendText = (parent, tag, className, text) => parent.appendChild(node(tag, className, text));
+    const pill = (value) => node("span", `pill ${value}`, value.replaceAll("_", " "));
+    const link = (label, href) => {
+      const element = node("a", "", label);
+      element.href = href;
+      element.target = "_blank";
+      element.rel = "noreferrer";
+      return element;
+    };
+    const formatDate = (value) => value ? new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }) : "—";
+    const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
+
+    function renderKpis(status) {
+      const rows = [
+        ["Curated", status.counts.curated, `Target ${status.target.minimum}–${status.target.maximum}`, "good", "engineering-count-curated"],
+        ["Follow up", status.counts.follow_up, "Candidates needing work", "warn", "engineering-count-follow_up"],
+        ["Removed", status.counts.removed, "Excluded from discovery", "bad", "engineering-count-removed"],
+        ["Passing", status.qualification_counts.passing, "Current scoped evidence", "good", "engineering-status-passing"],
+        ["Blocked / failing", status.qualification_counts.blocked + status.qualification_counts.failing, "Actionable constraints", "warn", "engineering-status-blocked"],
+        ["Tier 1 chains", status.chains.filter((item) => item.status === "passed").length, `${status.chains.length} checked`, "good", "engineering-chain-count"],
+      ];
+      for (const [label, value, note, tone, testid] of rows) {
+        const card = node("div", `card kpi ${tone}`);
+        card.dataset.testid = testid;
+        appendText(card, "span", "kpi-label", label);
+        appendText(card, "strong", "kpi-value", String(value));
+        appendText(card, "span", "kpi-note", note);
+        byId("kpis").appendChild(card);
+      }
+    }
+
+    function renderProtocols(status) {
+      for (const item of status.protocol_status) {
+        const card = node("article", "card protocol");
+        card.dataset.testid = `engineering-protocol-${item.protocol}`;
+        const top = node("div", "protocol-top");
+        appendText(top, "h3", "", item.label);
+        top.appendChild(pill(item.status));
+        card.appendChild(top);
+        appendText(card, "strong", "big-number", `${item.known} known`);
+        appendText(card, "div", "small-row", `${item.curated} curated · ${item.passing} passing`);
+        if (item.protocol === "hardware_mcp") appendText(card, "div", "small-row", "Physical operation has not qualified");
+        if (item.protocol === "mhs") appendText(card, "div", "small-row", "Research preview; physical operation has not qualified");
+        byId("protocols").appendChild(card);
+      }
+    }
+
+    function renderChains(status) {
+      for (const item of status.chains) {
+        const card = node("article", "card chain");
+        card.dataset.testid = `engineering-chain-${item.chain_id}`;
+        const top = node("div", "protocol-top");
+        appendText(top, "h3", "", item.chain_id.replaceAll("-", " "));
+        top.appendChild(pill(item.status));
+        card.appendChild(top);
+        appendText(card, "p", "route", item.name);
+        const metrics = node("div", "metrics");
+        for (const [value, label] of [[item.call_count, "calls"], [item.handoffs_accepted, "handoffs"], [item.artifact_checks, "hash checks"]]) {
+          const metric = node("div", "metric");
+          appendText(metric, "strong", "", String(value));
+          appendText(metric, "span", "", label);
+          metrics.appendChild(metric);
+        }
+        card.appendChild(metrics);
+        card.appendChild(link("Open exact chain evidence ↗", item.evidence_href));
+        card.lastChild.className = "evidence-link";
+        byId("chains").appendChild(card);
+      }
+    }
+
+    function renderChanges(status) {
+      byId("changes-summary").textContent = `Changes since the previous curation report · ${status.changes.count} classified`;
+      for (const [key, value] of Object.entries(status.changes.summary)) {
+        if (value === 0) continue;
+        const card = node("div", "change");
+        appendText(card, "strong", "", String(value));
+        appendText(card, "span", "", key.replaceAll("_", " "));
+        byId("changes").appendChild(card);
+      }
+      if (!status.changes.items.length) {
+        appendText(byId("change-items"), "p", "dim", `No classified changes. Previous report: ${status.changes.previous_as_of || "not supplied"}.`);
+      } else {
+        const list = node("ul", "limits");
+        for (const item of status.changes.items) appendText(list, "li", "", `${item.server_id}: ${item.change.replaceAll("_", " ")}${item.before ? ` (${item.before.replaceAll("_", " ")} → ${item.after.replaceAll("_", " ")})` : ""}`);
+        byId("change-items").appendChild(list);
+      }
+    }
+
+    function renderBreakdowns(status) {
+      for (const [label, rows] of Object.entries(status.breakdowns)) {
+        const group = node("div", "breakdown");
+        appendText(group, "h3", "", label[0].toUpperCase() + label.slice(1));
+        for (const item of rows) {
+          const row = node("div", "breakdown-row");
+          appendText(row, "span", "", item.key);
+          appendText(row, "span", "", `${item.passing}/${item.total}`);
+          group.appendChild(row);
+        }
+        byId("breakdowns").appendChild(group);
+      }
+    }
+
+    function addOptions(id, records, field) {
+      const select = byId(id);
+      for (const value of [...new Set(records.map((item) => item[field]))].sort()) {
+        const option = node("option", "", value.replaceAll("_", " "));
+        option.value = value;
+        select.appendChild(option);
+      }
+    }
+
+    function tags(values) {
+      const container = node("div", "tags");
+      for (const value of values || []) appendText(container, "span", "tag", value);
+      return container;
+    }
+
+    function renderRecords(status) {
+      const tbody = byId("records");
+      tbody.replaceChildren();
+      const query = byId("search").value.trim().toLowerCase();
+      const disposition = byId("disposition").value;
+      const qualification = byId("qualification").value;
+      const protocol = byId("protocol").value;
+      const filtered = status.records.filter((item) =>
+        (!query || values(item).includes(query)) &&
+        (!disposition || item.disposition === disposition) &&
+        (!qualification || item.qualification_status === qualification) &&
+        (!protocol || item.protocol_family === protocol));
+      byId("record-count").textContent = `${filtered.length} of ${status.records.length} servers shown`;
+      byId("empty").hidden = filtered.length !== 0;
+      for (const item of filtered) {
+        const row = node("tr");
+        const identity = node("td");
+        appendText(identity, "div", "server-name", item.name);
+        appendText(identity, "div", "server-id", item.server_id);
+        appendText(identity, "div", "dim", item.vendor);
+        row.appendChild(identity);
+        const decision = node("td"); decision.appendChild(pill(item.disposition)); row.appendChild(decision);
+        const state = node("td");
+        state.appendChild(pill(item.qualification_status));
+        appendText(state, "div", "dim", item.last_qualified_at ? `Qualified ${formatDate(item.last_qualified_at)}` : item.latest_result);
+        if (item.failure) appendText(state, "div", "dim", item.failure);
+        row.appendChild(state);
+        const scope = node("td");
+        appendText(scope, "div", "", item.scope || "—");
+        appendText(scope, "div", "dim", `${item.implementation_mode} · ${item.transport}`);
+        row.appendChild(scope);
+        const coverage = node("td"); coverage.appendChild(tags([...(item.disciplines || []), ...(item.engineering_stages || [])])); row.appendChild(coverage);
+        const prerequisites = node("td"); prerequisites.appendChild(tags(item.prerequisites?.length ? item.prerequisites : ["none"])); row.appendChild(prerequisites);
+        const next = node("td");
+        appendText(next, "div", "", item.next_action || "—");
+        appendText(next, "div", "dim", `${item.owner || "Unassigned"}${item.review_due ? ` · due ${formatDate(item.review_due)}` : ""}`);
+        row.appendChild(next);
+        const links = node("td");
+        links.appendChild(link("Source ↗", item.source_url));
+        if (item.evidence_href) { links.appendChild(document.createElement("br")); links.appendChild(link("Evidence ↗", item.evidence_href)); }
+        row.appendChild(links);
+        tbody.appendChild(row);
+      }
+    }
+
+    async function start() {
+      const response = await fetch("status.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`status.json returned ${response.status}`);
+      const status = await response.json();
+      byId("header-meta").append(
+        node("span", "", `As of ${formatDate(status.as_of)}`),
+        node("span", "", `Policy ${status.policy_version}`),
+        node("span", "", `Catalog ${status.catalog_sha256.slice(0, 12)}…`),
+        node("span", "", `${status.records.length} records`),
+      );
+      renderKpis(status);
+      renderProtocols(status);
+      renderChains(status);
+      renderChanges(status);
+      renderBreakdowns(status);
+      addOptions("disposition", status.records, "disposition");
+      addOptions("qualification", status.records, "qualification_status");
+      addOptions("protocol", status.records, "protocol_family");
+      for (const id of ["search", "disposition", "qualification", "protocol"]) byId(id).addEventListener("input", () => renderRecords(status));
+      renderRecords(status);
+      for (const text of status.limitations) appendText(byId("limitations"), "li", "", text);
+    }
+    start().catch((error) => {
+      byId("dashboard").replaceWith(Object.assign(node("div", "fatal", `Dashboard failed to load: ${error.message}`), { id: "dashboard-error" }));
+    });
+  </script>
+</body>
+</html>

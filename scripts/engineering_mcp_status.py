@@ -1,4 +1,4 @@
-"""Generate the served engineering MCP status from catalog qualification evidence."""
+"""Build the independent engineering MCP curation status from catalog evidence."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Iterable
 
-from .catalog_curation import build_report
-from .catalog_models import CatalogEntry
-from .curation_models import qualification_configuration
+from tool_registry.catalog_curation import build_report
+from tool_registry.catalog_models import CatalogEntry
+from tool_registry.curation_models import qualification_configuration
 
 
 IMPLEMENTATION_MODES = {
@@ -151,7 +151,7 @@ def _change_kind(old: dict[str, Any] | None, new: dict[str, Any] | None) -> str:
     if old is None:
         return "new"
     if new is None:
-        return "removed"
+        return "record_removed"
     old_disposition = old["curation"]["effective_disposition"]
     new_disposition = new["curation"]["effective_disposition"]
     if old_disposition != new_disposition:
@@ -178,7 +178,19 @@ def _change_kind(old: dict[str, Any] | None, new: dict[str, Any] | None) -> str:
 def _changes(
     previous: dict[str, Any] | None, current: dict[str, Any]
 ) -> dict[str, Any]:
-    tracked = ("promotion", "demotion", "new", "failure", "recovery", "removal")
+    tracked = (
+        "promotion",
+        "demotion",
+        "new",
+        "failure",
+        "recovery",
+        "removal",
+        "record_removed",
+        "disposition_changed",
+        "validation_changed",
+        "qualification_refreshed",
+        "metadata_changed",
+    )
     if previous is None:
         return {
             "previous_as_of": None,
@@ -248,7 +260,7 @@ def _review_evidence(
         }
         revision = payload.get("source_revision")
         return (
-            f"/api/mcp/status/evidence/{evidence_id}",
+            f"evidence/{evidence_id}.json",
             digest,
             revision if isinstance(revision, str) else None,
         )
@@ -303,7 +315,7 @@ def build_engineering_status(
                 "media_type": "application/json",
                 "content": raw.decode("utf-8"),
             }
-            evidence_href = f"/api/mcp/status/evidence/{evidence_id}"
+            evidence_href = f"evidence/{evidence_id}.json"
             evidence_sha256 = qualification.evidence_sha256
             evidence_age_days = (as_of - qualification.verified_at).days
             source_revision = qualification.source_revision
@@ -364,7 +376,7 @@ def build_engineering_status(
         raise ValueError("Process-chain evidence is not passing and clean")
     if sum(CHAIN_CALL_COUNTS.values()) != len(chain_evidence.get("calls", [])):
         raise ValueError(
-            "Process-chain call count changed without a dashboard recipe update"
+            "Process-chain call count changed without a status recipe update"
         )
     chain_evidence_id = "process-chains"
     embedded[chain_evidence_id] = {
@@ -390,7 +402,7 @@ def build_engineering_status(
                 "artifact_checks": _count_hash_checks(chain),
                 "cleanup": chain_evidence["cleanup"],
                 "last_run": chain_evidence["observed_at"],
-                "evidence_href": f"/api/mcp/status/evidence/{chain_evidence_id}",
+                "evidence_href": f"evidence/{chain_evidence_id}.json",
                 "scenario_kind": "synthetic_qualification_fixture",
             }
         )

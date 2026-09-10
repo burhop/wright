@@ -13,7 +13,6 @@ vi.mock("../services/mcp-service", async (loadOriginal) => {
     mcpService: {
       ...original.mcpService,
       getCapabilities: vi.fn(),
-      getEngineeringStatus: vi.fn(),
       getCatalogState: vi.fn(),
       previewCatalogUpdate: vi.fn(),
       activateCatalogUpdate: vi.fn(),
@@ -45,26 +44,6 @@ describe("ToolRegistryPage capability layout", () => {
       next_cursor: null,
       total: 0,
     });
-    vi.mocked(mcpService.getEngineeringStatus).mockResolvedValue({
-      schema_version: 1,
-      generated_at: "2026-09-09T00:00:00Z",
-      as_of: "2026-09-09",
-      policy_version: "2026-09-08.1",
-      counts: { curated: 10, follow_up: 56, removed: 12 },
-      qualification_counts: { passing: 10, failing: 10, blocked: 32, stale: 0, untested: 25 },
-      target: { minimum: 10, ideal: 15, maximum: 20, curated: 10, minimum_met: true, ideal_met: false },
-      breakdowns: { disciplines: [], protocols: [], transports: [], platforms: [], dependencies: [] },
-      protocol_status: [],
-      changes: {
-        previous_as_of: "2026-09-08",
-        count: 0,
-        summary: { promotion: 0, demotion: 0, new: 0, failure: 0, recovery: 0, removal: 0 },
-        items: [],
-      },
-      chains: [],
-      records: [],
-      limitations: [],
-    });
     vi.mocked(mcpService.getCatalogState).mockResolvedValue({
       bundled_snapshot_id: "bundled",
       active_snapshot_id: "bundled",
@@ -84,9 +63,6 @@ describe("ToolRegistryPage capability layout", () => {
     render(<ToolRegistryPage />);
 
     expect(screen.getByTestId("page-tool-registry")).toBeInTheDocument();
-    expect(await screen.findByTestId("engineering-mcp-status")).toHaveTextContent(
-      "10 of 15 preferred integrations",
-    );
     expect(
       screen.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeInTheDocument();

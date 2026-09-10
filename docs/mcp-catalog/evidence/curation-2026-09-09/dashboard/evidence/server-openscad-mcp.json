@@ -1,0 +1,168 @@
+{
+  "server_id": "openscad-mcp",
+  "observed_at": "2026-09-09T21:31:32.692132+00:00",
+  "finished_at": "2026-09-09T21:32:23.824740+00:00",
+  "duration_seconds": 51.133,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/quellant/openscad-mcp",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "OpenSCAD cube STL export",
+  "configuration_sha256": "b67b5122df53bac0a60e3e11bbbde535213d0f45b11d0bd5c2571d2107fb7dd3",
+  "installed_items": [
+    "openscad=2021.01",
+    "git=2.47.3"
+  ],
+  "source_references": [
+    "openscad-mcp@d438b84fff8af9d646c2bcb76fe58fa4ad387de0"
+  ],
+  "prerequisites": [],
+  "server_info": {
+    "name": "OpenSCAD MCP Server",
+    "title": null,
+    "version": "4.0.3",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "da4cee5a8f134915b6e01a66e3e78af5827a0993699bff3e9ed8a3657e05b033",
+  "tool_count": 15,
+  "export_schema": {
+    "properties": {
+      "scad_content": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "OpenSCAD code to export (mutually exclusive with scad_file)"
+      },
+      "scad_file": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Path to OpenSCAD file (mutually exclusive with scad_content)"
+      },
+      "output_format": {
+        "default": "stl",
+        "type": "string",
+        "description": "Export format - \"stl\", \"3mf\", \"amf\", \"off\", \"dxf\", or \"svg\"\n(default: \"stl\")"
+      },
+      "output_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Path to write the exported file. If not specified, a temp\ndirectory is used."
+      },
+      "variables": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Variables to pass to OpenSCAD via -D flags"
+      },
+      "include_paths": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Additional include paths for OpenSCAD via -I flags"
+      }
+    },
+    "type": "object",
+    "additionalProperties": false
+  },
+  "outcome": {
+    "bytes": 1467,
+    "sha256": "de7ef12d636136c327601079fd6a3485daef2e84a23a4c79ce91169b48e86ec2",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "gateway_outcome": {
+    "bytes": 1467,
+    "sha256": "de7ef12d636136c327601079fd6a3485daef2e84a23a4c79ce91169b48e86ec2",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 1467,
+    "sha256": "de7ef12d636136c327601079fd6a3485daef2e84a23a4c79ce91169b48e86ec2",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "cleanup": "passed"
+}

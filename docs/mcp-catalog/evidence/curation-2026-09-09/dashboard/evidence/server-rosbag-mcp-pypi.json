@@ -1,0 +1,167 @@
+{
+  "server_id": "rosbag-mcp-pypi",
+  "observed_at": "2026-09-09T21:19:44.111501+00:00",
+  "finished_at": "2026-09-09T21:20:16.184702+00:00",
+  "duration_seconds": 32.073,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://pypi.org/project/rosbag-mcp/",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_missing_bag_error_in_content",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "ROS 2 known-message retrieval",
+  "configuration_sha256": "19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649",
+  "installed_items": [],
+  "source_references": [
+    "rosbag-mcp==0.2.0"
+  ],
+  "prerequisites": [],
+  "server_info": {
+    "name": "rosbag-mcp",
+    "title": null,
+    "version": "1.28.1",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "f54d48ab9f72d3fe14f38a4b1919f22e373bfd8f7f54b645538028809905d08a",
+  "tool_count": 31,
+  "message_schema": {
+    "type": "object",
+    "properties": {
+      "topic": {
+        "type": "string",
+        "description": "ROS topic name"
+      },
+      "timestamp": {
+        "type": "number",
+        "description": "Unix timestamp in seconds"
+      },
+      "bag_path": {
+        "type": "string",
+        "description": "Optional: specific bag file"
+      },
+      "tolerance": {
+        "type": "number",
+        "description": "Time tolerance in seconds (default: 0.1)"
+      }
+    },
+    "required": [
+      "topic",
+      "timestamp"
+    ]
+  },
+  "outcome": {
+    "artifact": {
+      "database_bytes": 32768,
+      "database_sha256": "7e7322a47dd758857674ed00e3dd2882e329bd4d2674d229597bcf029bfc3e4f",
+      "metadata_sha256": "27004351e2bd8ab466ae983f8dcc2048f42c4b930e05014d4d7b82464ac05f8f",
+      "topic": "/chatter",
+      "message_type": "std_msgs/msg/String",
+      "timestamps_ns": [
+        1700000000000000000,
+        1700000001000000000
+      ],
+      "messages": [
+        "hello",
+        "world"
+      ]
+    },
+    "server": {
+      "topic": "/chatter",
+      "timestamp": 1700000000.0,
+      "message_type": "std_msgs/msg/String",
+      "message": {
+        "data": "hello",
+        "__msgtype__": "std_msgs/msg/String"
+      }
+    }
+  },
+  "gateway_outcome": {
+    "artifact": {
+      "database_bytes": 32768,
+      "database_sha256": "7e7322a47dd758857674ed00e3dd2882e329bd4d2674d229597bcf029bfc3e4f",
+      "metadata_sha256": "27004351e2bd8ab466ae983f8dcc2048f42c4b930e05014d4d7b82464ac05f8f",
+      "topic": "/chatter",
+      "message_type": "std_msgs/msg/String",
+      "timestamps_ns": [
+        1700000000000000000,
+        1700000001000000000
+      ],
+      "messages": [
+        "hello",
+        "world"
+      ]
+    },
+    "server": {
+      "topic": "/chatter",
+      "timestamp": 1700000000.0,
+      "message_type": "std_msgs/msg/String",
+      "message": {
+        "data": "hello",
+        "__msgtype__": "std_msgs/msg/String"
+      }
+    }
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "artifact": {
+      "database_bytes": 32768,
+      "database_sha256": "7e7322a47dd758857674ed00e3dd2882e329bd4d2674d229597bcf029bfc3e4f",
+      "metadata_sha256": "27004351e2bd8ab466ae983f8dcc2048f42c4b930e05014d4d7b82464ac05f8f",
+      "topic": "/chatter",
+      "message_type": "std_msgs/msg/String",
+      "timestamps_ns": [
+        1700000000000000000,
+        1700000001000000000
+      ],
+      "messages": [
+        "hello",
+        "world"
+      ]
+    },
+    "server": {
+      "topic": "/chatter",
+      "timestamp": 1700000000.0,
+      "message_type": "std_msgs/msg/String",
+      "message": {
+        "data": "hello",
+        "__msgtype__": "std_msgs/msg/String"
+      }
+    }
+  },
+  "cleanup": "passed"
+}

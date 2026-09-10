@@ -1,0 +1,30 @@
+{
+  "server_id": "kernelcad-mcp",
+  "observed_at": "2026-09-09T22:43:38.138705+00:00",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "wright-standard-isolated-container",
+  "platform": "linux-amd64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://registry.npmjs.org/kernelcad/-/kernelcad-0.11.2.tgz",
+  "source_revision": "npm:0.11.2",
+  "source_sha256": "faf3b230d45c1d0095a8555312719cc64b969e37d88b43c30108ad857bf1488a",
+  "installed_items": [
+    "kernelcad@0.11.2"
+  ],
+  "prerequisites": [],
+  "recovery_steps": [
+    "Publish every runtime dependency as an immutable registry artifact, then rerun the clean-container install.",
+    "Run a Wright GatewayService task with deterministic CAD source and independently inspect STEP/STL geometry before promotion."
+  ],
+  "implementation_mode": "native_vendor_binary",
+  "status": "failed",
+  "server_stderr": "npm error code EALLOWGIT\nnpm error Fetching packages of type \"git\" have been disabled\nnpm error Refusing to fetch \"replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.23.1\"\nnpm error A complete log of this run can be found in: /home/agent/.npm/_logs/2026-09-09T22_43_38_311Z-debug-0.log\n",
+  "failure_stage": "startup_or_protocol",
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "traceback": "  + Exception Group Traceback (most recent call last):\n  |   File \"/candidate/scripts/probe-mcp-followup.py\", line 145, in main\n  |     asyncio.run(\n  |     ~~~~~~~~~~~^\n  |         asyncio.wait_for(\n  |         ^^^^^^^^^^^^^^^^^\n  |             _probe(args, Path(temporary), report, errlog), timeout=120\n  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |         )\n  |         ^\n  |     )\n  |     ^\n  |   File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n  |     return runner.run(main)\n  |            ~~~~~~~~~~^^^^^^\n  |   File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n  |     return self._loop.run_until_complete(task)\n  |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  |   File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n  |     return future.result()\n  |            ~~~~~~~~~~~~~^^\n  |   File \"/usr/local/lib/python3.13/asyncio/tasks.py\", line 507, in wait_for\n  |     return await fut\n  |            ^^^^^^^^^\n  |   File \"/candidate/scripts/probe-mcp-followup.py\", line 44, in _probe\n  |     async with stdio_client(parameters, errlog=errlog) as (read, write):\n  |                ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"/usr/local/lib/python3.13/contextlib.py\", line 235, in __aexit__\n  |     await self.gen.athrow(value)\n  |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/mcp/client/stdio/__init__.py\", line 183, in stdio_client\n  |     anyio.create_task_group() as tg,\n  |     ~~~~~~~~~~~~~~~~~~~~~~~^^\n  |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py\", line 847, in __aexit__\n  |     raise BaseExceptionGroup(\n  |         \"unhandled errors in a TaskGroup\", self._exceptions\n  |     ) from None\n  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n  +-+---------------- 1 ----------------\n    | Exception Group Traceback (most recent call last):\n    |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/mcp/client/stdio/__init__.py\", line 189, in stdio_client\n    |     yield read_stream, write_stream\n    |   File \"/candidate/scripts/probe-mcp-followup.py\", line 45, in _probe\n    |     async with ClientSession(read, write) as client:\n    |                ~~~~~~~~~~~~~^^^^^^^^^^^^^\n    |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/mcp/shared/session.py\", line 238, in __aexit__\n    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)\n    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py\", line 847, in __aexit__\n    |     raise BaseExceptionGroup(\n    |         \"unhandled errors in a TaskGroup\", self._exceptions\n    |     ) from None\n    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n    +-+---------------- 1 ----------------\n      | Traceback (most recent call last):\n      |   File \"/candidate/scripts/probe-mcp-followup.py\", line 46, in _probe\n      |     initialized = await client.initialize()\n      |                   ^^^^^^^^^^^^^^^^^^^^^^^^^\n      |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/mcp/client/session.py\", line 183, in initialize\n      |     result = await self.send_request(\n      |              ^^^^^^^^^^^^^^^^^^^^^^^^\n      |     ...<16 lines>...\n      |     )\n      |     ^\n      |   File \"/opt/hermes/.venv/lib/python3.13/site-packages/mcp/shared/session.py\", line 306, in send_request\n      |     raise McpError(response_or_error.error)\n      | mcp.shared.exceptions.McpError: Connection closed\n      +------------------------------------\n",
+  "cleanup": "passed",
+  "finished_at": "2026-09-09T22:43:56.420355+00:00",
+  "duration_seconds": 18.282,
+  "duration_source": "monotonic_clock"
+}

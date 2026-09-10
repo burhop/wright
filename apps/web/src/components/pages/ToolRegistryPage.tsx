@@ -6,7 +6,6 @@ import { CapabilityLibrary } from "../tools/CapabilityLibrary";
 import { CatalogUpdatePanel } from "../tools/CatalogUpdatePanel";
 import { OnboardingWizard } from "../tools/OnboardingWizard";
 import { MissingCapabilityForm } from "../tools/MissingCapabilityForm";
-import { EngineeringMcpStatusDashboard } from "../tools/EngineeringMcpStatusDashboard";
 
 export function ToolRegistryPage() {
   const logger = useLogger("ToolRegistryPage");
@@ -54,7 +53,6 @@ export function ToolRegistryPage() {
           gap: "var(--space-xl)",
         }}
       >
-        <EngineeringMcpStatusDashboard refreshToken={refreshToken} />
         <CatalogUpdatePanel
           onCatalogChanged={() => setRefreshToken((value) => value + 1)}
         />

@@ -15,7 +15,6 @@ vi.mock("../../services/mcp-service", async (loadOriginal) => {
     ...original,
     mcpService: {
       getCapabilities: vi.fn(),
-      getEngineeringStatus: vi.fn(),
       observeCapability: vi.fn(),
     },
   };
