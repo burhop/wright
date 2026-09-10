@@ -52,6 +52,9 @@ try {
     await assertText(`category-key-${category.id}`, category.definition);
   }
   await page.getByTestId("engineering-product-groups").waitFor();
+  await assertText("engineering-color-key", "Tested as far as currently possible with no observed problem");
+  await assertText("engineering-color-key", "More work or a required environment remains");
+  await assertText("engineering-color-key", "Did not work and the evaluation is closed");
   for (const group of status.product_groups) {
     await assertText(`engineering-product-${group.id}`, group.count);
   }

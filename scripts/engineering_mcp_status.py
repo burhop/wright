@@ -72,13 +72,13 @@ PORTFOLIO_CATEGORIES = (
     },
     {
         "id": "failed",
-        "label": "Failed",
+        "label": "Needs repair (Failed)",
         "definition": "Current evidence shows an implementation, packaging, startup, or protocol failure.",
         "action": "Fix, replace, or exclude the implementation.",
     },
     {
         "id": "excluded_archive",
-        "label": "Excluded archive",
+        "label": "Closed / Excluded archive",
         "definition": "Retired, superseded, unavailable, duplicate, or not actually an MCP server.",
         "action": "Hide from discovery and retain the decision record to prevent repeated review.",
     },

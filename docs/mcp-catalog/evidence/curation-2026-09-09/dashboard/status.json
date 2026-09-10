@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-10T13:01:22.592053+00:00",
+  "generated_at": "2026-09-10T13:27:13.227139+00:00",
   "as_of": "2026-09-09",
   "catalog_sha256": "7cde2237d88f5ba7549f5b5d8738eebafe26358fd955cc7d8f58d347ab595f4f",
   "policy_version": "2026-09-08.1",
@@ -58,13 +58,13 @@
     },
     {
       "id": "failed",
-      "label": "Failed",
+      "label": "Needs repair (Failed)",
       "definition": "Current evidence shows an implementation, packaging, startup, or protocol failure.",
       "action": "Fix, replace, or exclude the implementation."
     },
     {
       "id": "excluded_archive",
-      "label": "Excluded archive",
+      "label": "Closed / Excluded archive",
       "definition": "Retired, superseded, unavailable, duplicate, or not actually an MCP server.",
       "action": "Hide from discovery and retain the decision record to prevent repeated review."
     }

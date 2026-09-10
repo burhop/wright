@@ -75,7 +75,7 @@
     .kpi.good { border-color: var(--green); }
     .kpi.warn { border-color: var(--amber); }
     .kpi.bad { border-color: var(--red); }
-    .kpi.archive { border-color: #71808d; }
+    .kpi.archive { border-color: var(--red); }
     .kpi-label { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
     .kpi-value { display: block; margin-top: 4px; font-size: 29px; font-weight: 800; letter-spacing: -.04em; }
     .kpi-note { color: var(--muted); font-size: 11px; }
@@ -95,11 +95,15 @@
     .big-number { display: block; font-size: 26px; font-weight: 800; margin: 14px 0 1px; }
     .small-row { color: var(--muted); line-height: 1.55; }
     .pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: #e7ecef; color: #4a5966; }
-    .pill.passing, .pill.curated, .pill.passed, .pill.implemented, .pill.qualified { background: #dff3e9; color: #086942; }
-    .pill.follow_up, .pill.blocked, .pill.dependency_missing, .pill.qualification_required, .pill.environment_required { background: #fff0d8; color: #8c4e00; }
-    .pill.removed, .pill.failing, .pill.failed { background: #fde6e6; color: #9c2424; }
-    .pill.untested, .pill.stale, .pill.research_preview, .pill.excluded_archive { background: #e7edf4; color: #405569; }
-    .pill.preflight_passed { background: #dff0f5; color: #0a6177; }
+    .pill.passing, .pill.curated, .pill.passed, .pill.implemented, .pill.qualified, .pill.preflight_passed, .pill.authentication_required { background: #dff3e9; color: #086942; }
+    .pill.follow_up, .pill.blocked, .pill.dependency_missing, .pill.qualification_required, .pill.environment_required, .pill.untested, .pill.stale, .pill.research_preview, .pill.failing, .pill.failed { background: #fff0d8; color: #8c4e00; }
+    .pill.removed, .pill.excluded_archive { background: #fde6e6; color: #9c2424; }
+    .traffic-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px; }
+    .traffic-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-size: 12px; }
+    .traffic-dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+    .traffic-dot.green { background: var(--green); }
+    .traffic-dot.yellow { background: var(--amber); }
+    .traffic-dot.red { background: var(--red); }
     .chains { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .chain { padding: 18px; border-left: 4px solid var(--green); }
     .chain .route { color: var(--muted); min-height: 40px; margin: 7px 0 14px; line-height: 1.45; }
@@ -155,6 +159,11 @@
   </header>
   <main id="dashboard" data-testid="engineering-mcp-dashboard">
     <div class="notice"><strong>Independent report</strong><span>This dashboard is generated from repository evidence. It is not part of Wright’s user-facing Tool Registry.</span></div>
+    <div class="traffic-legend" data-testid="engineering-color-key">
+      <div class="traffic-item"><span class="traffic-dot green"></span><strong>Green</strong><span>Tested as far as currently possible with no observed problem</span></div>
+      <div class="traffic-item"><span class="traffic-dot yellow"></span><strong>Yellow</strong><span>More work or a required environment remains</span></div>
+      <div class="traffic-item"><span class="traffic-dot red"></span><strong>Red</strong><span>Did not work and the evaluation is closed</span></div>
+    </div>
     <section>
       <div class="section-head"><div><h2>Product view</h2><p class="section-copy">Only Available servers are ready for ordinary product discovery. The other groups require progressively more validation.</p></div></div>
       <div class="grid kpis" id="product-groups" data-testid="engineering-product-groups"></div>
@@ -236,7 +245,15 @@
     const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, record.portfolio_category, record.portfolio_category_reason, record.curation_reason, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
 
     function renderKpis(status) {
-      const tones = { qualified: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
+      const tones = {
+        qualified: "good",
+        preflight_passed: "good",
+        authentication_required: "good",
+        environment_required: "warn",
+        untested: "warn",
+        failed: "warn",
+        excluded_archive: "archive",
+      };
       const notes = {
         qualified: `Target ${status.target.minimum}–${status.target.maximum}`,
         preflight_passed: "Complete full qualification",
@@ -265,7 +282,7 @@
         lab_integrations: "Requires host, license, hardware, or lab",
       };
       for (const item of status.product_groups) {
-        const card = node("div", `card kpi ${item.id === "available" ? "good" : item.id === "lab_integrations" ? "warn" : ""}`);
+        const card = node("div", `card kpi ${item.id === "lab_integrations" ? "warn" : "good"}`);
         card.dataset.testid = `engineering-product-${item.id}`;
         appendText(card, "span", "kpi-label", item.label);
         appendText(card, "strong", "kpi-value", String(item.count));
