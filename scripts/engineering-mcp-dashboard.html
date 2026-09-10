@@ -16,8 +16,11 @@
       --blue: #176b87;
       --cyan: #41b3c4;
       --green: #14845a;
-      --amber: #b46808;
-      --red: #b53a3a;
+      --amber: #e0b600;
+      --amber-ink: #655200;
+      --amber-wash: #fff9cf;
+      --red: #c8323d;
+      --red-wash: #fff0f1;
       --shadow: 0 10px 30px rgba(16, 42, 67, .08);
     }
     * { box-sizing: border-box; }
@@ -73,9 +76,9 @@
     .card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
     .kpi { padding: 17px 18px; border-top: 4px solid var(--blue); }
     .kpi.good { border-color: var(--green); }
-    .kpi.warn { border-color: var(--amber); }
+    .kpi.warn { border-color: var(--amber); background: var(--amber-wash); }
     .kpi.bad { border-color: var(--red); }
-    .kpi.archive { border-color: var(--red); }
+    .kpi.archive { border-color: var(--red); background: var(--red-wash); }
     .kpi-label { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
     .kpi-value { display: block; margin-top: 4px; font-size: 29px; font-weight: 800; letter-spacing: -.04em; }
     .kpi-note { color: var(--muted); font-size: 11px; }
@@ -96,8 +99,8 @@
     .small-row { color: var(--muted); line-height: 1.55; }
     .pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: #e7ecef; color: #4a5966; }
     .pill.passing, .pill.curated, .pill.passed, .pill.implemented, .pill.qualified, .pill.preflight_passed, .pill.authentication_required { background: #dff3e9; color: #086942; }
-    .pill.follow_up, .pill.blocked, .pill.dependency_missing, .pill.qualification_required, .pill.environment_required, .pill.untested, .pill.stale, .pill.research_preview, .pill.failing, .pill.failed { background: #fff0d8; color: #8c4e00; }
-    .pill.removed, .pill.excluded_archive { background: #fde6e6; color: #9c2424; }
+    .pill.follow_up, .pill.blocked, .pill.dependency_missing, .pill.qualification_required, .pill.environment_required, .pill.untested, .pill.stale, .pill.research_preview, .pill.failing, .pill.failed { background: var(--amber-wash); color: var(--amber-ink); border: 1px solid #e4c928; }
+    .pill.removed, .pill.excluded_archive { background: var(--red-wash); color: #98212b; border: 1px solid #e5a1a7; }
     .traffic-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px; }
     .traffic-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-size: 12px; }
     .traffic-dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
@@ -165,10 +168,9 @@
       <div class="traffic-item"><span class="traffic-dot red"></span><strong>Red</strong><span>Did not work and the evaluation is closed</span></div>
     </div>
     <section>
-      <div class="section-head"><div><h2>Product view</h2><p class="section-copy">Only Available servers are ready for ordinary product discovery. The other groups require progressively more validation.</p></div></div>
+      <div class="section-head"><div><h2>Product view</h2><p class="section-copy" id="product-summary"></p></div></div>
       <div class="grid kpis" id="product-groups" data-testid="engineering-product-groups"></div>
     </section>
-    <div class="grid kpis" id="kpis"></div>
 
     <section>
       <div class="section-head"><div><h2>Category key</h2><p class="section-copy">Portfolio categories describe the next curation action. Technical validation results remain visible in the evidence table.</p></div></div>
@@ -243,36 +245,6 @@
     };
     const formatDate = (value) => value ? new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }) : "—";
     const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, record.portfolio_category, record.portfolio_category_reason, record.curation_reason, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
-
-    function renderKpis(status) {
-      const tones = {
-        qualified: "good",
-        preflight_passed: "good",
-        authentication_required: "good",
-        environment_required: "warn",
-        untested: "warn",
-        failed: "warn",
-        excluded_archive: "archive",
-      };
-      const notes = {
-        qualified: `Target ${status.target.minimum}–${status.target.maximum}`,
-        preflight_passed: "Complete full qualification",
-        authentication_required: "Authentication challenge only",
-        environment_required: "Host, license, hardware, or lab needed",
-        untested: "Run initial preflight",
-        failed: "Fix, replace, or exclude",
-        excluded_archive: "Hidden from discovery",
-      };
-      const rows = status.category_key.map((item) => [item.label, status.category_counts[item.id], notes[item.id], tones[item.id] || "", `engineering-category-${item.id}`]);
-      for (const [label, value, note, tone, testid] of rows) {
-        const card = node("div", `card kpi ${tone}`);
-        card.dataset.testid = testid;
-        appendText(card, "span", "kpi-label", label);
-        appendText(card, "strong", "kpi-value", String(value));
-        appendText(card, "span", "kpi-note", note);
-        byId("kpis").appendChild(card);
-      }
-    }
 
     function renderProductGroups(status) {
       const notes = {
@@ -449,8 +421,8 @@
         node("span", "", `${status.records.length} records`),
         node("span", "", `${status.counts.curated} curated · ${status.counts.follow_up} follow-up · ${status.counts.removed} archived`),
       );
+      byId("product-summary").textContent = `${status.tested_as_far_as_possible.count} integrations have been tested as far as currently possible without an observed product defect. Only the ${status.product_release.count} Available servers are ready for ordinary product discovery.`;
       renderProductGroups(status);
-      renderKpis(status);
       renderCategoryKey(status);
       renderProtocols(status);
       renderChains(status);

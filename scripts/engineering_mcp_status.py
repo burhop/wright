@@ -555,6 +555,24 @@ def build_engineering_status(
                 record["server_id"] for record in records if record["release_eligible"]
             ],
         },
+        "tested_as_far_as_possible": {
+            "categories": [
+                "qualified",
+                "preflight_passed",
+                "authentication_required",
+            ],
+            "count": sum(
+                record["portfolio_category"]
+                in {"qualified", "preflight_passed", "authentication_required"}
+                for record in records
+            ),
+            "server_ids": [
+                record["server_id"]
+                for record in records
+                if record["portfolio_category"]
+                in {"qualified", "preflight_passed", "authentication_required"}
+            ],
+        },
         "product_groups": [
             {
                 "id": group_id,

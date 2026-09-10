@@ -48,7 +48,6 @@ try {
 
   await page.getByTestId("engineering-category-key").waitFor();
   for (const category of status.category_key) {
-    await assertText(`engineering-category-${category.id}`, status.category_counts[category.id]);
     await assertText(`category-key-${category.id}`, category.definition);
   }
   await page.getByTestId("engineering-product-groups").waitFor();
@@ -61,6 +60,10 @@ try {
   if (status.product_release.count !== status.category_counts.qualified) {
     throw new Error("Product release count must include only fully qualified servers");
   }
+  if (status.tested_as_far_as_possible.count !== 24) {
+    throw new Error("Tested-as-far-as-possible count must be 24");
+  }
+  await assertText("engineering-product-groups", status.product_groups[0].count);
   for (const protocol of status.protocol_status) {
     await assertText(`engineering-protocol-${protocol.protocol}`, `${protocol.known} known`);
   }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-10T13:27:13.227139+00:00",
+  "generated_at": "2026-09-10T15:37:08.132605+00:00",
   "as_of": "2026-09-09",
   "catalog_sha256": "7cde2237d88f5ba7549f5b5d8738eebafe26358fd955cc7d8f58d347ab595f4f",
   "policy_version": "2026-09-08.1",
@@ -85,6 +85,40 @@
       "openscad-mcp",
       "rhino-mcp-easehee",
       "rosbag-mcp-pypi"
+    ]
+  },
+  "tested_as_far_as_possible": {
+    "categories": [
+      "qualified",
+      "preflight_passed",
+      "authentication_required"
+    ],
+    "count": 24,
+    "server_ids": [
+      "atlassian-rovo-mcp",
+      "autocad-mcp-u-c4n",
+      "autodesk-product-help-mcp",
+      "blender-mcp",
+      "brep-mcp",
+      "freecad-addon-robust",
+      "freecad-mcp-nekanat",
+      "github-official-mcp",
+      "jarvis-onshape-mcp",
+      "kicad-mcp-blwfish",
+      "nvidia-cuda-docs-mcp",
+      "oasis-open-fem-agent",
+      "onshape-labs-featurescript-mcp",
+      "onshape-mcp-hedless",
+      "openscad-mcp",
+      "partuno-mcp",
+      "playwright-mcp",
+      "rescale-mcp-hosted",
+      "rhino-mcp-easehee",
+      "rosbag-mcp-pypi",
+      "siemens-element-mcp",
+      "solidworks-api-mcp",
+      "web3d-mcp",
+      "zoo-mcp"
     ]
   },
   "product_groups": [
