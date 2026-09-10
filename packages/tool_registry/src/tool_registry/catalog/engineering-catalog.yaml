@@ -4654,7 +4654,13 @@ servers:
     primary: false
     authority: community
     observed_at: '2026-09-09'
-    notes: 'SHA-256 e5f539798123871dd2602e41c38ecf7719f45e5f7705e03780f028e5008584b1; portfolio category: Excluded archive.'
+    notes: Historical public-source check only; it must not override working Windows runtime evidence.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/solid-edge-classification-correction.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Reconciles native Solid Edge execution and Wright gateway evidence with the separate private-source distribution boundary.
   locality: local
   weight: heavy
   env_vars:
@@ -4669,8 +4675,8 @@ servers:
     - .NET SDK
     python: []
     node: []
-  verification_state: excluded
-  installability_tier: non_working
+  verification_state: verified_mcp
+  installability_tier: tested
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4680,9 +4686,9 @@ servers:
     notes: Server can be built in the Windows image, but Solid Edge must be licensed and available outside Wright redistribution.
   platform_support:
     windows_11_x64:
-      status: host-dependent
+      status: 'yes'
       tested: true
-      notes: Native Windows qualification built pinned source, initialized MCP, and listed 12 tools without launching or changing Solid Edge; cad.get_status fails output validation when no active document is open because activeDocument is omitted despite being schema-required.
+      notes: The actively developed server has completed native Solid Edge creation, inspection, export, and regression workflows; Wright has a tested provider-neutral gateway contract for it.
     linux_x64:
       status: 'no'
       tested: true
@@ -4708,13 +4714,11 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: failed
-    message: The canonical public repository still returns 404; retain the prior Windows evidence but exclude this undistributable catalog record.
-    environment: wright-clean-debian13-x64
-    missing_dependencies:
-    - Publisher-controlled source
-    - Solid Edge
-    validated_at: '2026-09-09'
+    status: passed
+    message: Native Windows Solid Edge workflows and Wright's provider-neutral MCP gateway contract are working; public repository visibility remains a separate distribution concern.
+    environment: windows-11-x64-solid-edge
+    missing_dependencies: []
+    validated_at: '2026-09-10'
     evidence_status: recorded
   windows_qualification:
     observed_at: '2026-08-14T03:14:37.293030Z'
@@ -4756,16 +4760,32 @@ servers:
       reason_code: isolated_root_removed
   engineering_stages:
   - design
-  integration_kind: api_candidate
+  integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: removed
-    reason: The canonical public repository still returns 404; retain the prior Windows evidence but exclude this undistributable catalog record.
+    disposition: curated
+    reason: Wright's actively developed Windows integration works with native Solid Edge; public source visibility is tracked separately from technical status.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/solid-edge-mcp-burhop-source-boundary.json. Correct the endpoint or source identity before another execution attempt.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.
     adoption: unknown
+    qualifications:
+    - platform: windows_11_x64
+      environment: native-windows-solid-edge-and-wright-contract
+      distribution_mode: native
+      configuration_sha256: 009ac2a039139baf29dec2b313160f8aba099cf120ab99662a1b0ddfc0681cde
+      workflow: Solid Edge part creation, inspection, export, and Wright gateway execution
+      source_revision: f58a783d2bfad4cff97c818bb63d42c1485d305a
+      wright_revision: 75c6cdc384095cca6f6ded8bf3630bb3400bba36
+      verified_at: '2026-09-10'
+      expires_at: '2026-10-10'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-10/solid-edge-classification-correction.json
+      evidence_sha256: 4f439cc3f9ba1b64b1c07931aa4bda994e2cd1b3419f1734fe4e4f216628401f
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: matlab-mcp-server
   name: MATLAB MCP Server
   vendor: MathWorks
@@ -7449,111 +7469,123 @@ servers:
     adoption: unknown
     replacement_ids:
     - nvidia-omniverse-kit-mcp
-- id: simscale-api-candidate
-  name: SimScale Simulation API Candidate
-  vendor: SimScale
-  description: SimScale exposes cloud CFD, FEA, thermal, electromagnetics, and multiphysics workflows through REST APIs and official SDKs, but no public MCP server was found in the sweep.
+- id: simscale-edge-mcp-getanirao
+  name: SimScale Edge MCP
+  vendor: getanirao (community; unaffiliated with SimScale)
+  description: Community MCP server that automates the SimScale Workbench through a locally authenticated Microsoft Edge session and Playwright.
   domains:
   - cfd
   - fea
   - simulation
   - cloud-cae
   tags:
-  - api-candidate
+  - community
   - cloud-simulation
-  - no-public-mcp
-  transport: stdio
+  - browser-automation
+  transport: streamable_http
   command:
-  - simscale-mcp-not-public
-  source_url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
-  repository_url: https://github.com/SimScaleGmbH/simscale-python-sdk
-  package_url: https://pypi.org/project/simscale-sdk/
-  license: SimScale service terms
-  auth_model: api-key
-  install_method: unknown
+  - node
+  - src/http.js
+  source_url: https://github.com/getanirao/SimscaleMCP
+  repository_url: https://github.com/getanirao/SimscaleMCP
+  license: No license declared
+  auth_model: desktop-session
+  install_method: source
   maturity: watchlist
   capability_summary:
-  - CAD import, simulation setup, runs, parameter sweeps, and results through API/SDK
-  - Cloud CFD, structural, thermal, electromagnetics, and multiphysics analyses
-  - No verified public MCP server as of the latest sweep
+  - Navigate and inspect the SimScale Workbench through Microsoft Edge
+  - Upload CAD, operate visible controls, capture screenshots, and download results with confirmation gates
+  - Community browser automation; it does not use the official SimScale API
   source_records:
+  - url: https://github.com/getanirao/SimscaleMCP
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Public version 0.2.0 at commit 2fe7421965f1610418202bf4de9fcefa56058437; the project has two commits and no declared license.
   - url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
     kind: vendor_docs
-    primary: true
-    observed_at: '2026-08-12'
-    notes: Official docs link API documentation and Python/C# SDKs.
-  - url: https://www.simscale.com/technology/simulation-api/
-    kind: vendor_docs
     primary: false
-    observed_at: '2026-08-12'
-    notes: SimScale describes API-driven geometry upload, simulation setup, execution, sweeps, and result access.
-  locality: remote
+    observed_at: '2026-09-10'
+    notes: Official SimScale documentation covers the API and SDK, not this community MCP.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/simscale-edge-mcp-0.2.0-preflight.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Exact source, locked dependency install, and 26-test clean-container preflight.
+  locality: local
   weight: medium
   env_vars:
-  - name: SIMSCALE_API_KEY
-    label: SimScale API key
-    description: API key for a future MCP/API wrapper.
+  - name: SIMSCALE_FILE_ROOT
+    label: Allowed file root
+    description: Directory root allowed for SimScale uploads and downloaded results.
     required: true
-    secret: true
+    secret: false
   dependencies:
-    system: []
-    python:
-    - simscale-sdk
-    node: []
-  verification_state: verified_api_wrapper_candidate
+    system:
+    - Microsoft Edge
+    python: []
+    node:
+    - playwright-core@1.62.1
+  verification_state: verified_mcp
   installability_tier: blocked
   risk_level: high
-  deployment_mode: cloud-saas-wrapper-candidate
+  deployment_mode: local-browser-bridge
   runtime_requirements:
     cpu: standard CPU locally
     gpu: not required locally
-    docker: 'yes'
-    notes: API wrapper should be container-friendly, but no public MCP server is verified.
+    docker: partial
+    notes: Protocol and tests run in a clean container; full operation requires a Windows Edge session authenticated to SimScale.
   platform_support:
     windows_11_x64:
-      status: likely
+      status: host-dependent
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      notes: Intended platform; requires Microsoft Edge with remote debugging and a SimScale login.
     linux_x64:
-      status: likely
-      tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      status: 'no'
+      tested: true
+      notes: Clean Linux validation passed source, install, and tests, but did not provide the required Microsoft Edge session.
     linux_arm64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped; Python SDK support should be checked on GB10.
+      notes: The documented Microsoft Edge attachment workflow has not been validated on ARM64 Linux.
     macos_x64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      notes: Upstream documentation describes Windows Edge; macOS has not been evaluated.
     macos_arm64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
-  host_software_required: []
+      notes: Upstream documentation describes Windows Edge; macOS has not been evaluated.
+  host_software_required:
+  - Microsoft Edge
   credentials_required:
-  - SimScale API key
+  - SimScale account login
   default_enabled: false
   approval_gates:
   - network_access_approval
   - cloud_job_submission_approval
   validation_result:
-    status: blocked
-    message: No public SimScale MCP server was found; keep as a high-priority API wrapper candidate.
-    environment: null
+    status: dependency_missing
+    message: Version 0.2.0 installed from its lockfile and all 26 upstream tests passed in a clean Wright container, including MCP initialize, tools/list, and loopback Streamable HTTP; a real Edge/SimScale session remains untested.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - public MCP server
+    - Microsoft Edge session with remote debugging
+    - SimScale account login
+    validated_at: '2026-09-10'
+    evidence_status: recorded
   engineering_stages:
   - simulation
-  integration_kind: api_candidate
+  integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: removed
-    reason: SimScale provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.
+    disposition: follow_up
+    reason: A public community MCP now exists and passes clean-container preflight, but its live Windows Edge and authenticated SimScale workflow still requires qualification.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-12-09'
-    next_action: Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Use an isolated Windows Edge profile and SimScale test account to validate project pinning, read-only Workbench inspection, one bounded simulation workflow, downloads, Wright gateway routing, and cleanup.
     adoption: unknown
 - id: flexcompute-flow360-api-candidate
   name: Flexcompute Flow360 API Candidate

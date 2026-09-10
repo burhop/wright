@@ -68,11 +68,11 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
     ids = [record["server_id"] for record in status["records"]]
     assert len(ids) == len(set(ids)) == status["total"] == 78
     assert status["category_counts"] == {
-        "works": 10,
+        "works": 11,
         "preview": 6,
         "requires_login": 10,
-        "in_progress": 25,
-        "abandoned": 27,
+        "in_progress": 26,
+        "abandoned": 25,
         "vendor_blocked": 0,
     }
     assert sum(status["category_counts"].values()) == len(ids)
@@ -94,7 +94,12 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         "kicad-mcp-lamaalrajih",
         "solidworks-mcp-python",
     } <= by_category["abandoned"]
-    assert {"autocad-mcp-u-c4n", "rhino-mcp-easehee"} <= by_category["works"]
+    assert {
+        "autocad-mcp-u-c4n",
+        "rhino-mcp-easehee",
+        "solid-edge-mcp-burhop",
+    } <= by_category["works"]
+    assert "simscale-edge-mcp-getanirao" in by_category["in_progress"]
     assert set().union(*by_category.values()) == set(ids)
     assert {record["protocol_family"] for record in status["records"]} == {
         "mcp",

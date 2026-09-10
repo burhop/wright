@@ -2459,17 +2459,19 @@ SQLite state, and generated geometry under the ignored
 
 ### SolidEdgeMCP (`solid-edge-mcp-burhop`)
 
-- Check out exactly `2aad5bd24df6ce1ac9578ad35c4da7ac241b5330`.
+- Check out the exact internally reviewed SolidEdgeMCP revision selected for the
+  Wright release; record the revision because the source is not publicly
+  accessible.
 - Restore only from `https://api.nuget.org/v3/index.json` into the disposable
   package directory, then build only
   `src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj`.
-- Launch with an allowed root inside the disposable directory and the upstream
-  `creation` tool mode. Call only `cad.get_status` with
-  `providerId: solid_edge`; never call connect, create, export, close, or other
-  document-affecting tools.
-- Install, startup, and tool listing pass. With no active Solid Edge document,
-  the status result omits `activeDocument` even though the published output
-  schema requires the nullable property, so an MCP client rejects the result.
+- Launch on an isolated Windows workstation with licensed Solid Edge and a
+  disposable allowed root. Verify status and discovery before running a small
+  part creation, inspection, export, reopen, and cleanup workflow through
+  Wright/Hermes.
+- Preserve the native artifact hashes and Wright gateway transcript. Public
+  repository visibility and redistribution approval are release concerns, not
+  evidence that the running MCP is broken.
 
 ### Autodesk Platform Services (`aps-mcp-server-nodejs`)
 
@@ -2543,7 +2545,7 @@ evidence linked from each catalog entry.
 | Fusion desktop, Blender, FreeCAD (Proximile and Danstan), OpenFOAM, Simulink, Omniverse Kit/OmniUI/Isaac Sim | Resolve the pinned publisher source, install only in the selected host/lab, then launch the catalog command | Status/list first; then the smallest disposable model or solver fixture | Required desktop, solver, license, or GPU host absent; **Environment required** |
 | Autodesk Fusion Data | Replace the API origin with the publisher-documented MCP endpoint before retrying | Read one project/document metadata record | Current catalog URL terminates before MCP initialize; **Failed** |
 | Siemens Xcelerator Developer Portal | Do not launch the web portal URL as MCP | None until the publisher documents an MCP endpoint | Non-MCP URL; **Excluded archive** |
-| SolidEdgeMCP (burhop) | Do not distribute from an unavailable source | Retain old Windows diagnostics only as history | Canonical public repository remains 404; **Excluded archive** |
+| SolidEdgeMCP (burhop) | Use the internally reviewed exact source revision on Windows with licensed Solid Edge | Run the bounded Wright/Hermes creation, inspection, export, reopen, and cleanup workflow | Native Solid Edge and Wright integration evidence exists; public distribution remains separate; **Works** |
 
 ## 10 September focused qualification recipes
 
@@ -2584,3 +2586,18 @@ evidence linked from each catalog entry.
   four management tools. Diagnose that attachment before attempting
   `get_render_status`, deterministic render, STL export, independent mesh
   inspection, and Wright gateway calls.
+
+### SimScale Edge MCP
+
+- Pin community source commit
+  `2fe7421965f1610418202bf4de9fcefa56058437` and use `npm ci`; the
+  lockfile resolves only `playwright-core@1.62.1`.
+- The clean Wright container must pass all 26 upstream tests, including MCP
+  initialize, tool discovery, project guards, confirmation-sensitive actions,
+  redaction, and loopback Streamable HTTP.
+- For live qualification, use an isolated Windows Edge profile with remote
+  debugging, a dedicated SimScale test account, and a known project. Start with
+  read-only status and page-state calls, then run one bounded engineering task
+  through Wright and verify downloaded output and cleanup.
+- Treat it as community browser automation. It is unaffiliated with SimScale,
+  has only two observed commits, and declares no license.

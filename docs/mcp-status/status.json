@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-10-dec71fc99bb6",
-  "generated_at": "2026-09-10T20:44:07.182511+00:00",
+  "snapshot_id": "2026-09-10-14068b4b5c56",
+  "generated_at": "2026-09-10T21:05:47.833737+00:00",
   "assessed_as_of": "2026-09-10",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "82e863f87c70cc1c66ccd7dbeae709108e4f5c275af0212245e2eebd3bcbaa00",
+  "catalog_sha256": "c47b338a1f512129d9a9b8297fffafec3dd332da439dbaea7dc356c58aee2d9d",
   "total": 78,
   "category_counts": {
-    "works": 10,
+    "works": 11,
     "preview": 6,
     "requires_login": 10,
-    "in_progress": 25,
-    "abandoned": 27,
+    "in_progress": 26,
+    "abandoned": 25,
     "vendor_blocked": 0
   },
   "category_key": [
@@ -59,21 +59,21 @@
     }
   ],
   "green": {
-    "count": 26,
+    "count": 27,
     "components": {
-      "works": 10,
+      "works": 11,
       "preview": 6,
       "requires_login": 10
     },
     "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
   },
-  "fully_qualified_count": 10,
+  "fully_qualified_count": 11,
   "product_groups": [
     {
       "id": "works",
       "label": "Works",
       "color": "green",
-      "count": 10,
+      "count": 11,
       "server_ids": [
         "autocad-mcp-u-c4n",
         "autodesk-product-help-mcp",
@@ -84,7 +84,8 @@
         "oasis-open-fem-agent",
         "openscad-mcp",
         "rhino-mcp-easehee",
-        "rosbag-mcp-pypi"
+        "rosbag-mcp-pypi",
+        "solid-edge-mcp-burhop"
       ]
     },
     {
@@ -123,7 +124,7 @@
       "id": "in_progress",
       "label": "In progress",
       "color": "yellow",
-      "count": 25,
+      "count": 26,
       "server_ids": [
         "ansys-fluent-mcp",
         "autodesk-fusion-desktop-mcp",
@@ -144,6 +145,7 @@
         "nvidia-omniverse-usd-code-mcp",
         "openfoam-mcp-webworn",
         "rhino-mcp",
+        "simscale-edge-mcp-getanirao",
         "simulink-agentic-toolkit",
         "sketchup-mcp",
         "solidworks-mcp-ts",
@@ -156,7 +158,7 @@
       "id": "abandoned",
       "label": "Abandoned",
       "color": "red",
-      "count": 27,
+      "count": 25,
       "server_ids": [
         "ansys-mcp-server-community",
         "aps-mcp-server-nodejs",
@@ -179,8 +181,6 @@
         "revit-mcp",
         "rosbag-mcp-binabik",
         "siemens-xcelerator-developer-portal-mcp",
-        "simscale-api-candidate",
-        "solid-edge-mcp-burhop",
         "solidworks-mcp-alisamsam",
         "solidworks-mcp-python",
         "trikos529-openscad",
@@ -200,8 +200,8 @@
       "protocol": "mcp",
       "label": "MCP",
       "known": 73,
-      "curated": 10,
-      "passing": 10,
+      "curated": 11,
+      "passing": 11,
       "physical_operation_qualified": null,
       "status": "implemented"
     },
@@ -3481,16 +3481,16 @@
       "assessment_reviewed_at": null
     },
     {
-      "server_id": "simscale-api-candidate",
-      "name": "SimScale Simulation API Candidate",
-      "vendor": "SimScale",
-      "source_url": "https://www.simscale.com/docs/platform/api-and-sdk-documentation/",
-      "scope": "CAD import, simulation setup, runs, parameter sweeps, and results through API/SDK",
+      "server_id": "simscale-edge-mcp-getanirao",
+      "name": "SimScale Edge MCP",
+      "vendor": "getanirao (community; unaffiliated with SimScale)",
+      "source_url": "https://github.com/getanirao/SimscaleMCP",
+      "scope": "Navigate and inspect the SimScale Workbench through Microsoft Edge",
       "implementation_mode": "unknown",
       "source_revision": null,
-      "integration_kind": "api_candidate",
+      "integration_kind": "mcp_server",
       "protocol_family": "mcp",
-      "transport": "stdio",
+      "transport": "streamable_http",
       "disciplines": [
         "cfd",
         "cloud-cae",
@@ -3501,37 +3501,40 @@
         "simulation"
       ],
       "platforms": [
-        "linux_arm64",
-        "linux_x64",
-        "macos_arm64",
-        "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "abandoned",
-      "portfolio_category_reason": "SimScale provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.",
-      "progress_substatus": "closed",
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "The newly identified community server passes its locked install and all 26 tests, including MCP and loopback HTTP checks, but no real Edge/SimScale session or Wright-routed engineering task has been tested.",
+      "progress_substatus": "environment_needed",
       "release_eligible": false,
       "credentials": [
-        "SimScale API key"
+        "SimScale account login"
       ],
       "prerequisites": [
-        "simscale-sdk"
+        "Microsoft Edge",
+        "playwright-core@1.62.1"
       ],
       "last_qualified_at": null,
       "expires_at": null,
       "evidence_age_days": null,
-      "latest_result": "blocked",
-      "last_tested_at": null,
-      "next_action": "Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper.",
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Use an isolated Windows Edge profile and SimScale test account to validate project pinning, read-only Workbench inspection, one bounded simulation workflow, downloads, Wright gateway routing, and cleanup.",
       "tests_completed": [
-        "See latest technical result and linked evidence"
+        "Exact source review at commit 2fe7421965f1610418202bf4de9fcefa56058437",
+        "Clean-container locked install and 26-test upstream suite",
+        "In-process initialize, tools/list, tool-call error, and Streamable HTTP checks"
       ],
       "tests_remaining": [
-        "Reassess only if SimScale publishes an MCP server or Wright approves development of a maintained wrapper."
+        "Test an isolated Windows Edge profile and SimScale account",
+        "Inspect a known project, run one bounded engineering workflow through Wright, verify downloaded output, and clean up"
       ],
-      "limitations": [],
+      "limitations": [
+        "Community project with two commits, zero stars, and no declared license.",
+        "Browser automation may change when the SimScale Workbench UI changes."
+      ],
       "replacement_ids": [],
-      "assessment_reviewed_at": null
+      "assessment_reviewed_at": "2026-09-10"
     },
     {
       "server_id": "simulink-agentic-toolkit",
@@ -3643,10 +3646,10 @@
       "name": "SolidEdgeMCP",
       "vendor": "burhop",
       "source_url": "https://github.com/burhop/SolidEdgeMCP.git",
-      "scope": "Solid Edge status checks",
+      "scope": "Solid Edge part creation, inspection, export, and Wright gateway execution",
       "implementation_mode": "unknown",
-      "source_revision": null,
-      "integration_kind": "api_candidate",
+      "source_revision": "f58a783d2bfad4cff97c818bb63d42c1485d305a",
+      "integration_kind": "mcp_server",
       "protocol_family": "mcp",
       "transport": "stdio",
       "disciplines": [
@@ -3658,30 +3661,34 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "abandoned",
-      "portfolio_category_reason": "The canonical public repository still returns 404; retain the prior Windows evidence but exclude this undistributable catalog record.",
-      "progress_substatus": "closed",
-      "release_eligible": false,
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Wright's actively developed SolidEdgeMCP has working native Solid Edge creation, inspection, and export behavior plus the provider-neutral Wright gateway contract; private repository visibility is a distribution issue, not a runtime failure.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
       "credentials": [],
       "prerequisites": [
         ".NET SDK",
         "Solid Edge"
       ],
-      "last_qualified_at": null,
-      "expires_at": null,
-      "evidence_age_days": null,
-      "latest_result": "failed",
-      "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/solid-edge-mcp-burhop-source-boundary.json. Correct the endpoint or source identity before another execution attempt.",
+      "last_qualified_at": "2026-09-10",
+      "expires_at": "2026-10-10",
+      "evidence_age_days": 0,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.",
       "tests_completed": [
-        "See latest technical result and linked evidence"
+        "Native Windows MCP startup, discovery, Solid Edge creation, inspection, export, and regression workflows",
+        "Wright provider-neutral gateway projection, execution, progress, cancellation, workspace binding, and browser coverage"
       ],
       "tests_remaining": [
-        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/solid-edge-mcp-burhop-source-boundary.json. Correct the endpoint or source identity before another execution attempt."
+        "Keep a current combined Wright/Hermes-to-live-Solid-Edge release qualification with the shipped source revision"
       ],
-      "limitations": [],
+      "limitations": [
+        "Works applies to the Windows deployment with licensed Solid Edge.",
+        "Public source access and redistribution policy must be resolved before customer distribution."
+      ],
       "replacement_ids": [],
-      "assessment_reviewed_at": null
+      "assessment_reviewed_at": "2026-09-10"
     },
     {
       "server_id": "solidworks-api-mcp",

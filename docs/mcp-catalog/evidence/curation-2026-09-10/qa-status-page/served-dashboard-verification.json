@@ -1,28 +1,28 @@
 {
-  "observed_at": "2026-09-10T20:44:56.810Z",
+  "observed_at": "2026-09-10T21:06:20.145Z",
   "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "audience": "qa",
-  "snapshot_id": "2026-09-10-dec71fc99bb6",
+  "snapshot_id": "2026-09-10-14068b4b5c56",
   "total": 78,
   "category_counts": {
-    "works": 10,
+    "works": 11,
     "preview": 6,
     "requires_login": 10,
-    "in_progress": 25,
-    "abandoned": 27,
+    "in_progress": 26,
+    "abandoned": 25,
     "vendor_blocked": 0
   },
   "green": {
-    "count": 26,
+    "count": 27,
     "components": {
-      "works": 10,
+      "works": 11,
       "preview": 6,
       "requires_login": 10
     },
     "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
   },
-  "history_points": 2,
+  "history_points": 3,
   "console_errors": [],
   "page_errors": [],
   "failed_responses": [],

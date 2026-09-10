@@ -2022,3 +2022,17 @@ Result:
   `replicad-opencascadejs#kcad-v0.24.0`; protocol and CAD stages remain
   unreachable. The record stays In progress / Needs repair and points to
   `evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json`.
+## 10 September classification correction: SolidEdgeMCP and SimScale
+
+- **Problem:** SolidEdgeMCP was placed in Excluded archive because its public
+  repository URL returned 404, despite active Wright-owned development and
+  recorded native Solid Edge and Wright integration evidence.
+- **Resolution:** Restored SolidEdgeMCP to Works. Source visibility and
+  redistribution are now recorded as release boundaries instead of runtime
+  failures.
+- **Problem:** The SimScale watchlist entry said no public MCP existed.
+- **Resolution:** Identified the public community SimScale Edge MCP at commit
+  `2fe7421965f1610418202bf4de9fcefa56058437`. Its locked install and all 26
+  tests passed in a clean Wright container, including MCP and loopback HTTP
+  checks. It is In progress pending a real Edge/SimScale session and Wright
+  workflow; it is not an official SimScale server.

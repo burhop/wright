@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "server_id": "solid-edge-mcp-burhop",
+  "observed_at": "2026-09-10T20:57:25Z",
+  "status": "passed",
+  "platform": "windows_11_x64",
+  "configuration_sha256": "009ac2a039139baf29dec2b313160f8aba099cf120ab99662a1b0ddfc0681cde",
+  "decision": "restore_to_works",
+  "reason": "The prior Excluded archive decision treated a 404 from the private public-facing repository URL as a runtime failure. Wright owns and actively develops this integration, and native Solid Edge plus Wright gateway evidence exists. Source distribution remains a separate release concern.",
+  "current_source": {
+    "checkout": "D:/repos/SolidEdgeMCP",
+    "head": "f58a783d2bfad4cff97c818bb63d42c1485d305a",
+    "active_development_observed": true,
+    "public_repository_visibility": "private_or_unavailable"
+  },
+  "native_runtime_evidence": {
+    "qualification": "docs/mcp-catalog/evidence/windows-qualification-2026-08-13/solid-edge-mcp-burhop-windows-qualification.json",
+    "historical_protocol_result": "passed",
+    "historical_tool_count": 12,
+    "additional_observation": "The active SolidEdgeMCP checkout contains native Windows creation, inspection, export, sheet-metal, assembly, and acceptance evidence from real Solid Edge runs."
+  },
+  "wright_integration_evidence": {
+    "path": "specs/048-solid-edge-creation-visibility/checklists/completion-audit.md",
+    "sha256": "bb8e1306ad8605315998356915a161db983c61661967c7654d1de6efe5bcad0f",
+    "observations": [
+      "Wright gateway projection and execution policy passed focused and full regression suites.",
+      "Hermes plugin, browser, workspace binding, progress, cancellation, and protected bridge behavior passed their recorded gates.",
+      "SolidEdgeMCP provider tests and a live STL regression passed in the recorded completion audit."
+    ]
+  },
+  "steps": [
+    {
+      "stage": "source_identity_and_distribution_boundary",
+      "status": "passed",
+      "summary": "The active private checkout and exact source revision were identified; public visibility is tracked separately."
+    },
+    {
+      "stage": "native_mcp_backend_outcome",
+      "status": "passed",
+      "summary": "Recorded Windows runs cover MCP protocol plus native Solid Edge creation, inspection, export, and artifact outcomes."
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed",
+      "summary": "Wright's completed integration evidence covers provider-neutral gateway execution, Hermes plugin behavior, workspace binding, progress, cancellation, and browser behavior for SolidEdgeMCP."
+    }
+  ],
+  "remaining_release_boundary": "Run and retain a current combined Wright/Hermes-to-live-Solid-Edge qualification for the exact shipped revision, and resolve public source access and redistribution terms.",
+  "cleanup": "passed",
+  "cleanup_notes": "No Solid Edge process, document, or external checkout was modified."
+}

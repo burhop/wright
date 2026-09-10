@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "server_id": "simscale-edge-mcp-getanirao",
+  "observed_at": "2026-09-10T20:57:25Z",
+  "source": {
+    "url": "https://github.com/getanirao/SimscaleMCP",
+    "revision": "2fe7421965f1610418202bf4de9fcefa56058437",
+    "version": "0.2.0",
+    "latest_commit_at": "2026-08-02T14:45:33-07:00",
+    "commit_count_observed": 2,
+    "license": "not_declared"
+  },
+  "environment": {
+    "container_image": "wright:standard-linux-amd64-mcp-isolated",
+    "node": "26.7.0",
+    "npm": "12.0.2",
+    "platform": "linux_x64"
+  },
+  "dependency_install": {
+    "command": "npm ci --ignore-scripts",
+    "result": "passed",
+    "package_lock_sha256": "aca59592141478eb37549cf7f1007846c6f0a55720fd58bf1e6598d6b417daf1",
+    "resolved_dependency": "playwright-core@1.62.1",
+    "audit_vulnerabilities": 0,
+    "network_destinations": [
+      "registry.npmjs.org"
+    ]
+  },
+  "upstream_tests": {
+    "command": "npm test",
+    "result": "passed",
+    "passed": 26,
+    "failed": 0,
+    "covered_boundaries": [
+      "SimScale HTTPS allowlist",
+      "loopback-only CDP validation and redaction",
+      "project identity guards",
+      "confirmation-sensitive UI actions",
+      "MCP initialize and tools/list",
+      "tool-call error mapping",
+      "loopback Streamable HTTP health and MCP JSON-RPC"
+    ]
+  },
+  "live_backend": {
+    "result": "not_tested",
+    "missing_requirements": [
+      "isolated Microsoft Edge session with remote debugging",
+      "SimScale test account",
+      "known test project"
+    ]
+  },
+  "wright_gateway": {
+    "result": "not_tested"
+  },
+  "classification": "in_progress",
+  "cleanup": "Disposable container removed; source clone scheduled for removal after catalog update."
+}

@@ -400,6 +400,36 @@ assessments:
       - Reconcile documented and actual tools, then run a small SketchUp scene task through Wright on the desktop host
     limitations:
       - Requires SketchUp desktop and its extension server.
+  simscale-edge-mcp-getanirao:
+    category: in_progress
+    substatus: environment_needed
+    reason: The newly identified community server passes its locked install and all 26 tests, including MCP and loopback HTTP checks, but no real Edge/SimScale session or Wright-routed engineering task has been tested.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Exact source review at commit 2fe7421965f1610418202bf4de9fcefa56058437
+      - Clean-container locked install and 26-test upstream suite
+      - In-process initialize, tools/list, tool-call error, and Streamable HTTP checks
+    tests_remaining:
+      - Test an isolated Windows Edge profile and SimScale account
+      - Inspect a known project, run one bounded engineering workflow through Wright, verify downloaded output, and clean up
+    limitations:
+      - Community project with two commits, zero stars, and no declared license.
+      - Browser automation may change when the SimScale Workbench UI changes.
+  solid-edge-mcp-burhop:
+    category: works
+    substatus: qualified
+    reason: Wright's actively developed SolidEdgeMCP has working native Solid Edge creation, inspection, and export behavior plus the provider-neutral Wright gateway contract; private repository visibility is a distribution issue, not a runtime failure.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Native Windows MCP startup, discovery, Solid Edge creation, inspection, export, and regression workflows
+      - Wright provider-neutral gateway projection, execution, progress, cancellation, workspace binding, and browser coverage
+    tests_remaining:
+      - Keep a current combined Wright/Hermes-to-live-Solid-Edge release qualification with the shipped source revision
+    limitations:
+      - Works applies to the Windows deployment with licensed Solid Edge.
+      - Public source access and redistribution policy must be resolved before customer distribution.
   solidworks-mcp-alisamsam:
     category: abandoned
     substatus: closed

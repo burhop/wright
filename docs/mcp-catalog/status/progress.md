@@ -30,3 +30,14 @@
   25 In progress, 27 Excluded archive, and 0 Vendor blocked; green total 26.
 - [x] Complete full public/QA verification, record one history snapshot, capture
   final screenshots, commit the campaign, and leave the QA dashboard running.
+
+## 10 September 2026 classification correction
+
+- [x] Restore SolidEdgeMCP from Excluded archive to Works; its private source
+  distribution boundary does not invalidate native Windows and Wright runtime
+  evidence.
+- [x] Replace the obsolete SimScale API-only watchlist record with the newly
+  discovered community SimScale Edge MCP.
+- [x] Run its exact 0.2.0 source through a locked clean-container install and
+  all 26 upstream tests; retain it as In progress pending live Edge, SimScale,
+  and Wright workflow validation.
