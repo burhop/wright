@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.engineering/schemas/integration-status-v2.json",
+  "type": "object",
+  "required": ["schema_version", "snapshot_id", "generated_at", "assessed_as_of", "policy_version", "catalog_sha256", "total", "category_counts", "category_key", "green", "fully_qualified_count", "records", "audience"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "snapshot_id": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-f0-9]{12}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "assessed_as_of": {"type": "string", "format": "date"},
+    "policy_version": {"const": "engineering-integrations-v2"},
+    "catalog_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "total": {"type": "integer", "minimum": 0},
+    "audience": {"enum": ["qa", "public"]},
+    "category_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["works", "preview", "requires_login", "in_progress", "abandoned", "vendor_blocked"],
+      "properties": {
+        "works": {"type": "integer", "minimum": 0},
+        "preview": {"type": "integer", "minimum": 0},
+        "requires_login": {"type": "integer", "minimum": 0},
+        "in_progress": {"type": "integer", "minimum": 0},
+        "abandoned": {"type": "integer", "minimum": 0},
+        "vendor_blocked": {"type": "integer", "minimum": 0}
+      }
+    },
+    "category_key": {"type": "array", "minItems": 6, "maxItems": 6},
+    "green": {
+      "type": "object",
+      "required": ["count", "components", "meaning"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "components": {"type": "object", "required": ["works", "preview", "requires_login"]},
+        "meaning": {"type": "string", "minLength": 20}
+      }
+    },
+    "fully_qualified_count": {"type": "integer", "minimum": 0},
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["server_id", "name", "vendor", "protocol_family", "portfolio_category", "portfolio_category_reason", "progress_substatus", "next_action"],
+        "properties": {
+          "server_id": {"type": "string", "minLength": 1},
+          "name": {"type": "string", "minLength": 1},
+          "vendor": {"type": "string", "minLength": 1},
+          "protocol_family": {"enum": ["mcp", "webmcp", "hardware_mcp", "mhs"]},
+          "portfolio_category": {"enum": ["works", "preview", "requires_login", "in_progress", "abandoned", "vendor_blocked"]},
+          "portfolio_category_reason": {"type": "string", "minLength": 10},
+          "progress_substatus": {"type": "string", "minLength": 3},
+          "next_action": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

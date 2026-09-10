@@ -1,0 +1,59 @@
+schema_version: 1
+policy_version: engineering-integrations-v2
+assessments:
+  autocad-mcp-u-c4n:
+    category: works
+    substatus: qualified
+    reason: The pinned headless DXF workflow passed protocol, backend, Wright gateway, independent geometry, error, and workspace-boundary checks.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Pinned upstream suite and three direct Wright routes
+      - DXF geometry and out-of-workspace rejection
+    tests_remaining:
+      - Qualify live Windows AutoCAD COM mode separately
+    limitations:
+      - Works applies to the qualified headless DXF fallback scope, not live AutoCAD.
+  kernelcad-mcp:
+    category: in_progress
+    substatus: needs_repair
+    reason: The clean-container run found a repairable package dependency failure before protocol initialization; evaluation remains open.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Clean-container package installation attempt
+    tests_remaining:
+      - Confirm an immutable registry-published dependency release
+      - Run protocol, bracket workflow, export, gateway, outcome, and cleanup checks
+    limitations:
+      - No protocol or CAD task completed in the recorded run.
+  rhino-mcp-easehee:
+    category: works
+    substatus: qualified
+    reason: The pinned headless 3DM workflow passed protocol, backend, Wright gateway, independent Brep inspection, error, and reopen checks.
+    reviewed_at: "2026-09-10"
+    priority: normal
+    tests_completed:
+      - Pinned upstream suite and three direct Wright routes
+      - Independent units, bounds, topology, validity, and reopen inspection
+    tests_remaining:
+      - Qualify live Rhino and Grasshopper separately
+    limitations:
+      - Works applies to the qualified headless solid 3DM fallback scope.
+      - Standalone mesh volume and STL behavior remain outside the qualified scope.
+  web3d-mcp:
+    category: preview
+    substatus: verification_incomplete
+    reason: Server startup, protocol discovery, upstream tests, scene generation, validation, preview, and code generation passed; dependency advisories and the stated Node version remain unresolved.
+    reviewed_at: "2026-09-10"
+    priority: high
+    tests_completed:
+      - Protocol initialization and discovery of 12 tools on Node 22
+      - Upstream test suites and four representative tool operations
+    tests_remaining:
+      - Resolve or accept current dependency advisories
+      - Reconcile the upstream Node 18 claim with the observed Node 22 requirement
+      - Complete a scoped Wright gateway and artifact qualification
+    limitations:
+      - The clean-container dependency audit reported 33 vulnerabilities.
+      - Startup failed on Node 18 despite the upstream Node 18+ statement.

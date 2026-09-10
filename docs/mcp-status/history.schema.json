@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.engineering/schemas/integration-status-history-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "snapshots"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "snapshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["snapshot_id", "observed_at", "assessed_as_of", "schema_version", "policy_version", "catalog_sha256", "total", "category_counts", "green_count", "green_components", "fully_qualified_count", "membership", "change_reason"],
+        "properties": {
+          "snapshot_id": {"type": "string"},
+          "observed_at": {"type": "string", "format": "date-time"},
+          "assessed_as_of": {"type": "string", "format": "date"},
+          "schema_version": {"const": 2},
+          "policy_version": {"type": "string"},
+          "catalog_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "total": {"type": "integer", "minimum": 0},
+          "category_counts": {"type": "object"},
+          "green_count": {"type": "integer", "minimum": 0},
+          "green_components": {"type": "object"},
+          "fully_qualified_count": {"type": "integer", "minimum": 0},
+          "membership": {"type": "object", "additionalProperties": {"type": "string"}},
+          "change_reason": {"type": "string", "minLength": 8},
+          "corrects": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -299,42 +299,46 @@ uv run python -m tool_registry.catalog_curation report \
   --previous docs/mcp-catalog/evidence/curation-2026-09-08/report.json
 
 uv run python scripts/generate-engineering-mcp-status.py \
-  --as-of 2026-09-09 \
   --process-chains docs/mcp-catalog/evidence/curation-2026-09-09/process-chains-linux.json \
   --previous-report docs/mcp-catalog/evidence/curation-2026-09-08/report.json \
-  --output-dir docs/mcp-catalog/evidence/curation-2026-09-09/dashboard
+  --history docs/mcp-status/history.json \
+  --qa-output artifacts/mcp-status-qa \
+  --public-output artifacts/mcp-status-public
 ```
 
-The generator refuses missing, altered, or non-passing current qualification
-evidence and refuses process-chain evidence whose status, cleanup, or call count
-does not match the regression contract. It writes `index.html`, `status.json`,
-and exact evidence files below `dashboard/evidence/`. The standalone page shows
-the complete evidence table, qualification and disposition counts, changes from
-the previous report, protocol boundaries, and the latest chain outcomes.
+The generator refuses missing or altered current qualification evidence. Invalid
+or unavailable process-chain evidence becomes a secondary diagnostic and cannot
+blank the integration list. It validates reviewed assessments and both output
+schemas, reconciles canonical membership and counts, and builds a detailed QA
+projection plus a public allowlist projection.
 
-The dashboard assigns one portfolio category to every record. These categories
-describe the next curation action and do not replace the exact technical result:
+The dashboard assigns one of six portfolio categories to every MCP, WebMCP, and
+hardware record. These categories describe the next curation action and do not
+replace the exact technical result:
 
-- **Qualified:** current scoped protocol, backend, gateway, and outcome evidence.
-- **Preflight passed:** useful checks passed; complete Wright qualification remains.
-- **Connect and verify:** a current server reached an authentication challenge.
+- **Works:** current scoped protocol, backend, gateway, outcome, and cleanup evidence.
+- **Preview:** useful checks passed; complete Wright qualification remains.
+- **Requires login:** a current server reached an authentication challenge.
   This proves the access boundary, not post-login tools, backend behavior, or
   Wright gateway operation. Keep it out of ordinary product discovery until an
   authenticated read and gateway call pass.
-- **Environment required:** host software, a license, hardware, or a dedicated
-  lab environment beyond ordinary user authentication is needed.
-- **Untested:** no useful current execution evidence is recorded.
-- **Failed:** current evidence shows an implementation, packaging, startup, or
-  protocol failure.
-- **Excluded archive:** retired, superseded, unavailable, duplicate, or not an
-  MCP server. Hide it from discovery and retain the decision record.
+- **In progress:** planned work, repair, evidence review, renewal, host software,
+  licensing, hardware, or a lab environment remains.
+- **Abandoned:** a reviewed decision closed evaluation. Retain the reason and any
+  replacement to prevent repeated review.
+- **Blocked by vendor:** an attributable vendor restriction explicitly asks that
+  this integration use not proceed. Authentication, licenses, paywalls, or HTTP
+  errors do not establish this category.
+
+Works, Preview, and Requires login form the green technical-assessment total.
+Green is not customer adoption or production acceptance.
 
 Review the generated directory, run the catalog checks, and verify the dashboard
 through a local static HTTP server:
 
 ```bash
 python -m http.server 18765 --bind 127.0.0.1 \
-  --directory docs/mcp-catalog/evidence/curation-YYYY-MM-DD/dashboard
+  --directory artifacts/mcp-status-qa
 ```
 
 Capture the served verification and screenshots with:
@@ -342,13 +346,17 @@ Capture the served verification and screenshots with:
 ```bash
 node scripts/verify-engineering-mcp-dashboard.mjs \
   --base-url http://127.0.0.1:18765 \
-  --output-dir docs/mcp-catalog/evidence/curation-YYYY-MM-DD
+  --output-dir artifacts/mcp-status-verification
 ```
 
-The verifier derives expected counts from `status.json`, checks all protocol and
-Tier 1 cards, opens exact evidence, filters the complete server table, rejects
-browser or HTTP errors, and writes three screenshots plus
-`served-dashboard-verification.json`.
+The verifier derives expected counts and exact member totals from `status.json`,
+opens all six categories including the zero vendor state, checks reloadable URL
+filters, search, history, and the narrow layout, rejects browser or HTTP errors,
+and writes five screenshots plus `served-dashboard-verification.json`.
+
+After human review, repeat generation with `--record-snapshot --public-output
+docs/mcp-status`. Ordinary preview builds do not mutate history. See
+`docs/mcp-catalog/status/README.md` for correction and rollback rules.
 
 ## Protocol boundaries
 

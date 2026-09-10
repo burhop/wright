@@ -9,6 +9,11 @@ on:
       - docker/mcp-bundle.schema.json
       - docker/mcp/verify-bundle.py
       - docs/mcp-catalog/**
+      - docs/mcp-status/**
+      - scripts/engineering_mcp_status.py
+      - scripts/generate-engineering-mcp-status.py
+      - scripts/engineering-mcp-dashboard.html
+      - scripts/verify-engineering-mcp-dashboard.mjs
       - packages/tool_registry/src/tool_registry/catalog/**
       - packages/tool_registry/src/tool_registry/canonical_catalog.py
       - packages/tool_registry/src/tool_registry/catalog_bundle.py
@@ -17,6 +22,7 @@ on:
       - packages/tool_registry/src/tool_registry/catalog_curation.py
       - packages/tool_registry/src/tool_registry/catalog_platforms.py
       - packages/tool_registry/tests/test_catalog_*.py
+      - packages/tool_registry/tests/test_engineering_mcp_status.py
       - tests/docker/test_mcp_bundle.py
       - pyproject.toml
       - uv.lock
@@ -28,6 +34,11 @@ on:
       - docker/mcp-bundle.schema.json
       - docker/mcp/verify-bundle.py
       - docs/mcp-catalog/**
+      - docs/mcp-status/**
+      - scripts/engineering_mcp_status.py
+      - scripts/generate-engineering-mcp-status.py
+      - scripts/engineering-mcp-dashboard.html
+      - scripts/verify-engineering-mcp-dashboard.mjs
       - packages/tool_registry/src/tool_registry/catalog/**
       - packages/tool_registry/src/tool_registry/canonical_catalog.py
       - packages/tool_registry/src/tool_registry/catalog_bundle.py
@@ -36,6 +47,7 @@ on:
       - packages/tool_registry/src/tool_registry/catalog_curation.py
       - packages/tool_registry/src/tool_registry/catalog_platforms.py
       - packages/tool_registry/tests/test_catalog_*.py
+      - packages/tool_registry/tests/test_engineering_mcp_status.py
       - tests/docker/test_mcp_bundle.py
       - pyproject.toml
       - uv.lock
@@ -76,6 +88,7 @@ jobs:
             packages/tool_registry/tests/test_catalog_platforms.py \
             packages/tool_registry/tests/test_catalog_distribution.py \
             packages/tool_registry/tests/test_catalog_curation.py \
+            packages/tool_registry/tests/test_engineering_mcp_status.py \
             tests/docker/test_mcp_bundle.py
           uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
           uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.linux-arm64.yaml
@@ -83,6 +96,13 @@ jobs:
 
       - name: Report review decisions and lifecycle gaps
         run: uv run python -m tool_registry.catalog_curation report --output-dir artifacts/mcp-curation
+
+      - name: Validate combined QA and public status projections
+        run: |
+          uv run python scripts/generate-engineering-mcp-status.py \
+            --history docs/mcp-status/history.json \
+            --qa-output artifacts/mcp-status-qa \
+            --public-output artifacts/mcp-status-public
 
       - name: Observe public sources and discover lifecycle candidates
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

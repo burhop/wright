@@ -122,6 +122,7 @@ nav:
   - API Reference: api/api-reference.md
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md
+      - Integration Status Maintenance: mcp-catalog/status/README.md
       - Custom MCP Tools: mcp-catalog/custom-tools.md
       - Offline Caching: mcp-catalog/offline-cache.md
   - Admin:

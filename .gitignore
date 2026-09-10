@@ -284,6 +284,8 @@ docker/mcp/cache/
 docker/mcp/licenses/generated/
 docker/mcp-bundle.generated.*
 docker/mcp-bundle-status.json
+artifacts/mcp-status-*/
+artifacts/pytest-temp/
 
 # Environment secrets
 .env.local
