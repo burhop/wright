@@ -2486,6 +2486,13 @@ servers:
   - python
   - server.py
   source_url: https://github.com/zh19980811/Easy-MCP-AutoCad
+  source_records:
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/easy-mcp-autocad-closure.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Current source describes limited maintenance and a learning-oriented, incomplete implementation; Wright already qualifies overlapping AutoCAD capability.
   locality: local
   weight: medium
   env_vars: []
@@ -2503,8 +2510,8 @@ servers:
   aliases:
   - AutoCAD SQLite Exporter
   - Easy-MCP-AutoCad
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   platform_support:
@@ -2550,14 +2557,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: Current publisher documentation describes a lightly maintained learning project with incomplete tools, duplicating Wright's qualified AutoCAD coverage.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented
-      prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover only after sustained maintenance and complete tools provide a clear advantage over Wright's qualified AutoCAD integration.
     adoption: unknown
+    replacement_ids:
+    - autocad-mcp-u-c4n
 - id: multicad-mcp
   name: multiCAD COM Bridge
   vendor: AnCode666
@@ -5343,6 +5351,12 @@ servers:
     authority: community
     observed_at: '2026-09-09'
     notes: 'SHA-256 55a36d93f1203d7904155f4bf16cb23b7309ba6165b23d3a3ea8f385a18dd37a; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/openfoam-mcp-webworn-qualification.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Pinned-source OpenFOAM 12 qualification; protocol and solver ran, but independent artifact inspection proved the successful pipe-flow result used the wrong geometry.
   locality: local
   weight: heavy
   env_vars: []
@@ -5351,8 +5365,8 @@ servers:
     - OpenFOAM
     python: []
     node: []
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-only
   runtime_requirements:
@@ -5366,9 +5380,9 @@ servers:
       tested: false
       notes: OpenFOAM support on Windows is host-dependent and not validated.
     linux_x64:
-      status: likely
-      tested: false
-      notes: OpenFOAM is Linux-friendly, but this MCP has not been validated by Wright.
+      status: 'no'
+      tested: true
+      notes: A repaired disposable image initialized and ran, but the advertised pipe-flow operation solved a rectangular block rather than the requested circular pipe.
     linux_arm64:
       status: unknown
       tested: false
@@ -5389,24 +5403,23 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: dependency_missing
-    message: The current authoritative source was resolved; OpenFOAM 12 is deliberately absent from the clean Wright image.
-    environment: wright-clean-debian13-x64
-    missing_dependencies:
-    - OpenFOAM 12
-    validated_at: '2026-09-09'
+    status: failed
+    message: The server reported a successful circular-pipe result after OpenFOAM solved a 1 x 1 x 0.1 m rectangular block; its pressure drop came from a theoretical correlation rather than the computed field.
+    environment: repaired disposable Ubuntu 22.04/OpenFOAM 12 container, image sha256:17e00da96c5c7f7d695ab415a77e3765d9ec23ea504792f0639f89b2eefb540e
+    missing_dependencies: []
+    validated_at: '2026-09-10'
     evidence_status: recorded
   engineering_stages:
   - simulation
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: Independent result inspection found a false engineering success in the advertised pipe-flow path, after three packaging and startup defects were repaired for qualification.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/openfoam-mcp-webworn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; rediscover only after upstream fixes installation and proves requested geometry plus field-derived engineering results.
     adoption: unknown
 - id: freecad-mcp-sergiudanstan
   name: FreeCAD MCP Full-Module Server
@@ -5448,6 +5461,12 @@ servers:
     authority: community
     observed_at: '2026-09-09'
     notes: 'SHA-256 a37b8a58563e217d69deed81684055f24d55352abf8d2c27fc903c8c171376a3; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/freecad-mcp-sergiudanstan-qualification.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Pinned Linux qualification initialized MCP and listed 165 tools, but the first modeling call failed because the headless bridge ignored FREECAD_CMD and spawned a hard-coded macOS path.
   locality: local
   weight: heavy
   env_vars: []
@@ -5457,8 +5476,8 @@ servers:
     python: []
     node:
     - npm
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -5472,9 +5491,9 @@ servers:
       tested: false
       notes: Requires local FreeCAD and Node.js.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Requires local FreeCAD 0.21+ and Node.js; not validated by Wright.
+      status: 'no'
+      tested: true
+      notes: With FreeCAD 1.0 and Node.js installed, MCP initialized and listed tools but the first modeling call tried a hard-coded macOS Python path and failed.
     linux_arm64:
       status: unknown
       tested: false
@@ -5496,12 +5515,11 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: dependency_missing
-    message: The current authoritative source was resolved; FreeCAD host execution remains a dedicated-environment test.
-    environment: wright-clean-debian13-x64
-    missing_dependencies:
-    - FreeCAD
-    validated_at: '2026-09-09'
+    status: failed
+    message: Source revision 688b6349f3befdc90702a46d3cb7d369ca239621 initialized and listed 165 tools, but freecad_create_box failed with spawn /Applications/FreeCAD.app/Contents/Resources/bin/python ENOENT even when FREECAD_CMD=/usr/bin/freecadcmd and FreeCAD 1.0 was installed.
+    environment: disposable Wright-derived Debian 13 Linux x64 container, image sha256:f18cb4e97908c609e6c43f28172c379030571d84b5651677e844b9b15a0a2ff9
+    missing_dependencies: []
+    validated_at: '2026-09-10'
     evidence_status: recorded
   engineering_stages:
   - design
@@ -5509,13 +5527,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The advertised Linux headless bridge fails before its first modeling operation because it ignores the configured FreeCAD command and uses a hard-coded macOS runtime path; Wright already qualifies a FreeCAD integration.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-sergiudanstan-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover after a release fixes non-macOS headless startup, resolves dependency-audit findings, and passes a real exported-artifact qualification.
     adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: freecad-mcp-proximile
   name: FreeCAD MCP AI 3D Server
   vendor: proximile
@@ -5557,6 +5577,12 @@ servers:
     authority: community
     observed_at: '2026-09-09'
     notes: 'SHA-256 29a32defbcde0f055b09ef7d59686b7e0c170beec6823c61a3ca1be072b89a42; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/freecad-mcp-proximile-closure.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Product-scope review closed the single-commit experimental stack because it exposes broad machine and network controls alongside CAD operations and duplicates qualified FreeCAD coverage.
   locality: local
   weight: heavy
   env_vars: []
@@ -5566,8 +5592,8 @@ servers:
     - FreeCAD
     python: []
     node: []
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-only
   runtime_requirements:
@@ -5619,13 +5645,15 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The single-commit stack combines CAD mutation, arbitrary Python, Docker management, public tunnels, and multi-GPU AI services without a dependable product boundary; Wright already qualifies FreeCAD.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-proximile-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover only after the project establishes sustained maintenance and a bounded capability that is safer or materially stronger than Wright's qualified FreeCAD integration.
     adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: rhino-mcp-easehee
   name: Rhino MCP
   vendor: EaseHee
@@ -8165,8 +8193,8 @@ servers:
     node:
     - kernelcad@0.15.0
     - replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.24.0
-  verification_state: community_mcp
-  installability_tier: blocked
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: medium
   deployment_mode: local-stdio
   platform_support:
@@ -8186,11 +8214,11 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/kernelcad-mcp.md
   install_blocked_reason: The reviewed npm package depends on a GitHub fetch that Wright's clean-container npm policy rejects; publishing that dependency as an immutable registry artifact is required before MCP qualification.
   curation:
-    disposition: follow_up
-    reason: This is a relevant newly discovered CAD MCP, but its reviewed package does not install under Wright's clean-container dependency policy.
+    disposition: removed
+    reason: Two reviewed releases fail before MCP startup because a mutable GitHub runtime dependency conflicts with Wright's product installation policy.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-10'
-    review_due: '2026-10-10'
-    next_action: Recheck for a release with registry-published immutable dependencies; then run a parameterized bracket review and STEP/STL export through Wright GatewayService with independent geometry, error, timeout, and cleanup checks.
+    review_due: '2026-12-10'
+    next_action: Rediscover only after the publisher ships every runtime dependency as an immutable registry artifact.
     adoption: unknown
 format_version: 1

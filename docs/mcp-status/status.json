@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-10-14068b4b5c56",
-  "generated_at": "2026-09-10T21:05:47.833737+00:00",
+  "snapshot_id": "2026-09-10-5ad6dc4fbe4a",
+  "generated_at": "2026-09-10T22:01:12.658682+00:00",
   "assessed_as_of": "2026-09-10",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "c47b338a1f512129d9a9b8297fffafec3dd332da439dbaea7dc356c58aee2d9d",
+  "catalog_sha256": "d9fd3b9e754cd2a6794bb2006a161412bb7386a7ef95abd286cbc23d7be646ad",
   "total": 78,
   "category_counts": {
     "works": 11,
     "preview": 6,
     "requires_login": 10,
-    "in_progress": 26,
-    "abandoned": 25,
+    "in_progress": 21,
+    "abandoned": 30,
     "vendor_blocked": 0
   },
   "category_key": [
@@ -124,7 +124,7 @@
       "id": "in_progress",
       "label": "In progress",
       "color": "yellow",
-      "count": 26,
+      "count": 21,
       "server_ids": [
         "ansys-fluent-mcp",
         "autodesk-fusion-desktop-mcp",
@@ -132,18 +132,13 @@
         "cad-mcp-daobataotie",
         "comsol-multiphysics-mcp-wjc9011",
         "creo-mcp",
-        "easy-mcp-autocad",
-        "freecad-mcp-proximile",
-        "freecad-mcp-sergiudanstan",
         "fusion360-mcp-server",
-        "kernelcad-mcp",
         "matlab-mcp-server",
         "multicad-mcp",
         "nvidia-omniverse-isaac-sim-mcp",
         "nvidia-omniverse-kit-mcp",
         "nvidia-omniverse-omniui-mcp",
         "nvidia-omniverse-usd-code-mcp",
-        "openfoam-mcp-webworn",
         "rhino-mcp",
         "simscale-edge-mcp-getanirao",
         "simulink-agentic-toolkit",
@@ -158,7 +153,7 @@
       "id": "abandoned",
       "label": "Abandoned",
       "color": "red",
-      "count": 25,
+      "count": 30,
       "server_ids": [
         "ansys-mcp-server-community",
         "aps-mcp-server-nodejs",
@@ -171,13 +166,18 @@
         "calculix-simulation",
         "comsol-multiphysics-mcp-suzysa",
         "creoson-mcp-bridge",
+        "easy-mcp-autocad",
         "flexcompute-flow360-api-candidate",
         "freecad-booleans-lucygoodchild",
         "freecad-mcp-contextform",
+        "freecad-mcp-proximile",
         "freecad-mcp-sandraschi",
+        "freecad-mcp-sergiudanstan",
+        "kernelcad-mcp",
         "kicad-mcp-lamaalrajih",
         "mcp-ui-shopify",
         "nvidia-kit-cae-agent-skills",
+        "openfoam-mcp-webworn",
         "revit-mcp",
         "rosbag-mcp-binabik",
         "siemens-xcelerator-developer-portal-mcp",
@@ -1415,9 +1415,9 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "Windows-only pywin32 and AutoCAD COM requirements prevent Linux initialization; the live Windows workflow remains untested.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current publisher documentation describes a lightly maintained learning project with incomplete tools, duplicating Wright's qualified AutoCAD coverage.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -1435,17 +1435,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Rediscover only after sustained maintenance and complete tools provide a clear advantage over Wright's qualified AutoCAD integration.",
       "tests_completed": [
         "Source install attempts on Python 3.12 and 3.13"
       ],
-      "tests_remaining": [
-        "Compare one Windows AutoCAD read and write task with Wright's qualified headless AutoCAD scope"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Windows and AutoCAD 2018 or later."
+        "No live Windows AutoCAD operation was run because current source review closed it as an incomplete duplicate."
       ],
-      "replacement_ids": [],
+      "replacement_ids": [
+        "autocad-mcp-u-c4n"
+      ],
       "assessment_reviewed_at": "2026-09-10"
     },
     {
@@ -1722,9 +1722,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current but only the source boundary has been reviewed; package startup, FreeCAD operation, and Wright gateway behavior remain unknown.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The single-commit stack combines CAD mutation, arbitrary Python, Docker management, public tunnels, and multi-GPU AI services without a dependable product boundary; Wright already qualifies FreeCAD.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -1736,17 +1736,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-proximile-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Rediscover only after the project establishes sustained maintenance and a bounded capability that is safer or materially stronger than Wright's qualified FreeCAD integration.",
       "tests_completed": [
         "Current source identity review"
       ],
-      "tests_remaining": [
-        "Run the smallest FreeCAD operation and compare differentiated capability with freecad-mcp-nekanat"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Avoid another FreeCAD recommendation without a clear capability advantage."
+        "No backend run was justified after the product-scope and authority review closed the candidate."
       ],
-      "replacement_ids": [],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
       "assessment_reviewed_at": "2026-09-10"
     },
     {
@@ -1828,14 +1828,13 @@
         "simulation"
       ],
       "platforms": [
-        "linux_x64",
         "macos_arm64",
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current but only the source boundary has been reviewed; no package, FreeCAD backend, artifact, or Wright gateway evidence exists.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The advertised Linux headless bridge fails before its first modeling operation because it ignores the configured FreeCAD command and uses a hard-coded macOS runtime path; Wright already qualifies a FreeCAD integration.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -1846,19 +1845,20 @@
       "last_qualified_at": null,
       "expires_at": null,
       "evidence_age_days": null,
-      "latest_result": "dependency_missing",
-      "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-sergiudanstan-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Rediscover after a release fixes non-macOS headless startup, resolves dependency-audit findings, and passes a real exported-artifact qualification.",
       "tests_completed": [
-        "Current source identity review"
+        "Pinned lockfile install, TypeScript build, npm audit, MCP initialization, 165-tool discovery, and FreeCAD-backed box attempt"
       ],
-      "tests_remaining": [
-        "Run a minimal FreeCAD artifact task and compare differentiated capability with freecad-mcp-nekanat"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Avoid another FreeCAD recommendation without a clear capability advantage."
+        "The dependency audit reported four high, three moderate, and one low vulnerability.",
+        "Rediscover only after a release fixes non-macOS headless startup and passes an exported-artifact qualification."
       ],
-      "replacement_ids": [],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
       "assessment_reviewed_at": "2026-09-10"
     },
     {
@@ -2090,9 +2090,9 @@
       "platforms": [
         "linux_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The new 0.15.0 release still fails before protocol initialization because its OpenCascade runtime is fetched from GitHub and Wright's package policy rejects mutable git dependencies.",
-      "progress_substatus": "needs_repair",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Two reviewed releases fail before MCP startup because a mutable GitHub runtime dependency conflicts with Wright's product installation policy.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -2104,17 +2104,14 @@
       "evidence_age_days": null,
       "latest_result": "failed",
       "last_tested_at": "2026-09-10",
-      "next_action": "Recheck for a release with registry-published immutable dependencies; then run a parameterized bracket review and STEP/STL export through Wright GatewayService with independent geometry, error, timeout, and cleanup checks.",
+      "next_action": "Rediscover only after the publisher ships every runtime dependency as an immutable registry artifact.",
       "tests_completed": [
         "Current npm metadata and integrity review",
         "Clean-container install attempts for 0.11.2 and 0.15.0"
       ],
-      "tests_remaining": [
-        "Confirm an immutable registry-published dependency release",
-        "Run protocol, bracket workflow, export, gateway, outcome, and cleanup checks"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "No protocol or CAD task completed in the recorded run."
+        "Reconsider only after the publisher ships every runtime dependency as an immutable registry artifact."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2901,11 +2898,11 @@
         "simulation"
       ],
       "platforms": [
-        "linux_x64"
+        "unknown"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current, but only the OpenFOAM 12 host boundary has been reviewed; protocol, solver execution, artifact checks, and Wright gateway behavior remain unknown.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Independent result inspection found a false engineering success in the advertised pipe-flow path, after three packaging and startup defects were repaired for qualification.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -2914,17 +2911,18 @@
       "last_qualified_at": null,
       "expires_at": null,
       "evidence_age_days": null,
-      "latest_result": "dependency_missing",
-      "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/openfoam-mcp-webworn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Preserve the failure evidence; rediscover only after upstream fixes installation and proves requested geometry plus field-derived engineering results.",
       "tests_completed": [
-        "Current source and clean-container host boundary review"
+        "Pinned-source disposable OpenFOAM 12 image build and startup repair",
+        "MCP initialization and discovery of 9 tools",
+        "Pipe-flow solver run, Wright gateway call, artifact inspection, and cleanup"
       ],
-      "tests_remaining": [
-        "Run a small deterministic OpenFOAM case with mesh, residual, field, export, timeout, and cleanup assertions through Wright"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "OpenFOAM 12 is deliberately not part of Wright's base image."
+        "The disposable build required an omitted package, a corrected loader environment, and a writable mount at a hard-coded source path.",
+        "Reconsider only after upstream validates requested geometry and derives reported engineering results from solver fields."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"

@@ -1,16 +1,16 @@
 {
-  "observed_at": "2026-09-10T21:06:20.145Z",
+  "observed_at": "2026-09-10T22:02:05.048Z",
   "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "audience": "qa",
-  "snapshot_id": "2026-09-10-14068b4b5c56",
+  "snapshot_id": "2026-09-10-5ad6dc4fbe4a",
   "total": 78,
   "category_counts": {
     "works": 11,
     "preview": 6,
     "requires_login": 10,
-    "in_progress": 26,
-    "abandoned": 25,
+    "in_progress": 21,
+    "abandoned": 30,
     "vendor_blocked": 0
   },
   "green": {
@@ -22,7 +22,7 @@
     },
     "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
   },
-  "history_points": 3,
+  "history_points": 4,
   "console_errors": [],
   "page_errors": [],
   "failed_responses": [],

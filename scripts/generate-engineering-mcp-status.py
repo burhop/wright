@@ -7,9 +7,9 @@ import argparse
 import json
 import shutil
 import sys
-import tempfile
 from datetime import UTC, date, datetime
 from pathlib import Path
+from uuid import uuid4
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -96,7 +96,12 @@ def _write_json(path: Path, value: dict) -> None:
 
 def _stage_output(destination: Path, *, status: dict, history: dict, evidence_payloads: dict | None) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
-    stage = Path(tempfile.mkdtemp(prefix=f".{destination.name}-", dir=destination.parent))
+    # tempfile.mkdtemp intentionally creates a private directory. On Windows its
+    # restrictive ACL survives the atomic rename and prevents the standalone
+    # dashboard process from reading the published files. A random sibling made
+    # with normal directory creation inherits the repository's permissions.
+    stage = destination.parent / f".{destination.name}-{uuid4().hex}"
+    stage.mkdir()
     _write_json(stage / "status.json", status)
     _write_json(stage / "history.json", history)
     shutil.copyfile(ROOT / "scripts" / "engineering-mcp-dashboard.html", stage / "index.html")

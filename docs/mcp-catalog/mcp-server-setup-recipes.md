@@ -2601,3 +2601,30 @@ evidence linked from each catalog entry.
   through Wright and verify downloaded output and cleanup.
 - Treat it as community browser automation. It is unaffiliated with SimScale,
   has only two observed commits, and declares no license.
+
+### OpenFOAM MCP Server
+
+- Do not offer source revision
+  `8d14e2031146e4130d4e9f500146379dad19eb49` as a Wright integration.
+- Its published container needs an omitted `pkg-config` build dependency, the
+  OpenFOAM loader environment, and a writable mount at a hard-coded workspace
+  path before MCP startup.
+- The advertised pipe-flow operation can report success after solving a
+  rectangular block instead of the requested circular pipe. Its returned
+  pressure drop is computed by a theoretical correlation rather than extracted
+  from the solved field.
+- Reopen qualification only after upstream fixes installation and supplies a
+  deterministic case whose mesh matches the request and whose reported
+  engineering quantities independently match exported solver fields.
+
+### FreeCAD MCP Full-Module Server
+
+- Do not offer source revision
+  `688b6349f3befdc90702a46d3cb7d369ca239621` on Linux.
+- It initializes and lists 165 tools, but the headless bridge ignores
+  `FREECAD_CMD=/usr/bin/freecadcmd` and tries to spawn
+  `/Applications/FreeCAD.app/Contents/Resources/bin/python` on the first backend
+  operation.
+- Reopen only after a published revision fixes non-macOS headless startup,
+  clears the recorded dependency audit, and passes a parameterized model plus
+  independently checked STEP/STL output through Wright.

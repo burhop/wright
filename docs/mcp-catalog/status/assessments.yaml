@@ -15,19 +15,17 @@ assessments:
     limitations:
       - Works applies to the qualified headless DXF fallback scope, not live AutoCAD.
   kernelcad-mcp:
-    category: in_progress
-    substatus: needs_repair
-    reason: The new 0.15.0 release still fails before protocol initialization because its OpenCascade runtime is fetched from GitHub and Wright's package policy rejects mutable git dependencies.
+    category: abandoned
+    substatus: closed
+    reason: Releases 0.11.2 and 0.15.0 both fail before protocol initialization because the runtime depends on a mutable GitHub package fetch that Wright's product installation policy intentionally rejects.
     reviewed_at: "2026-09-10"
     priority: high
     tests_completed:
       - Current npm metadata and integrity review
       - Clean-container install attempts for 0.11.2 and 0.15.0
-    tests_remaining:
-      - Confirm an immutable registry-published dependency release
-      - Run protocol, bracket workflow, export, gateway, outcome, and cleanup checks
+    tests_remaining: []
     limitations:
-      - No protocol or CAD task completed in the recorded run.
+      - Reconsider only after the publisher ships every runtime dependency as an immutable registry artifact.
   rhino-mcp-easehee:
     category: works
     substatus: qualified
@@ -175,17 +173,16 @@ assessments:
     limitations:
       - Current evidence proves the local fallback, not Creo automation.
   easy-mcp-autocad:
-    category: in_progress
-    substatus: environment_needed
-    reason: Windows-only pywin32 and AutoCAD COM requirements prevent Linux initialization; the live Windows workflow remains untested.
+    category: abandoned
+    substatus: closed
+    reason: The publisher describes this as a learning project with limited maintenance and incomplete tool implementation; its basic AutoCAD scope is already covered by Wright's qualified AutoCAD integration.
     reviewed_at: "2026-09-10"
     priority: low
     tests_completed:
       - Source install attempts on Python 3.12 and 3.13
-    tests_remaining:
-      - Compare one Windows AutoCAD read and write task with Wright's qualified headless AutoCAD scope
+    tests_remaining: []
     limitations:
-      - Requires Windows and AutoCAD 2018 or later.
+      - No live Windows AutoCAD operation was run because current source review closed it as an incomplete duplicate.
   freecad-mcp-contextform:
     category: abandoned
     substatus: closed
@@ -198,17 +195,16 @@ assessments:
     limitations:
       - Preserved evidence records host-thread errors and no modeling artifact.
   freecad-mcp-proximile:
-    category: in_progress
-    substatus: environment_needed
-    reason: The source is current but only the source boundary has been reviewed; package startup, FreeCAD operation, and Wright gateway behavior remain unknown.
+    category: abandoned
+    substatus: closed
+    reason: The single-commit experimental stack combines CAD mutation, arbitrary Python, Docker lifecycle control, public tunnels, and multi-GPU AI services; it is too broad and risky for Wright's dependable core while a qualified FreeCAD integration already exists.
     reviewed_at: "2026-09-10"
     priority: low
     tests_completed:
       - Current source identity review
-    tests_remaining:
-      - Run the smallest FreeCAD operation and compare differentiated capability with freecad-mcp-nekanat
+    tests_remaining: []
     limitations:
-      - Avoid another FreeCAD recommendation without a clear capability advantage.
+      - No backend run was justified after the product-scope and authority review closed the candidate.
   freecad-mcp-sandraschi:
     category: abandoned
     substatus: closed
@@ -221,17 +217,17 @@ assessments:
     limitations:
       - Preserved evidence records an unsafe success signal.
   freecad-mcp-sergiudanstan:
-    category: in_progress
-    substatus: environment_needed
-    reason: The source is current but only the source boundary has been reviewed; no package, FreeCAD backend, artifact, or Wright gateway evidence exists.
+    category: abandoned
+    substatus: closed
+    reason: The pinned server initializes and lists 165 tools, but its advertised Linux headless path ignores FREECAD_CMD and tries to spawn a hard-coded macOS Python path; the first modeling call fails before FreeCAD despite FreeCAD 1.0 being installed.
     reviewed_at: "2026-09-10"
     priority: low
     tests_completed:
-      - Current source identity review
-    tests_remaining:
-      - Run a minimal FreeCAD artifact task and compare differentiated capability with freecad-mcp-nekanat
+      - Pinned lockfile install, TypeScript build, npm audit, MCP initialization, 165-tool discovery, and FreeCAD-backed box attempt
+    tests_remaining: []
     limitations:
-      - Avoid another FreeCAD recommendation without a clear capability advantage.
+      - The dependency audit reported four high, three moderate, and one low vulnerability.
+      - Rediscover only after a release fixes non-macOS headless startup and passes an exported-artifact qualification.
   fusion360-mcp-server:
     category: in_progress
     substatus: environment_needed
@@ -353,17 +349,19 @@ assessments:
     limitations:
       - Requires NVIDIA_API_KEY for the recommended NGC-backed deployment.
   openfoam-mcp-webworn:
-    category: in_progress
-    substatus: environment_needed
-    reason: The source is current, but only the OpenFOAM 12 host boundary has been reviewed; protocol, solver execution, artifact checks, and Wright gateway behavior remain unknown.
+    category: abandoned
+    substatus: closed
+    reason: The advertised pipe-flow operation reported success after solving a rectangular block instead of the requested circular pipe, and returned a theoretical pressure-drop correlation rather than a value extracted from the computed field.
     reviewed_at: "2026-09-10"
     priority: high
     tests_completed:
-      - Current source and clean-container host boundary review
-    tests_remaining:
-      - Run a small deterministic OpenFOAM case with mesh, residual, field, export, timeout, and cleanup assertions through Wright
+      - Pinned-source disposable OpenFOAM 12 image build and startup repair
+      - MCP initialization and discovery of 9 tools
+      - Pipe-flow solver run, Wright gateway call, artifact inspection, and cleanup
+    tests_remaining: []
     limitations:
-      - OpenFOAM 12 is deliberately not part of Wright's base image.
+      - The disposable build required an omitted package, a corrected loader environment, and a writable mount at a hard-coded source path.
+      - Reconsider only after upstream validates requested geometry and derives reported engineering results from solver fields.
   rhino-mcp:
     category: in_progress
     substatus: environment_needed

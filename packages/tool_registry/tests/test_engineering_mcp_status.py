@@ -71,8 +71,8 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         "works": 11,
         "preview": 6,
         "requires_login": 10,
-        "in_progress": 26,
-        "abandoned": 25,
+        "in_progress": 21,
+        "abandoned": 30,
         "vendor_blocked": 0,
     }
     assert sum(status["category_counts"].values()) == len(ids)
@@ -84,14 +84,18 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         }
         for category in PORTFOLIO_CATEGORY_IDS
     }
-    assert "kernelcad-mcp" in by_category["in_progress"]
+    assert "kernelcad-mcp" in by_category["abandoned"]
     assert {"web3d-mcp", "grafana-official-mcp", "nvidia-elements-mcp"} <= (
         by_category["preview"]
     )
     assert {
         "ansys-mcp-server-community",
+        "easy-mcp-autocad",
         "freecad-mcp-contextform",
+        "freecad-mcp-proximile",
+        "freecad-mcp-sergiudanstan",
         "kicad-mcp-lamaalrajih",
+        "openfoam-mcp-webworn",
         "solidworks-mcp-python",
     } <= by_category["abandoned"]
     assert {

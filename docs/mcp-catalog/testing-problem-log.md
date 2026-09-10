@@ -2020,8 +2020,43 @@ Solution:
 Result:
   Version 0.15.0 still fails with `EALLOWGIT` on
   `replicad-opencascadejs#kcad-v0.24.0`; protocol and CAD stages remain
-  unreachable. The record stays In progress / Needs repair and points to
+  unreachable. After the same policy failure in two reviewed releases, the
+  record is Abandoned and points to
   `evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json`.
+
+Problem:
+  OpenFOAM MCP advertised a successful circular pipe-flow operation, but its
+  published container omitted a build package, failed to load OpenFOAM runtime
+  libraries, and wrote to a hard-coded workspace path unavailable to its
+  non-root user.
+Solution:
+  Pinned source revision `8d14e2031146e4130d4e9f500146379dad19eb49`,
+  applied only the minimum disposable-container repairs, initialized MCP,
+  listed nine tools, ran the documented pipe-flow operation directly and
+  through Wright, and independently inspected the mesh, solver log, and field.
+Result:
+  The solver converged, but `blockMesh` created a 1 x 1 x 0.1 m rectangular
+  block instead of the requested 0.1 m diameter, 1 m long circular pipe. The
+  reported pressure drop came from a theoretical correlation rather than the
+  computed pressure field. This false engineering success closes the current
+  candidate as Abandoned. Evidence:
+  `evidence/curation-2026-09-10/openfoam-mcp-webworn-qualification.json`.
+
+Problem:
+  The sergiudanstan FreeCAD MCP documented a Linux headless fallback, but only
+  its source boundary had been checked.
+Solution:
+  Installed FreeCAD 1.0 in a fresh Wright-derived Intel Linux image, pinned
+  source revision `688b6349f3befdc90702a46d3cb7d369ca239621`, installed its
+  lockfile, built it, initialized MCP, listed tools, and attempted a 10 x 8 x 6
+  mm box.
+Result:
+  MCP listed 165 tools, but the first modeling call failed because the bridge
+  ignored `FREECAD_CMD=/usr/bin/freecadcmd` and spawned a hard-coded macOS
+  Python path. npm audit also reported four high, three moderate, and one low
+  vulnerability. The duplicate candidate is Abandoned; Wright already has a
+  qualified FreeCAD path. Evidence:
+  `evidence/curation-2026-09-10/freecad-mcp-sergiudanstan-qualification.json`.
 ## 10 September classification correction: SolidEdgeMCP and SimScale
 
 - **Problem:** SolidEdgeMCP was placed in Excluded archive because its public

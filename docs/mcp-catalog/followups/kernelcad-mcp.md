@@ -1,5 +1,8 @@
 # kernelCAD MCP follow-up
 
+Status: closed on 10 September 2026. Reopen only when the publisher ships all
+runtime dependencies as immutable registry artifacts.
+
 Reviewed 10 September 2026. Owner: Wright catalog maintainers. Next review:
 10 October 2026.
 
@@ -19,12 +22,11 @@ Wright's clean-container image disables Git package fetches. The preserved
 candidate integrity, the exact environment, and clean shutdown. No MCP handshake
 or CAD operation ran, so this is failure evidence, not a qualification.
 
-Recheck the publisher for a release whose runtime dependencies are immutable
-registry artifacts. Once it installs without weakening Wright's package policy,
-run a parameterized mounting-bracket task through `GatewayService`. Independently
-inspect the editable source, feature dimensions, STEP/STL file structure and
-geometry, then exercise invalid geometry, timeout/cancellation, workspace path
-controls, and cleanup before considering promotion.
+The candidate is excluded from the product list after the same policy conflict
+was reproduced in releases 0.11.2 and 0.15.0. If a future release removes the
+GitHub runtime fetch, run a parameterized mounting-bracket task through
+`GatewayService` and independently inspect the editable source, feature
+dimensions, STEP/STL structure and geometry before reconsidering it.
 
 Primary sources:
 
