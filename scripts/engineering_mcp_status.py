@@ -53,9 +53,15 @@ PORTFOLIO_CATEGORIES = (
         "action": "Complete the backend and gateway scenario.",
     },
     {
+        "id": "credential_ready",
+        "label": "Credential ready",
+        "definition": "A current server reached its expected authentication boundary; full use requires a user key, login, or OAuth grant.",
+        "action": "Include in the product with guided authentication, then complete a read-only post-login qualification.",
+    },
+    {
         "id": "environment_required",
         "label": "Environment required",
-        "definition": "Qualification needs a host application, license, account, hardware, or connected browser environment.",
+        "definition": "Qualification needs host software, a license, hardware, or a dedicated lab environment beyond ordinary user authentication.",
         "action": "Run the scenario in a dedicated environment with the recorded prerequisites.",
     },
     {
@@ -140,6 +146,13 @@ def _portfolio_category(
             "Useful validation passed, but a complete current scoped Wright qualification is still required.",
         )
     if entry.validation_result.status in {"dependency_missing", "blocked"}:
+        if entry.credentials_required and not entry.host_software_required:
+            return (
+                "credential_ready",
+                "The current server reached an authentication boundary and requires "
+                + ", ".join(sorted(set(entry.credentials_required)))
+                + ".",
+            )
         requirements = sorted(
             set(entry.host_software_required + entry.credentials_required)
         )
@@ -413,6 +426,8 @@ def build_engineering_status(
                 "qualification_status": status,
                 "portfolio_category": portfolio_category,
                 "portfolio_category_reason": portfolio_category_reason,
+                "release_eligible": portfolio_category
+                in {"qualified", "credential_ready"},
                 "protocol_family": _protocol_family(entry),
                 "transport": entry.transport,
                 "disciplines": sorted(entry.domains),
@@ -534,6 +549,13 @@ def build_engineering_status(
             key: category_counts[key] for key in PORTFOLIO_CATEGORY_IDS
         },
         "category_key": list(PORTFOLIO_CATEGORIES),
+        "product_release": {
+            "categories": ["qualified", "credential_ready"],
+            "count": sum(record["release_eligible"] for record in records),
+            "server_ids": [
+                record["server_id"] for record in records if record["release_eligible"]
+            ],
+        },
         "target": {
             "minimum": 10,
             "ideal": 15,

@@ -1,0 +1,20 @@
+{
+  "server_id": "siemens-xcelerator-developer-portal-mcp",
+  "observed_at": "2026-09-10T01:36:03.049687+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://developer.siemens.com/",
+  "source_revision": "remote-current",
+  "transport": "streamable_http",
+  "endpoint": "https://developer.siemens.com/",
+  "credentials_supplied": false,
+  "status": "failed",
+  "protocol": "not_reached",
+  "cleanup": "passed",
+  "failure_stage": "initialize_or_tools_list",
+  "observed_error": "unhandled errors in a TaskGroup (1 sub-exception) | unhandled errors in a TaskGroup (1 sub-exception) | Session terminated",
+  "finished_at": "2026-09-10T01:36:04.789368+00:00",
+  "duration_seconds": 1.74
+}

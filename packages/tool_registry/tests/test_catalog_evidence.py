@@ -103,7 +103,14 @@ def test_onshape_official_preview_is_distinct_and_vendor_grounded() -> None:
     assert official.transport == "streamable_http"
     assert official.command == "https://fs-mcp.labs.onshape.app/mcp"
     assert official.default_enabled is False
-    assert official.validation_result.status == "not_tested"
+    assert official.validation_result.status == "blocked"
+    assert official.validation_result.evidence_status == "recorded"
+    assert official.credentials_required == ["Onshape account authentication"]
+    assert any(
+        source.kind == "evidence"
+        and source.url.endswith("onshape-labs-featurescript-mcp-remote.json")
+        for source in official.source_records
+    )
     assert official.auth_model == "oauth"
     assert any(
         source.primary and source.authority == "vendor" and source.kind == "vendor_docs"

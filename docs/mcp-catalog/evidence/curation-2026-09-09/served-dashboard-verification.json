@@ -1,26 +1,27 @@
 {
-  "observed_at": "2026-09-10T01:08:17.497Z",
+  "observed_at": "2026-09-10T02:07:08.032Z",
   "dashboard_url": "http://127.0.0.1:18765/index.html",
   "status": "passed",
   "counts": {
     "curated": 10,
-    "follow_up": 52,
-    "removed": 16
+    "follow_up": 50,
+    "removed": 18
   },
   "category_counts": {
     "qualified": 10,
-    "preflight_passed": 3,
-    "environment_required": 20,
-    "untested": 20,
-    "failed": 9,
-    "excluded_archive": 16
+    "preflight_passed": 4,
+    "credential_ready": 10,
+    "environment_required": 26,
+    "untested": 0,
+    "failed": 10,
+    "excluded_archive": 18
   },
   "qualification_counts": {
     "passing": 10,
-    "failing": 11,
-    "blocked": 33,
+    "failing": 14,
+    "blocked": 48,
     "stale": 0,
-    "untested": 24
+    "untested": 6
   },
   "chains": [
     {

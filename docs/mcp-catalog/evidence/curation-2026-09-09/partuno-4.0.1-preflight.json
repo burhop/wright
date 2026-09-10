@@ -1,0 +1,3008 @@
+{
+  "server_id": "partuno-mcp",
+  "observed_at": "2026-09-10T01:26:47.224658+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://pypi.org/project/partuno/4.0.1/",
+  "source_revision": "4.0.1",
+  "source_sha256": "1e52d8b843f7be0880ea6f89a9b5f89482faf5a5d2dffa1fa254fe8d0415e7dd",
+  "installed_items": [
+    "partuno==4.0.1"
+  ],
+  "prerequisites": [
+    "credentials-for-live-distributor-search"
+  ],
+  "recovery_steps": [
+    "configure-dedicated-read-only-distributor-credentials"
+  ],
+  "implementation_mode": "native_vendor_binary",
+  "status": "partial",
+  "protocol": "passed",
+  "startup": "passed",
+  "server_info": {
+    "name": "Partuno",
+    "title": null,
+    "version": "4.0.1",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_count": 50,
+  "tool_schema_sha256": "b94c31a4ad83b37a062b2b2ea97b708586668a5128817f0147d6b4ada137e5db",
+  "tools": [
+    {
+      "name": "add_parts_to_mylist",
+      "description": "Add approved products, packaging, and quantities to a DigiKey MyList.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "request": {
+            "properties": {
+              "parts": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "package_type": {
+                      "default": "CutTape",
+                      "type": "string"
+                    },
+                    "sub_package_type": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "reference_designator": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "notes": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "target_price": {
+                      "default": 0,
+                      "minimum": 0,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "insertion_index": {
+                "default": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "parts",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "list_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "add_products_to_quote",
+      "description": "Add explicitly approved product quantities to a DigiKey quote.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "quote_id": {
+            "type": "integer"
+          },
+          "request": {
+            "properties": {
+              "products": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantities": {
+                      "items": {
+                        "type": "integer"
+                      },
+                      "maxItems": 20,
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "maxLength": 40,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantities"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 300,
+                "minItems": 1,
+                "type": "array"
+              },
+              "account_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "products",
+              "account_id",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "quote_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "analyze_bom",
+      "description": "Analyze a BOM for cost, stock, lifecycle, lead time, compliance, PCNs, alternate packaging, and substitutes.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "items": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "manufacturer_id": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "maxLength": 80,
+                      "type": "string"
+                    },
+                    "reference_designator": {
+                      "default": "",
+                      "maxLength": 500,
+                      "type": "string"
+                    },
+                    "notes": {
+                      "default": "",
+                      "maxLength": 1000,
+                      "type": "string"
+                    },
+                    "preferred_package": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "include_product_change_notifications": {
+                "default": true,
+                "type": "boolean"
+              },
+              "include_substitutions_for_risky_parts": {
+                "default": true,
+                "type": "boolean"
+              },
+              "include_alternate_packaging": {
+                "default": true,
+                "type": "boolean"
+              },
+              "exclude_marketplace": {
+                "default": true,
+                "type": "boolean"
+              },
+              "exclude_tariff": {
+                "default": false,
+                "type": "boolean"
+              },
+              "maximum_lead_weeks": {
+                "default": 20,
+                "maximum": 104,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "items"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "audit_lifecycle",
+      "description": "Audit a BOM or MyList for end-of-life risk, last-buy dates, shortages, long lead times, PCNs, and substitutes.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "items": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "properties": {
+                        "product_number": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "manufacturer_id": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "default": null
+                        },
+                        "customer_reference": {
+                          "default": "",
+                          "maxLength": 80,
+                          "type": "string"
+                        },
+                        "reference_designator": {
+                          "default": "",
+                          "maxLength": 500,
+                          "type": "string"
+                        },
+                        "notes": {
+                          "default": "",
+                          "maxLength": 1000,
+                          "type": "string"
+                        },
+                        "preferred_package": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      "required": [
+                        "product_number",
+                        "quantity"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "list_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "maximum_lead_weeks": {
+                "default": 20,
+                "maximum": 104,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "include_substitutions": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "batch_decode_barcodes",
+      "description": "Decode a batch of DigiKey barcodes and total received quantities by product number.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "barcodes": {
+                "items": {
+                  "properties": {
+                    "barcode_type": {
+                      "enum": [
+                        "product_1d",
+                        "product_2d",
+                        "pack_list_1d",
+                        "pack_list_2d"
+                      ],
+                      "type": "string"
+                    },
+                    "barcode": {
+                      "maxLength": 4000,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "barcode_type",
+                    "barcode"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "barcodes"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "compare_barcodes_to_mylist",
+      "description": "Compare scanned received quantities against the required quantities in a DigiKey MyList.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "barcodes": {
+                "items": {
+                  "properties": {
+                    "barcode_type": {
+                      "enum": [
+                        "product_1d",
+                        "product_2d",
+                        "pack_list_1d",
+                        "pack_list_2d"
+                      ],
+                      "type": "string"
+                    },
+                    "barcode": {
+                      "maxLength": 4000,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "barcode_type",
+                    "barcode"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "list_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "barcodes",
+              "list_id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "compare_component_offers",
+      "description": "Compare strict manufacturer-plus-MPN matches at requested quantities across DigiKey and Mouser.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "items": {
+                "items": {
+                  "properties": {
+                    "manufacturer": {
+                      "maxLength": 150,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "manufacturer_part_number": {
+                      "maxLength": 100,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "maximum": 10000000,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "manufacturer",
+                    "manufacturer_part_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 10,
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "required": [
+              "items"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_mylist",
+      "description": "Create a DigiKey MyList after the user approves the exact name.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "list_name": {
+                "maxLength": 150,
+                "minLength": 1,
+                "type": "string"
+              },
+              "tags": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "created_by": {
+                "default": "",
+                "type": "string"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "list_name",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_quote",
+      "description": "Create an empty DigiKey quote after explicit approval.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "quote_name": {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              "account_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "quote_name",
+              "account_id",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_quote_from_source",
+      "description": "Create and populate a quote from an explicitly approved BOM or MyList. The request must contain confirm=true.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "quote_name": {
+                "maxLength": 40,
+                "minLength": 1,
+                "type": "string"
+              },
+              "account_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "items": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "properties": {
+                        "product_number": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "manufacturer_id": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "default": null
+                        },
+                        "customer_reference": {
+                          "default": "",
+                          "maxLength": 80,
+                          "type": "string"
+                        },
+                        "reference_designator": {
+                          "default": "",
+                          "maxLength": 500,
+                          "type": "string"
+                        },
+                        "notes": {
+                          "default": "",
+                          "maxLength": 1000,
+                          "type": "string"
+                        },
+                        "preferred_package": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      "required": [
+                        "product_number",
+                        "quantity"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 100,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "list_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "quote_name",
+              "account_id",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "decode_barcode",
+      "description": "Decode a DigiKey product-bag or packing-list 1D or 2D barcode.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "barcode_type": {
+                "enum": [
+                  "product_1d",
+                  "product_2d",
+                  "pack_list_1d",
+                  "pack_list_2d"
+                ],
+                "type": "string"
+              },
+              "barcode": {
+                "maxLength": 4000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "includes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "barcode_type",
+              "barcode"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "delete_mylist",
+      "description": "Permanently delete a DigiKey MyList after identifying it and obtaining explicit approval.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "confirm": {
+            "const": true,
+            "type": "boolean"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "list_id",
+          "confirm"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "diff_mylist",
+      "description": "Dry-run a proposed BOM against a MyList and show additions, updates, removals, duplicates, and unchanged rows.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "request": {
+            "properties": {
+              "proposed_items": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "package_type": {
+                      "default": "CutTape",
+                      "type": "string"
+                    },
+                    "sub_package_type": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "reference_designator": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "notes": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "target_price": {
+                      "default": 0,
+                      "minimum": 0,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "remove_unlisted": {
+                "default": false,
+                "type": "boolean"
+              },
+              "consolidate_duplicates": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "proposed_items"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "list_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "execute_mouser_cart_change",
+      "description": "Execute only the exact, unexpired Mouser cart preview bound to the supplied one-time token.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "confirmation_token": {
+                "maxLength": 500,
+                "minLength": 32,
+                "type": "string"
+              }
+            },
+            "required": [
+              "confirmation_token"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_alternate_packaging",
+      "description": "Get alternate packaging for the same component.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_associated_accounts",
+      "description": "Get DigiKey Account IDs associated with the authenticated login.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_category",
+      "description": "Get one DigiKey category and its parametric-search context.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "category_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_digireel_pricing",
+      "description": "Calculate DigiReel pricing for a requested quantity.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "requested_quantity": {
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "product_number",
+          "requested_quantity"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_mouser_cart",
+      "description": "Read one Mouser cart. This does not modify the cart.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "cart_key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cart_key"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_mouser_order",
+      "description": "Read one Mouser order by sales-order number or web-order number.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "sales_order_number": {
+                "anyOf": [
+                  {
+                    "maxLength": 50,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "web_order_number": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_mylist",
+      "description": "Get one DigiKey MyList.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "list_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_mylist_parts",
+      "description": "Get every MyList part; compact is bounded and default, while full preserves the raw DigiKey shape.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "assemblies": {
+            "default": 1,
+            "type": "integer"
+          },
+          "include_attrition": {
+            "default": false,
+            "type": "boolean"
+          },
+          "response_detail": {
+            "default": "compact",
+            "enum": [
+              "compact",
+              "full"
+            ],
+            "type": "string"
+          },
+          "include_substitutions": {
+            "default": false,
+            "type": "boolean"
+          },
+          "substitution_limit": {
+            "default": 5,
+            "type": "integer"
+          },
+          "include_environmental_docs": {
+            "default": false,
+            "type": "boolean"
+          },
+          "include_images": {
+            "default": false,
+            "type": "boolean"
+          },
+          "include_empty_fields": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "list_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_pricing_by_quantity",
+      "description": "Compare exact, effective-MOQ, BetterValue, and maximum-order options; parent availability remains distinct from package stock.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "requested_quantity": {
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "product_number",
+          "requested_quantity"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_product_associations",
+      "description": "Get associated products and accessories.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_product_change_notifications",
+      "description": "Get PCNs with raw API dates and additive description-date diagnostics.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_product_details",
+      "description": "Get current specifications, inventory, lifecycle, classifications, variations, and account pricing for one product.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "manufacturer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_product_media",
+      "description": "Get a product's datasheets, images, documents, and video links.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_product_pricing",
+      "description": "Get current pricing and packaging variations for one DigiKey product.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer"
+          },
+          "in_stock": {
+            "default": false,
+            "type": "boolean"
+          },
+          "exclude_marketplace": {
+            "default": true,
+            "type": "boolean"
+          },
+          "exclude_tariff": {
+            "default": false,
+            "type": "boolean"
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_quote",
+      "description": "Get one DigiKey quote's metadata.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "quote_id": {
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "quote_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_quote_products",
+      "description": "Get the products and locked pricing in a DigiKey quote.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "quote_id": {
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quote_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_recommended_products",
+      "description": "Get DigiKey recommendations; explicit filters rejected with 404/500 are retried once without filters and marked.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 1,
+            "type": "integer"
+          },
+          "search_options": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "exclude_marketplace": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_sales_order",
+      "description": "Get shipment, tracking, backorder, and line-item status for one DigiKey sales order.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "sales_order_id": {
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "sales_order_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_substitutions",
+      "description": "Find replacement products with the requested limit enforced upstream and locally.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "product_number": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer"
+          },
+          "search_options": {
+            "default": "InStock,RoHSCompliant",
+            "type": "string"
+          },
+          "exclude_marketplace": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "product_number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_categories",
+      "description": "Get the DigiKey product category tree and category IDs.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_manufacturers",
+      "description": "List a bounded page of DigiKey manufacturers and their manufacturer IDs.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 100,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_mylists",
+      "description": "List the authenticated user's DigiKey MyLists.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "start_index": {
+            "default": 0,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_quotes",
+      "description": "List DigiKey quotes for an account.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "lookup_packing_list",
+      "description": "Retrieve packing-list information by invoice, sales order, or purchase order number.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "lookup_type": {
+                "enum": [
+                  "invoice",
+                  "sales_order",
+                  "purchase_order"
+                ],
+                "type": "string"
+              },
+              "value": {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              "include_pdf": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "lookup_type",
+              "value"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "optimize_bom_pricing",
+      "description": "Optimize BOM pricing across package choices; unpriceable alternate packages are isolated in candidate diagnostics.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "items": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "manufacturer_id": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "maxLength": 80,
+                      "type": "string"
+                    },
+                    "reference_designator": {
+                      "default": "",
+                      "maxLength": 500,
+                      "type": "string"
+                    },
+                    "notes": {
+                      "default": "",
+                      "maxLength": 1000,
+                      "type": "string"
+                    },
+                    "preferred_package": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "allow_marketplace": {
+                "default": false,
+                "type": "boolean"
+              },
+              "allow_tariff": {
+                "default": true,
+                "type": "boolean"
+              },
+              "allow_quantity_increase": {
+                "default": true,
+                "type": "boolean"
+              },
+              "include_digireel": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "items"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "preview_mouser_cart_change",
+      "description": "Read current cart state and preview an exact add, update, remove, replacement, order-copy, or schedule diff.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "add_items",
+                  "update_items",
+                  "remove_item",
+                  "replace_cart",
+                  "create_from_order",
+                  "add_schedule",
+                  "update_schedule",
+                  "delete_all_schedules"
+                ],
+                "type": "string"
+              },
+              "cart_key": {
+                "anyOf": [
+                  {
+                    "maxLength": 80,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "items": {
+                "items": {
+                  "properties": {
+                    "mouser_part_number": {
+                      "maxLength": 80,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "customer_part_number": {
+                      "default": "",
+                      "maxLength": 21,
+                      "pattern": "^[^*]*$",
+                      "type": "string"
+                    },
+                    "packaging_choice": {
+                      "enum": [
+                        "None",
+                        "Cut_Tape",
+                        "MouseReel",
+                        "FullReel"
+                      ],
+                      "type": "string",
+                      "default": "None"
+                    }
+                  },
+                  "required": [
+                    "mouser_part_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "type": "array"
+              },
+              "mouser_part_number": {
+                "anyOf": [
+                  {
+                    "maxLength": 80,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "order_number": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "schedule_items": {
+                "items": {
+                  "properties": {
+                    "mouser_part_number": {
+                      "maxLength": 80,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "scheduled_releases": {
+                      "items": {
+                        "properties": {
+                          "date": {
+                            "maxLength": 40,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "quantity": {
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "date",
+                          "quantity"
+                        ],
+                        "type": "object"
+                      },
+                      "maxItems": 100,
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "mouser_part_number",
+                    "scheduled_releases"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "type": "array"
+              }
+            },
+            "required": [
+              "operation"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "recommend_components",
+      "description": "Find project candidates after critical requirements are known; return pass/fail/unknown evidence and a Pareto shortlist.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "project_summary": {
+                "maxLength": 2000,
+                "minLength": 10,
+                "type": "string"
+              },
+              "search_terms": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 4,
+                "minItems": 1,
+                "type": "array"
+              },
+              "quantity": {
+                "maximum": 10000000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "hard_requirements": {
+                "items": {
+                  "properties": {
+                    "name": {
+                      "maxLength": 120,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "aliases": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 12,
+                      "type": "array"
+                    },
+                    "operator": {
+                      "enum": [
+                        "eq",
+                        "ne",
+                        "gt",
+                        "gte",
+                        "lt",
+                        "lte",
+                        "between",
+                        "contains",
+                        "boolean"
+                      ],
+                      "type": "string"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "maximum": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "unit": {
+                      "anyOf": [
+                        {
+                          "maxLength": 30,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "rationale": {
+                      "default": "",
+                      "maxLength": 400,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "operator"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 30,
+                "minItems": 1,
+                "type": "array"
+              },
+              "preferences": {
+                "items": {
+                  "properties": {
+                    "name": {
+                      "maxLength": 120,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "aliases": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 12,
+                      "type": "array"
+                    },
+                    "operator": {
+                      "enum": [
+                        "eq",
+                        "ne",
+                        "gt",
+                        "gte",
+                        "lt",
+                        "lte",
+                        "between",
+                        "contains",
+                        "boolean"
+                      ],
+                      "type": "string"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "maximum": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "unit": {
+                      "anyOf": [
+                        {
+                          "maxLength": 30,
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "rationale": {
+                      "default": "",
+                      "maxLength": 400,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "operator"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              "candidates_per_source": {
+                "default": 10,
+                "maximum": 20,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "project_summary",
+              "search_terms",
+              "quantity",
+              "hard_requirements"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "remove_mylist_part",
+      "description": "Permanently remove one identified part from a DigiKey MyList after explicit approval.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "unique_id": {
+            "type": "string"
+          },
+          "confirm": {
+            "const": true,
+            "type": "boolean"
+          },
+          "created_by": {
+            "default": "",
+            "type": "string"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "list_id",
+          "unique_id",
+          "confirm"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "rename_mylist",
+      "description": "Rename a DigiKey MyList after the user approves the exact change.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "request": {
+            "properties": {
+              "new_name": {
+                "maxLength": 150,
+                "minLength": 1,
+                "type": "string"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "new_name",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "list_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "research_product",
+      "description": "Get product details plus optional enrichments; partial failures are returned under errors without discarding successful results.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "product_number": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "include_media": {
+                "default": false,
+                "type": "boolean"
+              },
+              "include_substitutions": {
+                "default": false,
+                "type": "boolean"
+              },
+              "include_recommended": {
+                "default": false,
+                "type": "boolean"
+              },
+              "include_associations": {
+                "default": false,
+                "type": "boolean"
+              },
+              "include_alternate_packaging": {
+                "default": false,
+                "type": "boolean"
+              },
+              "include_change_notifications": {
+                "default": false,
+                "type": "boolean"
+              },
+              "limit": {
+                "default": 10,
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "includes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "product_number"
+            ],
+            "type": "object"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_mouser_order_history",
+      "description": "Read the authenticated deployment's Mouser order history by filter or date range.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "date_filter",
+                  "date_range"
+                ],
+                "type": "string"
+              },
+              "date_filter": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "None",
+                      "All",
+                      "Today",
+                      "Yesterday",
+                      "ThisWeek",
+                      "LastWeek",
+                      "ThisMonth",
+                      "LastMonth",
+                      "ThisQuarter",
+                      "LastQuarter",
+                      "ThisYear",
+                      "LastYear",
+                      "YearToDate"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "start_date": {
+                "anyOf": [
+                  {
+                    "maxLength": 20,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "end_date": {
+                "anyOf": [
+                  {
+                    "maxLength": 20,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "mode"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_mouser_products",
+      "description": "Search Mouser catalog data, availability, lifecycle, compliance, and price breaks. Shipping is unavailable.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "query": {
+                "maxLength": 400,
+                "minLength": 1,
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "keyword",
+                  "part_number"
+                ],
+                "type": "string",
+                "default": "keyword"
+              },
+              "manufacturer": {
+                "anyOf": [
+                  {
+                    "maxLength": 150,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "records": {
+                "default": 10,
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "starting_record": {
+                "default": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "in_stock": {
+                "default": false,
+                "type": "boolean"
+              },
+              "rohs": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_orders",
+      "description": "Search the authenticated user's DigiKey orders by date.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "shared": {
+            "default": false,
+            "type": "boolean"
+          },
+          "page_number": {
+            "default": 1,
+            "type": "integer"
+          },
+          "page_size": {
+            "default": 10,
+            "type": "integer"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_products",
+      "description": "Search DigiKey with native filters; a marked fallback removes explicitly non-matching tariff or Marketplace variations only when DigiKey returns them.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "properties": {
+              "keywords": {
+                "maxLength": 250,
+                "minLength": 1,
+                "type": "string"
+              },
+              "limit": {
+                "default": 10,
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "offset": {
+                "default": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "manufacturer_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "category_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "status_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "packaging_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "series_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "marketplace_filter": {
+                "enum": [
+                  "NoFilter",
+                  "ExcludeMarketPlace",
+                  "MarketPlaceOnly"
+                ],
+                "type": "string",
+                "default": "ExcludeMarketPlace"
+              },
+              "tariff_filter": {
+                "enum": [
+                  "None",
+                  "ExcludeTariff",
+                  "TariffOnly"
+                ],
+                "type": "string",
+                "default": "None"
+              },
+              "minimum_quantity_available": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "search_options": {
+                "description": "Supported values include ChipOutpost, Has3DModel, HasCadModel, HasDatasheet, HasProductPhoto, InStock, NewProduct, NonRohsCompliant, NormallyStocking, and RohsCompliant.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "parametric_category_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Category ID used with parametric filters."
+              },
+              "parametric_filters": {
+                "items": {
+                  "properties": {
+                    "parameter_id": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "value_ids": {
+                      "description": "ValueId strings returned in FilterOptions.ParametricFilters from an earlier broad search.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "parameter_id",
+                    "value_ids"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "sort_field": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional DigiKey sort field, such as Price, QuantityAvailable, Manufacturer, ManufacturerProductNumber, MinimumQuantity, Packaging, ProductStatus, or Supplier."
+              },
+              "sort_order": {
+                "enum": [
+                  "Ascending",
+                  "Descending"
+                ],
+                "type": "string",
+                "default": "Ascending"
+              },
+              "includes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Optional DigiKey includes expression used to reduce returned fields."
+              }
+            },
+            "required": [
+              "keywords"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "sync_mylist",
+      "description": "Apply an explicitly approved MyList diff. The request must contain confirm=true.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "request": {
+            "properties": {
+              "proposed_items": {
+                "items": {
+                  "properties": {
+                    "product_number": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "package_type": {
+                      "default": "CutTape",
+                      "type": "string"
+                    },
+                    "sub_package_type": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "customer_reference": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "reference_designator": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "notes": {
+                      "default": "",
+                      "type": "string"
+                    },
+                    "target_price": {
+                      "default": 0,
+                      "minimum": 0,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "product_number",
+                    "quantity"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "type": "array"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "remove_unlisted": {
+                "default": false,
+                "type": "boolean"
+              },
+              "consolidate_duplicates": {
+                "default": true,
+                "type": "boolean"
+              },
+              "confirm": {
+                "const": true,
+                "description": "Must be true after the user explicitly approves the exact diff.",
+                "type": "boolean"
+              },
+              "stop_on_error": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "proposed_items",
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "list_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_mylist_part",
+      "description": "Update an approved MyList part while preserving every field omitted from the request.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "list_id": {
+            "type": "string"
+          },
+          "unique_id": {
+            "type": "string"
+          },
+          "request": {
+            "properties": {
+              "product_number": {
+                "anyOf": [
+                  {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "quantity": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "package_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "sub_package_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "customer_reference": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "reference_designator": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "target_price": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "selected_quantity_index": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "attrition": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "alternate_parts": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "manufacturer_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "created_by": {
+                "default": "",
+                "type": "string"
+              },
+              "account_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "confirm": {
+                "const": true,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "confirm"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "list_id",
+          "unique_id",
+          "request"
+        ],
+        "type": "object"
+      }
+    }
+  ],
+  "task": "not_run",
+  "server_stderr": "Downloading uvloop (4.2MiB)\nDownloading beartype (1.3MiB)\nDownloading pydantic-core (2.0MiB)\nDownloading cryptography (4.5MiB)\nDownloading pygments (1.2MiB)\n Downloaded pygments\n Downloaded beartype\n Downloaded pydantic-core\n Downloaded uvloop\n Downloaded cryptography\nInstalled 76 packages in 238ms\n/home/agent/.cache/uv/archive-v0/c-DxjkOHzvxI1xQKwvDOR/lib/python3.13/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.\n  from ._compat import httpx2\n[09/10/26 01:26:55] INFO     Starting MCP server 'Partuno' with transport.py:241\n                             transport 'stdio'                                  \n",
+  "cleanup": "passed",
+  "finished_at": "2026-09-10T01:26:56.086107+00:00",
+  "duration_seconds": 8.861,
+  "duration_source": "monotonic_clock"
+}

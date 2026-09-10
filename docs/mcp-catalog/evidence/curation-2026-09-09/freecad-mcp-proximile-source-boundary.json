@@ -1,0 +1,27 @@
+{
+  "server_id": "freecad-mcp-proximile",
+  "observed_at": "2026-09-10T01:44:21.446049+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/proximile/FreeCAD-MCP",
+  "credentials_supplied": false,
+  "host_requirements": [
+    "FreeCAD"
+  ],
+  "command": "freecad-mcp",
+  "command_available_in_clean_image": false,
+  "cleanup": "passed",
+  "source_status": "available",
+  "source_revision": "2b75bad92b67ff5bade984d430231a768c6c4d7a",
+  "source_etag_sha256": "30b7dd22362f09a4f695a2bfb502397121cf2489c598d85bb290492b1326a6c5",
+  "archived": false,
+  "disabled": false,
+  "pushed_at": "2026-01-26T04:57:05Z",
+  "license_spdx": "MIT",
+  "status": "blocked",
+  "blocking_requirement": "host_or_license",
+  "protocol": "not_reached",
+  "message": "Authoritative source is current; clean runtime lacks the recorded host dependency."
+}

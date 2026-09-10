@@ -2,11 +2,11 @@
   "policy_version": "2026-09-08.1",
   "as_of": "2026-09-09",
   "platform": null,
-  "catalog_sha256": "39031d642187dd40bff40930c6c906201faec99b6e1756f74f8d43dbb592e619",
+  "catalog_sha256": "37026675fd9d9a3e1f532cea81682c9d89f384e1bdfcbc164a1aa44018803402",
   "counts": {
     "curated": 10,
-    "follow_up": 52,
-    "removed": 16
+    "follow_up": 50,
+    "removed": 18
   },
   "lists": {
     "curated": [
@@ -61,10 +61,8 @@
       "rescale-mcp-hosted",
       "rhino-mcp",
       "siemens-element-mcp",
-      "siemens-xcelerator-developer-portal-mcp",
       "simulink-agentic-toolkit",
       "sketchup-mcp",
-      "solid-edge-mcp-burhop",
       "solidworks-api-mcp",
       "solidworks-mcp-alisamsam",
       "solidworks-mcp-python",
@@ -89,7 +87,9 @@
       "nvidia-kit-cae-agent-skills",
       "revit-mcp",
       "rosbag-mcp-binabik",
+      "siemens-xcelerator-developer-portal-mcp",
       "simscale-api-candidate",
+      "solid-edge-mcp-burhop",
       "trikos529-openscad",
       "webmcp-standard"
     ]
@@ -161,7 +161,6 @@
         "rhino-mcp",
         "siemens-element-mcp",
         "sketchup-mcp",
-        "solid-edge-mcp-burhop",
         "solidworks-api-mcp",
         "solidworks-mcp-alisamsam",
         "solidworks-mcp-python",
@@ -240,7 +239,6 @@
         "atlassian-rovo-mcp",
         "autodesk-fusion-data-mcp",
         "github-official-mcp",
-        "siemens-xcelerator-developer-portal-mcp",
         "thingworx-mcp"
       ]
     },
@@ -395,14 +393,14 @@
         "release",
         "operations"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Validate v2 OAuth and the publisher-documented flat tools=all endpoint using a dedicated tenant; v1 credentials do not carry over.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/atlassian-rovo-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -505,14 +503,14 @@
         "manufacturing",
         "release"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "failed",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-data-mcp-remote.json. Correct the endpoint or source identity before another execution attempt.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -535,14 +533,14 @@
         "design",
         "manufacturing"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-desktop-mcp-host-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -734,14 +732,14 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/blender-mcp-harveyxiacn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1214,14 +1212,14 @@
         "concept",
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-proximile-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1275,14 +1273,14 @@
         "design",
         "simulation"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-sergiudanstan-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1337,14 +1335,14 @@
         "test_quality",
         "release"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Pin the reviewed distribution, arrange a dedicated test account, and verify a read-only task through the Wright gateway.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/github-official-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1367,14 +1365,14 @@
         "test_quality",
         "operations"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Pin an official image digest, confirm service-account read scope, and validate a known telemetry query; never execute an unreviewed latest image in scheduled discovery.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/grafana-official-mcp-preflight.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1626,14 +1624,14 @@
         "requirements",
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-cuda-docs-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1720,14 +1718,14 @@
         "test_quality",
         "operations"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-isaac-sim-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1750,14 +1748,14 @@
         "design",
         "operations"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-kit-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1779,14 +1777,14 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-omniui-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1884,14 +1882,14 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/onshape-labs-featurescript-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -1942,14 +1940,14 @@
       "engineering_stages": [
         "simulation"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/openfoam-mcp-webworn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -2019,14 +2017,14 @@
         "design",
         "sourcing"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Pin the reviewed distribution, arrange a dedicated test account, and verify a read-only task through the Wright gateway.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/partuno-4.0.1-task-attempt.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -2048,14 +2046,14 @@
       "engineering_stages": [
         "test_quality"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "passed",
       "curation": {
         "disposition": "follow_up",
         "reason": "Official maintained browser integration; current clean-environment and gateway evidence is required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Qualify deterministic local-page navigation and snapshot through Wright in a clean container.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/playwright-mcp-0.0.80-preflight.json. Complete a deterministic local-page browser task through Wright.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -2077,14 +2075,14 @@
       "engineering_stages": [
         "simulation"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "blocked",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/rescale-mcp-hosted-remote.json. Complete authentication and a read-only Wright gateway task.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -2320,19 +2318,19 @@
       "engineering_stages": [
         "release"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "failed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "The catalog points to the Siemens developer web portal, which terminated an MCP session and is not an MCP endpoint.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/siemens-xcelerator-developer-portal-mcp-remote.json. Correct the endpoint or source identity before another execution attempt.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -2379,14 +2377,14 @@
         "concept",
         "simulation"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "dependency_missing",
       "curation": {
         "disposition": "follow_up",
         "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/simulink-agentic-toolkit-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
@@ -2437,19 +2435,19 @@
       "engineering_stages": [
         "design"
       ],
-      "validation_status": "not_tested",
+      "validation_status": "failed",
       "curation": {
-        "disposition": "follow_up",
-        "reason": "Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.",
+        "disposition": "removed",
+        "reason": "The canonical public repository still returns 404; retain the prior Windows evidence but exclude this undistributable catalog record.",
         "owner": "Wright catalog maintainers",
-        "reviewed_at": "2026-09-08",
-        "review_due": "2026-10-08",
-        "next_action": "Recheck primary-source availability (observed HTTP 404); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+        "reviewed_at": "2026-09-09",
+        "review_due": "2026-10-09",
+        "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/solid-edge-mcp-burhop-source-boundary.json. Correct the endpoint or source identity before another execution attempt.",
         "replacement_ids": [],
         "adoption": "unknown",
         "adoption_evidence": [],
         "qualifications": [],
-        "effective_disposition": "follow_up",
+        "effective_disposition": "removed",
         "review_overdue": false,
         "limitations": [
           "Repeat user adoption has not been measured."
@@ -2793,7 +2791,19 @@
       "change": "changed"
     },
     {
+      "id": "atlassian-rovo-mcp",
+      "change": "changed"
+    },
+    {
       "id": "autocad-mcp-u-c4n",
+      "change": "changed"
+    },
+    {
+      "id": "autodesk-fusion-data-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "autodesk-fusion-desktop-mcp",
       "change": "changed"
     },
     {
@@ -2806,6 +2816,10 @@
     },
     {
       "id": "blender-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "blender-mcp-harveyxiacn",
       "change": "changed"
     },
     {
@@ -2825,6 +2839,22 @@
       "change": "changed"
     },
     {
+      "id": "freecad-mcp-proximile",
+      "change": "changed"
+    },
+    {
+      "id": "freecad-mcp-sergiudanstan",
+      "change": "changed"
+    },
+    {
+      "id": "github-official-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "grafana-official-mcp",
+      "change": "changed"
+    },
+    {
       "id": "kernelcad-mcp",
       "change": "added"
     },
@@ -2837,11 +2867,47 @@
       "change": "changed"
     },
     {
+      "id": "nvidia-cuda-docs-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "nvidia-omniverse-isaac-sim-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "nvidia-omniverse-kit-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "nvidia-omniverse-omniui-mcp",
+      "change": "changed"
+    },
+    {
       "id": "oasis-open-fem-agent",
       "change": "changed"
     },
     {
+      "id": "onshape-labs-featurescript-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "openfoam-mcp-webworn",
+      "change": "changed"
+    },
+    {
       "id": "openscad-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "partuno-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "playwright-mcp",
+      "change": "changed"
+    },
+    {
+      "id": "rescale-mcp-hosted",
       "change": "changed"
     },
     {
@@ -2853,7 +2919,19 @@
       "change": "changed"
     },
     {
+      "id": "siemens-xcelerator-developer-portal-mcp",
+      "change": "changed"
+    },
+    {
       "id": "simscale-api-candidate",
+      "change": "changed"
+    },
+    {
+      "id": "simulink-agentic-toolkit",
+      "change": "changed"
+    },
+    {
+      "id": "solid-edge-mcp-burhop",
       "change": "changed"
     }
   ],

@@ -1,0 +1,27 @@
+{
+  "server_id": "nvidia-omniverse-kit-mcp",
+  "observed_at": "2026-09-10T01:44:21.087624+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+  "credentials_supplied": false,
+  "host_requirements": [
+    "NVIDIA Omniverse Kit"
+  ],
+  "command": "kit-mcp",
+  "command_available_in_clean_image": false,
+  "cleanup": "passed",
+  "source_status": "available",
+  "source_revision": "9e9d69561f81fa368343382a53535f78f8c769fc",
+  "source_etag_sha256": "403776d7d4f4acf877f1507eeb1b9814789a225f7eefaaf8b3c12283326346cb",
+  "archived": false,
+  "disabled": false,
+  "pushed_at": "2026-08-19T16:34:26Z",
+  "license_spdx": "Apache-2.0",
+  "status": "blocked",
+  "blocking_requirement": "host_or_license",
+  "protocol": "not_reached",
+  "message": "Authoritative source is current; clean runtime lacks the recorded host dependency."
+}

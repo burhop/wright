@@ -232,11 +232,12 @@
     const values = (record) => [record.name, record.server_id, record.vendor, record.scope, record.next_action, record.portfolio_category, record.portfolio_category_reason, record.curation_reason, ...(record.prerequisites || []), ...(record.disciplines || [])].join(" ").toLowerCase();
 
     function renderKpis(status) {
-      const tones = { qualified: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
+      const tones = { qualified: "good", credential_ready: "good", environment_required: "warn", failed: "bad", excluded_archive: "archive" };
       const notes = {
         qualified: `Target ${status.target.minimum}–${status.target.maximum}`,
         preflight_passed: "Complete full qualification",
-        environment_required: "Host, access, or hardware needed",
+        credential_ready: "Release with guided authentication",
+        environment_required: "Host, license, hardware, or lab needed",
         untested: "Run initial preflight",
         failed: "Fix, replace, or exclude",
         excluded_archive: "Hidden from discovery",

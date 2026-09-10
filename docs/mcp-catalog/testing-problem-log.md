@@ -1965,3 +1965,32 @@ Result:
   container was removed. Optional network services and native desktop hosts
   remain follow-up. Evidence:
   evidence/curation-2026-09-08/blender-linux.json.
+
+Problem:
+  The dashboard's former Environment required category mixed live, healthy MCP
+  endpoints awaiting ordinary user authentication with servers needing CAD/CAE
+  hosts, commercial licenses, GPU hardware, or a lab.
+Solution:
+  Added Credential ready as a distinct portfolio category. It requires a current
+  endpoint or server to reach the expected key, login, or OAuth boundary without
+  an additional host dependency. Product release eligibility is now exactly
+  Qualified plus Credential ready; post-login task and gateway proof remain
+  visible as incomplete.
+Result:
+  The dashboard reports 10 Qualified and 10 Credential ready servers in the
+  20-server product release set. Environment required now means host, license,
+  hardware, or dedicated-lab work.
+
+Problem:
+  Twenty catalog entries had no useful current execution classification.
+Solution:
+  Ran one isolated attempt per server: seven hosted MCP protocol probes, nine
+  publisher-source/host-boundary probes, pinned stdio preflights for Partuno and
+  Playwright, a digest-pinned read-only Grafana stdio session, and an isolated
+  Fusion desktop command-boundary check. No credentials, paid jobs, external
+  writes, CAD mutations, or hardware operations were used.
+Result:
+  All 20 left Untested: 6 are Credential ready, 1 Preflight passed, 10
+  Environment required, 1 Failed, and 2 Excluded archive. Exact per-server JSON
+  and the reviewed result manifest are under
+  `evidence/curation-2026-09-09/`.

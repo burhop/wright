@@ -1,0 +1,21 @@
+{
+  "server_id": "rescale-mcp-hosted",
+  "observed_at": "2026-09-10T01:36:04.140565+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://rescale.com/documentation/mcp-server-getting-started/",
+  "source_revision": "remote-current",
+  "transport": "streamable_http",
+  "endpoint": "https://mcp.services.platform.rescale.com/mcp",
+  "credentials_supplied": false,
+  "status": "blocked",
+  "protocol": "not_reached",
+  "cleanup": "passed",
+  "failure_stage": "initialize_or_tools_list",
+  "observed_error": "unhandled errors in a TaskGroup (1 sub-exception) | Client error '401 Unauthorized' for url 'https://mcp.services.platform.rescale.com/mcp' For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401",
+  "blocking_requirement": "credentials_or_oauth",
+  "finished_at": "2026-09-10T01:36:05.930143+00:00",
+  "duration_seconds": 1.79
+}
