@@ -98,6 +98,14 @@ host-software validation remains a separate evidence-producing task.
 
 ## Current Research Additions
 
+The [2026-09-11 discovery sweep](discovery/2026-09-11/README.md) records 44
+additional projects with documented MCP interfaces, including AgentCAD,
+CadQuery contrib, build123d-mcp, ShapeItUp, and vcad. The linked inventory is
+research awaiting catalog review and clean-container qualification; those
+candidates have not been installed or added to the runtime catalog. It includes
+the exact queries, paginated public API results, source records, and unresolved
+leads so later sweeps can compare coverage.
+
 Recent primary-source additions include official Autodesk Product Help, Fusion
 desktop/data MCPs, official MathWorks MATLAB and Simulink MCP tooling,
 OpenFOAM, multiple FreeCAD variants, Rhino, Blender, BREP, SolidEdgeMCP,

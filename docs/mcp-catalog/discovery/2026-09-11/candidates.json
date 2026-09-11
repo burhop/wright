@@ -1,0 +1,875 @@
+{
+  "observed_on": "2026-09-11",
+  "scope": "Research inventory; does not configure, install, enable or qualify servers.",
+  "projects": [
+    {
+      "discovery_id": "D001",
+      "name": "AgentCAD",
+      "repository": "jdilla1277/agentcad",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "build123d modeling, STEP/mesh export, rendering, measurement, validation and version comparison.",
+      "documented_entrypoint": "python -m agentcad.mcp",
+      "prerequisites_and_limits": "Install agentcad[mcp]; Python and the bundled CAD dependencies. CadQuery is an optional extra.",
+      "source_urls": [
+        "https://github.com/jdilla1277/agentcad/blob/main/README.md",
+        "https://github.com/jdilla1277/agentcad"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "d251454e206f708c0f54413566b648001c9a74f3",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D002",
+      "name": "CadQuery contrib MCP",
+      "repository": "CadQuery/cadquery-contrib",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "CadQuery script execution, multi-view SVG rendering, geometry inspection, parameter extraction and export.",
+      "documented_entrypoint": "cadquery-mcp",
+      "prerequisites_and_limits": "Install from the repository's mcp-server subdirectory; CadQuery environment required.",
+      "source_urls": [
+        "https://github.com/CadQuery/cadquery-contrib/blob/master/mcp-server/README.md",
+        "https://github.com/CadQuery/cadquery-contrib"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "9954de2a1dbc963bd226892144a65df5903d287a",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D003",
+      "name": "build123d-mcp",
+      "repository": "pzfreo/build123d-mcp",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "Interactive build123d construction, previews, measurement and CAD exports.",
+      "documented_entrypoint": "uv tool run --python 3.12 build123d-mcp@latest",
+      "prerequisites_and_limits": "Local Python/OCCT environment; source also documents optional HTTP mode.",
+      "source_urls": [
+        "https://github.com/pzfreo/build123d-mcp/blob/main/README.md",
+        "https://github.com/pzfreo/build123d-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "84f36178a9891e14b45a29a540e283f279f996eb",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D004",
+      "name": "Casys build123d MCP",
+      "repository": "Casys-AI/mcp-build123d",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "Parametric CAD scripting, mass properties and STEP/STL/GLB artifacts.",
+      "documented_entrypoint": "deno run -A server.ts --stdio",
+      "prerequisites_and_limits": "Source checkout, Deno and qualified Python/build123d dependencies; packaged JSR and Docker routes also documented.",
+      "source_urls": [
+        "https://github.com/Casys-AI/mcp-build123d/blob/main/README.md",
+        "https://github.com/Casys-AI/mcp-build123d"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "ac57e8ea388f05afdda1181c9d7e8de3bef26684",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D005",
+      "name": "ShapeItUp",
+      "repository": "asbis/ShapeItUp",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "Headless TypeScript/Replicad authoring, previews, verification and STEP/STL export.",
+      "documented_entrypoint": "npx -y @shapeitup/mcp-server",
+      "prerequisites_and_limits": "Node 20+; OpenCascade WASM; VS Code viewer is optional.",
+      "source_urls": [
+        "https://github.com/asbis/ShapeItUp/blob/master/README.md",
+        "https://github.com/asbis/ShapeItUp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "1e1e4e28e920b4d1f88a2850a424dc1dc217ee2c",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D006",
+      "name": "vcad",
+      "repository": "ecto/vcad",
+      "domain": "CAD authoring",
+      "review_priority": 1,
+      "capabilities": "Create, inspect and export CAD models through a local WASM geometry engine.",
+      "documented_entrypoint": "npx -y @vcad/mcp",
+      "prerequisites_and_limits": "Published package contains the MCP server and BRep WASM kernel.",
+      "source_urls": [
+        "https://docs.vcad.io/tutorials/mcp/01-setup",
+        "https://www.npmjs.com/package/@vcad/mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D007",
+      "name": "TianshangCAD",
+      "repository": "Tianshang301/TianshangCAD",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "2D/3D CAD documents, editing, measurements, validation and optional CAM/simulation plugins.",
+      "documented_entrypoint": "python -m tianshangcad --transport stdio",
+      "prerequisites_and_limits": "Python package; optional backends have additional dependencies. Old cad-mcp-server package is yanked and renamed.",
+      "source_urls": [
+        "https://github.com/Tianshang301/TianshangCAD/blob/main/README.md",
+        "https://github.com/Tianshang301/TianshangCAD"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "6657e0a78837bc09dd25164ea24e663f9772b4f6",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D008",
+      "name": "kernelCAD",
+      "repository": "w1ne/kernelCAD-web",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Editable TypeScript CAD sources, model review, geometry validation and exports.",
+      "documented_entrypoint": "npx -y kernelcad mcp",
+      "prerequisites_and_limits": "Node/Replicad/OpenCascade stack; separate cloud mode is documented.",
+      "source_urls": [
+        "https://github.com/w1ne/kernelCAD-web/blob/develop/README.md",
+        "https://github.com/w1ne/kernelCAD-web"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "b1e718e9abdffa2a3fb04ff5be64b98b818825aa",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D009",
+      "name": "CADGate",
+      "repository": "vericontext/cadgate",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "CAD-as-code validation, geometry diffs, wall-thickness/DFM checks and rendered views.",
+      "documented_entrypoint": "cadgate mcp serve",
+      "prerequisites_and_limits": "Docker CAD sidecars; Chromium for rendering; optional judge tool requires an API key.",
+      "source_urls": [
+        "https://github.com/vericontext/cadgate/blob/main/README.md",
+        "https://github.com/vericontext/cadgate"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "54c63b2802a81324c6383f1ada3ac9567f6547c5",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D010",
+      "name": "partsmith",
+      "repository": "JLay2026/partsmith",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "build123d authoring, cross-sections, geometry checks, versioning and STL/STEP/3MF export.",
+      "documented_entrypoint": "Streamable HTTP at /mcp/",
+      "prerequisites_and_limits": "Python/build123d or project container; documentation places authentication at a reverse proxy.",
+      "source_urls": [
+        "https://github.com/JLay2026/partsmith/blob/main/README.md",
+        "https://github.com/JLay2026/partsmith"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "799a4f939e233befc21761740578192f6deb5412",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D011",
+      "name": "CAD/CAE Copilot",
+      "repository": "armpro24-blip/cad-cae-copilot",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "CAD and CAE workspace with editable parameters, build123d geometry, study setup and agent tools.",
+      "documented_entrypoint": "aieng-workbench-mcp",
+      "prerequisites_and_limits": "Project backend source package or container; build123d/OpenCascade and solver prerequisites; alpha release.",
+      "source_urls": [
+        "https://github.com/armpro24-blip/cad-cae-copilot/blob/main/README.md",
+        "https://github.com/armpro24-blip/cad-cae-copilot"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "b3cbb5fbd0a1d1a6bea4f42c9dcafc50015ae6a1",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D012",
+      "name": "noodle",
+      "repository": "rederyk/noodle",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Build and edit parametric node graphs, execute geometry and export through MCP.",
+      "documented_entrypoint": "Project MCP server; launch recipe needs follow-up",
+      "prerequisites_and_limits": "Python/build123d application. README establishes the MCP interface but exact client setup is linked elsewhere.",
+      "source_urls": [
+        "https://github.com/rederyk/noodle/blob/main/README.md",
+        "https://github.com/rederyk/noodle"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "260c6a0655a363f6a275c5bf5659cd05051b117a",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D013",
+      "name": "MCP CAD Studio",
+      "repository": "flujo-app/mcp-cad-studio",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Parametric CAD workspace with persistent models and an interactive MCP App.",
+      "documented_entrypoint": "npx -y mcp-cad-studio --stdio",
+      "prerequisites_and_limits": "Node application; stdio and Streamable HTTP documented; data tools work without MCP Apps UI.",
+      "source_urls": [
+        "https://github.com/flujo-app/mcp-cad-studio/blob/main/README.md",
+        "https://github.com/flujo-app/mcp-cad-studio"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "fd004c770597f8c0b3c8c4d8c9e2496de0a257ee",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D014",
+      "name": "CadQuery MCP (rishigundakaram)",
+      "repository": "rishigundakaram/cadquery-mcp-server",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "CadQuery model generation and verification tools.",
+      "documented_entrypoint": "python /path/to/cadquery-mcp-server/server.py",
+      "prerequisites_and_limits": "Source checkout with Python and CadQuery dependencies.",
+      "source_urls": [
+        "https://github.com/rishigundakaram/cadquery-mcp-server/blob/main/README.md",
+        "https://github.com/rishigundakaram/cadquery-mcp-server"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "054c2bab9e270414031890da2b00b7378ee7dd9e",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D015",
+      "name": "CadQuery MCP (bertvanbrakel)",
+      "repository": "bertvanbrakel/mcp-cadquery",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Execute and export CadQuery scripts and search a reusable parts library.",
+      "documented_entrypoint": "./server_stdio.sh",
+      "prerequisites_and_limits": "Source checkout, shell, Python, uv and CadQuery; SSE mode also documented.",
+      "source_urls": [
+        "https://github.com/bertvanbrakel/mcp-cadquery/blob/master/README.md",
+        "https://github.com/bertvanbrakel/mcp-cadquery"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "02d68b6085342bce38b7822d5d53fde52689fa21",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D016",
+      "name": "CadQuery MCP with GCS exports",
+      "repository": "mikekuniavsky/mcp-cadquery-server-public",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Execute CadQuery and return exported models and PNGs through Google Cloud Storage.",
+      "documented_entrypoint": "python src/mcp_cadquery_server/server.py",
+      "prerequisites_and_limits": "Python/CadQuery plus GCS bucket and credentials; local stdio still uploads exports.",
+      "source_urls": [
+        "https://github.com/mikekuniavsky/mcp-cadquery-server-public/blob/main/README.md",
+        "https://github.com/mikekuniavsky/mcp-cadquery-server-public"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "faea075d06c6e137b9db35a23b39f6f4bb422b58",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D017",
+      "name": "JSCAD MCP",
+      "repository": "caliperhq/jscad-mcp",
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Render OpenJSCAD models for visual and structural inspection.",
+      "documented_entrypoint": "npx @caliperhq/jscad-mcp",
+      "prerequisites_and_limits": "Node and native headless graphics dependencies; upstream notes Node-version build constraints.",
+      "source_urls": [
+        "https://www.npmjs.com/package/@caliperhq/jscad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D018",
+      "name": "BuildCAD AI",
+      "repository": null,
+      "domain": "CAD authoring",
+      "review_priority": 2,
+      "capabilities": "Hosted design listing, code retrieval, rendered previews and versioned saves.",
+      "documented_entrypoint": "https://buildcad.ai/api/mcp",
+      "prerequisites_and_limits": "Streamable HTTP; BuildCAD account required; hosted service has not been contacted through MCP.",
+      "source_urls": [
+        "https://buildcad.ai/mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D019",
+      "name": "CADPilot",
+      "repository": "LBurny/cadpilot",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "FreeCAD constrained sketches, parametric features, assemblies, joints and geometry inspection.",
+      "documented_entrypoint": "uvx cadpilot",
+      "prerequisites_and_limits": "FreeCAD with CADPilot addon and XML-RPC service; stdio MCP client.",
+      "source_urls": [
+        "https://github.com/LBurny/cadpilot/blob/main/README.md",
+        "https://github.com/LBurny/cadpilot"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "6ad719b0bd82821baf2d31d43d79cbb31ed638c9",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D020",
+      "name": "FreeCAD MCP (bonninr)",
+      "repository": "bonninr/freecad_mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "FreeCAD document context, commands and Python script execution.",
+      "documented_entrypoint": "python /path/to/freecad_mcp/src/freecad_bridge.py",
+      "prerequisites_and_limits": "FreeCAD workbench and local socket bridge; FastMCP implementation confirms protocol despite README acronym wording.",
+      "source_urls": [
+        "https://github.com/bonninr/freecad_mcp/blob/main/README.md",
+        "https://github.com/bonninr/freecad_mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "63a11eb26671ccd7eeb3d06eab569ad730c9e344",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D021",
+      "name": "FreeCAD Engineering (Tessa Labs)",
+      "repository": "tessalabs-space/freecad-mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "FreeCAD modeling, drawings, parameter sweeps, meshing and CAE preparation.",
+      "documented_entrypoint": "freecad-mcp from the tessalabs-space checkout",
+      "prerequisites_and_limits": "FreeCAD addon; derived from neka-nat with additional engineering capabilities.",
+      "source_urls": [
+        "https://github.com/tessalabs-space/freecad-mcp/blob/main/README.md",
+        "https://github.com/tessalabs-space/freecad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "c19f737712f9178d09dea8f136d4295465e87c44",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D022",
+      "name": "FreeCAD MCP Agent (theosib)",
+      "repository": "theosib/FreeCAD-MCP-Server",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "Live FreeCAD document, topology, properties and sketch-constraint inspection and editing.",
+      "documented_entrypoint": "freecad-mcp-agent",
+      "prerequisites_and_limits": "FreeCAD addon and local TCP bridge; Python MCP package from source.",
+      "source_urls": [
+        "https://github.com/theosib/FreeCAD-MCP-Server/blob/main/README.md",
+        "https://github.com/theosib/FreeCAD-MCP-Server"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "3dd2c58d41a780dee79ee648cb93ba68d74a4980",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D023",
+      "name": "FreeCAD MCP (yonosoft)",
+      "repository": "yonosoft/freecad-mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "Typed sketch and document operations through an embedded FreeCAD workbench.",
+      "documented_entrypoint": "http://127.0.0.1:8765/mcp",
+      "prerequisites_and_limits": "FreeCAD workbench and embedded MCP SDK; explicitly experimental and focused on constrained authoring.",
+      "source_urls": [
+        "https://github.com/yonosoft/freecad-mcp/blob/main/README.md",
+        "https://github.com/yonosoft/freecad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "4f69f1ceec3792a1d6bf70effb84aa416dbae37c",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D024",
+      "name": "OpenSCAD MCP (petrijr)",
+      "repository": "petrijr/openscad-mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "Validate, render, export and batch-process OpenSCAD models and templates.",
+      "documented_entrypoint": "openscad-mcp from the petrijr checkout",
+      "prerequisites_and_limits": "OpenSCAD executable plus Python; stdio and container wrappers documented; command name overlaps other implementations.",
+      "source_urls": [
+        "https://github.com/petrijr/openscad-mcp/blob/main/README.md",
+        "https://github.com/petrijr/openscad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "2e916b06e8a06bdde6a6e5639d1803b1775a0225",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D025",
+      "name": "OpenSCAD MCP (alexlenk)",
+      "repository": "alexlenk/openscad-mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "Compile OpenSCAD models and return rendered views to the agent.",
+      "documented_entrypoint": "uvx openscad-mcp-server",
+      "prerequisites_and_limits": "Docker or Finch for OpenSCAD runtime; Python server uses stdio.",
+      "source_urls": [
+        "https://github.com/alexlenk/openscad-mcp/blob/main/README.md",
+        "https://github.com/alexlenk/openscad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "4e1947e30775f5295f08046daa60186041c05c71",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D026",
+      "name": "Shapr3D file-exchange MCP",
+      "repository": "Alfredoalv13/shapr3d-mcp",
+      "domain": "CAD host bridges",
+      "review_priority": 2,
+      "capabilities": "build123d modeling, STEP exchange, geometry inspection and macOS Shapr3D app interaction.",
+      "documented_entrypoint": "uv run --directory /path/to/repo shapr3d-mcp",
+      "prerequisites_and_limits": "macOS, uv and Shapr3D; file-exchange bridge rather than direct access to Shapr3D feature history.",
+      "source_urls": [
+        "https://github.com/Alfredoalv13/shapr3d-mcp/blob/main/README.md",
+        "https://github.com/Alfredoalv13/shapr3d-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "31f70c3363c06fbdebc488a928061c02bb276d25",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D027",
+      "name": "@lisp CAD MCP",
+      "repository": null,
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "AutoLISP execution, drawing operations and package management across supported COM-based CAD hosts.",
+      "documented_entrypoint": "atlisp-mcp with TRANSPORT=stdio",
+      "prerequisites_and_limits": "Install @atlisp/mcp; Node plus compatible AutoCAD/ZWCAD/GStarCAD/BricsCAD host.",
+      "source_urls": [
+        "https://www.npmjs.com/package/@atlisp/mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D028",
+      "name": "CADBridge",
+      "repository": null,
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Live AutoCAD drawing edits, commands, AutoLISP and view capture.",
+      "documented_entrypoint": "npx -y @dmytro-prototypes/cadbridge-mcp",
+      "prerequisites_and_limits": "AutoCAD with CADBridge plugin plus a CADBridge account.",
+      "source_urls": [
+        "https://www.npmjs.com/package/@dmytro-prototypes/cadbridge-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D029",
+      "name": "Cadlens MCP",
+      "repository": "cadlens-co/cadlens-mcp",
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Parse CAD drawing files into entity, layer and metadata records through the Cadlens API.",
+      "documented_entrypoint": "npx -y @cadlens/mcp-server",
+      "prerequisites_and_limits": "Node; CADLENS_API_KEY and hosted API; drawing data is submitted to the service.",
+      "source_urls": [
+        "https://www.npmjs.com/package/@cadlens/mcp-server"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D030",
+      "name": "Linea MCP",
+      "repository": null,
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Create and edit CAD documents with an interactive drawing editor exposed as an MCP App.",
+      "documented_entrypoint": "npx -y @lineadraw/mcp --stdio",
+      "prerequisites_and_limits": "Node 20+; optional HTTP mode; sessions within one process share documents.",
+      "source_urls": [
+        "https://www.npmjs.com/package/@lineadraw/mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D031",
+      "name": "Splice CAD",
+      "repository": "splice-cad/splice-cad-mcp",
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Cable harness design, component search, harness plans and manufacturing documentation.",
+      "documented_entrypoint": "npx @splice-cad/mcp",
+      "prerequisites_and_limits": "Node; account/API key for cloud operations and browser bridge for local live-canvas operations.",
+      "source_urls": [
+        "https://github.com/splice-cad/splice-cad-mcp/blob/main/README.md",
+        "https://github.com/splice-cad/splice-cad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "75f3b40d69c09c7c72c43b25f464ef3147e18bfc",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D032",
+      "name": "KiCAD MCP (mixelpixx)",
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Schematic and PCB authoring, checks, custom symbols/footprints and manufacturing exports.",
+      "documented_entrypoint": "Repository client configuration",
+      "prerequisites_and_limits": "KiCad plus Python/TypeScript runtime; maintained predecessor of Konnect, distinct from lamaalrajih already cataloged.",
+      "source_urls": [
+        "https://github.com/mixelpixx/KiCAD-MCP-Server/blob/main/.github/README.md",
+        "https://github.com/mixelpixx/KiCAD-MCP-Server"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "9027379119f2e311952e85bce4508ba72bde49dd",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D033",
+      "name": "Konnect",
+      "repository": "mixelpixx/Konnect",
+      "domain": "Drawing and electrical",
+      "review_priority": 2,
+      "capabilities": "Native KiCad plugin for schematic/PCB design, routing, checks and manufacturing exports.",
+      "documented_entrypoint": "konnect",
+      "prerequisites_and_limits": "KiCad 10 and kicad-cli for relevant tools; native binary; stdio/HTTP; beta successor to mixelpixx's older server.",
+      "source_urls": [
+        "https://github.com/mixelpixx/Konnect/blob/main/README.md",
+        "https://github.com/mixelpixx/Konnect"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "4df1c751dcfa64e757cb721071aaa8ddba5a51e7",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D034",
+      "name": "Casys CalculiX MCP",
+      "repository": "Casys-AI/mcp-calculix",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Mesh STEP geometry with Gmsh and run bounded CalculiX studies with recorded results.",
+      "documented_entrypoint": "Deno server --stdio or HTTP /mcp on port 3015",
+      "prerequisites_and_limits": "Gmsh and CalculiX native dependencies or the project's image; separate project from existing CalculiX watchlist row.",
+      "source_urls": [
+        "https://github.com/Casys-AI/mcp-calculix/blob/main/README.md",
+        "https://github.com/Casys-AI/mcp-calculix"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "705d91586b160e7417770b4fdc3b37b92ad1c599",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D035",
+      "name": "Casys Modelica MCP",
+      "repository": "Casys-AI/mcp-modelica",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Run approved Modelica simulation kits and retrieve run evidence.",
+      "documented_entrypoint": "Deno server --stdio or HTTP /mcp on port 3016",
+      "prerequisites_and_limits": "OpenModelica and project runtime or container; bounded approved kits.",
+      "source_urls": [
+        "https://github.com/Casys-AI/mcp-modelica/blob/main/README.md",
+        "https://github.com/Casys-AI/mcp-modelica"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "bb5e927cc82b7382cbf6f6975ebafe8cb59100aa",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D036",
+      "name": "Casys SysON MCP",
+      "repository": "Casys-AI/mcp-syson",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Work with SysML v2 models, queries, requirements traces and product structures in SysON.",
+      "documented_entrypoint": "Deno server --stdio or HTTP /mcp on port 3009",
+      "prerequisites_and_limits": "Deno plus a configured SysON backend.",
+      "source_urls": [
+        "https://github.com/Casys-AI/mcp-syson/blob/main/README.md",
+        "https://github.com/Casys-AI/mcp-syson"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "da5818fb006b6beb10941e3f3e3937717368135d",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D037",
+      "name": "Casys DFM MCP",
+      "repository": "Casys-AI/mcp-dfm",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Measure STEP envelope, overhangs and sampled wall thickness against caller-specified limits.",
+      "documented_entrypoint": "Deno server --stdio or HTTP /mcp on port 3018",
+      "prerequisites_and_limits": "Project native geometry executables or published image; checks do not establish universal manufacturability.",
+      "source_urls": [
+        "https://github.com/Casys-AI/mcp-dfm/blob/main/README.md",
+        "https://github.com/Casys-AI/mcp-dfm"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "990a090405ca9938ab534c58ed721f0c84b1acc7",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D038",
+      "name": "mcp-fea",
+      "repository": "benchwire/mcp-fea",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "STEP-based static and modal FEA using Gmsh/CalculiX with task results and visualizations.",
+      "documented_entrypoint": "Deployed Modal MCP endpoint",
+      "prerequisites_and_limits": "Modal account/deployment and bearer token; registry still references TheRoboMaster123/mcp-fea.",
+      "source_urls": [
+        "https://github.com/benchwire/mcp-fea/blob/main/README.md",
+        "https://github.com/benchwire/mcp-fea"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "eae71b9e81fa71973b91361ddfa742d6cca69d98",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D039",
+      "name": "SALOME MCP",
+      "repository": "gnshb/salome-mcp",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "SALOME geometry and meshing through an application bridge.",
+      "documented_entrypoint": "uv run --directory /path/to/salome-mcp salome-mcp",
+      "prerequisites_and_limits": "SALOME with bridge plugin plus Python MCP package.",
+      "source_urls": [
+        "https://github.com/gnshb/salome-mcp/blob/main/README.md",
+        "https://github.com/gnshb/salome-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "a78936e364bfac91b70c3fb8dd250cda57607032",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D040",
+      "name": "Foam-Agent",
+      "repository": "csml-rpi/Foam-Agent",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Expose CFD planning, case preparation and simulation workflows as MCP tools.",
+      "documented_entrypoint": "foamagent-mcp",
+      "prerequisites_and_limits": "OpenFOAM environment and project dependencies; optional HTTP deployment; user must provide any required model access.",
+      "source_urls": [
+        "https://github.com/csml-rpi/Foam-Agent/blob/main/README.md",
+        "https://github.com/csml-rpi/Foam-Agent"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "268ee38d40262f6aaebd21b6b6281e2ce42fb34e",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D041",
+      "name": "Bentley OpenSTAAD MCP",
+      "repository": "BentleySystems/openstaad-mcp",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "STAAD.Pro model interaction, load definitions, property updates and data extraction.",
+      "documented_entrypoint": "uvx --from git+https://github.com/BentleySystems/openstaad-mcp openstaad-mcp",
+      "prerequisites_and_limits": "STAAD.Pro host/license and OpenSTAAD; vendor repository and official Registry record both found.",
+      "source_urls": [
+        "https://github.com/BentleySystems/openstaad-mcp/blob/main/README.md",
+        "https://github.com/BentleySystems/openstaad-mcp"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "cfc0bbe52280c3be9ff65d64bbbd58595d0c07ed",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D042",
+      "name": "FEA-MCP (ETABS/LUSAS)",
+      "repository": "GreatApo/FEA-MCP",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Modeling, analysis and postprocessing through ETABS and LUSAS adapters.",
+      "documented_entrypoint": "python /path/to/FEA-MCP/src/server.py",
+      "prerequisites_and_limits": "Windows COM/Python environment and licensed ETABS or LUSAS host.",
+      "source_urls": [
+        "https://github.com/GreatApo/FEA-MCP/blob/main/README.md",
+        "https://github.com/GreatApo/FEA-MCP"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "c066550505aa56cda9397d7ac7d2cda11c05b640",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D043",
+      "name": "LLNL MADA Tools",
+      "repository": "llnl/mada-tools",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "MCP family for Flux/Slurm scheduling, Vertex-CFD, surrogate modeling and job diagnostics.",
+      "documented_entrypoint": "Individual mada-mcp-* commands or mada-tools start-servers",
+      "prerequisites_and_limits": "Backend/HPC dependencies vary by server; counted once as a project family; geometry section is only planned.",
+      "source_urls": [
+        "https://github.com/llnl/mada-tools/blob/develop/README.md",
+        "https://github.com/llnl/mada-tools"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "ffb3aa0386425eb4057e0fcda02168a3175beda5",
+      "catalog_matches": []
+    },
+    {
+      "discovery_id": "D044",
+      "name": "NAVIER-CFD AutoResearch",
+      "repository": "Samsomyajit/NAVIER-CFD",
+      "domain": "Simulation and systems",
+      "review_priority": 2,
+      "capabilities": "Read-only model/dataset discovery, research planning, metrics and figure-spec inspection.",
+      "documented_entrypoint": "navier-autoresearch mcp",
+      "prerequisites_and_limits": "Install navier-cfd[autoresearch]; MCP interface does not expose solver execution or training.",
+      "source_urls": [
+        "https://github.com/Samsomyajit/NAVIER-CFD/blob/main/README.md",
+        "https://github.com/Samsomyajit/NAVIER-CFD"
+      ],
+      "mcp_evidence": "primary_documentation_reviewed",
+      "validation_status": "not_tested",
+      "platform_qualification": "unknown",
+      "disposition": "candidate_for_catalog_review",
+      "primary_source_git_blob_sha": "93f83a0842502038e935d5be4b769e96f01f2f1f",
+      "catalog_matches": []
+    }
+  ],
+  "baseline_catalog_sha256": "d76edd32a1a94c8755c225ab3bee071b09dfe8bb7bf618730d03ed365b7d9d7f",
+  "baseline_catalog_entry_count": 70
+}

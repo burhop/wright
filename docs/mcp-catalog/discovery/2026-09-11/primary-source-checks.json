@@ -1,0 +1,335 @@
+[
+  {
+    "repository": "jdilla1277/agentcad",
+    "source_url": "https://github.com/jdilla1277/agentcad/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/jdilla1277/agentcad/readme",
+    "git_blob_sha": "d251454e206f708c0f54413566b648001c9a74f3",
+    "content_sha256": "f14b8d313640d6129db3f6a5671df03b46b3b9504cecba88179de29e1f190e1c",
+    "bytes": 9132,
+    "fetched_at": "2026-09-11T20:32:49.443671+00:00"
+  },
+  {
+    "repository": "pzfreo/build123d-mcp",
+    "source_url": "https://github.com/pzfreo/build123d-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/pzfreo/build123d-mcp/readme",
+    "git_blob_sha": "84f36178a9891e14b45a29a540e283f279f996eb",
+    "content_sha256": "5ed718e36fd0537b079e1f670b6088313edbb356bfcd34bedc782b5279a14c4d",
+    "bytes": 11161,
+    "fetched_at": "2026-09-11T20:32:49.430412+00:00"
+  },
+  {
+    "repository": "Casys-AI/mcp-build123d",
+    "source_url": "https://github.com/Casys-AI/mcp-build123d/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Casys-AI/mcp-build123d/readme",
+    "git_blob_sha": "ac57e8ea388f05afdda1181c9d7e8de3bef26684",
+    "content_sha256": "57b8b6c1fe71f11921f211280681238758125744f254289d84e37fca77045995",
+    "bytes": 20886,
+    "fetched_at": "2026-09-11T20:32:49.655266+00:00"
+  },
+  {
+    "repository": "vericontext/cadgate",
+    "source_url": "https://github.com/vericontext/cadgate/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/vericontext/cadgate/readme",
+    "git_blob_sha": "54c63b2802a81324c6383f1ada3ac9567f6547c5",
+    "content_sha256": "1e5858c297e0b23e8e4ac1b7894e415f8a29f1e8b5a650dc791bd56ef05d30f3",
+    "bytes": 11008,
+    "fetched_at": "2026-09-11T20:32:49.510420+00:00"
+  },
+  {
+    "repository": "armpro24-blip/cad-cae-copilot",
+    "source_url": "https://github.com/armpro24-blip/cad-cae-copilot/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/armpro24-blip/cad-cae-copilot/readme",
+    "git_blob_sha": "b3cbb5fbd0a1d1a6bea4f42c9dcafc50015ae6a1",
+    "content_sha256": "9b99cf481e7bff60f8b09eecf7cc4b70b824040d9cafbb7feb7c63d919d3273f",
+    "bytes": 33261,
+    "fetched_at": "2026-09-11T20:32:49.690439+00:00"
+  },
+  {
+    "repository": "JLay2026/partsmith",
+    "source_url": "https://github.com/JLay2026/partsmith/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/JLay2026/partsmith/readme",
+    "git_blob_sha": "799a4f939e233befc21761740578192f6deb5412",
+    "content_sha256": "31e969e432dd8bc97bc8814ba4407cb4ac6ab6426776d352f40e7a9fdaadcee7",
+    "bytes": 12458,
+    "fetched_at": "2026-09-11T20:32:49.769048+00:00"
+  },
+  {
+    "repository": "rederyk/noodle",
+    "source_url": "https://github.com/rederyk/noodle/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/rederyk/noodle/readme",
+    "git_blob_sha": "260c6a0655a363f6a275c5bf5659cd05051b117a",
+    "content_sha256": "af56b2cd9bab661b204ea4fa624dac7995b7ff767187004fd8544b0bf7891a5e",
+    "bytes": 9254,
+    "fetched_at": "2026-09-11T20:32:49.873685+00:00"
+  },
+  {
+    "repository": "flujo-app/mcp-cad-studio",
+    "source_url": "https://github.com/flujo-app/mcp-cad-studio/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/flujo-app/mcp-cad-studio/readme",
+    "git_blob_sha": "fd004c770597f8c0b3c8c4d8c9e2496de0a257ee",
+    "content_sha256": "6d0451c0b8f79d67478da3c14113873c66838d0af246d3e939710f902cfd3449",
+    "bytes": 8621,
+    "fetched_at": "2026-09-11T20:32:49.974289+00:00"
+  },
+  {
+    "repository": "w1ne/kernelCAD-web",
+    "source_url": "https://github.com/w1ne/kernelCAD-web/blob/develop/README.md",
+    "api_url": "https://api.github.com/repos/w1ne/kernelCAD-web/readme",
+    "git_blob_sha": "b1e718e9abdffa2a3fb04ff5be64b98b818825aa",
+    "content_sha256": "34b7eb710c6454ddc73ebac292d323837d7ec275c5deb0d0c606d96601f9809d",
+    "bytes": 5983,
+    "fetched_at": "2026-09-11T20:32:50.005461+00:00"
+  },
+  {
+    "repository": "mixelpixx/KiCAD-MCP-Server",
+    "source_url": "https://github.com/mixelpixx/KiCAD-MCP-Server/blob/main/.github/README.md",
+    "api_url": "https://api.github.com/repos/mixelpixx/KiCAD-MCP-Server/readme",
+    "git_blob_sha": "9027379119f2e311952e85bce4508ba72bde49dd",
+    "content_sha256": "efae794b60da25a0067dc277be6ad1af06f8e5a409ff915c61bac9222504fd58",
+    "bytes": 7059,
+    "fetched_at": "2026-09-11T20:32:49.960277+00:00"
+  },
+  {
+    "repository": "bonninr/freecad_mcp",
+    "source_url": "https://github.com/bonninr/freecad_mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/bonninr/freecad_mcp/readme",
+    "git_blob_sha": "63a11eb26671ccd7eeb3d06eab569ad730c9e344",
+    "content_sha256": "d6c8508770413e9a0cd180393134181167d16501c830a47da73b2a0682f66f4a",
+    "bytes": 4738,
+    "fetched_at": "2026-09-11T20:32:50.160075+00:00"
+  },
+  {
+    "repository": "tessalabs-space/freecad-mcp",
+    "source_url": "https://github.com/tessalabs-space/freecad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/tessalabs-space/freecad-mcp/readme",
+    "git_blob_sha": "c19f737712f9178d09dea8f136d4295465e87c44",
+    "content_sha256": "0b310dabe46f0217add3361e4d0cf36e1676df54fd435a0059d5bb28f36c51cf",
+    "bytes": 11839,
+    "fetched_at": "2026-09-11T20:32:50.173625+00:00"
+  },
+  {
+    "repository": "theosib/FreeCAD-MCP-Server",
+    "source_url": "https://github.com/theosib/FreeCAD-MCP-Server/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/theosib/FreeCAD-MCP-Server/readme",
+    "git_blob_sha": "3dd2c58d41a780dee79ee648cb93ba68d74a4980",
+    "content_sha256": "0e56fe0a199756fc3ebe283a09182b43771698e04114a05e704bd2210acfd403",
+    "bytes": 6450,
+    "fetched_at": "2026-09-11T20:32:50.246634+00:00"
+  },
+  {
+    "repository": "yonosoft/freecad-mcp",
+    "source_url": "https://github.com/yonosoft/freecad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/yonosoft/freecad-mcp/readme",
+    "git_blob_sha": "4f69f1ceec3792a1d6bf70effb84aa416dbae37c",
+    "content_sha256": "c17332b240eb6b267e8b136da80149df43eb99d455ffd003adefa658b7b2c28f",
+    "bytes": 17476,
+    "fetched_at": "2026-09-11T20:32:50.479532+00:00"
+  },
+  {
+    "repository": "petrijr/openscad-mcp",
+    "source_url": "https://github.com/petrijr/openscad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/petrijr/openscad-mcp/readme",
+    "git_blob_sha": "2e916b06e8a06bdde6a6e5639d1803b1775a0225",
+    "content_sha256": "161f19bf0e2f562f4a349f0a1ff52fa198ad92428e6d87ecd6b511b8bce85aa2",
+    "bytes": 7499,
+    "fetched_at": "2026-09-11T20:32:50.346685+00:00"
+  },
+  {
+    "repository": "alexlenk/openscad-mcp",
+    "source_url": "https://github.com/alexlenk/openscad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/alexlenk/openscad-mcp/readme",
+    "git_blob_sha": "4e1947e30775f5295f08046daa60186041c05c71",
+    "content_sha256": "4af6f115de734115f26ae301fa80bc3179874da7c6344c2ce027e11aca765ee7",
+    "bytes": 8384,
+    "fetched_at": "2026-09-11T20:32:50.492149+00:00"
+  },
+  {
+    "repository": "Casys-AI/mcp-calculix",
+    "source_url": "https://github.com/Casys-AI/mcp-calculix/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Casys-AI/mcp-calculix/readme",
+    "git_blob_sha": "705d91586b160e7417770b4fdc3b37b92ad1c599",
+    "content_sha256": "127de5c2f135d2f1c9ef6ae6bbf2f3a7385228a5df4b29e560675d5ecb492dee",
+    "bytes": 5766,
+    "fetched_at": "2026-09-11T20:32:50.580008+00:00"
+  },
+  {
+    "repository": "Casys-AI/mcp-modelica",
+    "source_url": "https://github.com/Casys-AI/mcp-modelica/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Casys-AI/mcp-modelica/readme",
+    "git_blob_sha": "bb5e927cc82b7382cbf6f6975ebafe8cb59100aa",
+    "content_sha256": "b04abb46216691342cba9d31a0f0f38ffc64faac8cbb26cc6f774dc14e0a6be1",
+    "bytes": 5893,
+    "fetched_at": "2026-09-11T20:32:50.659971+00:00"
+  },
+  {
+    "repository": "Casys-AI/mcp-syson",
+    "source_url": "https://github.com/Casys-AI/mcp-syson/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Casys-AI/mcp-syson/readme",
+    "git_blob_sha": "da5818fb006b6beb10941e3f3e3937717368135d",
+    "content_sha256": "acd44d1d496d5ec2c1ceb321fd03450d9c5951f24e6ddb82692cf98a626ff4ad",
+    "bytes": 3889,
+    "fetched_at": "2026-09-11T20:32:50.821633+00:00"
+  },
+  {
+    "repository": "Casys-AI/mcp-dfm",
+    "source_url": "https://github.com/Casys-AI/mcp-dfm/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Casys-AI/mcp-dfm/readme",
+    "git_blob_sha": "990a090405ca9938ab534c58ed721f0c84b1acc7",
+    "content_sha256": "08931acb3c4d3542aa58f9f10979824640328715e3cf7be44d7e3c0890e7128f",
+    "bytes": 16440,
+    "fetched_at": "2026-09-11T20:32:50.864637+00:00"
+  },
+  {
+    "repository": "benchwire/mcp-fea",
+    "source_url": "https://github.com/benchwire/mcp-fea/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/benchwire/mcp-fea/readme",
+    "git_blob_sha": "eae71b9e81fa71973b91361ddfa742d6cca69d98",
+    "content_sha256": "fe19004d85a1b5cbb08fe444e0346626fd6645c71deac3f7fe8395fe7262a84e",
+    "bytes": 7904,
+    "fetched_at": "2026-09-11T20:32:50.925342+00:00"
+  },
+  {
+    "repository": "gnshb/salome-mcp",
+    "source_url": "https://github.com/gnshb/salome-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/gnshb/salome-mcp/readme",
+    "git_blob_sha": "a78936e364bfac91b70c3fb8dd250cda57607032",
+    "content_sha256": "05b6c11f5adab4ec3e86695be50396db9c607aa4cbb91377a192dd9a2889a793",
+    "bytes": 4101,
+    "fetched_at": "2026-09-11T20:32:50.999768+00:00"
+  },
+  {
+    "repository": "csml-rpi/Foam-Agent",
+    "source_url": "https://github.com/csml-rpi/Foam-Agent/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/csml-rpi/Foam-Agent/readme",
+    "git_blob_sha": "268ee38d40262f6aaebd21b6b6281e2ce42fb34e",
+    "content_sha256": "aa4d70cfaeca20d3b03470c40ccb7f13c58a2aa8cae4be0940013ec346d3b87a",
+    "bytes": 11847,
+    "fetched_at": "2026-09-11T20:32:51.028620+00:00"
+  },
+  {
+    "repository": "BentleySystems/openstaad-mcp",
+    "source_url": "https://github.com/BentleySystems/openstaad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/BentleySystems/openstaad-mcp/readme",
+    "git_blob_sha": "cfc0bbe52280c3be9ff65d64bbbd58595d0c07ed",
+    "content_sha256": "d4ffb308d54067edc744e521ad834222fb13800fdc1cbcc3e3dc616c863bc0b7",
+    "bytes": 12702,
+    "fetched_at": "2026-09-11T20:32:51.205460+00:00"
+  },
+  {
+    "repository": "GreatApo/FEA-MCP",
+    "source_url": "https://github.com/GreatApo/FEA-MCP/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/GreatApo/FEA-MCP/readme",
+    "git_blob_sha": "c066550505aa56cda9397d7ac7d2cda11c05b640",
+    "content_sha256": "95133b19e783d55422be7eedaf6330b6ef15684f6df301010e2e177b88e2f774",
+    "bytes": 5236,
+    "fetched_at": "2026-09-11T20:32:51.221769+00:00"
+  },
+  {
+    "repository": "llnl/mada-tools",
+    "source_url": "https://github.com/llnl/mada-tools/blob/develop/README.md",
+    "api_url": "https://api.github.com/repos/llnl/mada-tools/readme",
+    "git_blob_sha": "ffb3aa0386425eb4057e0fcda02168a3175beda5",
+    "content_sha256": "a13f193d493fe5920b2df5e9c8e7c5dc742937945a684096865f0a1fe4baa170",
+    "bytes": 10514,
+    "fetched_at": "2026-09-11T20:32:51.487660+00:00"
+  },
+  {
+    "repository": "splice-cad/splice-cad-mcp",
+    "source_url": "https://github.com/splice-cad/splice-cad-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/splice-cad/splice-cad-mcp/readme",
+    "git_blob_sha": "75f3b40d69c09c7c72c43b25f464ef3147e18bfc",
+    "content_sha256": "4de29614097befda484e628cdb9d8b02fdc3639a9de8aff7a09e556c600ffb8e",
+    "bytes": 12947,
+    "fetched_at": "2026-09-11T20:32:51.472962+00:00"
+  },
+  {
+    "repository": "Samsomyajit/NAVIER-CFD",
+    "source_url": "https://github.com/Samsomyajit/NAVIER-CFD/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Samsomyajit/NAVIER-CFD/readme",
+    "git_blob_sha": "93f83a0842502038e935d5be4b769e96f01f2f1f",
+    "content_sha256": "ba7c5042f3da12a5ddf233818cbbf87ae5ae1ddea64d2175096cc2d70fc1ab29",
+    "bytes": 15835,
+    "fetched_at": "2026-09-11T20:32:51.869909+00:00"
+  },
+  {
+    "repository": "Alfredoalv13/shapr3d-mcp",
+    "source_url": "https://github.com/Alfredoalv13/shapr3d-mcp/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Alfredoalv13/shapr3d-mcp/readme",
+    "git_blob_sha": "31f70c3363c06fbdebc488a928061c02bb276d25",
+    "content_sha256": "5f0944c1a6cb7c24a9d6f7cdbf7179bc717f5ea8efc50ad61183fd5141335885",
+    "bytes": 4125,
+    "fetched_at": "2026-09-11T20:32:51.762480+00:00"
+  },
+  {
+    "repository": "asbis/ShapeItUp",
+    "source_url": "https://github.com/asbis/ShapeItUp/blob/master/README.md",
+    "api_url": "https://api.github.com/repos/asbis/ShapeItUp/readme",
+    "git_blob_sha": "1e1e4e28e920b4d1f88a2850a424dc1dc217ee2c",
+    "content_sha256": "f4adefb32eaf0ebef76b1071581b2272b98b1d78e627fcdae5453f45143dbf1b",
+    "bytes": 5773,
+    "fetched_at": "2026-09-11T20:32:51.845257+00:00"
+  },
+  {
+    "repository": "Tianshang301/TianshangCAD",
+    "source_url": "https://github.com/Tianshang301/TianshangCAD/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/Tianshang301/TianshangCAD/readme",
+    "git_blob_sha": "6657e0a78837bc09dd25164ea24e663f9772b4f6",
+    "content_sha256": "d17dd4c930ee6aeab7e2dd6c7d86c2e49c8badbdf53fb17b95ffff975f66e5bd",
+    "bytes": 19942,
+    "fetched_at": "2026-09-11T20:32:51.885135+00:00"
+  },
+  {
+    "repository": "rishigundakaram/cadquery-mcp-server",
+    "source_url": "https://github.com/rishigundakaram/cadquery-mcp-server/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/rishigundakaram/cadquery-mcp-server/readme",
+    "git_blob_sha": "054c2bab9e270414031890da2b00b7378ee7dd9e",
+    "content_sha256": "ecbe7f8a42f85202c3a8a09249f35335ac1b1159d173d5bdb557127e5f13d78d",
+    "bytes": 3715,
+    "fetched_at": "2026-09-11T20:32:52.125514+00:00"
+  },
+  {
+    "repository": "bertvanbrakel/mcp-cadquery",
+    "source_url": "https://github.com/bertvanbrakel/mcp-cadquery/blob/master/README.md",
+    "api_url": "https://api.github.com/repos/bertvanbrakel/mcp-cadquery/readme",
+    "git_blob_sha": "02d68b6085342bce38b7822d5d53fde52689fa21",
+    "content_sha256": "d85c1f7acc69e63d05162d7f7677d62334611ff89c21957fa3832e0e291f040e",
+    "bytes": 11423,
+    "fetched_at": "2026-09-11T20:32:52.134312+00:00"
+  },
+  {
+    "repository": "mikekuniavsky/mcp-cadquery-server-public",
+    "source_url": "https://github.com/mikekuniavsky/mcp-cadquery-server-public/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/mikekuniavsky/mcp-cadquery-server-public/readme",
+    "git_blob_sha": "faea075d06c6e137b9db35a23b39f6f4bb422b58",
+    "content_sha256": "e609b636f56ece8f96d39021d0d8453ec5aa69838a55925e57e36e44ad83ceda",
+    "bytes": 5271,
+    "fetched_at": "2026-09-11T20:32:52.182381+00:00"
+  },
+  {
+    "repository": "CadQuery/cadquery-contrib",
+    "source_url": "https://github.com/CadQuery/cadquery-contrib/blob/master/mcp-server/README.md",
+    "api_url": "https://api.github.com/repos/CadQuery/cadquery-contrib/contents/mcp-server/README.md",
+    "git_blob_sha": "9954de2a1dbc963bd226892144a65df5903d287a",
+    "content_sha256": "948da5acc012c1d6e4dfe29b2c5088574b12c5572d9526f78168259a0e47a10e",
+    "bytes": 4763,
+    "fetched_at": "2026-09-11T20:32:52.078713+00:00"
+  },
+  {
+    "repository": "LBurny/cadpilot",
+    "source_url": "https://github.com/LBurny/cadpilot/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/LBurny/cadpilot/readme",
+    "git_blob_sha": "6ad719b0bd82821baf2d31d43d79cbb31ed638c9",
+    "content_sha256": "d38bde66f69f4b2e576ab170dd2d04f3256c16b0e68984f2d4d17c5f1f471a63",
+    "bytes": 8423,
+    "fetched_at": "2026-09-11T20:36:25.831109+00:00"
+  },
+  {
+    "repository": "mixelpixx/Konnect",
+    "source_url": "https://github.com/mixelpixx/Konnect/blob/main/README.md",
+    "api_url": "https://api.github.com/repos/mixelpixx/Konnect/readme",
+    "git_blob_sha": "4df1c751dcfa64e757cb721071aaa8ddba5a51e7",
+    "content_sha256": "7a353712dda9d17b2583f59bf1677ae29c5fdee8a7e972a7c222f09204a80bdc",
+    "bytes": 16646,
+    "fetched_at": "2026-09-11T20:36:26.049202+00:00"
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "observed_on": "2026-09-11",
+  "files": [
+    {
+      "path": "candidates.json",
+      "bytes": 41616,
+      "sha256": "7dce9dfc75bf7065bb15cd43536598a48a4c5a01481804c9db44ff090cb8e0c6"
+    },
+    {
+      "path": "github-cad-remaining-pages.json",
+      "bytes": 170146,
+      "sha256": "f165fc518bd37ab9101ba5eb1a34daa4ae77a39ea62f5c05658559264584d1d9"
+    },
+    {
+      "path": "github-search.json",
+      "bytes": 152701,
+      "sha256": "e4828eae9964d1b548bc1b6e61afa84e0a6fd01eae8e38625d4c2bde57ad3cc7"
+    },
+    {
+      "path": "github-triage.json",
+      "bytes": 393229,
+      "sha256": "7bce41d35decd2e0c334ce98acdf2f7ddea35453cbf4626ffd1ce2970600abef"
+    },
+    {
+      "path": "mcp-registry-cad-remaining-pages.json",
+      "bytes": 73800,
+      "sha256": "d42f9e5e3d464b8a4af7bca00c4dbcf54ba23aa695687a25f02a985359656dbd"
+    },
+    {
+      "path": "mcp-registry-search.json",
+      "bytes": 282281,
+      "sha256": "80e953ec2a48c83533313806fd172557cbbec3a5b368adfe54c0c558d5481a19"
+    },
+    {
+      "path": "package-checks.json",
+      "bytes": 10729,
+      "sha256": "ebd8b86fbea51197e0671744efdd9cef4810ae3447ef05f71dc554c7f50f0f24"
+    },
+    {
+      "path": "primary-source-checks.json",
+      "bytes": 16603,
+      "sha256": "c51024a37e25298d7eb6ab9db000a1a3ab354d0945e0f762519cc5c10be8ad6f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 23849,
+      "sha256": "6d6e02c0670d2f921f865f414754ccc4bf415c5d483db05519938ca9c4b9ccaf"
+    },
+    {
+      "path": "registry-triage.json",
+      "bytes": 102235,
+      "sha256": "14cd66fe9bd4f6780061bc554ec402bbce3f8830e08bb2725afde1cf40c73e6b"
+    },
+    {
+      "path": "repository-alias-checks.json",
+      "bytes": 423,
+      "sha256": "3ff959c1c4d9b9168b6a1f3f09318728c0aa4dae4c56eecf282ba887d581d003"
+    },
+    {
+      "path": "search-queries.json",
+      "bytes": 2919,
+      "sha256": "ff715cf64d1a559a4a6f442e774c01a561f26134d9419677e0da029005706991"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 1020,
+      "sha256": "d3d0231f4d7bca9113f26ed79fa6b4671e2ba852e53a465ac2012d12cc4483de"
+    }
+  ]
+}

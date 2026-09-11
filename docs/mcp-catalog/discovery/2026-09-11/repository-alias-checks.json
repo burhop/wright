@@ -1,0 +1,14 @@
+[
+  {
+    "requested_repository": "TheRoboMaster123/mcp-fea",
+    "resolved_repository": "benchwire/mcp-fea",
+    "url": "https://github.com/benchwire/mcp-fea",
+    "observed_at": "2026-09-11T20:39:31.3100644Z"
+  },
+  {
+    "requested_repository": "KittyCAD/mcp",
+    "resolved_repository": "KittyCAD/mcp",
+    "url": "https://github.com/KittyCAD/mcp",
+    "observed_at": "2026-09-11T20:39:31.7826198Z"
+  }
+]
