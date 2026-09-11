@@ -110,7 +110,7 @@ def test_selected_pyfluent_adapter_is_partial_and_evidence_only() -> None:
     assert plan.discovery_digest is None
     assert plan.gateway_digest is None
     assert plan.cleanup_state == "not_started"
-    assert "gateway proxy evidence" in plan.pending_evidence
+    assert "Wright gateway and solver artifact evidence" in plan.pending_evidence
     assert plan.evidence_resources
 
 
