@@ -4416,6 +4416,13 @@ def validate_roadmap_approval_and_lease(
                 f"{program_root}/program-state.json",
                 "specs/079-wright-native-authoring/tasks.md",
             )
+
+            def is_permitted_metadata(path: str) -> bool:
+                return any(
+                    path.startswith(prefix) if prefix.endswith("/") else path == prefix
+                    for prefix in permitted_metadata
+                )
+
             review_boundary = source_commit
             post_integration_changes: set[str] = set()
             protected_candidate_paths: set[str] = set()
@@ -4439,6 +4446,11 @@ def validate_roadmap_approval_and_lease(
                 protected_candidate_paths = set(
                     reader.diff_paths(delivery_baseline, identity.source_commit)
                 )
+                protected_candidate_paths = {
+                    path
+                    for path in protected_candidate_paths
+                    if not is_permitted_metadata(path)
+                }
                 post_integration_changes = set(
                     reader.diff_paths(review_boundary, source_commit)
                 )
@@ -4448,15 +4460,7 @@ def validate_roadmap_approval_and_lease(
                 and reader.is_ancestor(identity.source_commit, review_boundary)
                 and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
                 and not (protected_candidate_paths & post_integration_changes)
-                and all(
-                    any(
-                        path.startswith(prefix)
-                        if prefix.endswith("/")
-                        else path == prefix
-                        for prefix in permitted_metadata
-                    )
-                    for path in changes
-                )
+                and all(is_permitted_metadata(path) for path in changes)
             )
             if state.get("revision", 0) >= 98:
                 valid_checkpoint = (
