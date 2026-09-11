@@ -4406,9 +4406,9 @@ def validate_roadmap_approval_and_lease(
             identity = reader.resolve_identity(
                 checkpoint["candidate_commit"], program_root
             )
-            registered = documents[f"{program_root}/work-registry.json"]["milestone"][
-                "tasks"
-            ]
+            registry = documents[f"{program_root}/work-registry.json"]
+            milestone = registry["milestone"]
+            registered = milestone["tasks"]
             permitted_metadata = (
                 f"{program_root}/evidence/",
                 f"{program_root}/work-registry.json",
@@ -4416,11 +4416,38 @@ def validate_roadmap_approval_and_lease(
                 f"{program_root}/program-state.json",
                 "specs/079-wright-native-authoring/tasks.md",
             )
-            changes = reader.diff_paths(identity.source_commit, source_commit)
+            review_boundary = source_commit
+            post_integration_changes: set[str] = set()
+            protected_candidate_paths: set[str] = set()
+            integrated = feature_state in {
+                "DEV_INTEGRATED",
+                "DEV_DEPLOYMENT_VERIFIED",
+            }
+            if integrated:
+                baseline = state["baseline"]
+                review_boundary = str(baseline["commit"])
+                delivery_baseline = str(milestone["delivery"]["baseline_commit"])
+                summaries = reader.commit_summaries(
+                    [review_boundary, delivery_baseline]
+                )
+                if (
+                    summaries[review_boundary].get("tree") != baseline.get("tree")
+                    or not reader.is_ancestor(identity.source_commit, review_boundary)
+                    or not reader.is_ancestor(review_boundary, source_commit)
+                ):
+                    raise GitSubjectError("integrated native baseline is invalid")
+                protected_candidate_paths = set(
+                    reader.diff_paths(delivery_baseline, identity.source_commit)
+                )
+                post_integration_changes = set(
+                    reader.diff_paths(review_boundary, source_commit)
+                )
+            changes = reader.diff_paths(identity.source_commit, review_boundary)
             valid_checkpoint = (
                 identity.source_tree == checkpoint["candidate_tree"]
-                and reader.is_ancestor(identity.source_commit, source_commit)
+                and reader.is_ancestor(identity.source_commit, review_boundary)
                 and set(checkpoint["task_ids"]) <= {row["id"] for row in registered}
+                and not (protected_candidate_paths & post_integration_changes)
                 and all(
                     any(
                         path.startswith(prefix)
@@ -4449,7 +4476,6 @@ def validate_roadmap_approval_and_lease(
                         "specs/079-wright-native-authoring/tasks.md",
                     )
                 )
-                registry = documents[f"{program_root}/work-registry.json"]
                 candidate_registry = strict_loads(
                     reader.blob(
                         identity.source_commit, f"{program_root}/work-registry.json"

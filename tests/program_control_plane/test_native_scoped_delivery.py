@@ -43,6 +43,11 @@ def candidate(git_builder, repository_root: Path):
         )
         for name in names
     }
+    git_builder.write_bytes("baseline.txt", b"native baseline\n")
+    delivery_baseline = git_builder.commit("native delivery baseline")
+    docs[f"{ROOT}/work-registry.json"]["milestone"]["delivery"]["baseline_commit"] = (
+        delivery_baseline
+    )
     git_builder.write_json(
         f"{ROOT}/work-registry.json", docs[f"{ROOT}/work-registry.json"]
     )
@@ -117,7 +122,8 @@ def findings(candidate):
 
 
 @pytest.mark.parametrize(
-    "feature_state", sorted(NATIVE_REVIEWED_STATES - {"DEV_DEPLOYMENT_VERIFIED"})
+    "feature_state",
+    sorted(NATIVE_REVIEWED_STATES - {"DEV_INTEGRATED", "DEV_DEPLOYMENT_VERIFIED"}),
 )
 def test_reviewed_scoped_states_keep_human_and_final_tasks_pending(
     candidate, feature_state: str
@@ -224,6 +230,44 @@ def test_changes_after_review_require_new_candidate(candidate, path: str):
     builder, _, _ = candidate
     builder.write_bytes(path, b"changed\n")
     builder.commit("implementation changed after review")
+    assert any(
+        f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY" for f in findings(candidate)
+    )
+
+
+def _record_integrated_boundary(candidate):
+    builder, reader, docs = candidate
+    builder.write_bytes(f"{ROOT}/evidence/integration.txt", b"merged to dev\n")
+    integrated_commit = builder.commit("native integration boundary")
+    integrated_tree = reader.resolve_identity(integrated_commit, ROOT).source_tree
+    state = docs[f"{ROOT}/program-state.json"]
+    state.update(feature_state="DEV_INTEGRATED")
+    state["baseline"] = {
+        "ref": "dev",
+        "commit": integrated_commit,
+        "tree": integrated_tree,
+        "observed_clean": True,
+    }
+    state["next_eligible_actions"][0].update(
+        action="VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT"
+    )
+    builder.write_json(f"{ROOT}/{REVIEW}", docs[f"{ROOT}/{REVIEW}"])
+    builder.write_json(f"{ROOT}/program-state.json", state)
+    builder.commit("record native integration")
+    return builder
+
+
+def test_integrated_checkpoint_allows_unrelated_followup(candidate):
+    builder = _record_integrated_boundary(candidate)
+    builder.write_bytes("unrelated-feature.py", b"VALUE = 2\n")
+    builder.commit("implement unrelated feature")
+    assert findings(candidate) == []
+
+
+def test_integrated_checkpoint_still_protects_reviewed_candidate_paths(candidate):
+    builder = _record_integrated_boundary(candidate)
+    builder.write_bytes("product.py", b"VALUE = 2\n")
+    builder.commit("change reviewed native implementation")
     assert any(
         f.invariant == "NATIVE_SCOPED_CANDIDATE_IDENTITY" for f in findings(candidate)
     )
