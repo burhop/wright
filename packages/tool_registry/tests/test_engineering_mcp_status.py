@@ -68,10 +68,10 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
     ids = [record["server_id"] for record in status["records"]]
     assert len(ids) == len(set(ids)) == status["total"] == 78
     assert status["category_counts"] == {
-        "works": 11,
+        "works": 10,
         "preview": 6,
         "requires_login": 15,
-        "in_progress": 0,
+        "in_progress": 1,
         "abandoned": 46,
         "vendor_blocked": 0,
     }
@@ -128,7 +128,7 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         "webmcp-openscad",
         "wincc-unified-mcp",
     } <= by_category["abandoned"]
-    assert not by_category["in_progress"]
+    assert by_category["in_progress"] == {"openscad-mcp"}
     assert set().union(*by_category.values()) == set(ids)
     assert {record["protocol_family"] for record in status["records"]} == {
         "mcp",

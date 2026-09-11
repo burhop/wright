@@ -751,7 +751,7 @@ async def run(args, root, report):
     if args.server == "openscad-mcp":
         if not isinstance(command, list) or not any(
             re.fullmatch(
-                r"git\+https://github.com/quellant/openscad-mcp\.git@[a-f0-9]{40}", part
+                r"git\+https://github.com/robertcoop/openscad-mcp\.git@[a-f0-9]{40}", part
             )
             for part in command
         ):

@@ -2091,3 +2091,22 @@ Result:
   archive. In progress is zero. Detailed decisions and re-entry conditions are
   preserved in
   `evidence/curation-2026-09-10/overnight-final-dispositions.json`.
+
+## 11 September OpenSCAD source and dependency isolation
+
+Problem:
+  A clean Linux ARM image could not fetch the OpenSCAD MCP commit because the
+  revision was no longer advertised by an upstream branch or tag. The current
+  v0.6.1 release installed, but its MCP 2.x stack conflicted with FreeCAD's
+  pinned MCP 1.x stack when both were installed into the Hermes environment.
+Solution:
+  Updated OpenSCAD to canonical v0.6.1 commit
+  `258c8a4553b62d0d1df1a37aa54c218ef3de5689` and installed it in a dedicated
+  uv tool environment. Shared Python tools are now resolved in one transaction
+  so their constraints cannot overwrite one another sequentially.
+Result:
+  The corrected clean Linux x64 image built. A direct MCP session initialized,
+  listed 12 tools, found OpenSCAD 2021.01, and exported a valid 1467-byte STL.
+  OpenSCAD is In progress until a real product-design workflow renews repeat
+  direct and Wright gateway evidence; this follow-up does not block other
+  workflows.

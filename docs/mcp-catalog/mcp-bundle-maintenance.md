@@ -45,6 +45,16 @@ The default Linux bundle targets `linux-amd64`. The GB10 bundle targets
 `docs/mcp-catalog/dynamic-engineering-catalog.md` for the catalog-backed
 selection contract.
 
+## Isolated Python MCP tools
+
+Use `isolated_python_tools` when a Python MCP server's SDK requirements conflict
+with another server in the image. Each entry names an immutable `requirement`
+and its `executable`; the installer creates a dedicated uv tool environment and
+places only the executable in `/opt/wright/mcp/bin`. OpenSCAD uses this path so
+its MCP 2.x dependencies cannot replace FreeCAD's MCP 1.x dependencies. Keep
+ordinary compatible `python_tools` in the shared Hermes environment, where the
+installer resolves them together rather than applying dependencies in sequence.
+
 ## BREP MCP
 
 The Linux bundles install `brepjs-cad@0.103.0` from npm and launch its MCP

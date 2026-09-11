@@ -63,7 +63,7 @@ external server adds a neutral command-line binding, change only this record.
 
 ## OpenSCAD Geometry (`openscad-mcp-server`)
 
-Source: https://github.com/quellant/openscad-mcp
+Source: https://github.com/robertcoop/openscad-mcp
 
 Install selected-server dependencies:
 
@@ -75,7 +75,7 @@ sudo apt-get install -y --no-install-recommends openscad xvfb
 Run MCP:
 
 ```bash
-uv run --with git+https://github.com/quellant/openscad-mcp.git openscad-mcp
+uv run --with git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689 openscad-mcp
 ```
 
 Validation probes:
@@ -2519,14 +2519,14 @@ The current opt-in runner and container mounts are documented in
   onboarding must still independently satisfy applicable publisher terms.
 - OpenSCAD: install git, openscad, xvfb and xauth only in the selected disposable
   Intel Linux container. Launch `uv tool run --from
-  git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+  git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
   openscad-mcp`. The export_model call uses scad_content `cube([10,8,6]);`,
   output_format `stl`, and an output_path in the disposable workspace. Verify
   actual triangles, dimensions 10 x 8 x 6 mm and volume 480 mm3, then repeat through
   openscad-mcp__export_model. The 8 September run passed with a 1467-byte STL.
-  Do not assume a PyPI package or uvx executable exists. The upstream dependency
-  resolution selected FastMCP 4.0.3; source pinning alone does not lock transitive
-  dependencies. Review resolved dependencies during each retest.
+  The validated source is now also published as PyPI package `openscad-mcp` 0.6.1,
+  but Wright pins the reviewed Git revision. Source pinning alone does not lock
+  transitive dependencies, so review resolved dependencies during each retest.
 
 ## 9 September previously-untested batch
 

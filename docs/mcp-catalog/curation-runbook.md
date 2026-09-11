@@ -162,7 +162,7 @@ python /candidate/scripts/qualify-catalog-scenarios.py --execute \
 
 For OpenSCAD, first install `git openscad xvfb xauth` using the container's package
 manager, then select `--server openscad-mcp`. The catalog pins Git commit
-`d438b84fff8af9d646c2bcb76fe58fa4ad387de0` and launches it using `uv tool run`.
+`258c8a4553b62d0d1df1a37aa54c218ef3de5689` (advertised as `v0.6.1`) and launches it using `uv tool run`.
 Neither `uvx` nor Git is assumed present in the base image. Record prerequisite
 versions. Discard the container after each server. Never modify the base Docker
 image to satisfy a catalog test. See the setup recipes and problem log for the

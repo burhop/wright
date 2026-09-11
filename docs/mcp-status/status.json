@@ -1,16 +1,16 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-10-e1582435ecac",
-  "generated_at": "2026-09-11T15:07:50.751388+00:00",
-  "assessed_as_of": "2026-09-10",
+  "snapshot_id": "2026-09-11-d1975aa910df",
+  "generated_at": "2026-09-11T18:19:56.824285+00:00",
+  "assessed_as_of": "2026-09-11",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "4cb0fd36302e2eca234c318e236eaea68bba6edb1fbaa9f09e610ce40c659867",
+  "catalog_sha256": "22ffc90395840f72842f6b479d73718631820d214526b7f5c417e18f25f835cb",
   "total": 78,
   "category_counts": {
-    "works": 11,
+    "works": 10,
     "preview": 6,
     "requires_login": 15,
-    "in_progress": 0,
+    "in_progress": 1,
     "abandoned": 46,
     "vendor_blocked": 0
   },
@@ -59,21 +59,21 @@
     }
   ],
   "green": {
-    "count": 32,
+    "count": 31,
     "components": {
-      "works": 11,
+      "works": 10,
       "preview": 6,
       "requires_login": 15
     },
     "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
   },
-  "fully_qualified_count": 11,
+  "fully_qualified_count": 10,
   "product_groups": [
     {
       "id": "works",
       "label": "Works",
       "color": "green",
-      "count": 11,
+      "count": 10,
       "server_ids": [
         "autocad-mcp-u-c4n",
         "autodesk-product-help-mcp",
@@ -82,7 +82,6 @@
         "freecad-mcp-nekanat",
         "kicad-mcp-blwfish",
         "oasis-open-fem-agent",
-        "openscad-mcp",
         "rhino-mcp-easehee",
         "rosbag-mcp-pypi",
         "solid-edge-mcp-burhop"
@@ -129,8 +128,10 @@
       "id": "in_progress",
       "label": "In progress",
       "color": "yellow",
-      "count": 0,
-      "server_ids": []
+      "count": 1,
+      "server_ids": [
+        "openscad-mcp"
+      ]
     },
     {
       "id": "abandoned",
@@ -199,8 +200,8 @@
       "protocol": "mcp",
       "label": "MCP",
       "known": 73,
-      "curated": 11,
-      "passing": 11,
+      "curated": 10,
+      "passing": 10,
       "physical_operation_qualified": null,
       "status": "implemented"
     },
@@ -607,7 +608,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.",
@@ -812,7 +813,7 @@
       "prerequisites": [],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-07-10",
       "next_action": "Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.",
@@ -908,7 +909,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation.",
@@ -1003,7 +1004,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.",
@@ -1688,7 +1689,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.",
@@ -2161,7 +2162,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.",
@@ -2770,7 +2771,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.",
@@ -2934,11 +2935,11 @@
     {
       "server_id": "openscad-mcp",
       "name": "OpenSCAD Rendering Engine",
-      "vendor": "quellant",
-      "source_url": "https://github.com/quellant/openscad-mcp",
-      "scope": "OpenSCAD cube STL export",
+      "vendor": "robertcoop",
+      "source_url": "https://github.com/robertcoop/openscad-mcp",
+      "scope": "OpenSCAD rendering, model checks, and STL export over stdio MCP",
       "implementation_mode": "wrapper",
-      "source_revision": "d438b84fff8af9d646c2bcb76fe58fa4ad387de0",
+      "source_revision": null,
       "integration_kind": "mcp_server",
       "protocol_family": "mcp",
       "transport": "stdio",
@@ -2949,30 +2950,34 @@
         "design"
       ],
       "platforms": [
-        "linux_x64"
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
       ],
-      "portfolio_category": "works",
-      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
-      "progress_substatus": "qualified",
-      "release_eligible": true,
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "No useful current execution evidence has been recorded.",
+      "progress_substatus": "planned",
+      "release_eligible": false,
       "credentials": [],
       "prerequisites": [
         "OpenSCAD",
         "git",
-        "git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0",
+        "git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689",
         "openscad",
         "xvfb"
       ],
-      "last_qualified_at": "2026-09-09",
-      "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
-      "latest_result": "passed",
-      "last_tested_at": "2026-07-10",
-      "next_action": "Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.",
-      "tests_completed": [
-        "See latest technical result and linked evidence"
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "not_tested",
+      "last_tested_at": "2026-09-11",
+      "next_action": "Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work.",
+      "tests_completed": [],
+      "tests_remaining": [
+        "Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work."
       ],
-      "tests_remaining": [],
       "limitations": [],
       "replacement_ids": [],
       "assessment_reviewed_at": null
@@ -3271,7 +3276,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.",
@@ -3374,7 +3379,7 @@
       ],
       "last_qualified_at": "2026-09-09",
       "expires_at": "2026-10-09",
-      "evidence_age_days": 1,
+      "evidence_age_days": 2,
       "latest_result": "passed",
       "last_tested_at": "2026-09-08",
       "next_action": "Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.",
@@ -3674,7 +3679,7 @@
       ],
       "last_qualified_at": "2026-09-10",
       "expires_at": "2026-10-10",
-      "evidence_age_days": 0,
+      "evidence_age_days": 1,
       "latest_result": "passed",
       "last_tested_at": "2026-09-10",
       "next_action": "Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.",

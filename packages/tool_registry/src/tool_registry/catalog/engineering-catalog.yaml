@@ -2751,8 +2751,8 @@ servers:
     adoption: unknown
 - id: openscad-mcp
   name: OpenSCAD Rendering Engine
-  vendor: quellant
-  description: Background OpenSCAD compilation rendering previews as Base64 arrays or animations.
+  vendor: robertcoop
+  description: OpenSCAD model creation, inspection, rendering, and engineering artifact export.
   domains:
   - code-cad
   tags:
@@ -2766,10 +2766,10 @@ servers:
   - tool
   - run
   - --from
-  - git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+  - git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
   - openscad-mcp
-  source_url: https://github.com/quellant/openscad-mcp
-  repository_url: https://github.com/quellant/openscad-mcp
+  source_url: https://github.com/robertcoop/openscad-mcp
+  repository_url: https://github.com/robertcoop/openscad-mcp
   license: MIT
   auth_model: none
   install_method: source
@@ -2779,11 +2779,11 @@ servers:
   - Headless Linux container workflow with Xvfb and workspace-bound artifact output
   - Validated Linux x64 cube export and Wright/Hermes gateway tool calls
   source_records:
-  - url: https://github.com/quellant/openscad-mcp
+  - url: https://github.com/robertcoop/openscad-mcp
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Upstream MCP server source pinned by the Docker bundle.
+    observed_at: '2026-09-11'
+    notes: Canonical upstream MCP server source pinned to the advertised v0.6.1 release by the Docker bundle.
   - url: docs/mcp-catalog/evidence/openscad-mcp-server-validation.md
     kind: evidence
     primary: false
@@ -2804,13 +2804,13 @@ servers:
     - openscad
     - xvfb
     python:
-    - git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+    - git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
     node: []
   aliases:
   - openscad-mcp-server
   - OpenSCAD Geometry
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: might_work
   risk_level: medium
   deployment_mode: local-bridge
   platform_support:
@@ -2820,8 +2820,8 @@ servers:
       notes: OpenSCAD host available on Windows; Wright validation not run there
     linux_x64:
       status: 'yes'
-      tested: true
-      notes: clean Intel Ubuntu container installed OpenSCAD/Xvfb only for this MCP, exported STL, and verified Wright/Hermes gateway tool calls
+      tested: false
+      notes: v0.6.1 installed in an isolated image environment and exported a 1467-byte STL directly; repeat and Wright gateway qualification remain to be renewed
     linux_arm64:
       status: likely
       tested: false
@@ -2839,10 +2839,10 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: passed
-    validated_at: '2026-07-10'
-    evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: installed OpenSCAD/Xvfb only for this MCP, initialized openscad-mcp, listed 15 tools, check_openscad reported OpenSCAD 2021.01, export_model produced a 1449-byte cube STL, and the Wright/Hermes gateway exposed and called the prefixed tools.'
+    status: not_tested
+    validated_at: '2026-09-11'
+    evidence_status: partial
+    message: 'The current v0.6.1 release installed in an isolated image environment, initialized, listed 12 tools, found OpenSCAD 2021.01, and exported an independently checked 1467-byte cube STL. Repeat sessions and the Wright gateway were intentionally deferred to workflow validation.'
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
   headless_ok: 'yes'
@@ -2851,32 +2851,16 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: curated
-    reason: Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only
-      to the listed environments; repeat user adoption is unknown.
+    disposition: follow_up
+    reason: The current advertised v0.6.1 release passed a direct MCP cube export after isolation from FreeCAD's incompatible SDK, but its repeat and Wright gateway qualification has not been renewed.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.
+    reviewed_at: '2026-09-11'
+    review_due: '2026-10-11'
+    next_action: Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work.
     replacement_ids: []
     adoption: unknown
     adoption_evidence: []
-    qualifications:
-    - platform: linux_x64
-      environment: clean-wright-container
-      distribution_mode: docker
-      configuration_sha256: b67b5122df53bac0a60e3e11bbbde535213d0f45b11d0bd5c2571d2107fb7dd3
-      workflow: OpenSCAD cube STL export
-      source_revision: d438b84fff8af9d646c2bcb76fe58fa4ad387de0
-      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
-      verified_at: '2026-09-09'
-      expires_at: '2026-10-09'
-      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/openscad-linux.json
-      evidence_sha256: 35c190d94e390594b97681f07ba14568c58a6aecb1f6876839faf3c28c02a58a
-      protocol: passed
-      backend: passed
-      gateway: passed
-      outcome: passed
+    qualifications: []
 - id: trikos529-openscad
   name: OpenSCAD Code Linter
   vendor: trikos529

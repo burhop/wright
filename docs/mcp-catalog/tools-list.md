@@ -77,7 +77,7 @@ Validation must follow the clean-container process in `docs/mcp-catalog/mcp-serv
 | **freecad-mcp (sandraschi)** | 3D CAD / FEA / CFD | sandraschi | Open Source | [GitHub Repository](https://github.com/sandraschi/freecad-mcp) |
 | **freecad-mcp (contextform)** | 3D CAD Copilot | contextform | Open Source | [GitHub Repository](https://github.com/contextform/freecad-mcp) |
 | **freecad-addon-robust** | 3D CAD / Macros | spkane | Open Source | [GitHub Repository](https://github.com/spkane/freecad-addon-robust-mcp-server) |
-| **openscad-mcp** | Code CAD | quellant | Open Source | [GitHub Repository](https://github.com/quellant/openscad-mcp) |
+| **openscad-mcp** | Code CAD | robertcoop | Open Source | [GitHub Repository](https://github.com/robertcoop/openscad-mcp) |
 | **RhinoMCP** | 3D NURBS / Scripting | jingcheng-chen (McNeel) | Enterprise (OSS) | [GitHub Repository](https://github.com/jingcheng-chen/rhinomcp) |
 | **blender-mcp** | 3D Mesh / Blender | ahujasid | Open Source | [GitHub Repository](https://github.com/ahujasid/blender-mcp) |
 | **zoo-mcp** | Cloud CAD API / KCL docs | Zoo.dev | Startup (OSS, credential-limited) | [GitHub Repository](https://github.com/KittyCAD/zoo-mcp) |
