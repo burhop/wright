@@ -70,9 +70,9 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
     assert status["category_counts"] == {
         "works": 11,
         "preview": 6,
-        "requires_login": 10,
-        "in_progress": 21,
-        "abandoned": 30,
+        "requires_login": 15,
+        "in_progress": 0,
+        "abandoned": 46,
         "vendor_blocked": 0,
     }
     assert sum(status["category_counts"].values()) == len(ids)
@@ -103,7 +103,32 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         "rhino-mcp-easehee",
         "solid-edge-mcp-burhop",
     } <= by_category["works"]
-    assert "simscale-edge-mcp-getanirao" in by_category["in_progress"]
+    assert {
+        "ansys-fluent-mcp",
+        "fusion360-mcp-server",
+        "matlab-mcp-server",
+        "rhino-mcp",
+        "solidworks-mcp-ts",
+    } <= by_category["requires_login"]
+    assert {
+        "autodesk-fusion-desktop-mcp",
+        "blender-mcp-harveyxiacn",
+        "cad-mcp-daobataotie",
+        "comsol-multiphysics-mcp-wjc9011",
+        "creo-mcp",
+        "multicad-mcp",
+        "nvidia-omniverse-isaac-sim-mcp",
+        "nvidia-omniverse-kit-mcp",
+        "nvidia-omniverse-omniui-mcp",
+        "nvidia-omniverse-usd-code-mcp",
+        "simscale-edge-mcp-getanirao",
+        "simulink-agentic-toolkit",
+        "sketchup-mcp",
+        "thingworx-mcp",
+        "webmcp-openscad",
+        "wincc-unified-mcp",
+    } <= by_category["abandoned"]
+    assert not by_category["in_progress"]
     assert set().union(*by_category.values()) == set(ids)
     assert {record["protocol_family"] for record in status["records"]} == {
         "mcp",

@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-10-5ad6dc4fbe4a",
-  "generated_at": "2026-09-10T22:01:12.658682+00:00",
+  "snapshot_id": "2026-09-10-5d6c35259286",
+  "generated_at": "2026-09-11T01:29:30.421944+00:00",
   "assessed_as_of": "2026-09-10",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "d9fd3b9e754cd2a6794bb2006a161412bb7386a7ef95abd286cbc23d7be646ad",
+  "catalog_sha256": "098cfadcd1057f88503a2cc3daa4f4f7f889eef2d797cb3c5bee48742612ffa1",
   "total": 78,
   "category_counts": {
     "works": 11,
     "preview": 6,
-    "requires_login": 10,
-    "in_progress": 21,
-    "abandoned": 30,
+    "requires_login": 15,
+    "in_progress": 0,
+    "abandoned": 46,
     "vendor_blocked": 0
   },
   "category_key": [
@@ -59,11 +59,11 @@
     }
   ],
   "green": {
-    "count": 27,
+    "count": 32,
     "components": {
       "works": 11,
       "preview": 6,
-      "requires_login": 10
+      "requires_login": 15
     },
     "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
   },
@@ -106,17 +106,22 @@
       "id": "requires_login",
       "label": "Requires login",
       "color": "green",
-      "count": 10,
+      "count": 15,
       "server_ids": [
+        "ansys-fluent-mcp",
         "atlassian-rovo-mcp",
+        "fusion360-mcp-server",
         "github-official-mcp",
         "jarvis-onshape-mcp",
+        "matlab-mcp-server",
         "nvidia-cuda-docs-mcp",
         "onshape-labs-featurescript-mcp",
         "onshape-mcp-hedless",
         "partuno-mcp",
         "rescale-mcp-hosted",
+        "rhino-mcp",
         "siemens-element-mcp",
+        "solidworks-mcp-ts",
         "zoo-mcp"
       ]
     },
@@ -124,47 +129,30 @@
       "id": "in_progress",
       "label": "In progress",
       "color": "yellow",
-      "count": 21,
-      "server_ids": [
-        "ansys-fluent-mcp",
-        "autodesk-fusion-desktop-mcp",
-        "blender-mcp-harveyxiacn",
-        "cad-mcp-daobataotie",
-        "comsol-multiphysics-mcp-wjc9011",
-        "creo-mcp",
-        "fusion360-mcp-server",
-        "matlab-mcp-server",
-        "multicad-mcp",
-        "nvidia-omniverse-isaac-sim-mcp",
-        "nvidia-omniverse-kit-mcp",
-        "nvidia-omniverse-omniui-mcp",
-        "nvidia-omniverse-usd-code-mcp",
-        "rhino-mcp",
-        "simscale-edge-mcp-getanirao",
-        "simulink-agentic-toolkit",
-        "sketchup-mcp",
-        "solidworks-mcp-ts",
-        "thingworx-mcp",
-        "webmcp-openscad",
-        "wincc-unified-mcp"
-      ]
+      "count": 0,
+      "server_ids": []
     },
     {
       "id": "abandoned",
       "label": "Abandoned",
       "color": "red",
-      "count": 30,
+      "count": 46,
       "server_ids": [
         "ansys-mcp-server-community",
         "aps-mcp-server-nodejs",
         "aps-mcp-server-petr",
         "autocad-mcp",
         "autodesk-fusion-data-mcp",
+        "autodesk-fusion-desktop-mcp",
         "autodesk-fusion-mcp-python",
         "backflip-ai-watchlist",
+        "blender-mcp-harveyxiacn",
+        "cad-mcp-daobataotie",
         "caid-mcp",
         "calculix-simulation",
         "comsol-multiphysics-mcp-suzysa",
+        "comsol-multiphysics-mcp-wjc9011",
+        "creo-mcp",
         "creoson-mcp-bridge",
         "easy-mcp-autocad",
         "flexcompute-flow360-api-candidate",
@@ -176,15 +164,26 @@
         "kernelcad-mcp",
         "kicad-mcp-lamaalrajih",
         "mcp-ui-shopify",
+        "multicad-mcp",
         "nvidia-kit-cae-agent-skills",
+        "nvidia-omniverse-isaac-sim-mcp",
+        "nvidia-omniverse-kit-mcp",
+        "nvidia-omniverse-omniui-mcp",
+        "nvidia-omniverse-usd-code-mcp",
         "openfoam-mcp-webworn",
         "revit-mcp",
         "rosbag-mcp-binabik",
         "siemens-xcelerator-developer-portal-mcp",
+        "simscale-edge-mcp-getanirao",
+        "simulink-agentic-toolkit",
+        "sketchup-mcp",
         "solidworks-mcp-alisamsam",
         "solidworks-mcp-python",
+        "thingworx-mcp",
         "trikos529-openscad",
-        "webmcp-standard"
+        "webmcp-openscad",
+        "webmcp-standard",
+        "wincc-unified-mcp"
       ]
     },
     {
@@ -267,9 +266,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The official package passes protocol discovery and code validation, but no licensed Fluent solver, generated field result, or Wright gateway solver call has been proven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The official pinned package, MCP discovery, and safe code validation pass; a licensed Fluent solver is the only unavailable boundary, so customer exposure must remain credential-gated and unqualified for CFD results.",
+      "progress_substatus": "authentication_needed",
       "release_eligible": false,
       "credentials": [
         "Ansys license"
@@ -285,15 +284,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Connect package 0.4.0 to licensed Fluent 2024 R1 or newer and run a deterministic CFD case through Wright GatewayService with mesh, residual, field, export, timeout, and cleanup oracles.",
+      "next_action": "Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification.",
       "tests_completed": [
-        "Pinned 0.4.0 package, 25-tool discovery, and validate_code probe"
+        "Pinned official 0.4.0 wheel",
+        "MCP initialization and 25-tool discovery",
+        "Safe validate_code backend-independent probe"
       ],
       "tests_remaining": [
-        "Run a deterministic licensed Fluent case through Wright with mesh, residual, field, export, timeout, and cleanup assertions"
+        "Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification."
       ],
       "limitations": [
-        "Current evidence does not prove CFD correctness."
+        "No licensed solver, mesh, field result, export, or Wright gateway solve has been proven."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -699,9 +700,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The proprietary desktop command is correctly absent from Linux; no disposable Fusion session has yet proven a safe backend call or Wright gateway path.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official product documentation is credible, but the proprietary command is unavailable outside a licensed Fusion host and no protocol, backend artifact, or Wright gateway call can be reproduced for this release.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -712,15 +713,15 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-desktop-mcp-host-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks.",
       "tests_completed": [
-        "Clean-container host boundary and source review"
+        "Official source/host-boundary review",
+        "Clean-runtime command-availability check"
       ],
-      "tests_remaining": [
-        "Run one deterministic model inspection and export through Wright on a disposable Fusion host"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Autodesk Fusion desktop and a suitable test license."
+        "No executable server package or MCP session was available in the supported qualification environment.",
+        "Re-entry condition: Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -944,9 +945,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The authoritative source is current, but this duplicate Blender bridge has only reached the host boundary and has no backend or Wright gateway result.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "This alternative has no current differentiated backend qualification and duplicates Wright's already qualified Blender integration, so it is excluded from the current shortlist.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -958,15 +959,14 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/blender-mcp-harveyxiacn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification.",
       "tests_completed": [
-        "Current source identity and clean-container host boundary"
+        "Current source identity and host-boundary review"
       ],
-      "tests_remaining": [
-        "Compare its smallest Blender modeling task with the already qualified blender-mcp integration"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Do not duplicate the qualified Blender integration without a material capability advantage."
+        "No Blender artifact or Wright gateway task was executed for this implementation.",
+        "Re-entry condition: Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -1035,9 +1035,9 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The package requires Windows COM and a supported CAD host and cannot initialize on Linux; no Windows backend or gateway evidence exists.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The source has no tests, cannot initialize without Windows COM, and overlaps the qualified AutoCAD path without evidence of a material advantage.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -1056,15 +1056,16 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration.",
       "tests_completed": [
-        "Source install attempt and pywin32/win32com boundary"
+        "Pinned source review",
+        "Requirements install attempt",
+        "pywin32/win32com startup boundary"
       ],
-      "tests_remaining": [
-        "Run one read-only drawing inspection on Windows and compare coverage with the qualified AutoCAD integration"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Windows plus AutoCAD, GstarCAD, or ZWCAD."
+        "No MCP initialization or CAD artifact was produced.",
+        "Re-entry condition: Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -1255,9 +1256,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "Source is known, but the dependency set begins a large ML/CUDA download and bundled COMSOL files require review before a safe selected-server install.",
-      "progress_substatus": "evidence_review",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The candidate has no reproducible minimal install or MCP initialization; its heavyweight ML/CUDA dependency path and bundled COMSOL documents/models require review before any licensed-host test.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "COMSOL license"
@@ -1276,15 +1277,15 @@
       "evidence_age_days": null,
       "latest_result": "blocked",
       "last_tested_at": "2026-08-12",
-      "next_action": "Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+      "next_action": "Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification. source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
       "tests_completed": [
-        "Source preflight and dependency boundary review"
+        "Source and dependency preflight",
+        "Bundled-content and licensed-host boundary review"
       ],
-      "tests_remaining": [
-        "Isolate a minimal server dependency set, review bundled artifacts, then test protocol before arranging licensed COMSOL"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "No package install or MCP initialization has completed."
+        "Testing stopped before install and MCP initialization; no COMSOL result exists.",
+        "Re-entry condition: Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -1312,9 +1313,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "Local CadQuery export and MCP discovery work, but Creo/CREOSON is absent and the knowledge-base call lacks valid Volcengine credentials and Wright gateway proof.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The three-tool server can execute local CadQuery code but does not prove Creo automation; it also depends on absent CREOSON and Volcengine credentials and lacks gateway evidence.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "VOLCENGINE_AUTHORIZATION",
@@ -1333,15 +1334,16 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact. prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
       "tests_completed": [
-        "Three-tool discovery, local STEP export, missing CREOSON diagnostic, and authentication boundary"
+        "MCP initialization and three-tool discovery",
+        "Local CadQuery STEP export",
+        "Missing CREOSON and invalid-auth diagnostics"
       ],
-      "tests_remaining": [
-        "Run a controlled Creo open/import operation and knowledge lookup through Wright with real test credentials"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Current evidence proves the local fallback, not Creo automation."
+        "The exported STEP proves a local fallback, not Creo; arbitrary Python and external knowledge-service dependencies remain.",
+        "Re-entry condition: Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -1885,9 +1887,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The package passes 282 tests, protocol discovery, and mock operations, but no real Fusion add-in operation or Wright gateway artifact has been proven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The maintained package passes its suite, protocol discovery, mock operations, and the missing-add-in diagnostic; licensed Fusion plus its desktop add-in is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -1900,15 +1902,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright.",
       "tests_completed": [
-        "Upstream suite, 85-tool discovery, mock ping and create_box, and missing-add-in diagnostic"
+        "282 upstream tests",
+        "MCP initialization and 85-tool discovery",
+        "Mock ping/create_box and real-socket missing-host diagnostic"
       ],
       "tests_remaining": [
-        "Run a deterministic create, inspect, and export task through Wright on disposable Fusion"
+        "On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright."
       ],
       "limitations": [
-        "Mock mode does not establish Fusion backend correctness."
+        "Mock execution does not prove native Fusion geometry, CAM, export, or Wright gateway behavior."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2245,9 +2249,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The official binary and five tool schemas pass preflight, but MATLAB detection stops at the expected licensed-host boundary and no computation or gateway path is proven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The SHA-pinned official binary initializes, exposes its five tools, and reaches the expected MATLAB detection boundary; licensed MATLAB is the sole unavailable execution dependency.",
+      "progress_substatus": "authentication_needed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -2258,15 +2262,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Install licensed MATLAB R2021a or later outside Wright, set MW_MCP_SERVER_MATLAB_ROOT, and rerun v0.13.0 through Wright GatewayService with a deterministic numerical artifact oracle.",
+      "next_action": "Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB.",
       "tests_completed": [
-        "SHA-pinned v0.13.0 startup, protocol discovery, and detect_matlab_toolboxes boundary"
+        "SHA-pinned official v0.13.0 binary",
+        "MCP initialization and five-tool discovery",
+        "detect_matlab_toolboxes licensed-host boundary"
       ],
       "tests_remaining": [
-        "Run a deterministic numerical calculation and artifact through Wright on licensed MATLAB"
+        "Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB."
       ],
       "limitations": [
-        "Requires MATLAB R2021a or later and an appropriate license."
+        "No MATLAB calculation, numerical artifact, or Wright gateway execution has been proven."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2331,9 +2337,9 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The maintained package declares a Windows COM boundary and cannot initialize on Linux; no supported CAD host has been exercised through Wright.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The package cannot install or initialize outside Windows COM and duplicates existing AutoCAD coverage without a qualified multi-host advantage.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -2355,15 +2361,16 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts.",
       "tests_completed": [
-        "Current source review, package install boundary, and explicit non-Windows diagnostic"
+        "Pinned source/package review",
+        "Exact dependency install attempt",
+        "Explicit non-Windows startup diagnostic"
       ],
-      "tests_remaining": [
-        "Run one read-only document task on Windows against one supported CAD host through Wright"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Windows and AutoCAD, ZWCAD, GstarCAD, or BricsCAD."
+        "No MCP discovery or supported CAD-host artifact was produced.",
+        "Re-entry condition: Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2548,9 +2555,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current, but Isaac Sim, NVIDIA GPU execution, a backend tool call, and Wright gateway behavior require a dedicated lab host.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current source exists, but no reproducible server startup, tool discovery, Isaac Sim backend result, or Wright gateway call is available without a dedicated GPU lab and credentialed NVIDIA stack.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "NVIDIA API key"
@@ -2563,15 +2570,14 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-isaac-sim-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright.",
       "tests_completed": [
         "Current source and dedicated-host boundary review"
       ],
-      "tests_remaining": [
-        "Run one read-only scene or simulation inspection through Wright on a supported GPU host"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Isaac Sim and supported NVIDIA GPU infrastructure."
+        "No executable MCP or Isaac Sim artifact was observed.",
+        "Re-entry condition: Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2600,9 +2606,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current, but Omniverse Kit startup, a safe extension query, and Wright gateway behavior require a dedicated Kit host.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current source exists, but no reproducible Kit server startup, tool discovery, backend query, or Wright gateway call is available in the supported environment.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "NVIDIA API key"
@@ -2615,15 +2621,14 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-kit-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright.",
       "tests_completed": [
-        "Current source and dedicated-host boundary review"
+        "Current source and Kit-host boundary review"
       ],
-      "tests_remaining": [
-        "Run extension discovery and one read-only API documentation task through Wright on Omniverse Kit"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires an Omniverse Kit environment."
+        "No executable MCP or Omniverse Kit result was observed.",
+        "Re-entry condition: Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2650,9 +2655,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current, but OmniUI execution and Wright gateway behavior have not been tested on an Omniverse host.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "No executable OmniUI workflow or differentiated value beyond the broader Kit candidate has been proven, so the duplicate is excluded from the current shortlist.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "NVIDIA API key"
@@ -2665,15 +2670,14 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-omniui-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification.",
       "tests_completed": [
-        "Current source and dedicated-host boundary review"
+        "Current source and Omniverse-host boundary review"
       ],
-      "tests_remaining": [
-        "Prove a differentiated OmniUI task through Wright or consolidate this record with the Kit integration"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires Omniverse and must demonstrate value beyond the broader Kit server."
+        "No MCP startup, OmniUI result, or Wright gateway call was observed.",
+        "Re-entry condition: Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -2702,9 +2706,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "Source wheels build successfully, but Docker startup, tool discovery, read-only USD search, credentials, and Wright gateway operation remain unproven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Source wheels build only after Git LFS data is resolved, but the recommended credentialed deployment has no recorded startup, tool discovery, USD query, or Wright gateway result.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "NVIDIA API key"
@@ -2717,15 +2721,15 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-08-12",
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright.",
       "tests_completed": [
-        "Source build with Git LFS data resolved"
+        "Source identity review",
+        "Source wheel build with Git LFS data"
       ],
-      "tests_remaining": [
-        "Start the recommended deployment and run read-only USD search through Wright with a dedicated NVIDIA credential"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires NVIDIA_API_KEY for the recommended NGC-backed deployment."
+        "Build success does not establish an executable MCP; NVIDIA credentials and deployment assets remain unavailable.",
+        "Re-entry condition: Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3199,9 +3203,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The package passes 192 tests and lists 66 tools with clear missing-bridge diagnostics, but live Rhino 8 backend and Wright gateway operations remain unproven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The package passes its suite and protocol discovery and consistently reports the absent Rhino bridge; licensed Rhino 8 plus its plugin is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -3215,15 +3219,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently.",
       "tests_completed": [
-        "Upstream suite, protocol discovery, and three missing-bridge backend calls"
+        "192 upstream tests",
+        "MCP initialization and 66-tool discovery",
+        "Three safe missing-bridge backend diagnostics"
       ],
       "tests_remaining": [
-        "Run one live Rhino object inspection and controlled edit through Wright and compare with the qualified headless Rhino scope"
+        "On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently."
       ],
       "limitations": [
-        "Requires Rhino 8 with the plugin and mcpstart bridge running."
+        "No live Rhino object inspection/edit or Wright gateway result is proven; Wright's separate standalone Rhino scope is the qualified fallback."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3501,9 +3507,9 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The newly identified community server passes its locked install and all 26 tests, including MCP and loopback HTTP checks, but no real Edge/SimScale session or Wright-routed engineering task has been tested.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The small unlicensed community project passes its test suite but relies on brittle browser automation and has no authenticated SimScale engineering result, download oracle, or Wright gateway proof.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "SimScale account login"
@@ -3517,19 +3523,16 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-10",
-      "next_action": "Use an isolated Windows Edge profile and SimScale test account to validate project pinning, read-only Workbench inspection, one bounded simulation workflow, downloads, Wright gateway routing, and cleanup.",
+      "next_action": "Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification.",
       "tests_completed": [
-        "Exact source review at commit 2fe7421965f1610418202bf4de9fcefa56058437",
-        "Clean-container locked install and 26-test upstream suite",
-        "In-process initialize, tools/list, tool-call error, and Streamable HTTP checks"
+        "Pinned commit and locked install",
+        "26 upstream tests",
+        "In-process MCP and Streamable HTTP checks"
       ],
-      "tests_remaining": [
-        "Test an isolated Windows Edge profile and SimScale account",
-        "Inspect a known project, run one bounded engineering workflow through Wright, verify downloaded output, and clean up"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Community project with two commits, zero stars, and no declared license.",
-        "Browser automation may change when the SimScale Workbench UI changes."
+        "No real SimScale project or computed artifact was inspected; the repository declares no license.",
+        "Re-entry condition: Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3559,9 +3562,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The source is current, but licensed MATLAB/Simulink startup, model execution, result artifacts, and Wright gateway behavior require a dedicated host.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official source is identifiable, but no MCP startup, tool discovery, Simulink execution, result artifact, or Wright gateway behavior is reproducible without a licensed host.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -3573,15 +3576,14 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": "2026-09-09",
-      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/simulink-agentic-toolkit-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.",
+      "next_action": "Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink.",
       "tests_completed": [
-        "Current source and licensed-host boundary review"
+        "Current official source and licensed-host boundary review"
       ],
-      "tests_remaining": [
-        "Run a deterministic Simulink model, inspect signals, and export results through Wright"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires licensed MATLAB and Simulink."
+        "No executable protocol or model evidence was produced.",
+        "Re-entry condition: Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3610,9 +3612,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "MCP starts and reports the missing SketchUp extension clearly, but the repository has no usable test suite and the advertised get_scene_info tool is absent from discovery.",
-      "progress_substatus": "needs_repair",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The server initializes, but its repository has no usable automated suite and the advertised get_scene_info tool is absent from discovery; a missing desktop extension is not the only blocker.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -3626,15 +3628,17 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright.",
       "tests_completed": [
-        "Source install, 10-tool discovery, missing-extension read and eval diagnostics, and test-suite review"
+        "Pinned source install",
+        "MCP initialization and 10-tool discovery",
+        "Missing-extension diagnostics",
+        "Test-suite review"
       ],
-      "tests_remaining": [
-        "Reconcile documented and actual tools, then run a small SketchUp scene task through Wright on the desktop host"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires SketchUp desktop and its extension server."
+        "Documented and actual tool surfaces disagree, and no SketchUp artifact or gateway task was produced.",
+        "Re-entry condition: Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3867,9 +3871,9 @@
         "linux_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The package builds, passes 52 tests, lists 86 tools, and reports the missing Windows COM host correctly; live SolidWorks and Wright gateway behavior remain unproven.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The package builds, passes its suite, initializes, lists tools, and clearly reports the unavailable Windows COM host; licensed SolidWorks is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -3884,15 +3888,18 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export.",
       "tests_completed": [
-        "Build, mock suite, protocol discovery, and two expected non-Windows backend diagnostics"
+        "Pinned source build",
+        "52 upstream tests",
+        "MCP initialization and 86-tool discovery",
+        "Expected non-Windows winax diagnostics"
       ],
       "tests_remaining": [
-        "Run a deterministic part inspection and controlled edit through Wright on Windows with SolidWorks"
+        "On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export."
       ],
       "limitations": [
-        "Requires Windows, SolidWorks, and a working winax native module."
+        "No live SolidWorks document, export, independent artifact check, or Wright gateway task has been proven."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -3923,9 +3930,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "Official documentation establishes the product-hosted Hardware MCP endpoint, but no live ThingWorx 10.1 endpoint, authenticated discovery, or Wright gateway call is available.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "PTC documents a product-hosted MCP endpoint, but no accessible disposable ThingWorx deployment exists for endpoint authentication, discovery, resource access, gateway routing, or cleanup.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [
         "THINGWORX_BASE_URL",
@@ -3939,15 +3946,15 @@
       "evidence_age_days": null,
       "latest_result": "dependency_missing",
       "last_tested_at": null,
-      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "next_action": "Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright.",
       "tests_completed": [
-        "Official endpoint documentation and nonexistent local-package review"
+        "Official endpoint documentation review",
+        "Local package and command-path preflight"
       ],
-      "tests_remaining": [
-        "Authenticate to a disposable ThingWorx 10.1 MCPServices endpoint and run one read-only resource query through Wright"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "Requires a live ThingWorx deployment and credentials."
+        "No MCP request reached a real ThingWorx endpoint; this is not a vendor prohibition.",
+        "Re-entry condition: Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -4074,9 +4081,9 @@
         "macos_x64",
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The page builds, its OpenSCAD worker starts, and all 16 browser tools register, but relay 5.1.0 does not attach the page or expose those tools to MCP clients.",
-      "progress_substatus": "needs_repair",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The browser application and worker run, but the documented relay does not attach the page or expose its 16 OpenSCAD tools to MCP clients, so the current integration path is unusable.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -4091,15 +4098,17 @@
       "evidence_age_days": null,
       "latest_result": "failed",
       "last_tested_at": "2026-09-10",
-      "next_action": "Diagnose relay embed attachment with pinned 5.1.0, then require get_render_status and an STL export through Wright GatewayService before release.",
+      "next_action": "Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks.",
       "tests_completed": [
-        "Pinned source build, Chromium page load, 16-tool browser discovery, OpenSCAD worker start, and relay protocol discovery"
+        "Pinned source build",
+        "Chromium page and 16 browser-tool discovery",
+        "OpenSCAD worker startup",
+        "Relay initialization and attachment failure"
       ],
-      "tests_remaining": [
-        "Fix browser-to-relay attachment, then run render status and STL export through Wright with independent geometry inspection"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "The current failure is in the documented relay path, after the browser surface succeeds."
+        "No render-status call, STL artifact, or Wright gateway execution was possible.",
+        "Re-entry condition: Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"
@@ -4164,9 +4173,9 @@
       "platforms": [
         "windows_11_x64"
       ],
-      "portfolio_category": "in_progress",
-      "portfolio_category_reason": "The official Siemens support artifact is login-gated and no public package exists; a Windows WinCC Unified host is required before protocol or backend testing.",
-      "progress_substatus": "environment_needed",
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official Siemens artifact is account-gated, no public package or executable command is available, and no MCP protocol or WinCC runtime query can be tested for this release.",
+      "progress_substatus": "closed",
       "release_eligible": false,
       "credentials": [],
       "prerequisites": [
@@ -4179,15 +4188,15 @@
       "evidence_age_days": null,
       "latest_result": "blocked",
       "last_tested_at": null,
-      "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+      "next_action": "Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification.",
       "tests_completed": [
-        "Official documentation lookup and npm/PyPI/package-path preflight"
+        "Official documentation/support-artifact review",
+        "npm/PyPI/public-source and command-path preflight"
       ],
-      "tests_remaining": [
-        "Obtain the official support artifact through an authorized account and test one read-only runtime query on Windows"
-      ],
+      "tests_remaining": [],
       "limitations": [
-        "This is an access and proprietary-host boundary, not a vendor prohibition."
+        "No installable server, protocol session, or WinCC result was available; this is not a vendor prohibition.",
+        "Re-entry condition: Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification."
       ],
       "replacement_ids": [],
       "assessment_reviewed_at": "2026-09-10"

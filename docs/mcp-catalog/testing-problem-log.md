@@ -2071,3 +2071,23 @@ Result:
   tests passed in a clean Wright container, including MCP and loopback HTTP
   checks. It is In progress pending a real Edge/SimScale session and Wright
   workflow; it is not an official SimScale server.
+
+## 10 September overnight release disposition
+
+Problem:
+  Twenty-one records remained In progress after their practical clean-runtime
+  boundary was already known. Leaving them yellow made the queue imply active
+  executable work even where the required licensed host was unavailable or a
+  stronger qualified integration already covered the scope.
+Solution:
+  Reconciled every record against the preserved package, protocol, dependency,
+  host, artifact, and gateway observations. Applied the release-facing rule:
+  Requires login only when package and protocol checks passed and the licensed
+  host is the sole execution boundary; otherwise exclude the current candidate
+  with an objective re-entry qualification. No proprietary host, credential,
+  customer system, or paid service was accessed.
+Result:
+  Five records moved to Requires login and sixteen moved to the Excluded
+  archive. In progress is zero. Detailed decisions and re-entry conditions are
+  preserved in
+  `evidence/curation-2026-09-10/overnight-final-dispositions.json`.

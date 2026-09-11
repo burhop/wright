@@ -2628,3 +2628,24 @@ evidence linked from each catalog entry.
 - Reopen only after a published revision fixes non-macOS headless startup,
   clears the recorded dependency audit, and passes a parameterized model plus
   independently checked STEP/STL output through Wright.
+
+## Overnight current-release dispositions
+
+The 10 September final review closes the former In progress queue. Existing
+install commands and boundary probes in this document remain the reproducible
+recipes; the final release action is:
+
+- **Requires login:** `ansys-fluent-mcp`, `fusion360-mcp-server`,
+  `matlab-mcp-server`, `rhino-mcp`, and `solidworks-mcp-ts`. Their package and
+  MCP surfaces passed. Keep them credential-gated until the documented licensed
+  host scenario produces an independently checked artifact through Wright.
+- **Excluded archive:** `autodesk-fusion-desktop-mcp`,
+  `blender-mcp-harveyxiacn`, `cad-mcp-daobataotie`,
+  `comsol-multiphysics-mcp-wjc9011`, `creo-mcp`, `multicad-mcp`, the four
+  Omniverse/Isaac/USD candidates, `simscale-edge-mcp-getanirao`,
+  `simulink-agentic-toolkit`, `sketchup-mcp`, `thingworx-mcp`,
+  `webmcp-openscad`, and `wincc-unified-mcp`. Do not offer these records until
+  their entry-specific re-entry test in the dated disposition evidence passes.
+
+The decision matrix is
+`evidence/curation-2026-09-10/overnight-final-dispositions.json`.

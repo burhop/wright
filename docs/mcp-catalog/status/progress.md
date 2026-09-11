@@ -55,3 +55,19 @@
 - [x] Run its exact 0.2.0 source through a locked clean-container install and
   all 26 upstream tests; retain it as In progress pending live Edge, SimScale,
   and Wright workflow validation.
+
+## 10 September 2026 overnight final disposition
+
+- [x] Reconcile all 21 records that remained In progress against their current
+  package, protocol, host-boundary, artifact, and gateway evidence.
+- [x] Move Ansys Fluent, Fusion 360 community MCP, MATLAB, Rhino 8 MCP, and
+  SolidWorks TypeScript MCP to Requires login. Their packages and protocol
+  surfaces passed, and the unavailable licensed host is the sole execution
+  boundary; none is described as a qualified backend workflow.
+- [x] Move the other 16 candidates to the Excluded archive. Ten lack an
+  executable supported host/deployment, four duplicate stronger integrations,
+  and two have a demonstrated tool/relay defect. Every record preserves a
+  specific re-entry qualification.
+- [x] Reduce In progress from 21 to 0. Final reviewed counts are 11 Works,
+  6 Preview, 15 Requires login, 0 In progress, 46 Abandoned, and 0 Blocked by
+  vendor; green total is 32 of 78.

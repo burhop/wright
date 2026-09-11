@@ -773,11 +773,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The maintained package passes its suite, protocol discovery, mock operations, and the missing-add-in diagnostic; licensed Fusion plus its desktop add-in is the sole unavailable execution boundary.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright.
     adoption: unknown
 - id: autodesk-fusion-mcp-python
   name: Fusion 360 Python API Bridge
@@ -1144,12 +1144,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: hardware_mcp
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The official Siemens artifact is account-gated, no public package or executable command is available, and no MCP protocol or WinCC runtime query can be tested for this release.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification.
     adoption: unknown
 - id: thingworx-mcp
   name: PTC ThingWorx IoT Platform
@@ -1245,12 +1245,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: hardware_mcp
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: PTC documents a product-hosted MCP endpoint, but no accessible disposable ThingWorx deployment exists for endpoint authentication, discovery, resource access, gateway routing, or cleanup.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright.
     adoption: unknown
 - id: creo-mcp
   name: Creo/CadQuery MCP
@@ -1353,12 +1353,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: The three-tool server can execute local CadQuery code but does not prove Creo automation; it also depends on absent CREOSON and Volcengine credentials and lacks gateway evidence.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Arrange the documented
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact.
       prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
     adoption: unknown
 - id: creoson-mcp-bridge
@@ -1635,11 +1635,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The package builds, passes its suite, initializes, lists tools, and clearly reports the unavailable Windows COM host; licensed SolidWorks is the sole unavailable execution boundary.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export.
     adoption: unknown
 - id: solidworks-mcp-alisamsam
   name: SolidWorks Document Manager
@@ -2653,12 +2653,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: The package cannot install or initialize outside Windows COM and duplicates existing AutoCAD coverage without a qualified multi-host advantage.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts.
     adoption: unknown
 - id: cad-mcp-daobataotie
   name: CAD-MCP Universal COM
@@ -2742,12 +2742,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: The source has no tests, cannot initialize without Windows COM, and overlaps the qualified AutoCAD path without evidence of a material advantage.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration.
     adoption: unknown
 - id: openscad-mcp
   name: OpenSCAD Rendering Engine
@@ -3175,11 +3175,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The package passes its suite and protocol discovery and consistently reports the absent Rhino bridge; licensed Rhino 8 plus its plugin is the sole unavailable execution boundary.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently.
     adoption: unknown
 - id: sketchup-mcp
   name: SketchUp Ruby Server
@@ -3258,12 +3258,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: The server initializes, but its repository has no usable automated suite and the advertised get_scene_info tool is absent from discovery; a missing desktop extension is not the only blocker.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright.
     adoption: unknown
 - id: zoo-mcp
   name: Zoo.dev Cloud CAD API
@@ -3441,12 +3441,12 @@ servers:
   integration_kind: webmcp_application
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: The browser surface works, but the documented local relay failed to expose its registered OpenSCAD tools to Wright, so the integration needs a bridge repair.
+    disposition: removed
+    reason: The browser application and worker run, but the documented relay does not attach the page or expose its 16 OpenSCAD tools to MCP clients, so the current integration path is unusable.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-10'
-    review_due: '2026-10-10'
-    next_action: Diagnose relay embed attachment with pinned 5.1.0, then require get_render_status and an STL export through Wright GatewayService before release.
+    review_due: '2026-12-10'
+    next_action: Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks.
     adoption: unknown
 - id: web3d-mcp
   name: React Three Fiber Web3D
@@ -4904,11 +4904,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: The current official MCP binary passes protocol and tool discovery, but a useful engineering calculation cannot be qualified without a licensed MATLAB host.
+    reason: The SHA-pinned official binary initializes, exposes its five tools, and reaches the expected MATLAB detection boundary; licensed MATLAB is the sole unavailable execution dependency.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Install licensed MATLAB R2021a or later outside Wright, set MW_MCP_SERVER_MATLAB_ROOT, and rerun v0.13.0 through Wright GatewayService with a deterministic numerical artifact oracle.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB.
     adoption: unknown
 - id: simulink-agentic-toolkit
   name: Simulink Agentic Toolkit
@@ -5020,12 +5020,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The official source is identifiable, but no MCP startup, tool discovery, Simulink execution, result artifact, or Wright gateway behavior is reproducible without a licensed host.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/simulink-agentic-toolkit-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink.
     adoption: unknown
 - id: autodesk-fusion-desktop-mcp
   name: Autodesk Fusion MCP
@@ -5161,12 +5161,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The official product documentation is credible, but the proprietary command is unavailable outside a licensed Fusion host and no protocol, backend artifact, or Wright gateway call can be reproduced for this release.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-desktop-mcp-host-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks.
     adoption: unknown
 - id: autodesk-fusion-data-mcp
   name: Autodesk Fusion Data MCP
@@ -5890,12 +5890,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: This alternative has no current differentiated backend qualification and duplicates Wright's already qualified Blender integration, so it is excluded from the current shortlist.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/blender-mcp-harveyxiacn-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification.
     adoption: unknown
 - id: playwright-mcp
   name: Playwright MCP
@@ -6361,11 +6361,11 @@ servers:
   hardware_standard: none
   curation:
     disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    reason: The official pinned package, MCP discovery, and safe code validation pass; a licensed Fluent solver is the only unavailable boundary, so customer exposure must remain credential-gated and unqualified for CFD results.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Connect package 0.4.0 to licensed Fluent 2024 R1 or newer and run a deterministic CFD case through Wright GatewayService with mesh, residual, field, export, timeout, and cleanup oracles.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification.
     adoption: unknown
 - id: ansys-mcp-server-community
   name: Ansys MCP Server
@@ -6602,12 +6602,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: The candidate has no reproducible minimal install or MCP initialization; its heavyweight ML/CUDA dependency path and bundled COMSOL documents/models require review before any licensed-host test.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Recheck primary-source availability (observed HTTP 403); resolve renames, private access, or rate limiting before qualification. Verify the current
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification.
       source and prerequisites, then run the documented clean-environment backend and gateway scenario.
     adoption: unknown
 - id: comsol-multiphysics-mcp-suzysa
@@ -6830,12 +6830,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: Current source exists, but no reproducible Kit server startup, tool discovery, backend query, or Wright gateway call is available in the supported environment.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-kit-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright.
     adoption: unknown
 - id: nvidia-omniverse-usd-code-mcp
   name: NVIDIA USD Code MCP
@@ -6939,12 +6939,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    disposition: removed
+    reason: Source wheels build only after Git LFS data is resolved, but the recommended credentialed deployment has no recorded startup, tool discovery, USD query, or Wright gateway result.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-08'
-    review_due: '2026-10-08'
-    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright.
     adoption: unknown
 - id: nvidia-omniverse-omniui-mcp
   name: NVIDIA OmniUI MCP
@@ -7047,12 +7047,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: No executable OmniUI workflow or differentiated value beyond the broader Kit candidate has been proven, so the duplicate is excluded from the current shortlist.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-omniui-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification.
     adoption: unknown
 - id: nvidia-omniverse-isaac-sim-mcp
   name: NVIDIA Isaac Sim MCP
@@ -7160,12 +7160,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    disposition: removed
+    reason: Current source exists, but no reproducible server startup, tool discovery, Isaac Sim backend result, or Wright gateway call is available without a dedicated GPU lab and credentialed NVIDIA stack.
     owner: Wright catalog maintainers
-    reviewed_at: '2026-09-09'
-    review_due: '2026-10-09'
-    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-isaac-sim-mcp-source-boundary.json. Run the smallest recorded host/backend and Wright gateway scenario.
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright.
     adoption: unknown
 - id: nvidia-cuda-docs-mcp
   name: NVIDIA CUDA Docs MCP
@@ -7608,12 +7608,12 @@ servers:
   integration_kind: mcp_server
   hardware_standard: none
   curation:
-    disposition: follow_up
-    reason: A public community MCP now exists and passes clean-container preflight, but its live Windows Edge and authenticated SimScale workflow still requires qualification.
+    disposition: removed
+    reason: The small unlicensed community project passes its test suite but relies on brittle browser automation and has no authenticated SimScale engineering result, download oracle, or Wright gateway proof.
     owner: Wright catalog maintainers
     reviewed_at: '2026-09-10'
-    review_due: '2026-10-10'
-    next_action: Use an isolated Windows Edge profile and SimScale test account to validate project pinning, read-only Workbench inspection, one bounded simulation workflow, downloads, Wright gateway routing, and cleanup.
+    review_due: '2026-12-10'
+    next_action: Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification.
     adoption: unknown
 - id: flexcompute-flow360-api-candidate
   name: Flexcompute Flow360 API Candidate
