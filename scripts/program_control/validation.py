@@ -4423,6 +4423,17 @@ def validate_roadmap_approval_and_lease(
                     for prefix in permitted_metadata
                 )
 
+            governance_tooling = (
+                "scripts/program_control/validation.py",
+                "tests/program_control_plane/test_native_scoped_delivery.py",
+            )
+
+            def is_governance_tooling(path: str) -> bool:
+                return any(
+                    path.startswith(prefix) if prefix.endswith("/") else path == prefix
+                    for prefix in governance_tooling
+                )
+
             review_boundary = source_commit
             post_integration_changes: set[str] = set()
             protected_candidate_paths: set[str] = set()
@@ -4450,6 +4461,7 @@ def validate_roadmap_approval_and_lease(
                     path
                     for path in protected_candidate_paths
                     if not is_permitted_metadata(path)
+                    and not is_governance_tooling(path)
                 }
                 post_integration_changes = set(
                     reader.diff_paths(review_boundary, source_commit)

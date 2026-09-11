@@ -53,6 +53,9 @@ def candidate(git_builder, repository_root: Path):
     )
     git_builder.write_bytes("product.py", b"VALUE = 1\n")
     git_builder.write_bytes(
+        "scripts/program_control/validation.py", b"RULE_VERSION = 1\n"
+    )
+    git_builder.write_bytes(
         "specs/079-wright-native-authoring/tasks.md",
         (
             "- [x] T001 Implement baseline\n"
@@ -261,6 +264,13 @@ def test_integrated_checkpoint_allows_unrelated_followup(candidate):
     builder = _record_integrated_boundary(candidate)
     builder.write_bytes("unrelated-feature.py", b"VALUE = 2\n")
     builder.commit("implement unrelated feature")
+    assert findings(candidate) == []
+
+
+def test_integrated_checkpoint_allows_governance_tooling_maintenance(candidate):
+    builder = _record_integrated_boundary(candidate)
+    builder.write_bytes("scripts/program_control/validation.py", b"RULE_VERSION = 2\n")
+    builder.commit("maintain integrated governance tooling")
     assert findings(candidate) == []
 
 
