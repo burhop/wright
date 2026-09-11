@@ -27,8 +27,16 @@ class CatalogSnapshotError(RuntimeError):
     pass
 
 
+class _ClosingConnection(sqlite3.Connection):
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            return super().__exit__(exc_type, exc_value, traceback)
+        finally:
+            self.close()
+
+
 def _connect(database_path: str | Path) -> sqlite3.Connection:
-    connection = sqlite3.connect(str(database_path))
+    connection = sqlite3.connect(str(database_path), factory=_ClosingConnection)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
