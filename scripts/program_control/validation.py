@@ -4427,7 +4427,9 @@ def validate_roadmap_approval_and_lease(
                 "docs/contributing/dev-push-runbook.md",
                 "scripts/check-dev-push.sh",
                 "scripts/program_control/validation.py",
+                "scripts/program_status/publisher.py",
                 "tests/program_control_plane/test_native_scoped_delivery.py",
+                "tests/program_control_plane/test_program_status_publisher.py",
                 "tests/release/test_dev_push_process.py",
             )
 

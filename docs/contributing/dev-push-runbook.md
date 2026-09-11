@@ -135,7 +135,8 @@ state must be `PUSH_AUTHORIZATION_PENDING`, `PR_READY`, `DEV_MERGE_READY`, or
 validator must pass against the exact `HEAD`. `DEV_INTEGRATED` permits bounded
 maintenance after the reviewed feature is already on `dev`; the validator still
 protects the reviewed product paths and limits its own maintenance exemption to
-the exact gate, validator, documentation, and regression files. This mirrors the
+the exact gate, validator, status publisher, documentation, and regression files.
+This mirrors the
 non-mutating identity used by GitHub's synthetic merge checkout and prevents a
 locally named implementation worktree from hiding a lease/worktree mismatch that
 would fail pull-request validation.

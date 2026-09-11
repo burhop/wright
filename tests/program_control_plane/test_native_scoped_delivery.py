@@ -267,9 +267,17 @@ def test_integrated_checkpoint_allows_unrelated_followup(candidate):
     assert findings(candidate) == []
 
 
-def test_integrated_checkpoint_allows_governance_tooling_maintenance(candidate):
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/program_control/validation.py",
+        "scripts/program_status/publisher.py",
+        "tests/program_control_plane/test_program_status_publisher.py",
+    ],
+)
+def test_integrated_checkpoint_allows_governance_tooling_maintenance(candidate, path):
     builder = _record_integrated_boundary(candidate)
-    builder.write_bytes("scripts/program_control/validation.py", b"RULE_VERSION = 2\n")
+    builder.write_bytes(path, b"RULE_VERSION = 2\n")
     builder.commit("maintain integrated governance tooling")
     assert findings(candidate) == []
 
