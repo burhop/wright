@@ -135,4 +135,3 @@ Keep a short checklist updated in a progress document. Work sequentially with bo
 - Final delivery includes counts by group/protocol, green components, baseline corrections, public page/feed paths, current/history schemas, one update command, screenshots, test results, commit IDs, and remaining data limitations. Leave the local page running. No push, deploy, or live marketing update.
 
 Handoff structure reference: explicit context, outcomes, constraints and verification follow the [official OpenAI prompting guidance](https://learn.chatgpt.com/docs/prompting). The repository decisions and numerical baseline above come from local inspection.
-
