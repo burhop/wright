@@ -1,0 +1,2790 @@
+{
+  "note": "Registry listings establish discovery provenance, not runtime certification. Search terms produce many unrelated substring matches.",
+  "servers": [
+    {
+      "name": "ai.getfacade/mcp",
+      "description": "Designs a real house exterior on its own photo, prices it line by line and documents it.",
+      "repository_url": "https://github.com/getfacade/mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "ai.smithery/IlyaGusev-academia_mcp",
+      "description": "Search arXiv and ACL Anthology, retrieve citations and references, and browse web sources to accel…",
+      "repository_url": "https://github.com/IlyaGusev/academia_mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "ai.tokenarcade/tokenarcade",
+      "description": "Games for AI agents. Each game runs inside a single context window.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "ar.indicadores/empresas",
+      "description": "Empresas argentinas por CUIT: registro societario, deudas BCRA y contratos con el Estado.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "br.app.classificado/meta-agent-tools",
+      "description": "Registry of MCP servers, agent skills and plugins: search, filter, comments, likes, publish.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.angelmoncada/consulting",
+      "description": "Perfil, servicios, casos y contacto de Ángel Moncada.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.arcadedb/mcp-server",
+      "description": "Built-in MCP server for ArcadeDB multi-model database (graph, document, vector, time-series)",
+      "repository_url": "https://github.com/ArcadeData/arcadedb",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.cadencercs/cadence",
+      "description": "Send RCS messages from your agent and get typed replies. Automatic SMS fallback.",
+      "repository_url": "https://github.com/dwixom/rcs-agent-mvp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.cadencz/cadencz",
+      "description": "Plan, draft, schedule and publish social posts grounded in your Website Brain.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.kernelcad/kernelcad",
+      "description": "Agent-first CAD: editable .kcad.ts source, deterministic review, OpenCASCADE kernel.",
+      "repository_url": "https://github.com/w1ne/kernelCAD-web",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D008",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "com.mambabuilt/mcp-publication-cadence-tracker",
+      "description": "How often a company publishes long-form work, and whether that rate is rising or falling.",
+      "repository_url": "https://github.com/mambalabsdev/mcp-publication-cadence-tracker",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.quillcaddie.www/mcp",
+      "description": "OAuth-protected, read-only-by-default MCP server for provenance-labeled QuillCaddie project memory.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.scadaminer/nem-explorer",
+      "description": "Query Australia's electricity market (NEM/AEMO): prices, generation, FCAS, interconnectors, bids.",
+      "repository_url": "https://github.com/brensch/scadaminer-ai-toolkit",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.shamra-academia/research",
+      "description": "The only MCP server for Arabic academic research — search, read & cite Arabic + English papers.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.teclazo/mercadolibre",
+      "description": "Mercado Libre keyword & competitor intelligence for AI agents across all 18 ML markets.",
+      "repository_url": "https://github.com/georgelawrence/kwp-mercadolibre",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.themineworks/academic-research-mcp",
+      "description": "Scholarly search: OpenAlex, Crossref, arXiv, OpenCitations and PubMed in one endpoint.",
+      "repository_url": "https://github.com/themineworks/mcp-servers",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.thenextgennexus/academic-research-mcp-server",
+      "description": "ArXiv preprints + Google Scholar papers, with citation counts in one query.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.trycadbury/netsuite",
+      "description": "Expert-grounded NetSuite answers: saved searches, SuiteScript, workflows, and troubleshooting.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "dk.herbertkokholm.citecaddy/cite-caddy",
+      "description": "Remote MCP server for full read/write access to a Zotero library",
+      "repository_url": "https://github.com/herbertkokholm/cite-caddy",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "fr.aucadastre/aucadastre",
+      "description": "A French address, all public facts: parcel, zoning, risks, permits, sales, energy labels. No key.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "golf.caddence/caddence",
+      "description": "Live UK golf club prices across 40 retailers: offers, price history and deal ratings in GBP.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Abracadabrastartup/deusproof-mcp",
+      "description": "Prove your AI work existed first: timestamped, Bitcoin-anchored. Free, no account.",
+      "repository_url": "https://github.com/Abracadabrastartup/deusproof-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Africa-Data-Bank/africadb",
+      "description": "Trusted African data, provenance, citations, and catalog search for AI agents.",
+      "repository_url": "https://github.com/Africa-Data-Bank/afridb-platform",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.ArcadeData/arcadedb",
+      "description": "Multi-Model database with built-in MCP server for SQL, Cypher, Gremlin, and GraphQL.",
+      "repository_url": "https://github.com/ArcadeData/arcadedb",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.BharatDharmaAcademy/bda-mcp",
+      "description": "Jyotish, Panchang, Hindu festival and Sanatan Dharma knowledge tools with citations.",
+      "repository_url": "https://github.com/BharatDharmaAcademy/bda-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Continuum-AI-Corp/orcadub-mcp-server",
+      "description": "AI video dubbing via OrcaRouter (model orca/dub): upload a video or URL, poll, download the MP4.",
+      "repository_url": "https://github.com/Continuum-AI-Corp/orcadub-mcp-server",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Damso74/arcadeops-public-discovery",
+      "description": "Read-only ArcadeOps discovery for developer docs, OAuth, OpenAPI and synthetic sandbox.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.FoundryNet/academic-intel-mcp",
+      "description": "Academic paper search, scientific literature, citation analysis, arXiv & semantic related-work.",
+      "repository_url": "https://github.com/FoundryNet/academic-intel-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Gunsmith-Academy/woody-mcp",
+      "description": "Woody, the AI firearms expert. Verified specs, legal lookups, and knowledge base.",
+      "repository_url": "https://github.com/Gunsmith-Academy/woody-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.KittyCAD/zoo-mcp",
+      "description": "An MCP server that provides access to the Zoo API for various CAD operations and tools.",
+      "repository_url": "https://github.com/KittyCAD/mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [
+        "zoo-mcp"
+      ],
+      "discovery_id": null,
+      "disposition": "existing_product_metadata_conflict"
+    },
+    {
+      "name": "io.github.LokmenoWer/best-cad-mcp",
+      "description": "Windows AutoCAD MCP server for handle-first CAD automation, validation, and drawing exports.",
+      "repository_url": "https://github.com/LokmenoWer/best-cad-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.ProductOfAmerica/mcp-server-kicad",
+      "description": "Byte-preserving KiCad automation: 100+ tools for schematics, PCB layout, ERC, DRC, exports",
+      "repository_url": "https://github.com/ProductOfAmerica/mcp-server-kicad",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Psalmustrack/lambdacad-mcp",
+      "description": "AI drafting, design review and a drawing memory in BricsCAD on Linux: 128 tools, pure AutoLISP",
+      "repository_url": "https://github.com/Psalmustrack/lambdacad-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Rckl88/seracade",
+      "description": "LLM cost optimization. Audit your calls, prove savings, route to the cheapest quality model. BYOK.",
+      "repository_url": "https://github.com/Rckl88/seracade.git",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.SunFlash12/forge-cascade-mcp",
+      "description": "AI memory buyer routing with Forge docs, pricing, paid recommendations, and MCP discovery.",
+      "repository_url": "https://github.com/SunFlash12/forge-cascade-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.TheNextGenNexus/academic-research-mcp-server",
+      "description": "Search arXiv, Google Scholar, and Wikipedia for academic papers and knowledge",
+      "repository_url": "https://github.com/TheNextGenNexus/web-intelligence-mcp-servers",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Wandersonjack/avocado",
+      "description": "Generate AI images, videos, music, SFX & speech in any AI assistant. Results appear inline in chat.",
+      "repository_url": "https://github.com/Wandersonjack/avocado-ai-app",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Wxt-ai/notification-cadence-guide",
+      "description": "Set notification cadence for an operations workflow",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.YawLabs/caddy-mcp",
+      "description": "MCP server for managing Caddy web servers via the admin API",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.agustincf/arcade1v1",
+      "description": "Play 1v1 arcade games vs AI agents & humans, ranked by ELO. Replay-verified, on-chain escrow (Base).",
+      "repository_url": "https://github.com/agustincf/Arcade1v1",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.alesdev88/archicad-mcp",
+      "description": "Delivery-readiness QA and full official + Tapir API access for a running Archicad 29.",
+      "repository_url": "https://github.com/alesdev88/Archicad-MCP",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.arcadia-finance/mcp-server",
+      "description": "Concentrated liquidity on Uniswap/Aerodrome (rebalance, compound, leverage) or single-sided lending.",
+      "repository_url": "https://github.com/arcadia-finance/mcp-server",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.biosshot/kicad-copilot",
+      "description": "File-oriented MCP server for KiCad schematics, PCB placement, routing, and pours.",
+      "repository_url": "https://github.com/biosshot/kicad-copilot",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.blockchainacademics/mcp",
+      "description": "Crypto MCP — 99 tools across news, market, on-chain, sentiment, indicators, agent generation.",
+      "repository_url": "https://github.com/blockchainacademics/bca-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.blwfish/freecad-mcp",
+      "description": "Control FreeCAD from Claude — 3D modeling, PartDesign, CAM toolpaths, and more via 30+ tools.",
+      "repository_url": "https://github.com/blwfish/freecad-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.bunnyf/kicad-mcp-server",
+      "description": "MCP server for AI-assisted PCB design with KiCad 9.x",
+      "repository_url": "https://github.com/bunnyf/pcb-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cadlens-co/cadlens-mcp",
+      "description": "Model Context Protocol server that wraps the CADLens REST API.",
+      "repository_url": "https://github.com/cadlens-co/cadlens-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D029",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "io.github.codespar/mcp-mercado-bitcoin",
+      "description": "MCP server for Mercado Bitcoin — Brazilian crypto exchange, trading, orderbook, withdrawals",
+      "repository_url": "https://github.com/codespar/mcp-dev-latam",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.codespar/mcp-mercado-libre",
+      "description": "Mercado Libre — LATAM marketplace, product search, orders, sellers, shipments",
+      "repository_url": "https://github.com/codespar/mcp-dev-latam",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.codespar/mcp-mercado-pago",
+      "description": "Mercado Pago — payments, checkout, PIX, refunds for LATAM",
+      "repository_url": "https://github.com/codespar/mcp-dev-latam",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.daedalus/mcp-kicad",
+      "description": "MCP server exposing KiCad PCB Editor functionality via IPC API",
+      "repository_url": "https://github.com/daedalus/mcp-kicad",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.dcadolph/vamoose",
+      "description": "Calendar workflow engine for time off, approvals, and quick actions on any calendar backend.",
+      "repository_url": "https://github.com/dcadolph/vamoose",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.fboldo/openscad-mcp-server",
+      "description": "Render STL and PNG from OpenSCAD code.",
+      "repository_url": "https://github.com/fboldo/openscad-mcp-server",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.jmxisnext/academic-evidence-pack",
+      "description": "Signed citation-integrity reports + retraction-checked evidence packs, paid per call via x402/USDC.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.kascada/logmcp",
+      "description": "MCP server — read-only log access for AI assistants, without giving AI shell access.",
+      "repository_url": "https://github.com/kascada/logmcp.git",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.laffeyp/cascade-img",
+      "description": "LLM-operable Midjourney pipeline: 21 MCP tools to compose, generate, curate with vision, and log.",
+      "repository_url": "https://github.com/laffeyp/cascade-img",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.loncadev/baron",
+      "description": "Let your coding agent write to your work tracker: issues, branches, PRs and CI, one contract.",
+      "repository_url": "https://github.com/loncadev/baron",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.lulzasaur9192/agent-arcade-mcp",
+      "description": "Play Chess, Go, Trading & more against AI agents on Agent Arcade with Elo rankings",
+      "repository_url": "https://github.com/lulzasaur9192/agent-arcade-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.macphe22/bancadia-mcp",
+      "description": "Query Bancadia's registry of US business checking account products with structured filters.",
+      "repository_url": "https://github.com/Bancadia/bancadia-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.malkreide/swiss-academic-libraries-mcp",
+      "description": "Swiss academic libraries + open-access Swiss legal literature (SRU/OAI-PMH, no API key)",
+      "repository_url": "https://github.com/malkreide/swiss-academic-libraries-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mario-andreschak/mcp-cad-studio",
+      "description": "A self-contained parametric CAD studio MCP server with an interactive MCP App.",
+      "repository_url": "https://github.com/flujo-app/mcp-cad-studio",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D013",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "io.github.mariorojasmz/apolo-cad",
+      "description": "Agent-native parametric 3D CAD: model machines, validate them and emit shop drawings",
+      "repository_url": "https://github.com/mariorojasmz/apolo-cad",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mattmohandiss/cad-mcp-server",
+      "description": "STEP file inspection for AI. Measure walls, draft angles, clearances. Returns facts, not guesses.",
+      "repository_url": "https://github.com/mattmohandiss/cad-mcp-server",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mbrionesalvarez/caddie-mcp",
+      "description": "Your Garmin golf data in Claude: GPS shots, strokes gained, club distances, health context",
+      "repository_url": "https://github.com/mbrionesalvarez/caddie-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/anbima_certificado-mcp",
+      "description": "Looks up a person's Anbima professional certifications from the CPF. Platform-hosted, no credentials",
+      "repository_url": "https://github.com/mcp-dir/anbima_certificado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/atacadao-mcp",
+      "description": "Connect your Atacadão account to AI via Brazil's Open Finance: balances, statements, cards, investme",
+      "repository_url": "https://github.com/mcp-dir/atacadao-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/buscador_google-mcp",
+      "description": "Buscador: Google, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/buscador_google-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cadastur_prestadores-mcp",
+      "description": "Cadastur: Prestadores, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/cadastur_prestadores-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cade_processos-mcp",
+      "description": "CADE: Court Cases, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/cade_processos-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cadin_estadual-mcp",
+      "description": "Status of a CPF or CNPJ in the state treasury default registry (CADIN), by state. Platform-hosted, n",
+      "repository_url": "https://github.com/mcp-dir/cadin_estadual-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cadin_sp-mcp",
+      "description": "Status of a CPF or CNPJ in the São Paulo treasury default registry (CADIN). Platform-hosted, no cred",
+      "repository_url": "https://github.com/mcp-dir/cadin_sp-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfbm_cadastro-mcp",
+      "description": "Conselho Federal de Biomedicina: Cadastro, official-source lookup. Platform-hosted, pay per query wi",
+      "repository_url": "https://github.com/mcp-dir/cfbm_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfc_cadastro-mcp",
+      "description": "Conselho Federal de Contabilidade: Cadastro de Profissionais e Empresas, official-source lookup. Pla",
+      "repository_url": "https://github.com/mcp-dir/cfc_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cff_cadastro-mcp",
+      "description": "Conselho Federal de Farmácia: Cadastro, official-source lookup. Platform-hosted, pay per query with ",
+      "repository_url": "https://github.com/mcp-dir/cff_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfm_cadastro-mcp",
+      "description": "Conselho Federal de Medicina: Cadastro, official-source lookup. Platform-hosted, pay per query with ",
+      "repository_url": "https://github.com/mcp-dir/cfm_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfmv_cadastro-mcp",
+      "description": "Conselho Federal de Medicina Veterinária: Cadastro, official-source lookup. Platform-hosted, pay per",
+      "repository_url": "https://github.com/mcp-dir/cfmv_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfo_cadastro-mcp",
+      "description": "Conselho Federal de Odontologia: Cadastro, official-source lookup. Platform-hosted, pay per query wi",
+      "repository_url": "https://github.com/mcp-dir/cfo_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cfp_cadastro-mcp",
+      "description": "Conselho Federal de Psicologia: Cadastro, official-source lookup. Platform-hosted, pay per query wit",
+      "repository_url": "https://github.com/mcp-dir/cfp_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cnpj_cadastral-mcp",
+      "description": "Basic registration data for a company from a CNPJ: legal name, registration status, and legal nature",
+      "repository_url": "https://github.com/mcp-dir/cnpj_cadastral-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cnpj_cadastral_plus-mcp",
+      "description": "Extended registration data for a company from a CNPJ, beyond the basics. Platform-hosted, no credent",
+      "repository_url": "https://github.com/mcp-dir/cnpj_cadastral_plus-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/coren_pr_cadastro-mcp",
+      "description": "Conselho Regional de Enfermagem PR: Cadastro, official-source lookup. Platform-hosted, pay per query",
+      "repository_url": "https://github.com/mcp-dir/coren_pr_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/coren_sp_cadastro-mcp",
+      "description": "Conselho Regional de Enfermagem SP: Cadastro, official-source lookup. Platform-hosted, pay per query",
+      "repository_url": "https://github.com/mcp-dir/coren_sp_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cpf_cadastral-mcp",
+      "description": "Basic registration data for an individual from a CPF: name, registration status, and date of birth. ",
+      "repository_url": "https://github.com/mcp-dir/cpf_cadastral-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cpf_cadastral_plus-mcp",
+      "description": "Extended registration data for an individual from a CPF, beyond the basics. Platform-hosted, no cred",
+      "repository_url": "https://github.com/mcp-dir/cpf_cadastral_plus-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/crcp_certificado-mcp",
+      "description": "CRCP: Central de Registros de Certificados Profissionais, official-source lookup. Platform-hosted, p",
+      "repository_url": "https://github.com/mcp-dir/crcp_certificado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/crf_go_cadastro-mcp",
+      "description": "Conselho Regional de Farmácia GO: Cadastro, official-source lookup. Platform-hosted, pay per query w",
+      "repository_url": "https://github.com/mcp-dir/crf_go_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/crf_sp_cadastro-mcp",
+      "description": "Conselho Regional de Farmácia SP: Cadastro, official-source lookup. Platform-hosted, pay per query w",
+      "repository_url": "https://github.com/mcp-dir/crf_sp_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ac_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia AC: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ac_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_al_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia AL: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_al_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_am_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia AM: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_am_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ap_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia AP: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ap_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ba_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia BA: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ba_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia: Cadastro, official-source lookup. Platform-hosted, pay per query w",
+      "repository_url": "https://github.com/mcp-dir/cro_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ce_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia CE: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ce_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_df_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia DF: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_df_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_es_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia ES: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_es_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_go_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia GO: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_go_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ma_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia MA: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ma_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_mg_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia MG: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_mg_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ms_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia MS: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ms_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.pzfreo/build123d-mcp",
+      "description": "AI-driven 3D CAD via build123d: execute, render, measure, and export geometry interactively.",
+      "repository_url": "https://github.com/pzfreo/build123d-mcp",
+      "queries": [
+        "build123d"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D003",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "ai.featureboard/featureboard",
+      "description": "Local-first project board MCP: an AI agent plans, works, verifies, and ships tickets from markdown.",
+      "repository_url": "https://github.com/valentil/featureboard-mcp",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "ai.lifeisagame/conquer-fear",
+      "description": "Fear ladders for your assistant: small exposure steps, logged attempts, real progress.",
+      "repository_url": "",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "au.com.feasibly/planning",
+      "description": "Australian planning data for ~455 councils, 7 states — clause-cited, confidence-tagged.",
+      "repository_url": "",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.featurejet/feedback-board",
+      "description": "The feedback board your AI agents work from: users vote, agents build over MCP. 22 tools.",
+      "repository_url": "",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "dev.openfeature/mcp",
+      "description": "MCP server providing OpenFeature SDK installation guides and OFREP flag evaluation",
+      "repository_url": "",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Feason-com/context",
+      "description": "Christian source evidence for AI agents, with provenance, tradition coverage, and citation checks.",
+      "repository_url": "https://github.com/Feason-com/feason-context",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.LifeAbundantly/akd-vaultpdf",
+      "description": "On-device PDF, resume and CSV tools. Files never leave your machine. Refuses rather than guessing.",
+      "repository_url": "https://github.com/LifeAbundantly/akd-vaultpdf-mcp",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.TheRoboMaster123/mcp-fea",
+      "description": "Real FEA on CAD parts: validated setups, stress, safety factor, natural frequencies",
+      "repository_url": "https://github.com/TheRoboMaster123/mcp-fea",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D038",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "io.github.azender1/safeagent",
+      "description": "Exactly-once execution guard for AI agents. Prevents duplicate payments and webhooks on retry.",
+      "repository_url": "https://github.com/azender1/SafeAgent",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.canopy-labs/featureflip",
+      "description": "Manage Featureflip feature flags, targeting and rollouts from AI agents and editors.",
+      "repository_url": "https://github.com/canopy-labs/featureflip-mcp",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/confea_crea-mcp",
+      "description": "Looks up an engineer's or agronomist's professional registration at CONFEA/CREA from the CPF and nat",
+      "repository_url": "https://github.com/mcp-dir/confea_crea-mcp",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sadri-dridi/feather-ok",
+      "description": "Feather magic-byte check, file discarded",
+      "repository_url": "https://github.com/sadri-dridi/named-mcp-utilities",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.ycjcl868/mcp-server-fear-greed",
+      "description": "An MCP server for mcp-server-fear-greed",
+      "repository_url": "https://github.com/ycjcl868/mcp-server-fear-greed",
+      "queries": [
+        "fea"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.CSOAI-ORG/meek_cfd_thermal_mcp",
+      "description": "meek-cfd-thermal-mcp - MEOK science MCP for Project AURUM. MIT-licensed.",
+      "repository_url": "https://github.com/CSOAI-ORG/meek-cfd-thermal-mcp",
+      "queries": [
+        "cfd"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cmendezs/mcp-cfdi-mx",
+      "description": "MCP server for Mexican electronic invoicing (CFDI 4.0, Pagos 2.0)",
+      "repository_url": "https://github.com/cmendezs/mcp-cfdi-mx",
+      "queries": [
+        "cfd"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "live.alpic.clouddj-ce0f8cfd/clouddj",
+      "description": "cloud_dj",
+      "repository_url": "",
+      "queries": [
+        "cfd"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "ai.scamverify/mcp",
+      "description": "AI-powered scam and threat verification for phone numbers, URLs, texts, and emails.",
+      "repository_url": "https://github.com/scamverifyai/scamverify-ai",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "au.com.cameronwilson.camfeed/camfeed",
+      "description": "Public read-only archive of journalist Cameron Wilson's work, appearances, and biography.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "au.com.trip-planner/camping-australia",
+      "description": "Search Australian campsites, caravan parks and free camps; weather, gear, road trips and booking.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "br.com.upcampo/upi",
+      "description": "A UPí, IA da upCampo: consulte a fazenda e registre chuva, abastecimento e execução de OS.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.a2awire/benchmark-campaign-incrementality-audit-v1",
+      "description": "Free to compete: testnet faucet funds everything. Measure true campaign lift.",
+      "repository_url": "https://github.com/ee324/a2awire",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.cambercloud.camber-mcp/camber-mcp-server",
+      "description": "Remote data science agents for Snowflake, Databricks & BigQuery in Claude/Cursor via MCP",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.cautellus/scam-detection",
+      "description": "Scam and phishing detection for AI agents: safe/warn/danger verdicts for URLs and messages.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.dcamethod/dca-tools",
+      "description": "Dollar-cost-averaging backtests on real historical data for crypto, stocks and commodities.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.diggercamp/music-similarity",
+      "description": "Find independent music by how it sounds: similar tracks and playlists from a track link.",
+      "repository_url": "https://github.com/tommasosavorana/diggercamp-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.jacobcampbellrealtor/jacobcampbellrealtor",
+      "description": "Read-only server for jacobcampbellrealtor.com: licensee, service area, referrals, site search.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "com.tellseed/campaigns",
+      "description": "Create surveys, feedback and classification campaigns. Collect human answers and export results.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "eu.ansvar/cambodian-law-mcp",
+      "description": "Cambodia legislation via MCP -- full-text search across statutes and provisions",
+      "repository_url": "https://github.com/Ansvar-Systems/cambodian-law-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "eu.ansvar/cameroonian-law-mcp",
+      "description": "Cameroon legislation via MCP -- full-text search across statutes and provisions",
+      "repository_url": "https://github.com/Ansvar-Systems/cameroonian-law-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "fit.occam/occam",
+      "description": "Finds the simplest equation consistent with your data. SINDy and PySR symbolic regression via MCP.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.campaignstack/campaignstack",
+      "description": "Run B2B outreach from your AI agent: 250+ tools for campaigns, leads, LinkedIn and email workflows.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.CSOAI-ORG/scam-detector-mcp",
+      "description": "Scam Detector MCP Server by MEOK AI Labs",
+      "repository_url": "https://github.com/CSOAI-ORG/scam-detector-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Evozim/driver-fatigue-camera-mcp",
+      "description": "Premium agentic endpoint for driver-fatigue-camera-mcp.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Gabothefounder/scanscam-integrity",
+      "description": "Independent agent preflight: verify change, mandates, evidence, and exact execution.",
+      "repository_url": "https://github.com/Gabothefounder/scanscam",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.JCrossman/open-state-camping",
+      "description": "Find and prepare Parks Canada reservations while keeping the citizen in control.",
+      "repository_url": "https://github.com/JCrossman/can-fed-camp-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Sapientropic/aippocampus",
+      "description": "Local-first, source-backed continuity for AI agents via stdio MCP.",
+      "repository_url": "https://github.com/Sapientropic/AIppocampus",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.Wxt-ai/campaign-budget-forecaster",
+      "description": "Forecast a scenario amount",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.ZLeventer/linkedin-campaign-manager-mcp",
+      "description": "MCP server for LinkedIn Ads — 19 read-only tools for campaigns, performance, and Lead Gen Forms.",
+      "repository_url": "https://github.com/ZLeventer/linkedin-campaign-manager-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.acamolese/google-search-console-mcp",
+      "description": "Google Search Console: SEO audits, performance queries, URL inspection, indexing checks.",
+      "repository_url": "https://github.com/acamolese/google-search-console-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.alejooroncoy/campus-cli",
+      "description": "Unofficial Blackboard Learn (LMS) MCP for students: courses, assignments, grades, materials.",
+      "repository_url": "https://github.com/alejooroncoy/campus-cli",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.baixianger/camoufox-mcp",
+      "description": "Anti-detection browser automation with Camoufox - stealth Firefox for web scraping",
+      "repository_url": "https://github.com/baixianger/camoufox-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.brocamp/mcp",
+      "description": "Brototype MCP Hub — Query Brocamp Data",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.bzsasson/livetrafficcam-mcp",
+      "description": "Live US traffic cameras from state DOT feeds with verified live status, via livetrafficcam.com",
+      "repository_url": "https://github.com/bzsasson/livetrafficcam-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cambriannetwork/cambrian-api",
+      "description": "Cambrian API MCP: Solana and EVM DeFi data, Deep42 social intelligence, and perpetual risk analysis.",
+      "repository_url": "https://github.com/cambriannetwork/cambrian-api-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cameron-creations/numberbroom-mcp",
+      "description": "Verify US phone numbers: line type, carrier, and TCPA litigator status via the NumberBroom API.",
+      "repository_url": "https://github.com/cameron-creations/numberbroom-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cameroncooke/XcodeBuildMCP",
+      "description": "XcodeBuildMCP provides tools for Xcode project management, simulator management, and app utilities.",
+      "repository_url": "https://github.com/cameroncooke/XcodeBuildMCP",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cameronrye/activitypub-mcp",
+      "description": "Read-only-by-default MCP server: let LLMs explore the Fediverse — Mastodon, Misskey, Pleroma.",
+      "repository_url": "https://github.com/cameronrye/activitypub-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cameronrye/gopher-mcp",
+      "description": "Browse Gopher and Gemini resources safely: SSRF protection, TLS/TOFU, structured JSON output.",
+      "repository_url": "https://github.com/cameronrye/gopher-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cameronrye/openzim-mcp",
+      "description": "Offline MCP access to ZIM knowledge archives — Wikipedia, Wiktionary, Stack Exchange, Kiwix.",
+      "repository_url": "https://github.com/cameronrye/openzim-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.camgitt/memoir",
+      "description": "Persistent memory for AI coding tools via MCP. Remembers across sessions and machines.",
+      "repository_url": "https://github.com/camgitt/memoir",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.camlowe/mcp-server-reddit-ads",
+      "description": "Reddit Ads API v3: campaigns, ad groups, ads, reports, plus working writes with safety tiers.",
+      "repository_url": "https://github.com/camlowe/mcp-server-reddit-ads",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cammac-creator/ibanforge",
+      "description": "Pre-payout IBAN screening for AI agents: validation, sanctions, Swiss clearing, risk scoring",
+      "repository_url": "https://github.com/cammac-creator/ibanforge",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.cammac-creator/openswissdata",
+      "description": "Swiss customs (TARES), FINMA registry & NOGA/NACE/ISIC classifications. 9 MCP tools, free tier.",
+      "repository_url": "https://github.com/cammac-creator/openswissdata",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.carrasquelalex1/hipocampo",
+      "description": "Bilingual dual memory with SSC for AI agents. Semantic search, embeddings, profiles.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.ccamborde/klaren-mcp",
+      "description": "Search French companies, directors and associations (INPI, INSEE, RNA).",
+      "repository_url": "https://github.com/ccamborde/klaren.fr",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.chrischall/infinitecampus-mcp",
+      "description": "Infinite Campus (Campus Parent) for Claude — grades, attendance, assignments, messages",
+      "repository_url": "https://github.com/chrischall/infinitecampus-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.daedalus/mcp-delonghi-ecam",
+      "description": "MCP server for DeLonghi ECAM espresso coffee machines via local network",
+      "repository_url": "https://github.com/daedalus/mcp-delonghi-ecam",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.eduair94/cambio-uruguay",
+      "description": "Live buy/sell rates from 40+ Uruguayan exchange houses: best rates, conversion, history and news.",
+      "repository_url": "https://github.com/eduair94/cambio-uruguay.git",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.jarmstrong158/cambium",
+      "description": "Knowledge-lifecycle MCP: turn agent work into memory, recall it across projects, promote to org.",
+      "repository_url": "https://github.com/jarmstrong158/cambium",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.jarmstrong158/cambium-remote",
+      "description": "Cloudflare Worker for read-only recall of cambium knowledge. MCP 2026-07-28, dual-era.",
+      "repository_url": "https://github.com/jarmstrong158/cambium-remote",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.junoventures/campobelo-sampa-br",
+      "description": "Campo Belo — neighborhood directory: local places, events, menus, offers, and services.",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.lorenzo-cambiaghi/lynx",
+      "description": "LynxMCP: 100% local MCP server for the code questions grep can't answer: call graph, hybrid search",
+      "repository_url": "https://github.com/lorenzo-cambiaghi/LynxMCP",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/ecrvsp_docs_emplacamento-mcp",
+      "description": "ECRVSP Documentos: Primeiro Emplacamento, official-source lookup. Platform-hosted, pay per query wit",
+      "repository_url": "https://github.com/mcp-dir/ecrvsp_docs_emplacamento-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/ecrvsp_docs_emplacamento_lista-mcp",
+      "description": "ECRVSP Documentos: Placas de Primeiro Emplacamento, official-source lookup. Platform-hosted, pay per",
+      "repository_url": "https://github.com/mcp-dir/ecrvsp_docs_emplacamento_lista-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/mpt_sp_campinas_cnf-mcp",
+      "description": "MPT SP Campinas: Certificate Negativa de Feitos, official-source lookup. Platform-hosted, pay per qu",
+      "repository_url": "https://github.com/mcp-dir/mpt_sp_campinas_cnf-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_ba_camacari_cnd-mcp",
+      "description": "Prefeitura BA Camaçari: Clearance Certificate (Debts), official-source lookup. Platform-hosted, pay ",
+      "repository_url": "https://github.com/mcp-dir/pref_ba_camacari_cnd-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_go_campos_verdes_cnd-mcp",
+      "description": "Prefeitura GO Campos Verdes: Clearance Certificate (Debts), official-source lookup. Platform-hosted,",
+      "repository_url": "https://github.com/mcp-dir/pref_go_campos_verdes_cnd-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_ms_campo_grande_nfs-mcp",
+      "description": "Prefeitura MS Campo Grande: NFS-e (Nota Fiscal Eletrônica de Serviços), official-source lookup. Plat",
+      "repository_url": "https://github.com/mcp-dir/pref_ms_campo_grande_nfs-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_pb_campina_grande_multas-mcp",
+      "description": "Prefeitura PB Campina Grande: Multas, official-source lookup. Platform-hosted, pay per query with pr",
+      "repository_url": "https://github.com/mcp-dir/pref_pb_campina_grande_multas-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_sp_campinas_cnd-mcp",
+      "description": "Prefeitura SP Campinas: Clearance Certificate (Debts), official-source lookup. Platform-hosted, pay ",
+      "repository_url": "https://github.com/mcp-dir/pref_sp_campinas_cnd-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_sp_campinas_cpom-mcp",
+      "description": "Prefeitura SP Campinas: CPOM, official-source lookup. Platform-hosted, pay per query with prepaid cr",
+      "repository_url": "https://github.com/mcp-dir/pref_sp_campinas_cpom-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_sp_campinas_iptu-mcp",
+      "description": "Prefeitura SP Campinas: Parcelas IPTU, official-source lookup. Platform-hosted, pay per query with p",
+      "repository_url": "https://github.com/mcp-dir/pref_sp_campinas_iptu-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_mt_primeiro_emplacamento-mcp",
+      "description": "SEFAZ MT: Primeiro Emplacamento, official-source lookup. Platform-hosted, pay per query with prepaid",
+      "repository_url": "https://github.com/mcp-dir/sefaz_mt_primeiro_emplacamento-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.olaurendeau/mcp-camptocamp",
+      "description": "API Camptocamp.org : itinéraires alpins, sommets et points de passage.",
+      "repository_url": "https://github.com/olaurendeau/mcp-camptocamp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.pipeworx-io/activecampaign",
+      "description": "ActiveCampaign MCP Pack — email marketing + CRM (API v3).",
+      "repository_url": "https://github.com/pipeworx-io/mcp-activecampaign",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.pipeworx-io/data-cambridge",
+      "description": "DataCambridge MCP — Cambridge open data (data.cambridgema.gov, Socrata SODA API).",
+      "repository_url": "https://github.com/pipeworx-io/mcp-data-cambridge",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.pmarmaroli/vocametrix-mcp",
+      "description": "Clinical voice analysis MCP server — AVQI, DSI, jitter/shimmer, pronunciation assessment, and more.",
+      "repository_url": "https://github.com/pmarmaroli/vocametrix-mcp.git",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.publicaml/mcp-server",
+      "description": "AML screening for crypto addresses: risk, sanctions, fund tracing and counterparties.",
+      "repository_url": "https://github.com/publicaml/mcp-server",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.re-fagiano/bloodyhopes-campfire",
+      "description": "Read historical ballads, inspect critical Voices, and publish evidence-based research.",
+      "repository_url": "https://github.com/re-fagiano/bloodyhopes-site",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sadri-dridi/camel-n",
+      "description": "camelCase hump count, value discarded",
+      "repository_url": "https://github.com/sadri-dridi/named-mcp-utilities",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sadri-dridi/camel-ok",
+      "description": "camelCase shape, text discarded",
+      "repository_url": "https://github.com/sadri-dridi/named-mcp-utilities",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.saloprj/publicaml",
+      "description": "Free crypto AML/KYT screening for BTC/ETH/BSC/TRON — risk score, sanctions, source of funds.",
+      "repository_url": "https://github.com/saloprj/publicaml-examples",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sanchirico/camacho-mcp",
+      "description": "Persistent tmux terminal for AI agents — real-time spectating, SSH host-group dispatch.",
+      "repository_url": "https://github.com/sanchirico/camacho-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sebastienrousseau/camt-exceptions",
+      "description": "Generate + XSD-validate ISO 20022 E&I camt messages (camt.056 cancellation, camt.029 resolution).",
+      "repository_url": "https://github.com/sebastienrousseau/camt-exceptions",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sebastienrousseau/camt053-mcp",
+      "description": "MCP server for ISO 20022 camt.053 bank-to-customer statement parsing and reconciliation.",
+      "repository_url": "https://github.com/sebastienrousseau/camt053-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.shughestr/vancam-mcp",
+      "description": "Search 1M+ live traffic cameras worldwide by bounds, radius, route, or nearest point.",
+      "repository_url": "https://github.com/shughestr/vancam-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.smijo-geek/scamcheck-mcp-server",
+      "description": "Scan suspicious messages, URLs, and text for scams with AI. Free tier - no API key required.",
+      "repository_url": "https://github.com/smijo-geek/scamcheck-mcp-server",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.xiaojiou176-open/campus-copilot-mcp",
+      "description": "Read-only MCP server for the local Campus Copilot BFF and imported workspace snapshots.",
+      "repository_url": "https://github.com/xiaojiou176-open/campus-copilot",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "moda.ai/remote-camera",
+      "description": "Capture photos remotely from mobile devices via S3-backed upload URLs",
+      "repository_url": "",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "travel.ourway/camino-de-santiago",
+      "description": "Plan, quote & book the Camino de Santiago: routes, stages, live hotels, one package price, FAQ.",
+      "repository_url": "https://github.com/contactoourway-art/ourway-mcp",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "uk.co.campervanconversioncost/site",
+      "description": "Campervan Conversion Cost: the site's own MCP server — enquiry (enquiry = a human handoff, not a...",
+      "repository_url": "https://github.com/joeetdev/venture-estate",
+      "queries": [
+        "cam"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.BentleySystems/openstaad-mcp",
+      "description": "MCP server for Bentley STAAD.Pro via the OpenSTAAD API",
+      "repository_url": "https://github.com/BentleySystems/openstaad-mcp",
+      "queries": [
+        "staad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": "D041",
+      "disposition": "documented_candidate"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_mt_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia MT: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_mt_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_pa_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia PA: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_pa_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_pb_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia PB: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_pb_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_pe_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia PE: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_pe_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_pi_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia PI: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_pi_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_pr_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia PR: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_pr_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_rj_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia RJ: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_rj_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_rn_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia RN: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_rn_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_ro_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia RO: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_ro_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_rr_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia RR: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_rr_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_rs_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia RS: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_rs_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_sc_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia SC: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_sc_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_se_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia SE: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_se_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_sp_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia SP: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_sp_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/cro_to_cadastro-mcp",
+      "description": "Conselho Regional de Odontologia TO: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/cro_to_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/ecrvsp_docs_dados_cadastrais-mcp",
+      "description": "ECRVSP Documentos: Alteração de Dados Cadastrais, official-source lookup. Platform-hosted, pay per q",
+      "repository_url": "https://github.com/mcp-dir/ecrvsp_docs_dados_cadastrais-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/ibama_certificado_regularidade-mcp",
+      "description": "IBAMA: Certificado de Regularidade, official-source lookup. Platform-hosted, pay per query with prep",
+      "repository_url": "https://github.com/mcp-dir/ibama_certificado_regularidade-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/jucesp_certidao_simplificada-mcp",
+      "description": "Issues the simplified certificate of a company at JUCESP. Platform-hosted, no credentials, pay per q",
+      "repository_url": "https://github.com/mcp-dir/jucesp_certidao_simplificada-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/mercado-mcp",
+      "description": "Brazilian financial market data (B3): quotes, fundamentals, dividends, REITs (FIIs), BDRs, crypto, F",
+      "repository_url": "https://github.com/mcp-dir/mercado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/mercadolivre-mcp",
+      "description": "Mercado Livre (Latin America's largest marketplace) via the official API, seller profile and reputat",
+      "repository_url": "https://github.com/mcp-dir/mercadolivre-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/mercadopago-mcp",
+      "description": "Connect your Mercado Pago account to AI via Brazil's Open Finance: balances, statements, cards, inve",
+      "repository_url": "https://github.com/mcp-dir/mercadopago-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/mpt_cnf_unificada-mcp",
+      "description": "MPT Unificada: Certificate Negativa de Feitos, official-source lookup. Platform-hosted, pay per quer",
+      "repository_url": "https://github.com/mcp-dir/mpt_cnf_unificada-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_rj_rio_janeiro_cert_cad-mcp",
+      "description": "Prefeitura RJ Rio de Janeiro: Certificate de Elementos Cadastrais - IPTU, official-source lookup. Pl",
+      "repository_url": "https://github.com/mcp-dir/pref_rj_rio_janeiro_cert_cad-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/pref_sp_sao_paulo_cadin-mcp",
+      "description": "Prefeitura SP São Paulo: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid ",
+      "repository_url": "https://github.com/mcp-dir/pref_sp_sao_paulo_cadin-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/processos_judiciais_simplificada-mcp",
+      "description": "Simplified lookup of a person's or company's lawsuits from the CPF or CNPJ. Platform-hosted, no cred",
+      "repository_url": "https://github.com/mcp-dir/processos_judiciais_simplificada-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/receita_federal_sal_cadastro-mcp",
+      "description": "Receita Federal Sistema de Acréscimos Legais (SAL): Dados Cadastrais, official-source lookup. Platfo",
+      "repository_url": "https://github.com/mcp-dir/receita_federal_sal_cadastro-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_am_cadastro_veiculo-mcp",
+      "description": "SEFAZ AM: Cadastro de Vehicle (Outra UF), official-source lookup. Platform-hosted, pay per query wit",
+      "repository_url": "https://github.com/mcp-dir/sefaz_am_cadastro_veiculo-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_ba_ipva_notificado-mcp",
+      "description": "SEFAZ BA: IPVA Notificado, official-source lookup. Platform-hosted, pay per query with prepaid credi",
+      "repository_url": "https://github.com/mcp-dir/sefaz_ba_ipva_notificado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_cadastro_centralizado-mcp",
+      "description": "SEFAZ: Cadastro Centralizado de Contribuinte (CCC), official-source lookup. Platform-hosted, pay per",
+      "repository_url": "https://github.com/mcp-dir/sefaz_cadastro_centralizado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_mg_cadin-mcp",
+      "description": "SEFAZ MG: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/sefaz_mg_cadin-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_pr_cadin-mcp",
+      "description": "SEFAZ PR: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/sefaz_pr_cadin-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_rs_cadin_cfil-mcp",
+      "description": "SEFAZ RS: CADIN e CFIL, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/sefaz_rs_cadin_cfil-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/sefaz_sp_cadin-mcp",
+      "description": "SEFAZ SP: Cadin, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+      "repository_url": "https://github.com/mcp-dir/sefaz_sp_cadin-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/situacao_cadastral-mcp",
+      "description": "Check the registration status of a Brazilian CPF against official sources (name, status, birthdate, ",
+      "repository_url": "https://github.com/mcp-dir/situacao_cadastral-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/trabalho_forcado-mcp",
+      "description": "Checks whether an employer is on the forced/slave-like labor list from the CPF or CNPJ. Platform-hos",
+      "repository_url": "https://github.com/mcp-dir/trabalho_forcado-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/transparencia_indicadores_pf-mcp",
+      "description": "Indicators for an individual in the Federal Transparency Portal from the CPF and NIS. Platform-hoste",
+      "repository_url": "https://github.com/mcp-dir/transparencia_indicadores_pf-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/transparencia_indicadores_pj-mcp",
+      "description": "Indicators for a company in the Federal Transparency Portal from the CNPJ, such as sanctions, agreem",
+      "repository_url": "https://github.com/mcp-dir/transparencia_indicadores_pj-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/tribunal_tjsp_eproc_unificada-mcp",
+      "description": "Tribunal TJSP: Lookup Processual Unificada (Eproc), official-source lookup. Platform-hosted, pay per",
+      "repository_url": "https://github.com/mcp-dir/tribunal_tjsp_eproc_unificada-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.mcp-dir/tribunal_trf_cert_unificada-mcp",
+      "description": "Tribunal TRF: Certificate Unificada da Justiça Federal, official-source lookup. Platform-hosted, pay",
+      "repository_url": "https://github.com/mcp-dir/tribunal_trf_cert_unificada-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.oaslananka/kicad-mcp-pro",
+      "description": "Production-grade MCP server for KiCad EDA—PCB design, DRC, simulation, BOM, DFM, and manufacturing.",
+      "repository_url": "https://github.com/oaslananka/kicad-mcp-pro",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.paulovitorti/mercado-libre-monitor-precios",
+      "description": "Monitorea precio y stock en Mercado Libre y avisa cuando baja o vuelve a haber stock.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.paulovitorti/mercado-livre-monitor-preco",
+      "description": "Monitora preço e estoque no Mercado Livre e alerta quando cai ou volta a ter estoque.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.richardofortune/cadloop-openscad",
+      "description": "Compile OpenSCAD, read computed values, preview and measure the mesh, without a GUI.",
+      "repository_url": "https://github.com/richardofortune/cadloop",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.richardofortune/cadloop-slicer",
+      "description": "Find printer profiles, check bed fit, slice to .gcode.3mf and extract the G-code.",
+      "repository_url": "https://github.com/richardofortune/cadloop",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sadri-dridi/decade",
+      "description": "UTC decade start year",
+      "repository_url": "https://github.com/sadri-dridi/named-mcp-utilities",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sadri-dridi/fx-cad",
+      "description": "ISO 4217 currency CAD.",
+      "repository_url": "https://github.com/sadri-dridi/named-mcp-utilities",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.samymassoud/macadress",
+      "description": "MAC address and OUI vendor lookup over Model Context Protocol.",
+      "repository_url": "https://github.com/samymassoud/macadress",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.sandraschi/qcad-mcp",
+      "description": "QCAD MCP server - DXF/DWG floor plans to SVG preview + STL extrusion via MCP tools and REST API",
+      "repository_url": "https://github.com/sandraschi/qcad-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.tcador/787daily",
+      "description": "Puerto Rico news (English summaries + links) and live island conditions, read-only over MCP.",
+      "repository_url": "https://github.com/tcador/787daily-site",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.unmateria/mcp-kicad",
+      "description": "Design KiCad schematics by talking to Claude. Places parts, wires nets, runs ERC. Needs KiCad 10.",
+      "repository_url": "https://github.com/unmateria/MCP-Kicad",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.wende/cicada",
+      "description": "Code intelligence MCP server for 17+ programming languages.",
+      "repository_url": "https://github.com/wende/cicada",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.xpaysh/academic-research",
+      "description": "30+ academic research tools. Semantic Scholar, arXiv, PubMed, bioRxiv, CrossRef, IACR.",
+      "repository_url": "https://github.com/xpaysh/mcp-server",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.github.yousunjung84-edu/academyinfo",
+      "description": "Compare 488 Korean universities on 17 official disclosure indicators (대학알리미). No API key.",
+      "repository_url": "https://github.com/yousunjung84-edu/academyinfo-mcp",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.inboxacademy/mcp",
+      "description": "Read and author Inbox Academy courses, lessons, and quizzes for your organizations.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "io.studiomeyer/academy",
+      "description": "The Academy curriculum as an offline MCP library. Hosted course connector adds progress.",
+      "repository_url": "https://github.com/studiomeyer-io/mcp-academy",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "net.dmytro-prototypes/cad-control-mcp-server",
+      "description": "Control AutoCAD with AI: commands, read/edit/write drawing database, AutoLISP, scripts, PDF plots.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "net.dmytro-prototypes/cadbridge-mcp-autocad",
+      "description": "Control AutoCAD with AI: commands, read/edit/write drawing database, AutoLISP, scripts, PDF plots.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "org.rrmacademy/library",
+      "description": "Search 4,130+ peer-reviewed articles on restorative reproductive medicine, with fact verification",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "site.chatgpt.cursoraikk.agent-arcade-ai/agent-arcade",
+      "description": "Create, test and play AI-native games through server-authoritative contracts.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    },
+    {
+      "name": "top.agentarcade/agent-arcade",
+      "description": "AI-only game publishing, autonomous play, live observation, replay and independent certification.",
+      "repository_url": "",
+      "queries": [
+        "cad"
+      ],
+      "catalog_matches": [],
+      "discovery_id": null,
+      "disposition": "unreviewed_registry_hit"
+    }
+  ]
+}

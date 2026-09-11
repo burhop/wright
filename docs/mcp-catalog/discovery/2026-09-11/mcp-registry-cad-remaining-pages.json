@@ -1,0 +1,1906 @@
+{
+  "query": "cad",
+  "url": "https://registry.modelcontextprotocol.io/v0.1/servers?search=cad&version=latest&limit=100&cursor=io.github.mcp-dir%2Fcro_ms_cadastro-mcp%3A0.1.0",
+  "response": {
+    "servers": [
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_mt_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia MT: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia MT: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_mt_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_mt_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:34:29.25031Z",
+            "publishedAt": "2026-08-20T06:34:29.25031Z",
+            "updatedAt": "2026-08-20T06:34:29.25031Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_pa_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia PA: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia PA: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_pa_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_pa_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:35:25.988602Z",
+            "publishedAt": "2026-08-20T06:35:25.988602Z",
+            "updatedAt": "2026-08-20T06:35:25.988602Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_pb_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia PB: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia PB: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_pb_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_pb_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:36:23.188767Z",
+            "publishedAt": "2026-08-20T06:36:23.188767Z",
+            "updatedAt": "2026-08-20T06:36:23.188767Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_pe_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia PE: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia PE: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_pe_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_pe_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:37:19.057063Z",
+            "publishedAt": "2026-08-20T06:37:19.057063Z",
+            "updatedAt": "2026-08-20T06:37:19.057063Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_pi_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia PI: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia PI: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_pi_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_pi_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:38:16.600958Z",
+            "publishedAt": "2026-08-20T06:38:16.600958Z",
+            "updatedAt": "2026-08-20T06:38:16.600958Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_pr_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia PR: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia PR: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_pr_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_pr_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:39:13.352774Z",
+            "publishedAt": "2026-08-20T06:39:13.352774Z",
+            "updatedAt": "2026-08-20T06:39:13.352774Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_rj_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia RJ: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia RJ: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_rj_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_rj_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:40:16.877554Z",
+            "publishedAt": "2026-08-20T06:40:16.877554Z",
+            "updatedAt": "2026-08-20T06:40:16.877554Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_rn_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia RN: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia RN: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_rn_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_rn_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:41:13.417899Z",
+            "publishedAt": "2026-08-20T06:41:13.417899Z",
+            "updatedAt": "2026-08-20T06:41:13.417899Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_ro_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia RO: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia RO: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_ro_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_ro_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:42:12.618125Z",
+            "publishedAt": "2026-08-20T06:42:12.618125Z",
+            "updatedAt": "2026-08-20T06:42:12.618125Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_rr_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia RR: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia RR: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_rr_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_rr_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:43:08.927574Z",
+            "publishedAt": "2026-08-20T06:43:08.927574Z",
+            "updatedAt": "2026-08-20T06:43:08.927574Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_rs_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia RS: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia RS: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_rs_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_rs_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:44:04.948489Z",
+            "publishedAt": "2026-08-20T06:44:04.948489Z",
+            "updatedAt": "2026-08-20T06:44:04.948489Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_sc_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia SC: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia SC: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_sc_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_sc_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:45:00.662972Z",
+            "publishedAt": "2026-08-20T06:45:00.662972Z",
+            "updatedAt": "2026-08-20T06:45:00.662972Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_se_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia SE: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia SE: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_se_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_se_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:45:56.864303Z",
+            "publishedAt": "2026-08-20T06:45:56.864303Z",
+            "updatedAt": "2026-08-20T06:45:56.864303Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_sp_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia SP: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia SP: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_sp_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_sp_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:46:52.262955Z",
+            "publishedAt": "2026-08-20T06:46:52.262955Z",
+            "updatedAt": "2026-08-20T06:46:52.262955Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/cro_to_cadastro-mcp",
+          "description": "Conselho Regional de Odontologia TO: Cadastro, official-source lookup. Platform-hosted, pay per quer",
+          "title": "Conselho Regional de Odontologia TO: Cadastro",
+          "repository": {
+            "url": "https://github.com/mcp-dir/cro_to_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_cro_to_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T06:47:48.143873Z",
+            "publishedAt": "2026-08-20T06:47:48.143873Z",
+            "updatedAt": "2026-08-20T06:47:48.143873Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/ecrvsp_docs_dados_cadastrais-mcp",
+          "description": "ECRVSP Documentos: Alteração de Dados Cadastrais, official-source lookup. Platform-hosted, pay per q",
+          "title": "ECRVSP Documentos: Alteração de Dados Cadastrais",
+          "repository": {
+            "url": "https://github.com/mcp-dir/ecrvsp_docs_dados_cadastrais-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_ecrvsp_docs_dados_cadastrais"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T07:13:25.994033Z",
+            "publishedAt": "2026-08-20T07:13:25.994033Z",
+            "updatedAt": "2026-08-20T07:13:25.994033Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/ibama_certificado_regularidade-mcp",
+          "description": "IBAMA: Certificado de Regularidade, official-source lookup. Platform-hosted, pay per query with prep",
+          "title": "IBAMA: Certificado de Regularidade",
+          "repository": {
+            "url": "https://github.com/mcp-dir/ibama_certificado_regularidade-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_ibama_certificado_regularidade"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T07:39:05.953208Z",
+            "publishedAt": "2026-08-20T07:39:05.953208Z",
+            "updatedAt": "2026-08-20T07:39:05.953208Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/jucesp_certidao_simplificada-mcp",
+          "description": "Issues the simplified certificate of a company at JUCESP. Platform-hosted, no credentials, pay per q",
+          "title": "JUCESP: Certidão Simplificada",
+          "repository": {
+            "url": "https://github.com/mcp-dir/jucesp_certidao_simplificada-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_jucesp_certidao_simplificada"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T02:15:20.560706Z",
+            "publishedAt": "2026-08-19T02:15:20.560706Z",
+            "updatedAt": "2026-08-19T02:15:20.560706Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/mercado-mcp",
+          "description": "Brazilian financial market data (B3): quotes, fundamentals, dividends, REITs (FIIs), BDRs, crypto, F",
+          "title": "Mercado Financeiro BR",
+          "repository": {
+            "url": "https://github.com/mcp-dir/mercado-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_mercado"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-06-10T17:22:15.565823Z",
+            "publishedAt": "2026-06-10T17:22:15.565823Z",
+            "updatedAt": "2026-06-10T17:22:15.565823Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/mercadolivre-mcp",
+          "description": "Mercado Livre (Latin America's largest marketplace) via the official API, seller profile and reputat",
+          "title": "Mercado Livre Vendedor",
+          "repository": {
+            "url": "https://github.com/mcp-dir/mercadolivre-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_mercadolivre"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-21T13:30:02.445601Z",
+            "publishedAt": "2026-08-21T13:30:02.445601Z",
+            "updatedAt": "2026-08-21T13:30:02.445601Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/mercadopago-mcp",
+          "description": "Connect your Mercado Pago account to AI via Brazil's Open Finance: balances, statements, cards, inve",
+          "title": "Mercado Pago MCP",
+          "repository": {
+            "url": "https://github.com/mcp-dir/mercadopago-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_mercadopago"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-06-11T18:08:37.333585Z",
+            "publishedAt": "2026-06-11T18:08:37.333585Z",
+            "updatedAt": "2026-06-11T18:08:37.333585Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/mpt_cnf_unificada-mcp",
+          "description": "MPT Unificada: Certificate Negativa de Feitos, official-source lookup. Platform-hosted, pay per quer",
+          "title": "MPT Unificada: Certidão Negativa de Feitos",
+          "repository": {
+            "url": "https://github.com/mcp-dir/mpt_cnf_unificada-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_mpt_cnf_unificada"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T08:05:48.886064Z",
+            "publishedAt": "2026-08-20T08:05:48.886064Z",
+            "updatedAt": "2026-08-20T08:05:48.886064Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/pref_rj_rio_janeiro_cert_cad-mcp",
+          "description": "Prefeitura RJ Rio de Janeiro: Certificate de Elementos Cadastrais - IPTU, official-source lookup. Pl",
+          "title": "Prefeitura RJ Rio de Janeiro: Certidão de Elementos Cadastrais - IPTU",
+          "repository": {
+            "url": "https://github.com/mcp-dir/pref_rj_rio_janeiro_cert_cad-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_pref_rj_rio_janeiro_cert_cad"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T04:31:15.684559Z",
+            "publishedAt": "2026-08-20T04:31:15.684559Z",
+            "updatedAt": "2026-08-20T04:31:15.684559Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/pref_sp_sao_paulo_cadin-mcp",
+          "description": "Prefeitura SP São Paulo: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid ",
+          "title": "Prefeitura SP São Paulo: CADIN",
+          "repository": {
+            "url": "https://github.com/mcp-dir/pref_sp_sao_paulo_cadin-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_pref_sp_sao_paulo_cadin"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-20T04:42:34.591383Z",
+            "publishedAt": "2026-08-20T04:42:34.591383Z",
+            "updatedAt": "2026-08-20T04:42:34.591383Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/processos_judiciais_simplificada-mcp",
+          "description": "Simplified lookup of a person's or company's lawsuits from the CPF or CNPJ. Platform-hosted, no cred",
+          "title": "Processos Judiciais (Simplificada)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/processos_judiciais_simplificada-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_processos_judiciais_simplificada"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-15T20:44:42.564758Z",
+            "publishedAt": "2026-08-15T20:44:42.564758Z",
+            "updatedAt": "2026-08-15T20:44:42.564758Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/receita_federal_sal_cadastro-mcp",
+          "description": "Receita Federal Sistema de Acréscimos Legais (SAL): Dados Cadastrais, official-source lookup. Platfo",
+          "title": "Receita Federal Sistema de Acréscimos Legais (SAL): Dados Cadastrais",
+          "repository": {
+            "url": "https://github.com/mcp-dir/receita_federal_sal_cadastro-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_receita_federal_sal_cadastro"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T03:57:59.323596Z",
+            "publishedAt": "2026-08-19T03:57:59.323596Z",
+            "updatedAt": "2026-08-19T03:57:59.323596Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_am_cadastro_veiculo-mcp",
+          "description": "SEFAZ AM: Cadastro de Vehicle (Outra UF), official-source lookup. Platform-hosted, pay per query wit",
+          "title": "SEFAZ AM: Cadastro de Veículo (Outra UF)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_am_cadastro_veiculo-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_am_cadastro_veiculo"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:10:35.564746Z",
+            "publishedAt": "2026-08-19T17:10:35.564746Z",
+            "updatedAt": "2026-08-19T17:10:35.564746Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_ba_ipva_notificado-mcp",
+          "description": "SEFAZ BA: IPVA Notificado, official-source lookup. Platform-hosted, pay per query with prepaid credi",
+          "title": "SEFAZ BA: IPVA Notificado",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_ba_ipva_notificado-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_ba_ipva_notificado"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:14:15.97987Z",
+            "publishedAt": "2026-08-19T17:14:15.97987Z",
+            "updatedAt": "2026-08-19T17:14:15.97987Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_cadastro_centralizado-mcp",
+          "description": "SEFAZ: Cadastro Centralizado de Contribuinte (CCC), official-source lookup. Platform-hosted, pay per",
+          "title": "SEFAZ: Cadastro Centralizado de Contribuinte (CCC)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_cadastro_centralizado-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_cadastro_centralizado"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:15:12.289698Z",
+            "publishedAt": "2026-08-19T17:15:12.289698Z",
+            "updatedAt": "2026-08-19T17:15:12.289698Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_mg_cadin-mcp",
+          "description": "SEFAZ MG: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+          "title": "SEFAZ MG: CADIN",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_mg_cadin-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_mg_cadin"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:23:43.843412Z",
+            "publishedAt": "2026-08-19T17:23:43.843412Z",
+            "updatedAt": "2026-08-19T17:23:43.843412Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_pr_cadin-mcp",
+          "description": "SEFAZ PR: CADIN, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+          "title": "SEFAZ PR: CADIN",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_pr_cadin-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_pr_cadin"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:35:15.805434Z",
+            "publishedAt": "2026-08-19T17:35:15.805434Z",
+            "updatedAt": "2026-08-19T17:35:15.805434Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_rs_cadin_cfil-mcp",
+          "description": "SEFAZ RS: CADIN e CFIL, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+          "title": "SEFAZ RS: CADIN e CFIL",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_rs_cadin_cfil-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_rs_cadin_cfil"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:41:33.082095Z",
+            "publishedAt": "2026-08-19T17:41:33.082095Z",
+            "updatedAt": "2026-08-19T17:41:33.082095Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/sefaz_sp_cadin-mcp",
+          "description": "SEFAZ SP: Cadin, official-source lookup. Platform-hosted, pay per query with prepaid credit.",
+          "title": "SEFAZ SP: Cadin",
+          "repository": {
+            "url": "https://github.com/mcp-dir/sefaz_sp_cadin-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_sefaz_sp_cadin"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T17:45:15.448116Z",
+            "publishedAt": "2026-08-19T17:45:15.448116Z",
+            "updatedAt": "2026-08-19T17:45:15.448116Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/situacao_cadastral-mcp",
+          "description": "Check the registration status of a Brazilian CPF against official sources (name, status, birthdate, ",
+          "title": "Situação Cadastral",
+          "repository": {
+            "url": "https://github.com/mcp-dir/situacao_cadastral-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_situacao_cadastral"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-21T13:34:11.301799Z",
+            "publishedAt": "2026-08-21T13:34:11.301799Z",
+            "updatedAt": "2026-08-21T13:34:11.301799Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/trabalho_forcado-mcp",
+          "description": "Checks whether an employer is on the forced/slave-like labor list from the CPF or CNPJ. Platform-hos",
+          "title": "Trabalho Forçado (Lista Suja)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/trabalho_forcado-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_trabalho_forcado"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-15T20:54:35.24891Z",
+            "publishedAt": "2026-08-15T20:54:35.24891Z",
+            "updatedAt": "2026-08-15T20:54:35.24891Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/transparencia_indicadores_pf-mcp",
+          "description": "Indicators for an individual in the Federal Transparency Portal from the CPF and NIS. Platform-hoste",
+          "title": "Indicadores PF (Transparência)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/transparencia_indicadores_pf-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_transparencia_indicadores_pf"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-15T20:42:09.744975Z",
+            "publishedAt": "2026-08-15T20:42:09.744975Z",
+            "updatedAt": "2026-08-15T20:42:09.744975Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/transparencia_indicadores_pj-mcp",
+          "description": "Indicators for a company in the Federal Transparency Portal from the CNPJ, such as sanctions, agreem",
+          "title": "Indicadores PJ (Transparência)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/transparencia_indicadores_pj-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_transparencia_indicadores_pj"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-15T20:42:25.496021Z",
+            "publishedAt": "2026-08-15T20:42:25.496021Z",
+            "updatedAt": "2026-08-15T20:42:25.496021Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/tribunal_tjsp_eproc_unificada-mcp",
+          "description": "Tribunal TJSP: Lookup Processual Unificada (Eproc), official-source lookup. Platform-hosted, pay per",
+          "title": "Tribunal TJSP: Consulta Processual Unificada (Eproc)",
+          "repository": {
+            "url": "https://github.com/mcp-dir/tribunal_tjsp_eproc_unificada-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_tribunal_tjsp_eproc_unificada"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T13:11:43.071966Z",
+            "publishedAt": "2026-08-19T13:11:43.071966Z",
+            "updatedAt": "2026-08-19T13:11:43.071966Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.mcp-dir/tribunal_trf_cert_unificada-mcp",
+          "description": "Tribunal TRF: Certificate Unificada da Justiça Federal, official-source lookup. Platform-hosted, pay",
+          "title": "Tribunal TRF: Certidão Unificada da Justiça Federal",
+          "repository": {
+            "url": "https://github.com/mcp-dir/tribunal_trf_cert_unificada-mcp",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://api.mcp.ai/p_tribunal_trf_cert_unificada"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-19T13:14:39.600502Z",
+            "publishedAt": "2026-08-19T13:14:39.600502Z",
+            "updatedAt": "2026-08-19T13:14:39.600502Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.oaslananka/kicad-mcp-pro",
+          "description": "Production-grade MCP server for KiCad EDA—PCB design, DRC, simulation, BOM, DFM, and manufacturing.",
+          "title": "KiCad MCP Pro",
+          "repository": {
+            "url": "https://github.com/oaslananka/kicad-mcp-pro",
+            "source": "github",
+            "id": "R_kgDOStXTag"
+          },
+          "version": "3.34.5",
+          "websiteUrl": "https://oaslananka.github.io/kicad-mcp-pro",
+          "icons": [
+            {
+              "src": "https://oaslananka.github.io/kicad-mcp-pro/assets/icon-512.png",
+              "mimeType": "image/png",
+              "sizes": [
+                "512x512"
+              ]
+            },
+            {
+              "src": "https://oaslananka.github.io/kicad-mcp-pro/assets/icon.svg",
+              "mimeType": "image/svg+xml",
+              "sizes": [
+                "any"
+              ]
+            }
+          ],
+          "packages": [
+            {
+              "registryType": "pypi",
+              "registryBaseUrl": "https://pypi.org",
+              "identifier": "kicad-mcp-pro",
+              "version": "3.34.5",
+              "runtimeHint": "uvx",
+              "transport": {
+                "type": "stdio"
+              },
+              "runtimeArguments": [
+                {
+                  "value": "kicad-mcp-pro",
+                  "type": "positional"
+                }
+              ],
+              "packageArguments": [
+                {
+                  "description": "Transport protocol (stdio or streamable-http). Legacy SSE disabled by default.",
+                  "default": "stdio",
+                  "type": "named",
+                  "name": "--transport"
+                },
+                {
+                  "description": "Host to bind the HTTP server to",
+                  "default": "127.0.0.1",
+                  "type": "named",
+                  "name": "--host"
+                },
+                {
+                  "description": "Port to bind the HTTP server to",
+                  "default": "3334",
+                  "type": "named",
+                  "name": "--port"
+                }
+              ],
+              "environmentVariables": [
+                {
+                  "description": "Logging level (DEBUG, INFO, WARNING, ERROR)",
+                  "default": "INFO",
+                  "name": "KICAD_MCP_LOG_LEVEL"
+                }
+              ]
+            },
+            {
+              "registryType": "npm",
+              "registryBaseUrl": "https://registry.npmjs.org",
+              "identifier": "kicad-mcp-pro",
+              "version": "3.34.5",
+              "runtimeHint": "npx",
+              "transport": {
+                "type": "stdio"
+              },
+              "runtimeArguments": [
+                {
+                  "value": "-y",
+                  "type": "positional"
+                }
+              ],
+              "environmentVariables": [
+                {
+                  "description": "Override the Python package version pinned by the npm wrapper",
+                  "name": "KICAD_MCP_PRO_PYPI_VERSION"
+                }
+              ]
+            },
+            {
+              "registryType": "oci",
+              "identifier": "ghcr.io/oaslananka/kicad-mcp-pro:3.34.5",
+              "runtimeHint": "docker",
+              "transport": {
+                "type": "stdio"
+              },
+              "runtimeArguments": [
+                {
+                  "value": "run",
+                  "type": "positional"
+                },
+                {
+                  "value": "--rm",
+                  "type": "positional"
+                },
+                {
+                  "value": "-i",
+                  "type": "positional"
+                }
+              ],
+              "packageArguments": [
+                {
+                  "description": "Docker image to run",
+                  "isRequired": true,
+                  "default": "ghcr.io/oaslananka/kicad-mcp-pro:3.34.5",
+                  "type": "positional",
+                  "valueHint": "image"
+                }
+              ]
+            }
+          ],
+          "_meta": {}
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-11T10:47:45.391184Z",
+            "publishedAt": "2026-09-11T10:47:45.391184Z",
+            "updatedAt": "2026-09-11T10:47:45.391184Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.paulovitorti/mercado-libre-monitor-precios",
+          "description": "Monitorea precio y stock en Mercado Libre y avisa cuando baja o vuelve a haber stock.",
+          "title": "Monitor de Precios Mercado Libre — Alerta de Baja y Stock",
+          "version": "1.0.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.apify.com?tools=paulovitor18/mercado-libre-monitor-precios"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-07T18:40:22.708193Z",
+            "publishedAt": "2026-09-07T18:40:22.708193Z",
+            "updatedAt": "2026-09-07T18:40:22.708193Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.paulovitorti/mercado-livre-monitor-preco",
+          "description": "Monitora preço e estoque no Mercado Livre e alerta quando cai ou volta a ter estoque.",
+          "title": "Monitor de Preço Mercado Livre — Alerta de Queda e Estoque",
+          "version": "1.0.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.apify.com?tools=paulovitor18/mercado-livre-monitor-preco"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-07T18:40:21.779669Z",
+            "publishedAt": "2026-09-07T18:40:21.779669Z",
+            "updatedAt": "2026-09-07T18:40:21.779669Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.richardofortune/cadloop-openscad",
+          "description": "Compile OpenSCAD, read computed values, preview and measure the mesh, without a GUI.",
+          "title": "cadloop OpenSCAD",
+          "repository": {
+            "url": "https://github.com/richardofortune/cadloop",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "websiteUrl": "https://github.com/richardofortune/cadloop",
+          "packages": [
+            {
+              "registryType": "pypi",
+              "identifier": "cadloop",
+              "version": "0.1.0",
+              "runtimeHint": "uvx",
+              "transport": {
+                "type": "stdio"
+              },
+              "runtimeArguments": [
+                {
+                  "value": "cadloop",
+                  "type": "named",
+                  "name": "--from"
+                },
+                {
+                  "value": "cadloop-openscad",
+                  "type": "positional"
+                }
+              ],
+              "environmentVariables": [
+                {
+                  "description": "The only directory this server reads and writes. Defaults to ~/cad.",
+                  "name": "OPENSCAD_WORKSPACE"
+                },
+                {
+                  "description": "Path to the openscad binary. Auto-detected from PATH and the usual install locations if unset.",
+                  "name": "OPENSCAD_BIN"
+                },
+                {
+                  "description": "Seconds before a run is killed. Defaults to 300.",
+                  "name": "OPENSCAD_TIMEOUT"
+                }
+              ]
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-07-27T23:47:24.949433Z",
+            "publishedAt": "2026-07-27T23:47:24.949433Z",
+            "updatedAt": "2026-07-27T23:47:24.949433Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.richardofortune/cadloop-slicer",
+          "description": "Find printer profiles, check bed fit, slice to .gcode.3mf and extract the G-code.",
+          "title": "cadloop Slicer",
+          "repository": {
+            "url": "https://github.com/richardofortune/cadloop",
+            "source": "github"
+          },
+          "version": "0.1.0",
+          "websiteUrl": "https://github.com/richardofortune/cadloop",
+          "packages": [
+            {
+              "registryType": "pypi",
+              "identifier": "cadloop",
+              "version": "0.1.0",
+              "runtimeHint": "uvx",
+              "transport": {
+                "type": "stdio"
+              },
+              "runtimeArguments": [
+                {
+                  "value": "cadloop",
+                  "type": "named",
+                  "name": "--from"
+                },
+                {
+                  "value": "cadloop-slicer",
+                  "type": "positional"
+                }
+              ],
+              "environmentVariables": [
+                {
+                  "description": "The only directory this server reads and writes. Defaults to ~/cad.",
+                  "name": "SLICER_WORKSPACE"
+                },
+                {
+                  "description": "Path to the slicer binary. Auto-detected if unset. Creality Print's CLI does not work headless on macOS; prefer OrcaSlicer, Bambu Studio or ElegooSlicer there.",
+                  "name": "SLICER_BIN"
+                },
+                {
+                  "description": "Extra profile roots, os.pathsep separated. Added to the auto-detected roots rather than replacing them.",
+                  "name": "SLICER_PROFILE_DIRS"
+                },
+                {
+                  "description": "Seconds before a slice is killed. Defaults to 600.",
+                  "name": "SLICER_TIMEOUT"
+                }
+              ]
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-07-27T23:47:31.766071Z",
+            "publishedAt": "2026-07-27T23:47:31.766071Z",
+            "updatedAt": "2026-07-27T23:47:31.766071Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.sadri-dridi/decade",
+          "description": "UTC decade start year",
+          "title": "UTC decade start year",
+          "repository": {
+            "url": "https://github.com/sadri-dridi/named-mcp-utilities",
+            "source": "github"
+          },
+          "version": "1.0.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://agent-observatory-sensor.nolimit-observatory.workers.dev/s/decade/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-11T02:50:33.266597Z",
+            "publishedAt": "2026-09-11T02:50:33.266597Z",
+            "updatedAt": "2026-09-11T02:50:33.266597Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.sadri-dridi/fx-cad",
+          "description": "ISO 4217 currency CAD.",
+          "title": "Currency CAD",
+          "repository": {
+            "url": "https://github.com/sadri-dridi/named-mcp-utilities",
+            "source": "github"
+          },
+          "version": "1.0.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://agent-observatory-sensor.nolimit-observatory.workers.dev/s/fx-cad/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-09T01:22:30.951747Z",
+            "publishedAt": "2026-09-09T01:22:30.951747Z",
+            "updatedAt": "2026-09-09T01:22:30.951747Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.samymassoud/macadress",
+          "description": "MAC address and OUI vendor lookup over Model Context Protocol.",
+          "title": "macadress",
+          "repository": {
+            "url": "https://github.com/samymassoud/macadress",
+            "source": "github"
+          },
+          "version": "1.0.0",
+          "websiteUrl": "https://macadress.com/mcp",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.macadress.com/mcp",
+              "headers": [
+                {
+                  "description": "Bearer <your macadress.com API key>. Get one at https://macadress.com/signup.",
+                  "isRequired": true,
+                  "isSecret": true,
+                  "name": "Authorization"
+                }
+              ]
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-22T11:06:16.591253Z",
+            "publishedAt": "2026-08-22T11:06:16.591253Z",
+            "updatedAt": "2026-08-22T11:06:16.591253Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.sandraschi/qcad-mcp",
+          "description": "QCAD MCP server - DXF/DWG floor plans to SVG preview + STL extrusion via MCP tools and REST API",
+          "repository": {
+            "url": "https://github.com/sandraschi/qcad-mcp",
+            "source": "github"
+          },
+          "version": "0.3.0",
+          "packages": [
+            {
+              "registryType": "mcpb",
+              "identifier": "https://github.com/sandraschi/qcad-mcp/releases/download/v0.3.0/qcad-mcp-v0.3.0.mcpb",
+              "fileSha256": "a5e0bcf53d288a85c8661f8923a1117a0b8b172f7b174941f7413932d4213511",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-28T20:36:53.088399Z",
+            "publishedAt": "2026-08-28T20:36:53.088399Z",
+            "updatedAt": "2026-08-28T20:36:53.088399Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.tcador/787daily",
+          "description": "Puerto Rico news (English summaries + links) and live island conditions, read-only over MCP.",
+          "repository": {
+            "url": "https://github.com/tcador/787daily-site",
+            "source": "github"
+          },
+          "version": "1.0.0",
+          "websiteUrl": "https://787daily.com",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.787daily.com/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-06-23T01:09:35.77767Z",
+            "publishedAt": "2026-06-23T01:09:35.77767Z",
+            "updatedAt": "2026-06-23T01:09:35.77767Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.unmateria/mcp-kicad",
+          "description": "Design KiCad schematics by talking to Claude. Places parts, wires nets, runs ERC. Needs KiCad 10.",
+          "title": "KiCad Schematics",
+          "repository": {
+            "url": "https://github.com/unmateria/MCP-Kicad",
+            "source": "github"
+          },
+          "version": "0.2.7",
+          "packages": [
+            {
+              "registryType": "mcpb",
+              "identifier": "https://github.com/unmateria/MCP-Kicad/releases/download/v0.2.7/mcp-kicad.mcpb",
+              "fileSha256": "4b31b9d24c0094aae4b0130bb284e8e487252e63c1430100fc8763619839d53d",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-10T22:53:42.107793Z",
+            "publishedAt": "2026-08-10T22:53:42.107793Z",
+            "updatedAt": "2026-08-10T22:53:42.107793Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.wende/cicada",
+          "description": "Code intelligence MCP server for 17+ programming languages.",
+          "title": "CICADA",
+          "repository": {
+            "url": "https://github.com/wende/cicada",
+            "source": "github"
+          },
+          "version": "0.6.4",
+          "websiteUrl": "https://github.com/wende/cicada#readme",
+          "packages": [
+            {
+              "registryType": "pypi",
+              "registryBaseUrl": "https://pypi.org",
+              "identifier": "cicada-mcp",
+              "version": "0.6.4",
+              "runtimeHint": "uvx",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-02-26T13:57:30.963078Z",
+            "publishedAt": "2026-02-26T13:57:30.963078Z",
+            "updatedAt": "2026-02-26T13:57:30.963078Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.xpaysh/academic-research",
+          "description": "30+ academic research tools. Semantic Scholar, arXiv, PubMed, bioRxiv, CrossRef, IACR.",
+          "title": "xpay Academic Research",
+          "repository": {
+            "url": "https://github.com/xpaysh/mcp-server",
+            "source": "github"
+          },
+          "version": "1.0.0",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://research.mcp.xpay.sh/mcp?key={api_key}",
+              "variables": {
+                "api_key": {
+                  "description": "Your xpay API key from https://docs.xpay.sh/tools/connect",
+                  "isRequired": true,
+                  "isSecret": true
+                }
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-03-14T18:17:36.687993Z",
+            "publishedAt": "2026-03-14T18:17:36.687993Z",
+            "updatedAt": "2026-03-14T18:17:36.687993Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.github.yousunjung84-edu/academyinfo",
+          "description": "Compare 488 Korean universities on 17 official disclosure indicators (대학알리미). No API key.",
+          "title": "Korean University Disclosure Indicators (대학알리미)",
+          "repository": {
+            "url": "https://github.com/yousunjung84-edu/academyinfo-mcp",
+            "source": "github"
+          },
+          "version": "0.4.0",
+          "packages": [
+            {
+              "registryType": "npm",
+              "identifier": "academyinfo-mcp",
+              "version": "0.4.0",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ],
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://academyinfo-mcp-433006350023.asia-northeast3.run.app/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-11T07:25:36.302531Z",
+            "publishedAt": "2026-08-11T07:25:36.302531Z",
+            "updatedAt": "2026-08-11T07:25:36.302531Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.inboxacademy/mcp",
+          "description": "Read and author Inbox Academy courses, lessons, and quizzes for your organizations.",
+          "version": "1.1.0",
+          "websiteUrl": "https://inboxacademy.io",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.inboxacademy.io"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-02T07:47:23.514771Z",
+            "publishedAt": "2026-09-02T07:47:23.514771Z",
+            "updatedAt": "2026-09-02T07:47:23.514771Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "io.studiomeyer/academy",
+          "description": "The Academy curriculum as an offline MCP library. Hosted course connector adds progress.",
+          "title": "StudioMeyer Academy",
+          "repository": {
+            "url": "https://github.com/studiomeyer-io/mcp-academy",
+            "source": "github"
+          },
+          "version": "0.4.1",
+          "packages": [
+            {
+              "registryType": "npm",
+              "identifier": "mcp-academy",
+              "version": "0.4.1",
+              "transport": {
+                "type": "stdio"
+              },
+              "environmentVariables": [
+                {
+                  "description": "Optional, stdio only. Legacy Academy API key. The hosted connector at mcp.studiomeyer.academy uses OAuth instead and needs no key.",
+                  "format": "string",
+                  "isSecret": true,
+                  "name": "ACADEMY_API_KEY"
+                }
+              ]
+            }
+          ],
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.studiomeyer.academy/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-11T15:31:12.287383Z",
+            "publishedAt": "2026-08-11T15:31:12.287383Z",
+            "updatedAt": "2026-08-11T15:31:12.287383Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "net.dmytro-prototypes/cad-control-mcp-server",
+          "description": "Control AutoCAD with AI: commands, read/edit/write drawing database, AutoLISP, scripts, PDF plots.",
+          "title": "Control AutoCAD MCP Server",
+          "version": "0.1.18",
+          "websiteUrl": "https://cad-control.dmytro-prototypes.net",
+          "packages": [
+            {
+              "registryType": "npm",
+              "identifier": "@dmytro-prototypes/cad-control-mcp-server",
+              "version": "0.1.18",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-11T13:00:31.630656Z",
+            "publishedAt": "2026-09-11T13:00:31.630656Z",
+            "updatedAt": "2026-09-11T13:00:31.630656Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "net.dmytro-prototypes/cadbridge-mcp-autocad",
+          "description": "Control AutoCAD with AI: commands, read/edit/write drawing database, AutoLISP, scripts, PDF plots.",
+          "title": "CADBridge MCP Server for AutoCAD",
+          "version": "0.1.15",
+          "websiteUrl": "https://cadbridge.dmytro-prototypes.net",
+          "packages": [
+            {
+              "registryType": "npm",
+              "identifier": "@dmytro-prototypes/cadbridge-mcp",
+              "version": "0.1.15",
+              "transport": {
+                "type": "stdio"
+              }
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-09-08T20:36:08.645404Z",
+            "publishedAt": "2026-09-08T20:36:08.645404Z",
+            "updatedAt": "2026-09-08T20:36:08.645404Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "org.rrmacademy/library",
+          "description": "Search 4,130+ peer-reviewed articles on restorative reproductive medicine, with fact verification",
+          "version": "1.0.0",
+          "websiteUrl": "https://rrmacademy.org/connect",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://mcp.rrmacademy.org/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-08T02:24:30.524943Z",
+            "publishedAt": "2026-08-08T02:24:30.524943Z",
+            "updatedAt": "2026-08-08T02:24:30.524943Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "site.chatgpt.cursoraikk.agent-arcade-ai/agent-arcade",
+          "description": "Create, test and play AI-native games through server-authoritative contracts.",
+          "title": "Agent Arcade",
+          "version": "4.1.0",
+          "websiteUrl": "https://agent-arcade-ai.cursoraikk.chatgpt.site",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://agent-arcade-ai.cursoraikk.chatgpt.site/api/v3/mcp?campaign=mcp-registry-create-w1"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-08T07:19:43.648919Z",
+            "publishedAt": "2026-08-08T07:19:43.648919Z",
+            "updatedAt": "2026-08-08T07:19:43.648919Z",
+            "isLatest": true
+          }
+        }
+      },
+      {
+        "server": {
+          "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+          "name": "top.agentarcade/agent-arcade",
+          "description": "AI-only game publishing, autonomous play, live observation, replay and independent certification.",
+          "title": "Agent Arcade Protocol 5",
+          "version": "5.0.0",
+          "websiteUrl": "https://agentarcade.top",
+          "remotes": [
+            {
+              "type": "streamable-http",
+              "url": "https://agentarcade.top/api/mcp"
+            }
+          ]
+        },
+        "_meta": {
+          "io.modelcontextprotocol.registry/official": {
+            "status": "active",
+            "statusChangedAt": "2026-08-22T10:08:10.025407Z",
+            "publishedAt": "2026-08-22T10:08:10.025407Z",
+            "updatedAt": "2026-08-22T10:08:10.025407Z",
+            "isLatest": true
+          }
+        }
+      }
+    ],
+    "metadata": {
+      "count": 60
+    }
+  }
+}

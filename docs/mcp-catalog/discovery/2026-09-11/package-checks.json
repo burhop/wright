@@ -1,0 +1,324 @@
+[
+  {
+    "registry": "npm",
+    "name": "@shapeitup/mcp-server",
+    "url": "https://registry.npmjs.org/%40shapeitup%2Fmcp-server",
+    "version": "1.29.0",
+    "description": "ShapeItUp MCP server — scripted CAD tools (Replicad/OpenCascade) for Claude Code, Cursor, Claude Desktop, and other MCP clients.",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/asbis/ShapeItUp.git",
+      "directory": "packages/mcp-server"
+    },
+    "homepage": "https://github.com/asbis/ShapeItUp#readme",
+    "engines": {
+      "node": ">=20"
+    },
+    "bin": {
+      "shapeitup-mcp": "dist/index.js"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-08-29T09:14:56.196Z",
+    "observed_at": "2026-09-11T20:34:52.2016286Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@lineadraw/mcp",
+    "url": "https://registry.npmjs.org/%40lineadraw%2Fmcp",
+    "version": "0.7.0",
+    "description": "MCP server + in-chat viewer (MCP App) for Linea CAD documents.",
+    "repository": null,
+    "homepage": null,
+    "engines": {
+      "node": ">=20"
+    },
+    "bin": {
+      "lineadraw-mcp": "dist/server.js"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-08-30T12:28:52.218Z",
+    "observed_at": "2026-09-11T20:34:53.0239497Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@cadlens/mcp-server",
+    "url": "https://registry.npmjs.org/%40cadlens%2Fmcp-server",
+    "version": "0.6.0",
+    "description": "Model Context Protocol server that wraps the CADLens REST API.",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/cadlens-co/cadlens-mcp.git"
+    },
+    "homepage": "https://cadlens.co",
+    "engines": {
+      "node": ">=20.0.0"
+    },
+    "bin": {
+      "cadlens-mcp": "dist/index.js"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-08-11T03:30:41.857Z",
+    "observed_at": "2026-09-11T20:34:53.4936553Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@atlisp/mcp",
+    "url": "https://registry.npmjs.org/%40atlisp%2Fmcp",
+    "version": "1.8.32",
+    "description": "MCP Server for @lisp on CAD,support AutoCAD/GstarCAD/ZWCAD/BricsCAD or CAD platform compatible with AutoLISP",
+    "repository": {
+      "type": "git",
+      "url": "https://gitee.com/atlisp/atlisp-kernel.git"
+    },
+    "homepage": "https://gitee.com/atlisp",
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "bin": {
+      "atlisp-mcp": "dist/atlisp-mcp.js"
+    },
+    "license": "ISC",
+    "deprecated": null,
+    "published_at": "2026-07-22T12:18:50.202Z",
+    "observed_at": "2026-09-11T20:34:54.3084604Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@dmytro-prototypes/cadbridge-mcp",
+    "url": "https://registry.npmjs.org/%40dmytro-prototypes%2Fcadbridge-mcp",
+    "version": "0.1.15",
+    "description": "Drive a live AutoCAD session from an AI client through MCP",
+    "repository": null,
+    "homepage": "https://cadbridge.dmytro-prototypes.net",
+    "engines": {
+      "node": ">=18"
+    },
+    "bin": {
+      "cadbridge-mcp": "bin/cli.js"
+    },
+    "license": "SEE LICENSE IN LICENSE.txt",
+    "deprecated": null,
+    "published_at": "2026-09-08T20:35:57.516Z",
+    "observed_at": "2026-09-11T20:34:54.7315491Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@caliperhq/jscad-mcp",
+    "url": "https://registry.npmjs.org/%40caliperhq%2Fjscad-mcp",
+    "version": "0.1.0-beta.4",
+    "description": "MCP server for OpenJSCAD — gives Claude visual and structural awareness of JSCAD models",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/caliperhq/jscad-mcp.git"
+    },
+    "homepage": "https://github.com/caliperhq/jscad-mcp#readme",
+    "engines": {
+      "node": ">=18"
+    },
+    "bin": {
+      "jscad-mcp": "src/index.js"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-05-27T23:11:14.228Z",
+    "observed_at": "2026-09-11T20:34:55.2440835Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@vcad/mcp",
+    "url": "https://registry.npmjs.org/%40vcad%2Fmcp",
+    "version": "0.10.0-main.87",
+    "description": "vcad MCP server — parametric CAD + PCB design tools for AI agents (self-contained: bundled server + kernel WASM)",
+    "repository": {
+      "url": "git+https://github.com/ecto/vcad.git",
+      "type": "git"
+    },
+    "homepage": "https://vcad.io",
+    "engines": {
+      "node": ">=20"
+    },
+    "bin": {
+      "vcad-mcp": "index.mjs"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-09-10T01:42:08.25Z",
+    "observed_at": "2026-09-11T20:34:55.7093506Z"
+  },
+  {
+    "registry": "npm",
+    "name": "@splice-cad/mcp",
+    "url": "https://registry.npmjs.org/%40splice-cad%2Fmcp",
+    "version": "0.6.0",
+    "description": "MCP server for Splice CAD — search parts, build harness plans, create components with rich specs, and generate manufacturing documentation",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/splice-cad/splice-cad-mcp.git"
+    },
+    "homepage": "https://splice-cad.com",
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "bin": {
+      "splice-cad-mcp": "dist/index.js"
+    },
+    "license": "MIT",
+    "deprecated": null,
+    "published_at": "2026-08-12T14:26:36.968Z",
+    "observed_at": "2026-09-11T20:34:56.1551821Z"
+  },
+  {
+    "registry": "pypi",
+    "name": "agentcad",
+    "url": "https://pypi.org/pypi/agentcad/json",
+    "version": "0.6.0",
+    "description": "CLI CAD tool for AI agents. Write build123d scripts, with optional CadQuery compatibility, and get STEP files, renders, and metrics.",
+    "project_urls": {
+      "Repository": "https://github.com/jdilla1277/agentcad"
+    },
+    "requires_python": "<3.13,>=3.10",
+    "requires_dist": [
+      "tomli>=2; python_version < \"3.11\"",
+      "click>=8.0",
+      "build123d<0.11,>=0.10",
+      "cadquery-ocp<7.9,>=7.8",
+      "ocp_gordon<0.3",
+      "cadquery>=2.0; extra == \"cadquery\"",
+      "casadi<3.8; sys_platform == \"win32\" and extra == \"cadquery\"",
+      "mcp<2.0,>=1.0.0; extra == \"mcp\"",
+      "pytest>=8.0; extra == \"dev\"",
+      "pytest-timeout>=2.0; extra == \"dev\"",
+      "playwright>=1.40; extra == \"dev\"",
+      "pyyaml>=6.0; extra == \"dev\""
+    ],
+    "yanked": false,
+    "yanked_reason": null,
+    "observed_at": "2026-09-11T20:34:56.2478247Z"
+  },
+  {
+    "registry": "pypi",
+    "name": "build123d-mcp",
+    "url": "https://pypi.org/pypi/build123d-mcp/json",
+    "version": "0.3.84",
+    "description": "MCP server wrapping build123d for interactive 3D CAD",
+    "project_urls": {
+      "Homepage": "https://github.com/pzfreo/build123d-mcp",
+      "Issues": "https://github.com/pzfreo/build123d-mcp/issues",
+      "Repository": "https://github.com/pzfreo/build123d-mcp"
+    },
+    "requires_python": "<3.15,>=3.11",
+    "requires_dist": [
+      "augura>=0.1.6",
+      "b123d-recognisers<0.5,>=0.4.14",
+      "bd-warehouse",
+      "build123d-drafting-helpers>=0.10.0",
+      "build123d<0.12,>=0.10",
+      "defusedxml>=0.7.1",
+      "mcp<3,>=2",
+      "pillow",
+      "resvg-py",
+      "scipy",
+      "vtk>=9.3",
+      "uvicorn; extra == \"http\""
+    ],
+    "yanked": false,
+    "yanked_reason": null,
+    "observed_at": "2026-09-11T20:34:56.4022968Z"
+  },
+  {
+    "registry": "pypi",
+    "name": "tianshangcad",
+    "url": "https://pypi.org/pypi/tianshangcad/json",
+    "version": "0.13.0",
+    "description": "Modern CAD CLI + MCP Server system (2D/3D drawing, editing, measurement, rendering, JSON-driven)",
+    "project_urls": {
+      "Homepage": "https://github.com/Tianshang301/TianshangCAD"
+    },
+    "requires_python": ">=3.12",
+    "requires_dist": [
+      "typer>=0.12",
+      "pydantic>=2.7",
+      "pydantic-settings>=2.3",
+      "numpy>=1.26",
+      "ezdxf>=1.3",
+      "structlog>=24.1",
+      "PyYAML>=6.0",
+      "mcp>=2.0",
+      "apscheduler[sqlalchemy]>=3.10",
+      "matplotlib>=3.8",
+      "deepdiff>=7.0",
+      "prometheus-client>=0.20",
+      "imageio>=2.34",
+      "httpx>=0.27",
+      "jinja2>=3.1",
+      "cadquery<3,>=2.4; extra == \"occ\"",
+      "numpy<2,>=1.26; extra == \"occ\"",
+      "trimesh>=4.0; extra == \"boolean\"",
+      "manifold3d>=2.0; extra == \"boolean\"",
+      "scipy<1.14,>=1.12; extra == \"boolean\"",
+      "planegcs>=0.8.0; extra == \"solver\"",
+      "pybullet>=3.2; extra == \"sim\"",
+      "websockets>=12.0; extra == \"collab\"",
+      "pytest>=8.0; extra == \"dev\"",
+      "pytest-cov>=5.0; extra == \"dev\"",
+      "pytest-benchmark>=4.0; extra == \"dev\"",
+      "hypothesis>=6.100; extra == \"dev\"",
+      "ruff>=0.6; extra == \"dev\"",
+      "mypy>=1.10; extra == \"dev\"",
+      "build>=1.2; extra == \"dev\""
+    ],
+    "yanked": false,
+    "yanked_reason": null,
+    "observed_at": "2026-09-11T20:34:56.4600013Z"
+  },
+  {
+    "registry": "pypi",
+    "name": "cad-mcp-server",
+    "url": "https://pypi.org/pypi/cad-mcp-server/json",
+    "version": "0.10.0",
+    "description": "Modern CAD CLI + MCP Server system (2D/3D drawing, editing, measurement, rendering, JSON-driven)",
+    "project_urls": {
+      "Homepage": "https://github.com/Tianshang301/TianshangCAD"
+    },
+    "requires_python": ">=3.11",
+    "requires_dist": [
+      "typer>=0.12",
+      "pydantic>=2.7",
+      "pydantic-settings>=2.3",
+      "numpy>=1.26",
+      "ezdxf>=1.3",
+      "structlog>=24.1",
+      "PyYAML>=6.0",
+      "mcp>=2.0",
+      "apscheduler[sqlalchemy]>=3.10",
+      "matplotlib>=3.8",
+      "deepdiff>=7.0",
+      "prometheus-client>=0.20",
+      "imageio>=2.34",
+      "httpx>=0.27",
+      "jinja2>=3.1",
+      "cadquery<3,>=2.4; extra == \"occ\"",
+      "numpy<2,>=1.26; extra == \"occ\"",
+      "trimesh>=4.0; extra == \"boolean\"",
+      "manifold3d>=2.0; extra == \"boolean\"",
+      "scipy<1.14,>=1.12; extra == \"boolean\"",
+      "planegcs>=0.8.0; extra == \"solver\"",
+      "pybullet>=3.2; extra == \"sim\"",
+      "calculix-cae>=2.20; extra == \"sim\"",
+      "websockets>=12.0; extra == \"collab\"",
+      "pytest>=8.0; extra == \"dev\"",
+      "pytest-cov>=5.0; extra == \"dev\"",
+      "pytest-benchmark>=4.0; extra == \"dev\"",
+      "hypothesis>=6.100; extra == \"dev\"",
+      "ruff>=0.6; extra == \"dev\"",
+      "mypy>=1.10; extra == \"dev\"",
+      "build>=1.2; extra == \"dev\""
+    ],
+    "yanked": true,
+    "yanked_reason": "Renamed to tianshangcad. Use pip install tianshangcad instead.",
+    "observed_at": "2026-09-11T20:34:56.5153821Z"
+  }
+]

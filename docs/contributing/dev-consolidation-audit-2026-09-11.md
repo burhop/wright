@@ -12,6 +12,7 @@ implemented again. The comparison baseline was `origin/dev` at
 | Dirty `codex/080-canonical-workflow-recovery` worktree | Committed and merged | `92a52655` preserves the previously uncommitted workflow implementation; merge `f01bdb6d` reconciles it with the current MCP catalog and native process implementation. |
 | `codex/live-qa-20260821-112046` | Product changes retained | `ce56f39c` contributes Rivet run evidence, durable artifact records, confined workspace document production, digest-verified reads, and run-inspection improvements. Its branch-specific EPP program snapshot was excluded after reconciliation because it describes an older exact Git subject and cannot be published as current `dev` evidence. |
 | `codex/080-hermes-mcp-isolation` | Partially retained | `4d9ff1da` keeps the Hermes dependency consistency check in future Docker smoke runs. The older all-tools virtual environment change is superseded by the per-tool `uv tool` isolation merged in PR 124. |
+| Primary checkout discovery research | Recovered after PR 125 | The 2026-09-11 discovery sweep preserves 44 source-reviewed engineering MCP candidates, complete query results, triage records, package and primary-source checks, and a digest manifest. The runtime catalog remains unchanged until candidates complete clean-container qualification. |
 
 The recovered workflow merge keeps the reviewed workspace **Workflows** entry
 and `WorkflowRecoveryPage` described in
@@ -49,6 +50,8 @@ repository has a reviewed commit. The other one-level repositories under
   run-inspection checks passed: 36 tests.
 - MCP server setup and qualification suites were intentionally not rerun during
   consolidation so they would not block moving to real workflow work.
+- The recovered discovery package's 13 JSON records parsed successfully, and
+  every recorded byte count and SHA-256 digest matched its evidence manifest.
 
 For a future audit, compare patch-equivalent commits as well as ancestry:
 

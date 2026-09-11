@@ -1,0 +1,31 @@
+{
+  "observed_on": "2026-09-11",
+  "assembled_at": "2026-09-11T20:43:09.147257+00:00",
+  "baseline_head": "0ca22cdd613c0feed3b66d224199abd752f75bfa",
+  "baseline_catalog_sha256": "d76edd32a1a94c8755c225ab3bee071b09dfe8bb7bf618730d03ed365b7d9d7f",
+  "baseline_catalog_entries": 70,
+  "documented_missing_projects": 44,
+  "candidate_domains": {
+    "CAD authoring": 18,
+    "CAD host bridges": 8,
+    "Drawing and electrical": 7,
+    "Simulation and systems": 11
+  },
+  "github_cad_results": 427,
+  "github_cad_pages": 5,
+  "agentcad_github_star_rank": 6,
+  "github_unique_repositories_retrieved": 531,
+  "github_dispositions": {
+    "documented_candidate": 20,
+    "already_cataloged": 7,
+    "unreviewed_search_hit": 498,
+    "excluded_from_confirmed_count": 6
+  },
+  "registry_cad_records": 160,
+  "registry_cad_pages": 2,
+  "registry_unique_names_retrieved": 253,
+  "github_readmes_reviewed": 37,
+  "package_metadata_checks": 12,
+  "live_mcp_tests_run": 0,
+  "catalog_modified": false
+}

@@ -1,0 +1,84 @@
+{
+  "observed_on": "2026-09-11",
+  "method": "Indexed web search for discovery, then primary-source documentation and direct public APIs for evidence. Rankings are observation-specific.",
+  "indexed_search_batches": [
+    {
+      "group": "initial",
+      "queries": [
+        "CAD MCP server agentcad build123d CadQuery",
+        "\"CAD\" \"MCP\" site:github.com",
+        "engineering MCP server FEA CFD CAM meshing simulation github"
+      ]
+    },
+    {
+      "group": "CAD engines",
+      "queries": [
+        "\"CAD\" \"MCP\" site:github.com",
+        "\"cadquery\" \"MCP\" server",
+        "\"build123d\" \"MCP\" server",
+        "\"CAD\" \"MCP\" \"server\" -site:reddit.com -site:wikipedia.org"
+      ],
+      "notes": "First three queries restricted to github.com."
+    },
+    {
+      "group": "broad CAD and host variants",
+      "queries": [
+        "mcp server CAD",
+        "CAD \"Model Context Protocol\" -site:reddit.com",
+        "\"FreeCAD\" \"MCP\" site:github.com",
+        "\"OpenSCAD\" \"MCP\" site:github.com"
+      ]
+    },
+    {
+      "group": "package and registry discovery",
+      "queries": [
+        "\"CAD\" \"MCP\" site:pypi.org/project",
+        "\"CAD\" \"MCP\" site:npmjs.com/package",
+        "\"CAD\" \"MCP\" site:registry.modelcontextprotocol.io",
+        "\"CAD\" \"MCP\" agentcad zoo splice cogram"
+      ]
+    },
+    {
+      "group": "simulation and manufacturing",
+      "queries": [
+        "\"MCP\" \"FEA\" server site:github.com",
+        "\"MCP\" \"CFD\" server site:github.com",
+        "\"MCP\" \"meshing\" server Gmsh Salome site:github.com",
+        "\"MCP\" \"CAM\" \"CNC\" server site:github.com"
+      ]
+    },
+    {
+      "group": "vendor and package follow-up",
+      "queries": [
+        "Cogram Studio MCP server official",
+        "BuildCAD AI MCP server documentation",
+        "\"TianshangCAD\" github",
+        "\"ShapeItUp\" \"MCP\" github"
+      ]
+    },
+    {
+      "group": "embedded MCP and linked projects",
+      "queries": [
+        "\"Cogram Studio\"",
+        "\"vcad\" \"MCP\"",
+        "\"CADPilot\" \"github\"",
+        "\"CAD\" \"MCP\" \"Siemens NX\" \"CATIA\""
+      ]
+    }
+  ],
+  "direct_github_search_evidence": [
+    "github-search.json",
+    "github-cad-remaining-pages.json"
+  ],
+  "direct_mcp_registry_evidence": [
+    "mcp-registry-search.json",
+    "mcp-registry-cad-remaining-pages.json"
+  ],
+  "package_evidence": "package-checks.json",
+  "primary_source_evidence": "primary-source-checks.json",
+  "failures_and_fallbacks": [
+    "Web rendering of the MCP Registry API failed; public HTTP API retrieval subsequently succeeded and the CAD cursor was exhausted.",
+    "Some npm HTML pages were blocked or unavailable; public registry metadata and publisher READMEs were retrieved directly.",
+    "Cogram Studio's public landing page yielded no readable MCP setup content; it remains a lead outside the 44 documented candidates."
+  ]
+}
