@@ -296,7 +296,12 @@ export interface CatalogSnapshotSummary {
 
 export interface CapabilityListResponse {
   curation_counts?: Record<string, number>;
-  lifecycle_coverage?: Array<{ stage: string; label: string; curated: number; follow_up: number }>;
+  lifecycle_coverage?: Array<{
+    stage: string;
+    label: string;
+    curated: number;
+    follow_up: number;
+  }>;
   snapshot: CatalogSnapshotSummary;
   capabilities: CapabilityView[];
   next_cursor: string | null;

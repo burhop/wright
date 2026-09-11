@@ -80,8 +80,11 @@ export function readCapabilityFilters(
   const parameters = new URLSearchParams(search);
   const requestedCuration = parameters.get("curation");
   return {
-    curation: ["curated", "follow_up", "removed", "all"].includes(requestedCuration || "")
-      ? requestedCuration as CapabilityFilterState["curation"] : "curated",
+    curation: ["curated", "follow_up", "removed", "all"].includes(
+      requestedCuration || "",
+    )
+      ? (requestedCuration as CapabilityFilterState["curation"])
+      : "curated",
     engineeringStage: parameters.get("engineering_stage") || "",
     protocol: parameters.get("protocol") || "",
     search: parameters.get("search") || "",
@@ -104,7 +107,8 @@ export function readCapabilityFilters(
 export function writeCapabilityFilters(value: CapabilityFilterState) {
   const parameters = new URLSearchParams();
   parameters.set("curation", value.curation);
-  if (value.engineeringStage) parameters.set("engineering_stage", value.engineeringStage);
+  if (value.engineeringStage)
+    parameters.set("engineering_stage", value.engineeringStage);
   if (value.protocol) parameters.set("protocol", value.protocol);
   if (value.search) parameters.set("search", value.search);
   if (value.domain) parameters.set("domain", value.domain);
@@ -161,9 +165,17 @@ export function CapabilityFilters({
     >
       <label>
         <span className="sr-only">Catalog list</span>
-        <select aria-label="Catalog list" data-testid="capability-filter-curation"
-          value={value.curation} onChange={(event) => update({ curation: event.target.value as CapabilityFilterState["curation"] })}
-          style={{ ...controlStyle, width: "100%" }}>
+        <select
+          aria-label="Catalog list"
+          data-testid="capability-filter-curation"
+          value={value.curation}
+          onChange={(event) =>
+            update({
+              curation: event.target.value as CapabilityFilterState["curation"],
+            })
+          }
+          style={{ ...controlStyle, width: "100%" }}
+        >
           <option value="curated">Curated</option>
           <option value="follow_up">Follow up</option>
           <option value="removed">Removed from discovery</option>
@@ -172,9 +184,13 @@ export function CapabilityFilters({
       </label>
       <label>
         <span className="sr-only">Engineering process stage</span>
-        <select aria-label="Engineering process stage" data-testid="capability-filter-engineering-stage"
-          value={value.engineeringStage} onChange={(event) => update({ engineeringStage: event.target.value })}
-          style={{ ...controlStyle, width: "100%" }}>
+        <select
+          aria-label="Engineering process stage"
+          data-testid="capability-filter-engineering-stage"
+          value={value.engineeringStage}
+          onChange={(event) => update({ engineeringStage: event.target.value })}
+          style={{ ...controlStyle, width: "100%" }}
+        >
           <option value="">Entire engineering lifecycle</option>
           <option value="requirements">Requirements</option>
           <option value="concept">Concept and architecture</option>
@@ -189,9 +205,13 @@ export function CapabilityFilters({
       </label>
       <label>
         <span className="sr-only">Integration protocol</span>
-        <select aria-label="Integration protocol" data-testid="capability-filter-protocol"
-          value={value.protocol} onChange={(event) => update({ protocol: event.target.value })}
-          style={{ ...controlStyle, width: "100%" }}>
+        <select
+          aria-label="Integration protocol"
+          data-testid="capability-filter-protocol"
+          value={value.protocol}
+          onChange={(event) => update({ protocol: event.target.value })}
+          style={{ ...controlStyle, width: "100%" }}
+        >
           <option value="">All protocols</option>
           <option value="mcp">MCP</option>
           <option value="webmcp">WebMCP</option>

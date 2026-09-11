@@ -5,12 +5,18 @@ import {
 } from "./wright-surface-sdk";
 
 interface NativeModelContext {
-  registerTool(tool: {
-    name: string;
-    description: string;
-    inputSchema: Readonly<Record<string, unknown>>;
-    execute: (argumentsValue: Readonly<Record<string, unknown>>, options?: { signal?: AbortSignal }) => unknown;
-  }, options: { signal: AbortSignal }): Promise<void>;
+  registerTool(
+    tool: {
+      name: string;
+      description: string;
+      inputSchema: Readonly<Record<string, unknown>>;
+      execute: (
+        argumentsValue: Readonly<Record<string, unknown>>,
+        options?: { signal?: AbortSignal },
+      ) => unknown;
+    },
+    options: { signal: AbortSignal },
+  ): Promise<void>;
 }
 
 interface NativeDocument extends Document {
@@ -54,18 +60,21 @@ export async function registerWebMcpTool(
   if (tool.signal.aborted) abortNative();
   if (options.dualRegisterNative && detected === "available") {
     try {
-      await documentValue.modelContext!.registerTool({
-        name: tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema,
-        execute: (argumentsValue, callOptions) => {
-          const signal = callOptions?.signal
-            ? AbortSignal.any([lifetime.signal, callOptions.signal])
-            : lifetime.signal;
-          signal.throwIfAborted();
-          return tool.handler(argumentsValue, { signal });
+      await documentValue.modelContext!.registerTool(
+        {
+          name: tool.name,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          execute: (argumentsValue, callOptions) => {
+            const signal = callOptions?.signal
+              ? AbortSignal.any([lifetime.signal, callOptions.signal])
+              : lifetime.signal;
+            signal.throwIfAborted();
+            return tool.handler(argumentsValue, { signal });
+          },
         },
-      }, { signal: lifetime.signal });
+        { signal: lifetime.signal },
+      );
     } catch {
       nativeState = "rejected";
     }

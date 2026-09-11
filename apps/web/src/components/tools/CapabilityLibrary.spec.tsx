@@ -254,9 +254,15 @@ describe("CapabilityLibrary", () => {
     render(<CapabilityLibrary />);
     await screen.findByText(capability.name);
 
-    fireEvent.change(screen.getByLabelText("Catalog list"), { target: { value: "follow_up" } });
-    fireEvent.change(screen.getByLabelText("Engineering process stage"), { target: { value: "sourcing" } });
-    fireEvent.change(screen.getByLabelText("Integration protocol"), { target: { value: "webmcp" } });
+    fireEvent.change(screen.getByLabelText("Catalog list"), {
+      target: { value: "follow_up" },
+    });
+    fireEvent.change(screen.getByLabelText("Engineering process stage"), {
+      target: { value: "sourcing" },
+    });
+    fireEvent.change(screen.getByLabelText("Integration protocol"), {
+      target: { value: "webmcp" },
+    });
 
     fireEvent.change(screen.getByLabelText("Search MCP servers"), {
       target: { value: "bracket" },
@@ -299,7 +305,9 @@ describe("CapabilityLibrary", () => {
     await waitFor(() =>
       expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          curation: ["follow_up"], engineering_stage: ["sourcing"], protocol: ["webmcp"],
+          curation: ["follow_up"],
+          engineering_stage: ["sourcing"],
+          protocol: ["webmcp"],
           search: "bracket",
           domain: ["cad"],
           lifecycle_stage: ["verified_mcp"],
