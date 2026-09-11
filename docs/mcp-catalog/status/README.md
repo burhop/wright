@@ -63,3 +63,8 @@ building.
 The stable customer artifact is `docs/mcp-status/`. Marketing can host that
 directory or fetch `status.json` read-only. Consumers must check schema versions
 and must describe green as technical assessment progress, not adoption.
+
+The external-site implementation and deployment contract is documented in
+[`docs/mcp-status/PUBLISHING.md`](../../mcp-status/PUBLISHING.md). It covers the
+static bundle, feed-based integration, privacy boundary, cache behavior,
+verification, atomic publication, rollback, and approved claim language.

@@ -123,6 +123,7 @@ nav:
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md
       - Integration Status Maintenance: mcp-catalog/status/README.md
+      - Integration Status Publishing: mcp-status/PUBLISHING.md
       - Custom MCP Tools: mcp-catalog/custom-tools.md
       - Offline Caching: mcp-catalog/offline-cache.md
   - Admin:
