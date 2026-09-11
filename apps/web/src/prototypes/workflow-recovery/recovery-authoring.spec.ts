@@ -11,6 +11,7 @@ import {
   type RecoveryCommand,
 } from "./command-system";
 import { cloneLayout, cloneWorkflow, initialLayout, initialWorkflow, type RecoveryWorkflow } from "./model";
+import { createAuthoringObject } from "./authoring-objects";
 import {
   formatRecoveryAuthoringSource,
   parseRecoveryAuthoringSource,
@@ -64,6 +65,26 @@ function newlyAuthoredInputSource(): string {
 }
 
 describe("engineering workflow source", () => {
+  it("round-trips a one-block workflow without inheriting demo items", () => {
+    const workflow = cloneWorkflow(initialWorkflow);
+    workflow.workflowId = "workflow.prompt-to-html";
+    workflow.metadata.title = "Prompt to HTML";
+    workflow.blocks = [];
+    workflow.ports = [];
+    workflow.relationships = [];
+    workflow.artifactContracts = [];
+    workflow.bindings = [];
+    workflow.components = [];
+    for (const phase of workflow.phases) phase.blockIds = [];
+    const created = createAuthoringObject("document", workflow, { ...cloneLayout(initialLayout), positions: {} });
+    created.block.title = "Create HTML report";
+    created.block.inputPortIds = [];
+    created.block.instructions = "Create report.html in this workspace from this prompt.";
+    created.block.configuration.output_filename = "report.html";
+    workflow.blocks = [created.block];
+    workflow.ports = created.ports.filter((port) => port.direction === "output");
+    expectColdRoundTrip(workflow);
+  });
   it("rehydrates the friendly projection against the exact accepted envelope", () => {
     const formatted = formatRecoveryAuthoringSource(initialWorkflow);
     const parsed = parseRecoveryAuthoringSource(formatted.text, initialWorkflow);

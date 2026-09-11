@@ -112,6 +112,17 @@ def bootstrap_bundled_snapshot(
     actor: str = "wright-bootstrap",
     trace_id: str = "catalog-bootstrap",
 ) -> CatalogSnapshot:
+    # The bundled snapshot is immutable. Avoid reparsing and validating the
+    # packaged YAML (and taking a write lock) on every catalog read.
+    if payload is None:
+        with _connect(database_path) as connection:
+            stored = connection.execute(
+                """SELECT * FROM catalog_snapshots WHERE channel=? AND sequence=?
+                   AND EXISTS (SELECT 1 FROM catalog_state WHERE state_id=1)""",
+                (BUNDLED_CHANNEL, BUNDLED_SEQUENCE),
+            ).fetchone()
+            if stored is not None:
+                return _snapshot_from_row(stored)
     snapshot = bundled_snapshot(payload)
     with _connect(database_path) as connection:
         connection.execute("BEGIN IMMEDIATE")

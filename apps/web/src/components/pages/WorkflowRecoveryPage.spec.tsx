@@ -22,6 +22,7 @@ vi.mock("../../prototypes/workflow-recovery/WorkflowRecoveryConcept", async () =
   const { useState } = await import("react");
   function MockWorkflowRecoveryConcept(props: {
     surfaceState?: string;
+    fileActions?: import("react").ReactNode;
     workflowSource?: string;
     definitionRevision?: number;
     storageDigest?: string;
@@ -36,6 +37,7 @@ vi.mock("../../prototypes/workflow-recovery/WorkflowRecoveryConcept", async () =
     const [readSource, setReadSource] = useState("");
     const [files, setFiles] = useState("");
     return <div data-testid="workflow-editor-fixture" data-state={props.surfaceState ?? "ready"} data-source={initialSource} data-current-source={props.workflowSource} data-read-source={readSource} data-definition-revision={props.definitionRevision} data-storage-digest={props.storageDigest} data-path={props.workflowFilePath} data-layout={JSON.stringify(props.workflowLayout)} data-files={files}>
+      {props.fileActions}
       {props.onSave && <button type="button" data-testid="fixture-save" onClick={() => void props.onSave?.("updated workflow source", props.workflowLayout)}>Save fixture</button>}
       {props.onListWorkspaceFiles && <button type="button" data-testid="fixture-files" onClick={() => void props.onListWorkspaceFiles?.().then((values) => setFiles(JSON.stringify(values)))}>List files fixture</button>}
       {props.onReadStoredSource && <button type="button" data-testid="fixture-read" onClick={() => void props.onReadStoredSource?.().then((stored) => setReadSource(stored.source))}>Read stored fixture</button>}
@@ -88,7 +90,7 @@ describe("workspace workflow page", () => {
     expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute("data-source", document.source);
     expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute("data-definition-revision", "2");
     expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute("data-storage-digest", document.storage_digest);
-    expect(screen.getByTestId("workflow-workspace-context")).toHaveTextContent(/Bracket Program\s*\/\s*Workflows\s*\/\s*mounting-bracket\.workflow\.wflow/);
+    expect(screen.queryByTestId("workflow-workspace-context")).not.toBeInTheDocument();
     expect(screen.getByTestId("page-workflow-recovery")).toHaveStyle({ width: "100%", minWidth: "0" });
   });
 
@@ -114,11 +116,15 @@ describe("workspace workflow page", () => {
     mocks.create.mockResolvedValue({ ...document, path: "workflows/inspection-checks.workflow.wflow", storage_revision: 1 });
     renderPage({ onOpenWorkflow: onOpen });
     await screen.findByTestId("fixture-save");
+    await userEvent.click(screen.getByTestId("workflow-file-menu"));
     await userEvent.click(screen.getByRole("button", { name: "New workflow" }));
     await userEvent.type(screen.getByLabelText("Workflow name"), "Inspection checks");
     await userEvent.click(screen.getByRole("button", { name: "Create workflow" }));
     await waitFor(() => expect(onOpen).toHaveBeenCalledWith("workflows/inspection-checks.workflow.wflow"));
     expect(mocks.create).toHaveBeenCalledWith("session-1", "workflows/inspection-checks.workflow.wflow", expect.stringContaining("Inspection checks"));
+    const createdSource = mocks.create.mock.calls[0]![2] as string;
+    expect(createdSource).not.toMatch(/^(?:task|input|connection|item) /m);
+    expect(createdSource).not.toContain("bracket");
     expect(mocks.update).not.toHaveBeenCalled();
     expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute("data-source", document.source);
   });

@@ -21,6 +21,7 @@ from .models import (
     UpgradeResult,
 )
 from .state_store import connect_state_db
+from .workflow_artifact_review_repository import REVIEW_SCHEMA
 
 PRODUCT_VERSION = "0.1.0"
 LEDGER_TABLE = "wright_schema_migrations"
@@ -1086,6 +1087,9 @@ MIGRATIONS: tuple[Migration, ...] = (
         ),
     ),
 )
+
+
+MIGRATIONS += (Migration(17, 'terminal_workflow_artifact_reviews', (sql(REVIEW_SCHEMA),)),)
 
 
 def validate_definitions(migrations: Sequence[Migration] = MIGRATIONS) -> None:

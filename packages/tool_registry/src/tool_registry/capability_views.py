@@ -185,7 +185,7 @@ def _catalog_view(
         capability_summary=entry.capability_summary,
         field_provenance={
             "catalog_metadata": "active_catalog_snapshot",
-            "compatibility": "current_machine_observation",
+            "compatibility": "current_machine_observation" if observation else "not_observed",
             "user_state": "local_registry_and_workspace_state",
         },
         data_touched=entry.data_touched,
@@ -208,6 +208,9 @@ def _catalog_view(
             "host_software": entry.host_software_required,
             "credentials": entry.credentials_required,
             "license": entry.license,
+            "auth_model": entry.auth_model,
+            "install_method": entry.install_method,
+            "deployment_mode": entry.deployment_mode,
             "approval_gates": entry.approval_gates,
             "supported_platforms": {
                 key: value.model_dump(mode="json")
@@ -349,12 +352,15 @@ def _search_text(view: CapabilityView) -> str:
 
 
 def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
-    if filters.search and filters.search.casefold() not in _search_text(view):
-        return False
     if filters.domains and not filters.domains.intersection(view.domains):
         return False
-    if filters.platforms and view.compatibility.platform_key not in filters.platforms:
-        return False
+    if filters.platforms:
+        support = view.requirements.get("supported_platforms", {})
+        if not any(
+            support.get(platform, {}).get("status") in {"yes", "likely", "host-dependent"}
+            for platform in filters.platforms
+        ):
+            return False
     if (
         filters.lifecycle_stages
         and view.lifecycle_stage not in filters.lifecycle_stages
@@ -381,6 +387,10 @@ def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
     if filters.validation and validation not in filters.validation:
         return False
     if filters.installed is not None and view.user_state.installed != filters.installed:
+        return False
+    # Cheap exclusions first; don't serialize all requirements for records
+    # already excluded by the selected filters.
+    if filters.search and filters.search.casefold() not in _search_text(view):
         return False
     return True
 

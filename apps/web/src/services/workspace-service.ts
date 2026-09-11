@@ -29,6 +29,69 @@ export interface WorkspaceWorkflowSourceDocument {
   layout_status?: "missing" | "current" | "stale";
 }
 
+export interface WorkspaceWorkflowSourceRun {
+  status?: "completed" | "pending_review";
+  review?: WorkspaceWorkflowReview;
+  run_id?: string;
+  results?: WorkspaceEngineeringResult[];
+  run_log_path?: string;
+  workspace_id: string;
+  workflow_path: string;
+  workflow_title: string;
+  task_id: string;
+  task_title: string;
+  output_path: string;
+  output_bytes: number;
+  outputs?: WorkspaceWorkflowOutput[];
+  steps?: WorkspaceWorkflowStep[];
+}
+
+export interface WorkspaceEngineeringResult {
+  schema_version: 1;
+  id: string;
+  kind: "text" | "image" | "file" | "structured" | "cad_model" | "analysis";
+  name: string;
+  representations: Array<{kind: "value" | "workspace_file" | "application_document" | "cloud_resource"; location: string; format: string; provider_id: string; resource_id: string; revision: string | null; durability: "persistent" | "session" | "run"; sha256: string | null; size_bytes: number | null}>;
+  provenance: {run_id: string; task_id: string; output_port: string; input_revisions: Array<[string, string | null]>};
+  exports: WorkspaceEngineeringResult[];
+}
+
+export interface WorkspaceWorkflowRunSummary {
+  path: string; status: "running" | "completed" | "changes_requested" | "pending_review" | "failed" | "cancelled" | "interrupted" | "unknown";
+  started_at: string; completed_at?: string; source_digest: string; error?: string;
+  results: WorkspaceEngineeringResult[];
+  last_event?: {kind: string; task_title?: string; message?: string} | null;
+  review?: WorkspaceWorkflowReview;
+  run_id?: string | null;
+  execution_ended_at?: string | null;
+  source_matches_current?: boolean;
+  execution?: WorkspaceWorkflowExecutionSnapshot;
+}
+export interface WorkspaceWorkflowExecutionSnapshot {
+  active_task_id: string | null;
+  completed_task_ids: string[];
+  event_count: number;
+  model_call_count: number;
+  tool_call_count: number;
+  tool_completed_count: number;
+  revision_count: number;
+  outputs: WorkspaceWorkflowOutput[];
+  last_progress: {kind: string; at?: string; task_id?: string; task_title?: string; execution_kind?: "ai" | "mcp" | "mcp_task"; message?: string; status?: string; tool?: string; revision?: number} | null;
+  truncated: boolean;
+}
+export interface WorkspaceWorkflowReview {
+  evidence_status?: "current" | "stale";
+  evidence_message?: string;
+  review_id: string; package_digest: string; state: "pending" | "approved" | "changes_requested";
+  run_id: string; workflow_path: string; source_digest: string; task_id: string; task_title: string;
+  instructions: string; artifacts: Array<WorkspaceWorkflowOutput & {sha256: string}>;
+  created_at: string; decided_at: string | null; actor: string | null; reason: string | null;
+  attribution?: "local_workspace_user_not_authenticated";
+}
+export interface WorkspaceWorkflowOutput { task_id: string; task_title: string; output_path: string; output_bytes: number; output_format: string; cad_role?: "native" | "export" }
+export interface WorkspaceWorkflowStep { cad_document?: {server_id: string; documentId: string; displayName: string; fullPath?: string; isDirty: boolean}; tool_calls?: Array<{tool: string; arguments: Record<string, unknown>; status: string; result: unknown; text: string}>; execution_kind?: "ai" | "mcp" | "mcp_task"; tool?: string; arguments?: Record<string,unknown>; task_id: string; task_title: string; prompt: string; response: string; output_format: string; format_instructions?: string; output_path: string | null; output_bytes: number }
+export interface WorkspaceWorkflowRunEvent { report?: {verdict: string; corrections: string[]}; revision?: number; invalidated_task_ids?: string[]; engineering_result?: WorkspaceEngineeringResult; run_log_path?: string; execution_kind?: "ai" | "mcp" | "mcp_task"; tool?: string; arguments?: Record<string,unknown>; message?: string; status?: string; text?: string; result?: unknown; kind: "review_requested" | "design_check" | "design_revision" | "run_started" | "result_ready" | "operation_progress" | "step_started" | "step_completed" | "output_saved" | "task_progress" | "tool_started" | "tool_completed"; at: string; task_id: string; task_title: string; prompt?: string; response?: string; output_format?: string; format_instructions?: string; output_path?: string; output_bytes?: number }
+
 export class WorkspaceWorkflowSourceNotFoundError extends Error {
   readonly code = "workflow_source_not_found";
 
@@ -791,6 +854,121 @@ export class WorkspaceService {
     }
     return response.json();
   }
+
+  async getWorkspaceWorkflowRuns(sessionId: string, path: string, options?: {latestOnly?: boolean; workspaceId?: string; signal?: AbortSignal}): Promise<WorkspaceWorkflowRunSummary[]> {
+    const query = new URLSearchParams({session_id:sessionId,path});
+    if (options?.latestOnly) query.set("latest_only", "true");
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflow-sources/runs?${query}`, options?.signal ? {signal: options.signal} : undefined);
+    if (!response.ok) throw new Error("Run history could not be loaded. Try again.");
+    const payload = await response.json();
+    if (payload.workflow_path !== path || (options?.workspaceId && payload.workspace_id !== options.workspaceId) || !Array.isArray(payload.runs)) throw new Error("Run history did not match this workspace workflow.");
+    if (options?.latestOnly && (payload.runs.length > 1 || payload.runs.some((run: WorkspaceWorkflowRunSummary) => !run.execution))) throw new Error("The server did not provide current execution status. Refresh after the server update.");
+    return payload.runs;
+  }
+
+  async getWorkspaceWorkflowReviews(sessionId: string, path: string): Promise<WorkspaceWorkflowReview[]> {
+    const query = new URLSearchParams({session_id: sessionId, path});
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflow-sources/reviews?${query}`);
+    if (!response.ok) throw new Error("Document reviews could not be loaded. Refresh reviews to try again.");
+    const payload = await response.json();
+    if (!Array.isArray(payload.reviews) || payload.reviews.some((review: WorkspaceWorkflowReview) => review.workflow_path !== path)) throw new Error("Document reviews did not match this workflow.");
+    return payload.reviews;
+  }
+
+  async decideWorkspaceWorkflowReview(sessionId: string, review: WorkspaceWorkflowReview, decision: "approved" | "changes_requested", reason: string): Promise<WorkspaceWorkflowReview> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflow-sources/reviews/${encodeURIComponent(review.review_id)}/decision`, {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({session_id: sessionId, expected_package_digest: review.package_digest, decision, reason}),
+    });
+    if (!response.ok) {
+      let message = "Your decision could not be recorded. Refresh reviews before trying again.";
+      try {
+        const payload = await response.json();
+        const detail = payload.detail ?? {message: payload.message, correction: payload.details?.correction};
+        if (typeof detail.message === "string") message = `${detail.message}${typeof detail.correction === "string" ? ` ${detail.correction}` : ""}`;
+      } catch { /* Retain the actionable fallback for non-JSON responses. */ }
+      throw new Error(message);
+    }
+    const updated = await response.json() as WorkspaceWorkflowReview;
+    if (updated.review_id !== review.review_id || updated.workflow_path !== review.workflow_path || updated.package_digest !== review.package_digest) throw new Error("The decision response did not match the reviewed package. Refresh reviews to check its status.");
+    return updated;
+  }
+
+  async runWorkspaceWorkflowSource(
+    sessionId: string,
+    path: string,
+    expectedStorageDigest: string,
+    onEvent?: (event: WorkspaceWorkflowRunEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<WorkspaceWorkflowSourceRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-sources/run`,
+      {
+        method: "POST",
+        signal,
+        headers: { "Content-Type": "application/json", ...(onEvent ? { Accept: "application/x-ndjson" } : {}) },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path,
+          expected_storage_digest: expectedStorageDigest,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "The workflow could not run.";
+      try {
+        const payload = await response.json() as { message?: unknown; details?: { correction?: unknown }; detail?: { message?: unknown; correction?: unknown } };
+        // API middleware normalizes HTTPException bodies; also accept the
+        // original envelope for older hosts and test adapters.
+        const detail = payload.detail ?? { message: payload.message, correction: payload.details?.correction };
+        if (typeof detail?.message === "string") {
+          message = detail.message;
+          if (typeof detail.correction === "string") message += ` ${detail.correction}`;
+        }
+      } catch {
+        // Keep the safe fallback; backend error bodies may be non-JSON.
+      }
+      throw new Error(message);
+    }
+    let run: WorkspaceWorkflowSourceRun | undefined;
+    if (onEvent && response.headers.get("content-type")?.includes("application/x-ndjson")) {
+      if (!response.body) throw new Error("The workflow event stream is unavailable.");
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      const consume = (line: string) => {
+        if (!line.trim()) return;
+        const event = JSON.parse(line);
+        if (event.kind === "completed" || event.kind === "pending_review") run = event.result;
+        else if (event.kind === "failed") throw new Error(`${event.message} ${event.correction ?? ""}`);
+        else onEvent(event as WorkspaceWorkflowRunEvent);
+      };
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          buffer += decoder.decode(value, { stream: !done });
+          let end: number;
+          while ((end = buffer.indexOf("\n")) >= 0) { consume(buffer.slice(0, end)); buffer = buffer.slice(end + 1); }
+          if (done) { consume(buffer); break; }
+        }
+      } catch (error) { await reader.cancel(); throw error; }
+      finally { reader.releaseLock(); }
+    } else run = await response.json() as WorkspaceWorkflowSourceRun;
+    if (
+      !run
+      || typeof run.output_path !== "string"
+      || (!run.output_path.trim() && !run.results?.some(result =>
+        result.schema_version === 1 && result.id && result.name && result.representations?.some(rep =>
+          (rep.kind === "cloud_resource" || rep.kind === "application_document")
+          && rep.location && rep.provider_id && rep.resource_id
+          && ["persistent", "session", "run"].includes(rep.durability))))
+      || !Number.isFinite(run.output_bytes) || run.output_bytes < 0
+    ) {
+      throw new Error("Wright returned an invalid workflow run result.");
+    }
+    return run;
+  }
+
   async openBrepPanel(sessionId: string): Promise<BrepPanelSession> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/brep/panel`,

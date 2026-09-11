@@ -7,16 +7,18 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import asyncio
+import anyio
 import json
 import time
 from dataclasses import dataclass
 
 import structlog
-from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request, UploadFile, File
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from typing import Optional
 
 from agent_adapters import BaseAgentEngine
+from agent_adapters.report_generation import generate_workflow_response, response_instructions, decide_workflow_tool_action
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from api.config import (
@@ -94,6 +96,9 @@ from api.schemas.workspace import (
     WorkflowResponse,
     WorkflowDocumentResponse,
     WorkflowSourceCreateRequest,
+    WorkflowSourceRunRequest,
+    WorkflowSourceRunResponse,
+    WorkflowArtifactReviewDecisionRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
     WorkflowInputFilesResponse,
@@ -126,6 +131,7 @@ from api.schemas.workspace import (
     RivetMcpBindingResponse,
     WorkflowOperationsListResponse,
     WorkflowRunHistoryResponse,
+    WorkflowSourceRecentRunsResponse,
     WorkflowRunEvidenceResponse,
     EngineeringScenarioCatalogEntryResponse,
     EngineeringScenarioListResponse,
@@ -157,6 +163,10 @@ from workspace_service.workflows import (
 from workspace_service.workflow_sources import (
     WorkflowSourceConflictError,
     WorkflowSourceStorageError,
+)
+from workspace_service.workflow_source_execution import (
+    WorkflowSourceExecutionError,
+    prepare_prompt_workflow, execute_prompt_workflow,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
@@ -957,6 +967,192 @@ async def update_workflow_source_endpoint(
         raise _workflow_source_http_error(error) from error
     except OSError as error:
         raise _workflow_source_unavailable(error) from error
+
+
+@router.get("/workflow-sources/tools")
+async def list_workflow_source_tools(session_id: str, request: Request, service: WorkspaceService = Depends(get_workspace_service)):
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+    scope = _workflow_source_scope(session_id, service)
+    runtime = WorkflowMcpRuntime(request.app.state.gateway_service, workspace_id=scope.workspace_id, session_id=session_id)
+    try:
+        return {"tools": runtime.available()}
+    finally:
+        await runtime.close()
+
+
+@router.post("/workflow-sources/images", status_code=201)
+async def upload_workflow_image(session_id: str, file: UploadFile = File(...), service: WorkspaceService = Depends(get_workspace_service)):
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        content = await file.read(4 * 1024 * 1024 + 1)
+        path = await service.files.upload_workflow_image(scope.workspace_dir, file.filename or "image.png", content)
+        return {"workspace_id": scope.workspace_id, "path": path}
+    except (ValueError, OSError) as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    finally:
+        await file.close()
+
+
+@router.get("/workflow-sources/cad")
+async def workflow_cad_options(session_id: str, server_id: str, request: Request, documents: bool = False, service: WorkspaceService = Depends(get_workspace_service)):
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+    from workspace_service.workflow_cad import capabilities, list_documents
+    from workspace_service.workflow_source_execution import PromptStep
+    scope = _workflow_source_scope(session_id, service)
+    runtime = WorkflowMcpRuntime(request.app.state.gateway_service, workspace_id=scope.workspace_id, session_id=session_id)
+    step = PromptStep('cad_inspect', 'CAD model selection', '', None, (), 'text', '', False, 'indexed', server_id=server_id, agent_task=True)
+    try:
+        result = await capabilities(runtime, step)
+        if documents and result.get('can_list'):
+            result['documents'] = await list_documents(runtime, step)
+        return result
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(status_code=422, detail={'message':str(error), 'correction':error.correction}) from error
+    finally:
+        await runtime.close()
+
+
+@router.get("/workflow-sources/application")
+async def workflow_application_options(session_id: str, server_id: str, request: Request, resources: bool = False, service: WorkspaceService = Depends(get_workspace_service)):
+    from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+    from workspace_service.workflow_application_task import application_options
+    from workspace_service.workflow_source_execution import PromptStep
+    scope = _workflow_source_scope(session_id, service)
+    runtime = WorkflowMcpRuntime(request.app.state.gateway_service, workspace_id=scope.workspace_id, session_id=session_id)
+    step = PromptStep('resource_inspect', 'Application resource selection', '', None, (), 'text', '', False, 'indexed', server_id=server_id, agent_task=True)
+    try:
+        return await application_options(runtime, step, resources=resources)
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(status_code=422, detail={'message':str(error), 'correction':error.correction}) from error
+    finally:
+        await runtime.close()
+
+
+@router.get("/workflow-sources/runs", response_model=WorkflowSourceRecentRunsResponse, response_model_exclude_unset=True)
+async def workflow_recent_runs(session_id: str, path: str, service: WorkspaceService = Depends(get_workspace_service), latest_only: bool = False):
+    from workspace_service.workflow_run_record import recent_workflow_runs
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        records=await asyncio.to_thread(recent_workflow_runs,scope.workspace_dir,path,latest_only=latest_only)
+        reviews=await service.workflow_artifact_reviews.list(scope.workspace_id,path,scope.workspace_dir)
+        for record in records:
+            review=next((item for item in reviews if item['run_log_path']==record['path']),None)
+            if review:
+                record['review']=review
+                record['status']='pending_review' if review['state']=='pending' else 'completed' if review['state']=='approved' else 'changes_requested'
+                if review['decided_at']:record['completed_at']=review['decided_at']
+        return {'workspace_id':scope.workspace_id,'workflow_path':path,'runs':records}
+    except (OSError, ValueError) as error:
+        raise HTTPException(status_code=422,detail='Unable to read run history for this workspace workflow.') from error
+
+
+@router.get('/workflow-sources/reviews')
+async def workflow_artifact_reviews(session_id: str, path: str, service: WorkspaceService = Depends(get_workspace_service)):
+    scope = _workflow_source_scope(session_id, service)
+    return {'reviews': await service.workflow_artifact_reviews.list(scope.workspace_id, path, scope.workspace_dir)}
+
+
+@router.get('/workflow-sources/reviews/{review_id}')
+async def workflow_artifact_review(review_id: str, session_id: str, service: WorkspaceService = Depends(get_workspace_service)):
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        return await service.workflow_artifact_reviews.get(scope.workspace_id, review_id, scope.workspace_dir)
+    except KeyError as error:
+        raise HTTPException(status_code=404, detail='Review not found in this workspace') from error
+
+
+@router.post('/workflow-sources/reviews/{review_id}/decision')
+async def workflow_artifact_review_decision(review_id: str, body: WorkflowArtifactReviewDecisionRequest,
+                                          service: WorkspaceService = Depends(get_workspace_service)):
+    scope = _workflow_source_scope(body.session_id, service)
+    try:
+        # No MCP exposure, execution continuation or client-asserted verified identity.
+        return await service.workflow_artifact_reviews.decide(workspace_id=scope.workspace_id,
+            workspace_dir=scope.workspace_dir, review_id=review_id, expected_package_digest=body.expected_package_digest,
+            decision=body.decision, reason=body.reason)
+    except KeyError as error:
+        raise HTTPException(status_code=404, detail='Review not found in this workspace') from error
+    except WorkflowSourceExecutionError as error:
+        raise HTTPException(status_code=409, detail={'code':error.code.lower(), 'message':str(error), 'correction':error.correction}) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail={'code':'workflow_review_invalid', 'message':str(error),
+            'correction':'Provide the requested decision and reason.'}) from error
+
+
+@router.post("/workflow-sources/run", response_model=WorkflowSourceRunResponse)
+@traced("workspace.workflow_sources.run")
+async def run_workflow_source_endpoint(
+    body: WorkflowSourceRunRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Execute the saved workspace source; optionally stream actual step events."""
+    scope = _workflow_source_scope(body.session_id, service)
+    def detail(error):
+        if isinstance(error, WorkflowSourceExecutionError):
+            return {"code": error.code.lower(), "message": str(error), "correction": error.correction}
+        return {"code": "workflow_output_unavailable", "message": "The workflow output could not be saved.", "correction": "Check the workspace file path and permissions, then run again."}
+    runtime = None
+    try:
+        def open_tools():
+            nonlocal runtime
+            from workspace_service.workflow_mcp_execution import WorkflowMcpRuntime
+            runtime = WorkflowMcpRuntime(request.app.state.gateway_service, workspace_id=scope.workspace_id, session_id=body.session_id)
+            return runtime
+        plan, values = await prepare_prompt_workflow(service=service, workspace_dir=scope.workspace_dir, path=body.path, expected_digest=body.expected_storage_digest, tool_runtime=open_tools)
+        async def run(on_event=None):
+            from workspace_service.workflow_run_record import record_workflow_run
+            async def execute(emit):
+                return await execute_prompt_workflow(service=service, workspace_dir=scope.workspace_dir, plan=plan, input_values=values, response_generator=generate_workflow_response, on_event=emit, tool_runtime=runtime, action_generator=decide_workflow_tool_action)
+            result = await record_workflow_run(service=service, workspace_dir=scope.workspace_dir, workspace_id=scope.workspace_id, source_path=body.path, source_digest=body.expected_storage_digest, execute=execute, on_event=on_event)
+            for step in result["steps"]:
+                if step.get("execution_kind") == "ai":
+                    step["format_instructions"] = response_instructions(step["output_format"])
+            return {"workspace_id": scope.workspace_id, "workflow_path": body.path, **result}
+        if "application/x-ndjson" in request.headers.get("accept", ""):
+            async def events():
+                queue = asyncio.Queue()
+                async def emit(event):
+                    if event["kind"] == "step_started" and event.get("execution_kind") == "ai":
+                        event["format_instructions"] = response_instructions(event["output_format"])
+                    await queue.put(event)
+                async def produce():
+                    try:
+                        result = await run(emit)
+                        await queue.put({"kind": result.get('status', 'completed'), "result": result})
+                    except (WorkflowSourceExecutionError, OSError, ValueError) as error:
+                        await queue.put({"kind": "failed", **detail(error)})
+                    finally:
+                        if runtime is not None:
+                            await runtime.close()
+                        await queue.put(None)
+                task = asyncio.create_task(produce())
+                try:
+                    while (event := await queue.get()) is not None:
+                        yield json.dumps(event) + "\n"
+                finally:
+                    task.cancel()
+                    # Cancel execution first. A disconnected StreamingResponse is
+                    # already in a cancelled scope; unshielded gather would send
+                    # a second Task.cancel into the producer's final checkpoint.
+                    # Only drain cleanup, bounded beyond its five-second write.
+                    with anyio.move_on_after(6.0, shield=True):
+                        await asyncio.gather(task, return_exceptions=True)
+            return StreamingResponse(events(), media_type="application/x-ndjson", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+        try:
+            return WorkflowSourceRunResponse(**await run())
+        finally:
+            if runtime is not None:
+                await runtime.close()
+    except WorkflowSourceExecutionError as error:
+        if runtime is not None:
+            await runtime.close()
+        status_code = 409 if error.code == "WORKFLOW_SOURCE_CONFLICT" else 503 if error.code == "MODEL_UNAVAILABLE" else 422
+        raise HTTPException(status_code=status_code, detail=detail(error)) from error
+    except (OSError, ValueError) as error:
+        if runtime is not None:
+            await runtime.close()
+        raise HTTPException(status_code=422, detail=detail(error)) from error
 
 
 @router.get("/workflow-templates", response_model=WorkflowTemplateListResponse)

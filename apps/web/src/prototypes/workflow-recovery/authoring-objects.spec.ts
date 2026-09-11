@@ -7,7 +7,7 @@ import { formatRecoveryAuthoringSource, parseRecoveryAuthoringSource, validateRe
 import {
   AUTHORING_GROUPS, AUTHORING_TEMPLATES, authoringConfigurationCommands,
   authoringDeletionImpact, authoringInputState, authoringReadiness,
-  buildDeletionCommands, createAuthoringObject, findAuthoringPosition,
+  buildDeletionCommands, canConnectAuthoringPorts, createAuthoringObject, findAuthoringPosition,
   hydrateAuthoringLayout,
 } from "./authoring-objects";
 
@@ -18,8 +18,26 @@ function apply(workflow: RecoveryWorkflow, layout: RecoveryLayout, commands: Rec
 }
 
 describe("native authoring objects", () => {
+  it("saves one image and connects it only to an image input", () => {
+    const image = createAuthoringObject("image-input", initialWorkflow, initialLayout);
+    const output = image.ports[0]!;
+    expect(image.ports).toHaveLength(1);
+    expect(output.cardinality).toBe("one");
+    const imageInput = initialWorkflow.ports.find((port) => port.id === "port.reference-images-in")!;
+    const textInput = initialWorkflow.ports.find((port) => port.id === "port.design-intent-in")!;
+    expect(canConnectAuthoringPorts(output, imageInput)).toBe(true);
+    expect(canConnectAuthoringPorts(output, textInput)).toBe(false);
+    const added = apply(initialWorkflow, initialLayout, [image]);
+    const rejected = applyRecoveryBatch(added.workflow, added.layout, recoveryCommandBatch(added.workflow.revision, "graph", [{ kind: "connect", relationship: { id: "rel.image-to-text", kind: "data", sourceId: output.id, targetId: textInput.id, label: "Image", condition: null } }]));
+    expect(rejected.ok).toBe(false);
+    const connected = apply(added.workflow, added.layout, [{ kind: "disconnect", relationshipId: "rel.reference-to-specification" }, { kind: "connect", relationship: { id: "rel.image-to-image", kind: "data", sourceId: output.id, targetId: imageInput.id, label: "Image", condition: null } }]);
+    const reopened = parseRecoveryAuthoringSource(formatRecoveryAuthoringSource(connected.workflow).text, initialWorkflow);
+    expect(reopened.ok).toBe(true);
+    expect(reopened.workflow!.ports.find((port) => port.id === output.id)?.cardinality).toBe("one");
+    expect(reopened.workflow!.relationships.find((edge) => edge.id === "rel.image-to-image")?.targetId).toBe(imageInput.id);
+  });
   it("offers seven curated groups with real, independently identified unbound templates", () => {
-    expect(AUTHORING_GROUPS.map((group) => group.label)).toEqual(["Input", "LLM document", "MCP tools", "3D check", "Drawing", "FDM", "More"]);
+    expect(AUTHORING_GROUPS.map((group) => group.label)).toEqual(["Input", "AI prompt", "MCP servers", "Review"]);
     for (const group of AUTHORING_GROUPS) expect(AUTHORING_TEMPLATES.some((template) => template.group === group.id)).toBe(true);
     for (const template of AUTHORING_TEMPLATES) {
       const command = createAuthoringObject(template.id, initialWorkflow, initialLayout);

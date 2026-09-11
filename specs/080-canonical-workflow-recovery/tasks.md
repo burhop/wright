@@ -305,6 +305,33 @@ US5: T044 parity documentation || T045 capability audit
 
 ## Notes
 
+## September 7 engineering task/result goal — active implementation checklist
+
+This section tracks the user-authorized goal in attachment
+`3ec746a4-03db-4a48-9455-93dd099ced4f/pasted-text.txt`. Earlier checkboxes remain
+historical evidence for their original subjects. Checked tasks below establish
+only the stated implementation or verification scope, not overall completion,
+production delivery, or user acceptance. Current evidence and limitations are in
+`evidence/engineering-results-progress.md` and
+`../../docs/contributing/engineering-task-results.md`.
+
+- [x] T136 Define versioned engineering results, representations, provenance and explicit collection requirements with contract tests.
+- [x] T137 Preserve existing CAD source identities, export addresses, connections and layout through the compatibility projection and source roundtrip tests.
+- [x] T138 Integrate one CAD model per task and grouped exports in the existing workspace canvas and Run details; verify real working-copy and two-task handoff files.
+- [x] T139 Pin local CAD documents, preserve originals for working copies, enforce indexed/overwrite choices, and serialize cooperating host processes with OS leases.
+- [x] T140 Implement provider-declared application resource discovery, revision-aware editing/copying, async monitoring and explicit import/export adapters with separately labeled contract tests.
+- [x] T141 Verify supported consumer boundaries, actionable export offers and capability checks. Application imports and offers have contract/browser evidence; image-to-MCP and CAD JPEG-to-AI have live evidence. Exact MCP text/JSON result contents and staged generic application workspace exports pass focused contracts. The live working-copy export-state test verifies fresh dirty-state reporting without silently saving; original finding preserved. Scope and provider prerequisites are in engineering-results-audit.md.
+- [x] T142 Checkpoint verified partial outputs, preserve failed-run diagnostic links, and report active/interrupted/unknown historical runs without resubmitting mutations. Live historical output links and simulated partial failures have browser evidence.
+- [x] T143 Complete the numbered representative verification set with its required evidence distinctions: cases 1–5 live; cases 6–7 contract/simulated because the cloud/solver providers are unavailable; case 8 has live failure/rerun records plus adversarial contracts and simulated cancellation/partial-result browser evidence. See the eight-row audit; no live cloud solve claimed.
+- [x] T144 Inventory actual workspace files and existing legacy scenarios with stable IDs and explicit planned/authored/runnable/evidence distinctions. Current inventory is 30 files, 18 compiling, and four planned scenario migrations; no invented workflows fill the 100-case target.
+- [x] T145 Provide bounded explicit/subset campaign execution through the ordinary workspace API, immutable attempts, fixture bundles, non-overwriting restoration and application serialization.
+- [x] T146 Add source-hash-bound CAD dimensional and application revision assertions alongside file validity/digest and original-preservation checks. Recheck preserved live 2.5 mm handoff evidence without claiming a new execution or whole-design acceptance.
+- [x] T147 Add revision-bound analysis-quantity oracles and preserve the real scenario definitions/criteria in planned_cases. Unit/adversarial and shared async execution contracts pass. The next batch names Structural bracket and the other three actual scenarios, with original assertions and exact provider prerequisites; full migration/live qualification awaits those integrations rather than being fabricated.
+- [x] T148 Consolidated relevant checks: 313 backend passed / 7 explicit Windows skips; 164 editor passed; TypeScript passed. Original startup timeout, isolated pass and serial full-suite pass retained. engineering-results-audit.md maps the full user goal to code, tests, live/simulated reports and stated limits.
+- [x] T149 Final exact-name/manual handoff is docs/contributing/engineering-workflow-test-handoff.md. Workspace entry, saved graph, direct controls, historical file links and dashboard were verified in report 2026-09-07T19-05-14-539Z; artifact validator passed. Initial trace loss is recorded, screenshots and continuation trace preserved. CAD result handoff is displayed in the attached browser; Codex panel open is queued. Next actual batch and unavailable integrations are explicit, with no release or user-acceptance claim.
+
+## Historical implementation notes
+
 - `[P]` means different-file parallel work, not permission for multiple writers to mutate shared state.
 - Every interaction keeps a stable `data-testid`; no test ID is semantic authority.
 - The recovery DSL, React Flow renderer, in-memory host, and static output fixtures remain disposable until approved and deliberately promoted.

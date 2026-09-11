@@ -372,3 +372,21 @@ No constitutional violation is accepted. Two deliberate concept-only additions a
 |---|---|---|
 | Provisional React Flow dependency | Accepted bakeoff evidence is materially stronger than the current custom shell, and this slice must prove real direct manipulation/overlays through the renderer seam. | Further polishing the custom SVG/HTML canvas would harden the rejected product grammar and would not close the prototype's direct-manipulation evidence gap. |
 | Contextual engineer-facing workflow source | A compact source-mapped engineering-script treatment is needed for lossless bidirectional editing without exposing host-managed metadata or coupling the language to current UI widgets. | Exposing strict JSON/YAML or the full internal IR would make engineers author revisions, hashes, and opaque identities; hiding all source would remove the requested code-literate workflow path. |
+
+## Authorized native MCP expansion — 2026-09-05
+
+The requesting engineer authorized extending the prompt editing and execution
+concepts to the next process steps, especially AI responses feeding MCP tools.
+Use one reusable MCP block with workspace-discovered tool entries and
+schema-driven inputs. Preserve canonical workspace source files, the existing
+canvas and file viewer, and the governed GatewayService. The implemented local
+scope, live examples, tests and remaining limits are recorded in
+[evidence/mcp-block-integration-20260905.md](evidence/mcp-block-integration-20260905.md).
+This amendment supersedes the historical prototype-only/no-MCP-execution scope
+for these native prompt/MCP data-flow steps; it does not claim catalog-wide CAD
+validation or change push, merge or release gates.
+
+
+## September 6 individual-block milestone
+
+The user authorized independently useful input, prompt and single-server AI MCP task blocks before specialized compound CAD workflows. Implementation and local live UI verification are complete in this 080 working tree; user acceptance and the consolidated CI/dev batch remain pending. See [block interoperability evidence](evidence/block-interoperability-20260906.md) for contracts, five saved workspace examples, tests, execution limits and browser reports. Reusable/composite blocks and general feedback loops remain deferred.

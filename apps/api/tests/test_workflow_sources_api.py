@@ -18,6 +18,30 @@ from workspace_service.workflow_sources import (
 SOURCE_PATH = "workflows/mounting-bracket.workflow.wflow"
 
 
+@pytest.mark.parametrize("accept", ["application/json", "application/x-ndjson"])
+def test_disconnected_process_is_rejected_before_a_run_starts(sync_client, monkeypatch, accept):
+    from unittest.mock import AsyncMock
+    from packages.workspace_service.tests.test_workflow_authoring_preflight import definition
+
+    service = _Service()
+    service.workflow_sources.current = _document(definition('second_result'), 1)
+    generate = AsyncMock(side_effect=AssertionError("No model should be called"))
+    monkeypatch.setattr('api.routers.workspace.generate_workflow_response', generate)
+    app.dependency_overrides[get_workspace_service] = lambda: service
+    try:
+        response = sync_client.post('/api/workspace/workflow-sources/run',
+            headers={'Accept': accept}, json={'session_id': 'session-1', 'path': SOURCE_PATH,
+                'expected_storage_digest': service.workflow_sources.current.storage_digest})
+        assert response.status_code == 422
+        detail = response.json()
+        assert detail['error_code'] == 'workflow_disconnected_process'
+        assert '2 disconnected groups' in detail['message']
+        assert 'own workflow' in detail['details']['correction']
+        generate.assert_not_called()
+    finally:
+        app.dependency_overrides.pop(get_workspace_service, None)
+
+
 def _document(source: str, storage_revision: int, definition_revision: int = 2):
     encoded = source.encode("utf-8")
     return SimpleNamespace(

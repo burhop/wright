@@ -1,3 +1,4 @@
+import { validateOutputChanges } from "./output-contracts";
 import {
   cloneLayout,
   cloneWorkflow,
@@ -24,6 +25,9 @@ export type RecoveryCommand =
   | { kind: "set_block_configuration"; blockId: string; key: string; value: string | number | boolean }
   | { kind: "set_artifact_definition"; artifactId: string; patch: { name?: string; description?: string } }
   | { kind: "set_port_contract"; portId: string; required: boolean; cardinality: RecoveryPort["cardinality"] }
+  | { kind: "set_port_type"; portId: string; typeId: string }
+  | { kind: "delete_port"; portId: string }
+  | { kind: "add_port"; port: RecoveryPort }
   | { kind: "set_binding_tool"; bindingId: string; toolId: string | null }
   | { kind: "update_relationship"; relationshipId: string; patch: Partial<Pick<RecoveryRelationship, "kind" | "sourceId" | "targetId" | "label" | "condition">> }
   | { kind: "add_block"; block: RecoveryBlock; ports: RecoveryPort[]; position: { x: number; y: number } }
@@ -68,6 +72,13 @@ function block(workflow: RecoveryWorkflow, id: string): RecoveryBlock {
 }
 
 function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, command: RecoveryCommand): void {
+  if (command.kind === "add_port") {
+    const owner = block(workflow, command.port.ownerBlockId);
+    if (workflow.ports.some((port) => port.id === command.port.id)) throw new Error("Connection point already exists");
+    workflow.ports.push(structuredClone(command.port));
+    (command.port.direction === "input" ? owner.inputPortIds : owner.outputPortIds).push(command.port.id);
+    return;
+  }
   if (command.kind === "restore_snapshot") {
     Object.assign(workflow, cloneWorkflow(command.workflow));
     Object.assign(layout, cloneLayout(command.layout));
@@ -99,14 +110,26 @@ function applyCommand(workflow: RecoveryWorkflow, layout: RecoveryLayout, comman
     return;
   }
   if (command.kind === "set_block_definition") {
-    if (Object.keys(command.patch).length === 0 || Object.values(command.patch).some((value) => typeof value !== "string" || value.trim() === "")) {
+    if (Object.keys(command.patch).length === 0 || Object.entries(command.patch).some(([key, value]) => typeof value !== "string" || (key !== "instructions" && value.trim() === ""))) {
       throw new Error(`WFR-COMMAND-DEFINITION-INVALID:${command.blockId}`);
     }
-    Object.assign(block(workflow, command.blockId), Object.fromEntries(Object.entries(command.patch).map(([key, value]) => [key, value!.trim()])));
+    Object.assign(block(workflow, command.blockId), Object.fromEntries(Object.entries(command.patch).map(([key, value]) => [key, key === "instructions" ? value : value!.trim()])));
     return;
   }
   if (command.kind === "set_block_configuration") {
     block(workflow, command.blockId).configuration[command.key] = command.value;
+    return;
+  }
+  if (command.kind === "set_port_type" || command.kind === "delete_port") {
+    const port = workflow.ports.find((item) => item.id === command.portId);
+    if (!port || port.artifactContractId || workflow.relationships.some((edge) => edge.sourceId === port.id || edge.targetId === port.id)) throw new Error("Disconnect this connection point before changing it.");
+    if (command.kind === "set_port_type") port.typeId = command.typeId;
+    else {
+      const owner = block(workflow, port.ownerBlockId);
+      owner.inputPortIds = owner.inputPortIds.filter((id) => id !== port.id);
+      owner.outputPortIds = owner.outputPortIds.filter((id) => id !== port.id);
+      workflow.ports = workflow.ports.filter((item) => item.id !== port.id);
+    }
     return;
   }
   if (command.kind === "set_port_contract") {
@@ -264,7 +287,7 @@ export function applyRecoveryBatch(
     const [code, identity] = message.split(":");
     return failure(code?.startsWith("WFR-") ? code : "WFR-COMMAND-UNKNOWN", message, "Correct or remove the invalid command; no change was applied.", identity ?? null);
   }
-  const inputDiagnostics = [...workflow.blocks.flatMap(validateAuthoringConfiguration), ...validateAuthoringConnections(workflow)];
+  const inputDiagnostics = [...workflow.blocks.flatMap(validateAuthoringConfiguration), ...validateAuthoringConnections(workflow), ...(batch.origin === "history" ? [] : validateOutputChanges(workflowValue, workflow))];
   if (inputDiagnostics.length) return { ok: false, workflow: null, layout: null, diagnostics: inputDiagnostics, diff: [], semanticChanged: false };
   const candidateText = formatRecoveryDsl(workflow).text;
   const parsed = parseRecoveryDsl(candidateText);
@@ -382,8 +405,9 @@ export function textEditCommands(before: RecoveryWorkflow, after: RecoveryWorkfl
     if (current.required !== edited.required || current.cardinality !== edited.cardinality) edits.push({ kind: "set_port_contract", portId: current.id, required: edited.required, cardinality: edited.cardinality });
   }
   const beforePortIds = new Set(before.ports.map((port) => port.id));
-  const unsupportedPort = after.ports.find((port) => !beforePortIds.has(port.id) && !addedPortIds.has(port.id));
-  if (unsupportedPort) return [{ code: "WFR-TEXT-STRUCTURE-UNSUPPORTED", semanticId: unsupportedPort.id, line: null, explanation: "Engineering source cannot add one connection point to an existing step.", correction: "Add a complete new step or restore the accepted connection points." }];
+  for (const port of after.ports) {
+    if (!beforePortIds.has(port.id) && !addedPortIds.has(port.id)) edits.push({ kind: "add_port", port: structuredClone(port) });
+  }
   const afterRelationships = new Map(after.relationships.map((item) => [item.id, item]));
   const beforeRelationshipIds = new Set(before.relationships.map((item) => item.id));
   for (const current of before.relationships) {

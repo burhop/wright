@@ -35,13 +35,6 @@ export function Sidebar() {
       order: 3,
     },
     {
-      id: "logs",
-      label: "Logs",
-      path: "/logs",
-      icon: "logs",
-      order: 4,
-    },
-    {
       id: "model-setup",
       label: "Model Setup",
       path: "/setup/model",

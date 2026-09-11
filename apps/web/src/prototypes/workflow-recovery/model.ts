@@ -161,7 +161,7 @@ export interface RecoveryRunProjection {
   semanticSha256: string;
   createdAt: string;
   completedAt: string | null;
-  mode: "simulated";
+  mode: "simulated" | "native";
   state: RecoveryRunState;
   activeBlockId: string | null;
   activeRelationshipId: string | null;

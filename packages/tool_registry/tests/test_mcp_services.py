@@ -25,7 +25,8 @@ class FakeEngine:
         self.started: list[str] = []
         self.stopped: list[str] = []
 
-    async def start_server(self, server_id: str):
+    async def start_server(self, server_id: str, *, approval_context=None):
+        self.start_approval_context = approval_context
         self.started.append(server_id)
         return db_update_server(
             self.db_path,
@@ -58,6 +59,21 @@ def _insert_server(db_path, **overrides):
     server = McpServer(**data)
     insert_server(db_path, server)
     return server
+
+
+@pytest.mark.asyncio
+async def test_activation_preserves_approval_for_lifecycle_check(db_path):
+    from tool_registry.safety import McpSafetyPolicy
+
+    server = _insert_server(db_path, risk_level="high", approval_gates=["workspace_write_approval"])
+    engine = FakeEngine(db_path)
+    with pytest.raises(Exception, match="requires approval"):
+        await services.toggle_server_activation(engine, server.server_id, True)
+    assert not engine.started
+    approval = ApprovalContext(machine_approvals={"workspace_write_approval"})
+    await services.toggle_server_activation(engine, server.server_id, True, approval_context=approval)
+    assert engine.start_approval_context is approval
+    assert McpSafetyPolicy().can_start(server, engine.start_approval_context).allowed
 
 
 def test_list_register_and_tool_services(db_path, tmp_path, monkeypatch):

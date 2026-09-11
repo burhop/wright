@@ -232,8 +232,21 @@ def _required_runtimes(entry: CatalogEntry) -> tuple[set[str], set[str]]:
 
 
 def evaluate_compatibility(
-    entry: CatalogEntry, observation: MachineCompatibilityObservation
+    entry: CatalogEntry, observation: MachineCompatibilityObservation | None
 ) -> CapabilityCompatibility:
+    # Browsing the catalog must never launch host probes. Installation and an
+    # explicit observation still use the complete checks below.
+    if observation is None:
+        return CapabilityCompatibility(
+            status="uncertain",
+            platform_key="unknown",
+            reasons=[_reason(
+                "machine_not_observed",
+                "No current computer setup check is available.",
+                "Check setup when installing this server.",
+                "machine.observation",
+            )],
+        )
     reasons: list[CompatibilityReason] = []
     status = "compatible"
 

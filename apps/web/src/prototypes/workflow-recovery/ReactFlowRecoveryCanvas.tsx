@@ -14,6 +14,7 @@ import {
   useNodesState,
   useNodesInitialized,
   useStore,
+  useUpdateNodeInternals,
   type Connection,
   type Edge,
   type EdgeProps,
@@ -34,8 +35,12 @@ import {
 } from "../../components/workflow-composer/component-graph";
 import { validateRecoveryRunProjection, type RecoveryRelationship, type RecoveryRunProjection, type RecoveryRunState, type RecoveryRunSubject } from "./model";
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
+import { canConnectAuthoringPorts } from "./authoring-objects";
 
 interface RecoveryCanvasRuntime {
+  readonly outputLabels?: Readonly<Record<string,string>>;
+  readonly outputGroups?: Readonly<Record<string,string>>;
+  readonly hiddenPorts?: ReadonlySet<string>;
   readonly run: RecoveryRunProjection;
   readonly runSubject: RecoveryRunSubject | null;
   readonly proposedBlockIds: ReadonlySet<string>;
@@ -46,6 +51,9 @@ interface RecoveryCanvasRuntime {
   readonly onArtifactInspect: (portId: string) => void;
   readonly focusPath?: boolean;
   readonly blockIcons?: Readonly<Record<string, string>>;
+  readonly readOnly?: boolean;
+  readonly canConnect?: (sourcePortId: string, targetPortId: string) => boolean;
+  readonly connectionIssue?: (sourcePortId: string, targetPortId: string) => string | null | undefined;
 }
 
 const emptyRun: RecoveryRunProjection = {
@@ -90,6 +98,7 @@ export function RecoveryCanvasRuntimeProvider({
 }
 
 interface RecoveryNodeData extends Record<string, unknown> {
+  readonly outputGroups?: Readonly<Record<string,string>>;
   readonly block: DraftBlockProjection;
   readonly selected: boolean;
   readonly runState: RecoveryRunState;
@@ -103,6 +112,9 @@ interface RecoveryNodeData extends Record<string, unknown> {
   readonly onToggleComponent: (semanticId: string) => void;
   readonly muted: boolean;
   readonly iconKind: string;
+  readonly readOnly: boolean;
+  readonly onRename: (title: string) => void;
+  readonly onDelete: () => void;
 }
 
 type RecoveryFlowNode = Node<RecoveryNodeData, "recovery">;
@@ -120,7 +132,7 @@ const stateGlyph: Record<RecoveryRunState, string> = {
 
 const roleLabel: Record<DraftBlockProjection["role"], string> = {
   input: "input source",
-  work: "step",
+  work: "task",
   review: "design review",
   release: "output",
 };
@@ -241,6 +253,20 @@ function PortRow({
 
 const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<RecoveryFlowNode>) {
   const block = data.block;
+  const updateInternals = useUpdateNodeInternals();
+  const portIdentity = [...block.inputs, ...block.outputs].map(port => port.semanticId).join("|");
+  useEffect(() => { updateInternals(block.semanticId); }, [block.semanticId, portIdentity, updateInternals]);
+  const [renaming, setRenaming] = useState(false);
+  const [title, setTitle] = useState(block.title);
+  const startRename = () => {
+    if (data.readOnly) return;
+    setTitle(block.title);
+    setRenaming(true);
+  };
+  const finishRename = () => {
+    setRenaming(false);
+    if (!data.readOnly && title.trim() && title.trim() !== block.title) data.onRename(title.trim());
+  };
   return (
     <article
       className={`recovery-block recovery-block--${block.role}${data.selected ? " is-selected" : ""}${data.active ? " is-active" : ""}${data.proposed ? " is-proposed" : ""}${data.muted ? " is-muted" : ""}`}
@@ -249,6 +275,7 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       data-selected={data.selected}
       data-run-state={data.runState}
       data-active={data.active}
+      aria-busy={data.runState === "running"}
       data-component-collapsed={data.componentState?.collapsed ?? undefined}
       data-detail-level={data.detailLevel}
       data-endpoints-visible={data.selected || data.keyboardSource !== null}
@@ -263,6 +290,14 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             data.onSelect(block.semanticId);
+          } else if (event.key === "F2") {
+            event.preventDefault();
+            event.stopPropagation();
+            startRename();
+          } else if (event.key === "Delete" || event.key === "Backspace") {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!data.readOnly) data.onDelete();
           } else if (data.componentState !== null && event.key === "ArrowRight" && data.componentState.collapsed) {
             event.preventDefault();
             data.onToggleComponent(block.semanticId);
@@ -274,11 +309,15 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
       }}
     >
       <RelationshipRoutingHandles blockId={block.semanticId} />
-      {data.active && <div className="recovery-block__active">▶ ACTIVE STEP</div>}
+      {data.active && <div className="recovery-block__active">▶ ACTIVE TASK</div>}
       {data.proposed && <div className="recovery-block__proposal">AI SUGGESTION · REVIEW BEFORE ADDING</div>}
       <header className="recovery-block__heading">
         <span className="recovery-block__icon"><WorkflowObjectIcon kind={data.iconKind} /></span>
-        <div className="recovery-block__identity"><span className="recovery-block__kind">{roleLabel[block.role]}</span><h3>{block.title}</h3></div>
+        <div className="recovery-block__identity"><span className="recovery-block__kind">{roleLabel[block.role]}</span>{renaming && !data.readOnly ? <input className="recovery-block__title-editor nodrag nopan" data-testid={`workflow-recovery-rename-${block.semanticId}`} aria-label="Step name" autoFocus value={title} onFocus={(event) => event.currentTarget.select()} onChange={(event) => setTitle(event.target.value)} onClick={(event) => event.stopPropagation()} onBlur={finishRename} onKeyDown={(event) => {
+          event.stopPropagation();
+          if (event.key === "Enter") { event.preventDefault(); finishRename(); }
+          if (event.key === "Escape") { event.preventDefault(); setRenaming(false); }
+        }} /> : <h3 title={data.readOnly ? undefined : "Double-click to rename · F2"} onDoubleClick={(event) => { event.stopPropagation(); startRename(); }}>{block.title}</h3>}</div>
         <span className={`recovery-state recovery-state--${data.runState}`} aria-label={`Run state ${data.runState}`}>
           {stateGlyph[data.runState]}{data.runState === "idle" ? "" : ` ${data.runState.replace("-", " ")}`}
         </span>
@@ -339,7 +378,10 @@ const RecoveryBlockNode = memo(function RecoveryBlockNode({ data }: NodeProps<Re
         {block.inputs.map((port) => <PortRow key={port.semanticId} port={port} side="input" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />)}
       </div>
       <div className="recovery-block__ports recovery-block__ports--outputs">
-        {block.outputs.map((port) => <PortRow key={port.semanticId} port={port} side="output" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />)}
+        {block.outputs.map((port,index) => <div key={port.semanticId}>
+          {data.outputGroups?.[port.semanticId] && (index===0 || data.outputGroups[port.semanticId]!==data.outputGroups[block.outputs[index-1].semanticId]) && <small className="recovery-output-group">{data.outputGroups[port.semanticId]}</small>}
+          <PortRow port={port} side="output" keyboardSource={data.keyboardSource} onPortKey={data.onPortKey} />
+        </div>)}
       </div>
       {block.gates.length > 0 && <div className="recovery-block__gate">◇ Approval required</div>}
     </article>
@@ -565,21 +607,36 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
   const focusPath = Boolean(runtime.focusPath && selectedSemanticId !== null);
 
   const portLookup = useMemo(() => new Map(blocks.flatMap((block) => [...block.inputs, ...block.outputs]).map((port) => [port.semanticId, port])), [blocks]);
+  const canConnect = useCallback((sourceId: string, targetId: string) => {
+    if (runtime.readOnly) return false;
+    if (runtime.canConnect) return runtime.canConnect(sourceId, targetId);
+    const source = portLookup.get(sourceId);
+    const target = portLookup.get(targetId);
+    return canConnectAuthoringPorts(source && { ...source, typeId: source.value_type_id, ownerBlockId: source.owner_block_id }, target && { ...target, typeId: target.value_type_id, ownerBlockId: target.owner_block_id });
+  }, [portLookup, runtime.readOnly, runtime.canConnect]);
+  const [connectionMessage, setConnectionMessage] = useState("");
   const blockIds = useMemo(() => new Set(blocks.map((block) => block.semanticId)), [blocks]);
   const requireBlockEndpoint = (semanticId: string, relationshipId: string, endpoint: "source" | "target") => {
     if (!blockIds.has(semanticId)) throw new Error(`RECOVERY_EDGE_${endpoint.toUpperCase()}_BLOCK_MISSING:${relationshipId}:${semanticId}`);
     return semanticId;
   };
   const onPortKey = useCallback((port: DraftPortProjection) => {
+    if (runtime.readOnly) return;
     if (port.direction === "output") {
+      setConnectionMessage("");
       setKeyboardSource((current) => current === port.semanticId ? null : port.semanticId);
       return;
     }
     if (keyboardSource !== null) {
+      if (!canConnect(keyboardSource, port.semanticId)) {
+        setConnectionMessage(runtime.connectionIssue?.(keyboardSource,port.semanticId) || (portLookup.get(keyboardSource)?.value_type_id.startsWith("type.image.") ? "Connect the image to an input that accepts images." : "Choose an input that accepts this output type."));
+        return;
+      }
       onIntent({ type: "create-connection", sourcePortId: keyboardSource, targetPortId: port.semanticId });
+      setConnectionMessage("");
       setKeyboardSource(null);
     }
-  }, [keyboardSource, onIntent]);
+  }, [keyboardSource, onIntent, canConnect, portLookup, runtime.readOnly, runtime.connectionIssue]);
 
   const projectedNodes = useMemo<RecoveryFlowNode[]>(() => blocks.map((block) => ({
       id: block.semanticId,
@@ -587,7 +644,11 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       position: { x: block.position.x, y: block.position.y },
       selected: selectedSemanticId === block.semanticId,
       data: {
-        block,
+        block: { ...block, inputs: block.inputs.filter(port => !runtime.hiddenPorts?.has(port.semanticId)), outputs:block.outputs.filter(port=>!runtime.hiddenPorts?.has(port.semanticId)).map(port=>({...port,name:runtime.outputLabels?.[port.semanticId]??port.name})) },
+        outputGroups: runtime.outputGroups,
+        readOnly: runtime.readOnly ?? false,
+        onRename: (title) => onIntent({ type: "edit-block", semanticId: block.semanticId, title, purpose: block.purpose }),
+        onDelete: () => onIntent({ type: "delete-concept", semanticId: block.semanticId }),
         iconKind: runtime.blockIcons?.[block.semanticId] ?? blockIcon(block),
         selected: selectedSemanticId === block.semanticId,
         runState: runtime.run.steps[block.semanticId]?.state ?? "idle",
@@ -610,6 +671,10 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
       onPortKey,
       runtime.proposedBlockIds,
       runtime.blockIcons,
+      runtime.hiddenPorts,
+      runtime.outputLabels,
+      runtime.outputGroups,
+      runtime.readOnly,
       runtime.run.activeBlockId,
       runtime.run.steps,
       selectedSemanticId,
@@ -690,13 +755,13 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
     if (!connection.sourceHandle || !connection.targetHandle) return;
     const source = portLookup.get(connection.sourceHandle);
     const target = portLookup.get(connection.targetHandle);
-    if (source?.direction !== "output" || target?.direction !== "input") return;
+    if (!source || !target || !canConnect(source.semanticId, target.semanticId)) return;
     onIntent({ type: "create-connection", sourcePortId: source.semanticId, targetPortId: target.semanticId });
   };
 
   return (
     <div className={`recovery-canvas recovery-canvas--${runtime.portTreatment}`} data-testid="workflow-recovery-canvas" data-port-treatment={runtime.portTreatment} data-detail-level={detailLevel} data-focus-path={focusPath} aria-label={`${projection.title} diagram`}>
-      {keyboardSource && <div className="recovery-keyboard-connection" role="status">Connection started. Focus a compatible input and press Enter; Escape cancels.</div>}
+      {(keyboardSource || connectionMessage) && <div className="recovery-keyboard-connection" role="status">{connectionMessage || "Connection started. Focus a compatible input and press Enter; Escape cancels."}</div>}
       <ReactFlow
         data-testid="workflow-recovery-reactflow-pane"
         nodes={nodes}
@@ -726,9 +791,18 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({ projection, selec
         onEdgesDelete={(deleted) => deleted.forEach((edge) => onIntent({ type: "delete-connection", semanticId: edge.id }))}
         onNodesDelete={(deleted) => deleted.forEach((node) => onIntent({ type: "delete-concept", semanticId: node.id }))}
         onConnect={connect}
+        onConnectStart={()=>setConnectionMessage("")}
+        onConnectEnd={(_,state)=>{
+          if(state.isValid||!state.fromHandle?.id||!state.toHandle?.id)return;
+          const source=state.fromHandle.type==="source"?state.fromHandle.id:state.toHandle.id;
+          const target=state.fromHandle.type==="target"?state.fromHandle.id:state.toHandle.id;
+          setConnectionMessage(runtime.connectionIssue?.(source,target)||"Choose an input that accepts this output type.");
+        }}
+        isValidConnection={(connection) => Boolean(connection.sourceHandle && connection.targetHandle && canConnect(connection.sourceHandle, connection.targetHandle))}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             setKeyboardSource(null);
+            setConnectionMessage("");
             return;
           }
           if (event.key === "Enter" || event.key === " ") {

@@ -617,14 +617,16 @@ export function parseRecoveryAuthoringSource(text: string, base: RecoveryWorkflo
   }
 
   const itemSections = new Map(sectionsByKind("item").map((section) => [section.key, section]));
+  // The reconstruction base supplies vocabulary only. Source controls which
+  // item contracts are retained, so a small workflow need not inherit the demo.
+  candidate.artifactContracts = candidate.artifactContracts.filter((artifact) =>
+    itemSections.has(stableKey(artifact.id)),
+  );
   const artifactsByKey = new Map(candidate.artifactContracts.map((artifact) => [stableKey(artifact.id), artifact]));
   for (const artifact of candidate.artifactContracts) {
     const key = stableKey(artifact.id);
     const section = itemSections.get(key);
-    if (!section) {
-      diagnostics.push(diagnostic("WFR-SOURCE-ITEM-MISSING", `Engineering item '${key}' is missing.`, "Restore the item declaration so files and design documents remain explicit.", artifact.id));
-      continue;
-    }
+    if (!section) continue;
     diagnostics.push(...requireFields(section, ["name", "type", "formats", "description"]));
     const name = stringField(section, "name", diagnostics);
     const type = stringField(section, "type", diagnostics);
@@ -661,7 +663,8 @@ export function parseRecoveryAuthoringSource(text: string, base: RecoveryWorkflo
     const purpose = stringField(section, "purpose", diagnostics);
     const stepTypeValue = stringField(section, "step_type", diagnostics);
     const actor = stringField(section, section.kind === "input" ? "provided_by" : "performed_by", diagnostics);
-    const instructions = stringField(section, instructionField, diagnostics);
+    const instructions = instructionField === "prompt" && typeof section.fields[instructionField] === "string"
+      ? section.fields[instructionField] as string : stringField(section, instructionField, diagnostics);
     const groupKey = nullableStringField(section, "group", diagnostics);
     const stepType = stepTypeValue ? recoveryStepType(stepTypeValue) : null;
     const executionKind = actor ? executionKindForActor(actor) : null;
@@ -726,6 +729,10 @@ export function parseRecoveryAuthoringSource(text: string, base: RecoveryWorkflo
   }
   candidate.blocks = nextBlocks;
   candidate.ports = nextPorts;
+  const retainedBindings = new Set(nextBlocks.flatMap((block) => block.bindingId ? [block.bindingId] : []));
+  const retainedComponents = new Set(nextBlocks.flatMap((block) => block.componentRef ? [block.componentRef.componentId] : []));
+  candidate.bindings = candidate.bindings.filter((binding) => retainedBindings.has(binding.id));
+  candidate.components = candidate.components.filter((component) => retainedComponents.has(component.id));
   for (const phase of candidate.phases) phase.blockIds = nextBlocks.filter((block) => block.phaseId === phase.id).map((block) => block.id);
 
   const blocksByKey = new Map(candidate.blocks.map((block) => [stableKey(block.id), block]));

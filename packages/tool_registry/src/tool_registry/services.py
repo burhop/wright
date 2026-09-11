@@ -145,7 +145,7 @@ async def toggle_server_activation(
         )
         if not decision.allowed:
             raise McpInvalidOperationError(decision.reason)
-        return await engine.start_server(server_id)
+        return await engine.start_server(server_id, approval_context=approval_context)
     return await engine.stop_server(server_id)
 
 
@@ -174,7 +174,7 @@ async def install_server(
         credentials_configured=_credential_status_for_policy(server),
     )
     if start_decision.allowed:
-        updated = await engine.start_server(server_id)
+        updated = await engine.start_server(server_id, approval_context=approval_context)
     else:
         updated = db_update_server(
             engine.db_path,

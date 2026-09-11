@@ -7,12 +7,9 @@ export { findAuthoringPosition, hydrateAuthoringLayout } from "./authoring-posit
 export type AuthoringGroup = "input" | "document" | "tool" | "check3d" | "drawing" | "fdm" | "more";
 export const AUTHORING_GROUPS: readonly { id: AuthoringGroup; label: string; description: string }[] = [
   { id: "input", label: "Input", description: "Text and existing workspace files" },
-  { id: "document", label: "LLM document", description: "Draft a document-generating step; no model runs on creation" },
-  { id: "tool", label: "MCP tools", description: "Describe a tool step; configure a reviewed binding before execution" },
-  { id: "check3d", label: "3D check", description: "Define a CAD model check and expected report" },
-  { id: "drawing", label: "Drawing", description: "Create or check a manufacturing drawing" },
-  { id: "fdm", label: "FDM", description: "Define a printability check" },
-  { id: "more", label: "More", description: "Other engineering and manual-review steps" },
+  { id: "document", label: "AI prompt", description: "Generate a response from a prompt" },
+  { id: "tool", label: "MCP servers", description: "Add a task configured for an available application or service" },
+  { id: "more", label: "Review", description: "Engineer review and approval" },
 ];
 
 interface TemplatePort { key: string; name: string; typeId: string; direction: RecoveryPort["direction"]; required?: boolean; cardinality?: RecoveryPort["cardinality"] }
@@ -26,6 +23,7 @@ export interface AuthoringTemplate {
   ports: readonly TemplatePort[];
   inputMode?: "text" | "workspace-file";
   applicationHint?: string;
+  configuration?: Record<string, string | number | boolean>;
 }
 const textIn: TemplatePort = { key: "text-in", name: "Design text", typeId: "type.value.text", direction: "input" };
 const fileIn: TemplatePort = { key: "file-in", name: "Reference document", typeId: "type.file.workspace", direction: "input", required: false, cardinality: "optional" };
@@ -36,20 +34,22 @@ const verdictOut: TemplatePort = { key: "verdict-out", name: "Check result", typ
 const draftInstructions = "Describe the required inputs, expected outputs, and acceptance criteria. This draft step is not bound to an execution tool.";
 
 export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
+  { id: "ai-prompt", group: "document", label: "AI prompt", description: "Write a prompt or use another step's response", executionKind: "ai_capable", instructions: "Describe what you want the AI to do.", configuration: { prompt_source: "inline", output_format: "text", save_output: false, file_policy: "indexed" }, ports: [{ key: "prompt-in", name: "Prompt", typeId: "type.document.engineering", direction: "input", required: false, cardinality: "optional" }, { ...documentOut, name: "Response" }] },
   { id: "text-input", group: "input", label: "Text input", description: "Write requirements, design intent, or notes", executionKind: "human", instructions: "Provide the engineering text used by connected steps.", inputMode: "text", ports: [{ key: "text-out", name: "Design text", typeId: "type.value.text", direction: "output" }] },
   { id: "file-input", group: "input", label: "Workspace file", description: "Reference an existing document in this workspace", executionKind: "human", instructions: "Select a permitted workspace file. Wright retains the reference; selecting it does not run a tool.", inputMode: "workspace-file", ports: [{ key: "file-out", name: "Workspace file", typeId: "type.file.workspace", direction: "output" }] },
-  { id: "image-input", group: "input", label: "Reference images", description: "Reference an image file from this workspace", executionKind: "human", instructions: "Select a reference image that explains the intended design.", inputMode: "workspace-file", ports: [{ key: "images-out", name: "Reference images", typeId: "type.image.reference-set", direction: "output", cardinality: "many" }] },
+  { id: "image-input", group: "input", label: "Image", description: "Select one image from this workspace", executionKind: "human", instructions: "Select one reference image that explains the intended design.", inputMode: "workspace-file", ports: [{ key: "images-out", name: "Image", typeId: "type.image.reference-set", direction: "output", cardinality: "one" }] },
   { id: "document", group: "document", label: "Engineering document", description: "Unbound document-writing step with an editable prompt", executionKind: "ai_capable", instructions: "Draft an engineering document from the connected design text and reference document. State assumptions and questions for engineer review.", ports: [textIn, fileIn, documentOut] },
+  { id: "html-report", group: "document", label: "HTML report", description: "Create one self-contained HTML report in this workspace", executionKind: "ai_capable", instructions: "Write a concise engineering report. State assumptions, include any needed comparison or table, and conclude with the recommended next action.", configuration: { output_format: "html", output_filename: "report.html" }, ports: [documentOut] },
   { id: "design-specification", group: "document", label: "Design specification", description: "Describe a design-specification drafting step", executionKind: "ai_capable", instructions: "Draft a design specification from the supplied design text and reference document. Separate known facts from assumptions and require engineer review.", ports: [textIn, fileIn, { key: "specification-out", name: "Design specification", typeId: "type.design.specification", direction: "output" }] },
   { id: "work-order", group: "document", label: "Work order", description: "Describe work, deliverables, and acceptance criteria", executionKind: "ai_capable", instructions: "Draft a work order from the supplied design text and reference document, naming deliverables, constraints, and review criteria.", ports: [textIn, fileIn, { ...documentOut, name: "Work order" }] },
-  ...["MCP tool", "BREP", "Solid Edge", "Onshape"].map((name): AuthoringTemplate => ({ id: name === "MCP tool" ? "mcp-tool" : `${name.toLowerCase().replace(/ /g, "-")}-tool`, group: "tool", label: name === "MCP tool" ? name : `${name} step`, description: `${name} intention only; no availability or execution binding is claimed`, applicationHint: name, executionKind: "deterministic", instructions: draftInstructions, ports: [{ key: "document-in", name: "Engineering document", typeId: "type.document.engineering", direction: "input" }, { key: "result-out", name: "Structured result", typeId: "type.result.structured", direction: "output" }] })),
+  { id: "mcp-task", group: "tool", label: "AI task with MCP", description: "Describe the task; AI chooses tools from one workspace server", executionKind: "ai_capable", instructions: "", configuration: { output_format: "text", save_output: false, file_policy: "indexed", max_tool_calls: 8, timeout_seconds: 300 }, ports: [{ ...documentOut, name: "Task result" }] },
+  { id: "mcp-tool", group: "tool", label: "MCP tool", description: "Choose a tool available to this workspace", executionKind: "deterministic", instructions: "Run the selected MCP tool with its configured inputs.", configuration: { output_format: "json", save_output: false, file_policy: "indexed" }, ports: [{ key: "result-out", name: "Result", typeId: "type.result.structured", direction: "output" }, { key: "text-out", name: "Text", typeId: "type.value.text", direction: "output" }] },
   { id: "model-check", group: "check3d", label: "Check CAD model", description: "Unbound model check with separate report and result", executionKind: "deterministic", instructions: "Define the geometric checks, units, tolerances, and acceptance criteria for the CAD model.", ports: [modelIn, reportOut, verdictOut] },
   { id: "dimension-check", group: "check3d", label: "Check dimensions", description: "Compare model dimensions with stated requirements", executionKind: "deterministic", instructions: "Specify the dimensions and tolerances to check. Record measured values, units, and deviations in the report.", ports: [modelIn, { key: "specification-in", name: "Design specification", typeId: "type.design.specification", direction: "input" }, reportOut, verdictOut] },
-  { id: "drawing", group: "drawing", label: "Create drawing", description: "Unbound drawing step from a CAD model", executionKind: "deterministic", instructions: "Describe the required views, dimensions, units, drawing standard, and sheet size.", ports: [modelIn, { key: "drawing-out", name: "Manufacturing drawing", typeId: "type.file.drawing", direction: "output" }] },
   { id: "drawing-check", group: "drawing", label: "Check drawing", description: "Define a drawing review with a report and result", executionKind: "deterministic", instructions: "Check required dimensions, tolerances, notes, and revision information against the design requirements.", ports: [{ key: "drawing-in", name: "Manufacturing drawing", typeId: "type.file.drawing", direction: "input" }, reportOut, verdictOut] },
   { id: "fdm-check", group: "fdm", label: "Check FDM printability", description: "Unbound check for material, orientation, and print constraints", executionKind: "deterministic", instructions: "Specify printer, material, layer height, orientation, support, and wall-thickness criteria before evaluating printability.", ports: [modelIn, reportOut, verdictOut] },
   { id: "engineering-step", group: "more", label: "Engineering step", description: "Describe additional work without an execution binding", executionKind: "deterministic", instructions: draftInstructions, ports: [{ key: "document-in", name: "Engineering document", typeId: "type.document.engineering", direction: "input" }, documentOut] },
-  { id: "manual-review", group: "more", label: "Engineer review", description: "Describe a manual review and its expected notes", executionKind: "human", instructions: "Review the connected document and record observations and unresolved questions. This step does not automatically approve downstream work.", ports: [{ key: "document-in", name: "Engineering document", typeId: "type.document.engineering", direction: "input" }, { ...documentOut, name: "Review notes" }] },
+  { id: "manual-review", group: "more", label: "Engineer review", description: "Review the final document and approve or request changes", executionKind: "human", instructions: "Review the connected document for completeness, accuracy, assumptions, and unresolved questions. Approve it or request changes with review notes.", ports: [{ key: "document-in", name: "Engineering document", typeId: "type.document.engineering", direction: "input" }] },
 ];
 
 export function createAuthoringObject(templateId: string, workflow: RecoveryWorkflow, layout: RecoveryLayout, options: { selectedBlockId?: string | null; viewportCenter?: AuthoringPoint } = {}): Extract<RecoveryCommand, { kind: "add_block" }> {
@@ -61,7 +61,8 @@ export function createAuthoringObject(templateId: string, workflow: RecoveryWork
   const suffix = `${template.id}-${index}`;
   const blockId = `block.${suffix}`;
   const ports: RecoveryPort[] = template.ports.map((port) => ({ id: `port.${suffix}-${port.key}`, ownerBlockId: blockId, direction: port.direction, name: port.name, typeId: port.typeId, required: port.required ?? true, cardinality: port.cardinality ?? "one", artifactContractId: null, description: `${port.name} ${port.direction === "input" ? "used by" : "expected from"} this step; no run output is implied.` }));
-  const configuration: RecoveryBlock["configuration"] = { authoring_template: template.id };
+  const configuration: RecoveryBlock["configuration"] = { authoring_template: template.id, ...template.configuration };
+  if (template.id === "ai-prompt") configuration.prompt_input = ports[0]!.id.slice(5).replaceAll("-", "_");
   if (template.group === "input") Object.assign(configuration, { [RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY]: "input", input_mode: template.inputMode!, input_text: "", workspace_file: "" });
   else configuration.binding_state = "unbound";
   if (template.applicationHint) configuration.application_hint = template.applicationHint;
@@ -82,12 +83,27 @@ export function validateAuthoringConfiguration(block: RecoveryBlock): RecoveryDi
   const diagnostics: RecoveryDiagnostic[] = [];
   const fail = (code: string, explanation: string, correction: string) => diagnostics.push({ code, explanation, correction, semanticId: block.id, line: null });
   const configuration = block.configuration;
+  if (configuration.authoring_template === "mcp-task" && configuration.max_tool_calls !== undefined &&
+      (typeof configuration.max_tool_calls !== "number" || !Number.isInteger(configuration.max_tool_calls) || configuration.max_tool_calls < 1 || configuration.max_tool_calls > 32)) {
+    fail("WFR-MCP-TASK-LIMIT-INVALID", "Maximum tool calls must be a whole number from 1 to 32.", "Choose 1–32 calls; the default is 8 and the task time limit still applies.");
+  }
   if (Object.keys(configuration).some((key) => ["__proto__", "prototype", "constructor"].includes(key))) fail("WFR-INPUT-CONFIGURATION-INVALID", "The setting name is reserved and cannot be authored.", "Choose an ordinary engineering setting name.");
   if (Object.values(configuration).some((value) => !["string", "number", "boolean"].includes(typeof value) || (typeof value === "number" && !Number.isFinite(value)))) fail("WFR-INPUT-CONFIGURATION-INVALID", "Step settings must contain finite numbers, text, or true/false values.", "Correct the invalid setting; the previous workflow remains unchanged.");
   if (configuration.workspace_file !== undefined && (typeof configuration.workspace_file !== "string" || (configuration.workspace_file !== "" && !isSafeWorkspaceInputPath(configuration.workspace_file)))) fail("WFR-INPUT-PATH-INVALID", "The input file must be a regular relative path inside this workspace.", "Choose a file from this workspace; absolute paths, parent traversal, encoded paths, and managed directories are not allowed.");
   if (configuration.input_text !== undefined && (typeof configuration.input_text !== "string" || configuration.input_text.length > 65_536)) fail("WFR-INPUT-TEXT-INVALID", "Input text must be text no longer than 65,536 characters.", "Shorten the text or reference a workspace document.");
   if (configuration.input_mode !== undefined && !["text", "workspace-file", "text-or-document"].includes(String(configuration.input_mode))) fail("WFR-INPUT-MODE-INVALID", "The input mode is not supported.", "Use text or workspace-file.");
   return diagnostics;
+}
+
+export function canConnectAuthoringPorts(source: Pick<RecoveryPort, "direction" | "typeId" | "cardinality" | "ownerBlockId"> | undefined, target: Pick<RecoveryPort, "direction" | "typeId" | "cardinality" | "ownerBlockId"> | undefined): boolean {
+  return Boolean(source && target && source.direction === "output" && target.direction === "input" && source.ownerBlockId !== target.ownerBlockId && source.typeId === target.typeId && (source.cardinality !== "many" || target.cardinality === "many"));
+}
+
+/** The old image-input template marked its single file as a collection.
+ * Repair only that template; genuinely authored collection inputs stay intact. */
+export function singleImageInputCorrections(workflow: RecoveryWorkflow): RecoveryCommand[] {
+  const singleFileBlocks = new Set(workflow.blocks.filter((block) => block.configuration.authoring_template === "image-input" && block.configuration.input_mode === "workspace-file").map((block) => block.id));
+  return workflow.ports.filter((port) => singleFileBlocks.has(port.ownerBlockId) && port.direction === "output" && port.typeId === "type.image.reference-set" && port.cardinality === "many").map((port) => ({ kind: "set_port_contract", portId: port.id, required: port.required, cardinality: "one" }));
 }
 
 /** Do not silently narrow a collection value to one item. The retained
@@ -110,12 +126,12 @@ export function authoringInputState(block: RecoveryBlock, permittedFiles?: reado
   const text = typeof block.configuration.input_text === "string" ? block.configuration.input_text : "";
   const path = typeof block.configuration.workspace_file === "string" ? block.configuration.workspace_file : "";
   if (mode === "workspace-file" || (mode !== "text" && path)) {
-    if (!path) return { status: "missing", summary: "No file selected", reason: "Choose an existing workspace file." };
+    if (!path) return { status: "missing", summary: "No file path", reason: "Enter a workspace-relative file path." };
     if (permittedFiles && !permittedFiles.includes(path)) return { status: "unavailable", summary: path, reason: "This file is not available in the current workspace. Choose another file." };
     return { status: "configured", summary: path, reason: "A file reference is configured; it is checked again before opening. This is not an execution result." };
   }
   if (text.trim()) return { status: "configured", summary: `${text.trim().length.toLocaleString("en-US")} characters`, reason: "Engineer-authored text is configured, not executed or approved." };
-  return { status: "missing", summary: "Not configured", reason: "Enter text or select a workspace file." };
+  return { status: "missing", summary: "Not configured", reason: "Enter text or a workspace-relative file path." };
 }
 
 export function authoringReadiness(workflow: RecoveryWorkflow, permittedFiles?: readonly string[]) {

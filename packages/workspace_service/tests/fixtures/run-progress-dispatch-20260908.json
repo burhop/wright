@@ -1,0 +1,121 @@
+{
+  "source_run": "C:\\Users\\markb\\.codex\\visualizations\\2026\\08\\31\\01a05a1c-9b32-7cf1-881c-1c2af3c60469\\workflow-recovery-evidence-workspaces-20260901T200836Z\\wright-workflow-evidence\\runs\\design-to-sendcutsend-review-continuation\\20260908T072312Z-e0fbc28367b1.json",
+  "source_sha256": "827d949e2d4e5e5d200038f190bef5630e9db1bb545a170fb53bce33258d5315",
+  "projection": "Exact event fields needed to distinguish model decision dispatches from CAD export status; prompts and native payloads omitted.",
+  "events": [
+    {
+      "kind": "step_started",
+      "at": "2026-09-08T07:23:12.740606+00:00",
+      "task_id": "create_cad",
+      "task_title": "Inspect saved CAD candidate",
+      "execution_kind": "mcp_task"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-09-08T07:23:22.816024+00:00",
+      "task_id": "create_cad",
+      "task_title": "Inspect saved CAD candidate",
+      "tool_calls": 0,
+      "available_tools": [
+        {
+          "alias": "tool_0",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.get_inspection_capabilities",
+          "schema_digest": "778aa337c12a4464d1e23274df29a31009b12890a002c14bd63157cfa5a50a72"
+        },
+        {
+          "alias": "tool_1",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.get_server_info",
+          "schema_digest": "402c586da42655f08df45f48742c3dcc9f15eded64651ee83a737c8d55d1ce67"
+        },
+        {
+          "alias": "tool_2",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.get_status",
+          "schema_digest": "a61e5468fd2b51b74d573aa86e3648466125d075315c9f9cb1a73756932c4f92"
+        },
+        {
+          "alias": "tool_3",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_body_faces",
+          "schema_digest": "23e6fb6f6862d0ab79c18dd645eeedb92c74d4061a2de55631028e5ac5c579eb"
+        },
+        {
+          "alias": "tool_4",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_dimensions",
+          "schema_digest": "d2be7b20e0409eff2c74cc836e0846ea8b6eba53eb03c979631a9e92e7dc5212"
+        },
+        {
+          "alias": "tool_5",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_documents",
+          "schema_digest": "1db061ff87e577004ab1651150866c6103a7846c600985111707a78b50802704"
+        },
+        {
+          "alias": "tool_6",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_features",
+          "schema_digest": "776756ce638696160d1857d8e8aa50de18337cef6b3153306fe101e3e4ee1825"
+        },
+        {
+          "alias": "tool_7",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_materials",
+          "schema_digest": "cc4d0e523d3c786c97f4ab12e2e01828a4f336447dcadd58f84a84d783f8c8f9"
+        },
+        {
+          "alias": "tool_8",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_providers",
+          "schema_digest": "c1550e64fe9cff4aa3b6e1b50aced27fc8bdeb44566819ac7b733b1918ebf8aa"
+        },
+        {
+          "alias": "tool_9",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.list_variables",
+          "schema_digest": "1a4f79cf04b23ca3845c90d53c38829609925879fea98e285f4a041b2d5b4a45"
+        },
+        {
+          "alias": "tool_10",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.measure_body_extents",
+          "schema_digest": "a8aea4cb6bf17eca7f9c950e4c5d5d44928ade1ebf46a52a6b46a284fb354bd0"
+        },
+        {
+          "alias": "tool_11",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.rebuild_document",
+          "schema_digest": "25d5f3347d32d2b2ba98f2b9d341b02de901a709a07d6630c300e398490c8d56"
+        },
+        {
+          "alias": "tool_12",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.set_feature_suppression",
+          "schema_digest": "d2a1280e9b62ff4536ffb80427e7c72429d380f559444af0c2dd3b5d6d953c38"
+        },
+        {
+          "alias": "tool_13",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.set_variable",
+          "schema_digest": "cfb534f11585d83d9de0fdfccc1ec7c1570b8b4c2a88821021c0a846ab4f3423"
+        },
+        {
+          "alias": "tool_14",
+          "tool": "965a99c8-130d-4e64-96b0-18db066027b0__cad.verify_inspection_requirements",
+          "schema_digest": "72b7669fe3c0b2eb1695dbcffe49cb32fb1243b3a1975a5b3ec0644b621c00bf"
+        }
+      ],
+      "message": "Planning the task"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-09-08T07:30:33.370838+00:00",
+      "task_id": "flat_pattern",
+      "task_title": "Export flat pattern DXF",
+      "execution_kind": "mcp_task"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-09-08T07:32:35.369760+00:00",
+      "task_id": "flat_pattern",
+      "task_title": "Export flat pattern DXF",
+      "message": "DXF export integrity: pass. Report: manufacturing/flat-pattern.dxf.verification.json"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-09-08T07:32:51.746798+00:00",
+      "task_id": "flat_pattern",
+      "task_title": "Export flat pattern DXF",
+      "message": "The CAD application marked the open model modified during export. Its native file was not automatically saved after export."
+    }
+  ],
+  "expected_model_call_count": 1
+}

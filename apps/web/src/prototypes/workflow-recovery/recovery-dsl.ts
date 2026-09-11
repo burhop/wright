@@ -143,7 +143,7 @@ function sourceMapFor(text: string): Record<string, RecoverySourceMapEntry> {
 }
 
 function asString(value: unknown, field: string): string {
-  if (typeof value !== "string" || value.length === 0) throw new Error(`WFR-TEXT-FIELD-TYPE:${field}`);
+  if (typeof value !== "string" || (value.length === 0 && field !== "instructions")) throw new Error(`WFR-TEXT-FIELD-TYPE:${field}`);
   return value;
 }
 
@@ -362,7 +362,8 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
       const sourceBlock = blocks.get(relationship.sourceId);
       if (!sourceBlock || !blocks.has(relationship.targetId)) diagnostics.push(diagnostic("WFR-REFERENCE-DANGLING", `${relationship.id} has a missing block endpoint.`, "Choose existing blocks.", relationship.id));
       const isReviewComponent = sourceBlock?.kind === "component" && sourceBlock.componentRef?.componentId === "component.review-cell";
-      if ((relationship.kind === "decision" || relationship.kind === "feedback") && sourceBlock && sourceBlock.kind !== "decision" && sourceBlock.kind !== "approval" && !isReviewComponent) {
+      const isDesignCheck = sourceBlock?.configuration.authoring_template === "mcp-task" && sourceBlock.configuration.design_check === true;
+      if ((relationship.kind === "decision" || relationship.kind === "feedback") && sourceBlock && sourceBlock.kind !== "decision" && sourceBlock.kind !== "approval" && !isReviewComponent && !isDesignCheck) {
         diagnostics.push(diagnostic("WFR-RELATIONSHIP-SOURCE-KIND", `${relationship.id} must originate at a decision or approval block.`, "Choose a decision/approval source or use data/control flow.", relationship.id));
       }
       if (relationship.kind === "feedback") {

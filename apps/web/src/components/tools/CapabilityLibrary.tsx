@@ -10,8 +10,37 @@ import { CapabilityDetails } from "./CapabilityDetails";
 import {
   CapabilityFilters,
   readCapabilityFilters,
+  matchesCapabilityFilters,
   type CapabilityFilterState,
 } from "./CapabilityFilters";
+
+// Share an in-flight request across React StrictMode mounts. Filters run locally.
+const pendingCatalogs = new Map<string, Promise<CapabilityListResponse>>();
+function loadCatalog(refreshKey: string) {
+  const existing = pendingCatalogs.get(refreshKey);
+  if (existing) return existing;
+  const pending = (async () => {
+    const first = await mcpService.getCapabilities({ limit: 200 });
+    const capabilities = [...first.capabilities];
+    let cursor = first.next_cursor;
+    const seen = new Set<string>();
+    while (cursor) {
+      if (seen.has(cursor))
+        throw new Error("Catalog pagination did not advance");
+      seen.add(cursor);
+      const page = await mcpService.getCapabilities({ limit: 200, cursor });
+      if (page.snapshot.snapshot_id !== first.snapshot.snapshot_id)
+        throw new Error("Catalog changed while loading");
+      capabilities.push(...page.capabilities);
+      cursor = page.next_cursor;
+    }
+    return { ...first, capabilities, next_cursor: null };
+  })().finally(() => {
+    pendingCatalogs.delete(refreshKey);
+  });
+  pendingCatalogs.set(refreshKey, pending);
+  return pending;
+}
 
 export function CapabilityLibrary({
   refreshToken = 0,
@@ -36,50 +65,24 @@ export function CapabilityLibrary({
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
-  const query = useMemo(
-    () => ({
-      search: filters.search || undefined,
-      domain: filters.domain ? [filters.domain] : undefined,
-      lifecycle_stage: filters.lifecycleStage
-        ? [filters.lifecycleStage]
-        : undefined,
-      platform: filters.platform ? [filters.platform] : undefined,
-      maturity: filters.maturity ? [filters.maturity] : undefined,
-      evidence_class: filters.evidenceClass
-        ? [filters.evidenceClass]
-        : undefined,
-      compatibility: filters.compatibility
-        ? [filters.compatibility]
-        : undefined,
-      risk: filters.risk ? [filters.risk] : undefined,
-      locality: filters.locality ? [filters.locality] : undefined,
-      host: filters.host ? [filters.host] : undefined,
-      validation: filters.validation ? [filters.validation] : undefined,
-      installed:
-        filters.installed === "" ? undefined : filters.installed === "true",
-      limit: 200,
-    }),
-    [filters],
-  );
-
   const searchContext = useMemo<MissingCapabilitySearchContext>(
     () => ({
       query: filters.search,
       filters: {
-        domain: filters.domain,
-        lifecycle_stage: filters.lifecycleStage,
         platform: filters.platform,
-        maturity: filters.maturity,
-        evidence_class: filters.evidenceClass,
-        compatibility: filters.compatibility,
-        risk: filters.risk,
-        locality: filters.locality,
-        host: filters.host,
-        validation: filters.validation,
         installed: filters.installed,
+        commercial: String(filters.commercial),
+        open_source: String(filters.openSource),
       },
     }),
     [filters],
+  );
+  const matches = useMemo(
+    () =>
+      result?.capabilities.filter((capability) =>
+        matchesCapabilityFilters(capability, filters),
+      ) || [],
+    [result, filters],
   );
 
   useEffect(() => {
@@ -90,8 +93,7 @@ export function CapabilityLibrary({
     let active = true;
     setLoading(true);
     setError(null);
-    mcpService
-      .getCapabilities(query)
+    loadCatalog(`${refreshToken}:${retryToken}`)
       .then((value) => {
         if (active) setResult(value);
       })
@@ -105,41 +107,7 @@ export function CapabilityLibrary({
     return () => {
       active = false;
     };
-  }, [query, refreshToken, retryToken]);
-
-  const firstMatch = result?.capabilities[0] || null;
-  const blockerOrigin = firstMatch?.compatibility.reasons[0]?.source
-    ? firstMatch.compatibility.reasons[0].source.startsWith("machine.")
-      ? "this machine"
-      : firstMatch.compatibility.reasons[0].source.startsWith("policy.")
-        ? "local Wright policy"
-        : "recorded MCP server evidence"
-    : null;
-  const primaryAction = firstMatch
-    ? firstMatch.compatibility.status === "incompatible"
-      ? {
-          label: "Review setup requirements",
-          consequence:
-            "This opens evidence and alternatives; it does not install or enable anything.",
-        }
-      : firstMatch.compatibility.status === "uncertain"
-        ? {
-            label: "Review setup requirements",
-            consequence:
-              "This explains what is known before you create an onboarding plan; it does not install anything.",
-          }
-        : firstMatch.user_state?.active
-          ? {
-              label: "Review workspace availability",
-              consequence:
-                "This confirms the scope before you prepare a Rivet workflow.",
-            }
-          : {
-              label: "Review and plan onboarding",
-              consequence:
-                "You will review an exact plan before Wright changes anything.",
-            }
-    : null;
+  }, [refreshToken, retryToken]);
 
   const observeSelected = async () => {
     if (!selected) return;
@@ -231,28 +199,20 @@ export function CapabilityLibrary({
 
       <CapabilityFilters value={filters} onChange={setFilters} />
 
-      <details>
-        <summary>What do the setup labels mean?</summary>
-        <p style={{ color: "var(--color-text-muted)", marginBottom: 0 }}>
-          Labels describe whether this computer is ready to use a server. A
-          server marked <strong>Host app needed</strong> can still be installed;
-          the engineering application is needed before its tools can run.
-          <strong> Check required</strong> means Wright has not completed a
-          local check, not that installation failed.
-        </p>
-      </details>
-
       {result?.snapshot.offline && (
         <div
           role="status"
           data-testid="capability-offline-source"
           style={{ color: "var(--color-text-muted)", fontSize: "0.82rem" }}
         >
-          Using the complete bundled catalog · {result.total} matching MCP
-          servers
+          {matches.length} matching MCP servers
         </div>
       )}
-      {loading && <div role="status">Loading MCP servers…</div>}
+      {loading && (
+        <div role="status">
+          {result ? "Refreshing MCP servers…" : "Loading MCP servers…"}
+        </div>
+      )}
       {error && (
         <div role="alert">
           <p>{error}</p>
@@ -264,42 +224,7 @@ export function CapabilityLibrary({
           </button>
         </div>
       )}
-      {!loading && !error && firstMatch && primaryAction ? (
-        <aside
-          aria-labelledby="capability-next-action-title"
-          data-testid="capability-next-action"
-        >
-          <h2 id="capability-next-action-title">Next action</h2>
-          <p>
-            <strong>{primaryAction.label}.</strong> {primaryAction.consequence}
-          </p>
-          {blockerOrigin && firstMatch.compatibility.status !== "compatible" ? (
-            <p>
-              Blocker origin: <strong>{blockerOrigin}</strong>.{" "}
-              {firstMatch.compatibility.reasons[0]?.message}
-            </p>
-          ) : null}
-          <button
-            type="button"
-            data-testid="capability-primary-next-action"
-            onClick={() => {
-              if (
-                onPlanOnboarding &&
-                firstMatch.compatibility.status === "compatible" &&
-                !firstMatch.user_state?.active
-              ) {
-                setSelected(null);
-                onPlanOnboarding(firstMatch.capability_id);
-                return;
-              }
-              setSelected(firstMatch);
-            }}
-          >
-            {primaryAction.label}
-          </button>
-        </aside>
-      ) : null}
-      {!loading && !error && result?.capabilities.length === 0 && (
+      {!loading && result && matches.length === 0 && (
         <div data-testid="capability-empty-state">
           <h2>No MCP servers match these filters</h2>
           <p>Clear one or more filters, or report a missing MCP candidate.</p>
@@ -314,7 +239,7 @@ export function CapabilityLibrary({
           )}
         </div>
       )}
-      {!loading && !error && result && result.capabilities.length > 0 && (
+      {result && matches.length > 0 && (
         <div
           data-testid="capability-results"
           style={{
@@ -324,11 +249,12 @@ export function CapabilityLibrary({
             gap: "var(--space-lg)",
           }}
         >
-          {result.capabilities.map((capability) => (
+          {matches.map((capability) => (
             <CapabilityCard
               key={capability.capability_id}
               capability={capability}
               onOpen={setSelected}
+              onInstall={onPlanOnboarding}
             />
           ))}
         </div>

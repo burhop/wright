@@ -156,6 +156,9 @@ export interface CapabilityView {
     host_software?: string[];
     credentials?: string[];
     license?: string | null;
+    auth_model?: string;
+    install_method?: string;
+    deployment_mode?: string;
     approval_gates?: string[];
     supported_platforms?: Record<string, PlatformSupportRecord>;
   };

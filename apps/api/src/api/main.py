@@ -206,7 +206,10 @@ async def lifespan(app: FastAPI):
     mcp_settings = McpTransportSettings.from_env()
     app.state.mcp_engine = McpEngine(
         DATABASE_PATH,
-        operation_timeout=mcp_settings.operation_timeout_seconds,
+        # Gateway calls retain their default deadline and may explicitly request
+        # more time up to this ceiling (e.g. native CAD). The child transport must
+        # not cancel those permitted calls at the shorter default deadline.
+        operation_timeout=mcp_settings.maximum_timeout_seconds,
     )
     if app.state.workspace_surface_settings.flags.webmcp:
         app.state.surface_webmcp_router = app.state.mcp_engine.webmcp_router

@@ -2120,6 +2120,7 @@ name = "wright-workspace-service"
 version = "0.1.0"
 source = { editable = "packages/workspace_service" }
 dependencies = [
+    { name = "anyio" },
     { name = "httpx" },
     { name = "psutil" },
     { name = "pydantic" },
@@ -2133,6 +2134,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "anyio", specifier = ">=4,<5" },
     { name = "httpx", specifier = ">=0.27,<1" },
     { name = "psutil", specifier = ">=6,<8" },
     { name = "pydantic", specifier = ">=2.7" },

@@ -24,6 +24,42 @@ from workspace_service.workflow_sources import (
 )
 
 
+class WorkflowSourceExecutionSnapshot(BaseModel):
+    """Compact recovery projection; full native evidence remains in the run file."""
+    active_task_id: str | None = None
+    completed_task_ids: list[str]
+    event_count: int
+    model_call_count: int
+    tool_call_count: int
+    tool_completed_count: int
+    revision_count: int
+    outputs: list[dict[str, Any]]
+    last_progress: dict[str, Any] | None = None
+    truncated: bool
+
+
+class WorkflowSourceRecentRun(BaseModel):
+    path: str
+    status: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    source_digest: str | None = None
+    error: str | None = None
+    results: list[dict[str, Any]]
+    last_event: dict[str, Any] | None = None
+    review: dict[str, Any] | None = None
+    run_id: str | None = None
+    execution_ended_at: str | None = None
+    source_matches_current: bool | None = None
+    execution: WorkflowSourceExecutionSnapshot | None = None
+
+
+class WorkflowSourceRecentRunsResponse(BaseModel):
+    workspace_id: str
+    workflow_path: str
+    runs: list[WorkflowSourceRecentRun]
+
+
 #  File Operations
 class WorkspaceNodeResponse(BaseModel):
     name: str
@@ -155,6 +191,42 @@ class WorkflowSourceResponse(BaseModel):
     layout: dict[str, Any] | None = None
     layout_revision: int = 0
     layout_status: Literal["missing", "current", "stale"] = "missing"
+
+
+class WorkflowSourceRunRequest(BaseModel):
+    """Run a saved workspace workflow without accepting a client execution plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+    expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class WorkflowSourceRunResponse(BaseModel):
+    status: Literal['completed', 'pending_review'] = 'completed'
+    review: dict | None = None
+    run_id: str | None = None
+    results: list[dict] = Field(default_factory=list)
+    run_log_path: str | None = None
+    workspace_id: str
+    workflow_path: str
+    workflow_title: str
+    task_id: str
+    task_title: str
+    output_path: str
+    output_bytes: int = Field(ge=0, le=100 * 1024 * 1024)
+    outputs: list[dict] = Field(default_factory=list)
+    steps: list[dict] = Field(default_factory=list)
+
+
+class WorkflowArtifactReviewDecisionRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    session_id: str = Field(min_length=1, max_length=256)
+    expected_package_digest: str = Field(pattern=r'^[0-9a-f]{64}$')
+    decision: Literal['approved', 'changes_requested']
+    actor: str | None = Field(default=None, max_length=200)  # Compatibility label, never reviewer authority.
+    reason: str = Field(default='', max_length=2000)
 
 
 class WorkflowInputFileResponse(BaseModel):

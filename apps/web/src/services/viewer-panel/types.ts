@@ -16,6 +16,8 @@ export interface ViewerCapabilities {
   readonly supports3DControls: boolean;
   readonly prefersIsolation: boolean;
   readonly supportsMultiView: boolean;
+  /** Opt in only when the viewer implements the host's ping/pong protocol. */
+  readonly supportsHeartbeat?: boolean;
 }
 
 export interface ViewerDocument {

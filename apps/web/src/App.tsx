@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { initializeSavedTheme } from "./services/ui-preferences";
 import {
   BrowserRouter,
   HashRouter,
@@ -31,21 +32,13 @@ import {
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 
+function SavedTheme() {
+  useEffect(initializeSavedTheme, []);
+  return null;
+}
+
 function App() {
   useDesktopIntegration();
-
-  useEffect(() => {
-    hostAdapter
-      .fetch(`${hostAdapter.getApiBaseUrl()}/api/setup/status`)
-      .then((res) => res.json())
-      .then((data) => {
-        const activeTheme = data.theme || "dark";
-        document.documentElement.setAttribute("data-theme", activeTheme);
-      })
-      .catch(() => {
-        document.documentElement.setAttribute("data-theme", "dark");
-      });
-  }, []);
 
   const Router =
     hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
@@ -55,6 +48,7 @@ function App() {
     <ViewerPanelProvider>
       <ToolsProvider>
         <AuthGate>
+          <SavedTheme />
           <AppShell>
             <Routes>
               <Route path="/" element={<DashboardPage />} />

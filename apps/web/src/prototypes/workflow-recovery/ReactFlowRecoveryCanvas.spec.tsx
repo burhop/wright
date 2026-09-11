@@ -35,6 +35,18 @@ function runtime(run = initialRunProjection(initialWorkflow, "a".repeat(64), "20
 }
 
 describe("ReactFlowRecoveryCanvas component contract", () => {
+  it("rejects an image-to-text keyboard connection but accepts an image input", () => {
+    const workflow = cloneWorkflow(initialWorkflow);
+    workflow.ports.find((port) => port.id === "port.reference-images-out")!.cardinality = "one";
+    const onIntent = vi.fn();
+    render(<RecoveryCanvasRuntimeProvider value={runtime()}><ReactFlowRecoveryCanvas projection={toDraftProjection(workflow, initialLayout)} selectedSemanticId={"block.create-design-specification"} onIntent={onIntent} /></RecoveryCanvasRuntimeProvider>);
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-handle-port.reference-images-out"), { key: "Enter" });
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-handle-port.design-intent-in"), { key: "Enter" });
+    expect(onIntent).not.toHaveBeenCalled();
+    expect(screen.getByRole("status")).toHaveTextContent("Connect the image to an input that accepts images.");
+    fireEvent.keyDown(screen.getByTestId("workflow-recovery-handle-port.reference-images-in"), { key: "Enter" });
+    expect(onIntent).toHaveBeenCalledWith({ type: "create-connection", sourcePortId: "port.reference-images-out", targetPortId: "port.reference-images-in" });
+  });
   it("distinguishes authored tools from document writers without using their names or identities", () => {
     const workflow = cloneWorkflow(initialWorkflow);
     const layout = cloneLayout(initialLayout);

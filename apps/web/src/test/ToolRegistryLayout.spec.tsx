@@ -73,5 +73,6 @@ describe("ToolRegistryPage capability layout", () => {
     expect(
       await screen.findByTestId("capability-empty-state"),
     ).toBeInTheDocument();
+    expect(mcpService.getCatalogState).not.toHaveBeenCalled();
   });
 });

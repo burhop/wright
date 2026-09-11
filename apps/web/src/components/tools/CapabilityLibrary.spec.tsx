@@ -198,29 +198,21 @@ describe("CapabilityLibrary", () => {
     });
   });
 
-  it("shows offline provenance, evidence, compatibility, and details", async () => {
+  it("shows cost, login, location, and installation details", async () => {
     const user = userEvent.setup();
     render(<CapabilityLibrary />);
 
     expect(await screen.findByText(capability.name)).toBeInTheDocument();
-    expect(screen.getByTestId("capability-offline-source")).toHaveTextContent(
-      "complete bundled catalog",
-    );
+    expect(screen.getByText("Subscription required")).toBeInTheDocument();
     expect(
-      screen.getByTestId("evidence-badge-official_preview"),
-    ).toHaveTextContent("Publisher preview");
+      screen.queryByText("What do the setup labels mean?"),
+    ).not.toBeInTheDocument();
     expect(
-      screen.getByTestId("compatibility-badge-uncertain"),
-    ).toHaveTextContent("Connection check needed");
-    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
-      "Review setup requirements",
-    );
-    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
-      "Blocker origin: this machine",
-    );
-    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
-      "does not install",
-    );
+      screen.queryByTestId("capability-next-action"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("evidence-badge-official_preview"),
+    ).not.toBeInTheDocument();
 
     await user.click(
       screen.getByRole("button", { name: /view MCP server details/i }),
@@ -250,69 +242,91 @@ describe("CapabilityLibrary", () => {
     );
   });
 
-  it("keeps filter state in the URL and sends each dimension", async () => {
+  it("filters immediately without another request and keeps the URL focused", async () => {
     render(<CapabilityLibrary />);
     await screen.findByText(capability.name);
-
     fireEvent.change(screen.getByLabelText("Search MCP servers"), {
-      target: { value: "bracket" },
+      target: { value: "missing tool" },
     });
-    fireEvent.change(screen.getByLabelText("Engineering domain"), {
-      target: { value: "cad" },
+    expect(screen.getByTestId("capability-empty-state")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Search MCP servers"), {
+      target: { value: "FeatureScript" },
     });
-    fireEvent.change(screen.getByLabelText("Lifecycle stage"), {
-      target: { value: "verified_mcp" },
+    fireEvent.change(screen.getByLabelText("Operating system"), {
+      target: { value: "windows" },
     });
-    fireEvent.change(
-      screen.getByLabelText("Current platform and architecture"),
-      { target: { value: "windows_11_x64" } },
-    );
-    fireEvent.change(screen.getByLabelText("Maturity"), {
-      target: { value: "official" },
-    });
-    fireEvent.change(screen.getByLabelText("Evidence class"), {
-      target: { value: "official_preview" },
-    });
-    fireEvent.change(screen.getByLabelText("Setup readiness"), {
-      target: { value: "uncertain" },
-    });
-    fireEvent.change(screen.getByLabelText("Risk level"), {
-      target: { value: "medium" },
-    });
-    fireEvent.change(screen.getByLabelText("Locality"), {
-      target: { value: "remote" },
-    });
-    fireEvent.change(screen.getByLabelText("Required host software"), {
-      target: { value: "Desktop CAD" },
-    });
-    fireEvent.change(screen.getByLabelText("Validation state"), {
-      target: { value: "not_tested" },
-    });
-    fireEvent.change(screen.getByLabelText("Installed state"), {
+    fireEvent.change(screen.getByLabelText("Installed"), {
       target: { value: "false" },
     });
-
-    await waitFor(() =>
-      expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          search: "bracket",
-          domain: ["cad"],
-          lifecycle_stage: ["verified_mcp"],
-          platform: ["windows_11_x64"],
-          maturity: ["official"],
-          evidence_class: ["official_preview"],
-          compatibility: ["uncertain"],
-          risk: ["medium"],
-          locality: ["remote"],
-          host: ["Desktop CAD"],
-          validation: ["not_tested"],
-          installed: false,
-        }),
-      ),
-    );
-    expect(window.location.search).toContain("search=bracket");
-    expect(window.location.search).toContain("domain=cad");
+    expect(screen.getByText(capability.name)).toBeInTheDocument();
+    expect(mcpService.getCapabilities).toHaveBeenCalledTimes(1);
+    expect(window.location.search).toContain("search=FeatureScript");
+    expect(window.location.search).toContain("platform=windows");
     expect(window.location.search).toContain("installed=false");
+    expect(screen.getAllByRole("combobox")).toHaveLength(2);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(2);
+  });
+
+  it("keeps existing cards usable when a refresh fails", async () => {
+    const rendered = render(<CapabilityLibrary />);
+    await screen.findByText(capability.name);
+    vi.mocked(mcpService.getCapabilities).mockRejectedValueOnce(
+      new Error("offline"),
+    );
+    rendered.rerender(<CapabilityLibrary refreshToken={1} />);
+    expect(screen.getByText(capability.name)).toBeInTheDocument();
+    await screen.findByRole("alert");
+    expect(
+      screen.getByRole("button", { name: /view MCP server details/i }),
+    ).toBeEnabled();
+  });
+
+  it("loads fresh state when an install completes during an older request", async () => {
+    let finishOld!: (value: CapabilityListResponse) => void;
+    vi.mocked(mcpService.getCapabilities).mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishOld = resolve;
+      }),
+    );
+    const rendered = render(<CapabilityLibrary />);
+    vi.mocked(mcpService.getCapabilities).mockResolvedValueOnce({
+      ...result,
+      capabilities: [{ ...capability, name: "Updated installation" }],
+    });
+    rendered.rerender(<CapabilityLibrary refreshToken={1} />);
+    await screen.findByText("Updated installation");
+    finishOld(result);
+    await waitFor(() =>
+      expect(screen.queryByText(capability.name)).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("Updated installation")).toBeInTheDocument();
+  });
+
+  it("loads all pages so filtering covers the complete catalog", async () => {
+    vi.mocked(mcpService.getCapabilities)
+      .mockResolvedValueOnce({ ...result, next_cursor: "page-2" })
+      .mockResolvedValueOnce({
+        ...result,
+        capabilities: [
+          { ...capability, capability_id: "second", name: "Second server" },
+        ],
+        next_cursor: null,
+      });
+    render(<CapabilityLibrary />);
+    await screen.findByText("Second server");
+    expect(mcpService.getCapabilities).toHaveBeenCalledWith({
+      limit: 200,
+      cursor: "page-2",
+    });
+  });
+
+  it("offers installation directly on a card", async () => {
+    const onPlanOnboarding = vi.fn();
+    render(<CapabilityLibrary onPlanOnboarding={onPlanOnboarding} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Install " + capability.name }),
+    );
+    expect(onPlanOnboarding).toHaveBeenCalledWith(capability.capability_id);
   });
 
   it("supports keyboard detail opening and local observation", async () => {
@@ -324,6 +338,7 @@ describe("CapabilityLibrary", () => {
     button.focus();
     await user.keyboard("{Enter}");
     expect(screen.getByTestId("capability-details-close")).toHaveFocus();
+    await user.click(screen.getByText("Technical details"));
     await user.click(
       screen.getByRole("button", { name: /check this computer/i }),
     );

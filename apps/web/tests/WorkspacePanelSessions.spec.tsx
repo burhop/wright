@@ -105,6 +105,8 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
     sessionId: string;
     workspaceName: string;
     workflowFilePath: string;
+    reopenRequest?: number;
+    onOpenWorkflow?: (path: string) => void;
   }) => (
     <div
       data-testid="workspace-workflow-fixture"
@@ -112,7 +114,8 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
       data-session-id={props.sessionId}
       data-workspace-name={props.workspaceName}
       data-workflow-file={props.workflowFilePath}
-    />
+      data-reopen-request={props.reopenRequest}
+    ><button onClick={() => props.onOpenWorkflow?.(props.workflowFilePath)}>Reopen fixture file</button></div>
   ),
 }));
 
@@ -418,6 +421,20 @@ describe("WorkspacePanel session selection", () => {
     );
     expect(await screen.findByTestId("workspace-workflow-fixture")).toHaveAttribute("data-workflow-file", "/workflows/inspection.workflow.wflow");
     expect(screen.queryByText("mounting-bracket.workflow.wflow")).not.toBeInTheDocument();
+  });
+
+  it("sends a fresh reopen request when the Open control selects an already retained workflow", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(<MemoryRouter initialEntries={["/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Finspection.workflow.wflow"]}>
+      <ViewerPanelProvider><WorkspacePanel workspaceId="workspace-1" sessionId="new-session" /></ViewerPanelProvider>
+    </MemoryRouter>);
+    const panel = await screen.findByTestId("workspace-workflow-fixture");
+    expect(panel).toHaveAttribute("data-reopen-request", "0");
+    fireEvent.click(screen.getByRole("button", { name: "Reopen fixture file" }));
+    await waitFor(() => expect(panel).toHaveAttribute("data-reopen-request", "1"));
+    fireEvent.click(screen.getByRole("button", { name: "Reopen fixture file" }));
+    await waitFor(() => expect(panel).toHaveAttribute("data-reopen-request", "2"));
+    expect(screen.getAllByTestId("workspace-workflow-fixture")).toHaveLength(1);
   });
 
   it.each(["../outside.workflow.wflow", "workflows/../outside.workflow.wflow", "workflows/con.workflow.wflow", "C:/outside.workflow.wflow"])("fails closed for invalid workflow path %s", async (path) => {

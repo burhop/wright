@@ -989,10 +989,10 @@ a {
 
 /* Glassmorphism panel style */
 .glass-panel {
-  background: rgba(19, 27, 46, 0.7);
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
 }
 
 /* Hover glow borders */

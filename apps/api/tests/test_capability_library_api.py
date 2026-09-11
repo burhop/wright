@@ -63,6 +63,8 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
     assert body["capabilities"][0]["examples"]
     assert body["capabilities"][0]["field_provenance"]
     assert body["capabilities"][0]["requirements"]["supported_platforms"]
+    assert body["capabilities"][0]["requirements"]["auth_model"] == "oauth"
+    assert body["capabilities"][0]["requirements"]["install_method"] == "remote-http"
 
     first = client.get("/api/mcp/capabilities", params={"limit": 1}).json()
     assert first["total"] == 70
@@ -75,6 +77,36 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
         second["capabilities"][0]["capability_id"]
         != (first["capabilities"][0]["capability_id"])
     )
+
+
+def test_catalog_browsing_never_probes_the_computer(capability_client, monkeypatch):
+    client, database_path = capability_client
+
+    def forbid_probe(*args, **kwargs):
+        raise AssertionError("Browsing must not launch machine probes")
+
+    monkeypatch.setattr("api.services.mcp_services.observe_machine", forbid_probe)
+    response = client.get("/api/mcp/capabilities", params={"limit": 200})
+    assert response.status_code == 200
+    assert response.json()["total"] >= 70
+    for capability in response.json()["capabilities"]:
+        assert capability["compatibility"]["observation_id"] is None
+        assert capability["field_provenance"]["compatibility"] == "not_observed"
+    detail = client.get("/api/mcp/capabilities/onshape-labs-featurescript-mcp")
+    assert detail.status_code == 200
+    with sqlite3.connect(database_path) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM machine_compatibility_observations").fetchone()[0] == 0
+
+
+def test_repeated_catalog_reads_do_not_rebuild_bundled_snapshot(capability_client, monkeypatch):
+    client, _ = capability_client
+    assert client.get("/api/mcp/capabilities").status_code == 200
+
+    def forbid_rebuild(*args, **kwargs):
+        raise AssertionError("Existing bundled snapshot must be reused")
+
+    monkeypatch.setattr("tool_registry.catalog_snapshots.bundled_snapshot", forbid_rebuild)
+    assert client.get("/api/mcp/capabilities").status_code == 200
 
 
 def test_fresh_start_managed_server_does_not_overclaim_legacy_validation(

@@ -187,6 +187,11 @@ export function WorkspacePanel({
       : null;
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
+  const [workflowReopenRequests, setWorkflowReopenRequests] = useState<Record<string, number>>({});
+  const requestWorkflowReopen = useCallback((path: string) => {
+    const key = `${_workspaceId}\u0000${normalizeEditorTabPath(path)}`;
+    setWorkflowReopenRequests((current) => ({ ...current, [key]: (current[key] ?? 0) + 1 }));
+  }, [_workspaceId]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [observedContainer, setObservedContainer] =
     useState<HTMLDivElement | null>(null);
@@ -412,9 +417,9 @@ export function WorkspacePanel({
       ? savedLayout.activeSidebar
       : "files",
   );
-  // Switch to the chat-only thin shell when the legacy workspace has no room
-  // for the full editor layout.
-  const isThin = panelWidth < 768 && !surfacesEnabled;
+  // Keep workspace navigation available before the user opens a workflow,
+  // including when Codex hosts the workspace in a narrow pane.
+  const isThin = panelWidth < 768 && !surfacesEnabled && !recoveryWorkflowEnabled;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
@@ -696,6 +701,7 @@ export function WorkspacePanel({
 
   const viewerContainerRef = useRef<HTMLDivElement>(null);
   const sendMessageRef = useRef(sendMessage);
+  const openWorkspaceFileRef = useRef<(path: string) => Promise<void>>(async () => {});
 
   useEffect(() => {
     sendMessageRef.current = sendMessage;
@@ -874,7 +880,7 @@ export function WorkspacePanel({
     let cancelled = false;
 
     const token = {
-      isCancellationRequested: cancelled,
+      get isCancellationRequested() { return cancelled; },
       onCancellationRequested: () => {
         return { dispose: () => {} };
       },
@@ -886,7 +892,7 @@ export function WorkspacePanel({
       viewerContainerRef.current,
       true,
       true,
-      contribution.id === "iframe-viewer",
+      provider.getCapabilities(file, mode).supportsHeartbeat === true,
     );
 
     const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
@@ -915,7 +921,11 @@ export function WorkspacePanel({
     const container = viewerContainerRef.current;
     const handleViewerMessage = (e: Event) => {
       const customEvent = e as CustomEvent;
-      const { type, content } = customEvent.detail || {};
+      const { type, content, path, sessionId } = customEvent.detail || {};
+      if (type === "open-workspace-file" && !cancelled && sessionId === workspaceFileSessionId && typeof path === "string") {
+        void openWorkspaceFileRef.current(path);
+        return;
+      }
       if (type === "create-prompt" && content) {
         // Viewer actions belong to this workspace's bound conversation even
         // when the global session list has not refreshed yet.
@@ -1182,6 +1192,7 @@ export function WorkspacePanel({
     if (!activeSessionId) return;
 
     if (recoveryWorkflowEnabled && isWorkspaceWorkflowTab(path) && workspaceFileSessionId) {
+      requestWorkflowReopen(path);
       const query = new URLSearchParams(location.search);
       query.set("workflow", "canonical");
       query.set("workflowPath", path.replace(/^\//, ""));
@@ -1248,6 +1259,8 @@ export function WorkspacePanel({
       );
     }
   };
+
+  openWorkspaceFileRef.current = handleFileClick;
 
   // File tree operations
   const handleCreate = async (
@@ -1513,12 +1526,13 @@ export function WorkspacePanel({
 
   const selectWorkspaceWorkflow = useCallback((path: string) => {
     if (!isWorkspaceWorkflowTab(path)) throw new Error("Choose a valid workspace workflow file.");
+    requestWorkflowReopen(path);
     const query = new URLSearchParams(location.search);
     query.set("workflow", "canonical");
     query.set("workflowPath", path.replace(/^\//, ""));
     navigate({ pathname: location.pathname, search: `?${query.toString()}` }, { replace: true });
     openTransientTab({ name: path.split("/").at(-1)!, path: normalizeEditorTabPath(path), type: "workflow" });
-  }, [location.pathname, location.search, navigate, openTransientTab]);
+  }, [location.pathname, location.search, navigate, openTransientTab, requestWorkflowReopen]);
 
   useEffect(() => {
     if (canonicalWorkflowAvailable) {
@@ -2883,7 +2897,7 @@ export function WorkspacePanel({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              backgroundColor: "var(--color-neutral-dark, #121212)",
+              backgroundColor: "var(--color-surface-subtle)",
               paddingRight: "var(--space-md, 12px)",
             }}
           >
@@ -3026,12 +3040,14 @@ export function WorkspacePanel({
                 }}
               >
                 <WorkflowRecoveryPage
+                  onOpenFile={handleFileClick}
                   workspaceId={_workspaceId}
                   sessionId={workspaceFileSessionId}
                   workspaceName={
                     workspaceInfo?.workspace_name || workspacePath || _workspaceId
                   }
                   workflowFilePath={tab.path}
+                  reopenRequest={workflowReopenRequests[`${_workspaceId}\u0000${tab.path}`] ?? 0}
                   onOpenWorkflow={selectWorkspaceWorkflow}
                 />
               </div>

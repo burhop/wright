@@ -86,3 +86,6 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalError;
 });
+
+// React Flow reads the canvas transform when ports change. JSDOM has no layout.
+Object.defineProperty(window, "DOMMatrixReadOnly", { configurable: true, value: class { m22 = 1; } });

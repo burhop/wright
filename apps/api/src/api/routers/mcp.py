@@ -2,6 +2,7 @@ import structlog
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, Response
 from pydantic import BaseModel, Field, model_validator
+from starlette.concurrency import run_in_threadpool
 from tool_registry import (
     McpServer,
     McpServerCreate,
@@ -236,7 +237,7 @@ def _operation_http_exception(error, trace_id: str) -> HTTPException:
 @router.get("/catalog/state", dependencies=[Depends(require_admin)])
 @traced("mcp.catalog.state")
 async def catalog_state(service: McpApiService = Depends(get_mcp_api_service)):
-    return service.get_catalog_state()
+    return await run_in_threadpool(service.get_catalog_state)
 
 
 @router.post("/catalog/updates/preview", dependencies=[Depends(require_admin)])
@@ -322,7 +323,8 @@ async def list_capabilities(
     service: McpApiService = Depends(get_mcp_api_service),
 ):
     try:
-        return service.list_capabilities(
+        return await run_in_threadpool(
+            service.list_capabilities,
             filters=CapabilityFilters(
                 search=search,
                 domains=frozenset(domain or []),
@@ -357,7 +359,7 @@ async def get_capability(
     service: McpApiService = Depends(get_mcp_api_service),
 ):
     try:
-        return service.get_capability(capability_id)
+        return await run_in_threadpool(service.get_capability, capability_id)
     except McpServiceError as error:
         raise mcp_service_http_exception(error)
 

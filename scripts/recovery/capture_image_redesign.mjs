@@ -262,7 +262,7 @@ if (full) {
   });
   add("20-save-reopen", "Save and reopen source plus positions", "Click Save, then reload the workspace workflow URL.", "Authored texts, file references, prompts, exact connections and saved canvas positions survive reopening.", async () => {
     savedSource = await sourceText(); await expect(tid("workflow-recovery-concept")).toHaveAttribute("data-layout-digest", /^sha256:[a-f0-9]{64}$/); savedLayoutDigest = await tid("workflow-recovery-concept").getAttribute("data-layout-digest"); await click("workflow-recovery-save"); await expect(tid("workflow-recovery-save-status")).toHaveText("Saved in workspace"); await expect(tid("workflow-recovery-concept")).toHaveAttribute("data-layout-digest", /^sha256:[a-f0-9]{64}$/); savedLayoutDigest = await tid("workflow-recovery-concept").getAttribute("data-layout-digest"); mutations.push({ action: "saved authored source and layout", path: workflowPath, chosenFile, inputValues: [textOne, textTwo] });
-    await page.reload(); logAction("Reload saved workflow", functionalUrl); await expect(tid("workflow-recovery-filebar")).toContainText(path.basename(workflowPath), { timeout: 30000 }); await expect(tid("workflow-recovery-inputs-toggle")).toContainText("3/6 configured"); await expect(tid("workflow-recovery-concept")).toHaveAttribute("data-layout-digest", savedLayoutDigest); const reopened = await sourceText(); expect(reopened.replace(/\r\n/g, "\n")).toBe(savedSource.replace(/\r\n/g, "\n")); await expect(tid("workflow-recovery-run-start")).toBeDisabled();
+    await page.reload(); logAction("Reload saved workflow", functionalUrl); await expect(tid("workflow-recovery-filebar")).toContainText(path.basename(workflowPath), { timeout: 30000 }); await expect(tid("workflow-recovery-inputs-toggle")).toContainText("3/6 configured"); await expect(tid("workflow-recovery-concept")).toHaveAttribute("data-layout-digest", savedLayoutDigest); const reopened = await sourceText(); expect(reopened.replace(/\r\n/g, "\n")).toBe(savedSource.replace(/\r\n/g, "\n")); await click("workflow-recovery-run-start"); await expect(page.getByRole("dialog", { name: "Process cannot start" })).toContainText("Automatic execution is not available"); await expect(tid("workflow-recovery-run-mode")).toHaveCount(0); await click("workflow-recovery-modal-close");
   });
   add("21-conflict", "Protect a stale tab’s authored work", "Open the same workflow in a second tab. Save a name edit there. In the original tab edit the same name differently and Save.", "The stale save conflicts; local text remains protected and the newer stored file is not overwritten.", async () => {
     stalePage = await context.newPage(); await stalePage.goto(functionalUrl); await expect(stalePage.getByTestId("workflow-recovery-palette").filter({ visible: true })).toBeVisible({ timeout: 30000 });
@@ -275,23 +275,41 @@ if (full) {
   add("23-example-suggestion", "Open the original workflow and review an example suggestion", "Click Open workflow and choose mounting-bracket.workflow.wflow. Open Example suggestion, inspect the preview and its no-live-AI label, then discard it.", "Open workflow selects the actual saved original. The reviewed proposal remains bounded and never changes that file.", async () => {
     await page.getByRole("button", { name: "Open workflow", exact: true }).click(); logAction("Click Open workflow"); await page.getByRole("button", { name: "mounting-bracket.workflow.wflow", exact: true }).click(); logAction("Open actual saved original", "mounting-bracket.workflow.wflow"); await expect(tid("workflow-recovery-filebar")).toContainText("mounting-bracket.workflow.wflow"); expect(await sourceText()).toBe(referenceSource); await click("workflow-recovery-ai-request"); await expect(tid("workflow-recovery-proposal")).toContainText("NO LIVE AI CALL"); await expect(tid("workflow-recovery-proposal-preview")).toContainText("Preview only"); await capture("23-proposal-open", [{ testId: "workflow-recovery-proposal-reject", label: "Discard example suggestion" }, { testId: "workflow-recovery-proposal-accept", label: "Apply reviewed suggestion" }]); await click("workflow-recovery-proposal-reject"); expect(await sourceText()).toBe(referenceSource);
   });
-  add("24-simulation", "Run the fixed example honestly", "Click Simulate and advance the fixed example. At its missing-input state simulate supplying material; continue to the demo output. Inspect its filename, checksum and actions at 1537, 1070 and 830 pixel widths and actual 200% browser zoom without downloading.", "The bottom drawer says Simulation and no external tools. The completed output is explicitly a demo fixture, not generated CAD evidence. Long metadata and report/download action text wrap inside the preview and remain reachable.", async () => {
-    await expect(tid("workflow-recovery-run-start")).toBeEnabled(); await click("workflow-recovery-run-start"); await expect(tid("workflow-recovery-run-mode")).toContainText("NO EXTERNAL TOOLS");
-    for (let i = 0; i < 2; i++) await click("workflow-recovery-run-advance"); await expect(tid("workflow-recovery-run-recover")).toBeVisible(); await capture("24-simulation-needs-input", [{ testId: "workflow-recovery-run-recover", label: "Simulate supplying material" }]); await click("workflow-recovery-run-recover"); for (let i = 0; i < 6; i++) await click("workflow-recovery-run-advance"); await click("workflow-recovery-run-output"); await expect(page.getByRole("dialog", { name: "Mounting bracket STEP file" })).toContainText("This simulated workflow did not create this file");
-    for (const width of [1537, 1070, 830]) { await page.setViewportSize({ width, height: 791 }); logAction("Resize output preview", `${width}×791`); await verifyOutputPreviewLayout(String(width)); }
-    await page.setViewportSize({ width: 1537, height: 791 }); const baselineDpr = await page.evaluate(() => devicePixelRatio);
-    const outputZoom = await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); if (!tab?.id) throw new Error("Could not identify output-preview evidence tab"); await chrome.tabs.setZoom(tab.id, 2); return chrome.tabs.getZoom(tab.id); }, page.url()); expect(outputZoom).toBe(2); await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBeGreaterThan(baselineDpr * 1.8); logAction("Set actual output-preview browser zoom", "200% using chrome.tabs.setZoom; not viewport emulation"); await verifyOutputPreviewLayout("actual-200pct", outputZoom);
-    await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); await chrome.tabs.setZoom(tab.id, 1); }, page.url()); await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBe(baselineDpr); logAction("Restore browser zoom", "100%"); await capture("24-output-demo", [{ testId: "workflow-recovery-output-open-artifact.step", label: "Readable report action" }, { testId: "workflow-recovery-output-download-artifact.step", label: "Download a labeled demo fixture" }]); await click("workflow-recovery-modal-close"); await click("workflow-recovery-run-end"); await click("workflow-recovery-run-details-toggle");
+  add("24-run-preflight", "Explain missing inputs without queuing a demo", "Click Run. Review each missing input and the unavailable execution integration. Click Configure Design intent to open its Settings, then collapse Inspector without changing values.", "Run gives an actionable error, identifies three missing inputs, and states MCP execution is unavailable. No run is queued and no Advance simulation control is offered.", async () => {
+    await click("workflow-recovery-run-start");
+    const dialog = page.getByRole("dialog", { name: "Process cannot start" });
+    await expect(dialog).toContainText("3 inputs need configuration");
+    await expect(dialog).toContainText("Nothing was started or queued");
+    await expect(dialog).toContainText("configuring inputs alone will not enable execution");
+    await expect(tid("workflow-recovery-run-mode")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Advance simulation" })).toHaveCount(0);
+    for (const width of [1537, 907, 830]) {
+      await page.setViewportSize({ width, height: 791 }); logAction("Resize run error", `${width}×791`);
+      await tid("workflow-recovery-run-fix-block.design-intent").scrollIntoViewIfNeeded();
+      await expect(tid("workflow-recovery-run-fix-block.design-intent")).toBeInViewport();
+      await capture(`24-run-error-${width}`, [{ testId: "workflow-recovery-run-fix-block.design-intent", label: "Open missing input Settings" }, { testId: "workflow-recovery-execution-unavailable", label: "Execution integration remains unavailable" }]);
+    }
+    await click("workflow-recovery-run-fix-block.design-intent");
+    await expect(dialog).toHaveCount(0);
+    await expect(tid("workflow-recovery-input-text-block.design-intent")).toBeVisible();
+    await expect(tid("workflow-recovery-config-apply")).toBeVisible();
+    await capture("24-configure-missing-input", [{ testId: "workflow-recovery-input-text-block.design-intent", label: "Supply design instructions" }]);
+    await click("workflow-recovery-inspector-close");
+    await page.setViewportSize({ width: 1537, height: 791 });
   });
 }
 
-const dimensions = full || args.viewports === "all" ? [{ width: 1536, height: 1024 }, { width: 1537, height: 791 }, { width: 1070, height: 791 }, { width: 830, height: 791 }] : [];
+const dimensions = full || args.viewports === "all" ? [{ width: 1536, height: 1024 }, { width: 1537, height: 791 }, { width: 1070, height: 791 }, { width: 907, height: 791 }, { width: 830, height: 791 }] : [];
 if (full) add("image-reference-match", "Review the full canvas at the approved image size", "Return to the original unchanged workflow. Resize to 1536×1024 and reload it without opening Inspector.", "The original workflow opens with a readable canvas-first default at the selected reference image dimensions. No persistent input cards or blank Inspector column consume the canvas.", async () => {
   await page.setViewportSize({ width: 1536, height: 1024 }); await page.reload(); logAction("Reload unchanged original at image-match dimensions", "1536×1024; no Fit-all overview or forced selection"); await expect(tid("workflow-recovery-palette")).toBeVisible({ timeout: 30000 }); await expect(tid("workflow-recovery-inspector")).toHaveCount(0); await expect(tid("workflow-recovery-filebar")).toContainText("mounting-bracket.workflow.wflow");
 }, [{ testId: "workflow-recovery-palette", label: "Compact object creation rail" }, { testId: "workflow-recovery-canvas", label: "Default readable canvas at approved reference dimensions" }]);
 for (const viewport of dimensions) add(`viewport-${viewport.width}`, `Viewport ${viewport.width}×${viewport.height}`, `Resize the window to ${viewport.width}×${viewport.height}. Open Design intent in the Inputs navigator.`, "Document and controls remain in the viewport; details scroll internally.", async () => {
   await page.setViewportSize(viewport); logAction("Resize viewport", `${viewport.width}×${viewport.height}`); await click("workflow-recovery-inputs-toggle"); await click("workflow-recovery-input-navigate-block.design-intent");
   const measurements = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scrollWidth: document.documentElement.scrollWidth, scrollHeight: document.documentElement.scrollHeight, canvas: document.querySelector('[data-testid="workflow-recovery-canvas"]')?.getBoundingClientRect().toJSON() })); writeFileSync(path.join(root, `viewport-${viewport.width}.json`), JSON.stringify(measurements, null, 2));
+  const tiles = await page.locator('.recovery-create-group').evaluateAll((buttons) => buttons.map((button) => { const box = button.getBoundingClientRect(); return { label: button.textContent, width: box.width, height: box.height }; }));
+  expect(tiles).toHaveLength(7); for (const tile of tiles) { expect(tile.width, tile.label).toBe(64); expect(tile.height, tile.label).toBe(64); }
+  const rail = await page.locator('.recovery-create-buttons').evaluate((element) => ({ width: element.clientWidth, content: element.scrollWidth })); expect(rail.content).toBeLessThanOrEqual(rail.width);
+  writeFileSync(path.join(root, `palette-${viewport.width}.json`), JSON.stringify({ tiles, rail }, null, 2));
   if (measurements.scrollWidth > viewport.width + 2 || measurements.scrollHeight > viewport.height + 2) throw new Error(`Document overflow: ${JSON.stringify(measurements)}`);
 }, [{ testId: "workflow-recovery-canvas", label: "Readable canvas viewport" }, { testId: "workflow-recovery-inspector", label: "Internally scrolling Inspector" }]);
 if (full) add("short-rail-keyboard", "Reach the complete Create rail in a short window", "Resize to 768×512. Focus Input, press Tab six times to reach More, then press Enter. Press Escape to close.", "Keyboard navigation scrolls More into view; its options remain reachable without force clicking or treating viewport size as zoom.", async () => {
@@ -313,6 +331,19 @@ if (needsZoom) add("browser-zoom-200", "Actual browser zoom at 200%", "Set brows
   await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); await chrome.tabs.setZoom(tab.id, 1); }, page.url());
 });
 
+if (mode === "blocks") {
+  plans.length = 0; status.steps.length = 0; status.manualSteps.length = 0;
+  const { registerBlockAcceptance } = await import("./block_acceptance.mjs");
+  registerBlockAcceptance({ add, getPage: () => page, tid, click, fill, capture, logAction, expect, args, root, stamp, mutations });
+  status.title = "Wright individual blocks and interoperability";
+  if (args.only) {
+    const ids = new Set(args.only.split(","));
+    const selected = plans.filter(p => ids.has(p.record.id));
+    plans.splice(0, plans.length, ...selected);
+    status.steps = selected.map(p => p.record);
+    status.manualSteps = status.manualSteps.filter(s => selected.some(p => p.record.label === s.label));
+  }
+}
 writeReport();
 try {
   // A local, minimal extension supplies the browser's real per-tab zoom API.
@@ -349,7 +380,7 @@ try {
   }
   await verifyServedSubject();
   if (mode === "final" && (git("rev-parse", "HEAD") !== subject.commit || git("status", "--porcelain", "--untracked-files=no") || untrackedImplementation().length)) throw new Error("The exact committed subject changed during final acceptance; preserve this run and capture a new frozen continuation.");
-  status.overall = "pass"; status.summary = full ? `${status.steps.length} functional and responsive checks passed against ${subject.dirty || subject.untrackedImplementation.length ? "the recorded working tree" : "the exact clean committed subject"}. All execution remains explicitly simulated or unbound. Created ${workflowPath}; original example preserved.` : "Early integrated shell reviewed in the real browser. Functional and exact-subject acceptance remain separate.";
+  status.overall = "pass"; status.summary = mode === "blocks" ? "Individual block authoring and live interoperability checks passed through the workspace UI. Evidence covers the current working tree; CI and user acceptance remain separate." : full ? `${status.steps.length} functional and responsive checks passed against ${subject.dirty || subject.untrackedImplementation.length ? "the recorded working tree" : "the exact clean committed subject"}. Execution remains unavailable; missing inputs are actionable and no manual simulation is offered in the workspace. Created ${workflowPath}; original example preserved.` : "Early integrated shell reviewed in the real browser. Functional and exact-subject acceptance remain separate.";
 } catch (error) {
   status.overall = "blocked"; status.summary = `Stopped at first failure: ${error.message}`;
   if (!active) { active = { id: "startup", label: "Browser startup", purpose: "Open evidence browser", action: "Launch Chromium and start trace", controls: [], expected: "The evidence browser starts safely" }; status.steps.unshift(active); }

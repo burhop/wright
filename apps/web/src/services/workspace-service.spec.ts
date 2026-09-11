@@ -16,6 +16,83 @@ import {
 
 const digest = "d".repeat(64);
 
+describe("scoped latest execution snapshot", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+  it("uses bounded GET and carries only its read cancellation signal", async () => {
+    const signal=new AbortController().signal;
+    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({workspace_id:"workspace",workflow_path:"workflows/test.workflow.wflow",runs:[]})));
+    await expect(workspaceService.getWorkspaceWorkflowRuns("session","workflows/test.workflow.wflow",{workspaceId:"workspace",latestOnly:true,signal})).resolves.toEqual([]);
+    expect(mocks.fetch.mock.calls[0][0]).toContain("latest_only=true");
+    expect(mocks.fetch.mock.calls[0][1]).toEqual({signal});
+  });
+  it.each([
+    {workspace_id:"foreign",workflow_path:"path",runs:[]},
+    {workspace_id:"workspace",workflow_path:"other",runs:[]},
+    {workspace_id:"workspace",workflow_path:"path",runs:[{path:"runs/old.json"}]},
+  ])("rejects wrong scope or old server projection %#",async payload => {
+    mocks.fetch.mockResolvedValue(new Response(JSON.stringify(payload)));
+    await expect(workspaceService.getWorkspaceWorkflowRuns("s","path",{workspaceId:"workspace",latestOnly:true})).rejects.toThrow();
+  });
+});
+
+describe("terminal workflow review", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+  const review = {review_id:"review-1",workflow_path:"workflows/review.wflow",package_digest:"package-sha",state:"pending"} as import("./workspace-service").WorkspaceWorkflowReview;
+  it("recognizes pending_review as terminal stream result", async () => {
+    const result = {status:"pending_review",review,output_path:"reports/brief-001.html",output_bytes:128};
+    const event = vi.fn();
+    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({kind:"pending_review",result})+"\n",{headers:{"Content-Type":"application/x-ndjson"}}));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session",review.workflow_path,digest,event)).resolves.toEqual(result);
+    expect(event).not.toHaveBeenCalled();
+  });
+  it("binds a decision to the exact package and local workspace without inventing actor identity", async () => {
+    mocks.fetch.mockResolvedValue(response({...review,state:"approved"}));
+    await workspaceService.decideWorkspaceWorkflowReview("session",review,"approved","");
+    expect(JSON.parse(mocks.fetch.mock.calls[0][1].body)).toEqual({session_id:"session",expected_package_digest:"package-sha",decision:"approved",reason:""});
+  });
+  it.each([
+    {detail:{message:"Reviewed file changed.",correction:"Run again for a new review."}},
+    {message:"Reviewed file changed.",details:{correction:"Run again for a new review."}},
+  ])("preserves stale review correction from either API envelope", async body => {
+    mocks.fetch.mockResolvedValue(response(body,409));
+    await expect(workspaceService.decideWorkspaceWorkflowReview("session",review,"approved","")).rejects.toThrow("Reviewed file changed. Run again for a new review.");
+  });
+  it("rejects review history belonging to another workflow", async () => {
+    mocks.fetch.mockResolvedValue(response({reviews:[{...review,workflow_path:"workflows/other.wflow"}]}));
+    await expect(workspaceService.getWorkspaceWorkflowReviews("session",review.workflow_path)).rejects.toThrow("did not match");
+  });
+});
+
+describe("CAD workflow completion", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+  it.each(["cad/bracket.psm", "cad/bracket.step", "cad/bracket.x_t"])("accepts actual CAD deliverable %s from the event stream", async output_path => {
+    const result = { output_path, output_bytes: 2048, outputs: [{ output_path, output_bytes: 2048, cad_role: "native" }] };
+    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({kind: "completed", result}) + "\n", {headers:{"Content-Type":"application/x-ndjson"}}));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session", "workflows/cad.workflow.wflow", digest, vi.fn())).resolves.toEqual(result);
+  });
+  it("still rejects a malformed result", async () => {
+    mocks.fetch.mockResolvedValue(response({output_path: "cad/bracket.psm", output_bytes: "unknown"}));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session", "workflows/cad.workflow.wflow", digest)).rejects.toThrow("invalid workflow run result");
+  });
+  it("accepts an identified cloud result without a local file", async () => {
+    const result={output_path:"",output_bytes:0,results:[{schema_version:1,id:"run:task:model",name:"Bracket",kind:"cad_model",representations:[{kind:"cloud_resource",location:"https://example.invalid/models/1",provider_id:"cloud:cad",resource_id:"1",durability:"persistent"}]}]};
+    mocks.fetch.mockResolvedValue(response(result));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session","workflows/cloud.wflow",digest)).resolves.toEqual(result);
+  });
+  it("rejects empty completion without an identified result", async () => {
+    mocks.fetch.mockResolvedValue(response({output_path:"",output_bytes:0,results:[]}));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session","workflows/cloud.wflow",digest)).rejects.toThrow("invalid workflow run result");
+  });
+  it.each([
+    {error_code:"workflow_not_ready",message:"Image input is incompatible.",details:{correction:"Connect it as reference material."}},
+    {detail:{message:"Image input is incompatible.",correction:"Connect it as reference material."}},
+  ])("preserves actionable preflight errors from either host envelope", async (body) => {
+    mocks.fetch.mockResolvedValue(response(body,422));
+    await expect(workspaceService.runWorkspaceWorkflowSource("session","workflows/image.wflow",digest)).rejects.toThrow(
+      "Image input is incompatible. Connect it as reference material.");
+  });
+});
+
 describe("workflow input file choices", () => {
   beforeEach(() => mocks.fetch.mockReset());
 
