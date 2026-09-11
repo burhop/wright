@@ -80,7 +80,8 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
     class FakeMcpEngine:
         def __init__(self, *args, **kwargs):
             events.append("mcp")
-            assert kwargs["operation_timeout"] == 30.0
+            # Per-call gateway deadlines may exceed the 30-second default.
+            assert kwargs["operation_timeout"] == 120.0
 
         async def shutdown(self):
             events.append("shutdown")

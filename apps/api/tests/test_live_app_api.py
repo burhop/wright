@@ -224,6 +224,29 @@ def test_invalid_state_returns_stable_safe_problem_and_no_runtime_details() -> N
     assert "runtime_id" not in response.text
 
 
+def test_compensation_failure_returns_safe_correlation_reference() -> None:
+    client, service = _client()
+    service.error = LiveAppControlError(
+        "SURFACE_DESCRIPTOR_COMMIT_FAILED",
+        "Managed runtime was safely contained. Reference abcdef0123456789.",
+        retryable=True,
+        correlation_id="abcdef0123456789",
+    )
+
+    response = client.post(
+        "/api/workspace/surfaces/surface-app/start", headers=_headers()
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == {
+        "code": "SURFACE_DESCRIPTOR_COMMIT_FAILED",
+        "message": "Managed runtime was safely contained. Reference abcdef0123456789.",
+        "retryable": True,
+        "correlationId": "abcdef0123456789",
+    }
+    assert "runtime_id" not in response.text
+
+
 def test_lifecycle_routes_require_engineer_or_administrator_authority() -> None:
     client, service = _client(authenticated=False)
     response = client.post(

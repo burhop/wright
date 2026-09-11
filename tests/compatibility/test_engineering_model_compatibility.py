@@ -36,7 +36,7 @@ def _table_names(database: Path) -> set[str]:
         }
 
 
-def test_migration_15_to_16_is_additive_and_preserves_existing_settings(
+def test_upgrade_from_15_is_additive_and_preserves_existing_settings(
     tmp_path,
 ) -> None:
     database = tmp_path / "migration-15.db"
@@ -47,11 +47,11 @@ def test_migration_15_to_16_is_additive_and_preserves_existing_settings(
             "INSERT OR REPLACE INTO system_settings(key, value) VALUES (?, ?)",
             ("llm_provider", "openai-compatible"),
         )
-    result = upgrade_database(database, migrations=MIGRATIONS[:16])
+    result = upgrade_database(database)
     after = _table_names(database)
 
     assert result.starting_version == 15
-    assert result.ending_version == 16
+    assert result.ending_version == 19
     assert before <= after
     assert {
         "model_install_plans",
@@ -59,6 +59,7 @@ def test_migration_15_to_16_is_additive_and_preserves_existing_settings(
         "model_installations",
         "model_capability_bindings",
         "model_references",
+        "workspace_artifacts",
     } <= after
     with sqlite3.connect(database) as connection:
         assert connection.execute(
@@ -286,5 +287,5 @@ def test_native_and_docker_package_manifests_include_model_registry_without_payl
 
     assert (
         database_status(REPO_ROOT / ".nonexistent-compatibility.db").target_version
-        == 17
+        == 19
     )

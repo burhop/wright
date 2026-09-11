@@ -27,19 +27,41 @@ function surfacePreviewHostHeader(host: string): string {
 
 const surfaceProxyPrefix = "/__wright-surface/";
 
-function surfaceProxyMatch(
+export interface SurfaceProxyMatch {
+  authority: string;
+  encoded: string;
+  targetPath: string;
+}
+
+function normalizedPreviewAuthority(host: string | undefined): string | null {
+  if (!host || !surfacePreviewHost.test(host)) return null;
+  return surfacePreviewHostHeader(host).toLowerCase();
+}
+
+export function surfaceProxyMatch(
   url: string | undefined,
   referer: string | undefined,
-): { authority: string; encoded: string; targetPath: string } | null {
+  browserHost?: string,
+): SurfaceProxyMatch | null {
   const current = url ?? "/";
+  const expectedAuthority = normalizedPreviewAuthority(browserHost);
+  if (browserHost !== undefined && expectedAuthority === null) return null;
   if (current.startsWith(surfaceProxyPrefix)) {
     const rest = current.slice(surfaceProxyPrefix.length);
     const slash = rest.indexOf("/");
     const encoded = slash === -1 ? rest : rest.slice(0, slash);
     const targetPath = slash === -1 ? "/" : rest.slice(slash) || "/";
     try {
+      const authority = decodeURIComponent(encoded);
+      if (
+        !validSurfaceAuthority(authority) ||
+        (expectedAuthority !== null &&
+          authority.toLowerCase() !== expectedAuthority)
+      ) {
+        return null;
+      }
       return {
-        authority: decodeURIComponent(encoded),
+        authority,
         encoded,
         targetPath,
       };
@@ -47,15 +69,35 @@ function surfaceProxyMatch(
       return null;
     }
   }
-  if (!referer || !current.startsWith("/")) return null;
-  try {
-    const ref = new URL(referer);
-    const fromRef = surfaceProxyMatch(ref.pathname, undefined);
-    if (!fromRef) return null;
-    return { ...fromRef, targetPath: current };
-  } catch {
-    return null;
+  if (!current.startsWith("/") || current.startsWith("//")) return null;
+  if (referer) {
+    try {
+      const ref = new URL(referer);
+      if (
+        browserHost !== undefined &&
+        ref.host.toLowerCase() !== browserHost.toLowerCase()
+      ) {
+        return null;
+      }
+      const fromRef = surfaceProxyMatch(ref.pathname, undefined, browserHost);
+      if (fromRef) return { ...fromRef, targetPath: current };
+    } catch {
+      return null;
+    }
   }
+  // Rivet/Vite's lazy preload helper emits absolute /assets/* URLs. The
+  // upstream host intentionally sends Referrer-Policy: no-referrer, so those
+  // requests cannot recover the tunneled authority from Referer. The browser
+  // preview host is already a unique, isolated presentation origin; derive
+  // only its exact API authority and let the server-held cookie map authorize
+  // that same presentation. Control hosts and cross-presentation prefixes are
+  // rejected above.
+  if (expectedAuthority === null) return null;
+  return {
+    authority: expectedAuthority,
+    encoded: encodeURIComponent(expectedAuthority),
+    targetPath: current,
+  };
 }
 
 function validSurfaceAuthority(authority: string): boolean {
@@ -175,6 +217,7 @@ function surfaceDevProxyPlugin(): Plugin {
             typeof req.headers.referer === "string"
               ? req.headers.referer
               : undefined,
+            req.headers.host,
           );
           if (!match) {
             next();

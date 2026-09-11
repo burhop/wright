@@ -3,7 +3,9 @@ import type {
   ViewerProvider,
   ViewerDocument,
   PanelHost,
+  OpenContext,
 } from "../types";
+import { workspaceService } from "../../workspace-service";
 
 export interface TextDocument extends ViewerDocument {
   content: string;
@@ -37,18 +39,16 @@ export class TextProvider implements ViewerProvider<TextDocument> {
 
   private changeCallbacks = new Set<(e: any) => void>();
 
-  async openDocument(file: FileDescriptor): Promise<TextDocument> {
-    let text = "";
-    try {
-      const response = await fetch(
-        `/api/workspace/files/content?path=${encodeURIComponent(file.uri)}`,
-      );
-      if (response.ok) {
-        text = await response.text();
-      }
-    } catch {
-      // fallback
-    }
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<TextDocument> {
+    if (!context.sessionId)
+      throw new Error("No workspace session was provided for this file.");
+    const text = await workspaceService.getFileContentText(
+      context.sessionId,
+      file.uri,
+    );
     return new TextDocumentImpl(file.uri, text);
   }
 

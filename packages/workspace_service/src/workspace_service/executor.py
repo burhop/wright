@@ -40,6 +40,37 @@ class BoundedExecutor:
                 f"{operation} exceeded its deadline", operation=operation
             ) from exc
 
+    async def run_to_completion(self, operation: str, work: Callable[[], T]) -> T:
+        """Run uncancellable synchronous work without reporting an early failure.
+
+        A thread-pool future cannot stop a filesystem transaction after it has
+        started. Cancellation is therefore deferred until the worker finishes,
+        so a caller is never told that a write failed while that write can still
+        commit later in the background.
+        """
+
+        if self._closed:
+            raise RuntimeError("workspace executor is closed")
+        async with self._capacity:
+            loop = asyncio.get_running_loop()
+            future = loop.run_in_executor(self._pool, partial(work))
+            cancellation_requested = False
+            while not future.done():
+                try:
+                    await asyncio.shield(future)
+                except asyncio.CancelledError:
+                    cancellation_requested = True
+            if cancellation_requested:
+                # Observe any worker exception before cancellation wins; this
+                # prevents an unhandled-future warning without disguising the
+                # caller's cancellation.
+                try:
+                    future.result()
+                except BaseException:
+                    pass
+                raise asyncio.CancelledError
+            return future.result()
+
     async def close(self) -> None:
         if self._closed:
             return

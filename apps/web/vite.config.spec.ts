@@ -4,6 +4,7 @@ import {
   extractSurfaceSessionCookie,
   rewriteSurfaceSetCookies,
   rewriteSurfaceText,
+  surfaceProxyMatch,
   surfaceProxyHeaders,
 } from "./vite.config";
 
@@ -86,5 +87,89 @@ describe("surface development proxy rewriting", () => {
     ).toEqual([
       `session=value; HttpOnly; Path=/__wright-surface/${authority}/`,
     ]);
+  });
+
+  it("routes root-relative lazy assets from the exact isolated preview host without a referrer", () => {
+    const match = surfaceProxyMatch(
+      "/assets/CodeEditor-DQoetr3z.js",
+      undefined,
+      "s-editor.localhost:5173",
+    );
+
+    expect(match).toEqual({
+      authority: "s-editor.localhost:8000",
+      encoded: "s-editor.localhost%3A8000",
+      targetPath: "/assets/CodeEditor-DQoetr3z.js",
+    });
+    expect(
+      surfaceProxyHeaders(
+        { host: "s-editor.localhost:5173" },
+        match!.authority,
+        "wright_surface=editor-session",
+      ),
+    ).toMatchObject({
+      host: "s-editor.localhost:8000",
+      cookie: "wright_surface=editor-session",
+    });
+  });
+
+  it.each([
+    "/assets/CodeEditor-DQoetr3z.js",
+    "/assets/vendor-BfeYtx4Z.css",
+    "/assets/vendor-Bw7vnkIi.js",
+    "/assets/codeEditorModelCache-0CJKNP2F.js",
+  ])("keeps maintained Rivet lazy asset %s on the same authority", (path) => {
+    expect(
+      surfaceProxyMatch(path, undefined, "s-editor.localhost:5173"),
+    ).toMatchObject({
+      authority: "s-editor.localhost:8000",
+      targetPath: path,
+    });
+  });
+
+  it("does not authorize control-host, malformed, or cross-preview asset routes", () => {
+    const editorAuthority = encodeURIComponent("s-editor.localhost:8000");
+
+    expect(
+      surfaceProxyMatch("/assets/vendor.js", undefined, "127.0.0.1:5173"),
+    ).toBeNull();
+    expect(
+      surfaceProxyMatch(
+        "/assets/vendor.js",
+        undefined,
+        "not-a-preview.localhost:5173",
+      ),
+    ).toBeNull();
+    expect(
+      surfaceProxyMatch(
+        `/__wright-surface/${editorAuthority}/assets/vendor.js`,
+        undefined,
+        "s-other.localhost:5173",
+      ),
+    ).toBeNull();
+  });
+
+  it("keeps simultaneous preview authorities and cookies isolated", () => {
+    const first = surfaceProxyMatch(
+      "/assets/vendor.js",
+      undefined,
+      "s-first.localhost:5173",
+    );
+    const second = surfaceProxyMatch(
+      "/assets/vendor.js",
+      undefined,
+      "s-second.localhost:5173",
+    );
+
+    expect(first?.authority).toBe("s-first.localhost:8000");
+    expect(second?.authority).toBe("s-second.localhost:8000");
+    expect(
+      surfaceProxyHeaders({}, first!.authority, "wright_surface=first").cookie,
+    ).toBe("wright_surface=first");
+    expect(
+      surfaceProxyHeaders({}, second!.authority, "wright_surface=second")
+        .cookie,
+    ).toBe("wright_surface=second");
+    expect(surfaceProxyHeaders({}, first!.authority).cookie).toBeUndefined();
   });
 });

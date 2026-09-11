@@ -36,6 +36,10 @@ describe("PlotlyRenderer", () => {
       />,
     );
     expect(screen.getByRole("table", { name: "Load data" })).toBeVisible();
+    // Initial layout must remain measurable; display:none makes Plotly use 700px.
+    const measuringHost = screen.getByRole("img", { hidden: true });
+    expect(measuringHost).not.toHaveAttribute("hidden");
+    expect(measuringHost).toHaveStyle({ visibility: "hidden" });
     await waitFor(() => expect(react).toHaveBeenCalledTimes(1));
     const host = screen.getByRole("img", {
       name: "Load rises from 10 N to 12 N.",

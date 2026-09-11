@@ -1,0 +1,23 @@
+INFO:     127.0.0.1:49709 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50834 - "GET /workflow-composer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64764 - "GET /assets/index-DfqTPY9Q.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50834 - "GET /assets/index-DU3akysP.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50834 - "GET /api/auth/session/status HTTP/1.1" 200 OK
+{"trace_id": "no-active-span", "workspace_id": null, "event": "list_sessions_requested", "wright.correlation_id": "73095284bf8524d96cd659ce7c688199", "level": "info", "timestamp": "2026-08-31T20:18:36.644938Z"}
+INFO:     127.0.0.1:50229 - "GET /api/setup/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64764 - "GET /api/mcp/servers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50834 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60464 - "GET /api/mcp/tools HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50229 - "GET /api/inference/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64764 - "POST /api/workflow-drafts HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53686 - "GET /api/agent/health HTTP/1.1" 200 OK
+{"trace_id": "no-active-span", "workspace_id": null, "count": 50, "event": "list_sessions_success", "wright.correlation_id": "73095284bf8524d96cd659ce7c688199", "level": "info", "timestamp": "2026-08-31T20:18:40.698154Z"}
+INFO:     127.0.0.1:49990 - "GET /api/agent/sessions HTTP/1.1" 200 OK
+{"trace_id": "no-active-span", "session_id": "api-09b9b40fa60597c6", "event": "chat_history_requested", "wright.correlation_id": "810ab9cc88ca52fa5a401f50b0850f69", "level": "info", "timestamp": "2026-08-31T20:18:40.711727Z"}
+INFO:     127.0.0.1:53686 - "GET /api/agent/chat/stream/status?session_id=api-09b9b40fa60597c6 HTTP/1.1" 200 OK
+{"trace_id": "no-active-span", "session_id": "api-09b9b40fa60597c6", "message_count": 2, "event": "chat_history_success", "wright.correlation_id": "810ab9cc88ca52fa5a401f50b0850f69", "level": "info", "timestamp": "2026-08-31T20:18:40.764480Z"}
+INFO:     127.0.0.1:49990 - "GET /api/agent/sessions/api-09b9b40fa60597c6/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "POST /api/workflow-drafts/draft.75ada92358d647cfbf7711d04d8cba01/validate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "POST /api/workflow-drafts/draft.75ada92358d647cfbf7711d04d8cba01/validate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "PUT /api/workflow-drafts/draft.75ada92358d647cfbf7711d04d8cba01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "GET /api/workflow-drafts/draft.75ada92358d647cfbf7711d04d8cba01 HTTP/1.1" 200 OK

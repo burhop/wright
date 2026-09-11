@@ -23,12 +23,13 @@ export function Header() {
       data-testid="header"
       className="glass-panel"
       style={{
-        height: "48px",
+        height: "32px",
+        flexShrink: 0,
         borderBottom: "1px solid var(--color-border)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 var(--space-xl)",
+        padding: "0 16px",
         zIndex: 10,
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
       }}
@@ -42,7 +43,7 @@ export function Header() {
       >
         <span
           style={{
-            fontSize: "1rem",
+            fontSize: "0.85rem",
             fontWeight: "700",
             letterSpacing: "1.5px",
             fontFamily: "var(--font-ui)",

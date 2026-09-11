@@ -93,7 +93,7 @@ CHANGED_FILES="$({
   git diff --name-only
   git diff --cached --name-only
   git ls-files --others --exclude-standard
-} | sort -u)"
+} | awk '!seen[$0]++')"
 
 CHECK_FRONTEND=0
 CHECK_PYTHON=0

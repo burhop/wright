@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/recovery/workflow-layout.schema.json",
+  "title": "Wright recovery workflow layout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_kind",
+    "schema_version",
+    "workflow_id",
+    "semantic_revision",
+    "layout_revision",
+    "positions",
+    "viewport"
+  ],
+  "properties": {
+    "document_kind": { "const": "workflow-layout" },
+    "schema_version": { "const": "1.0.0-recovery.1" },
+    "workflow_id": { "type": "string", "minLength": 3 },
+    "semantic_revision": { "type": "integer", "minimum": 1 },
+    "layout_revision": { "type": "integer", "minimum": 1 },
+    "positions": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y"],
+        "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+      }
+    },
+    "viewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "zoom"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "zoom": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}

@@ -80,6 +80,10 @@
   display: grid;
   gap: 8px;
 }
+.rivet-run-results > h3 {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+}
 .rivet-run-result {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -146,6 +150,55 @@
   padding: 0 8px 8px;
   color: var(--color-error);
 }
+.rivet-run-step-evidence {
+  margin: 0 8px 8px;
+  color: var(--color-secondary);
+  font-size: 0.72rem;
+}
+.rivet-run-step-evidence > summary {
+  cursor: pointer;
+}
+.rivet-run-step-evidence > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.rivet-run-step-evidence h4 {
+  margin: 8px 0 4px;
+  font-size: 0.72rem;
+}
+.rivet-run-step-evidence dl,
+.rivet-run-step-evidence p {
+  margin: 0;
+}
+.rivet-run-step-evidence dl > div {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.35fr) minmax(0, 1fr);
+  gap: 8px;
+  padding: 4px 0;
+  border-top: 1px solid var(--color-border);
+}
+.rivet-run-step-evidence dd {
+  margin: 0;
+  min-width: 0;
+}
+.rivet-run-step-evidence dd > span {
+  margin-right: 8px;
+  color: var(--color-text-muted);
+}
+.rivet-run-step-evidence pre {
+  max-height: 72px;
+  margin: 4px 0 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.rivet-run-step-technical {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 8px;
+  margin-top: 8px !important;
+}
 .rivet-run-diagnosis h3 {
   margin: 0 0 6px;
   font-size: 0.9rem;
@@ -172,5 +225,8 @@
   .rivet-run-steps button,
   .rivet-run-history button {
     grid-template-columns: 1fr auto;
+  }
+  .rivet-run-step-evidence > div {
+    grid-template-columns: 1fr;
   }
 }

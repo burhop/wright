@@ -23,6 +23,14 @@ from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
+from .workflow_sources import (
+    WORKFLOW_SOURCE_MAX_BYTES,
+    WorkflowSourceConflictError,
+    WorkflowSourceDocument,
+    WorkflowSourceStorageError,
+    WorkspaceWorkflowSourceStore,
+    WorkspaceWorkflowSourceUseCases,
+)
 from .workflow_runner import (
     RunnerArtifactManifest,
     RunnerAssetCatalog,
@@ -36,6 +44,14 @@ from .workflow_operations import (
     WorkflowOperationsError,
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
+)
+from .workflow_draft_service import (
+    WorkflowDraftConflictError,
+    WorkflowDraftIdentityMismatchError,
+    WorkflowDraftInvalidError,
+    WorkflowDraftNotFoundError,
+    WorkflowDraftService,
+    WorkflowDraftValidationResult,
 )
 from .engineering_scenario_artifacts import (
     EngineeringArtifactNormalizerRegistry,
@@ -59,6 +75,9 @@ from .rivet_validation import (
     ValidationIssue,
     WorkflowIdentityMismatch,
     WorkflowValidationResult,
+    RequestedDeliverable,
+    requested_deliverable,
+    validate_requested_deliverable_effect,
     validate_rivet_project,
 )
 from .rivet_approvals import RivetApprovalError, RivetApprovalService
@@ -86,6 +105,11 @@ from .workflow_catalog import (
     WorkflowTemplateCatalog,
     WorkflowTemplateError,
 )
+from .workspace_document_artifacts import (
+    WorkspaceDocumentArtifactError,
+    WorkspaceDocumentArtifactService,
+)
+from .workspace_document_gateway import WorkspaceDocumentGatewayProvider
 from .workflow_graph import (
     WorkflowGraphError,
     WorkflowGraphNode,
@@ -119,9 +143,21 @@ __all__ = [
     "workspace_path_overlaps_application",
     "build_workspace_service",
     "WorkflowDocument",
+    "WorkflowDraftConflictError",
+    "WorkflowDraftIdentityMismatchError",
+    "WorkflowDraftInvalidError",
+    "WorkflowDraftNotFoundError",
+    "WorkflowDraftService",
+    "WorkflowDraftValidationResult",
     "WorkflowPersistenceError",
     "WorkflowRevisionConflict",
     "WorkspaceWorkflowStore",
+    "WORKFLOW_SOURCE_MAX_BYTES",
+    "WorkflowSourceConflictError",
+    "WorkflowSourceDocument",
+    "WorkflowSourceStorageError",
+    "WorkspaceWorkflowSourceStore",
+    "WorkspaceWorkflowSourceUseCases",
     "RunnerSettings",
     "RunnerStatus",
     "RunnerArtifactManifest",
@@ -160,6 +196,9 @@ __all__ = [
     "ValidationIssue",
     "WorkflowIdentityMismatch",
     "WorkflowValidationResult",
+    "RequestedDeliverable",
+    "requested_deliverable",
+    "validate_requested_deliverable_effect",
     "validate_rivet_project",
     "RivetApprovalError",
     "RivetApprovalService",
@@ -177,4 +216,7 @@ __all__ = [
     "RivetMcpError",
     "RivetWorkflowMcpService",
     "create_rivet_mcp_server",
+    "WorkspaceDocumentArtifactError",
+    "WorkspaceDocumentArtifactService",
+    "WorkspaceDocumentGatewayProvider",
 ]

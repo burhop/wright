@@ -1,0 +1,172 @@
+{
+  "overall": "pass",
+  "checkedAt": "2026-09-01T20:26:49.538Z",
+  "checks": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "historicalSubject": true,
+      "correctionSubject": true,
+      "correctionTree": true,
+      "correctionManifest": true,
+      "recoveryLedger": true,
+      "productionBoundary": true,
+      "approval": true,
+      "readiness": true,
+      "governedFreeze": true,
+      "galleryCount": 15,
+      "imagesLoaded": true,
+      "horizontalOverflowPixels": 0,
+      "overflowingElements": [],
+      "layoutRoots": {
+        "html": {
+          "left": 0,
+          "right": 1440,
+          "width": 1440,
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        "body": {
+          "left": 0,
+          "right": 1440,
+          "width": 1440,
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".shell": {
+          "left": 18,
+          "right": 1422,
+          "width": 1404,
+          "clientWidth": 1404,
+          "scrollWidth": 1404,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".tabs": {
+          "left": 18,
+          "right": 744,
+          "width": 726,
+          "clientWidth": 724,
+          "scrollWidth": 724,
+          "overflowX": "auto",
+          "contain": "none"
+        }
+      },
+      "internallyOverflowingElements": []
+    },
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "historicalSubject": true,
+      "correctionSubject": true,
+      "correctionTree": true,
+      "correctionManifest": true,
+      "recoveryLedger": true,
+      "productionBoundary": true,
+      "approval": true,
+      "readiness": true,
+      "governedFreeze": true,
+      "galleryCount": 15,
+      "imagesLoaded": true,
+      "horizontalOverflowPixels": 0,
+      "overflowingElements": [
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 429,
+          "width": 127,
+          "text": "Delivery Lanes"
+        },
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 597,
+          "width": 161,
+          "text": "Engineering Health"
+        },
+        {
+          "tag": "button",
+          "className": "tab",
+          "right": 730,
+          "width": 125,
+          "text": "Agent Activity"
+        }
+      ],
+      "layoutRoots": {
+        "html": {
+          "left": 0,
+          "right": 390,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        "body": {
+          "left": 0,
+          "right": 390,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".shell": {
+          "left": 11,
+          "right": 379,
+          "width": 368,
+          "clientWidth": 368,
+          "scrollWidth": 368,
+          "overflowX": "visible",
+          "contain": "none"
+        },
+        ".tabs": {
+          "left": 11,
+          "right": 379,
+          "width": 368,
+          "clientWidth": 366,
+          "scrollWidth": 724,
+          "overflowX": "auto",
+          "contain": "inline-size"
+        }
+      },
+      "internallyOverflowingElements": []
+    },
+    "api": {
+      "status": 200,
+      "completed": 77,
+      "total": 80,
+      "approval": "complete",
+      "decision": "approved",
+      "baselineCommit": "f9237763d6fa6e9748dfb7b713e753a7fc4b4d17",
+      "correctionCommit": "38b409bf149a1241cc87cdedd48f83fed16b5050",
+      "correctionTree": "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6",
+      "correctionManifestSha256": "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335",
+      "customerReady": false
+    },
+    "http:root": 200,
+    "http:report": 200,
+    "http:status": 200,
+    "http:manifest": 200,
+    "http:frozen": 200,
+    "http:correctionImage1": 200,
+    "http:correctionImage2": 200,
+    "http:correctionImage3": 200,
+    "http:correctionImage4": 200,
+    "http:correctionImage5": 200,
+    "http:correctionImage6": 200,
+    "http:correctionImage7": 200,
+    "http:encodedTraversal": 403,
+    "http:plainTraversal": 403
+  },
+  "diagnostics": [],
+  "failures": []
+}

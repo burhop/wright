@@ -12,6 +12,12 @@ from tool_registry.gateway_adapters import (
     EngineGatewayLifecycle,
 )
 from tool_registry.models import McpServer, McpTool
+from tool_registry.gateway_models import (
+    GatewayError,
+    GatewayErrorCode,
+    GatewayWorkspaceScopeError,
+)
+from tool_registry.runners.stdio import StdioRunner
 
 
 def _server(server_id: str, *, risk_level: str) -> McpServer:
@@ -166,3 +172,100 @@ async def test_engine_gateway_does_not_notify_after_failed_discovery() -> None:
     )
 
     assert changed == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("runner_scope", ["other-workspace", None])
+async def test_browser_gateway_rejects_cached_runner_with_wrong_workspace(
+    tmp_path, runner_scope
+) -> None:
+    db_path = str(tmp_path / "browser-scope.db")
+    upgrade_database(db_path)
+    server = _server("browser", risk_level="low")
+    server.source_url = "https://github.com/microsoft/playwright-mcp"
+    insert_server(db_path, server)
+    engine = _Engine()
+    engine.db_path = db_path
+    runner = StdioRunner(
+        ["node", "browser-cli.js"],
+        cwd=(str(tmp_path / runner_scope) if runner_scope else None),
+    )
+    engine.lifecycle.runner = runner
+
+    with pytest.raises(
+        GatewayError, match="different or unspecified workspace"
+    ) as error:
+        await EngineGatewayLifecycle(engine).ensure_started(
+            "browser",
+            workspace_path=str(tmp_path / "requested-workspace"),
+            approval_context={},
+        )
+
+    assert error.value.code is GatewayErrorCode.INVALID_BINDING
+    assert isinstance(error.value, GatewayWorkspaceScopeError)
+    assert "Disable" in str(error.value)
+    assert str(tmp_path) not in str(error.value)
+    assert engine.lifecycle.runner is runner
+    assert engine.starts == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "source_url",
+    [
+        "https://github.com/microsoft/playwright-mcp",
+        "https://example.test/other-server",
+    ],
+)
+async def test_browser_gateway_reuses_matching_scope_and_leaves_other_servers_alone(
+    tmp_path, source_url
+) -> None:
+    db_path = str(tmp_path / "browser-matching-scope.db")
+    upgrade_database(db_path)
+    server = _server("browser", risk_level="low")
+    server.source_url = source_url
+    insert_server(db_path, server)
+    engine = _Engine()
+    engine.db_path = db_path
+    workspace = tmp_path / "workspace"
+    # Relative components normalize to the same root; unrelated servers retain
+    # their existing application/session lifecycle even with another cwd.
+    cwd = str(workspace / "nested" / "..") if "microsoft" in source_url else None
+    runner = StdioRunner(["node", "browser-cli.js"], cwd=cwd)
+    engine.lifecycle.runner = runner
+
+    await EngineGatewayLifecycle(engine).ensure_started(
+        "browser",
+        workspace_path=str(workspace),
+        approval_context={},
+    )
+
+    assert engine.lifecycle.runner is runner
+    assert engine.starts == []
+
+
+@pytest.mark.asyncio
+async def test_browser_gateway_checks_runner_reused_by_concurrent_activation(tmp_path):
+    db_path = str(tmp_path / "browser-activation-race.db")
+    upgrade_database(db_path)
+    server = _server("browser", risk_level="low")
+    server.source_url = "https://github.com/microsoft/playwright-mcp"
+    insert_server(db_path, server)
+    runner = StdioRunner(["node", "browser-cli.js"], cwd=str(tmp_path / "other"))
+
+    class ConcurrentEngine(_Engine):
+        async def start_server(self, server_id, workspace_path, *, approval_context):
+            self.lifecycle.runner = runner
+
+    engine = ConcurrentEngine()
+    engine.db_path = db_path
+    changed = []
+    lifecycle = EngineGatewayLifecycle(engine, tools_changed=changed.append)
+    with pytest.raises(GatewayError, match="different or unspecified workspace"):
+        await lifecycle.ensure_started(
+            "browser",
+            workspace_path=str(tmp_path / "requested"),
+            approval_context={},
+        )
+    assert changed == []
+    assert engine.lifecycle.runner is runner

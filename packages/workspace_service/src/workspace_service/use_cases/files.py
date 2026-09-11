@@ -131,6 +131,62 @@ class WorkspaceFileUseCases:
             timeout_seconds=self._timeout,
         )
 
+    async def write_generated(
+        self, workspace_dir: str, path: str, content: str, policy: str
+    ) -> str:
+        return await self.write_generated_bytes(
+            workspace_dir, path, content.encode("utf-8"), policy
+        )
+
+    async def write_generated_bytes(
+        self, workspace_dir: str, path: str, content: bytes, policy: str
+    ) -> str:
+        return await self._executor.run(
+            "workspace.files.write_generated",
+            lambda: self._files_factory(workspace_dir).write_generated(
+                path, content, policy
+            ),
+            timeout_seconds=self._timeout,
+        )
+
+    async def read_reference(self, workspace_dir: str, path: str) -> bytes:
+        """Bounded bytes for workflow references, including images."""
+        from ..workspace_path import WorkspacePath
+
+        def work():
+            target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+            with target.open("rb") as stream:
+                content = stream.read(4 * 1024 * 1024 + 1)
+            if len(content) > 4 * 1024 * 1024:
+                raise ValueError("Choose a reference smaller than 4 MiB.")
+            return content
+
+        return await self._executor.run(
+            "workspace.files.reference", work, timeout_seconds=self._timeout
+        )
+
+    async def upload_workflow_image(
+        self, workspace_dir: str, name: str, content: bytes
+    ) -> str:
+        from ..workflow_references import image_media_type
+
+        if not content or len(content) > 4 * 1024 * 1024:
+            raise ValueError("Choose an image smaller than 4 MiB.")
+        if (
+            Path(name).name != name
+            or any(c in name for c in "/\\:%")
+            or name.startswith(".")
+        ):
+            raise ValueError("Choose an image with a simple filename.")
+        image_media_type(name, content)
+        return await self._executor.run(
+            "workspace.files.upload_image",
+            lambda: self._files_factory(workspace_dir).write_generated(
+                name, content, "indexed"
+            ),
+            timeout_seconds=self._timeout,
+        )
+
     async def delete_backup(self, workspace_dir: str, backup_id: str) -> None:
         await self._executor.run(
             "workspace.files.backup.delete",

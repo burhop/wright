@@ -73,6 +73,15 @@ if [ "$SKIP_BUILD" != "1" ]; then
     .
 fi
 
+echo "Checking final Hermes environment dependency contract..."
+PIP_CHECK_EXIT=0
+PIP_CHECK_OUTPUT=$(docker run --rm --platform "$DOCKER_PLATFORM" \
+  --entrypoint /usr/local/bin/uv "$IMAGE_TAG" \
+  pip check --python /opt/hermes/.venv/bin/python 2>&1) || PIP_CHECK_EXIT=$?
+printf '%s\n' "$PIP_CHECK_OUTPUT"
+printf '%s\n' "$PIP_CHECK_OUTPUT" | "$PYTHON_BIN" \
+  scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
+
 docker run --rm --platform "$DOCKER_PLATFORM" --entrypoint /opt/hermes/.venv/bin/python "$IMAGE_TAG" \
   /opt/wright/mcp/verify-bundle.py /opt/wright/mcp/mcp-bundle.yaml >/tmp/wright-mcp-validation.json
 

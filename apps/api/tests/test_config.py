@@ -1,4 +1,8 @@
-from api.config import api_mcp_autostart_enabled, get_ui_theme
+from api.config import (
+    api_mcp_autostart_enabled,
+    get_ui_theme,
+    workflow_composer_enabled,
+)
 import importlib
 
 
@@ -18,6 +22,20 @@ def test_api_mcp_autostart_can_be_disabled_for_external_gateway(monkeypatch):
 
     monkeypatch.setenv("WRIGHT_API_MCP_AUTOSTART", "true")
     assert api_mcp_autostart_enabled() is True
+
+
+def test_workflow_composer_defaults_off(monkeypatch):
+    monkeypatch.delenv("WRIGHT_WORKFLOW_COMPOSER_ENABLED", raising=False)
+    assert workflow_composer_enabled() is False
+
+
+def test_workflow_composer_accepts_only_explicit_truthy_values(monkeypatch):
+    for value in ("1", "true", "yes", "on", "TRUE"):
+        monkeypatch.setenv("WRIGHT_WORKFLOW_COMPOSER_ENABLED", value)
+        assert workflow_composer_enabled() is True
+    for value in ("", "0", "false", "no", "off", "enabled"):
+        monkeypatch.setenv("WRIGHT_WORKFLOW_COMPOSER_ENABLED", value)
+        assert workflow_composer_enabled() is False
 
 
 def test_hermes_api_key_falls_back_to_api_server_key(monkeypatch):

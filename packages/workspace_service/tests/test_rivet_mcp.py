@@ -138,10 +138,7 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
             assert result.structuredContent["state"] == "succeeded", (
                 result.structuredContent
             )
-            assert (
-                result.structuredContent["outputs"]["output"]["value"]
-                == "hello through MCP"
-            )
+            assert result.structuredContent["outputs"]["output"] == "hello through MCP"
             assert progress
             assert [item[0] for item in progress] == sorted(
                 item[0] for item in progress

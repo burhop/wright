@@ -350,6 +350,15 @@ describe("CapabilityLibrary", () => {
     expect(button).toHaveFocus();
   });
 
+  it("offers installation directly on a card", async () => {
+    const onPlanOnboarding = vi.fn();
+    render(<CapabilityLibrary onPlanOnboarding={onPlanOnboarding} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: `Install ${capability.name}` }),
+    );
+    expect(onPlanOnboarding).toHaveBeenCalledWith(capability.capability_id);
+  });
+
   it("closes capability details before handing off to setup", async () => {
     const user = userEvent.setup();
     const onPlanOnboarding = vi.fn();

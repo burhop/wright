@@ -52,7 +52,7 @@ async def _serve(values: argparse.Namespace) -> None:
     settings = McpTransportSettings.from_env()
     engine = McpEngine(
         DATABASE_PATH,
-        operation_timeout=settings.operation_timeout_seconds,
+        operation_timeout=settings.maximum_timeout_seconds,
     )
     logger.info(
         "mcp_gateway_runtime_configured",

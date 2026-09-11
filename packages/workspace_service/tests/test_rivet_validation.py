@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from importlib.resources import files
+from datetime import UTC, datetime
 
 import pytest
+from core.rivet_mcp import CapabilityBinding, canonical_digest
 
 from workspace_service.rivet_validation import (
     WorkflowIdentityMismatch,
     extract_rivet_mcp_requirements,
+    project_graph_inventory,
     validate_rivet_project,
+    validate_requested_deliverable_effect,
 )
 
 
@@ -60,6 +64,19 @@ def test_validation_reports_missing_main_and_selected_graph():
     assert [port.id for port in selected.main_graph.inputs] == ["input"]
     assert [port.id for port in selected.main_graph.outputs] == ["output"]
     assert selected.requirements == ()
+
+    inventory, complete = project_graph_inventory(
+        _template("basic-flow"), selected_graph=selected.main_graph.id
+    )
+    assert complete is True
+    assert [item["label"] for item in inventory] == [
+        "Graph Output",
+        "Graph Input",
+    ]
+    assert [item["node_type"] for item in inventory] == [
+        "graphOutput",
+        "graphInput",
+    ]
 
 
 def test_validation_handles_malformed_projects_and_bounds_issues():
@@ -133,3 +150,125 @@ data:
         "alpha__inspect",
         None,
     ]
+
+
+def _document_project(
+    *,
+    connect_output: bool = True,
+    tool: str = "wright-workspace-files__write_text_document",
+) -> str:
+    connection = (
+        """
+      connections:
+        - {outputNodeId: writer, outputId: result, inputNodeId: output, inputId: value}
+"""
+        if connect_output
+        else "      connections: []\n"
+    )
+    return f"""
+version: 4
+data:
+  graphs:
+    graph:
+      metadata: {{id: graph, name: Main}}
+      nodes:
+        '[writer]:mcpToolCall "Create workspace document"':
+          data:
+            toolName: {tool}
+            useToolNameInput: false
+            useToolArgumentsInput: false
+            toolArguments: '{{"relativePath":"reports/review.md","content":"review","mediaType":"text/markdown","overwrite":false}}'
+        '[output]:graphOutput "Graph Output"':
+          data: {{id: artifact, dataType: any}}
+{connection}  metadata:
+    mainGraphId: graph
+    wrightRequestedDeliverable:
+      kind: workspace_document
+      label: Design review
+      suggestedRelativePath: reports/review.md
+      confirmedAt: '2026-08-21T20:00:00Z'
+      confirmationRevision: 0
+"""
+
+
+def _document_binding() -> CapabilityBinding:
+    declaration = {
+        "effect_kind": "workspace_document",
+        "artifact_output": True,
+        "native_format": False,
+        "required_approvals": ["workspace_write_approval"],
+    }
+    return CapabilityBinding.build(
+        binding_id="binding-document",
+        workspace_id="workspace-1",
+        workflow_id="workflow-1",
+        workflow_revision=1,
+        workflow_digest="a" * 64,
+        graph_id="graph",
+        node_id="writer",
+        node_handle="wright:abcdefghijklmnop",
+        requirement_id=None,
+        qualified_tool_name="wright-workspace-files__write_text_document",
+        server_id="wright-workspace-files",
+        server_revision="v1",
+        capability_digest="b" * 64,
+        validation_evidence_id="reviewed-document-v1",
+        workspace_grant_digest="c" * 64,
+        input_schema={"type": "object"},
+        output_schema={"type": "object"},
+        risk={"required_approvals": ["workspace_write_approval"]},
+        units_policy={},
+        material_defaults={},
+        argument_constraints={"type": "object"},
+        created_at=datetime.now(UTC),
+        artifact_producer=declaration,
+        artifact_producer_digest=canonical_digest(declaration),
+    )
+
+
+def test_document_deliverable_requires_exact_producer_output_and_reviewed_binding():
+    project = _document_project()
+
+    assert validate_requested_deliverable_effect(project) == ()
+    assert (
+        validate_requested_deliverable_effect(
+            project,
+            bindings=(_document_binding(),),
+            require_reviewed_binding=True,
+        )
+        == ()
+    )
+    assert validate_rivet_project(
+        project,
+        workflow_id="workflow-1",
+        revision=1,
+        digest="a" * 64,
+    ).valid
+
+
+def test_document_deliverable_rejects_missing_dependency_and_value_only_tool_substitute():
+    disconnected = validate_requested_deliverable_effect(
+        _document_project(connect_output=False)
+    )
+    assert {issue.code for issue in disconnected} == {
+        "RIVET_DELIVERABLE_OUTPUT_REQUIRED"
+    }
+    wrong_tool = validate_requested_deliverable_effect(
+        _document_project(tool="other__return_path")
+    )
+    assert wrong_tool[0].code == "RIVET_DELIVERABLE_PRODUCER_REQUIRED"
+
+
+def test_native_deliverable_rejects_writer_without_matching_producer_declaration():
+    project = (
+        _document_project()
+        .replace("kind: workspace_document", "kind: native_cad")
+        .replace("      suggestedRelativePath: reports/review.md\n", "")
+    )
+    issues = validate_requested_deliverable_effect(
+        project,
+        bindings=(_document_binding(),),
+        require_reviewed_binding=True,
+    )
+    assert issues[0].code == "RIVET_DELIVERABLE_PRODUCER_REQUIRED"
+    assert "artifact-producing MCP tool" in issues[0].message

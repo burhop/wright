@@ -5,7 +5,10 @@ import {
   directRivetEditorUrl,
   directRivetWorkflowUrl,
 } from "../../services/rivet-editor";
-import { ensureRivetEditorRunning } from "../../services/rivet-editor-lifecycle";
+import {
+  ensureRivetEditorRunning,
+  retryRivetEditorRunning,
+} from "../../services/rivet-editor-lifecycle";
 import {
   closePresentation,
   createPresentation,
@@ -28,6 +31,11 @@ interface ManagedLaunch {
   readonly presentation: PresentationLaunch | null;
 }
 
+interface LaunchRequest {
+  readonly id: number;
+  readonly mode: "passive" | "explicit-retry";
+}
+
 export function ManagedRivetSurface({
   workspaceId,
   sessionId,
@@ -37,9 +45,14 @@ export function ManagedRivetSurface({
 }: ManagedRivetSurfaceProps) {
   const [launch, setLaunch] = useState<ManagedLaunch | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [generation, setGeneration] = useState(0);
+  const [launchRequest, setLaunchRequest] = useState<LaunchRequest>({
+    id: 0,
+    mode: "passive",
+  });
+  const [retrying, setRetrying] = useState(false);
   const launchRef = useRef<ManagedLaunch | null>(null);
   const previewRecoveryAttempts = useRef(0);
+  const retryInFlight = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -48,6 +61,8 @@ export function ManagedRivetSurface({
 
     const configuredDirectUrl = directRivetEditorUrl();
     if (configuredDirectUrl) {
+      retryInFlight.current = false;
+      setRetrying(false);
       const directUrl =
         directRivetWorkflowUrl(initialSlug) ?? configuredDirectUrl;
       const next = { url: directUrl, surfaceId: null, presentation: null };
@@ -59,7 +74,11 @@ export function ManagedRivetSurface({
       };
     }
 
-    void ensureRivetEditorRunning(workspaceId, sessionId)
+    const startEditor =
+      launchRequest.mode === "explicit-retry"
+        ? retryRivetEditorRunning
+        : ensureRivetEditorRunning;
+    void startEditor(workspaceId, sessionId)
       .then(async (surfaceId) => {
         // React may retire this effect while the shared, idempotent startup is
         // still resolving. Do not issue a presentation that this mount can no
@@ -94,6 +113,12 @@ export function ManagedRivetSurface({
         if (active) {
           setError(reason instanceof Error ? reason.message : String(reason));
         }
+      })
+      .finally(() => {
+        if (active && launchRequest.mode === "explicit-retry") {
+          retryInFlight.current = false;
+          setRetrying(false);
+        }
       });
 
     return () => {
@@ -109,7 +134,7 @@ export function ManagedRivetSurface({
         ).catch(() => undefined);
       }
     };
-  }, [generation, initialSlug, sessionId, workspaceId]);
+  }, [initialSlug, launchRequest, sessionId, workspaceId]);
 
   const openInBrowser = useCallback(async () => {
     if (!launch) return;
@@ -135,7 +160,10 @@ export function ManagedRivetSurface({
     (reason: string) => {
       if (previewRecoveryAttempts.current < 1) {
         previewRecoveryAttempts.current += 1;
-        setGeneration((value) => value + 1);
+        setLaunchRequest((value) => ({
+          id: value.id + 1,
+          mode: "passive",
+        }));
         return;
       }
       const current = launchRef.current;
@@ -177,12 +205,19 @@ export function ManagedRivetSurface({
             <button
               type="button"
               data-testid="managed-rivet-retry"
+              disabled={retrying}
               onClick={() => {
+                if (retryInFlight.current) return;
+                retryInFlight.current = true;
                 previewRecoveryAttempts.current = 0;
-                setGeneration((value) => value + 1);
+                setRetrying(true);
+                setLaunchRequest((value) => ({
+                  id: value.id + 1,
+                  mode: "explicit-retry",
+                }));
               }}
             >
-              Retry
+              {retrying ? "Retrying…" : "Retry"}
             </button>
           )}
         </div>

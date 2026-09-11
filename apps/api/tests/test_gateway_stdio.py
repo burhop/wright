@@ -15,6 +15,7 @@ async def test_stdio_gateway_installs_secret_provider_before_runtime(
 
     class FakeEngine:
         def __init__(self, *_args, **_kwargs) -> None:
+            assert _kwargs["operation_timeout"] == 120.0
             self.lifecycle = SimpleNamespace(_operation_timeout=30.0)
             self._lifecycle_adapter = SimpleNamespace(operation_timeout=30.0)
 

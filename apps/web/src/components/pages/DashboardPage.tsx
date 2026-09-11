@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useLogger from "../../hooks/useLogger";
 import useHealthStatus from "../../hooks/useHealthStatus";
@@ -33,20 +33,48 @@ export function DashboardPage() {
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
   const [allWorkspaces, setAllWorkspaces] = useState<WorkspaceInfo[]>([]);
+  const [workspacesLoading, setWorkspacesLoading] = useState(true);
+  const [workspacesLoadFailed, setWorkspacesLoadFailed] = useState(false);
+  const [workspaceIndexLoadFailed, setWorkspaceIndexLoadFailed] =
+    useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [recentErrors, setRecentErrors] = useState<any[]>([]);
   const [activeSessionsCount, setActiveSessionsCount] = useState<number>(0);
 
+  const fetchWorkspaces = useCallback(async () => {
+    setWorkspacesLoading(true);
+    const [recentResult, allResult] = await Promise.allSettled([
+      workspaceService.getRecentWorkspaces(),
+      workspaceService.getAllWorkspaces(),
+    ]);
+    const recent =
+      recentResult.status === "fulfilled" ? recentResult.value : [];
+    const completeIndex =
+      allResult.status === "fulfilled" ? allResult.value : null;
+    setAllWorkspaces(completeIndex ?? []);
+    setRecentWorkspaces(
+      recent.length > 0 ? recent : (completeIndex ?? []).slice(0, 5),
+    );
+    setWorkspacesLoadFailed(
+      recentResult.status === "rejected" && allResult.status === "rejected",
+    );
+    setWorkspaceIndexLoadFailed(allResult.status === "rejected");
+    setWorkspacesLoading(false);
+    if (recentResult.status === "rejected") {
+      logger.error("Failed to load recent workspaces", {
+        err: recentResult.reason,
+      });
+    }
+    if (allResult.status === "rejected") {
+      logger.error("Failed to load the workspace index", {
+        err: allResult.reason,
+      });
+    }
+  }, [logger]);
+
   useEffect(() => {
     logger.info("Dashboard Page loaded");
-    const fetchWorkspaces = async () => {
-      try {
-        const recent = await workspaceService.getRecentWorkspaces();
-        setRecentWorkspaces(recent);
-      } catch (err) {
-        logger.error("Failed to load workspaces", { err });
-      }
-    };
+    void fetchWorkspaces();
 
     const fetchErrors = async () => {
       try {
@@ -72,14 +100,13 @@ export function DashboardPage() {
       }
     };
 
-    fetchWorkspaces();
     fetchErrors();
     fetchSessions();
-  }, [logger]);
+  }, [fetchWorkspaces, logger]);
 
   const getWorkspaceName = (w: WorkspaceInfo) => {
     if (w.workspace_name) return w.workspace_name;
-    const parts = w.local_path.split("/");
+    const parts = w.local_path.split(/[\\/]/);
     return parts[parts.length - 1] || w.local_path;
   };
 
@@ -96,7 +123,9 @@ export function DashboardPage() {
 
   const handleSelectWorkspace = async (w: WorkspaceInfo) => {
     try {
-      await workspaceService.activateWorkspace(w.session_id);
+      const activated = await workspaceService.activateWorkspace(w.session_id);
+      if (!activated)
+        throw new Error("Wright could not activate this workspace session.");
       navigate(`/workspace/${w.workspace_id}`);
     } catch (err) {
       logger.error("Failed to switch workspace", { err });
@@ -104,25 +133,32 @@ export function DashboardPage() {
   };
 
   const handleViewAllWorkspaces = async () => {
-    if (!showAllWorkspaces) {
-      try {
-        const all = await workspaceService.getAllWorkspaces();
-        setAllWorkspaces(all);
-      } catch (err) {
-        logger.error("Failed to load all workspaces", { err });
-      }
+    if (showAllWorkspaces) {
+      setShowAllWorkspaces(false);
+      return;
     }
-    setShowAllWorkspaces(!showAllWorkspaces);
+    try {
+      const all = await workspaceService.getAllWorkspaces();
+      setAllWorkspaces(all);
+      setWorkspaceIndexLoadFailed(false);
+      setShowAllWorkspaces(true);
+    } catch (err) {
+      setWorkspaceIndexLoadFailed(true);
+      logger.error("Failed to load all workspaces", { err });
+    }
   };
 
   const handleWorkspaceCreated = async (workspace: WorkspaceInfo) => {
     setIsCreateModalOpen(false);
     try {
-      await workspaceService.activateWorkspace(workspace.session_id);
+      const activated = await workspaceService.activateWorkspace(
+        workspace.session_id,
+      );
+      if (!activated)
+        throw new Error("Wright could not activate the new workspace session.");
       navigate(`/workspace/${workspace.workspace_id}`);
     } catch (err) {
       logger.error("Failed to activate new workspace", { err });
-      navigate(`/workspace/${workspace.workspace_id}`);
     }
   };
 
@@ -305,7 +341,31 @@ export function DashboardPage() {
                   color: "var(--color-secondary)",
                 }}
               >
-                No active workspaces yet. Create one above to begin.
+                {workspacesLoading
+                  ? "Loading workspaces…"
+                  : workspacesLoadFailed || workspaceIndexLoadFailed
+                    ? "The complete workspace list could not be loaded. Check the local Wright service and try again."
+                    : "No workspaces yet. Create one above to begin."}
+                {!workspacesLoading &&
+                  (workspacesLoadFailed || workspaceIndexLoadFailed) && (
+                    <button
+                      type="button"
+                      data-testid="retry-workspaces-btn"
+                      onClick={() => void fetchWorkspaces()}
+                      style={{
+                        display: "block",
+                        margin: "var(--space-sm) auto 0",
+                        padding: "4px var(--space-sm)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-sm)",
+                        background: "var(--color-surface)",
+                        color: "var(--color-primary)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Retry workspace list
+                    </button>
+                  )}
               </div>
             ) : (
               recentWorkspaces.map((w) => (
@@ -407,6 +467,19 @@ export function DashboardPage() {
             )}
           </div>
 
+          {!workspacesLoading &&
+            workspaceIndexLoadFailed &&
+            recentWorkspaces.length > 0 && (
+              <div
+                data-testid="workspace-index-partial"
+                role="status"
+                style={{ color: "var(--color-warning)", fontSize: "0.72rem" }}
+              >
+                Showing recent workspaces. The complete workspace list is
+                temporarily unavailable.
+              </div>
+            )}
+
           {recentWorkspaces.length > 0 && (
             <div
               style={{ display: "flex", flexDirection: "column", gap: "4px" }}
@@ -430,7 +503,9 @@ export function DashboardPage() {
               >
                 {showAllWorkspaces
                   ? " Hide all workspaces"
-                  : " View all workspaces"}
+                  : workspaceIndexLoadFailed
+                    ? " Retry full workspace list"
+                    : " View all workspaces"}
               </button>
 
               {showAllWorkspaces && (
@@ -836,7 +911,13 @@ export function DashboardPage() {
                 Total Workspaces Indexed:
               </span>
               <span>
-                <strong>{recentWorkspaces.length}</strong>
+                <strong>
+                  {workspacesLoading
+                    ? "Loading…"
+                    : workspaceIndexLoadFailed
+                      ? "Unavailable"
+                      : allWorkspaces.length}
+                </strong>
               </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>

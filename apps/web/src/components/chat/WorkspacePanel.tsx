@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FileTree from "../common/FileTree";
 import DiffViewer from "../common/DiffViewer";
 import EditorTabs from "./EditorTabs";
@@ -32,10 +32,14 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
-import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
-import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
+import {
+  rivetWorkflowsTabEnabled,
+  workspaceSurfacesEnabled,
+} from "../../services/surfaces/feature-flags";
+import { workflowRecoveryEnabled } from "../../config/workflow-recovery";
 import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
 import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
+import { WorkflowRecoveryPage } from "../pages/WorkflowRecoveryPage";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -51,6 +55,16 @@ import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
 const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
+const WORKSPACE_WORKFLOW_FILE_PATH =
+  "/workflows/mounting-bracket.workflow.wflow";
+
+function isWorkspaceWorkflowTab(path: string | null): boolean {
+  const match =
+    /^\/?workflows\/([a-z0-9][a-z0-9-]{0,62})\.workflow\.wflow$/.exec(
+      path ?? "",
+    );
+  return !!match && !/^(aux|con|nul|prn|com[1-9]|lpt[1-9])$/.test(match[1]);
+}
 
 function directRivetTabPath(slug: string): string {
   return `${DIRECT_RIVET_TAB_PREFIX}/${slug}/workflow.rivet-project`;
@@ -161,10 +175,38 @@ export function WorkspacePanel({
     cancelActiveStream,
   } = useChat();
   const navigate = useNavigate();
+  const location = useLocation();
   const surfacesEnabled = workspaceSurfacesEnabled();
-  const workflowsTabEnabled = rivetWorkflowsTabEnabled();
+  const recoveryWorkflowEnabled = workflowRecoveryEnabled();
+  const rivetWorkflowEnabled = rivetWorkflowsTabEnabled();
+  const canonicalWorkflowRequested =
+    new URLSearchParams(location.search).get("workflow") === "canonical";
+  const canonicalWorkflowAvailable =
+    recoveryWorkflowEnabled && canonicalWorkflowRequested;
+  const workflowPathQuery = new URLSearchParams(location.search).get(
+    "workflowPath",
+  );
+  const requestedWorkflowPath =
+    workflowPathQuery === null
+      ? WORKSPACE_WORKFLOW_FILE_PATH
+      : isWorkspaceWorkflowTab(workflowPathQuery)
+        ? normalizeEditorTabPath(workflowPathQuery)
+        : null;
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
+  const [workflowReopenRequests, setWorkflowReopenRequests] = useState<
+    Record<string, number>
+  >({});
+  const requestWorkflowReopen = useCallback(
+    (path: string) => {
+      const key = `${_workspaceId}\u0000${normalizeEditorTabPath(path)}`;
+      setWorkflowReopenRequests((current) => ({
+        ...current,
+        [key]: (current[key] ?? 0) + 1,
+      }));
+    },
+    [_workspaceId],
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const [observedContainer, setObservedContainer] =
     useState<HTMLDivElement | null>(null);
@@ -390,15 +432,27 @@ export function WorkspacePanel({
       ? savedLayout.activeSidebar
       : "files",
   );
-  // Switch to the chat-only thin shell when the legacy workspace has no room
-  // for the full editor layout.
-  const isThin = panelWidth < 768 && !surfacesEnabled;
+  // Keep workspace navigation available before the user opens a workflow,
+  // including when Codex hosts the workspace in a narrow pane.
+  const isThin =
+    panelWidth < 768 && !surfacesEnabled && !recoveryWorkflowEnabled;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
-  const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
+  const [ordinaryAgentCollapsed, setOrdinaryAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
+  const [workflowAgentCollapsed, setWorkflowAgentCollapsed] = useState<boolean>(
+    savedLayout?.workflowAgentCollapsed ?? true,
+  );
+  // Workflow authoring owns the canvas by default. Keep this preference
+  // separate so entering/leaving Workflows does not change ordinary chat.
+  const isAgentCollapsed = canonicalWorkflowAvailable
+    ? workflowAgentCollapsed
+    : ordinaryAgentCollapsed;
+  const setIsAgentCollapsed = canonicalWorkflowAvailable
+    ? setWorkflowAgentCollapsed
+    : setOrdinaryAgentCollapsed;
   const {
     openTabs,
     activeTabPath,
@@ -547,7 +601,8 @@ export function WorkspacePanel({
       const state = {
         activeSidebar,
         isSidebarCollapsed,
-        isAgentCollapsed,
+        isAgentCollapsed: ordinaryAgentCollapsed,
+        workflowAgentCollapsed,
         openTabs: dedupeEditorTabs(openTabs),
         activeTabPath: activeTabPath
           ? normalizeEditorTabPath(activeTabPath)
@@ -569,7 +624,8 @@ export function WorkspacePanel({
     layoutKey,
     activeSidebar,
     isSidebarCollapsed,
-    isAgentCollapsed,
+    ordinaryAgentCollapsed,
+    workflowAgentCollapsed,
     openTabs,
     activeTabPath,
     leftSidebarWidth,
@@ -661,6 +717,9 @@ export function WorkspacePanel({
 
   const viewerContainerRef = useRef<HTMLDivElement>(null);
   const sendMessageRef = useRef(sendMessage);
+  const openWorkspaceFileRef = useRef<(path: string) => Promise<void>>(
+    async () => {},
+  );
 
   useEffect(() => {
     sendMessageRef.current = sendMessage;
@@ -695,6 +754,20 @@ export function WorkspacePanel({
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
           const tabPath = normalizeEditorTabPath(tab.path);
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
+          if (isWorkspaceWorkflowTab(tabPath) || tab.type === "workflow") {
+            if (
+              canonicalWorkflowAvailable &&
+              requestedWorkflowPath &&
+              isWorkspaceWorkflowTab(tab.path)
+            ) {
+              openTransientTab({
+                name: tabPath.split("/").at(-1)!,
+                path: tabPath,
+                type: "workflow",
+              });
+            }
+            continue;
+          }
           if (
             isDirectRivetTab(tabPath) ||
             tab.type === "rivet" ||
@@ -746,13 +819,22 @@ export function WorkspacePanel({
           await openTab(file, "preview", workspaceFileSessionId || undefined);
         }
         if (savedLayout.activeTabPath) {
+          const normalizedActiveTab = normalizeEditorTabPath(
+            savedLayout.activeTabPath,
+          );
+          if (
+            isWorkspaceWorkflowTab(normalizedActiveTab) &&
+            !canonicalWorkflowAvailable
+          ) {
+            return;
+          }
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(
             savedLayout.activeTabPath,
           );
           setActiveTabPath(
             savedWorkflowSlug
               ? directRivetTabPath(savedWorkflowSlug)
-              : normalizeEditorTabPath(savedLayout.activeTabPath),
+              : normalizedActiveTab,
           );
         }
       };
@@ -760,6 +842,8 @@ export function WorkspacePanel({
     }
   }, [
     savedLayout,
+    canonicalWorkflowAvailable,
+    requestedWorkflowPath,
     workspaceFileSessionId,
     openTab,
     openTransientTab,
@@ -769,7 +853,11 @@ export function WorkspacePanel({
   // Pluggable resolution of active tab viewer
   useEffect(() => {
     if (!activeTabPath || !viewerContainerRef.current) return;
-    if (isDirectRivetTab(activeTabPath) || isDirectBrepTab(activeTabPath)) {
+    if (
+      isWorkspaceWorkflowTab(activeTabPath) ||
+      isDirectRivetTab(activeTabPath) ||
+      isDirectBrepTab(activeTabPath)
+    ) {
       viewerContainerRef.current.replaceChildren();
       return;
     }
@@ -814,7 +902,9 @@ export function WorkspacePanel({
     let cancelled = false;
 
     const token = {
-      isCancellationRequested: cancelled,
+      get isCancellationRequested() {
+        return cancelled;
+      },
       onCancellationRequested: () => {
         return { dispose: () => {} };
       },
@@ -826,7 +916,7 @@ export function WorkspacePanel({
       viewerContainerRef.current,
       true,
       true,
-      contribution.id === "iframe-viewer",
+      provider.getCapabilities(file, mode).supportsHeartbeat === true,
     );
 
     const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
@@ -855,7 +945,16 @@ export function WorkspacePanel({
     const container = viewerContainerRef.current;
     const handleViewerMessage = (e: Event) => {
       const customEvent = e as CustomEvent;
-      const { type, content } = customEvent.detail || {};
+      const { type, content, path, sessionId } = customEvent.detail || {};
+      if (
+        type === "open-workspace-file" &&
+        !cancelled &&
+        sessionId === workspaceFileSessionId &&
+        typeof path === "string"
+      ) {
+        void openWorkspaceFileRef.current(path);
+        return;
+      }
       if (type === "create-prompt" && content) {
         // Viewer actions belong to this workspace's bound conversation even
         // when the global session list has not refreshed yet.
@@ -1121,6 +1220,28 @@ export function WorkspacePanel({
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
 
+    if (
+      recoveryWorkflowEnabled &&
+      isWorkspaceWorkflowTab(path) &&
+      workspaceFileSessionId
+    ) {
+      requestWorkflowReopen(path);
+      const query = new URLSearchParams(location.search);
+      query.set("workflow", "canonical");
+      query.set("workflowPath", path.replace(/^\//, ""));
+      navigate(
+        { pathname: location.pathname, search: `?${query.toString()}` },
+        { replace: true },
+      );
+      openTransientTab({
+        name: path.split("/").at(-1)!,
+        path: normalizeEditorTabPath(path),
+        type: "workflow",
+      });
+      setIsSidebarCollapsed(true);
+      return;
+    }
+
     const savedWorkflowSlug = workspaceRivetWorkflowSlug(path);
     if (savedWorkflowSlug && workspaceFileSessionId) {
       const workflow = await workspaceService.readRivetWorkflow(
@@ -1178,6 +1299,10 @@ export function WorkspacePanel({
       );
     }
   };
+
+  useEffect(() => {
+    openWorkspaceFileRef.current = handleFileClick;
+  });
 
   // File tree operations
   const handleCreate = async (
@@ -1267,6 +1392,14 @@ export function WorkspacePanel({
 
   const handleSelectTab = (path: string) => {
     setActiveTabPath(path);
+    if (canonicalWorkflowAvailable && isWorkspaceWorkflowTab(path)) {
+      const query = new URLSearchParams(location.search);
+      query.set("workflowPath", path.replace(/^\//, ""));
+      navigate(
+        { pathname: location.pathname, search: `?${query.toString()}` },
+        { replace: true },
+      );
+    }
   };
 
   // Resize listeners
@@ -1413,6 +1546,63 @@ export function WorkspacePanel({
     }
   };
 
+  const openWorkspaceWorkflowTab = useCallback(() => {
+    if (!_workspaceId || !workspaceFileSessionId || !requestedWorkflowPath)
+      return;
+    setIsSidebarCollapsed(true);
+    openTransientTab({
+      name: requestedWorkflowPath.split("/").at(-1)!,
+      path: requestedWorkflowPath,
+      type: "workflow",
+    });
+    if (surfaceLayout.mode === "narrow") {
+      surfaceLayoutDispatch({
+        type: "select_narrow_pane",
+        pane: "surface",
+      });
+    }
+  }, [
+    _workspaceId,
+    openTransientTab,
+    surfaceLayout.mode,
+    surfaceLayoutDispatch,
+    workspaceFileSessionId,
+    requestedWorkflowPath,
+  ]);
+
+  const selectWorkspaceWorkflow = useCallback(
+    (path: string) => {
+      if (!isWorkspaceWorkflowTab(path))
+        throw new Error("Choose a valid workspace workflow file.");
+      requestWorkflowReopen(path);
+      const query = new URLSearchParams(location.search);
+      query.set("workflow", "canonical");
+      query.set("workflowPath", path.replace(/^\//, ""));
+      navigate(
+        { pathname: location.pathname, search: `?${query.toString()}` },
+        { replace: true },
+      );
+      openTransientTab({
+        name: path.split("/").at(-1)!,
+        path: normalizeEditorTabPath(path),
+        type: "workflow",
+      });
+    },
+    [
+      location.pathname,
+      location.search,
+      navigate,
+      openTransientTab,
+      requestWorkflowReopen,
+    ],
+  );
+
+  useEffect(() => {
+    if (canonicalWorkflowAvailable) {
+      openWorkspaceWorkflowTab();
+    }
+  }, [canonicalWorkflowAvailable, openWorkspaceWorkflowTab]);
+
   const openRivetWorkflowTab = useCallback(
     (slug?: string) => {
       if (!workspaceFileSessionId) return;
@@ -1486,6 +1676,21 @@ export function WorkspacePanel({
     openBrepPanelTab();
   }, [activeSessionStreamActivity, openBrepPanelTab]);
 
+  const workspaceWorkflowTabs =
+    canonicalWorkflowAvailable && requestedWorkflowPath
+      ? openTabs.filter((tab) => isWorkspaceWorkflowTab(tab.path))
+      : [];
+  const activeWorkspaceWorkflow =
+    canonicalWorkflowAvailable && isWorkspaceWorkflowTab(activeTabPath);
+
+  useEffect(() => {
+    if (canonicalWorkflowAvailable) return;
+    for (const tab of openTabs) {
+      if (isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow") {
+        closeTab(tab.path);
+      }
+    }
+  }, [canonicalWorkflowAvailable, closeTab, openTabs]);
   const directRivetTabs = openTabs.filter(
     (tab) => isDirectRivetTab(tab.path) || tab.type === "rivet",
   );
@@ -1519,10 +1724,10 @@ export function WorkspacePanel({
   const activeDirectBrep = isDirectBrepTab(activeTabPath);
 
   useEffect(() => {
-    if (activeDirectRivet || activeDirectBrep) {
+    if (activeWorkspaceWorkflow || activeDirectRivet || activeDirectBrep) {
       setIsSidebarCollapsed(true);
     }
-  }, [activeDirectBrep, activeDirectRivet]);
+  }, [activeDirectBrep, activeDirectRivet, activeWorkspaceWorkflow]);
 
   if (isThin) {
     return (
@@ -1818,11 +2023,27 @@ export function WorkspacePanel({
           isSidebarCollapsed={isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
-          onOpenRivetEditor={() => {
-            void openRivetWorkflowTab();
+          onOpenWorkflows={() => {
+            if (recoveryWorkflowEnabled) {
+              if (canonicalWorkflowRequested) {
+                openWorkspaceWorkflowTab();
+              } else {
+                const query = new URLSearchParams(location.search);
+                query.set("workflow", "canonical");
+                navigate(
+                  {
+                    pathname: location.pathname,
+                    search: `?${query.toString()}`,
+                  },
+                  { replace: true },
+                );
+              }
+            } else if (rivetWorkflowEnabled) {
+              void openRivetWorkflowTab();
+            }
           }}
           onOpenBrepPanel={openBrepPanelTab}
-          workflowsEnabled={workflowsTabEnabled}
+          workflowsEnabled={recoveryWorkflowEnabled || rivetWorkflowEnabled}
         />
       )}
 
@@ -2738,7 +2959,7 @@ export function WorkspacePanel({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              backgroundColor: "var(--color-neutral-dark, #121212)",
+              backgroundColor: "var(--color-surface-subtle)",
               paddingRight: "var(--space-md, 12px)",
             }}
           >
@@ -2768,6 +2989,7 @@ export function WorkspacePanel({
                 style={{
                   width: 32,
                   height: 32,
+                  flexShrink: 0,
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -2794,29 +3016,59 @@ export function WorkspacePanel({
                 )}
               </button>
             )}
-            {activeTabPath && !activeDirectRivet && !activeDirectBrep && (
-              <button
-                data-testid="viewer-inspector-toggle"
-                onClick={() => setIsInspectorOpen(!isInspectorOpen)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: isInspectorOpen
-                    ? "var(--color-secondary, #aaaaaa)"
-                    : "var(--color-primary, #ffffff)",
-                  opacity: 0.7,
-                  cursor: "pointer",
-                  padding: "8px",
-                  fontSize: "0.9rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                title="Inspect Viewer Details"
-              >
-                <SearchIcon size={16} />
-              </button>
-            )}
+            {activeWorkspaceWorkflow &&
+              isAgentCollapsed &&
+              (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
+              (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
+                <button
+                  data-testid="agent-sidebar-toggle"
+                  aria-label="Open Agent Console"
+                  onClick={() => setIsAgentCollapsed(false)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    flexShrink: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    border: "1px solid transparent",
+                    borderRadius: "var(--radius-sm, 4px)",
+                    color: "var(--color-primary, #ffffff)",
+                    opacity: 0.75,
+                    cursor: "pointer",
+                  }}
+                  title="Open Agent Console"
+                >
+                  ◀
+                </button>
+              )}
+            {activeTabPath &&
+              !activeWorkspaceWorkflow &&
+              !activeDirectRivet &&
+              !activeDirectBrep && (
+                <button
+                  data-testid="viewer-inspector-toggle"
+                  onClick={() => setIsInspectorOpen(!isInspectorOpen)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: isInspectorOpen
+                      ? "var(--color-secondary, #aaaaaa)"
+                      : "var(--color-primary, #ffffff)",
+                    opacity: 0.7,
+                    cursor: "pointer",
+                    padding: "8px",
+                    fontSize: "0.9rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  title="Inspect Viewer Details"
+                >
+                  <SearchIcon size={16} />
+                </button>
+              )}
           </div>
         )}
 
@@ -2828,6 +3080,57 @@ export function WorkspacePanel({
             position: "relative",
           }}
         >
+          {canonicalWorkflowAvailable && !requestedWorkflowPath && (
+            <section
+              role="alert"
+              data-testid="workspace-workflow-path-error"
+              style={{ padding: 24 }}
+            >
+              Choose a valid workspace workflow path such as
+              workflows/design-checks.workflow.wflow. No workflow was created or
+              opened.
+            </section>
+          )}
+          {workspaceWorkflowTabs.map((tab) => {
+            if (!_workspaceId || !workspaceFileSessionId) return null;
+            const isActive = activeTabPath === tab.path;
+            return (
+              <div
+                key={tab.path}
+                data-testid="retained-workspace-workflow-panel"
+                aria-hidden={!isActive}
+                style={{
+                  position: isActive ? "relative" : "absolute",
+                  inset: isActive ? undefined : 0,
+                  zIndex: isActive ? 1 : 0,
+                  display: isActive ? "flex" : "none",
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 0,
+                  visibility: isActive ? "visible" : "hidden",
+                  pointerEvents: isActive ? "auto" : "none",
+                }}
+              >
+                <WorkflowRecoveryPage
+                  onOpenFile={handleFileClick}
+                  workspaceId={_workspaceId}
+                  sessionId={workspaceFileSessionId}
+                  workspaceName={
+                    workspaceInfo?.workspace_name ||
+                    workspacePath ||
+                    _workspaceId
+                  }
+                  workflowFilePath={tab.path}
+                  reopenRequest={
+                    workflowReopenRequests[
+                      `${_workspaceId}\u0000${tab.path}`
+                    ] ?? 0
+                  }
+                  onOpenWorkflow={selectWorkspaceWorkflow}
+                />
+              </div>
+            );
+          })}
           {directRivetTabs.map((tab) => {
             const slug = rivetSlugFromTabPath(tab.path) || "rivet";
             if (!_workspaceId || !workspaceFileSessionId) return null;
@@ -2888,7 +3191,10 @@ export function WorkspacePanel({
               </div>
             );
           })}
-          {!activeDirectRivet && !activeDirectBrep && activeTabPath ? (
+          {!activeWorkspaceWorkflow &&
+          !activeDirectRivet &&
+          !activeDirectBrep &&
+          activeTabPath ? (
             <>
               <div
                 ref={viewerContainerRef}
@@ -3037,7 +3343,9 @@ export function WorkspacePanel({
                 </div>
               )}
             </>
-          ) : !activeDirectRivet && !activeDirectBrep ? (
+          ) : !activeWorkspaceWorkflow &&
+            !activeDirectRivet &&
+            !activeDirectBrep ? (
             /* Welcome / landing screen when no tabs are open */
             <div
               data-testid="workspace-empty-state"
@@ -3461,7 +3769,8 @@ export function WorkspacePanel({
       </div>
 
       {/* Floating Expand button for Right Agent Drawer if collapsed */}
-      {isAgentCollapsed &&
+      {!activeWorkspaceWorkflow &&
+        isAgentCollapsed &&
         (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
         (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
           <button

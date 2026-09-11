@@ -176,6 +176,26 @@ button {
 
 /* Shared Wright form treatment. Native controls otherwise inherit the reset
    above and appear as unstyled text, especially in dark mode. */
+[data-testid="development-metrics"] select {
+  color-scheme: dark;
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+[data-theme="light"] [data-testid="development-metrics"] select {
+  color-scheme: light;
+}
+
+[data-testid="development-metrics"] select option {
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+[data-testid="development-metrics"] select:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
 .wright-form {
   color-scheme: dark;
 }
@@ -989,10 +1009,10 @@ a {
 
 /* Glassmorphism panel style */
 .glass-panel {
-  background: rgba(19, 27, 46, 0.7);
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
 }
 
 /* Hover glow borders */

@@ -1,0 +1,34 @@
+{
+  "blocking_decisions": [
+    "DEC-P0-007",
+    "DEC-P0-009",
+    "DEC-P0-010",
+    "DEC-P0-011",
+    "DEC-P0-012"
+  ],
+  "blocking_dependencies": [
+    "EPP-B01",
+    "EPP-F03",
+    "EPP-F05",
+    "EPP-F06"
+  ],
+  "case_count": 0,
+  "decision_findings": {
+    "DEC-P0-007": "open",
+    "DEC-P0-009": "open",
+    "DEC-P0-010": "open",
+    "DEC-P0-011": "decided_without_decision_record",
+    "DEC-P0-012": "open"
+  },
+  "next_action": "Obtain the named human decisions and complete roadmap dependencies; then rerun this preflight before generating or executing any case.",
+  "policy_blockers": [
+    "benchmark_coverage_policy_not_approved",
+    "release_threshold_policy_not_approved"
+  ],
+  "safe_to_count_cases": false,
+  "safe_to_generate_cases": false,
+  "schema_findings": {},
+  "score": "0/100",
+  "status": "BLOCKED",
+  "violations": []
+}

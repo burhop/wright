@@ -117,6 +117,27 @@ def test_projection_merges_alias_user_state_and_retains_custom_rows() -> None:
     assert custom.evidence_class == "user_reported_source_needed"
 
 
+def test_platform_filter_uses_catalog_support_without_machine_probes():
+    entry = _entry()
+    views = build_capability_views([entry], [], None)
+    assert (
+        paginate_capabilities(
+            [entry],
+            views,
+            filters=CapabilityFilters(platforms=frozenset({"linux_x64"})),
+        ).total
+        == 1
+    )
+    assert (
+        paginate_capabilities(
+            [entry],
+            views,
+            filters=CapabilityFilters(platforms=frozenset({"windows_11_x64"})),
+        ).total
+        == 0
+    )
+
+
 def test_projection_downgrades_legacy_pass_without_current_evidence() -> None:
     server = _server("legacy-passed", "Legacy passed MCP")
     server.validation_result.status = "passed"

@@ -12,10 +12,11 @@ const RIVET_SOURCE_ID = "wright.rivet-editor";
 
 function recoveryOperation(
   lifecycle: SurfaceDescriptor["lifecycle"],
+  allowFailedRetry: boolean,
 ): LiveAppOperation | null {
   if (lifecycle === "declared") return "start";
   if (lifecycle === "stopped") return "restart";
-  if (lifecycle === "failed") return "retry";
+  if (lifecycle === "failed" && allowFailedRetry) return "retry";
   return null;
 }
 
@@ -60,6 +61,7 @@ async function waitForRunnableSurface(
 async function startRivetEditor(
   workspaceId: string,
   sessionId: string,
+  allowFailedRetry: boolean,
 ): Promise<string> {
   const surface = await workspaceService.getRivetEditorSurface(sessionId);
   if (!surface.manifest) {
@@ -72,6 +74,7 @@ async function startRivetEditor(
     sessionId,
   );
 
+  let failedRetryAvailable = allowFailedRetry;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     if (
       descriptor.lifecycle === "ready" ||
@@ -93,12 +96,24 @@ async function startRivetEditor(
       continue;
     }
 
-    const operation = recoveryOperation(descriptor.lifecycle);
+    const operation = recoveryOperation(
+      descriptor.lifecycle,
+      failedRetryAvailable,
+    );
     if (!operation) {
+      if (
+        allowFailedRetry &&
+        !failedRetryAvailable &&
+        descriptor.lifecycle === "failed"
+      ) {
+        throw new Error("Rivet editor remained failed after Retry.");
+      }
       throw new Error(
         `Rivet editor cannot start from ${descriptor.lifecycle}.`,
       );
     }
+
+    if (operation === "retry") failedRetryAvailable = false;
 
     try {
       const runtime = await operateLiveApp(
@@ -126,6 +141,7 @@ async function startRivetEditor(
         window.dispatchEvent(new Event("wright-surfaces-changed"));
         return descriptor.surfaceId;
       }
+      if (operation === "retry") throw error;
       if (attempt === 2) throw error;
       continue;
     }
@@ -144,11 +160,34 @@ export function ensureRivetEditorRunning(
   workspaceId: string,
   sessionId: string,
 ): Promise<string> {
-  const key = `${workspaceId}:${sessionId}`;
+  return requestRivetEditor(workspaceId, sessionId, false);
+}
+
+export function retryRivetEditorRunning(
+  workspaceId: string,
+  sessionId: string,
+): Promise<string> {
+  return requestRivetEditor(workspaceId, sessionId, true);
+}
+
+function requestRivetEditor(
+  workspaceId: string,
+  sessionId: string,
+  allowFailedRetry: boolean,
+): Promise<string> {
+  // An explicit user recovery must never inherit a passive mount's authority.
+  // Keep each intent idempotent on its own while allowing the explicit Retry
+  // to proceed if a passive request is still settling after an API restart.
+  const intent = allowFailedRetry ? "explicit-retry" : "passive";
+  const key = `${workspaceId}:${sessionId}:${intent}`;
   const existing = startupRequests.get(key);
   if (existing) return existing;
 
-  const request = startRivetEditor(workspaceId, sessionId).finally(() => {
+  const request = startRivetEditor(
+    workspaceId,
+    sessionId,
+    allowFailedRetry,
+  ).finally(() => {
     if (startupRequests.get(key) === request) startupRequests.delete(key);
   });
   startupRequests.set(key, request);

@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-03T00:16:31.194108Z",
+  "audit_subject": {
+    "commit": "af0691229e39a8b1b80db0ed7eaa44caaf765f31",
+    "tree": "bd308b0bb73c810caead38435944a1314d19a866"
+  },
+  "audit_status": "PASS",
+  "goal_status": "blocked_external",
+  "goal_complete": false,
+  "tracked_worktree_clean_before_output": false,
+  "untracked_paths": [
+    ".test-tmp/",
+    "artifacts/dashboard-image-redesign-report-checks/",
+    "artifacts/dashboard-image-redesign-verification/",
+    "specs/080-canonical-workflow-recovery/evidence/requesting-engineer-followup-20260902.md"
+  ],
+  "untracked_paths_note": "Untracked paths are disclosed, not treated as committed evidence.",
+  "recovery_ledger": {
+    "completed": 89,
+    "total": 92,
+    "open_tasks": ["T056", "T058", "T060"]
+  },
+  "frozen_checkpoint": {
+    "commit": "b4a7e996f10ec95f7d24185a43fd1401843db66d",
+    "unchanged": true,
+    "open_tasks_by_file": {
+      "specs/079-visual-workflow-composition/tasks.md": [
+        "T028",
+        "T029",
+        "T030",
+        "T031",
+        "T032",
+        "T033",
+        "T034",
+        "T035",
+        "T036",
+        "T037",
+        "T038"
+      ]
+    }
+  },
+  "approved_walkthrough": {
+    "commit": "f9237763d6fa6e9748dfb7b713e753a7fc4b4d17",
+    "tree": "aeca6ab8294dd54112d3e9ac10148537af32b0f0",
+    "manifest_sha256": "f2b4964ec1f599b55a8a8d53704147d2133674baa5db9a28072d4a2808c57347",
+    "steps_passed": 50,
+    "steps_total": 50,
+    "raw_screenshots": 99,
+    "annotated_screenshots": 99,
+    "manifest_files": 204,
+    "browser_diagnostics": 0,
+    "missing_files": [],
+    "digest_mismatches": []
+  },
+  "usability_correction_walkthrough": {
+    "commit": "38b409bf149a1241cc87cdedd48f83fed16b5050",
+    "tree": "452c1ab82b12fe94ba743e3dfe612c8cd4b9dac6",
+    "manifest_sha256": "b8764a02ef83dfc52b65714de0cdbb05071feb9c0ebf4f5fde4995a2870cf335",
+    "steps_passed": 24,
+    "steps_total": 24,
+    "raw_screenshots": 26,
+    "annotated_screenshots": 26,
+    "manifest_files": 59,
+    "browser_diagnostics": 0,
+    "missing_files": [],
+    "digest_mismatches": []
+  },
+  "capability_coverage": {
+    "status": "PASS",
+    "mapped": 890,
+    "unique": 890,
+    "capabilities": 33,
+    "unexplained_omissions": []
+  },
+  "dashboard_verification": {
+    "path": "artifacts/dashboard-image-redesign-verification/20260903T001532131Z-complete/dashboard-verification.json",
+    "ok": true,
+    "error": null
+  },
+  "requirements": [
+    {
+      "id": "OBJ-001",
+      "label": "Frozen EPP-F02B checkpoint is unchanged",
+      "status": "passed",
+      "evidence": [
+        "specs/079-visual-workflow-composition/tasks.md",
+        "specs/080-canonical-workflow-recovery/evidence/checkpoint-d-freeze.md"
+      ],
+      "detail": "Git diff is empty against b4a7e996 and T028-T038 remain unchecked in the frozen task file."
+    },
+    {
+      "id": "OBJ-002",
+      "label": "Canonical model, syntax, command, layout, run, and component contracts are present",
+      "status": "passed",
+      "evidence": [
+        "specs/080-canonical-workflow-recovery/contracts/",
+        "specs/080-canonical-workflow-recovery/evidence/syntax-evaluation.json",
+        "specs/080-canonical-workflow-recovery/tasks.md"
+      ],
+      "detail": "All local contract tasks through T055 are complete and JSON, YAML, and the public engineering source share at least five valid edit probes."
+    },
+    {
+      "id": "OBJ-003",
+      "label": "Bidirectional graph/text conformance and atomic containment are evidenced",
+      "status": "passed",
+      "evidence": [
+        "tests/recovery/test_workflow_conformance.py",
+        "apps/web/src/prototypes/workflow-recovery/command-system.spec.ts",
+        "artifacts/ui-walkthrough/workflow-recovery/20260901T031913Z-continuation-1/status.json"
+      ],
+      "detail": "The paired-edit, last-valid containment, digest-isolation, and stable-diagnostic tasks are complete in the exact walkthrough subject."
+    },
+    {
+      "id": "OBJ-004",
+      "label": "Canvas-first high-fidelity workflow experience has exact walkthrough evidence",
+      "status": "passed",
+      "evidence": [
+        "artifacts/ui-walkthrough/workflow-recovery/20260901T031913Z-continuation-1",
+        "artifacts/ui-walkthrough/workflow-recovery-usability/20260901T200836Z-continuation-14"
+      ],
+      "detail": "The immutable approval baseline and the current 24/24 workspace-owned correction walkthrough both have exact subject/tree binding, complete manifest integrity, paired screenshots, and zero unexpected diagnostics."
+    },
+    {
+      "id": "OBJ-005",
+      "label": "Human direction approval is recorded without invented reviewer facts",
+      "status": "passed",
+      "evidence": [
+        "specs/080-canonical-workflow-recovery/evidence/product-approval.md"
+      ],
+      "detail": "The record preserves the original direction approval, binds the corrected exact subject by evidence, identifies the requesting user only as a self-described mechanical engineer, and states that name and timestamp were not supplied."
+    },
+    {
+      "id": "OBJ-006",
+      "label": "Capability inventory and recovery dashboard are current and truthful",
+      "status": "passed",
+      "evidence": [
+        "specs/080-canonical-workflow-recovery/evidence/capability-coverage.json",
+        "artifacts/dashboard-image-redesign-verification/20260903T001532131Z-complete/dashboard-verification.json",
+        "specs/080-canonical-workflow-recovery/evidence/image-redesign-delivery.json",
+        "specs/080-canonical-workflow-recovery/tasks.md"
+      ],
+      "detail": "Coverage is 890/890 and 33/33; dashboard must match the current 89/92 ledger with customer readiness false and zero desktop/mobile overflow or browser diagnostics."
+    },
+    {
+      "id": "OBJ-007",
+      "label": "Dependency-ordered locally safe post-approval implementation is qualified",
+      "status": "passed",
+      "evidence": [
+        "specs/080-canonical-workflow-recovery/evidence/production-promotion.md",
+        "specs/080-canonical-workflow-recovery/evidence/security-offline-qualification.md",
+        "specs/080-canonical-workflow-recovery/evidence/release-candidate-hardening.md",
+        "artifacts/t059-release-candidate/"
+      ],
+      "detail": "Stable definition/layout/run/component, security/offline, deterministic packaging, Windows lifecycle, Docker, and zero-mutation rehearsal gates pass locally."
+    }
+  ],
+  "findings": [],
+  "blockers": [
+    {
+      "task": "T056",
+      "kind": "human_evidence",
+      "condition": "Real assistive-technology and moderated representative-engineer sessions have not occurred.",
+      "next_action": "Run the committed moderated-engineer protocol with real participants and retain contemporaneous exact-subject evidence."
+    },
+    {
+      "task": "T058",
+      "kind": "human_authority_and_roadmap_dependencies",
+      "condition": "Named decisions, F03/F05/F06/B01 dependencies, independent oracles, holdout, and 100 qualified cases are unavailable; result remains 0/100.",
+      "next_command": "uv run python scripts/recovery/benchmark_preflight.py --output test-results/dataset-evaluation/benchmark-preflight.json"
+    },
+    {
+      "task": "T060",
+      "kind": "prohibited_external_delivery",
+      "condition": "Push, merge, publication, release, and customer actions require separate authorization.",
+      "next_action": "Obtain explicit T060 authorization before reading the dev-push runbook and running its merge/release gates."
+    }
+  ],
+  "prohibited_actions_performed": [],
+  "customer_ready": false
+}

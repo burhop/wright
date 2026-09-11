@@ -220,27 +220,16 @@ test.describe("UI Navigation Redesign E2E", () => {
     await page.goto("/");
     await expect(page.getByTestId("nav-dashboard")).toBeVisible();
     await expect(page.getByTestId("nav-tool-registry")).toBeVisible();
-    await expect(page.getByTestId("nav-logs")).toBeVisible();
+    await expect(page.getByTestId("nav-logs")).toHaveCount(0);
     await expect(page.getByTestId("nav-settings")).toBeVisible();
 
-    // 2. Click Logs link
-    await page.getByTestId("nav-logs").click();
-    await expect(page).toHaveURL("/logs");
-    await expect(page.getByTestId("page-logs")).toBeVisible();
-
-    // Verify filter elements exist on logs page
-    await expect(page.getByTestId("logs-filter-workspace")).toBeVisible();
-    await expect(page.getByTestId("logs-filter-level")).toBeVisible();
-    await expect(page.getByTestId("logs-filter-search")).toBeVisible();
-    await expect(page.getByTestId("logs-refresh-btn")).toBeVisible();
-
-    // 3. Click Settings link
+    // 2. Click Settings link
     await page.getByTestId("nav-settings").click();
     await expect(page).toHaveURL("/settings");
     await expect(page.getByTestId("page-settings")).toBeVisible();
 
     // Verify settings elements exist
-    await expect(page.getByTestId("settings-llm-provider")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Open Model Setup/ })).toBeVisible();
     await expect(page.getByTestId("settings-theme")).toBeVisible();
     await expect(page.getByTestId("settings-save-btn")).toBeVisible();
   });

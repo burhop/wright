@@ -15,10 +15,48 @@ from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .workflow_repository import WorkflowIndexRecord, WorkflowRepository
 from .workflow_review_repository import WorkflowReview, WorkflowReviewRepository
+from .workflow_draft_repository import (
+    WorkflowDraftAlreadyExists,
+    WorkflowDraftRepository,
+    WorkflowDraftRevisionConflict,
+    WorkflowDraftStorageError,
+)
+from .workflow_definition_repository import (
+    WORKFLOW_DEFINITION_MIGRATIONS,
+    WorkflowDefinitionAlreadyExists,
+    WorkflowDefinitionRepository,
+    WorkflowDefinitionRevisionConflict,
+    WorkflowDefinitionSchemaError,
+    rollback_workflow_definition_schema,
+    upgrade_workflow_definition_schema,
+)
+from .workflow_layout_repository import (
+    WORKFLOW_LAYOUT_MIGRATIONS,
+    WorkflowLayoutAlreadyExists,
+    WorkflowLayoutRepository,
+    WorkflowLayoutRevisionConflict,
+    WorkflowLayoutSchemaError,
+    rollback_workflow_layout_schema,
+    upgrade_workflow_layout_schema,
+)
+from .workflow_execution_repository import (
+    WORKFLOW_EXECUTION_MIGRATIONS,
+    CanonicalWorkflowRunRepository,
+    WorkflowExecutionSchemaError,
+    WorkflowRunReconnectSnapshot,
+    WorkflowRunStateConflict,
+    rollback_workflow_execution_schema,
+    upgrade_workflow_execution_schema,
+)
 from .workflow_runs import (
     WorkflowRunEventRecord,
     WorkflowRunRecord,
     WorkflowRunRepository,
+)
+from .workspace_artifacts import (
+    WorkspaceArtifactConflict,
+    WorkspaceArtifactRecord,
+    WorkspaceArtifactRepository,
 )
 from .rivet_mcp_repository import RivetMcpRepository
 from .engineering_scenario_repository import EngineeringScenarioRepository
@@ -61,12 +99,34 @@ __all__ = [
     "UpgradeResult",
     "WorkspaceRepository",
     "WorkflowIndexRecord",
+    "WorkflowDraftAlreadyExists",
+    "WorkflowDraftRepository",
+    "WorkflowDraftRevisionConflict",
+    "WorkflowDraftStorageError",
+    "WORKFLOW_DEFINITION_MIGRATIONS",
+    "WorkflowDefinitionAlreadyExists",
+    "WorkflowDefinitionRepository",
+    "WorkflowDefinitionRevisionConflict",
+    "WorkflowDefinitionSchemaError",
+    "WORKFLOW_LAYOUT_MIGRATIONS",
+    "WorkflowLayoutAlreadyExists",
+    "WorkflowLayoutRepository",
+    "WorkflowLayoutRevisionConflict",
+    "WorkflowLayoutSchemaError",
+    "WORKFLOW_EXECUTION_MIGRATIONS",
+    "CanonicalWorkflowRunRepository",
+    "WorkflowExecutionSchemaError",
+    "WorkflowRunReconnectSnapshot",
+    "WorkflowRunStateConflict",
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
     "WorkflowRunEventRecord",
     "WorkflowRunRecord",
     "WorkflowRunRepository",
+    "WorkspaceArtifactConflict",
+    "WorkspaceArtifactRecord",
+    "WorkspaceArtifactRepository",
     "RivetMcpRepository",
     "EngineeringScenarioRepository",
     "GatewayBindingError",
@@ -101,5 +161,11 @@ __all__ = [
     "create_backup",
     "database_status",
     "restore_backup",
+    "rollback_workflow_definition_schema",
+    "rollback_workflow_layout_schema",
+    "rollback_workflow_execution_schema",
     "upgrade_database",
+    "upgrade_workflow_definition_schema",
+    "upgrade_workflow_layout_schema",
+    "upgrade_workflow_execution_schema",
 ]

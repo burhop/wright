@@ -60,6 +60,92 @@ class _CaptureLogger:
 
 
 @pytest.mark.asyncio
+async def test_workflow_images_stay_multimodal_through_translation_and_repair():
+    image = {
+        "type": "image_url",
+        "image_url": {"url": "data:image/png;base64," + "AAAA" * 16000},
+    }
+    calls = []
+
+    async def handler(request):
+        payload = json.loads(request.content)
+        content = payload["messages"][1]["content"]
+        assert content[0]["type"] == "text"
+        assert "Reference image 1 attached" in content[0]["text"]
+        assert "data:image/" not in content[0]["text"]
+        assert (
+            content[1] == image
+        )  # Full pixels, even above transcript truncation limit.
+        calls.append(payload)
+        decision = (
+            "invalid decision"
+            if len(calls) == 1
+            else '{"kind":"tool_call","name":"create_graph","arguments":{"title":"From sketch"}}'
+        )
+        return httpx.Response(
+            200, json={"choices": [{"message": {"content": decision}}]}
+        )
+
+    bridge = HermesOpenAICompatibilityBridge(
+        HermesOpenAIBridgeSettings(
+            base_url="http://127.0.0.1:8642", api_key="fixture-key", workflow_task=True
+        ),
+        transport=httpx.MockTransport(handler),
+    )
+    result = await bridge.complete(
+        _request(
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Create from this sketch"},
+                        image,
+                    ],
+                }
+            ],
+            tools=[_tool()],
+        )
+    )
+    assert len(calls) == 2
+    assert (
+        result["choices"][0]["message"]["tool_calls"][0]["function"]["name"]
+        == "create_graph"
+    )
+
+
+@pytest.mark.asyncio
+async def test_workflow_does_not_fetch_an_arbitrary_image_url():
+    async def handler(request):
+        pytest.fail("Invalid image must fail before calling the provider")
+
+    bridge = HermesOpenAICompatibilityBridge(
+        HermesOpenAIBridgeSettings(
+            base_url="http://127.0.0.1:8642", api_key="fixture-key", workflow_task=True
+        ),
+        transport=httpx.MockTransport(handler),
+    )
+    with pytest.raises(HermesBridgeError, match="workspace image data"):
+        await bridge.complete(
+            _request(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "https://example.invalid/private.png"
+                                },
+                            }
+                        ],
+                    }
+                ],
+                tools=[_tool()],
+            )
+        )
+
+
+@pytest.mark.asyncio
 async def test_structured_bridge_timing_is_correlated_and_redacted(monkeypatch):
     captured = _CaptureLogger()
     monkeypatch.setattr(bridge_module, "logger", captured)

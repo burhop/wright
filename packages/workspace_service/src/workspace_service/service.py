@@ -61,6 +61,7 @@ from .use_cases import (
     WorkspaceLifecycleUseCases,
     WorkspaceToolUseCases,
     WorkspaceWorkflowUseCases,
+    WorkspaceWorkflowSourceUseCases,
 )
 from .use_cases.run import issue_display_execution_lease
 from .surfaces.display_tokens import DisplayExecutionTokenService
@@ -233,6 +234,7 @@ class WorkspaceService:
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
         )
+        self.workflow_sources = WorkspaceWorkflowSourceUseCases(self.executor)
         self.workflow_templates = WorkflowTemplateCatalog()
         self.workflow_graph = WorkspaceWorkflowGraphOperations(self.workflows)
         self.workflow_editor = WorkspaceWorkflowEditor(self.workflows)
@@ -262,6 +264,9 @@ class WorkspaceService:
         self.workflow_operations = WorkspaceWorkflowOperations(
             WorkflowReviewRepository(db_path), self.workflow_runner
         )
+        from .workflow_artifact_review import WorkflowArtifactReviewService
+
+        self.workflow_artifact_reviews = WorkflowArtifactReviewService(db_path)
         self.engineering_scenarios = EngineeringScenarioService(
             db_path, operations=self.workflow_operations
         )

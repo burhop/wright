@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from types import SimpleNamespace
 
 import pytest
+from core.rivet_mcp import canonical_digest
 from data_vault import WorkflowReviewRepository
 from tool_registry.gateway_models import GatewayTool
 from workspace_service.rivet_capabilities import RivetCapabilityService
 from workspace_service.rivet_settings import RivetMcpGatewaySettings
-from workspace_service.rivet_validation import extract_rivet_mcp_requirements
+from workspace_service.rivet_validation import (
+    RivetMcpNodeRequirement,
+    extract_rivet_mcp_requirements,
+)
 from workspace_service.workflow_operations import (
     WorkflowOperationsError,
     WorkflowOperationsSettings,
@@ -102,6 +107,70 @@ data:
     result = extract_rivet_mcp_requirements(project, selected_graph="graph")
     assert result.errors == ()
     assert result.nodes[0].static_tool_name == "alpha__inspect"
+
+
+def test_trusted_artifact_producer_is_bound_and_declaration_drift_is_stale():
+    declaration = {
+        "effect_kind": "workspace_document",
+        "artifact_output": True,
+        "native_format": False,
+        "required_approvals": ["workspace_write_approval"],
+    }
+    declaration_digest = canonical_digest(declaration)
+
+    class Gateway:
+        def __init__(self, current_declaration, current_digest) -> None:
+            self.current_declaration = current_declaration
+            self.current_digest = current_digest
+
+        def list_tools(self, _session_id):
+            return (
+                GatewayTool(
+                    "wright-workspace-files__write_text_document",
+                    "wright-workspace-files",
+                    "write_text_document",
+                    "Create workspace document",
+                    {"type": "object"},
+                    output_schema={"type": "object"},
+                    required_approvals=frozenset({"workspace_write_approval"}),
+                    provenance={
+                        "server_revision": "document-v1",
+                        "validation_evidence_id": "wright-reviewed:document-v1",
+                        "artifact_producer": self.current_declaration,
+                        "artifact_producer_digest": self.current_digest,
+                    },
+                ),
+            )
+
+    gateway = Gateway(declaration, declaration_digest)
+    service = RivetCapabilityService(gateway)
+    snapshot = service.discover(session_id="session-a", workspace_id="workspace-a")
+    capability = snapshot.tools[0]
+    assert capability.binding_eligible is True
+    assert capability.artifact_producer == declaration
+    binding = service.bind(
+        snapshot=snapshot,
+        requirement=RivetMcpNodeRequirement(
+            "graph", "writer", "mcpToolCall", capability.qualified_tool_name
+        ),
+        qualified_tool_name=capability.qualified_tool_name,
+        workflow_id="workflow-a",
+        workflow_revision=1,
+        workflow_digest="a" * 64,
+        units_policy={},
+        material_defaults={},
+        created_at=datetime.now(UTC),
+    )
+    assert binding.artifact_producer_digest == declaration_digest
+
+    changed = {
+        **declaration,
+        "required_approvals": ["workspace_write_approval", "review-v2"],
+    }
+    gateway.current_declaration = changed
+    gateway.current_digest = canonical_digest(changed)
+    current = service.discover(session_id="session-a", workspace_id="workspace-a")
+    assert service.stale_reasons(binding, current) == ("artifact_producer_changed",)
 
 
 class _Gateway:

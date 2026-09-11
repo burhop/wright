@@ -37,11 +37,14 @@ export const runningInspection: RivetRunInspection = {
     updated_at: "2026-08-20T14:00:02Z",
   },
   events: [],
+  run_inputs: [],
+  inputs_state: "available",
   steps: [
     {
       step_id: "call-1",
       sequence: 1,
       node_id: "node-1",
+      node_type: "mcpToolCall",
       label: "Inspect CAD",
       kind: "mcp_call",
       qualified_tool_name: "cad.inspect",
@@ -52,6 +55,10 @@ export const runningInspection: RivetRunInspection = {
       completed_at: null,
       duration_ms: null,
       reason_code: null,
+      inputs: [],
+      outputs: [],
+      input_state: "available",
+      output_state: "unavailable",
       result: null,
       artifacts: [],
       redaction_count: 0,
@@ -61,6 +68,7 @@ export const runningInspection: RivetRunInspection = {
   final_outputs: [],
   diagnostic: null,
   completeness: {
+    inputs_complete: true,
     outputs_complete: true,
     steps_complete: true,
     events_complete: true,
@@ -79,6 +87,8 @@ const result = (
   name,
   origin: "workflow_output",
   kind,
+  data_type: kind,
+  evidence_state: value === null ? "no-value" : "available",
   value,
   preview:
     value === null
@@ -117,19 +127,23 @@ export const succeededInspection: RivetRunInspection = {
     duration_ms: 2000,
   })),
   final_outputs: [
+    result(
+      "model",
+      "artifact",
+      { artifact_id: "artifact-1" },
+      {
+        data_type: "artifact-reference",
+        artifact: { artifact_id: "artifact-1", label: "CAD model" },
+      },
+    ),
     result("message", "text", "Inspection complete"),
     result("empty", "null", null),
     result("dimensions", "structured", { width: 4, height: 2 }),
     result("items", "list", ["a", "b"]),
     result("report", "link", "https://example.test/report"),
-    result(
-      "model",
-      "artifact",
-      { artifact_id: "artifact-1" },
-      { artifact: { artifact_id: "artifact-1", label: "CAD model" } },
-    ),
     result("large", "text", "x".repeat(300), {
       complete: false,
+      evidence_state: "truncated",
       truncation_reason: "size_limit",
       original_bytes: 1200,
       retained_bytes: 300,
@@ -138,7 +152,7 @@ export const succeededInspection: RivetRunInspection = {
       "secret",
       "structured",
       { token: "[REDACTED]" },
-      { redaction_count: 1 },
+      { evidence_state: "redacted", redaction_count: 1 },
     ),
   ],
   completeness: {
@@ -177,6 +191,7 @@ export const failedInspection: RivetRunInspection = {
       "Confirm the server is healthy, then run the saved revision again.",
     failed_step_id: "call-2",
     failed_node_id: "node-2",
+    failed_node_label: "Create feature",
     qualified_tool_name: "onshape.create_feature",
     trace_id: "trace-child",
     full_rerun_available: true,

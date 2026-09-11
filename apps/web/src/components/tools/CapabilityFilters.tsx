@@ -1,8 +1,10 @@
 import type {
+  CapabilityView,
   CompatibilityStatus,
   EvidenceClass,
   RiskLevel,
 } from "../../services/mcp-service";
+import { capabilityFacts } from "./CapabilityFacts";
 
 export interface CapabilityFilterState {
   curation: "curated" | "follow_up" | "removed" | "all";
@@ -20,6 +22,8 @@ export interface CapabilityFilterState {
   host: string;
   validation: string;
   installed: "" | "true" | "false";
+  commercial: boolean;
+  openSource: boolean;
 }
 
 const ENGINEERING_DOMAINS = [
@@ -72,6 +76,8 @@ export const emptyCapabilityFilters: CapabilityFilterState = {
   host: "",
   validation: "",
   installed: "",
+  commercial: false,
+  openSource: false,
 };
 
 export function readCapabilityFilters(
@@ -101,6 +107,8 @@ export function readCapabilityFilters(
     host: parameters.get("host") || "",
     validation: parameters.get("validation") || "",
     installed: (parameters.get("installed") || "") as "" | "true" | "false",
+    commercial: parameters.get("commercial") === "true",
+    openSource: parameters.get("open_source") === "true",
   };
 }
 
@@ -124,11 +132,25 @@ export function writeCapabilityFilters(value: CapabilityFilterState) {
   if (value.host) parameters.set("host", value.host);
   if (value.validation) parameters.set("validation", value.validation);
   if (value.installed) parameters.set("installed", value.installed);
+  if (value.commercial) parameters.set("commercial", "true");
+  if (value.openSource) parameters.set("open_source", "true");
   const query = parameters.toString();
   window.history.replaceState(
     null,
     "",
     `${window.location.pathname}${query ? `?${query}` : ""}`,
+  );
+}
+
+export function matchesCapabilityOwnershipFilters(
+  capability: CapabilityView,
+  value: CapabilityFilterState,
+) {
+  const facts = capabilityFacts(capability);
+  return (
+    !(value.commercial || value.openSource) ||
+    (value.commercial && facts.commercial) ||
+    (value.openSource && facts.openSource)
   );
 }
 
@@ -434,6 +456,26 @@ export function CapabilityFilters({
           <option value="true">Installed or connected</option>
           <option value="false">Not installed</option>
         </select>
+      </label>
+      <label
+        style={{ display: "flex", alignItems: "center", gap: 6, padding: 8 }}
+      >
+        <input
+          type="checkbox"
+          checked={value.commercial}
+          onChange={(event) => update({ commercial: event.target.checked })}
+        />
+        Commercial
+      </label>
+      <label
+        style={{ display: "flex", alignItems: "center", gap: 6, padding: 8 }}
+      >
+        <input
+          type="checkbox"
+          checked={value.openSource}
+          onChange={(event) => update({ openSource: event.target.checked })}
+        />
+        Open source
       </label>
     </form>
   );

@@ -1,0 +1,369 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/workflows/canonical-workflow-ir-vnext.schema.json",
+  "title": "Wright Canonical Workflow IR vNext Recovery Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_kind",
+    "schema_version",
+    "workflow_id",
+    "revision",
+    "parent_revision",
+    "metadata",
+    "phases",
+    "blocks",
+    "ports",
+    "relationships",
+    "artifact_contracts",
+    "bindings",
+    "components"
+  ],
+  "properties": {
+    "document_kind": { "const": "workflow-ir" },
+    "schema_version": { "const": "2.0.0-recovery.1" },
+    "workflow_id": { "$ref": "#/$defs/id" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "parent_revision": { "type": ["integer", "null"], "minimum": 1 },
+    "semantic_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "phases": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/phase" }
+    },
+    "blocks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1000,
+      "items": { "$ref": "#/$defs/block" }
+    },
+    "ports": {
+      "type": "array",
+      "maxItems": 4000,
+      "items": { "$ref": "#/$defs/port" }
+    },
+    "relationships": {
+      "type": "array",
+      "maxItems": 4000,
+      "items": { "$ref": "#/$defs/relationship" }
+    },
+    "artifact_contracts": {
+      "type": "array",
+      "maxItems": 2000,
+      "items": { "$ref": "#/$defs/artifactContract" }
+    },
+    "bindings": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": { "$ref": "#/$defs/binding" }
+    },
+    "components": {
+      "type": "array",
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "text": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "purpose", "engineering_domain", "authorship"],
+      "properties": {
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "engineering_domain": { "$ref": "#/$defs/id" },
+        "authorship": { "enum": ["human", "human_with_ai_proposal"] }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "order", "block_ids"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "order": { "type": "integer", "minimum": 0 },
+        "block_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "purpose",
+        "phase_id",
+        "execution_kind",
+        "instructions",
+        "configuration",
+        "input_port_ids",
+        "output_port_ids",
+        "binding_id",
+        "component_ref"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["work", "decision", "approval", "component"] },
+        "title": { "$ref": "#/$defs/text" },
+        "purpose": { "$ref": "#/$defs/text" },
+        "phase_id": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "execution_kind": { "enum": ["deterministic", "ai_capable", "human"] },
+        "instructions": { "type": "string", "maxLength": 4000 },
+        "configuration": {
+          "type": "object",
+          "maxProperties": 128,
+          "additionalProperties": { "type": ["string", "number", "boolean"] }
+        },
+        "input_port_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "output_port_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "binding_id": {
+          "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "component_ref": {
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["component_id", "version_range"],
+              "properties": {
+                "component_id": { "$ref": "#/$defs/id" },
+                "version_range": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner_block_id",
+        "direction",
+        "name",
+        "type_id",
+        "required",
+        "cardinality",
+        "artifact_contract_id",
+        "description"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "owner_block_id": { "$ref": "#/$defs/id" },
+        "direction": { "enum": ["input", "output"] },
+        "name": { "$ref": "#/$defs/text" },
+        "type_id": { "$ref": "#/$defs/id" },
+        "required": { "type": "boolean" },
+        "cardinality": { "enum": ["one", "optional", "many"] },
+        "artifact_contract_id": {
+          "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "description": { "type": "string", "maxLength": 1000 }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "source_id",
+        "target_id",
+        "label",
+        "condition"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["data", "control", "decision", "feedback"] },
+        "source_id": { "$ref": "#/$defs/id" },
+        "target_id": { "$ref": "#/$defs/id" },
+        "label": { "type": "string", "maxLength": 500 },
+        "condition": { "type": ["string", "null"], "maxLength": 1000 }
+      }
+    },
+    "artifactContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "type_id",
+        "media_type",
+        "description",
+        "producer_block_id",
+        "required_for_block_ids",
+        "preview_policy",
+        "allowed_actions"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "type_id": { "$ref": "#/$defs/id" },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "description": { "$ref": "#/$defs/text" },
+        "producer_block_id": {
+          "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }]
+        },
+        "required_for_block_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "preview_policy": { "enum": ["inline", "metadata", "none"] },
+        "allowed_actions": {
+          "type": "array",
+          "items": {
+            "enum": ["inspect", "preview", "open", "download", "replace"]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "bindingMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semantic_source", "implementation_target"],
+      "properties": {
+        "semantic_source": { "$ref": "#/$defs/id" },
+        "implementation_target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "provider_id",
+        "server_id",
+        "tool_id",
+        "schema_digest",
+        "argument_map",
+        "result_map",
+        "approval_policy",
+        "capability_name"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["internal", "mcp_tool", "human"] },
+        "provider_id": { "type": ["string", "null"], "maxLength": 160 },
+        "server_id": { "type": ["string", "null"], "maxLength": 160 },
+        "tool_id": { "type": ["string", "null"], "maxLength": 160 },
+        "schema_digest": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "argument_map": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/bindingMap" }
+        },
+        "result_map": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/bindingMap" }
+        },
+        "approval_policy": {
+          "enum": ["none", "review_before_run", "explicit_external_write"]
+        },
+        "capability_name": { "$ref": "#/$defs/text" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "title",
+        "input_port_ids",
+        "output_port_ids",
+        "internal_definition_digest",
+        "internal_addresses"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "version": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "title": { "$ref": "#/$defs/text" },
+        "input_port_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "output_port_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "internal_definition_digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "internal_addresses": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4000,
+          "items": { "$ref": "#/$defs/componentInternalAddress" }
+        }
+      }
+    },
+    "componentInternalAddress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semantic_id", "concept_kind", "relative_path"],
+      "properties": {
+        "semantic_id": { "$ref": "#/$defs/id" },
+        "concept_kind": {
+          "enum": [
+            "block",
+            "port",
+            "relationship",
+            "artifact_contract",
+            "binding",
+            "component"
+          ]
+        },
+        "relative_path": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 320,
+          "pattern": "^[a-z0-9][a-z0-9._/-]*$"
+        }
+      }
+    }
+  }
+}

@@ -10,10 +10,17 @@ from types import SimpleNamespace
 
 import pytest
 from api.rivet_runner_bridge import RivetRunnerBridgeApplication
-from core.rivet_mcp import CapabilityBinding, WorkflowBindingSet
+from core.rivet_mcp import (
+    ArtifactReference,
+    CapabilityBinding,
+    RivetChildCallRecord,
+    WorkflowBindingSet,
+)
 from core.workflow_runs import RunnerAvailability, WorkflowRunState
 from data_vault import (
     RivetMcpRepository,
+    WorkspaceArtifactRecord,
+    WorkspaceArtifactRepository,
     WorkflowRunRepository,
     upgrade_database,
 )
@@ -476,6 +483,27 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
         created_at=datetime.now(UTC),
     )
     repository.save_binding_set(binding_set)
+    artifact_repository = WorkspaceArtifactRepository(str(database))
+    artifact_path = tmp_path / "reports" / "design-review.md"
+    artifact_path.parent.mkdir()
+    artifact_path.write_text("# Design review\n", encoding="utf-8")
+    artifact_record = WorkspaceArtifactRecord(
+        artifact_id="artifact-document-1",
+        workspace_id="workspace-1",
+        session_id="session-1",
+        principal_id="wright-rivet",
+        relative_path="reports/design-review.md",
+        media_type="text/markdown",
+        sha256="ab748e4663a64b0ab137af8f941775f4dfa3fed5221e57f320deae6cf9d29193",
+        byte_count=16,
+        producer_provider_id="wright-workspace-files",
+        producer_tool_name="wright-workspace-files__write_text_document",
+        producer_declaration_digest="a" * 64,
+        request_id="request-artifact",
+        correlation_id="request-artifact",
+        created_at=datetime.now(UTC),
+    )
+    artifact_repository.insert(artifact_record)
 
     class Assets:
         def status(self):
@@ -496,6 +524,36 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
 
         async def run(self, **kwargs):
             self.grant = kwargs["mcp_grant"]
+            now = datetime.now(UTC)
+            repository.append_child_call(
+                RivetChildCallRecord(
+                    call_id="call-artifact",
+                    request_id="request-artifact",
+                    run_id=kwargs["run_id"],
+                    authority_id=self.grant.authority_id,
+                    node_id=bindings[0].node_id,
+                    binding_digest=bindings[0].binding_digest,
+                    qualified_tool_name=bindings[0].qualified_tool_name,
+                    server_revision=bindings[0].server_revision,
+                    schema_digest=bindings[0].schema_digest,
+                    validation_evidence_id=bindings[0].validation_evidence_id,
+                    argument_digest="b" * 64,
+                    trace_id="trace-artifact",
+                    state="succeeded",
+                    child_received=True,
+                    started_at=now,
+                    completed_at=now,
+                    artifacts=(
+                        ArtifactReference(
+                            artifact_id=artifact_record.artifact_id,
+                            media_type=artifact_record.media_type,
+                            sha256=artifact_record.sha256,
+                            bytes=artifact_record.byte_count,
+                            label="design-review.md",
+                        ),
+                    ),
+                )
+            )
             return RivetRuntimeResult(
                 kwargs["run_id"],
                 runtime_state,
@@ -547,6 +605,7 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
         bridge=private_bridge,
         session_resolver=lambda _session, _workspace: "gateway-session",
         settings=RivetMcpGatewaySettings(enabled=True),
+        artifact_repository=artifact_repository,
     )
     started = await runner.start(
         workspace_id="workspace-1",
@@ -579,5 +638,23 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
     assert manifest["binding_set_digest"] == binding_set.binding_set_digest
     assert manifest["runtime"]["protocol_version"] == 2
     assert len(manifest["bindings"]) == 2
+    assert manifest["artifacts"] == [
+        {
+            "artifact_id": "artifact-document-1",
+            "media_type": "text/markdown",
+            "sha256": artifact_record.sha256,
+            "bytes": 16,
+            "label": "design-review.md",
+        }
+    ]
+    linked_artifact = artifact_repository.get_for_run(
+        workspace_id="workspace-1",
+        session_id="session-1",
+        run_id=started.run_id,
+        artifact_id=artifact_record.artifact_id,
+    )
+    assert linked_artifact is not None
+    assert linked_artifact.artifact_id == artifact_record.artifact_id
+    assert linked_artifact.sha256 == artifact_record.sha256
     assert host.grant.token not in str(manifest)
     assert authorities.snapshot(host.grant.authority_id).state == "terminal"

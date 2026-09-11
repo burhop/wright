@@ -19,7 +19,7 @@ interface WorkspaceActivityBarProps {
   isSidebarCollapsed: boolean;
   onBack: () => void;
   onSelectSidebar: (sidebar: WorkspaceSidebarId) => void;
-  onOpenRivetEditor?: () => void;
+  onOpenWorkflows?: () => void;
   onOpenBrepPanel: () => void;
   workflowsEnabled?: boolean;
 }
@@ -39,7 +39,7 @@ const items: Array<{
   {
     id: "workflows",
     testId: "activity-bar-workflows-btn",
-    title: "Rivet Workflows",
+    title: "Workflows",
     icon: (size) => <WorkflowIcon size={size} />,
   },
   {
@@ -90,7 +90,7 @@ export function WorkspaceActivityBar({
   isSidebarCollapsed,
   onBack,
   onSelectSidebar,
-  onOpenRivetEditor,
+  onOpenWorkflows,
   onOpenBrepPanel,
   workflowsEnabled = false,
 }: WorkspaceActivityBarProps) {
@@ -130,7 +130,7 @@ export function WorkspaceActivityBar({
               data-testid={item.testId}
               onClick={() => {
                 if (item.id === "workflows") {
-                  onOpenRivetEditor?.();
+                  onOpenWorkflows?.();
                   return;
                 }
                 if (item.id === "brep") {

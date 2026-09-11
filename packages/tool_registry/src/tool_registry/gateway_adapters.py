@@ -3,13 +3,20 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 import hashlib
 import json
+import os
 from typing import Any
 
-from .db import get_servers, get_tools
-from .gateway_models import GatewayResource, GatewaySessionContext, GatewayTool
+from .db import get_server, get_servers, get_tools
+from .gateway_models import (
+    GatewayResource,
+    GatewaySessionContext,
+    GatewayTool,
+    GatewayWorkspaceScopeError,
+)
 from .manager import McpEngine
 from .safety import ApprovalContext, McpSafetyPolicy
 from .runners.base import ProgressCallback
+from .runners.stdio import StdioRunner
 from .wright_managed_servers import (
     RIVET_WORKFLOW_MUTATION_APPROVAL,
     RIVET_WORKFLOWS_SERVER_ID,
@@ -157,15 +164,41 @@ class EngineGatewayLifecycle:
         self, server_id: str, *, workspace_path: str, approval_context: Any
     ) -> None:
         context = _approval_context(approval_context)
-        if self.engine.lifecycle.runner_for(server_id) is None:
+        runner = self.engine.lifecycle.runner_for(server_id)
+        if runner is not None:
+            self._check_browser_workspace(server_id, runner, workspace_path)
+        if runner is None:
             await self.engine.start_server(
                 server_id, workspace_path, approval_context=context
             )
-            if (
-                self.engine.lifecycle.runner_for(server_id) is not None
-                and self._tools_changed is not None
-            ):
+            runner = self.engine.lifecycle.runner_for(server_id)
+            if runner is not None:
+                # start_server may reuse a runner published by a concurrent
+                # activation; check that winning instance's actual file root.
+                self._check_browser_workspace(server_id, runner, workspace_path)
+            if runner is not None and self._tools_changed is not None:
                 self._tools_changed(server_id)
+
+    def _check_browser_workspace(
+        self, server_id: str, runner: Any, workspace_path: str
+    ) -> None:
+        if not isinstance(runner, StdioRunner):
+            return
+        server = get_server(self.engine.db_path, server_id)
+        if server is None or (server.source_url or "").rstrip("/") != (
+            "https://github.com/microsoft/playwright-mcp"
+        ):
+            return
+
+        # Playwright's file tools resolve against the process cwd when the
+        # client does not supply MCP roots. A cached child must never silently
+        # substitute another workspace. Do not restart it: it may own live calls.
+        def normalize(path: str) -> str:
+            return os.path.normcase(os.path.realpath(path))
+
+        if runner.cwd and normalize(runner.cwd) == normalize(workspace_path):
+            return
+        raise GatewayWorkspaceScopeError()
 
     async def call_tool(
         self,

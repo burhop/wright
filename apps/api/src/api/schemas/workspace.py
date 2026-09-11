@@ -6,8 +6,59 @@ All models used by workspace endpoints are defined here.
 """
 
 import json
-from pydantic import BaseModel, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictInt,
+    field_validator,
+    model_validator,
+)
 from typing import Any, Dict, List, Literal, Optional
+
+from workspace_service.workflow_sources import (
+    WORKFLOW_SOURCE_MAX_BYTES,
+    WorkflowSourceStorageError,
+    validate_source_layout,
+)
+
+
+class WorkflowSourceExecutionSnapshot(BaseModel):
+    """Compact recovery projection; full native evidence remains in the run file."""
+
+    active_task_id: str | None = None
+    completed_task_ids: list[str]
+    event_count: int
+    model_call_count: int
+    tool_call_count: int
+    tool_completed_count: int
+    revision_count: int
+    outputs: list[dict[str, Any]]
+    last_progress: dict[str, Any] | None = None
+    truncated: bool
+
+
+class WorkflowSourceRecentRun(BaseModel):
+    path: str
+    status: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    source_digest: str | None = None
+    error: str | None = None
+    results: list[dict[str, Any]]
+    last_event: dict[str, Any] | None = None
+    review: dict[str, Any] | None = None
+    run_id: str | None = None
+    execution_ended_at: str | None = None
+    source_matches_current: bool | None = None
+    execution: WorkflowSourceExecutionSnapshot | None = None
+
+
+class WorkflowSourceRecentRunsResponse(BaseModel):
+    workspace_id: str
+    workflow_path: str
+    runs: list[WorkflowSourceRecentRun]
 
 
 #  File Operations
@@ -77,6 +128,118 @@ class WorkflowResponse(BaseModel):
 class WorkflowDocumentResponse(WorkflowResponse):
     project: str
     datasets: Dict[str, str]
+
+
+class _WorkflowSourceContentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    source: str = Field(max_length=WORKFLOW_SOURCE_MAX_BYTES)
+
+    @field_validator("source")
+    @classmethod
+    def validate_source_utf8_bytes(cls, source: str) -> str:
+        try:
+            size_bytes = len(source.encode("utf-8"))
+        except UnicodeEncodeError as error:
+            raise ValueError("Workflow source must be valid UTF-8 text") from error
+        if size_bytes > WORKFLOW_SOURCE_MAX_BYTES:
+            raise ValueError(
+                f"Workflow source exceeds the {WORKFLOW_SOURCE_MAX_BYTES}-byte limit"
+            )
+        return source
+
+
+class WorkflowSourceCreateRequest(_WorkflowSourceContentRequest):
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+
+
+class WorkflowSourceUpdateRequest(_WorkflowSourceContentRequest):
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+    expected_storage_revision: int = Field(ge=1)
+    expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    semantic_change_validated: StrictBool
+    layout: dict[str, Any] | None = None
+    expected_layout_revision: StrictInt | None = Field(default=None, ge=0, lt=100_000)
+
+    @field_validator("layout")
+    @classmethod
+    def validate_layout(cls, layout):
+        if layout is None:
+            return None
+        try:
+            return validate_source_layout(layout)
+        except WorkflowSourceStorageError as error:
+            raise ValueError(str(error)) from error
+
+    @model_validator(mode="after")
+    def require_layout_base(self):
+        if self.layout is not None and self.expected_layout_revision is None:
+            raise ValueError("A layout base revision is required when saving layout")
+        return self
+
+
+class WorkflowSourceResponse(BaseModel):
+    workspace_id: str
+    path: str
+    storage_revision: int
+    storage_digest: str
+    definition_revision: int
+    metadata_authority: Literal["wright_host"] = "wright_host"
+    size_bytes: int
+    source: str
+    layout: dict[str, Any] | None = None
+    layout_revision: int = 0
+    layout_status: Literal["missing", "current", "stale"] = "missing"
+
+
+class WorkflowSourceRunRequest(BaseModel):
+    """Run a saved workspace workflow without accepting a client execution plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    session_id: str = Field(min_length=1, max_length=256)
+    path: str = Field(min_length=1, max_length=256)
+    expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class WorkflowSourceRunResponse(BaseModel):
+    status: Literal["completed", "pending_review"] = "completed"
+    review: dict | None = None
+    run_id: str | None = None
+    results: list[dict] = Field(default_factory=list)
+    run_log_path: str | None = None
+    workspace_id: str
+    workflow_path: str
+    workflow_title: str
+    task_id: str
+    task_title: str
+    output_path: str
+    output_bytes: int = Field(ge=0, le=100 * 1024 * 1024)
+    outputs: list[dict] = Field(default_factory=list)
+    steps: list[dict] = Field(default_factory=list)
+
+
+class WorkflowArtifactReviewDecisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    session_id: str = Field(min_length=1, max_length=256)
+    expected_package_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    decision: Literal["approved", "changes_requested"]
+    actor: str | None = Field(
+        default=None, max_length=200
+    )  # Compatibility label, never reviewer authority.
+    reason: str = Field(default="", max_length=2000)
+
+
+class WorkflowInputFileResponse(BaseModel):
+    path: str
+    name: str
+
+
+class WorkflowInputFilesResponse(BaseModel):
+    workspace_id: str
+    files: list[WorkflowInputFileResponse]
 
 
 class WorkflowTemplateResponse(BaseModel):
@@ -220,6 +383,8 @@ class RivetRunResultResponse(BaseModel):
     name: str
     origin: str
     kind: str
+    data_type: str = "unknown"
+    evidence_state: str = "unavailable"
     value: Any = None
     preview: str
     complete: bool
@@ -235,6 +400,7 @@ class RivetRunStepResponse(BaseModel):
     step_id: str
     sequence: int
     node_id: str | None = None
+    node_type: str | None = None
     label: str
     kind: str
     qualified_tool_name: str | None = None
@@ -245,6 +411,10 @@ class RivetRunStepResponse(BaseModel):
     completed_at: str | None = None
     duration_ms: int | None = None
     reason_code: str | None = None
+    inputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    outputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    input_state: str = "unavailable"
+    output_state: str = "unavailable"
     result: Dict[str, Any] | None = None
     artifacts: List[Dict[str, Any]] = Field(default_factory=list)
     redaction_count: int = 0
@@ -257,6 +427,7 @@ class RivetRunDiagnosticResponse(BaseModel):
     recovery_action: str
     failed_step_id: str | None = None
     failed_node_id: str | None = None
+    failed_node_label: str | None = None
     qualified_tool_name: str | None = None
     trace_id: str | None = None
     full_rerun_available: bool
@@ -265,6 +436,7 @@ class RivetRunDiagnosticResponse(BaseModel):
 
 
 class RivetRunCompletenessResponse(BaseModel):
+    inputs_complete: bool = False
     outputs_complete: bool
     steps_complete: bool
     events_complete: bool
@@ -277,6 +449,8 @@ class RivetRunInspectionResponse(BaseModel):
     run: RivetRunSummaryResponse
     progress: RivetRunProgressResponse
     events: List[Dict[str, Any]] = Field(default_factory=list)
+    run_inputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    inputs_state: str = "not-retained"
     steps: List[RivetRunStepResponse] = Field(default_factory=list)
     final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
     diagnostic: RivetRunDiagnosticResponse | None = None
@@ -368,6 +542,10 @@ class RivetMcpCapabilityResponse(BaseModel):
     compatibility: str
     binding_eligible: bool
     blocking_reasons: list[str]
+    artifact_producer: Dict[str, Any] | None = None
+    artifact_producer_digest: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$"
+    )
 
 
 class RivetMcpCapabilitiesResponse(BaseModel):
@@ -418,6 +596,10 @@ class RivetMcpBindingResponse(BaseModel):
     risk: Dict[str, Any] | None = None
     units_policy: Dict[str, Any] | None = None
     material_defaults: Dict[str, Any] | None = None
+    artifact_producer: Dict[str, Any] | None = None
+    artifact_producer_digest: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$"
+    )
     blockers: list[str] = Field(default_factory=list)
 
 
