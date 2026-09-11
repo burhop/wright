@@ -63,8 +63,22 @@ def tampered_catalog(envelope: dict) -> dict:
 
 
 def candidate_70_catalog() -> dict:
-    """Return the final bundled 70-entry acceptance payload."""
-    return deepcopy(load_catalog_document())
+    """Return a stable 70-entry historical update fixture as the bundle grows."""
+    payload = deepcopy(load_catalog_document())
+    additions = {
+        "autocad-mcp-u-c4n",
+        "rosbag-mcp-pypi",
+        "kicad-mcp-blwfish",
+        "kernelcad-mcp",
+        "github-official-mcp",
+        "atlassian-rovo-mcp",
+        "grafana-official-mcp",
+        "partuno-mcp",
+    }
+    payload["servers"] = [
+        entry for entry in payload["servers"] if entry["id"] not in additions
+    ]
+    return payload
 
 
 def prior_69_catalog() -> dict:

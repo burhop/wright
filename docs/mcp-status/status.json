@@ -1,0 +1,4261 @@
+{
+  "schema_version": 2,
+  "snapshot_id": "2026-09-11-d1975aa910df",
+  "generated_at": "2026-09-11T18:19:56.824285+00:00",
+  "assessed_as_of": "2026-09-11",
+  "policy_version": "engineering-integrations-v2",
+  "catalog_sha256": "22ffc90395840f72842f6b479d73718631820d214526b7f5c417e18f25f835cb",
+  "total": 78,
+  "category_counts": {
+    "works": 10,
+    "preview": 6,
+    "requires_login": 15,
+    "in_progress": 1,
+    "abandoned": 46,
+    "vendor_blocked": 0
+  },
+  "category_key": [
+    {
+      "id": "works",
+      "label": "Works",
+      "color": "green",
+      "definition": "Current scoped evidence proves protocol, tools, backend operation, Wright gateway execution, outcome, and cleanup.",
+      "action": "Keep the scoped qualification current and disclose its limits."
+    },
+    {
+      "id": "preview",
+      "label": "Preview",
+      "color": "green",
+      "definition": "Useful execution checks passed, but complete scoped Wright qualification is unfinished.",
+      "action": "Complete the named missing backend, gateway, or outcome checks."
+    },
+    {
+      "id": "requires_login",
+      "label": "Requires login",
+      "color": "green",
+      "definition": "Unauthenticated testing reached an observed account, key, or OAuth boundary; post-login scope remains unverified.",
+      "action": "Use a test account to verify tools, one safe operation, and Wright gateway execution."
+    },
+    {
+      "id": "in_progress",
+      "label": "In progress",
+      "color": "yellow",
+      "definition": "Testing, repair, evidence review, renewal, host software, license, hardware, or a lab environment remains.",
+      "action": "Complete the recorded next action and review the result."
+    },
+    {
+      "id": "abandoned",
+      "label": "Abandoned",
+      "color": "red",
+      "definition": "A reviewed decision closed evaluation because the entry is retired, superseded, duplicate, unavailable, unsuitable, or no longer worth pursuing.",
+      "action": "Retain the decision record; restore only after a reviewed material change."
+    },
+    {
+      "id": "vendor_blocked",
+      "label": "Blocked by vendor",
+      "color": "neutral",
+      "definition": "An attributable vendor restriction explicitly asks that this integration or use not proceed.",
+      "action": "Respect the restriction and review only when the vendor position changes."
+    }
+  ],
+  "green": {
+    "count": 31,
+    "components": {
+      "works": 10,
+      "preview": 6,
+      "requires_login": 15
+    },
+    "meaning": "Technically assessed under the recorded policy; this is not customer adoption."
+  },
+  "fully_qualified_count": 10,
+  "product_groups": [
+    {
+      "id": "works",
+      "label": "Works",
+      "color": "green",
+      "count": 10,
+      "server_ids": [
+        "autocad-mcp-u-c4n",
+        "autodesk-product-help-mcp",
+        "blender-mcp",
+        "brep-mcp",
+        "freecad-mcp-nekanat",
+        "kicad-mcp-blwfish",
+        "oasis-open-fem-agent",
+        "rhino-mcp-easehee",
+        "rosbag-mcp-pypi",
+        "solid-edge-mcp-burhop"
+      ]
+    },
+    {
+      "id": "preview",
+      "label": "Preview",
+      "color": "green",
+      "count": 6,
+      "server_ids": [
+        "freecad-addon-robust",
+        "grafana-official-mcp",
+        "nvidia-elements-mcp",
+        "playwright-mcp",
+        "solidworks-api-mcp",
+        "web3d-mcp"
+      ]
+    },
+    {
+      "id": "requires_login",
+      "label": "Requires login",
+      "color": "green",
+      "count": 15,
+      "server_ids": [
+        "ansys-fluent-mcp",
+        "atlassian-rovo-mcp",
+        "fusion360-mcp-server",
+        "github-official-mcp",
+        "jarvis-onshape-mcp",
+        "matlab-mcp-server",
+        "nvidia-cuda-docs-mcp",
+        "onshape-labs-featurescript-mcp",
+        "onshape-mcp-hedless",
+        "partuno-mcp",
+        "rescale-mcp-hosted",
+        "rhino-mcp",
+        "siemens-element-mcp",
+        "solidworks-mcp-ts",
+        "zoo-mcp"
+      ]
+    },
+    {
+      "id": "in_progress",
+      "label": "In progress",
+      "color": "yellow",
+      "count": 1,
+      "server_ids": [
+        "openscad-mcp"
+      ]
+    },
+    {
+      "id": "abandoned",
+      "label": "Abandoned",
+      "color": "red",
+      "count": 46,
+      "server_ids": [
+        "ansys-mcp-server-community",
+        "aps-mcp-server-nodejs",
+        "aps-mcp-server-petr",
+        "autocad-mcp",
+        "autodesk-fusion-data-mcp",
+        "autodesk-fusion-desktop-mcp",
+        "autodesk-fusion-mcp-python",
+        "backflip-ai-watchlist",
+        "blender-mcp-harveyxiacn",
+        "cad-mcp-daobataotie",
+        "caid-mcp",
+        "calculix-simulation",
+        "comsol-multiphysics-mcp-suzysa",
+        "comsol-multiphysics-mcp-wjc9011",
+        "creo-mcp",
+        "creoson-mcp-bridge",
+        "easy-mcp-autocad",
+        "flexcompute-flow360-api-candidate",
+        "freecad-booleans-lucygoodchild",
+        "freecad-mcp-contextform",
+        "freecad-mcp-proximile",
+        "freecad-mcp-sandraschi",
+        "freecad-mcp-sergiudanstan",
+        "kernelcad-mcp",
+        "kicad-mcp-lamaalrajih",
+        "mcp-ui-shopify",
+        "multicad-mcp",
+        "nvidia-kit-cae-agent-skills",
+        "nvidia-omniverse-isaac-sim-mcp",
+        "nvidia-omniverse-kit-mcp",
+        "nvidia-omniverse-omniui-mcp",
+        "nvidia-omniverse-usd-code-mcp",
+        "openfoam-mcp-webworn",
+        "revit-mcp",
+        "rosbag-mcp-binabik",
+        "siemens-xcelerator-developer-portal-mcp",
+        "simscale-edge-mcp-getanirao",
+        "simulink-agentic-toolkit",
+        "sketchup-mcp",
+        "solidworks-mcp-alisamsam",
+        "solidworks-mcp-python",
+        "thingworx-mcp",
+        "trikos529-openscad",
+        "webmcp-openscad",
+        "webmcp-standard",
+        "wincc-unified-mcp"
+      ]
+    },
+    {
+      "id": "vendor_blocked",
+      "label": "Blocked by vendor",
+      "color": "neutral",
+      "count": 0,
+      "server_ids": []
+    }
+  ],
+  "protocol_status": [
+    {
+      "protocol": "mcp",
+      "label": "MCP",
+      "known": 73,
+      "curated": 10,
+      "passing": 10,
+      "physical_operation_qualified": null,
+      "status": "implemented"
+    },
+    {
+      "protocol": "webmcp",
+      "label": "WebMCP",
+      "known": 3,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": null,
+      "status": "implemented"
+    },
+    {
+      "protocol": "hardware_mcp",
+      "label": "Hardware MCP",
+      "known": 2,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": false,
+      "status": "qualification_required"
+    },
+    {
+      "protocol": "mhs",
+      "label": "Anthropic Model Hardware Standard",
+      "known": 0,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": false,
+      "status": "research_preview"
+    }
+  ],
+  "limitations": [
+    "This report evaluates recorded evidence; it does not run live qualification.",
+    "Candidate stage assignments describe intended coverage, not proven end-to-end handoffs.",
+    "MHS is a research preview; Wright has not qualified physical device operation.",
+    "Passing means the recorded scoped qualification remains current; it does not extend to untested tools, platforms, or host modes.",
+    "The three chains are deterministic Tier 1 integration scenarios, not physical product validation or production process proof."
+  ],
+  "audience": "public",
+  "records": [
+    {
+      "server_id": "ansys-fluent-mcp",
+      "name": "PyFluent MCP",
+      "vendor": "Ansys",
+      "source_url": "https://github.com/ansys/pyfluent-mcp",
+      "scope": "Launch or attach to local or remote Fluent sessions",
+      "implementation_mode": "unknown",
+      "source_revision": "0.4.0",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The official pinned package, MCP discovery, and safe code validation pass; a licensed Fluent solver is the only unavailable boundary, so customer exposure must remain credential-gated and unqualified for CFD results.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "Ansys license"
+      ],
+      "prerequisites": [
+        "Ansys Fluent 2024 R1 or newer for live solver tools",
+        "Ansys Fluent for live solver tools",
+        "ansys-fluent-core>=0.27",
+        "ansys-fluent-mcp==0.4.0"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification.",
+      "tests_completed": [
+        "Pinned official 0.4.0 wheel",
+        "MCP initialization and 25-tool discovery",
+        "Safe validate_code backend-independent probe"
+      ],
+      "tests_remaining": [
+        "Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification."
+      ],
+      "limitations": [
+        "No licensed solver, mesh, field result, export, or Wright gateway solve has been proven."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "ansys-mcp-server-community",
+      "name": "Ansys MCP Server",
+      "vendor": "vorobjewsen30-max",
+      "source_url": "https://pypi.org/project/ansys-mcp-server/",
+      "scope": "Fluent CFD, Mechanical FEA, MAPDL, DPF, Prime Meshing, and System Coupling wrappers",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "fea",
+        "meshing",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The community server cannot import against current MCP SDK releases and never initializes; the official PyFluent MCP is the stronger maintained Ansys path.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "Ansys license"
+      ],
+      "prerequisites": [
+        "Ansys Fluent, Mechanical, MAPDL, DPF, Prime, or System Coupling as needed",
+        "Ansys solver products for live tools",
+        "ansys-mcp-server"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-08-12",
+      "next_action": "Preserve the import-failure evidence; reconsider after a compatible upstream release demonstrates capabilities beyond the official PyFluent server.",
+      "tests_completed": [
+        "Startup attempts on Python 3.12 and 3.13"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence ends before MCP initialization."
+      ],
+      "replacement_ids": [
+        "ansys-fluent-mcp"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "aps-mcp-server-nodejs",
+      "name": "Autodesk Platform Services Node MCP",
+      "vendor": "Autodesk",
+      "source_url": "https://github.com/autodesk-platform-services/aps-mcp-server-nodejs",
+      "scope": "Secure gateway for accessing Autodesk Platform Services cloud data modeling and derivative extraction APIs.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cloud-cad",
+        "plm"
+      ],
+      "engineering_stages": [
+        "design",
+        "release"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The publisher repository is archived and no current backend/gateway qualification establishes a supported workflow.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "APS_CLIENT_ID",
+        "APS_CLIENT_SECRET",
+        "SSA_ID",
+        "SSA_KEY_ID",
+        "SSA_KEY_PATH"
+      ],
+      "prerequisites": [
+        "aps-mcp-server-nodejs"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "autodesk-fusion-data-mcp"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "aps-mcp-server-petr",
+      "name": "Autodesk APS Community MCP",
+      "vendor": "petrbroz",
+      "source_url": "https://github.com/petrbroz/aps-mcp-server",
+      "scope": "Superseded community Autodesk Platform Services MCP for Autodesk Construction Cloud account, project, folder, issue, and item-version queries.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cloud-cad",
+        "plm"
+      ],
+      "engineering_stages": [
+        "design",
+        "release"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The source is archived and this entry is blocked without a qualified workflow.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "APS_CLIENT_ID",
+        "APS_CLIENT_SECRET",
+        "APS_SA_ID",
+        "APS_SA_EMAIL",
+        "APS_SA_KEY_ID",
+        "APS_SA_PRIVATE_KEY"
+      ],
+      "prerequisites": [
+        "@aps_sdk/authentication",
+        "@aps_sdk/construction-issues",
+        "@aps_sdk/data-management",
+        "@modelcontextprotocol/sdk",
+        "nodejs",
+        "typescript",
+        "yarn"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "autodesk-fusion-data-mcp"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "atlassian-rovo-mcp",
+      "name": "Atlassian Rovo MCP",
+      "vendor": "Atlassian",
+      "source_url": "https://support.atlassian.com/atlassian-ai-gateway/docs/how-to-upgrade-from-atlassian-rovo-mcp-v1-to-atlassian-rovo-mcp-v2/",
+      "scope": "Jira requirements and engineering work items, Confluence knowledge, and change traceability.",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "operations",
+        "release",
+        "requirements"
+      ],
+      "engineering_stages": [
+        "requirements",
+        "release",
+        "operations"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires Atlassian OAuth authorization.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "Atlassian OAuth authorization"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/atlassian-rovo-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/atlassian-rovo-mcp-remote.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "autocad-mcp",
+      "name": "AutoCAD MCP",
+      "vendor": "puran-water",
+      "source_url": "https://github.com/puran-water/autocad-mcp",
+      "scope": "AutoCAD/LT automation bridge with a Linux-safe ezdxf backend for headless DXF generation plus a Windows AutoCAD File IPC backend for desktop automation.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "drafting"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "This proof-of-concept implementation is superseded by the maintained U-C4N headless drafting integration.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "git+https://github.com/puran-water/autocad-mcp.git"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "autocad-mcp-u-c4n"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "autocad-mcp-u-c4n",
+      "name": "AutoCAD MCP Pro",
+      "vendor": "U-C4N",
+      "source_url": "https://github.com/U-C4N/Autocad-MCP",
+      "scope": "Create a 100 x 60 mechanical DXF with two radius-5 holes and a centerline; save, reopen, reject an out-of-workspace write, and inspect the DXF geometry independently.",
+      "implementation_mode": "fallback",
+      "source_revision": "abc2a82e7128358b9e228a7d9442b37019aa3fe5",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "drafting"
+      ],
+      "engineering_stages": [
+        "design",
+        "manufacturing"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "The pinned headless DXF workflow passed protocol, backend, Wright gateway, independent geometry, error, and workspace-boundary checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "autocad-mcp-pro from pinned source revision",
+        "ezdxf>=1.4,<2",
+        "git"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.",
+      "tests_completed": [
+        "Pinned upstream suite and three direct Wright routes",
+        "DXF geometry and out-of-workspace rejection"
+      ],
+      "tests_remaining": [
+        "Qualify live Windows AutoCAD COM mode separately"
+      ],
+      "limitations": [
+        "Works applies to the qualified headless DXF fallback scope, not live AutoCAD."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "autodesk-fusion-data-mcp",
+      "name": "Autodesk Fusion Data MCP",
+      "vendor": "Autodesk",
+      "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_FusionCloudMcp_autodesk_fusion_data_mcp_server_html",
+      "scope": "Access Fusion hubs and projects",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "sse",
+      "disciplines": [
+        "cloud-cad",
+        "manufacturing-data",
+        "plm"
+      ],
+      "engineering_stages": [
+        "design",
+        "manufacturing",
+        "release"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The configured Autodesk API origin is not an MCP endpoint and no installable server or corrected endpoint identity was found, so this record cannot initialize.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "Autodesk account"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Preserve the endpoint evidence; reinstate only when Autodesk publishes a concrete MCP endpoint or distributable server with current documentation.",
+      "tests_completed": [
+        "Remote initialize attempt and endpoint identity review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Reinstatement requires a concrete Autodesk-published MCP endpoint or package."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "autodesk-fusion-desktop-mcp",
+      "name": "Autodesk Fusion MCP",
+      "vendor": "Autodesk",
+      "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU",
+      "scope": "Live Fusion desktop automation",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "sse",
+      "disciplines": [
+        "cad",
+        "cam"
+      ],
+      "engineering_stages": [
+        "design",
+        "manufacturing"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official product documentation is credible, but the proprietary command is unavailable outside a licensed Fusion host and no protocol, backend artifact, or Wright gateway call can be reproduced for this release.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Autodesk Fusion"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks.",
+      "tests_completed": [
+        "Official source/host-boundary review",
+        "Clean-runtime command-availability check"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No executable server package or MCP session was available in the supported qualification environment.",
+        "Re-entry condition: Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "autodesk-fusion-mcp-python",
+      "name": "Fusion 360 Python API Bridge",
+      "vendor": "sockcymbal",
+      "source_url": "https://github.com/sockcymbal/autodesk-fusion-mcp-python",
+      "scope": "Python MCP bridge wrapping the local Fusion 360 script interface.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The current package fails its only advertised modeling call before any Autodesk request because it uses a nonexistent httpx BasicAuth API; a better-maintained Fusion bridge remains under evaluation.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "APS_CLIENT_ID",
+        "APS_CLIENT_SECRET",
+        "FUSION_ACTIVITY_ID"
+      ],
+      "prerequisites": [
+        "APS Design Automation activity",
+        "Fusion 360",
+        "httpx",
+        "mcp",
+        "python-dotenv"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the failure evidence; reconsider only after a tested upstream authentication fix and a current Fusion backend workflow are available.",
+      "tests_completed": [
+        "Source install, protocol discovery, and generate_cube failure reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence contains no successful Autodesk backend operation."
+      ],
+      "replacement_ids": [
+        "fusion360-mcp-server"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "autodesk-product-help-mcp",
+      "name": "Autodesk Product Help MCP",
+      "vendor": "help.autodesk.com",
+      "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html",
+      "scope": "Autodesk help product discovery",
+      "implementation_mode": "native",
+      "source_revision": "service 3.2.0; schema 8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "utilities"
+      ],
+      "engineering_stages": [
+        "requirements",
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "backflip-ai-watchlist",
+      "name": "Backflip AI CAD Candidate",
+      "vendor": "Backflip AI",
+      "source_url": "https://www.backflip.ai/",
+      "scope": "Mesh, image, and scan to CAD workflows",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "api_candidate",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cloud-cad",
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "No public Backflip MCP server exists; retain the vendor integration lead in the excluded archive rather than presenting it as an MCP.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Autodesk Fusion add-in for current desktop workflow",
+        "Autodesk Fusion for the current add-in"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "blender-mcp",
+      "name": "Blender 3D Mesh Copilot",
+      "vendor": "ahujasid",
+      "source_url": "https://github.com/ahujasid/blender-mcp",
+      "scope": "Blender dimensioned box STL export",
+      "implementation_mode": "wrapper",
+      "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477; package 1.9.1; BlenderMCP 1.30.0; Blender 4.3.2",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "Blender",
+        "BlenderMCP addon",
+        "blender",
+        "git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+        "python3-requests",
+        "xvfb"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "blender-mcp-harveyxiacn",
+      "name": "Blender MCP Comprehensive Server",
+      "vendor": "harveyxiacn",
+      "source_url": "https://github.com/harveyxiacn/blender-mcp",
+      "scope": "Blender scene and object control",
+      "implementation_mode": "unknown",
+      "source_revision": "1a04d16819dcc283b14de94aa5fb4983251a6578",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "animation",
+        "mesh",
+        "rendering"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "This alternative has no current differentiated backend qualification and duplicates Wright's already qualified Blender integration, so it is excluded from the current shortlist.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Blender 4.0+",
+        "blender-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification.",
+      "tests_completed": [
+        "Current source identity and host-boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No Blender artifact or Wright gateway task was executed for this implementation.",
+        "Re-entry condition: Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "brep-mcp",
+      "name": "BREP MCP",
+      "vendor": "andymai",
+      "source_url": "https://github.com/andymai/brepjs",
+      "scope": "BREP box STEP and STL export",
+      "implementation_mode": "wrapper",
+      "source_revision": "brepjs-cad 0.103.0; 2cfc880f517e82cfc4bbafed36ce55afa27daa12",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "Node.js",
+        "brepjs-cad"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "cad-mcp-daobataotie",
+      "name": "CAD-MCP Universal COM",
+      "vendor": "daobataotie",
+      "source_url": "https://github.com/daobataotie/CAD-MCP",
+      "scope": "Windows COM bridge for AutoCAD, GstarCAD, and ZWCAD 2D drawing operations through natural-language and direct drawing tools.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "drafting"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The source has no tests, cannot initialize without Windows COM, and overlaps the qualified AutoCAD path without evidence of a material advantage.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "AutoCAD",
+        "AutoCAD/GstarCAD/ZWCAD",
+        "GstarCAD",
+        "Windows",
+        "ZWCAD",
+        "mcp",
+        "pydantic",
+        "pywin32",
+        "typing"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration.",
+      "tests_completed": [
+        "Pinned source review",
+        "Requirements install attempt",
+        "pywin32/win32com startup boundary"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No MCP initialization or CAD artifact was produced.",
+        "Re-entry condition: Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "caid-mcp",
+      "name": "CAiD OCCT Kernel Bridge",
+      "vendor": "dreliq9",
+      "source_url": "https://github.com/dreliq9/caid-mcp",
+      "scope": "Direct OpenCASCADE geometric kernel bridge bypassing FreeCAD GUI with volume/manifold diagnostic layers.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The source repository is unavailable, every PyPI release is yanked, and the latest wheel has no server entry point.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "CAiD",
+        "CAiD from GitHub source",
+        "OCP",
+        "OCP/OpenCASCADE",
+        "caid-mcp",
+        "libGL",
+        "libgl1"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Preserve historical evidence; review a maintained successor before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve historical evidence; review a maintained successor before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "brep-mcp",
+        "freecad-mcp-nekanat"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "calculix-simulation",
+      "name": "CalculiX Simulation",
+      "vendor": "github.com",
+      "source_url": "https://github.com/calculix/calculix-mcp",
+      "scope": "Open-source finite element analysis (FEA) solver. Performs structural stress, strain, and thermal analysis on 3D meshes via the CalculiX MCP bridge.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "capability_alias",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "No standalone MCP source was established; the recorded source returns 404. CalculiX remains a solver capability.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "CalculiX",
+        "FreeCAD FEM or standalone wrapper TBD"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "oasis-open-fem-agent"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "comsol-multiphysics-mcp-suzysa",
+      "name": "COMSOL Multiphysics MCP",
+      "vendor": "Suzy-Sa",
+      "source_url": "https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP",
+      "scope": "COMSOL model automation through mph backend",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "fea",
+        "multiphysics",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The package tests pass but the server imports a removed MCP SDK module and cannot initialize; the other COMSOL candidate remains the active evaluation path.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "COMSOL license"
+      ],
+      "prerequisites": [
+        "COMSOL Multiphysics",
+        "chromadb",
+        "mph",
+        "optional Windows interactive desktop for GUI tools"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-08-12",
+      "next_action": "Preserve the startup evidence; reconsider after an upstream MCP SDK compatibility release and licensed COMSOL backend proof.",
+      "tests_completed": [
+        "Seventy-six package tests and startup failure reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No MCP or licensed COMSOL operation completed."
+      ],
+      "replacement_ids": [
+        "comsol-multiphysics-mcp-wjc9011"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "comsol-multiphysics-mcp-wjc9011",
+      "name": "COMSOL MCP Server",
+      "vendor": "wjc9011",
+      "source_url": "https://github.com/wjc9011/COMSOL_Multiphysics_MCP",
+      "scope": "COMSOL model create, load, save, and versioning workflows",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "fea",
+        "multiphysics",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The candidate has no reproducible minimal install or MCP initialization; its heavyweight ML/CUDA dependency path and bundled COMSOL documents/models require review before any licensed-host test.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "COMSOL license"
+      ],
+      "prerequisites": [
+        "COMSOL Multiphysics",
+        "COMSOL Multiphysics 5.x or 6.x",
+        "Java runtime",
+        "chromadb",
+        "mph",
+        "pymupdf",
+        "sentence-transformers"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-08-12",
+      "next_action": "Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification. source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+      "tests_completed": [
+        "Source and dependency preflight",
+        "Bundled-content and licensed-host boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Testing stopped before install and MCP initialization; no COMSOL result exists.",
+        "Re-entry condition: Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "creo-mcp",
+      "name": "Creo/CadQuery MCP",
+      "vendor": "yangkunyi",
+      "source_url": "https://github.com/yangkunyi/creo-mcp",
+      "scope": "CadQuery code-execution MCP that can export STEP files locally, query a Volcengine knowledge base, and open STEP files in Creo through a local CREOSON bridge.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The three-tool server can execute local CadQuery code but does not prove Creo automation; it also depends on absent CREOSON and Volcengine credentials and lacks gateway evidence.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "VOLCENGINE_AUTHORIZATION",
+        "VOLCENGINE_SERVICE_RESOURCE_ID"
+      ],
+      "prerequisites": [
+        "CREOSON",
+        "Creo",
+        "cadquery",
+        "creo-mcp",
+        "creopyson",
+        "libgl1"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact. prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "tests_completed": [
+        "MCP initialization and three-tool discovery",
+        "Local CadQuery STEP export",
+        "Missing CREOSON and invalid-auth diagnostics"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "The exported STEP proves a local fallback, not Creo; arbitrary Python and external knowledge-service dependencies remain.",
+        "Re-entry condition: Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "creoson-mcp-bridge",
+      "name": "CREOSON JSON-RPC Server",
+      "vendor": "SimplifiedLogic",
+      "source_url": "https://github.com/SimplifiedLogic/creoson",
+      "scope": "Direct JLINK bridge to PTC Creo Parametric modeling kernel.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "capability_alias",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "CREOSON is a Creo JSON/JLINK dependency, not an MCP server; retain its decision and validation evidence in the excluded archive.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Creo",
+        "CreosonServer-3.0.1-win64.zip",
+        "JLINK",
+        "Java",
+        "Windows",
+        "pfcasync.jar"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "easy-mcp-autocad",
+      "name": "Easy-MCP-AutoCAD",
+      "vendor": "zh19980811",
+      "source_url": "https://github.com/zh19980811/Easy-MCP-AutoCad",
+      "scope": "Windows AutoCAD COM MCP server with drawing tools, entity scanning, text matching, and SQLite persistence for CAD element analytics.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "drafting"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current publisher documentation describes a lightly maintained learning project with incomplete tools, duplicating Wright's qualified AutoCAD coverage.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "AutoCAD 2018+",
+        "COM interface",
+        "Windows",
+        "comtypes",
+        "mcp",
+        "pyautocad",
+        "pywin32",
+        "sqlalchemy"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Rediscover only after sustained maintenance and complete tools provide a clear advantage over Wright's qualified AutoCAD integration.",
+      "tests_completed": [
+        "Source install attempts on Python 3.12 and 3.13"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No live Windows AutoCAD operation was run because current source review closed it as an incomplete duplicate."
+      ],
+      "replacement_ids": [
+        "autocad-mcp-u-c4n"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "flexcompute-flow360-api-candidate",
+      "name": "Flexcompute Flow360 API Candidate",
+      "vendor": "Flexcompute",
+      "source_url": "https://www.flexcompute.com/flow360/",
+      "scope": "GPU-native cloud CFD setup, meshing, solving, and post-processing",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "api_candidate",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "cloud-cae",
+        "hpc"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Flow360 provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "Flow360 API key"
+      ],
+      "prerequisites": [
+        "flow360"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "freecad-addon-robust",
+      "name": "FreeCAD Robust Server",
+      "vendor": "spkane",
+      "source_url": "https://github.com/spkane/freecad-addon-robust-mcp-server",
+      "scope": "Exposes 150+ CAD tools, headless rendering, and arbitrary macro generation/execution.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Useful validation passed, but a complete current scoped Wright qualification is still required.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "FreeCAD",
+        "RobustMCPBridge",
+        "freecad-robust-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "freecad-booleans-lucygoodchild",
+      "name": "FreeCAD Booleans",
+      "vendor": "github.com",
+      "source_url": "https://github.com/lucygoodchild/freecad-mcp-server",
+      "scope": "FreeCAD server specializing in primitive generation and complex Boolean logic operations for solid modeling.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "capability_alias",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Overlapping FreeCAD capability with recorded protocol stdout contamination.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "FreeCAD"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "freecad-mcp-nekanat",
+        "freecad-addon-robust"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "freecad-mcp-contextform",
+      "name": "FreeCAD Copilot Workbench",
+      "vendor": "contextform",
+      "source_url": "https://github.com/contextform/freecad-mcp",
+      "scope": "Launches FreeCAD native Copilot panel. Extends view control, primitive modeling, and viewport captures.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "With FreeCAD installed and connected, the first modeling call hangs on invalid GUI-thread dispatch. Wright already qualifies the maintained FreeCAD Python Server for the same core workflow.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "AICopilot workbench",
+        "FreeCAD",
+        "Xvfb",
+        "freecad-mcp-setup",
+        "mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the thread-failure evidence; reconsider only after upstream provides a safe host-thread implementation with artifact proof.",
+      "tests_completed": [
+        "Installer tests, FreeCAD connection, echo, and backend timeout reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence records host-thread errors and no modeling artifact."
+      ],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "freecad-mcp-nekanat",
+      "name": "FreeCAD Python Server",
+      "vendor": "neka-nat",
+      "source_url": "https://github.com/neka-nat/freecad-mcp",
+      "scope": "FreeCAD box creation and STL export",
+      "implementation_mode": "wrapper",
+      "source_revision": "63acb305573194a011641ab13ccfb391fe95769f; FreeCAD 1.1.1; MCP SDK 1.28.1",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "FreeCAD",
+        "FreeCADMCP addon",
+        "Python",
+        "Xvfb",
+        "freecad-mcp",
+        "uv"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "freecad-mcp-proximile",
+      "name": "FreeCAD MCP AI 3D Server",
+      "vendor": "proximile",
+      "source_url": "https://github.com/proximile/FreeCAD-MCP",
+      "scope": "FreeCAD CAD operations",
+      "implementation_mode": "unknown",
+      "source_revision": "2b75bad92b67ff5bade984d430231a768c6c4d7a",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "ai-3d",
+        "cad",
+        "mesh"
+      ],
+      "engineering_stages": [
+        "concept",
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The single-commit stack combines CAD mutation, arbitrary Python, Docker management, public tunnels, and multi-GPU AI services without a dependable product boundary; Wright already qualifies FreeCAD.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Docker",
+        "FreeCAD"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Rediscover only after the project establishes sustained maintenance and a bounded capability that is safer or materially stronger than Wright's qualified FreeCAD integration.",
+      "tests_completed": [
+        "Current source identity review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No backend run was justified after the product-scope and authority review closed the candidate."
+      ],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "freecad-mcp-sandraschi",
+      "name": "FreeCAD Engineering",
+      "vendor": "sandraschi",
+      "source_url": "https://github.com/sandraschi/freecad-mcp",
+      "scope": "End-to-end engineering: FreeCAD geometry → CalculiX FEA → OpenFOAM CFD → PrusaSlicer G-code.\n",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cam",
+        "cfd",
+        "fea"
+      ],
+      "engineering_stages": [
+        "design",
+        "simulation",
+        "manufacturing"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current validation reports successful STL creation when no artifact exists. Wright already qualifies the maintained FreeCAD Python Server for the same core modeling workflow.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "CalculiX",
+        "FreeCAD",
+        "OpenFOAM",
+        "PrusaSlicer",
+        "freecad-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the failure evidence; reconsider only after an upstream release fixes artifact verification and is materially better than the qualified FreeCAD integration.",
+      "tests_completed": [
+        "Ninety-four tests, protocol discovery, direct FreeCAD export, and false-success reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence records an unsafe success signal."
+      ],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "freecad-mcp-sergiudanstan",
+      "name": "FreeCAD MCP Full-Module Server",
+      "vendor": "sergiudanstan",
+      "source_url": "https://github.com/sergiudanstan/freecad-mcp",
+      "scope": "FreeCAD document management",
+      "implementation_mode": "unknown",
+      "source_revision": "688b6349f3befdc90702a46d3cb7d369ca239621",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "bim",
+        "cad",
+        "fea",
+        "meshing"
+      ],
+      "engineering_stages": [
+        "design",
+        "simulation"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The advertised Linux headless bridge fails before its first modeling operation because it ignores the configured FreeCAD command and uses a hard-coded macOS runtime path; Wright already qualifies a FreeCAD integration.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "FreeCAD 0.21+",
+        "Node.js 18+",
+        "npm"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Rediscover after a release fixes non-macOS headless startup, resolves dependency-audit findings, and passes a real exported-artifact qualification.",
+      "tests_completed": [
+        "Pinned lockfile install, TypeScript build, npm audit, MCP initialization, 165-tool discovery, and FreeCAD-backed box attempt"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "The dependency audit reported four high, three moderate, and one low vulnerability.",
+        "Rediscover only after a release fixes non-macOS headless startup and passes an exported-artifact qualification."
+      ],
+      "replacement_ids": [
+        "freecad-mcp-nekanat"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "fusion360-mcp-server",
+      "name": "Fusion 360 MCP",
+      "vendor": "faust-machines",
+      "source_url": "https://github.com/faust-machines/fusion360-mcp-server",
+      "scope": "85-tool MCP bridge for Fusion 360 parametric sketches, body operations, export, and CAM workflows through the Fusion360MCP add-in.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cam"
+      ],
+      "engineering_stages": [
+        "design",
+        "manufacturing"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The maintained package passes its suite, protocol discovery, mock operations, and the missing-add-in diagnostic; licensed Fusion plus its desktop add-in is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Fusion 360 desktop",
+        "Fusion360MCP add-in",
+        "fusion360-mcp-server"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright.",
+      "tests_completed": [
+        "282 upstream tests",
+        "MCP initialization and 85-tool discovery",
+        "Mock ping/create_box and real-socket missing-host diagnostic"
+      ],
+      "tests_remaining": [
+        "On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright."
+      ],
+      "limitations": [
+        "Mock execution does not prove native Fusion geometry, CAM, export, or Wright gateway behavior."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "github-official-mcp",
+      "name": "GitHub MCP",
+      "vendor": "GitHub",
+      "source_url": "https://github.com/github/github-mcp-server",
+      "scope": "Repository, issue, engineering change, and release evidence through GitHub official MCP.",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "design",
+        "release",
+        "requirements",
+        "test_quality"
+      ],
+      "engineering_stages": [
+        "requirements",
+        "design",
+        "test_quality",
+        "release"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires GitHub authorization.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "GitHub authorization"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/github-official-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/github-official-mcp-remote.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "grafana-official-mcp",
+      "name": "Grafana MCP",
+      "vendor": "Grafana",
+      "source_url": "https://github.com/grafana/mcp-grafana/blob/main/docs/sources/set-up/install-with-docker.md",
+      "scope": "Read-only observability queries for engineering operations and service diagnostics.",
+      "implementation_mode": "unknown",
+      "source_revision": "1.0.0",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "operations",
+        "test_quality"
+      ],
+      "engineering_stages": [
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Pinned Grafana MCP 1.0.0 authenticated to disposable Grafana 13.2 and passed read-only datasource discovery directly and through GatewayService; the Hermes-facing gateway and seeded-result oracle remain.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN"
+      ],
+      "prerequisites": [
+        "Docker",
+        "Grafana 9 or later"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Renew the pinned read-only qualification against a seeded engineering dashboard and add independent query-result assertions.",
+      "tests_completed": [
+        "Fifty-two-tool discovery and authenticated list_datasources through direct MCP and Wright gateway",
+        "Short-lived token, private Docker network, matching result hashes, and cleanup"
+      ],
+      "tests_remaining": [
+        "Repeat through the Hermes-facing Wright gateway and add a seeded engineering dashboard query with independent result assertions"
+      ],
+      "limitations": [
+        "Preview covers the proven read-only scope; users must supply their own Grafana URL and service token."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "jarvis-onshape-mcp",
+      "name": "Jarvis OnShape MCP",
+      "vendor": "ReshefElisha",
+      "source_url": "https://github.com/ReshefElisha/jarvis-onshape-mcp",
+      "scope": "AI copilot for Onshape CAD. 60+ tools: parametric sketches, extrudes, fillets, assemblies, Variable Studios, FeatureScript, and multi-view rendering with vision feedback.\n",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cloud-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires ONSHAPE_API_KEY, ONSHAPE_API_SECRET.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "ONSHAPE_API_KEY",
+        "ONSHAPE_API_SECRET"
+      ],
+      "prerequisites": [
+        "onshape-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "kernelcad-mcp",
+      "name": "kernelCAD MCP",
+      "vendor": "w1ne",
+      "source_url": "https://github.com/w1ne/kernelCAD-web",
+      "scope": "Evaluate editable .kcad.ts mechanical models",
+      "implementation_mode": "native",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "manufacturing",
+        "mechanical"
+      ],
+      "engineering_stages": [
+        "concept",
+        "design",
+        "manufacturing"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Two reviewed releases fail before MCP startup because a mutable GitHub runtime dependency conflicts with Wright's product installation policy.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "kernelcad@0.15.0",
+        "replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.24.0"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Rediscover only after the publisher ships every runtime dependency as an immutable registry artifact.",
+      "tests_completed": [
+        "Current npm metadata and integrity review",
+        "Clean-container install attempts for 0.11.2 and 0.15.0"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Reconsider only after the publisher ships every runtime dependency as an immutable registry artifact."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "kicad-mcp-blwfish",
+      "name": "KiCad MCP by blwfish",
+      "vendor": "blwfish",
+      "source_url": "https://github.com/blwfish/kicad-mcp",
+      "scope": "Search the installed footprint libraries, create a 40 x 30 mm native PCB, place a two-pad resistor at 20 x 15 mm, reopen and audit the board, reject a missing board, export Gerbers and drill data, and independently inspect the KiCad file and fabrication archive.",
+      "implementation_mode": "wrapper",
+      "source_revision": "bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "ecad",
+        "manufacturing",
+        "pcb"
+      ],
+      "engineering_stages": [
+        "design",
+        "manufacturing",
+        "test_quality",
+        "release"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "KiCad 9",
+        "KiCad 9 with pcbnew Python bindings",
+        "KiCad footprint libraries",
+        "KiCad symbol and footprint libraries",
+        "KiCad symbol libraries",
+        "git",
+        "kicad-mcp 0.13.0 from pinned source revision"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "kicad-mcp-lamaalrajih",
+      "name": "KiCad MCP",
+      "vendor": "github.com",
+      "source_url": "https://github.com/lamaalrajih/kicad-mcp",
+      "scope": "Community KiCad MCP for electronics project inspection and local bridge workflows. Requires KiCad 9.0+ for host-backed operations.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Eleven of sixteen advertised tools expose an unusable required context argument and normal MCP clients cannot call them. Wright already qualifies the blwfish KiCad integration.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "KiCad",
+        "Python",
+        "uv"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the schema-failure evidence; reconsider after upstream removes the client-visible context argument and demonstrates KiCad 9 backend calls.",
+      "tests_completed": [
+        "Protocol discovery, sample project reads, schema failure, and upstream test review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence records the client-visible ctx schema defect."
+      ],
+      "replacement_ids": [
+        "kicad-mcp-blwfish"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "matlab-mcp-server",
+      "name": "MATLAB MCP Server",
+      "vendor": "MathWorks",
+      "source_url": "https://github.com/matlab/matlab-mcp-server",
+      "scope": "Start and quit MATLAB",
+      "implementation_mode": "unknown",
+      "source_revision": "v0.13.0",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "analysis",
+        "computation",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "concept",
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The SHA-pinned official binary initializes, exposes its five tools, and reaches the expected MATLAB detection boundary; licensed MATLAB is the sole unavailable execution dependency.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "MATLAB R2021a or later"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB.",
+      "tests_completed": [
+        "SHA-pinned official v0.13.0 binary",
+        "MCP initialization and five-tool discovery",
+        "detect_matlab_toolboxes licensed-host boundary"
+      ],
+      "tests_remaining": [
+        "Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB."
+      ],
+      "limitations": [
+        "No MATLAB calculation, numerical artifact, or Wright gateway execution has been proven."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "mcp-ui-shopify",
+      "name": "MCP-UI (Shopify)",
+      "vendor": "github.com",
+      "source_url": "https://github.com/anthropics/anthropic-cookbook",
+      "scope": "Renders interactive UI components (3D viewers, charts, sliders) inside chat interfaces. Eliminates the 'text wall' problem in LLM conversations.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "protocol_reference",
+      "protocol_family": "webmcp",
+      "transport": "webmcp",
+      "disciplines": [
+        "utilities"
+      ],
+      "engineering_stages": [
+        "requirements"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "MCP Apps/UI infrastructure is not a standalone engineering MCP server.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "not_tested",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "multicad-mcp",
+      "name": "multiCAD COM Bridge",
+      "vendor": "AnCode666",
+      "source_url": "https://github.com/AnCode666/multiCAD-mcp",
+      "scope": "Universal COM wrapper routing CAD commands to ZWCAD, GstarCAD, and BricsCAD platforms.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "drafting"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The package cannot install or initialize outside Windows COM and duplicates existing AutoCAD coverage without a qualified multi-host advantage.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "AutoCAD",
+        "AutoCAD 2018+",
+        "BricsCAD",
+        "BricsCAD 21+",
+        "GstarCAD",
+        "GstarCAD 2020+",
+        "Windows",
+        "Windows COM",
+        "ZWCAD",
+        "ZWCAD 2020+",
+        "multiCAD-mcp",
+        "pywin32"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts.",
+      "tests_completed": [
+        "Pinned source/package review",
+        "Exact dependency install attempt",
+        "Explicit non-Windows startup diagnostic"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No MCP discovery or supported CAD-host artifact was produced.",
+        "Re-entry condition: Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "nvidia-cuda-docs-mcp",
+      "name": "NVIDIA CUDA Docs MCP",
+      "vendor": "NVIDIA",
+      "source_url": "https://developer.nvidia.com/nsight-ai",
+      "scope": "Search CUDA documentation",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "sse",
+      "disciplines": [
+        "hpc",
+        "utilities"
+      ],
+      "engineering_stages": [
+        "requirements",
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires NVIDIA account authentication.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "NVIDIA account authentication"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-cuda-docs-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-cuda-docs-mcp-remote.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "nvidia-elements-mcp",
+      "name": "NVIDIA Elements MCP",
+      "vendor": "NVIDIA",
+      "source_url": "https://nvidia.github.io/elements/docs/mcp/",
+      "scope": "NVIDIA Elements design-system guidance",
+      "implementation_mode": "unknown",
+      "source_revision": "2.2.2",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "robotics",
+        "utilities"
+      ],
+      "engineering_stages": [
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Pinned NVIDIA Elements CLI 2.2.2 passed all 18 tool schemas and skills_list directly and through Wright; its scope is useful but narrow and has no representative engineering UI task yet.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "@nvidia-elements/cli",
+        "Node.js"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Renew the pinned package qualification and add a representative NVIDIA engineering UI guidance task before promoting beyond Preview.",
+      "tests_completed": [
+        "Pinned npm integrity, 18-tool discovery, direct skills_list, Wright gateway call, matching hashes, and cleanup"
+      ],
+      "tests_remaining": [
+        "Add one representative NVIDIA engineering UI guidance scenario and renew the qualification"
+      ],
+      "limitations": [
+        "Preview covers read-only design-system guidance and does not establish repeat user adoption."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "nvidia-kit-cae-agent-skills",
+      "name": "NVIDIA Omniverse Kit-CAE Agent Skills",
+      "vendor": "NVIDIA Omniverse",
+      "source_url": "https://github.com/NVIDIA-Omniverse/kit-cae",
+      "scope": "OpenUSD schemas and data delegates for CAE and scientific datasets",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "agent_skills",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cae",
+        "cfd",
+        "digital-twin",
+        "visualization"
+      ],
+      "engineering_stages": [
+        "design",
+        "simulation",
+        "operations"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Agent skills and host tooling are not a separately installable MCP server.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "NVIDIA GPU drivers",
+        "NVIDIA RTX GPU recommended",
+        "Omniverse Kit SDK"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "not_tested",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "nvidia-omniverse-kit-mcp"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "nvidia-omniverse-isaac-sim-mcp",
+      "name": "NVIDIA Isaac Sim MCP",
+      "vendor": "NVIDIA Omniverse",
+      "source_url": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+      "scope": "Search Isaac Sim extensions, APIs, examples, docs, best practices, and settings",
+      "implementation_mode": "unknown",
+      "source_revision": "9e9d69561f81fa368343382a53535f78f8c769fc",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "digital-twin",
+        "robotics",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation",
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current source exists, but no reproducible server startup, tool discovery, Isaac Sim backend result, or Wright gateway call is available without a dedicated GPU lab and credentialed NVIDIA stack.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "NVIDIA API key"
+      ],
+      "prerequisites": [
+        "Docker recommended"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright.",
+      "tests_completed": [
+        "Current source and dedicated-host boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No executable MCP or Isaac Sim artifact was observed.",
+        "Re-entry condition: Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "nvidia-omniverse-kit-mcp",
+      "name": "NVIDIA Omniverse Kit MCP",
+      "vendor": "NVIDIA Omniverse",
+      "source_url": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+      "scope": "Search 400+ Omniverse Kit extensions",
+      "implementation_mode": "unknown",
+      "source_revision": "9e9d69561f81fa368343382a53535f78f8c769fc",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "digital-twin",
+        "usd",
+        "visualization"
+      ],
+      "engineering_stages": [
+        "design",
+        "operations"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Current source exists, but no reproducible Kit server startup, tool discovery, backend query, or Wright gateway call is available in the supported environment.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "NVIDIA API key"
+      ],
+      "prerequisites": [
+        "Docker recommended"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright.",
+      "tests_completed": [
+        "Current source and Kit-host boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No executable MCP or Omniverse Kit result was observed.",
+        "Re-entry condition: Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "nvidia-omniverse-omniui-mcp",
+      "name": "NVIDIA OmniUI MCP",
+      "vendor": "NVIDIA Omniverse",
+      "source_url": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+      "scope": "Browse OmniUI classes, modules, methods, widgets, and examples",
+      "implementation_mode": "unknown",
+      "source_revision": "9e9d69561f81fa368343382a53535f78f8c769fc",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "utilities",
+        "visualization"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "No executable OmniUI workflow or differentiated value beyond the broader Kit candidate has been proven, so the duplicate is excluded from the current shortlist.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "NVIDIA API key"
+      ],
+      "prerequisites": [
+        "Docker recommended"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification.",
+      "tests_completed": [
+        "Current source and Omniverse-host boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No MCP startup, OmniUI result, or Wright gateway call was observed.",
+        "Re-entry condition: Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "nvidia-omniverse-usd-code-mcp",
+      "name": "NVIDIA USD Code MCP",
+      "vendor": "NVIDIA Omniverse",
+      "source_url": "https://github.com/NVIDIA-Omniverse/kit-usd-agents",
+      "scope": "Browse OpenUSD modules, classes, and methods",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "usd",
+        "visualization"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Source wheels build only after Git LFS data is resolved, but the recommended credentialed deployment has no recorded startup, tool discovery, USD query, or Wright gateway result.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "NVIDIA API key"
+      ],
+      "prerequisites": [
+        "Docker recommended"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-08-12",
+      "next_action": "Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright.",
+      "tests_completed": [
+        "Source identity review",
+        "Source wheel build with Git LFS data"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Build success does not establish an executable MCP; NVIDIA credentials and deployment assets remain unavailable.",
+        "Re-entry condition: Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "oasis-open-fem-agent",
+      "name": "OASiS Open FEM Agent",
+      "vendor": "Hereon-InstituteMS",
+      "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+      "scope": "OASiS scikit-fem Poisson solve",
+      "implementation_mode": "native",
+      "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780; Python 3.12.12; MCP SDK 1.28.1; scikit-fem 12.0.2",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "fea",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "Python",
+        "mcp[cli]==1.28.1",
+        "oasis-mcp@7c184d5b7ca5cda6086f3912d1c7923c58307780",
+        "optional solver backends selected by the user",
+        "python==3.12.*",
+        "scikit-fem==12.0.2"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "onshape-labs-featurescript-mcp",
+      "name": "Onshape Labs FeatureScript MCP",
+      "vendor": "Onshape / PTC",
+      "source_url": "https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad",
+      "scope": "Generate FeatureScript from natural-language mechanical design requirements",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "cad",
+        "cloud-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires Onshape account authentication.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "Onshape account authentication"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/onshape-labs-featurescript-mcp-remote.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/onshape-labs-featurescript-mcp-remote.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "onshape-mcp-hedless",
+      "name": "Onshape MCP",
+      "vendor": "hedless",
+      "source_url": "https://github.com/hedless/onshape-mcp",
+      "scope": "Cloud-native Onshape REST API MCP for document discovery, Part Studios, sketches, features, assemblies, FeatureScript, variables, and export.\n",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cloud-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires ONSHAPE_ACCESS_KEY, ONSHAPE_SECRET_KEY.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "ONSHAPE_ACCESS_KEY",
+        "ONSHAPE_SECRET_KEY"
+      ],
+      "prerequisites": [
+        "onshape-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "openfoam-mcp-webworn",
+      "name": "OpenFOAM MCP Server",
+      "vendor": "webworn",
+      "source_url": "https://github.com/webworn/openfoam-mcp-server",
+      "scope": "OpenFOAM connectivity diagnostics",
+      "implementation_mode": "unknown",
+      "source_revision": "8d14e2031146e4130d4e9f500146379dad19eb49",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cfd",
+        "meshing",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "Independent result inspection found a false engineering success in the advertised pipe-flow path, after three packaging and startup defects were repaired for qualification.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "OpenFOAM"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Preserve the failure evidence; rediscover only after upstream fixes installation and proves requested geometry plus field-derived engineering results.",
+      "tests_completed": [
+        "Pinned-source disposable OpenFOAM 12 image build and startup repair",
+        "MCP initialization and discovery of 9 tools",
+        "Pipe-flow solver run, Wright gateway call, artifact inspection, and cleanup"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "The disposable build required an omitted package, a corrected loader environment, and a writable mount at a hard-coded source path.",
+        "Reconsider only after upstream validates requested geometry and derives reported engineering results from solver fields."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "openscad-mcp",
+      "name": "OpenSCAD Rendering Engine",
+      "vendor": "robertcoop",
+      "source_url": "https://github.com/robertcoop/openscad-mcp",
+      "scope": "OpenSCAD rendering, model checks, and STL export over stdio MCP",
+      "implementation_mode": "wrapper",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "in_progress",
+      "portfolio_category_reason": "No useful current execution evidence has been recorded.",
+      "progress_substatus": "planned",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "OpenSCAD",
+        "git",
+        "git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689",
+        "openscad",
+        "xvfb"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "not_tested",
+      "last_tested_at": "2026-09-11",
+      "next_action": "Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work.",
+      "tests_completed": [],
+      "tests_remaining": [
+        "Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "partuno-mcp",
+      "name": "Partuno component sourcing MCP",
+      "vendor": "JPMarhefka",
+      "source_url": "https://github.com/JPMarhefka/partuno",
+      "scope": "Community DigiKey and Mouser component research, BOM analysis, and sourcing comparison using operator-owned credentials.",
+      "implementation_mode": "unknown",
+      "source_revision": "4.0.1",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "design",
+        "sourcing"
+      ],
+      "engineering_stages": [
+        "design",
+        "sourcing"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires DigiKey and/or Mouser API credentials.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "DigiKey and/or Mouser API credentials"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/partuno-4.0.1-task-attempt.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/partuno-4.0.1-task-attempt.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "playwright-mcp",
+      "name": "Playwright MCP",
+      "vendor": "Microsoft",
+      "source_url": "https://github.com/microsoft/playwright-mcp",
+      "scope": "Browser navigation and interaction",
+      "implementation_mode": "unknown",
+      "source_revision": "0.0.80",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "browser-automation",
+        "utilities"
+      ],
+      "engineering_stages": [
+        "test_quality"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Useful validation passed, but a complete current scoped Wright qualification is still required.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "@playwright/mcp",
+        "Chromium or Chrome for Testing",
+        "Node.js 18+"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/playwright-mcp-0.0.80-preflight.json. Complete a deterministic local-page browser task through Wright.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/playwright-mcp-0.0.80-preflight.json. Complete a deterministic local-page browser task through Wright."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "rescale-mcp-hosted",
+      "name": "Rescale Hosted MCP Server",
+      "vendor": "Rescale",
+      "source_url": "https://rescale.com/documentation/mcp-server-getting-started/",
+      "scope": "Create and submit Rescale simulation jobs and workstations",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "sse",
+      "disciplines": [
+        "cfd",
+        "fea",
+        "hpc",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires Rescale API key.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "Rescale API key"
+      ],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/rescale-mcp-hosted-remote.json. Complete authentication and a read-only Wright gateway task.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/rescale-mcp-hosted-remote.json. Complete authentication and a read-only Wright gateway task."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "revit-mcp",
+      "name": "Revit BIM MCP",
+      "vendor": "mcp-servers-for-revit",
+      "source_url": "https://github.com/mcp-servers-for-revit/revit-mcp",
+      "scope": "Query and execute CRUD commands directly over Revit Building Information Modeling (BIM) structural elements.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "bim"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The repository is archived; the desktop-dependent integration has no current Wright workflow qualification.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "@modelcontextprotocol/sdk",
+        "Revit",
+        "Windows",
+        "better-sqlite3",
+        "build-essential",
+        "nodejs",
+        "npm",
+        "revit-mcp-plugin",
+        "ws",
+        "zod"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "rhino-mcp",
+      "name": "Rhino NURBS C# MCP",
+      "vendor": "jingcheng-chen",
+      "source_url": "https://github.com/jingcheng-chen/rhinomcp",
+      "scope": "NURBS geometry controller running inside Rhino thread via C# loopback connection.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "code-cad",
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The package passes its suite and protocol discovery and consistently reports the absent Rhino bridge; licensed Rhino 8 plus its plugin is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Rhino 8",
+        "RhinoMCP plugin",
+        "mcpstart bridge on 127.0.0.1:1999",
+        "rhinomcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently.",
+      "tests_completed": [
+        "192 upstream tests",
+        "MCP initialization and 66-tool discovery",
+        "Three safe missing-bridge backend diagnostics"
+      ],
+      "tests_remaining": [
+        "On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently."
+      ],
+      "limitations": [
+        "No live Rhino object inspection/edit or Wright gateway result is proven; Wright's separate standalone Rhino scope is the qualified fallback."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "rhino-mcp-easehee",
+      "name": "Rhino MCP",
+      "vendor": "EaseHee",
+      "source_url": "https://github.com/easehee/rhino-mcp",
+      "scope": "Author and save a millimetre 10 x 8 x 6 solid Brep, reopen it in fresh sessions, reject an invalid dimension, and independently inspect the 3DM object, topology, units, validity, and bounds.",
+      "implementation_mode": "fallback",
+      "source_revision": "3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "bim",
+        "cad",
+        "code-cad",
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "The pinned headless 3DM workflow passed protocol, backend, Wright gateway, independent Brep inspection, error, and reopen checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "Python 3.11+",
+        "optional .NET 8 SDK",
+        "optional Rhino 8",
+        "rhino3dm-mcp from pinned source revision",
+        "rhino3dm>=8.9,<9"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.",
+      "tests_completed": [
+        "Pinned upstream suite and three direct Wright routes",
+        "Independent units, bounds, topology, validity, and reopen inspection"
+      ],
+      "tests_remaining": [
+        "Qualify live Rhino and Grasshopper separately"
+      ],
+      "limitations": [
+        "Works applies to the qualified headless solid 3DM fallback scope.",
+        "Standalone mesh volume and STL behavior remain outside the qualified scope."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "rosbag-mcp-binabik",
+      "name": "ROSBag MCP (historical source)",
+      "vendor": "github.com",
+      "source_url": "https://github.com/binabik-ai/mcp-rosbags",
+      "scope": "Community MCP for offline ROS bag file inspection and robotics data analysis. Optional ROS 2 extras may be needed for some workflows.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "analysis"
+      ],
+      "engineering_stages": [
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "rosbag-mcp-pypi"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "rosbag-mcp-pypi",
+      "name": "ROSBag MCP",
+      "vendor": "Junhyeok Choi",
+      "source_url": "https://pypi.org/project/rosbag-mcp/",
+      "scope": "ROS 2 known-message retrieval",
+      "implementation_mode": "wrapper",
+      "source_revision": "rosbag-mcp 0.2.0 wheel 92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0; Python 3.12.12; MCP SDK 1.28.1; rosbags 0.11.5",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "engineering-data",
+        "robotics"
+      ],
+      "engineering_stages": [
+        "test_quality",
+        "operations"
+      ],
+      "platforms": [
+        "linux_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Current scoped evidence passed protocol, backend, gateway, and outcome checks.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        "matplotlib==3.11.1",
+        "mcp==1.28.1",
+        "numpy==2.5.3",
+        "pillow==12.3.0",
+        "python==3.12.*",
+        "rosbag-mcp==0.2.0",
+        "rosbags==0.11.5"
+      ],
+      "last_qualified_at": "2026-09-09",
+      "expires_at": "2026-10-09",
+      "evidence_age_days": 2,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-08",
+      "next_action": "Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "siemens-element-mcp",
+      "name": "Siemens Element Design System",
+      "vendor": "Siemens",
+      "source_url": "https://element.siemens.io/get-started/element-mcp/",
+      "scope": "Retrieves UX writing guidelines, component specs, and API patterns for Element components via RAG.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires OPENAI_API_KEY.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "OPENAI_API_KEY"
+      ],
+      "prerequisites": [
+        "@siemens/element-mcp@49.12.0-v.1.11.1",
+        "nodejs",
+        "npm"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "siemens-xcelerator-developer-portal-mcp",
+      "name": "Siemens Xcelerator Developer Portal MCP",
+      "vendor": "developer.siemens.com",
+      "source_url": "https://developer.siemens.com/",
+      "scope": "Documentation/help MCP candidate for Siemens developer-portal product, API, and resource discovery. Treat as read-only docs until the exact client config URL is pinned.",
+      "implementation_mode": "unknown",
+      "source_revision": "remote-current",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "sse",
+      "disciplines": [
+        "plm"
+      ],
+      "engineering_stages": [
+        "release"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The catalog points to the Siemens developer web portal, which terminated an MCP session and is not an MCP endpoint.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/siemens-xcelerator-developer-portal-mcp-remote.json. Correct the endpoint or source identity before another execution attempt.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/siemens-xcelerator-developer-portal-mcp-remote.json. Correct the endpoint or source identity before another execution attempt."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "simscale-edge-mcp-getanirao",
+      "name": "SimScale Edge MCP",
+      "vendor": "getanirao (community; unaffiliated with SimScale)",
+      "source_url": "https://github.com/getanirao/SimscaleMCP",
+      "scope": "Navigate and inspect the SimScale Workbench through Microsoft Edge",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "streamable_http",
+      "disciplines": [
+        "cfd",
+        "cloud-cae",
+        "fea",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "simulation"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The small unlicensed community project passes its test suite but relies on brittle browser automation and has no authenticated SimScale engineering result, download oracle, or Wright gateway proof.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "SimScale account login"
+      ],
+      "prerequisites": [
+        "Microsoft Edge",
+        "playwright-core@1.62.1"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification.",
+      "tests_completed": [
+        "Pinned commit and locked install",
+        "26 upstream tests",
+        "In-process MCP and Streamable HTTP checks"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No real SimScale project or computed artifact was inspected; the repository declares no license.",
+        "Re-entry condition: Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "simulink-agentic-toolkit",
+      "name": "Simulink Agentic Toolkit",
+      "vendor": "MathWorks",
+      "source_url": "https://github.com/matlab/simulink-agentic-toolkit",
+      "scope": "Read Simulink models",
+      "implementation_mode": "unknown",
+      "source_revision": "9c591b28d998c51a87ca802d228c5c6a11a4bcd9",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "model-based-design",
+        "simulation"
+      ],
+      "engineering_stages": [
+        "concept",
+        "simulation"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official source is identifiable, but no MCP startup, tool discovery, Simulink execution, result artifact, or Wright gateway behavior is reproducible without a licensed host.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "MATLAB R2023a or later",
+        "Simulink"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": "2026-09-09",
+      "next_action": "Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink.",
+      "tests_completed": [
+        "Current official source and licensed-host boundary review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No executable protocol or model evidence was produced.",
+        "Re-entry condition: Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "sketchup-mcp",
+      "name": "SketchUp Ruby Server",
+      "vendor": "mhyrr",
+      "source_url": "https://github.com/mhyrr/sketchup-mcp",
+      "scope": "Controls SketchUp component definitions and materials via a local Ruby TCP hook.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The server initializes, but its repository has no usable automated suite and the advertised get_scene_info tool is absent from discovery; a missing desktop extension is not the only blocker.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "SketchUp",
+        "SketchupMCP extension",
+        "extension server on port 9876",
+        "sketchup-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright.",
+      "tests_completed": [
+        "Pinned source install",
+        "MCP initialization and 10-tool discovery",
+        "Missing-extension diagnostics",
+        "Test-suite review"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Documented and actual tool surfaces disagree, and no SketchUp artifact or gateway task was produced.",
+        "Re-entry condition: Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "solid-edge-mcp-burhop",
+      "name": "SolidEdgeMCP",
+      "vendor": "burhop",
+      "source_url": "https://github.com/burhop/SolidEdgeMCP.git",
+      "scope": "Solid Edge part creation, inspection, export, and Wright gateway execution",
+      "implementation_mode": "unknown",
+      "source_revision": "f58a783d2bfad4cff97c818bb63d42c1485d305a",
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "works",
+      "portfolio_category_reason": "Wright's actively developed SolidEdgeMCP has working native Solid Edge creation, inspection, and export behavior plus the provider-neutral Wright gateway contract; private repository visibility is a distribution issue, not a runtime failure.",
+      "progress_substatus": "qualified",
+      "release_eligible": true,
+      "credentials": [],
+      "prerequisites": [
+        ".NET SDK",
+        "Solid Edge"
+      ],
+      "last_qualified_at": "2026-09-10",
+      "expires_at": "2026-10-10",
+      "evidence_age_days": 1,
+      "latest_result": "passed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.",
+      "tests_completed": [
+        "Native Windows MCP startup, discovery, Solid Edge creation, inspection, export, and regression workflows",
+        "Wright provider-neutral gateway projection, execution, progress, cancellation, workspace binding, and browser coverage"
+      ],
+      "tests_remaining": [
+        "Keep a current combined Wright/Hermes-to-live-Solid-Edge release qualification with the shipped source revision"
+      ],
+      "limitations": [
+        "Works applies to the Windows deployment with licensed Solid Edge.",
+        "Public source access and redistribution policy must be resolved before customer distribution."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "solidworks-api-mcp",
+      "name": "SolidWorks API Knowledge Base",
+      "vendor": "kilwizac",
+      "source_url": "https://github.com/kilwizac/solidworks-api-mcp",
+      "scope": "Search and RAG helper exposing SolidWorks API documents for code syntax lookup.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "requirements",
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Useful validation passed, but a complete current scoped Wright qualification is still required.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Bun",
+        "bun",
+        "local SolidWorks API documentation corpus"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "solidworks-mcp-alisamsam",
+      "name": "SolidWorks Document Manager",
+      "vendor": "alisamsam",
+      "source_url": "https://github.com/alisamsam/solidworks-mcp",
+      "scope": "MCP tool managing SolidWorks file attributes, drawings, and metadata properties.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The documented requirements include an unavailable package and unconditional Windows COM imports, preventing installation and MCP initialization. The TypeScript SolidWorks integration is the stronger follow-up candidate.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "SolidWorks",
+        "Windows",
+        "Windows COM",
+        "asyncio-compat",
+        "mcp",
+        "python-dotenv",
+        "pywin32"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the install-failure evidence; reconsider after corrected dependency metadata and live Windows/SolidWorks proof.",
+      "tests_completed": [
+        "Declared install path and reduced-dependency startup failure reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence ends before MCP initialization."
+      ],
+      "replacement_ids": [
+        "solidworks-mcp-ts"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "solidworks-mcp-python",
+      "name": "SolidWorks Python COM",
+      "vendor": "andrewbartels1",
+      "source_url": "https://github.com/andrewbartels1/SolidworksMCP-python",
+      "scope": "Exposes 100+ CAD drawing and sketching functions over the local Windows COM/VBA backend, with preview rendering and SQLite rollback states.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "tolerance"
+      ],
+      "engineering_stages": [
+        "design",
+        "test_quality"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The current declared dependency range cannot import the server, so MCP never initializes. The TypeScript SolidWorks integration has a healthy test suite and reaches the expected host boundary.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "SolidWorks",
+        "Windows",
+        "Windows COM",
+        "comtypes",
+        "fastmcp",
+        "pydantic-ai",
+        "pywin32",
+        "pywin32-ctypes",
+        "solidworks-mcp-python"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve the import-failure evidence; reconsider after an upstream dependency fix and live Windows/SolidWorks proof.",
+      "tests_completed": [
+        "Editable install, focused test import, CLI startup, and dependency mismatch reproduction"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "Preserved evidence ends before MCP initialization."
+      ],
+      "replacement_ids": [
+        "solidworks-mcp-ts"
+      ],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "solidworks-mcp-ts",
+      "name": "SolidWorks TypeScript COM",
+      "vendor": "vespo92",
+      "source_url": "https://github.com/vespo92/SolidworksMCP-TS",
+      "scope": "TypeScript/Node-based COM wrapper supporting VBA macro fallback generation for large parameter geometries.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The package builds, passes its suite, initializes, lists tools, and clearly reports the unavailable Windows COM host; licensed SolidWorks is the sole unavailable execution boundary.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "SolidWorks",
+        "Windows",
+        "Windows COM",
+        "solidworks-mcp-server",
+        "winax"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export.",
+      "tests_completed": [
+        "Pinned source build",
+        "52 upstream tests",
+        "MCP initialization and 86-tool discovery",
+        "Expected non-Windows winax diagnostics"
+      ],
+      "tests_remaining": [
+        "On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export."
+      ],
+      "limitations": [
+        "No live SolidWorks document, export, independent artifact check, or Wright gateway task has been proven."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "thingworx-mcp",
+      "name": "PTC ThingWorx IoT Platform",
+      "vendor": "PTC",
+      "source_url": "https://support.ptc.com/help/thingworx/platform/r10.1/",
+      "scope": "Exposes industrial machine telemetry, alarms, and sensor KPIs configured as MCPServices.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "hardware_mcp",
+      "transport": "sse",
+      "disciplines": [
+        "iot",
+        "plm"
+      ],
+      "engineering_stages": [
+        "release",
+        "operations"
+      ],
+      "platforms": [
+        "linux_arm64",
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "PTC documents a product-hosted MCP endpoint, but no accessible disposable ThingWorx deployment exists for endpoint authentication, discovery, resource access, gateway routing, or cleanup.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [
+        "THINGWORX_BASE_URL",
+        "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN"
+      ],
+      "prerequisites": [
+        "ThingWorx 10.1+ MCP-enabled server"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright.",
+      "tests_completed": [
+        "Official endpoint documentation review",
+        "Local package and command-path preflight"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No MCP request reached a real ThingWorx endpoint; this is not a vendor prohibition.",
+        "Re-entry condition: Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "trikos529-openscad",
+      "name": "OpenSCAD Code Linter",
+      "vendor": "trikos529",
+      "source_url": "https://github.com/topics/cad-3d",
+      "scope": "Checks SCAD files for parameter standards, syntax validation, and hardcoded values.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "capability_alias",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The listing points to a GitHub topic instead of a verified implementation and failed prior validation.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "openscad"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [
+        "openscad-mcp"
+      ],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "web3d-mcp",
+      "name": "React Three Fiber Web3D",
+      "vendor": "dev261004",
+      "source_url": "https://github.com/dev261004/web3d-mcp-server",
+      "scope": "R3F-based browser 3D graphics rendering script builder.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "mesh"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "preview",
+      "portfolio_category_reason": "Server startup, protocol discovery, upstream tests, scene generation, validation, preview, and code generation passed; dependency advisories and the stated Node version remain unresolved.",
+      "progress_substatus": "verification_incomplete",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "node>=22",
+        "npm"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "passed",
+      "last_tested_at": "2026-07-10",
+      "next_action": "Assess current dependency advisories and supported Node version before repeating artifact and gateway probes.",
+      "tests_completed": [
+        "Protocol initialization and discovery of 12 tools on Node 22",
+        "Upstream test suites and four representative tool operations"
+      ],
+      "tests_remaining": [
+        "Resolve or accept current dependency advisories",
+        "Reconcile the upstream Node 18 claim with the observed Node 22 requirement",
+        "Complete a scoped Wright gateway and artifact qualification"
+      ],
+      "limitations": [
+        "The clean-container dependency audit reported 33 vulnerabilities.",
+        "Startup failed on Node 18 despite the upstream Node 18+ statement."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "webmcp-openscad",
+      "name": "Web OpenSCAD",
+      "vendor": "jherr",
+      "source_url": "https://github.com/jherr/webmcp-openscad",
+      "scope": "Exposes client-side OpenSCAD modeling tools in TanStack web interface.",
+      "implementation_mode": "unknown",
+      "source_revision": "a3acb68578701001f0251459c75716a55aadfa10",
+      "integration_kind": "webmcp_application",
+      "protocol_family": "webmcp",
+      "transport": "webmcp",
+      "disciplines": [
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The browser application and worker run, but the documented relay does not attach the page or expose its 16 OpenSCAD tools to MCP clients, so the current integration path is unusable.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "@mcp-b/webmcp-local-relay",
+        "MCP-B extension or @mcp-b/webmcp-local-relay",
+        "browser with WebMCP page",
+        "pnpm",
+        "scad-webmcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "failed",
+      "last_tested_at": "2026-09-10",
+      "next_action": "Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks.",
+      "tests_completed": [
+        "Pinned source build",
+        "Chromium page and 16 browser-tool discovery",
+        "OpenSCAD worker startup",
+        "Relay initialization and attachment failure"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No render-status call, STL artifact, or Wright gateway execution was possible.",
+        "Re-entry condition: Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "webmcp-standard",
+      "name": "WebMCP Standard",
+      "vendor": "github.com",
+      "source_url": "https://github.com/anthropics/anthropic-cookbook",
+      "scope": "Open standard for browser-based AI interaction. Exposes webpage functionality as MCP tools directly to agents  eliminates brittle DOM actuation.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "protocol_reference",
+      "protocol_family": "webmcp",
+      "transport": "webmcp",
+      "disciplines": [
+        "utilities"
+      ],
+      "engineering_stages": [
+        "requirements"
+      ],
+      "platforms": [
+        "unknown"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "WebMCP is a browser standard; its former cookbook link is not an installable server.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "not_tested",
+      "last_tested_at": null,
+      "next_action": "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.",
+      "tests_completed": [],
+      "tests_remaining": [
+        "Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    },
+    {
+      "server_id": "wincc-unified-mcp",
+      "name": "Siemens WinCC Unified SCADA",
+      "vendor": "Siemens",
+      "source_url": "https://support.industry.siemens.com/cs/document/110002407",
+      "scope": "Bridges industrial runtime alarms, machine variables, and UDT tag data queries via Openness API.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "hardware_mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "iot"
+      ],
+      "engineering_stages": [
+        "operations"
+      ],
+      "platforms": [
+        "windows_11_x64"
+      ],
+      "portfolio_category": "abandoned",
+      "portfolio_category_reason": "The official Siemens artifact is account-gated, no public package or executable command is available, and no MCP protocol or WinCC runtime query can be tested for this release.",
+      "progress_substatus": "closed",
+      "release_eligible": false,
+      "credentials": [],
+      "prerequisites": [
+        "Siemens support package 110002407",
+        "WinCC Unified PC Runtime",
+        "Windows"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "blocked",
+      "last_tested_at": null,
+      "next_action": "Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification.",
+      "tests_completed": [
+        "Official documentation/support-artifact review",
+        "npm/PyPI/public-source and command-path preflight"
+      ],
+      "tests_remaining": [],
+      "limitations": [
+        "No installable server, protocol session, or WinCC result was available; this is not a vendor prohibition.",
+        "Re-entry condition: Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification."
+      ],
+      "replacement_ids": [],
+      "assessment_reviewed_at": "2026-09-10"
+    },
+    {
+      "server_id": "zoo-mcp",
+      "name": "Zoo.dev Cloud CAD API",
+      "vendor": "KittyCAD",
+      "source_url": "https://github.com/KittyCAD/mcp",
+      "scope": "High-scale cloud CAD modeling, KCL documentation search, and rapid file conversion service.",
+      "implementation_mode": "unknown",
+      "source_revision": null,
+      "integration_kind": "mcp_server",
+      "protocol_family": "mcp",
+      "transport": "stdio",
+      "disciplines": [
+        "cad",
+        "cloud-cad",
+        "code-cad"
+      ],
+      "engineering_stages": [
+        "design"
+      ],
+      "platforms": [
+        "linux_x64",
+        "macos_arm64",
+        "macos_x64",
+        "windows_11_x64"
+      ],
+      "portfolio_category": "requires_login",
+      "portfolio_category_reason": "The current server reached an authentication boundary and requires ZOO_API_TOKEN.",
+      "progress_substatus": "authentication_needed",
+      "release_eligible": false,
+      "credentials": [
+        "ZOO_API_TOKEN"
+      ],
+      "prerequisites": [
+        "zoo-mcp"
+      ],
+      "last_qualified_at": null,
+      "expires_at": null,
+      "evidence_age_days": null,
+      "latest_result": "dependency_missing",
+      "last_tested_at": null,
+      "next_action": "The publisher moved the repository to KittyCAD/mcp; pin a current release and qualify using a dedicated Zoo account.",
+      "tests_completed": [
+        "See latest technical result and linked evidence"
+      ],
+      "tests_remaining": [
+        "The publisher moved the repository to KittyCAD/mcp; pin a current release and qualify using a dedicated Zoo account."
+      ],
+      "limitations": [],
+      "replacement_ids": [],
+      "assessment_reviewed_at": null
+    }
+  ]
+}

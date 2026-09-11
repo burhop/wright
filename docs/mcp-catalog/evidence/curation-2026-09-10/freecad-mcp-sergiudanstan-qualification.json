@@ -1,0 +1,24 @@
+{
+  "server_id": "freecad-mcp-sergiudanstan",
+  "observed_at": "2026-09-10",
+  "source_url": "https://github.com/sergiudanstan/freecad-mcp",
+  "source_revision": "688b6349f3befdc90702a46d3cb7d369ca239621",
+  "package_lock_sha256": "31c639888e9bdf417538fa0c7964f12adbad3c132bbe5db90f2aac1a7e2cfeff",
+  "platform": "linux_x64",
+  "container_base": "wright:standard-linux-amd64-mcp-isolated",
+  "qualification_image_digest": "sha256:f18cb4e97908c609e6c43f28172c379030571d84b5651677e844b9b15a0a2ff9",
+  "host": {"freecad": "1.0.0", "node": "26.7.0", "npm": "12.0.2"},
+  "status": "failed",
+  "decision": "abandoned",
+  "steps": [
+    {"stage": "source_and_install", "status": "passed", "diagnostic": "Pinned source, npm ci, and TypeScript build completed."},
+    {"stage": "dependency_audit", "status": "failed", "diagnostic": "npm audit reported 8 vulnerabilities: 4 high, 3 moderate, and 1 low."},
+    {"stage": "mcp_protocol", "status": "passed", "protocol_version": "2024-11-05", "tool_count": 165},
+    {"stage": "freecad_backend", "status": "failed", "diagnostic": "freecad_create_box failed with spawn /Applications/FreeCAD.app/Contents/Resources/bin/python ENOENT. The bridge accepted FREECAD_CMD=/usr/bin/freecadcmd for logging but derived the executable from a hard-coded macOS application root."},
+    {"stage": "artifact_and_gateway", "status": "not_reached", "diagnostic": "No model or export existed to send through Wright after the backend failed."},
+    {"stage": "cleanup", "status": "passed", "diagnostic": "The disposable probe container exited and was removed."}
+  ],
+  "protocol_evidence": {"path": "freecad-mcp-sergiudanstan-protocol.json", "sha256": "8120a518cda6909d1276253dac7a93910a5956fa82c2d108fce09af2c1689c78"},
+  "audit_evidence": "freecad-mcp-sergiudanstan-npm-audit.json",
+  "reopen_when": "A release fixes non-macOS headless startup, resolves dependency-audit findings, and passes an independently checked CAD export through Wright."
+}

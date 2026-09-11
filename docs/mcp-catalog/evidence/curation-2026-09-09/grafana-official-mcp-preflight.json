@@ -1,0 +1,20 @@
+{
+  "server_id": "grafana-official-mcp",
+  "observed_at": "2026-09-10T01:46:51Z",
+  "environment": "official-vendor-container",
+  "container_image": "grafana/mcp-grafana@sha256:5114852743e450fe5186b6c1712419843eb4bd295e47e64c452c3aa0fab3c42e",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "launch_arguments": ["-t", "stdio", "--disable-write"],
+  "credentials_supplied": false,
+  "startup": "passed",
+  "protocol": "passed",
+  "initialize_protocol_version": "2025-06-18",
+  "server_info": {"name": "mcp-grafana", "version": "(devel)"},
+  "tools_list": "passed",
+  "backend": "blocked",
+  "observed_backend_error": "GET http://localhost:3000/api/datasources: connect refused",
+  "blocking_requirements": ["Grafana 9 or later", "GRAFANA_SERVICE_ACCOUNT_TOKEN"],
+  "read_only_mode": true,
+  "status": "partial",
+  "cleanup": "passed"
+}

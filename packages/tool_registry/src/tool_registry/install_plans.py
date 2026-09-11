@@ -384,6 +384,30 @@ def create_install_plan(
     blockers.extend(license_blockers)
 
     if entry is not None:
+        if entry.curation.disposition == "removed":
+            blockers.append(
+                _reason(
+                    "catalog_retired",
+                    entry.curation.reason,
+                    "Choose a reviewed replacement. Existing installations remain manageable.",
+                )
+            )
+        if entry.integration_kind not in {"mcp_server", "webmcp_application"}:
+            blockers.append(
+                _reason(
+                    "catalog_not_an_implementation",
+                    "This record is not an installable integration.",
+                    "Follow the research record for implementation availability.",
+                )
+            )
+        if entry.hardware_standard != "none":
+            blockers.append(
+                _reason(
+                    "hardware_qualification_required",
+                    "Hardware operation has not been qualified by Wright.",
+                    "Complete device-specific qualification before planning hardware access.",
+                )
+            )
         backend = _backend_for_entry(entry)
         capability_id = entry.id
         capability_material = entry.model_dump(mode="json")

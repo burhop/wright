@@ -111,6 +111,32 @@ export interface McpServer {
 }
 
 export interface CapabilityView {
+  engineering_stages?: string[];
+  integration_kind?: string;
+  hardware_standard?: "none" | "hardware_mcp" | "mhs_preview";
+  protocol_family?: "mcp" | "webmcp" | "mhs";
+  curation?: {
+    disposition: "curated" | "follow_up" | "removed";
+    effective_disposition: "curated" | "follow_up" | "removed";
+    reason: string;
+    owner: string;
+    reviewed_at: string | null;
+    review_due: string | null;
+    next_action: string;
+    replacement_ids: string[];
+    adoption: string;
+    adoption_evidence: string[];
+    review_overdue: boolean;
+    limitations: string[];
+    qualifications: Array<{
+      platform: string;
+      environment: string;
+      workflow: string;
+      verified_at: string;
+      expires_at: string;
+      source_revision: string;
+    }>;
+  };
   capability_id: string;
   canonical_id: string;
   name: string;
@@ -241,6 +267,9 @@ export interface MachineCompatibilityObservation {
 }
 
 export interface CapabilityQuery {
+  curation?: string[];
+  engineering_stage?: string[];
+  protocol?: string[];
   search?: string;
   domain?: string[];
   platform?: string[];
@@ -266,6 +295,13 @@ export interface CatalogSnapshotSummary {
 }
 
 export interface CapabilityListResponse {
+  curation_counts?: Record<string, number>;
+  lifecycle_coverage?: Array<{
+    stage: string;
+    label: string;
+    curated: number;
+    follow_up: number;
+  }>;
   snapshot: CatalogSnapshotSummary;
   capabilities: CapabilityView[];
   next_cursor: string | null;

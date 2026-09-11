@@ -1,0 +1,21 @@
+{
+  "server_id": "onshape-labs-featurescript-mcp",
+  "observed_at": "2026-09-10T01:35:57.443931+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad",
+  "source_revision": "remote-current",
+  "transport": "streamable_http",
+  "endpoint": "https://fs-mcp.labs.onshape.app/mcp",
+  "credentials_supplied": false,
+  "status": "blocked",
+  "protocol": "not_reached",
+  "cleanup": "passed",
+  "failure_stage": "initialize_or_tools_list",
+  "observed_error": "unhandled errors in a TaskGroup (1 sub-exception) | Client error '401 Unauthorized' for url 'https://fs-mcp.labs.onshape.app/mcp' For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401",
+  "blocking_requirement": "credentials_or_oauth",
+  "finished_at": "2026-09-10T01:35:59.836336+00:00",
+  "duration_seconds": 2.392
+}

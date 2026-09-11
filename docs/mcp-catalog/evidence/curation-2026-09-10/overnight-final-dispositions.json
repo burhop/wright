@@ -1,0 +1,318 @@
+{
+  "schema_version": "1.0",
+  "observed_at": "2026-09-10T23:45:00Z",
+  "policy": "engineering-integrations-v2 overnight current-release decision",
+  "starting_category": "in_progress",
+  "starting_count": 21,
+  "method": "Reviewed the current clean-environment and host-boundary evidence. No unavailable proprietary host, customer system, credential, or paid service was accessed.",
+  "category_counts": {
+    "requires_login": 5,
+    "abandoned": 16
+  },
+  "records": [
+    {
+      "server_id": "ansys-fluent-mcp",
+      "category": "requires_login",
+      "reason": "The official pinned package, MCP discovery, and safe code validation pass; a licensed Fluent solver is the only unavailable boundary, so customer exposure must remain credential-gated and unqualified for CFD results.",
+      "tests_completed": [
+        "Pinned official 0.4.0 wheel",
+        "MCP initialization and 25-tool discovery",
+        "Safe validate_code backend-independent probe"
+      ],
+      "limitations": [
+        "No licensed solver, mesh, field result, export, or Wright gateway solve has been proven."
+      ],
+      "reentry": "Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification.",
+      "priority": "high"
+    },
+    {
+      "server_id": "fusion360-mcp-server",
+      "category": "requires_login",
+      "reason": "The maintained package passes its suite, protocol discovery, mock operations, and the missing-add-in diagnostic; licensed Fusion plus its desktop add-in is the sole unavailable execution boundary.",
+      "tests_completed": [
+        "282 upstream tests",
+        "MCP initialization and 85-tool discovery",
+        "Mock ping/create_box and real-socket missing-host diagnostic"
+      ],
+      "limitations": [
+        "Mock execution does not prove native Fusion geometry, CAM, export, or Wright gateway behavior."
+      ],
+      "reentry": "On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright.",
+      "priority": "high"
+    },
+    {
+      "server_id": "matlab-mcp-server",
+      "category": "requires_login",
+      "reason": "The SHA-pinned official binary initializes, exposes its five tools, and reaches the expected MATLAB detection boundary; licensed MATLAB is the sole unavailable execution dependency.",
+      "tests_completed": [
+        "SHA-pinned official v0.13.0 binary",
+        "MCP initialization and five-tool discovery",
+        "detect_matlab_toolboxes licensed-host boundary"
+      ],
+      "limitations": [
+        "No MATLAB calculation, numerical artifact, or Wright gateway execution has been proven."
+      ],
+      "reentry": "Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB.",
+      "priority": "high"
+    },
+    {
+      "server_id": "rhino-mcp",
+      "category": "requires_login",
+      "reason": "The package passes its suite and protocol discovery and consistently reports the absent Rhino bridge; licensed Rhino 8 plus its plugin is the sole unavailable execution boundary.",
+      "tests_completed": [
+        "192 upstream tests",
+        "MCP initialization and 66-tool discovery",
+        "Three safe missing-bridge backend diagnostics"
+      ],
+      "limitations": [
+        "No live Rhino object inspection/edit or Wright gateway result is proven; Wright's separate standalone Rhino scope is the qualified fallback."
+      ],
+      "reentry": "On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently.",
+      "priority": "normal"
+    },
+    {
+      "server_id": "solidworks-mcp-ts",
+      "category": "requires_login",
+      "reason": "The package builds, passes its suite, initializes, lists tools, and clearly reports the unavailable Windows COM host; licensed SolidWorks is the sole unavailable execution boundary.",
+      "tests_completed": [
+        "Pinned source build",
+        "52 upstream tests",
+        "MCP initialization and 86-tool discovery",
+        "Expected non-Windows winax diagnostics"
+      ],
+      "limitations": [
+        "No live SolidWorks document, export, independent artifact check, or Wright gateway task has been proven."
+      ],
+      "reentry": "On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export.",
+      "priority": "high"
+    },
+    {
+      "server_id": "autodesk-fusion-desktop-mcp",
+      "category": "abandoned",
+      "reason": "The official product documentation is credible, but the proprietary command is unavailable outside a licensed Fusion host and no protocol, backend artifact, or Wright gateway call can be reproduced for this release.",
+      "tests_completed": [
+        "Official source/host-boundary review",
+        "Clean-runtime command-availability check"
+      ],
+      "limitations": [
+        "No executable server package or MCP session was available in the supported qualification environment."
+      ],
+      "reentry": "Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks.",
+      "priority": "high"
+    },
+    {
+      "server_id": "blender-mcp-harveyxiacn",
+      "category": "abandoned",
+      "reason": "This alternative has no current differentiated backend qualification and duplicates Wright's already qualified Blender integration, so it is excluded from the current shortlist.",
+      "tests_completed": [
+        "Current source identity and host-boundary review"
+      ],
+      "limitations": [
+        "No Blender artifact or Wright gateway task was executed for this implementation."
+      ],
+      "reentry": "Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification.",
+      "priority": "low"
+    },
+    {
+      "server_id": "cad-mcp-daobataotie",
+      "category": "abandoned",
+      "reason": "The source has no tests, cannot initialize without Windows COM, and overlaps the qualified AutoCAD path without evidence of a material advantage.",
+      "tests_completed": [
+        "Pinned source review",
+        "Requirements install attempt",
+        "pywin32/win32com startup boundary"
+      ],
+      "limitations": [
+        "No MCP initialization or CAD artifact was produced."
+      ],
+      "reentry": "Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration.",
+      "priority": "low"
+    },
+    {
+      "server_id": "comsol-multiphysics-mcp-wjc9011",
+      "category": "abandoned",
+      "reason": "The candidate has no reproducible minimal install or MCP initialization; its heavyweight ML/CUDA dependency path and bundled COMSOL documents/models require review before any licensed-host test.",
+      "tests_completed": [
+        "Source and dependency preflight",
+        "Bundled-content and licensed-host boundary review"
+      ],
+      "limitations": [
+        "Testing stopped before install and MCP initialization; no COMSOL result exists."
+      ],
+      "reentry": "Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification.",
+      "priority": "high"
+    },
+    {
+      "server_id": "creo-mcp",
+      "category": "abandoned",
+      "reason": "The three-tool server can execute local CadQuery code but does not prove Creo automation; it also depends on absent CREOSON and Volcengine credentials and lacks gateway evidence.",
+      "tests_completed": [
+        "MCP initialization and three-tool discovery",
+        "Local CadQuery STEP export",
+        "Missing CREOSON and invalid-auth diagnostics"
+      ],
+      "limitations": [
+        "The exported STEP proves a local fallback, not Creo; arbitrary Python and external knowledge-service dependencies remain."
+      ],
+      "reentry": "Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact.",
+      "priority": "high"
+    },
+    {
+      "server_id": "multicad-mcp",
+      "category": "abandoned",
+      "reason": "The package cannot install or initialize outside Windows COM and duplicates existing AutoCAD coverage without a qualified multi-host advantage.",
+      "tests_completed": [
+        "Pinned source/package review",
+        "Exact dependency install attempt",
+        "Explicit non-Windows startup diagnostic"
+      ],
+      "limitations": [
+        "No MCP discovery or supported CAD-host artifact was produced."
+      ],
+      "reentry": "Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts.",
+      "priority": "normal"
+    },
+    {
+      "server_id": "nvidia-omniverse-isaac-sim-mcp",
+      "category": "abandoned",
+      "reason": "Current source exists, but no reproducible server startup, tool discovery, Isaac Sim backend result, or Wright gateway call is available without a dedicated GPU lab and credentialed NVIDIA stack.",
+      "tests_completed": [
+        "Current source and dedicated-host boundary review"
+      ],
+      "limitations": [
+        "No executable MCP or Isaac Sim artifact was observed."
+      ],
+      "reentry": "Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright.",
+      "priority": "high"
+    },
+    {
+      "server_id": "nvidia-omniverse-kit-mcp",
+      "category": "abandoned",
+      "reason": "Current source exists, but no reproducible Kit server startup, tool discovery, backend query, or Wright gateway call is available in the supported environment.",
+      "tests_completed": [
+        "Current source and Kit-host boundary review"
+      ],
+      "limitations": [
+        "No executable MCP or Omniverse Kit result was observed."
+      ],
+      "reentry": "Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright.",
+      "priority": "normal"
+    },
+    {
+      "server_id": "nvidia-omniverse-omniui-mcp",
+      "category": "abandoned",
+      "reason": "No executable OmniUI workflow or differentiated value beyond the broader Kit candidate has been proven, so the duplicate is excluded from the current shortlist.",
+      "tests_completed": [
+        "Current source and Omniverse-host boundary review"
+      ],
+      "limitations": [
+        "No MCP startup, OmniUI result, or Wright gateway call was observed."
+      ],
+      "reentry": "Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification.",
+      "priority": "low"
+    },
+    {
+      "server_id": "nvidia-omniverse-usd-code-mcp",
+      "category": "abandoned",
+      "reason": "Source wheels build only after Git LFS data is resolved, but the recommended credentialed deployment has no recorded startup, tool discovery, USD query, or Wright gateway result.",
+      "tests_completed": [
+        "Source identity review",
+        "Source wheel build with Git LFS data"
+      ],
+      "limitations": [
+        "Build success does not establish an executable MCP; NVIDIA credentials and deployment assets remain unavailable."
+      ],
+      "reentry": "Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright.",
+      "priority": "high"
+    },
+    {
+      "server_id": "simscale-edge-mcp-getanirao",
+      "category": "abandoned",
+      "reason": "The small unlicensed community project passes its test suite but relies on brittle browser automation and has no authenticated SimScale engineering result, download oracle, or Wright gateway proof.",
+      "tests_completed": [
+        "Pinned commit and locked install",
+        "26 upstream tests",
+        "In-process MCP and Streamable HTTP checks"
+      ],
+      "limitations": [
+        "No real SimScale project or computed artifact was inspected; the repository declares no license."
+      ],
+      "reentry": "Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification.",
+      "priority": "high"
+    },
+    {
+      "server_id": "simulink-agentic-toolkit",
+      "category": "abandoned",
+      "reason": "The official source is identifiable, but no MCP startup, tool discovery, Simulink execution, result artifact, or Wright gateway behavior is reproducible without a licensed host.",
+      "tests_completed": [
+        "Current official source and licensed-host boundary review"
+      ],
+      "limitations": [
+        "No executable protocol or model evidence was produced."
+      ],
+      "reentry": "Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink.",
+      "priority": "high"
+    },
+    {
+      "server_id": "sketchup-mcp",
+      "category": "abandoned",
+      "reason": "The server initializes, but its repository has no usable automated suite and the advertised get_scene_info tool is absent from discovery; a missing desktop extension is not the only blocker.",
+      "tests_completed": [
+        "Pinned source install",
+        "MCP initialization and 10-tool discovery",
+        "Missing-extension diagnostics",
+        "Test-suite review"
+      ],
+      "limitations": [
+        "Documented and actual tool surfaces disagree, and no SketchUp artifact or gateway task was produced."
+      ],
+      "reentry": "Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright.",
+      "priority": "normal"
+    },
+    {
+      "server_id": "thingworx-mcp",
+      "category": "abandoned",
+      "reason": "PTC documents a product-hosted MCP endpoint, but no accessible disposable ThingWorx deployment exists for endpoint authentication, discovery, resource access, gateway routing, or cleanup.",
+      "tests_completed": [
+        "Official endpoint documentation review",
+        "Local package and command-path preflight"
+      ],
+      "limitations": [
+        "No MCP request reached a real ThingWorx endpoint; this is not a vendor prohibition."
+      ],
+      "reentry": "Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright.",
+      "priority": "normal"
+    },
+    {
+      "server_id": "webmcp-openscad",
+      "category": "abandoned",
+      "reason": "The browser application and worker run, but the documented relay does not attach the page or expose its 16 OpenSCAD tools to MCP clients, so the current integration path is unusable.",
+      "tests_completed": [
+        "Pinned source build",
+        "Chromium page and 16 browser-tool discovery",
+        "OpenSCAD worker startup",
+        "Relay initialization and attachment failure"
+      ],
+      "limitations": [
+        "No render-status call, STL artifact, or Wright gateway execution was possible."
+      ],
+      "reentry": "Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks.",
+      "priority": "high"
+    },
+    {
+      "server_id": "wincc-unified-mcp",
+      "category": "abandoned",
+      "reason": "The official Siemens artifact is account-gated, no public package or executable command is available, and no MCP protocol or WinCC runtime query can be tested for this release.",
+      "tests_completed": [
+        "Official documentation/support-artifact review",
+        "npm/PyPI/public-source and command-path preflight"
+      ],
+      "limitations": [
+        "No installable server, protocol session, or WinCC result was available; this is not a vendor prohibition."
+      ],
+      "reentry": "Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification.",
+      "priority": "normal"
+    }
+  ],
+  "cleanup": "No qualification runtime was started by this reconciliation; no external system was modified."
+}

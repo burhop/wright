@@ -1,0 +1,750 @@
+{
+  "installed_items": [
+    "kicad-cli=9.0.2+dfsg-1",
+    "kicad-symbols=9.0.2-1",
+    "kicad-footprints=9.0.2-1",
+    "brepjs-cad=0.103.0"
+  ],
+  "prerequisites": [
+    "reviewed-brep-compatibility-launcher",
+    "system-python-pcbnew-oracle"
+  ],
+  "observed_at": "2026-09-09T22:11:21.409008+00:00",
+  "finished_at": "2026-09-09T22:14:48.986121+00:00",
+  "duration_seconds": 207.577,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "fresh-disposable-wright-engineering-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "status": "passed",
+  "calls": [
+    {
+      "sequence": 1,
+      "server_id": "brep-mcp",
+      "tool": "export_part",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 2,
+      "server_id": "oasis-open-fem-agent",
+      "tool": "run_simulation",
+      "approvals": [
+        "execute_code_approval",
+        "workspace_write_approval"
+      ],
+      "status": "passed"
+    },
+    {
+      "sequence": 3,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_new",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 4,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_rectangle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 5,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 6,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 7,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_line",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 8,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_save_as",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 9,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "library",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 10,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 11,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 12,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "pcb",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 13,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "audit",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 14,
+      "server_id": "kicad-mcp-blwfish",
+      "tool": "export",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 15,
+      "server_id": "brep-mcp",
+      "tool": "export_part",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 16,
+      "server_id": "oasis-open-fem-agent",
+      "tool": "run_simulation",
+      "approvals": [
+        "execute_code_approval",
+        "workspace_write_approval"
+      ],
+      "status": "passed"
+    },
+    {
+      "sequence": 17,
+      "server_id": "rosbag-mcp-pypi",
+      "tool": "get_message_at_time",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 18,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_new",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 19,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_rectangle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 20,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 21,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 22,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_line",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 23,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_save_as",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 24,
+      "server_id": "rosbag-mcp-pypi",
+      "tool": "get_message_at_time",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 25,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_new",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 26,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_rectangle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 27,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 28,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_circle",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 29,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "entity_create_line",
+      "approvals": [],
+      "status": "passed"
+    },
+    {
+      "sequence": 30,
+      "server_id": "autocad-mcp-u-c4n",
+      "tool": "drawing_save_as",
+      "approvals": [],
+      "status": "passed"
+    }
+  ],
+  "chains": [
+    {
+      "id": "mechanical-cad-fea-review",
+      "status": "passed",
+      "design_id": "MECH-BRACKET",
+      "revision": "A",
+      "geometry": {
+        "stl": {
+          "path": "part.stl",
+          "format": "STL",
+          "bytes": 193495,
+          "sha256": "e69b79332f7ab55355cb64ab1365face79afe61bc4282e3016a8093c9b4a38d9",
+          "dimensions_mm": [
+            100.0,
+            30.0,
+            8.0
+          ],
+          "volume_mm3": 23196.085561508928
+        },
+        "step": {
+          "path": "part.step",
+          "format": "STEP AP242",
+          "bytes": 22632,
+          "sha256": "7fec7f723065f8279d190223192d79dab81becc736f2dadcb433f7ec0dccc29e"
+        },
+        "holes_mm": [
+          [
+            15,
+            15,
+            4
+          ],
+          [
+            85,
+            15,
+            4
+          ]
+        ],
+        "expected_volume_mm3": 23195.752280681012
+      },
+      "simulation": {
+        "path": "result.vtu",
+        "format": "VTU",
+        "bytes": 76396,
+        "sha256": "40cd83773e12d817cf234943e171c19a19d5b8145fd7bb19bc535d2efb2906b0",
+        "point_count": 533,
+        "components": 3,
+        "bounds": [
+          [
+            0.0,
+            0.1
+          ],
+          [
+            0.0,
+            0.03
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "field": "displacement_m",
+        "field_min": -6.19025955644e-05,
+        "field_max": 1.30595958607e-05,
+        "field_magnitude_max": 6.327280328206387e-05,
+        "fixed_boundary_magnitude_max": 0.0,
+        "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself.",
+        "job_name": "mechanical-bracket-A",
+        "input_sha256": "6adc8d2b8919262f9a25bf10fca565d5cde85fa56df60288f1eec604a7ce7216",
+        "input_geometry_sha256": "7fec7f723065f8279d190223192d79dab81becc736f2dadcb433f7ec0dccc29e",
+        "model_scope": "2D equivalent solid-section screening model; mounting holes are excluded"
+      },
+      "review_drawing": {
+        "path": "mechanical-review-A.dxf",
+        "format": "DXF",
+        "bytes": 15714,
+        "sha256": "b52ed3e0acb0229b2e1a8a982c77f2d253293966562497e38a5568a959472292",
+        "entity_counts": {
+          "LWPOLYLINE": 1,
+          "CIRCLE": 2,
+          "LINE": 1
+        },
+        "outline_mm": [
+          100.0,
+          30.0
+        ],
+        "holes_mm": [
+          [
+            15.0,
+            15.0,
+            4.0
+          ],
+          [
+            85.0,
+            15.0,
+            4.0
+          ]
+        ],
+        "centerline_mm": [
+          50.0,
+          0.0,
+          50.0,
+          30.0
+        ]
+      },
+      "handoffs": [
+        {
+          "status": "accepted",
+          "manifest_sha256": "ad7357d9b13225cfdc3d68f391fd3e9ef3bc9bda181786054be2493d5c0b446a",
+          "artifact_count": 2,
+          "identity": [
+            "brep-mcp",
+            "oasis-open-fem-agent",
+            "MECH-BRACKET-A"
+          ],
+          "units": {
+            "geometry": "mm",
+            "analysis": "m-N-Pa"
+          },
+          "corrupted_manifest_rejected": true
+        },
+        {
+          "status": "accepted",
+          "manifest_sha256": "1542335c9ef520489ce0d327d31e533b5132eca5012cbb0e445d793602694d13",
+          "artifact_count": 3,
+          "identity": [
+            "oasis-open-fem-agent",
+            "autocad-mcp-u-c4n",
+            "MECH-BRACKET-A"
+          ],
+          "units": {
+            "drawing": "mm",
+            "displacement": "m"
+          },
+          "corrupted_manifest_rejected": true
+        }
+      ]
+    },
+    {
+      "id": "electronics-ecad-enclosure-thermal-test",
+      "status": "passed",
+      "design_id": "ELEC-CONTROLLER",
+      "revision": "A",
+      "board": {
+        "path": "controller-A.kicad_pcb",
+        "format": "KiCad PCB",
+        "bytes": 6369,
+        "sha256": "20cf8405434d075ca5348927584f48e25eb6b4d6c4b6c9222c7ab159421485e9",
+        "width_mm": 50.1,
+        "height_mm": 40.1,
+        "footprints": [
+          {
+            "reference": "R1",
+            "value": "10k",
+            "x_mm": 25.0,
+            "y_mm": 20.0,
+            "pads": 2
+          }
+        ]
+      },
+      "fabrication": {
+        "board_stem": "controller-A",
+        "gerber_count": 24,
+        "drill_count": 1,
+        "archive": "controller-A-gerbers.zip",
+        "archive_sha256": "8cc0a04c7f69876789810ef11bbf718137a11d746158b6f2b72308113d4b6bfd",
+        "files": {
+          "controller-A-B_Adhesive.gba": "60b4afbedff93ddf4de18c4f839deb55cb074bc1f4ba405117d21a6d58c510ad",
+          "controller-A-B_Courtyard.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-B_Cu.gbl": "457c5f4a4d5a933b522e77da5544aa98e14e6a118e371ef0526cb1d2449d1025",
+          "controller-A-B_Fab.gbr": "395b0408c381a1d61d92f70114d53f573f6416638a775f4bf9ad856ff9c7c792",
+          "controller-A-B_Mask.gbs": "2e122f2bfa5c1bab049c97e08bc2941c35991003bdac08768757fdef4dc9ce66",
+          "controller-A-B_Paste.gbp": "e921d1d0dad77ee1c6f3528e3ce30f8418de18fc985fe6101bdeaf8b46866ee2",
+          "controller-A-B_Silkscreen.gbo": "9a99f61bf72ed237f2a8177563b727de0a3729d58e87f12f083a957a8a76b9a5",
+          "controller-A-Edge_Cuts.gm1": "87b2cfafb92efb9334a717cdfa4f576b220105f8e952490c08b8154921206374",
+          "controller-A-F_Adhesive.gta": "5c2a6c71ca4dfbe4726518cd6633b86e9b2dd4328e704570149956c8f593a214",
+          "controller-A-F_Courtyard.gbr": "2a0a066dc5f89744a4b50e4699ff8199be1b784c2fa7e199055d532992158367",
+          "controller-A-F_Cu.gtl": "946be532af88501e32f50dc3900c085c1859bc299d4e492cdd4d7df0be0aae57",
+          "controller-A-F_Fab.gbr": "89b737e6a5b400f4bba9e052c8c33ff4805d0eeefd70f4677778b9ff9a6224ef",
+          "controller-A-F_Mask.gts": "94e6ea1c0e398080f086b2ee00cae78a534a528ba3b3920f14af5759f09cad47",
+          "controller-A-F_Paste.gtp": "445a437f0249f49bbfc4d733324f73062cb8c9b9adeb570e799a4cc3f1a22129",
+          "controller-A-F_Silkscreen.gto": "39c2942ee27dd77b66bb2420a07bb3aa685e1a64aa3ce6aa2a7fdaece11e5028",
+          "controller-A-Margin.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-User_1.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-User_2.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-User_3.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-User_4.gbr": "4744d662b97ab60260df92110651f403b2e2d0c9f89133badd56bd680ec79560",
+          "controller-A-User_Comments.gbr": "282d171ec7e00d48ac1e5f43404d3f62f0ace1c3e95418417de4fe401c92fd99",
+          "controller-A-User_Drawings.gbr": "9c8a8f008d92d64fbd541bb7593a366a56d8366a519a629c42111c546453a2b4",
+          "controller-A-User_Eco1.gbr": "bfd74e146327c303d13ec444e469c07441eabf555dd5268ca8fb260914de3db2",
+          "controller-A-User_Eco2.gbr": "9cf68de00afa404b68d8d734964264f92b7b8a3b24b7ea4e8cbb13671a185724",
+          "controller-A.drl": "2830380619f7dd5e7a093ab26522ddc8c5f5c146c83d21f778a1ced1ca8c0fec"
+        }
+      },
+      "enclosure": {
+        "stl": {
+          "path": "part.stl",
+          "format": "STL",
+          "bytes": 1121,
+          "sha256": "62afc362b30e8004448054a7fe00c0c8768ee72a0104f8072927cb0d24792fb0",
+          "dimensions_mm": [
+            60.0,
+            50.0,
+            15.0
+          ],
+          "volume_mm3": 45000.0
+        },
+        "step": {
+          "path": "part.step",
+          "format": "STEP AP242",
+          "bytes": 15416,
+          "sha256": "1030aa833b1623add4062e02b35bec762e48a2b58a2d7154358286b9e8562acd"
+        },
+        "input_board_sha256": "20cf8405434d075ca5348927584f48e25eb6b4d6c4b6c9222c7ab159421485e9"
+      },
+      "thermal_simulation": {
+        "path": "result.vtu",
+        "format": "VTU",
+        "bytes": 147827,
+        "sha256": "25be03922ed6701023b948142bb3e2150a1daafe139ba3036876d42e16446208",
+        "point_count": 1353,
+        "components": 1,
+        "bounds": [
+          [
+            0.0,
+            0.05
+          ],
+          [
+            0.0,
+            0.04
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "field": "temperature_K",
+        "field_min": 298.15,
+        "field_max": 320.514253382,
+        "boundary_temperature_K": [
+          298.15,
+          298.15
+        ],
+        "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself.",
+        "job_name": "electronics-controller-A-thermal",
+        "input_sha256": "34f960010f8ad42148a64673157a36f93c6265c5cce4f5b5a236559d4d6e9abd",
+        "input_board_sha256": "20cf8405434d075ca5348927584f48e25eb6b4d6c4b6c9222c7ab159421485e9",
+        "input_enclosure_step_sha256": "1030aa833b1623add4062e02b35bec762e48a2b58a2d7154358286b9e8562acd"
+      },
+      "validation_trace": {
+        "artifact": {
+          "path": "bag",
+          "format": "ROS 2 SQLite bag",
+          "database_sha256": "ebcc5e0cf9f49b6e497bb3c6c2b7b6e9be4951ec249b546a7b29be27f52c5c92",
+          "metadata_sha256": "16184ba57f7624fd70badddfcd930ef2536dd111e10646bb8935a1a6e67e2df7",
+          "topic": "/wright/thermal_validation",
+          "timestamp_ns": 1710000000000000000,
+          "message": {
+            "board_sha256": "20cf8405434d075ca5348927584f48e25eb6b4d6c4b6c9222c7ab159421485e9",
+            "design_id": "ELEC-CONTROLLER",
+            "enclosure_step_sha256": "1030aa833b1623add4062e02b35bec762e48a2b58a2d7154358286b9e8562acd",
+            "limit_temperature_K": 358.15,
+            "max_temperature_K": 320.514253382,
+            "revision": "A",
+            "simulation_sha256": "25be03922ed6701023b948142bb3e2150a1daafe139ba3036876d42e16446208",
+            "status": "pass"
+          }
+        },
+        "gateway_message": {
+          "board_sha256": "20cf8405434d075ca5348927584f48e25eb6b4d6c4b6c9222c7ab159421485e9",
+          "design_id": "ELEC-CONTROLLER",
+          "enclosure_step_sha256": "1030aa833b1623add4062e02b35bec762e48a2b58a2d7154358286b9e8562acd",
+          "limit_temperature_K": 358.15,
+          "max_temperature_K": 320.514253382,
+          "revision": "A",
+          "simulation_sha256": "25be03922ed6701023b948142bb3e2150a1daafe139ba3036876d42e16446208",
+          "status": "pass"
+        }
+      },
+      "handoffs": [
+        {
+          "status": "accepted",
+          "manifest_sha256": "f29dfb7d3be38243ade461ea58c738e134700a7b7360a5f1825aa1bdeed79cd5",
+          "artifact_count": 1,
+          "identity": [
+            "kicad-mcp-blwfish",
+            "brep-mcp",
+            "ELEC-CONTROLLER-A"
+          ],
+          "units": {
+            "board": "mm",
+            "enclosure": "mm"
+          },
+          "corrupted_manifest_rejected": true
+        },
+        {
+          "status": "accepted",
+          "manifest_sha256": "ebe67e56a900c8b914a91c075ab346a240d87c47888c0669ce8780edaea18769",
+          "artifact_count": 3,
+          "identity": [
+            "brep-mcp",
+            "oasis-open-fem-agent",
+            "ELEC-CONTROLLER-A"
+          ],
+          "units": {
+            "geometry": "mm",
+            "thermal": "m-W-K"
+          },
+          "corrupted_manifest_rejected": true
+        },
+        {
+          "status": "accepted",
+          "manifest_sha256": "4b2060507cd9fae74516098a0adb5e0643a8d4b08660d6306fa1eef416e35cf2",
+          "artifact_count": 2,
+          "identity": [
+            "oasis-open-fem-agent",
+            "rosbag-mcp-pypi",
+            "ELEC-CONTROLLER-A"
+          ],
+          "units": {
+            "temperature": "K",
+            "timestamp": "ns"
+          },
+          "corrupted_manifest_rejected": true
+        }
+      ]
+    },
+    {
+      "id": "field-evidence-controlled-revision",
+      "status": "passed",
+      "design_id": "FIELD-BRACKET",
+      "source_revision": {
+        "id": "A",
+        "drawing": {
+          "path": "field-bracket-A.dxf",
+          "format": "DXF",
+          "bytes": 15708,
+          "sha256": "56d10729ee0b2d88af1f4e4b20896623f14c25947559589577a6f3153194225d",
+          "entity_counts": {
+            "LWPOLYLINE": 1,
+            "CIRCLE": 2,
+            "LINE": 1
+          },
+          "outline_mm": [
+            100.0,
+            8.0
+          ],
+          "holes_mm": [
+            [
+              20.0,
+              4.0,
+              2.0
+            ],
+            [
+              80.0,
+              4.0,
+              2.0
+            ]
+          ],
+          "centerline_mm": [
+            50.0,
+            0.0,
+            50.0,
+            8.0
+          ]
+        }
+      },
+      "field_evidence": {
+        "artifact": {
+          "path": "bag",
+          "format": "ROS 2 SQLite bag",
+          "database_sha256": "6b4d33c0ec5005b7c5f26818192c393c9c56105ee4a96daf0cef060ba1623aa2",
+          "metadata_sha256": "ca86c1e6b41969a0b91050233972f488dac5d03282402c0e6478768d711cf4af",
+          "topic": "/wright/field_deflection",
+          "timestamp_ns": 1720000000000000000,
+          "message": {
+            "allowable_deflection_mm": 1.0,
+            "design_id": "FIELD-BRACKET",
+            "instrument": "LVDT-03",
+            "measured_deflection_mm": 1.8,
+            "sample_id": "RIG-17-RUN-0042",
+            "source_drawing_sha256": "56d10729ee0b2d88af1f4e4b20896623f14c25947559589577a6f3153194225d",
+            "source_revision": "A"
+          }
+        },
+        "gateway_message": {
+          "allowable_deflection_mm": 1.0,
+          "design_id": "FIELD-BRACKET",
+          "instrument": "LVDT-03",
+          "measured_deflection_mm": 1.8,
+          "sample_id": "RIG-17-RUN-0042",
+          "source_drawing_sha256": "56d10729ee0b2d88af1f4e4b20896623f14c25947559589577a6f3153194225d",
+          "source_revision": "A"
+        }
+      },
+      "released_revision": {
+        "id": "B",
+        "drawing": {
+          "path": "field-bracket-B.dxf",
+          "format": "DXF",
+          "bytes": 15712,
+          "sha256": "4b269669b9490d5e04eb4cffe537989314da07f2ca6f76aeaefb2199553f11f9",
+          "entity_counts": {
+            "LWPOLYLINE": 1,
+            "CIRCLE": 2,
+            "LINE": 1
+          },
+          "outline_mm": [
+            100.0,
+            10.0
+          ],
+          "holes_mm": [
+            [
+              20.0,
+              5.0,
+              2.0
+            ],
+            [
+              80.0,
+              5.0,
+              2.0
+            ]
+          ],
+          "centerline_mm": [
+            50.0,
+            0.0,
+            50.0,
+            10.0
+          ]
+        },
+        "change": "section thickness increased from 8 mm to 10 mm"
+      },
+      "handoffs": [
+        {
+          "status": "accepted",
+          "manifest_sha256": "993236b67ec003677a52bd9dcdcb754186c0c50b4e37adc6896537a5f9f14040",
+          "artifact_count": 3,
+          "identity": [
+            "test-rig-RIG-17",
+            "rosbag-mcp-pypi",
+            "FIELD-BRACKET-A"
+          ],
+          "units": {
+            "deflection": "mm",
+            "timestamp": "ns"
+          },
+          "corrupted_manifest_rejected": true
+        },
+        {
+          "status": "accepted",
+          "manifest_sha256": "a987ac87fdc576b78278ac510766da85f54782f53cc5f20301877473b3da3f32",
+          "artifact_count": 2,
+          "identity": [
+            "rosbag-mcp-pypi",
+            "autocad-mcp-u-c4n",
+            "FIELD-BRACKET-B"
+          ],
+          "units": {
+            "drawing": "mm",
+            "deflection": "mm"
+          },
+          "corrupted_manifest_rejected": true
+        }
+      ]
+    }
+  ],
+  "portfolio_inputs": {
+    "brep-mcp": {
+      "configuration_sha256": "676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b",
+      "source_url": "https://github.com/andymai/brepjs",
+      "tool_schema_sha256": "c39b1af77e33ec5bad0a4dc8f7313de27d55e02aad67e16fd3316a464b37a4bb",
+      "tool_count": 2
+    },
+    "oasis-open-fem-agent": {
+      "configuration_sha256": "58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e",
+      "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+      "tool_schema_sha256": "4245cad52960571e4bccd6f0aec3eae5039bca378e236a91f1ebfa924bdbe489",
+      "tool_count": 17
+    },
+    "autocad-mcp-u-c4n": {
+      "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+      "source_url": "https://github.com/U-C4N/Autocad-MCP",
+      "tool_schema_sha256": "a9e48d10fa5abee3275bf352d8d31c9878297d517e26e543fd53c9a7f5fd4ab8",
+      "tool_count": 47
+    },
+    "kicad-mcp-blwfish": {
+      "configuration_sha256": "d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc",
+      "source_url": "https://github.com/blwfish/kicad-mcp",
+      "tool_schema_sha256": "7a54defba181f5aa3f48da9c73e635e35523d3f625435684eacf84f0b2aec3f3",
+      "tool_count": 17
+    },
+    "rosbag-mcp-pypi": {
+      "configuration_sha256": "19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649",
+      "source_url": "https://pypi.org/project/rosbag-mcp/",
+      "tool_schema_sha256": "ad265dfd228c3d0254fae608e052d08f60e89c66d97c407dcf624def09c61130",
+      "tool_count": 31
+    }
+  },
+  "workspace_policy": {
+    "workspace_id": "process-chain-workspace",
+    "principal_id": "curation-operator",
+    "enabled_server_ids": [
+      "brep-mcp",
+      "oasis-open-fem-agent",
+      "autocad-mcp-u-c4n",
+      "kicad-mcp-blwfish",
+      "rosbag-mcp-pypi"
+    ],
+    "visible_tool_count": 114
+  },
+  "cleanup": "passed",
+  "evidence_sha256": "b1dc2eecc5734980682638d09e935a48cc7cb54502596c38dbb2c9f9de285ca9"
+}

@@ -27,6 +27,49 @@ NOW = datetime(2026, 8, 12, 12, 0, tzinfo=UTC)
 ROOT = CatalogTrustRoot("test", TEST_KEY_ID, TEST_PUBLIC_KEY)
 
 
+def test_signed_catalog_without_review_fields_retains_its_original_bytes():
+    from tool_registry.catalog_models import CatalogEntry
+
+    payload = candidate_70_catalog()
+    for entry in payload["servers"]:
+        for field in (
+            "curation",
+            "engineering_stages",
+            "integration_kind",
+            "hardware_standard",
+        ):
+            entry.pop(field, None)
+    snapshot = verify_catalog_envelope(
+        signed_catalog(payload, issued_at=NOW),
+        trust_root=ROOT,
+        now=NOW,
+        minimum_sequence=1,
+    )
+    assert snapshot.payload_json == payload
+    assert all(
+        CatalogEntry.model_validate(entry).curation.disposition == "follow_up"
+        for entry in snapshot.payload_json["servers"]
+    )
+
+
+def test_signed_semantically_invalid_curation_is_a_catalog_rejection():
+    payload = candidate_70_catalog()
+    payload["servers"][0]["curation"] = {
+        "disposition": "curated",
+        "reviewed_at": "2026-09-08",
+        "review_due": "2026-10-08",
+        "qualifications": [],
+    }
+    with pytest.raises(CatalogVerificationError) as caught:
+        verify_catalog_envelope(
+            signed_catalog(payload, issued_at=NOW),
+            trust_root=ROOT,
+            now=NOW,
+            minimum_sequence=1,
+        )
+    assert caught.value.code == "catalog_payload_invalid"
+
+
 def test_canonical_json_is_deterministic_and_rejects_floats() -> None:
     assert canonical_json({"z": "é", "a": [2, 1]}) == (b'{"a":[2,1],"z":"\xc3\xa9"}')
     with pytest.raises(CatalogVerificationError, match="Floating-point"):

@@ -1,0 +1,27 @@
+{
+  "server_id": "openfoam-mcp-webworn",
+  "observed_at": "2026-09-10T01:44:20.343199+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/webworn/openfoam-mcp-server",
+  "credentials_supplied": false,
+  "host_requirements": [
+    "OpenFOAM 12"
+  ],
+  "command": "openfoam-mcp-server",
+  "command_available_in_clean_image": false,
+  "cleanup": "passed",
+  "source_status": "available",
+  "source_revision": "8d14e2031146e4130d4e9f500146379dad19eb49",
+  "source_etag_sha256": "0f55b6ccbaadb19aab80755260098288533a47ffa5574e0bed12c43aa6d64605",
+  "archived": false,
+  "disabled": false,
+  "pushed_at": "2026-01-18T12:04:28Z",
+  "license_spdx": "NOASSERTION",
+  "status": "blocked",
+  "blocking_requirement": "host_or_license",
+  "protocol": "not_reached",
+  "message": "Authoritative source is current; clean runtime lacks the recorded host dependency."
+}

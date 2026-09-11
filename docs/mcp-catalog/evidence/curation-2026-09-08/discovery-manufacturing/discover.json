@@ -1,0 +1,47 @@
+{
+  "search": "manufacturing",
+  "next_cursor": null,
+  "candidates": [
+    {
+      "registry_name": "com.daedalmap/distributed-manufacturing",
+      "version": "1.0.1",
+      "repository_url": "https://github.com/xyver/daedal-map",
+      "known_catalog_id": null,
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted discovery lead; verify publisher, user value, and Wright compatibility."
+    },
+    {
+      "registry_name": "com.unitemfg/us-manufacturing-directory",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/tudorbotezan/mfg-dir",
+      "known_catalog_id": null,
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted discovery lead; verify publisher, user value, and Wright compatibility."
+    },
+    {
+      "registry_name": "guide.manufacturingleader/guide-registry",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/people-analyst/bicycle-guide",
+      "known_catalog_id": null,
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted discovery lead; verify publisher, user value, and Wright compatibility."
+    },
+    {
+      "registry_name": "io.github.1337mofo/australian-manufacturing-directory",
+      "version": "1.0.0",
+      "repository_url": null,
+      "known_catalog_id": null,
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted discovery lead; verify publisher, user value, and Wright compatibility."
+    },
+    {
+      "registry_name": "io.github.1337mofo/australian-manufacturing-directory",
+      "version": "1.0.1",
+      "repository_url": null,
+      "known_catalog_id": null,
+      "proposed_disposition": "follow_up",
+      "reason": "Untrusted discovery lead; verify publisher, user value, and Wright compatibility."
+    }
+  ],
+  "observed_at": "2026-09-08T18:48:25.810905+00:00"
+}

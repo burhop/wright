@@ -1,0 +1,642 @@
+{
+  "server_id": "kicad-mcp-blwfish",
+  "observed_at": "2026-09-09T00:29:15.399305+00:00",
+  "wright_revision": "d6a015f8",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/blwfish/kicad-mcp",
+  "status": "failed",
+  "steps": [],
+  "adoption": "unknown",
+  "scope": "KiCad PCB authoring, audit, DRC, and Gerber export",
+  "configuration_sha256": "6cc0d12fb8b0948dae988b52c9f129e88c126f9ecba082c76296dd41731ede8c",
+  "installed_items": [
+    "kicad-mcp 0.13.0 at bcc6f11de92e5f47cb7dde1d24565f7779b2fbed",
+    "KiCad 9.0.2+dfsg-1",
+    "kicad-symbols 9.0.2-1",
+    "kicad-footprints 9.0.2-1"
+  ],
+  "source_references": [
+    "https://github.com/blwfish/kicad-mcp/tree/v0.13.0",
+    "https://github.com/blwfish/kicad-mcp/commit/bcc6f11de92e5f47cb7dde1d24565f7779b2fbed"
+  ],
+  "prerequisites": [
+    "KiCad 9.0.2 CLI and pcbnew Python bindings",
+    "KiCad 9.0.2 standard symbol and footprint libraries",
+    "git only inside the disposable qualification container"
+  ],
+  "server_info": {
+    "name": "KiCad",
+    "title": null,
+    "version": "4.0.3",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8119d98d08d5cfa61702ce68f6b152462507346f19acd83d2a483a5760d14ae0",
+  "tool_count": 17,
+  "pcb_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "height_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "min_track_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "min_via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "min_via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_hole_to_hole_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "min_through_hole_diameter_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_copper_edge_clearance_mm": {
+        "default": 0.5,
+        "type": "number"
+      },
+      "fix_silkscreen": {
+        "default": true,
+        "type": "boolean"
+      },
+      "fill_zones_flag": {
+        "default": true,
+        "type": "boolean"
+      },
+      "library": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "footprint_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "reference": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "layer": {
+        "default": "F.Cu",
+        "type": "string"
+      },
+      "check_keepouts": {
+        "default": true,
+        "type": "boolean"
+      },
+      "net_name": {
+        "default": "",
+        "type": "string"
+      },
+      "old_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "class_name": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "nets": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "track_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "clearance_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "via_diameter_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "pad_number": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "assignments": {
+        "anyOf": [
+          {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "end_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "trace_width_mm": {
+        "default": 0.25,
+        "type": "number"
+      },
+      "drill_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "size_mm": {
+        "default": 0.6,
+        "type": "number"
+      },
+      "via_type": {
+        "default": "through",
+        "type": "string"
+      },
+      "clear_tracks": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_vias": {
+        "default": true,
+        "type": "boolean"
+      },
+      "clear_zones_flag": {
+        "default": false,
+        "type": "boolean"
+      },
+      "new_width_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "net_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "layer_filter": {
+        "default": "",
+        "type": "string"
+      },
+      "corners": {
+        "anyOf": [
+          {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "zone_clearance_mm": {
+        "default": 0.3,
+        "type": "number"
+      },
+      "min_width_mm": {
+        "default": 0.2,
+        "type": "number"
+      },
+      "connect_pads": {
+        "default": "thermal",
+        "type": "string"
+      },
+      "priority": {
+        "default": 0,
+        "type": "integer"
+      },
+      "text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "text_size_mm": {
+        "default": 1.0,
+        "type": "number"
+      },
+      "thickness_mm": {
+        "default": 0.15,
+        "type": "number"
+      },
+      "silk_field": {
+        "default": "reference",
+        "type": "string"
+      },
+      "visible": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "rel_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "angle_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "silk_layer": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "new_text": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_x_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "near_y_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_size_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_thickness_mm": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "edit_rotation_deg": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "export_schema": {
+    "properties": {
+      "operation": {
+        "type": "string"
+      },
+      "pcb_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "project_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "output_dir": {
+        "default": "",
+        "type": "string"
+      },
+      "create_zip": {
+        "default": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "type": "object",
+    "additionalProperties": false
+  },
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "causes": [],
+  "sub_errors": [
+    {
+      "type": "BrokenResourceError",
+      "message": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/.venv/lib/python3.13/site-packages/mcp/client/stdio/__init__.py\", line 155, in stdout_reader\n    message = types.JSONRPCMessage.model_validate_json(line)\n  File \"/workspace/.venv/lib/python3.13/site-packages/pydantic/main.py\", line 782, in model_validate_json\n    return cls.__pydantic_validator__.validate_json(\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        json_data, strict=strict, extra=extra, context=context, by_alias=by_alias, by_name=by_name\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\npydantic_core._pydantic_core.ValidationError: 1 validation error for JSONRPCMessage\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='Saved DRC history entry ...59c680_drc_history.json', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/workspace/.venv/lib/python3.13/site-packages/mcp/client/stdio/__init__.py\", line 158, in stdout_reader\n    await read_stream_writer.send(exc)\n  File \"/workspace/.venv/lib/python3.13/site-packages/anyio/streams/memory.py\", line 249, in send\n    self.send_nowait(item)\n    ~~~~~~~~~~~~~~~~^^^^^^\n  File \"/workspace/.venv/lib/python3.13/site-packages/anyio/streams/memory.py\", line 220, in send_nowait\n    raise BrokenResourceError\nanyio.BrokenResourceError\n"
+    }
+  ],
+  "cleanup": "passed"
+}

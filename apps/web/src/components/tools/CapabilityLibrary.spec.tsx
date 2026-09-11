@@ -254,13 +254,23 @@ describe("CapabilityLibrary", () => {
     render(<CapabilityLibrary />);
     await screen.findByText(capability.name);
 
+    fireEvent.change(screen.getByLabelText("Catalog list"), {
+      target: { value: "follow_up" },
+    });
+    fireEvent.change(screen.getByLabelText("Engineering process stage"), {
+      target: { value: "sourcing" },
+    });
+    fireEvent.change(screen.getByLabelText("Integration protocol"), {
+      target: { value: "webmcp" },
+    });
+
     fireEvent.change(screen.getByLabelText("Search MCP servers"), {
       target: { value: "bracket" },
     });
     fireEvent.change(screen.getByLabelText("Engineering domain"), {
       target: { value: "cad" },
     });
-    fireEvent.change(screen.getByLabelText("Lifecycle stage"), {
+    fireEvent.change(screen.getByLabelText("Source verification"), {
       target: { value: "verified_mcp" },
     });
     fireEvent.change(
@@ -295,6 +305,9 @@ describe("CapabilityLibrary", () => {
     await waitFor(() =>
       expect(mcpService.getCapabilities).toHaveBeenLastCalledWith(
         expect.objectContaining({
+          curation: ["follow_up"],
+          engineering_stage: ["sourcing"],
+          protocol: ["webmcp"],
           search: "bracket",
           domain: ["cad"],
           lifecycle_stage: ["verified_mcp"],
@@ -313,6 +326,8 @@ describe("CapabilityLibrary", () => {
     expect(window.location.search).toContain("search=bracket");
     expect(window.location.search).toContain("domain=cad");
     expect(window.location.search).toContain("installed=false");
+    expect(window.location.search).toContain("curation=follow_up");
+    expect(window.location.search).toContain("engineering_stage=sourcing");
   });
 
   it("supports keyboard detail opening and local observation", async () => {

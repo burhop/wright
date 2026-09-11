@@ -232,17 +232,24 @@ async def test_stdio_runner_mock():
 @pytest.mark.asyncio
 async def test_stdio_runner_uses_configured_operation_timeout(monkeypatch):
     runner = StdioRunner(["unused"], operation_timeout=0.01)
+    stopped = False
 
     async def never_responds(*args, **kwargs):
         await asyncio.Event().wait()
 
+    async def stop_runner():
+        nonlocal stopped
+        stopped = True
+
     monkeypatch.setattr(runner, "_send_request", never_responds)
+    monkeypatch.setattr(runner, "stop", stop_runner)
 
     with pytest.raises(
         TimeoutError,
         match=r"timed out after 0\.01 seconds",
     ):
         await runner.call_tool("slow_tool", {})
+    assert stopped is True
 
 
 @pytest.mark.asyncio

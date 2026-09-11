@@ -620,8 +620,19 @@ def _path_commits(
     for line in reversed(output.splitlines()):
         parts = line.split("\t", 2)
         if len(parts) == 3:
-            rows.append((parts[0], parts[1], parts[2]))
+            rows.append((parts[0], _canonical_timestamp(parts[1]), parts[2]))
     return rows
+
+
+def _canonical_timestamp(value: str) -> str:
+    """Return an ISO 8601 instant in UTC so lexical and causal order agree."""
+
+    return (
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
+        .astimezone(timezone.utc)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
 
 
 def _observations_for_path(

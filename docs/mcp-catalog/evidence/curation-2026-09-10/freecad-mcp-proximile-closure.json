@@ -1,0 +1,18 @@
+{
+  "server_id": "freecad-mcp-proximile",
+  "observed_at": "2026-09-10",
+  "source_url": "https://github.com/proximile/FreeCAD-MCP",
+  "source_revision": "2b75bad92b67ff5bade984d430231a768c6c4d7a",
+  "repository_commit_count_observed": 1,
+  "status": "closed",
+  "decision": "abandoned",
+  "current_source_findings": [
+    "The MCP combines 57 CAD and system tools with arbitrary Python execution.",
+    "It can start and stop Docker services and create public Cloudflare tunnels.",
+    "Optional AI paths require a broad multi-service, multi-GPU stack.",
+    "Wright already has a qualified, bounded FreeCAD integration."
+  ],
+  "prior_execution_boundary": "Source identity and clean-host dependency boundary were recorded; no backend mutation was run after the product-scope review closed the candidate.",
+  "replacement_ids": ["freecad-mcp-nekanat"],
+  "reopen_when": "The project demonstrates sustained maintenance and a bounded capability that is safer or materially stronger than Wright's qualified FreeCAD integration."
+}

@@ -1,0 +1,983 @@
+{
+  "observed_at": "2026-09-10T19:43:32.079172+00:00",
+  "sources": [
+    {
+      "repository": "AnCode666/multiCAD-mcp",
+      "catalog_ids": [
+        "multicad-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/AnCode666/multiCAD-mcp",
+      "status": "observed",
+      "canonical_repository": "AnCode666/multiCAD-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-06-27T17:46:08Z",
+      "updated_at": "2026-09-10T15:25:12Z",
+      "stars": 104,
+      "forks": 22,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "Hereon-InstituteMS/OASiS",
+      "catalog_ids": [
+        "oasis-open-fem-agent"
+      ],
+      "source_url": "https://api.github.com/repos/Hereon-InstituteMS/OASiS",
+      "status": "observed",
+      "canonical_repository": "Hereon-InstituteMS/OASiS",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-09T14:45:56Z",
+      "updated_at": "2026-09-10T08:50:34Z",
+      "stars": 18,
+      "forks": 1,
+      "open_issues": 4,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "JPMarhefka/partuno",
+      "catalog_ids": [
+        "partuno-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/JPMarhefka/partuno",
+      "status": "observed",
+      "canonical_repository": "JPMarhefka/Partuno",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-09T14:54:46Z",
+      "updated_at": "2026-09-02T05:58:06Z",
+      "stars": 3,
+      "forks": 1,
+      "open_issues": 3,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "KittyCAD/mcp",
+      "catalog_ids": [
+        "zoo-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/KittyCAD/mcp",
+      "status": "observed",
+      "canonical_repository": "KittyCAD/mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T17:33:22Z",
+      "updated_at": "2026-09-08T16:35:28Z",
+      "stars": 9,
+      "forks": 1,
+      "open_issues": 14,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "NVIDIA-Omniverse/kit-cae",
+      "catalog_ids": [
+        "nvidia-kit-cae-agent-skills"
+      ],
+      "source_url": "https://api.github.com/repos/NVIDIA-Omniverse/kit-cae",
+      "status": "observed",
+      "canonical_repository": "NVIDIA-Omniverse/kit-cae",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-04T15:06:02Z",
+      "updated_at": "2026-08-28T16:09:43Z",
+      "stars": 59,
+      "forks": 21,
+      "open_issues": 7,
+      "default_branch": "main",
+      "license_spdx": "NOASSERTION"
+    },
+    {
+      "repository": "NVIDIA-Omniverse/kit-usd-agents",
+      "catalog_ids": [
+        "nvidia-omniverse-isaac-sim-mcp",
+        "nvidia-omniverse-kit-mcp",
+        "nvidia-omniverse-omniui-mcp",
+        "nvidia-omniverse-usd-code-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/NVIDIA-Omniverse/kit-usd-agents",
+      "status": "observed",
+      "canonical_repository": "NVIDIA-Omniverse/kit-usd-agents",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-19T16:34:26Z",
+      "updated_at": "2026-09-09T01:17:11Z",
+      "stars": 96,
+      "forks": 19,
+      "open_issues": 4,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "NVIDIA/elements",
+      "catalog_ids": [
+        "nvidia-elements-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/NVIDIA/elements",
+      "status": "observed",
+      "canonical_repository": "NVIDIA/elements",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T19:43:08Z",
+      "updated_at": "2026-09-10T19:43:12Z",
+      "stars": 85,
+      "forks": 16,
+      "open_issues": 5,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "ReshefElisha/jarvis-onshape-mcp",
+      "catalog_ids": [
+        "jarvis-onshape-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/ReshefElisha/jarvis-onshape-mcp",
+      "status": "observed",
+      "canonical_repository": "ReshefElisha/jarvis-onshape-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-04-22T07:19:32Z",
+      "updated_at": "2026-09-09T05:01:46Z",
+      "stars": 169,
+      "forks": 34,
+      "open_issues": 17,
+      "default_branch": "main",
+      "license_spdx": "NOASSERTION"
+    },
+    {
+      "repository": "SimScaleGmbH/simscale-python-sdk",
+      "catalog_ids": [
+        "simscale-api-candidate"
+      ],
+      "source_url": "https://api.github.com/repos/SimScaleGmbH/simscale-python-sdk",
+      "status": "observed",
+      "canonical_repository": "SimScaleGmbH/simscale-python-sdk",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-03-03T16:28:02Z",
+      "updated_at": "2026-08-05T05:02:51Z",
+      "stars": 36,
+      "forks": 7,
+      "open_issues": 0,
+      "default_branch": "master",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "SimplifiedLogic/creoson",
+      "catalog_ids": [
+        "creoson-mcp-bridge"
+      ],
+      "source_url": "https://api.github.com/repos/SimplifiedLogic/creoson",
+      "status": "observed",
+      "canonical_repository": "SimplifiedLogic/creoson",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-19T13:07:38Z",
+      "updated_at": "2026-09-08T10:31:23Z",
+      "stars": 148,
+      "forks": 40,
+      "open_issues": 46,
+      "default_branch": "master",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "Suzy-Sa/COMSOL-Multiphysics-MCP",
+      "catalog_ids": [
+        "comsol-multiphysics-mcp-suzysa"
+      ],
+      "source_url": "https://api.github.com/repos/Suzy-Sa/COMSOL-Multiphysics-MCP",
+      "status": "observed",
+      "canonical_repository": "Suzy-Sa/COMSOL-Multiphysics-MCP",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-05-19T06:23:57Z",
+      "updated_at": "2026-08-22T14:16:18Z",
+      "stars": 35,
+      "forks": 1,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "U-C4N/Autocad-MCP",
+      "catalog_ids": [
+        "autocad-mcp-u-c4n"
+      ],
+      "source_url": "https://api.github.com/repos/U-C4N/Autocad-MCP",
+      "status": "observed",
+      "canonical_repository": "U-C4N/Autocad-MCP",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-07T06:30:37Z",
+      "updated_at": "2026-09-10T02:29:08Z",
+      "stars": 81,
+      "forks": 22,
+      "open_issues": 4,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "ahujasid/blender-mcp",
+      "catalog_ids": [
+        "blender-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/ahujasid/blender-mcp",
+      "status": "observed",
+      "canonical_repository": "ahujasid/blender-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-07T15:51:01Z",
+      "updated_at": "2026-09-10T19:36:48Z",
+      "stars": 28088,
+      "forks": 2595,
+      "open_issues": 34,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "alisamsam/solidworks-mcp",
+      "catalog_ids": [
+        "solidworks-mcp-alisamsam"
+      ],
+      "source_url": "https://api.github.com/repos/alisamsam/solidworks-mcp",
+      "status": "observed",
+      "canonical_repository": "alisamsam/Solidworks-MCP",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-03-23T11:46:46Z",
+      "updated_at": "2026-09-10T14:45:52Z",
+      "stars": 120,
+      "forks": 25,
+      "open_issues": 4,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "andrewbartels1/SolidworksMCP-python",
+      "catalog_ids": [
+        "solidworks-mcp-python"
+      ],
+      "source_url": "https://api.github.com/repos/andrewbartels1/SolidworksMCP-python",
+      "status": "observed",
+      "canonical_repository": "andrewbartels1/SolidworksMCP-python",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-07T05:40:49Z",
+      "updated_at": "2026-09-08T05:23:06Z",
+      "stars": 72,
+      "forks": 25,
+      "open_issues": 31,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "andymai/brepjs",
+      "catalog_ids": [
+        "brep-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/andymai/brepjs",
+      "status": "observed",
+      "canonical_repository": "andymai/brepjs",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T01:28:21Z",
+      "updated_at": "2026-09-10T01:28:20Z",
+      "stars": 101,
+      "forks": 9,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "ansys/pyfluent-mcp",
+      "catalog_ids": [
+        "ansys-fluent-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/ansys/pyfluent-mcp",
+      "status": "observed",
+      "canonical_repository": "ansys/pyfluent-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T13:47:29Z",
+      "updated_at": "2026-09-10T13:40:29Z",
+      "stars": 21,
+      "forks": 3,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "anthropics/anthropic-cookbook",
+      "catalog_ids": [
+        "mcp-ui-shopify",
+        "webmcp-standard"
+      ],
+      "source_url": "https://api.github.com/repos/anthropics/anthropic-cookbook",
+      "status": "unavailable",
+      "http_status": 301
+    },
+    {
+      "repository": "autodesk-platform-services/aps-mcp-server-nodejs",
+      "catalog_ids": [
+        "aps-mcp-server-nodejs"
+      ],
+      "source_url": "https://api.github.com/repos/autodesk-platform-services/aps-mcp-server-nodejs",
+      "status": "observed",
+      "canonical_repository": "autodesk-platform-services/aps-mcp-server-nodejs",
+      "archived": true,
+      "disabled": false,
+      "pushed_at": "2026-05-07T12:28:22Z",
+      "updated_at": "2026-07-27T16:33:32Z",
+      "stars": 25,
+      "forks": 7,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "binabik-ai/mcp-rosbags",
+      "catalog_ids": [
+        "rosbag-mcp-binabik"
+      ],
+      "source_url": "https://api.github.com/repos/binabik-ai/mcp-rosbags",
+      "status": "observed",
+      "canonical_repository": "binabik-ai/mcp-rosbags",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-09-21T18:24:22Z",
+      "updated_at": "2026-08-14T11:47:13Z",
+      "stars": 28,
+      "forks": 3,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "blwfish/kicad-mcp",
+      "catalog_ids": [
+        "kicad-mcp-blwfish"
+      ],
+      "source_url": "https://api.github.com/repos/blwfish/kicad-mcp",
+      "status": "observed",
+      "canonical_repository": "blwfish/kicad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-07T06:52:56Z",
+      "updated_at": "2026-09-08T22:57:47Z",
+      "stars": 16,
+      "forks": 3,
+      "open_issues": 6,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "burhop/SolidEdgeMCP",
+      "catalog_ids": [
+        "solid-edge-mcp-burhop"
+      ],
+      "source_url": "https://api.github.com/repos/burhop/SolidEdgeMCP",
+      "status": "unavailable",
+      "http_status": 404
+    },
+    {
+      "repository": "calculix/calculix-mcp",
+      "catalog_ids": [
+        "calculix-simulation"
+      ],
+      "source_url": "https://api.github.com/repos/calculix/calculix-mcp",
+      "status": "unavailable",
+      "http_status": 404
+    },
+    {
+      "repository": "contextform/freecad-mcp",
+      "catalog_ids": [
+        "freecad-mcp-contextform"
+      ],
+      "source_url": "https://api.github.com/repos/contextform/freecad-mcp",
+      "status": "observed",
+      "canonical_repository": "contextform/freecad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-08-15T03:09:13Z",
+      "updated_at": "2026-09-10T11:31:02Z",
+      "stars": 121,
+      "forks": 24,
+      "open_issues": 12,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "daobataotie/CAD-MCP",
+      "catalog_ids": [
+        "cad-mcp-daobataotie"
+      ],
+      "source_url": "https://api.github.com/repos/daobataotie/CAD-MCP",
+      "status": "observed",
+      "canonical_repository": "daobataotie/CAD-MCP",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-07-21T01:36:15Z",
+      "updated_at": "2026-09-10T19:39:36Z",
+      "stars": 534,
+      "forks": 77,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "dev261004/web3d-mcp-server",
+      "catalog_ids": [
+        "web3d-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/dev261004/web3d-mcp-server",
+      "status": "observed",
+      "canonical_repository": "dev261004/web3d-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-04-03T06:56:45Z",
+      "updated_at": "2026-05-20T13:07:55Z",
+      "stars": 1,
+      "forks": 0,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "dreliq9/caid-mcp",
+      "catalog_ids": [
+        "caid-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/dreliq9/caid-mcp",
+      "status": "unavailable",
+      "http_status": 404
+    },
+    {
+      "repository": "easehee/rhino-mcp",
+      "catalog_ids": [
+        "rhino-mcp-easehee"
+      ],
+      "source_url": "https://api.github.com/repos/easehee/rhino-mcp",
+      "status": "observed",
+      "canonical_repository": "EaseHee/rhino-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-05-20T17:10:56Z",
+      "updated_at": "2026-09-10T14:39:31Z",
+      "stars": 6,
+      "forks": 1,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "faust-machines/fusion360-mcp-server",
+      "catalog_ids": [
+        "fusion360-mcp-server"
+      ],
+      "source_url": "https://api.github.com/repos/faust-machines/fusion360-mcp-server",
+      "status": "observed",
+      "canonical_repository": "faust-machines/fusion360-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T08:10:52Z",
+      "updated_at": "2026-09-10T08:11:33Z",
+      "stars": 88,
+      "forks": 19,
+      "open_issues": 2,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "flexcompute/Flow360",
+      "catalog_ids": [
+        "flexcompute-flow360-api-candidate"
+      ],
+      "source_url": "https://api.github.com/repos/flexcompute/Flow360",
+      "status": "observed",
+      "canonical_repository": "flexcompute/Flow360",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-09T18:06:04Z",
+      "updated_at": "2026-06-23T17:19:36Z",
+      "stars": 24,
+      "forks": 10,
+      "open_issues": 10,
+      "default_branch": "main",
+      "license_spdx": "LGPL-2.1"
+    },
+    {
+      "repository": "github/github-mcp-server",
+      "catalog_ids": [
+        "github-official-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/github/github-mcp-server",
+      "status": "observed",
+      "canonical_repository": "github/github-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T01:25:36Z",
+      "updated_at": "2026-09-10T19:36:37Z",
+      "stars": 32848,
+      "forks": 4941,
+      "open_issues": 314,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "grafana/mcp-grafana",
+      "catalog_ids": [
+        "grafana-official-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/grafana/mcp-grafana",
+      "status": "observed",
+      "canonical_repository": "grafana/mcp-grafana",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T19:03:11Z",
+      "updated_at": "2026-09-10T19:03:16Z",
+      "stars": 3445,
+      "forks": 442,
+      "open_issues": 85,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "harveyxiacn/blender-mcp",
+      "catalog_ids": [
+        "blender-mcp-harveyxiacn"
+      ],
+      "source_url": "https://api.github.com/repos/harveyxiacn/blender-mcp",
+      "status": "observed",
+      "canonical_repository": "harveyxiacn/blender-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-06-03T02:22:58Z",
+      "updated_at": "2026-09-08T12:19:49Z",
+      "stars": 10,
+      "forks": 5,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "hedless/onshape-mcp",
+      "catalog_ids": [
+        "onshape-mcp-hedless"
+      ],
+      "source_url": "https://api.github.com/repos/hedless/onshape-mcp",
+      "status": "observed",
+      "canonical_repository": "hedless/onshape-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T18:31:07Z",
+      "updated_at": "2026-09-10T18:31:17Z",
+      "stars": 136,
+      "forks": 70,
+      "open_issues": 1,
+      "default_branch": "develop",
+      "license_spdx": null
+    },
+    {
+      "repository": "jherr/webmcp-openscad",
+      "catalog_ids": [
+        "webmcp-openscad"
+      ],
+      "source_url": "https://api.github.com/repos/jherr/webmcp-openscad",
+      "status": "observed",
+      "canonical_repository": "jherr/webmcp-openscad",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-27T17:28:22Z",
+      "updated_at": "2026-08-27T17:44:18Z",
+      "stars": 19,
+      "forks": 3,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "jingcheng-chen/rhinomcp",
+      "catalog_ids": [
+        "rhino-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/jingcheng-chen/rhinomcp",
+      "status": "observed",
+      "canonical_repository": "jingcheng-chen/rhinomcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T15:36:05Z",
+      "updated_at": "2026-09-10T15:23:23Z",
+      "stars": 1049,
+      "forks": 95,
+      "open_issues": 10,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "kilwizac/solidworks-api-mcp",
+      "catalog_ids": [
+        "solidworks-api-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/kilwizac/solidworks-api-mcp",
+      "status": "observed",
+      "canonical_repository": "kilwizac/solidworks-api-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-08-20T09:53:33Z",
+      "updated_at": "2026-08-24T14:39:18Z",
+      "stars": 7,
+      "forks": 2,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "lamaalrajih/kicad-mcp",
+      "catalog_ids": [
+        "kicad-mcp-lamaalrajih"
+      ],
+      "source_url": "https://api.github.com/repos/lamaalrajih/kicad-mcp",
+      "status": "observed",
+      "canonical_repository": "lamaalrajih/kicad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-10-17T16:30:09Z",
+      "updated_at": "2026-09-09T15:25:59Z",
+      "stars": 517,
+      "forks": 83,
+      "open_issues": 21,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "lucygoodchild/freecad-mcp-server",
+      "catalog_ids": [
+        "freecad-booleans-lucygoodchild"
+      ],
+      "source_url": "https://api.github.com/repos/lucygoodchild/freecad-mcp-server",
+      "status": "observed",
+      "canonical_repository": "lucygoodchild/freecad-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-06-02T15:58:16Z",
+      "updated_at": "2026-08-13T02:53:22Z",
+      "stars": 8,
+      "forks": 3,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "matlab/matlab-mcp-server",
+      "catalog_ids": [
+        "matlab-mcp-server"
+      ],
+      "source_url": "https://api.github.com/repos/matlab/matlab-mcp-server",
+      "status": "observed",
+      "canonical_repository": "matlab/matlab-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-03T12:47:42Z",
+      "updated_at": "2026-09-10T13:27:45Z",
+      "stars": 1492,
+      "forks": 124,
+      "open_issues": 28,
+      "default_branch": "main",
+      "license_spdx": "NOASSERTION"
+    },
+    {
+      "repository": "matlab/simulink-agentic-toolkit",
+      "catalog_ids": [
+        "simulink-agentic-toolkit"
+      ],
+      "source_url": "https://api.github.com/repos/matlab/simulink-agentic-toolkit",
+      "status": "observed",
+      "canonical_repository": "matlab/simulink-agentic-toolkit",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-09T19:53:57Z",
+      "updated_at": "2026-09-10T11:38:20Z",
+      "stars": 1073,
+      "forks": 102,
+      "open_issues": 25,
+      "default_branch": "main",
+      "license_spdx": "NOASSERTION"
+    },
+    {
+      "repository": "mcp-servers-for-revit/revit-mcp",
+      "catalog_ids": [
+        "revit-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/mcp-servers-for-revit/revit-mcp",
+      "status": "observed",
+      "canonical_repository": "mcp-servers-for-revit/revit-mcp",
+      "archived": true,
+      "disabled": false,
+      "pushed_at": "2026-02-25T21:11:11Z",
+      "updated_at": "2026-09-09T08:22:20Z",
+      "stars": 457,
+      "forks": 147,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "mhyrr/sketchup-mcp",
+      "catalog_ids": [
+        "sketchup-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/mhyrr/sketchup-mcp",
+      "status": "observed",
+      "canonical_repository": "mhyrr/sketchup-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-04-25T13:23:11Z",
+      "updated_at": "2026-09-10T16:07:56Z",
+      "stars": 415,
+      "forks": 72,
+      "open_issues": 18,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "microsoft/playwright-mcp",
+      "catalog_ids": [
+        "playwright-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/microsoft/playwright-mcp",
+      "status": "observed",
+      "canonical_repository": "microsoft/playwright-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-09T22:51:19Z",
+      "updated_at": "2026-09-10T18:37:48Z",
+      "stars": 36980,
+      "forks": 3131,
+      "open_issues": 11,
+      "default_branch": "main",
+      "license_spdx": "Apache-2.0"
+    },
+    {
+      "repository": "neka-nat/freecad-mcp",
+      "catalog_ids": [
+        "freecad-mcp-nekanat"
+      ],
+      "source_url": "https://api.github.com/repos/neka-nat/freecad-mcp",
+      "status": "observed",
+      "canonical_repository": "neka-nat/freecad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-10T13:58:26Z",
+      "updated_at": "2026-09-10T15:51:29Z",
+      "stars": 2155,
+      "forks": 280,
+      "open_issues": 38,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "petrbroz/aps-mcp-server",
+      "catalog_ids": [
+        "aps-mcp-server-petr"
+      ],
+      "source_url": "https://api.github.com/repos/petrbroz/aps-mcp-server",
+      "status": "observed",
+      "canonical_repository": "petrbroz/aps-mcp-server",
+      "archived": true,
+      "disabled": false,
+      "pushed_at": "2025-10-29T16:09:03Z",
+      "updated_at": "2026-07-20T15:08:41Z",
+      "stars": 41,
+      "forks": 14,
+      "open_issues": 0,
+      "default_branch": "master",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "proximile/FreeCAD-MCP",
+      "catalog_ids": [
+        "freecad-mcp-proximile"
+      ],
+      "source_url": "https://api.github.com/repos/proximile/FreeCAD-MCP",
+      "status": "observed",
+      "canonical_repository": "proximile/FreeCAD-MCP",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-01-26T04:57:05Z",
+      "updated_at": "2026-08-12T10:42:30Z",
+      "stars": 4,
+      "forks": 1,
+      "open_issues": 0,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "puran-water/autocad-mcp",
+      "catalog_ids": [
+        "autocad-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/puran-water/autocad-mcp",
+      "status": "observed",
+      "canonical_repository": "puran-water/autocad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-02-20T17:36:20Z",
+      "updated_at": "2026-09-10T12:20:48Z",
+      "stars": 493,
+      "forks": 78,
+      "open_issues": 6,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "quellant/openscad-mcp",
+      "catalog_ids": [
+        "openscad-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/quellant/openscad-mcp",
+      "status": "unavailable",
+      "http_status": 301
+    },
+    {
+      "repository": "sandraschi/freecad-mcp",
+      "catalog_ids": [
+        "freecad-mcp-sandraschi"
+      ],
+      "source_url": "https://api.github.com/repos/sandraschi/freecad-mcp",
+      "status": "observed",
+      "canonical_repository": "sandraschi/freecad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-06T13:26:28Z",
+      "updated_at": "2026-09-10T16:08:02Z",
+      "stars": 25,
+      "forks": 2,
+      "open_issues": 2,
+      "default_branch": "master",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "sergiudanstan/freecad-mcp",
+      "catalog_ids": [
+        "freecad-mcp-sergiudanstan"
+      ],
+      "source_url": "https://api.github.com/repos/sergiudanstan/freecad-mcp",
+      "status": "observed",
+      "canonical_repository": "sergiudanstan/freecad-mcp",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-03-08T07:37:51Z",
+      "updated_at": "2026-09-01T19:07:15Z",
+      "stars": 7,
+      "forks": 2,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "sockcymbal/autodesk-fusion-mcp-python",
+      "catalog_ids": [
+        "autodesk-fusion-mcp-python"
+      ],
+      "source_url": "https://api.github.com/repos/sockcymbal/autodesk-fusion-mcp-python",
+      "status": "observed",
+      "canonical_repository": "sockcymbal/autodesk-fusion-mcp-python",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2025-05-22T21:17:20Z",
+      "updated_at": "2026-06-17T13:24:41Z",
+      "stars": 19,
+      "forks": 3,
+      "open_issues": 1,
+      "default_branch": "main",
+      "license_spdx": null
+    },
+    {
+      "repository": "spkane/freecad-addon-robust-mcp-server",
+      "catalog_ids": [
+        "freecad-addon-robust"
+      ],
+      "source_url": "https://api.github.com/repos/spkane/freecad-addon-robust-mcp-server",
+      "status": "observed",
+      "canonical_repository": "spkane/freecad-addon-robust-mcp-server",
+      "archived": false,
+      "disabled": false,
+      "pushed_at": "2026-09-07T16:44:42Z",
+      "updated_at": "2026-09-10T17:25:23Z",
+      "stars": 224,
+      "forks": 48,
+      "open_issues": 27,
+      "default_branch": "main",
+      "license_spdx": "MIT"
+    },
+    {
+      "repository": "vespo92/SolidworksMCP-TS",
+      "catalog_ids": [
+        "solidworks-mcp-ts"
+      ],
+      "source_url": "https://api.github.com/repos/vespo92/SolidworksMCP-TS",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "vorobjewsen30-max/ansys-mcp-server",
+      "catalog_ids": [
+        "ansys-mcp-server-community"
+      ],
+      "source_url": "https://api.github.com/repos/vorobjewsen30-max/ansys-mcp-server",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "w1ne/kernelCAD-web",
+      "catalog_ids": [
+        "kernelcad-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/w1ne/kernelCAD-web",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "webworn/openfoam-mcp-server",
+      "catalog_ids": [
+        "openfoam-mcp-webworn"
+      ],
+      "source_url": "https://api.github.com/repos/webworn/openfoam-mcp-server",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "wjc9011/COMSOL_Multiphysics_MCP",
+      "catalog_ids": [
+        "comsol-multiphysics-mcp-wjc9011"
+      ],
+      "source_url": "https://api.github.com/repos/wjc9011/COMSOL_Multiphysics_MCP",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "yangkunyi/creo-mcp",
+      "catalog_ids": [
+        "creo-mcp"
+      ],
+      "source_url": "https://api.github.com/repos/yangkunyi/creo-mcp",
+      "status": "unavailable",
+      "http_status": 403
+    },
+    {
+      "repository": "zh19980811/Easy-MCP-AutoCad",
+      "catalog_ids": [
+        "easy-mcp-autocad"
+      ],
+      "source_url": "https://api.github.com/repos/zh19980811/Easy-MCP-AutoCad",
+      "status": "unavailable",
+      "http_status": 403
+    }
+  ],
+  "limitation": "Stars and repository activity do not establish MCP adoption or Wright qualification.",
+  "complete": false
+}

@@ -1,0 +1,21 @@
+{
+  "server_id": "atlassian-rovo-mcp",
+  "observed_at": "2026-09-10T01:36:00.928132+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://support.atlassian.com/atlassian-ai-gateway/docs/how-to-upgrade-from-atlassian-rovo-mcp-v1-to-atlassian-rovo-mcp-v2/",
+  "source_revision": "remote-current",
+  "transport": "streamable_http",
+  "endpoint": "https://mcp.atlassian.com/v2/mcp?tools=all",
+  "credentials_supplied": false,
+  "status": "blocked",
+  "protocol": "not_reached",
+  "cleanup": "passed",
+  "failure_stage": "initialize_or_tools_list",
+  "observed_error": "unhandled errors in a TaskGroup (1 sub-exception) | Client error '401 Unauthorized' for url 'https://mcp.atlassian.com/v2/mcp?tools=all' For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401",
+  "blocking_requirement": "credentials_or_oauth",
+  "finished_at": "2026-09-10T01:36:03.043385+00:00",
+  "duration_seconds": 2.115
+}

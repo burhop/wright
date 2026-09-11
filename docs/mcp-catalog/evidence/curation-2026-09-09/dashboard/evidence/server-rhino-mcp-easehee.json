@@ -1,0 +1,195 @@
+{
+  "server_id": "rhino-mcp-easehee",
+  "observed_at": "2026-09-09T21:26:33.157786+00:00",
+  "finished_at": "2026-09-09T21:28:24.104750+00:00",
+  "duration_seconds": 110.947,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/easehee/rhino-mcp",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_schema_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "Rhino standalone solid Brep 3DM authoring",
+  "configuration_sha256": "cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18",
+  "installed_items": [
+    "git=2.47.3"
+  ],
+  "source_references": [
+    "rhino-mcp@3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46"
+  ],
+  "prerequisites": [
+    "standalone-rhino3dm-mode"
+  ],
+  "server_info": {
+    "name": "rhino-mcp",
+    "title": null,
+    "version": "1.30.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "c37a6fb99c95eebd7b67fcd56baa8a448d518f2d919a0ba69464448adde9406b",
+  "tool_count": 244,
+  "save_schema": {
+    "$defs": {
+      "_SaveIn": {
+        "properties": {
+          "doc_id": {
+            "default": "active",
+            "description": "Document handle id; 'active' targets the current document.",
+            "title": "Doc Id",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Absolute path; defaults to the previously opened file.",
+            "title": "Path"
+          },
+          "version": {
+            "default": 8,
+            "maximum": 8,
+            "minimum": 2,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "_SaveIn",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "args": {
+        "$ref": "#/$defs/_SaveIn"
+      }
+    },
+    "required": [
+      "args"
+    ],
+    "title": "rhino_saveArguments",
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 19589,
+    "sha256": "62bc7a07d223a6d00c110dd7dc00581bc44d2842b1a88d6deb1f8fc5af94adf6",
+    "header": "3D Geometry File Format       80",
+    "independent_reader": "rhino3dm==8.17.0",
+    "solid": {
+      "object_count": 1,
+      "units_mm": true,
+      "kind": "Brep",
+      "is_valid": true,
+      "is_solid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          8.0,
+          6.0
+        ]
+      ]
+    }
+  },
+  "gateway_outcome": {
+    "bytes": 19607,
+    "sha256": "dc0309c663cf9af8425a201fe08334fb527bfe142ac5d2f5f6bcd596998b1dc2",
+    "header": "3D Geometry File Format       80",
+    "independent_reader": "rhino3dm==8.17.0",
+    "solid": {
+      "object_count": 1,
+      "units_mm": true,
+      "kind": "Brep",
+      "is_valid": true,
+      "is_solid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          8.0,
+          6.0
+        ]
+      ]
+    }
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 19621,
+    "sha256": "7f0c47b1a9b19564a174641ffebb15bd9d96e14821d7fffedabc9e8524b4f6bd",
+    "header": "3D Geometry File Format       80",
+    "independent_reader": "rhino3dm==8.17.0",
+    "solid": {
+      "object_count": 1,
+      "units_mm": true,
+      "kind": "Brep",
+      "is_valid": true,
+      "is_solid": true,
+      "face_count": 6,
+      "edge_count": 12,
+      "bounds": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          8.0,
+          6.0
+        ]
+      ]
+    }
+  },
+  "cleanup": "passed"
+}

@@ -1,0 +1,142 @@
+{
+  "server_id": "brep-mcp",
+  "observed_at": "2026-09-09T21:29:36.923737+00:00",
+  "finished_at": "2026-09-09T21:30:01.460484+00:00",
+  "duration_seconds": 24.537,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/andymai/brepjs",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_error_behavior",
+      "status": "passed"
+    },
+    {
+      "stage": "bounded_timeout_cancellation",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "BREP box STEP and STL export",
+  "configuration_sha256": "676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b",
+  "installed_items": [
+    "brepjs-cad=0.103.0"
+  ],
+  "source_references": [],
+  "prerequisites": [
+    "reviewed-brep-compatibility-launcher"
+  ],
+  "server_info": {
+    "name": "brepjs-cad",
+    "title": null,
+    "version": "0.103.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "b7c2642da0b8ba55de9296f330dd52b1ca04b25d263f103c002d231382c911f4",
+  "tool_count": 2,
+  "export_schema": {
+    "type": "object",
+    "properties": {
+      "code": {
+        "type": "string",
+        "description": "A brepjs .brep.ts module with a default-exported part function."
+      },
+      "outDir": {
+        "type": "string",
+        "description": "Directory to write artifacts into."
+      },
+      "formats": {
+        "type": "object",
+        "description": "Which artifacts to write; omit for all.",
+        "properties": {
+          "step": {
+            "type": "boolean"
+          },
+          "glb": {
+            "type": "boolean"
+          },
+          "stl": {
+            "type": "boolean"
+          }
+        }
+      },
+      "timeoutMs": {
+        "type": "number",
+        "description": "Optional wall-clock budget in ms (default 30000)."
+      }
+    },
+    "required": [
+      "code",
+      "outDir"
+    ]
+  },
+  "outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "4b43c23385a89f866dc969810ee553775b9c9fa7a4cdbdb19c26046e1c16231f"
+  },
+  "gateway_outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "799ca630be258d8385a987f255f3750cfaae408826c29c2a94205ca4735fe203"
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "40f9321e5a649ba8b9ff1463792a6b954ea86028a0332c78dd4f85a105f5809b"
+  },
+  "cleanup": "passed"
+}

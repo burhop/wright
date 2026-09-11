@@ -18,8 +18,8 @@ from tool_registry.engineering_catalog import ENGINEERING_CATALOG
 def test_canonical_catalog_resource_is_schema_valid_and_exact() -> None:
     document = load_catalog_document()
     assert document["format_version"] == 1
-    assert len(document["servers"]) == 70
-    assert len(ENGINEERING_CATALOG) == 70
+    assert len(document["servers"]) == 78
+    assert len(ENGINEERING_CATALOG) == 78
     assert files("tool_registry.catalog").joinpath("schema.json").is_file()
     assert files("tool_registry.catalog").joinpath("engineering-catalog.yaml").is_file()
 
@@ -115,7 +115,21 @@ def test_researched_entries_carry_source_and_runtime_metadata() -> None:
 
     rhino = entries["rhino-mcp-easehee"]
     assert rhino.runtime_requirements.docker == "yes"
-    assert "STEP, IGES, STL, OBJ, IFC, and gbXML workflows" in rhino.capability_summary
+    assert "Standalone 3DM authoring plus OBJ and STL export for mesh objects" in (
+        rhino.capability_summary
+    )
+    assert rhino.launch_env == {"RHINO_MCP_FORCE_MODE": "standalone"}
+    assert "3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46" in " ".join(rhino.command)
+
+    autocad = entries["autocad-mcp-u-c4n"]
+    assert autocad.launch_env["AUTOCAD_MCP_BACKEND"] == "ezdxf"
+    assert autocad.launch_env["TOOL_PROFILE"] == "lean"
+    assert "abc2a82e7128358b9e228a7d9442b37019aa3fe5" in " ".join(autocad.command)
+
+    kicad = entries["kicad-mcp-blwfish"]
+    assert kicad.maturity == "community"
+    assert kicad.runtime_requirements.docker == "yes"
+    assert "bcc6f11de92e5f47cb7dde1d24565f7779b2fbed" in " ".join(kicad.command)
 
     rescale = entries["rescale-mcp-hosted"]
     assert rescale.maturity == "official"

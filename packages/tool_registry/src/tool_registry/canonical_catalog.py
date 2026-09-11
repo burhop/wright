@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 import httpx
 import yaml
 from jsonschema import Draft202012Validator
+from pydantic import ValidationError
 
 from .catalog_loader import catalog_entry_to_mcp_seed
 from .catalog_evidence import CatalogEvidenceError, validate_catalog_evidence
@@ -94,7 +95,10 @@ def _validate_catalog_document(document: Any) -> dict[str, Any]:
                 f"servers/{index}: {error.message}" for error in schema_errors[:3]
             )
             continue
-        entries.append(CatalogEntry.model_validate(raw))
+        try:
+            entries.append(CatalogEntry.model_validate(raw))
+        except ValidationError as error:
+            errors.append(f"servers/{index}: {error}")
     if errors:
         raise CatalogValidationError(
             "Canonical engineering catalog is invalid: " + "; ".join(errors[:5])

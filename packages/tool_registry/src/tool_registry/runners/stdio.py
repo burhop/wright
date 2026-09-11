@@ -3,6 +3,7 @@ import json
 import inspect
 import math
 import os
+import signal
 import subprocess
 import structlog
 import shlex
@@ -19,9 +20,9 @@ tracer = trace.get_tracer(__name__)
 
 
 def _subprocess_kwargs() -> Dict[str, Any]:
-    """Hide stdio tool subprocess consoles on Windows."""
+    """Isolate the child tree on POSIX and hide its console on Windows."""
     if os.name != "nt":
-        return {}
+        return {"start_new_session": True}
 
     creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
     if not creationflags:
@@ -163,8 +164,27 @@ class StdioRunner(BaseRunner):
                     logger.warning(
                         "mcp_server_force_killing", command=redact_command(self.command)
                     )
+                # A server can exit while a solver subprocess that it launched is
+                # still running. POSIX children start in a dedicated process group,
+                # so retire that whole group whenever the runner stops.
+                if os.name != "nt":
+                    try:
+                        os.killpg(self.process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    except PermissionError:
+                        logger.warning(
+                            "mcp_server_process_group_kill_failed",
+                            command=redact_command(self.command),
+                        )
+                elif self.process.returncode is None:
                     try:
                         self.process.kill()
+                    except ProcessLookupError:
+                        pass
+                if self.process.returncode is None:
+                    try:
+                        await self.process.wait()
                     except Exception:
                         pass
                 self.process = None
@@ -223,6 +243,9 @@ class StdioRunner(BaseRunner):
                         self._progress_callbacks.pop(progress_token, None)
             except asyncio.TimeoutError as e:
                 span.record_exception(e)
+                # A timed-out server may still be running the tool or a solver it
+                # spawned. Retire this transport before returning the timeout.
+                await self.stop()
                 raise TimeoutError(
                     f"Call to tool '{tool_name}' timed out after "
                     f"{self.operation_timeout:g} seconds."

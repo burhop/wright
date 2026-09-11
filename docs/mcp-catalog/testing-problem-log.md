@@ -1821,3 +1821,292 @@ Result:
   `external_license_incomplete`. The remote MCP is operational on Windows, but
   Wright registration and gateway qualification remain blocked until the user
   independently completes and records any applicable Autodesk service terms.
+
+## Curation qualification, 8 September 2026
+
+Problem:
+  The new Autodesk help runner passed three direct sessions but failed at the
+  gateway with "server is not active" on Windows and Intel Linux.
+Solution:
+  Installed Wright's normal secret-provider composition in the disposable runner,
+  seeded an inactive installed server, and exercised both GatewayService and the
+  actual api.gateway_stdio MCP endpoint. Corrected catalog transport metadata to
+  Streamable HTTP. No service terms or account settings were accepted or changed.
+Result:
+  Public product discovery passed on native Windows x64 and clean Linux x64
+  containers, including prefixed tools, a real call, and cleanup. Technical
+  qualification does not waive the onboarding planner's publisher-terms step.
+  Evidence: evidence/curation-2026-09-08/autodesk-help-{windows,linux}.json.
+
+Problem:
+  OpenSCAD qualification initially failed because openscad-mcp has no verified
+  PyPI distribution, the base image lacks uvx and Git, and the export recipe used
+  an unsupported format argument.
+Solution:
+  Used the repository's existing reviewed Git commit
+  d438b84fff8af9d646c2bcb76fe58fa4ad387de0 with uv tool run. Installed Git, OpenSCAD,
+  Xvfb and xauth only in each disposable selected-server container. Updated the
+  recipe to the observed output_format and output_path schema. A transient
+  unquoted YAML 'no' value was corrected before final qualification.
+Result:
+  Three direct sessions and both gateway layers exported a 1467-byte STL with
+  dimensions 10 x 8 x 6 mm and volume 480 mm3. Cleanup passed. The resolved
+  FastMCP runtime reported 4.0.3 and emitted logging deprecation warnings on
+  stderr. This qualifies the recorded cube export on Linux x64 containers only;
+  cancellation, recovery, other artifacts and native platforms remain follow-up.
+  Evidence: evidence/curation-2026-09-08/openscad-linux.json.
+
+Problem:
+  The shared Windows Python environment has an incomplete cryptography package
+  and the default pytest temporary directory is inaccessible in the sandbox.
+Solution:
+  Used an isolated Wright Linux runtime with pytest, pytest-asyncio and respx
+  installed only inside the disposable container. No shared Python environment
+  or base image was modified. Native focused checks use a private workspace temp.
+Result:
+  The catalog, signed updates, installation, backward compatibility and API suite
+  passed 119 tests before final qualification records were added; the final
+  evidence-binding and environment checks are recorded in the curation report notes.
+
+Problem:
+  BREP 0.103.0 initialized and listed tools, but its published CommonJS MCP bundle
+  still maps an embedded data URL through `fileURLToPath`, preventing real export.
+Solution:
+  Installed only the pinned npm package in a clean standard Wright Intel Linux
+  container and launched it through Wright's source-controlled compatibility
+  wrapper. The installed third-party files were not edited. Added independent
+  STEP/STL, controlled-error, bounded-timeout, gateway, and cleanup checks.
+Result:
+  Three direct sessions and both Wright gateway layers exported a 40 x 20 x 10
+  mm solid. Parsed STL volume was 8000 mm3 and every STEP file had complete
+  ISO-10303-21 framing. Invalid input left no artifact, and the sandbox stopped
+  an infinite program at its configured timeout. BREP is curated for this Linux
+  configuration. Evidence: evidence/curation-2026-09-08/brep-linux.json.
+
+Problem:
+  A fresh launch of FreeCAD MCP commit
+  63acb305573194a011641ab13ccfb391fe95769f resolved MCP SDK 2.x from its open
+  `mcp[cli]>=1.12.2` dependency and failed before initialization because the
+  source imports `mcp.server.fastmcp` from the 1.x API.
+Solution:
+  Pinned Wright's catalog command and Linux engineering bundles to
+  `mcp[cli]==1.28.1`, preserving the exact upstream server commit. Installed only
+  FreeCAD 1.1.1, its Xvfb/OpenGL prerequisites, and that server in a fresh
+  standard Wright Intel Linux container.
+Result:
+  Three direct sessions and both gateway layers created a 10 x 8 x 6 mm
+  `Part::Box` and exported identical 684-byte STL files independently measured at
+  480 mm3. A controlled exception was returned in tool content, cleanup passed,
+  and the disposable container was removed. FreeCAD is curated only for the
+  pinned Linux configuration; structured error signaling and cancellation remain
+  follow-up. Evidence: evidence/curation-2026-09-08/freecad-linux.json.
+
+Problem:
+  A fresh OASiS install had three integration defects: its open MCP constraint
+  selected incompatible SDK 2.x, its NumPy cap had no Python 3.13 wheel, and its
+  generic top-level `core` package collided with Wright's inherited Python path.
+  The simulation API also supplied no backend timeout.
+Solution:
+  Pinned OASiS commit `7c184d5b7ca5cda6086f3912d1c7923c58307780`, uv-managed
+  Python 3.12, `mcp[cli]==1.28.1`, and `scikit-fem==12.0.2`; cleared the child
+  `PYTHONPATH`; and changed Wright's POSIX stdio runner to place servers in a
+  dedicated process group and retire that group after an operation timeout.
+Result:
+  Three direct sessions and both Wright gateway layers solved the fixed Poisson
+  case. Independent VTU parsing found 2,113 finite nodes on the unit square,
+  zero boundary values, and max phi 0.0735750773202. A controlled invalid script
+  produced no VTU, and a one-second Wright deadline left no solver process.
+  Only this scikit-fem Linux configuration is curated; OASiS's other solver
+  backends remain unqualified. Evidence:
+  evidence/curation-2026-09-08/oasis-linux.json.
+
+Problem:
+  The existing `binabik-ai/mcp-rosbags` entry still leaves MCP and rosbags
+  unpinned. Its setup advertises `mcp-rosbag-server=server:main`, but the built
+  package omits top-level `server.py`; a clean installed launch failed with
+  `ModuleNotFoundError`. Its historical source-checkout path also needs obsolete
+  `rosbags==0.10.10`.
+Solution:
+  Removed that broken distribution from ordinary discovery and qualified the
+  separately packaged `rosbag-mcp==0.2.0` wheel with exact MCP and data-stack
+  pins under uv-managed Python 3.12. The test created a deterministic two-message
+  ROS 2 SQLite bag and inspected both SQLite rows and CDR bytes independently.
+Result:
+  Three direct sessions and both Wright gateway layers retrieved `/chatter`
+  message `hello` at the expected timestamp. Independent inspection confirmed
+  the topic type, both nanosecond timestamps, and `hello`/`world` strings. A
+  missing bag produced a diagnostic in normal tool content and cleanup passed.
+  The replacement is curated only for this Linux known-message workflow; its
+  unavailable source-repository link, maintenance continuity, broader tools,
+  large-bag performance, and repeat adoption remain follow-up. Evidence:
+  evidence/curation-2026-09-08/rosbag-pypi-linux.json.
+
+Problem:
+  The prior Blender record followed a mutable package launch and old source
+  revision. Current Blender 4.3 removed the old STL export option used by the
+  first qualification probe. Wright's injected source `PYTHONPATH` also hid the
+  dependencies of Blender's embedded interpreter, while Debian installs
+  `python3-requests` outside Blender's default module path.
+Solution:
+  Pinned source commit `5f8ddaf6e987c4aa0c3467fcc548838b28f64477`, disabled
+  telemetry, enabled safe mode, used Blender 4.3's `wm.stl_export` signature,
+  cleared Wright's source path for the Blender process, and exposed Debian's
+  declared system-package directory in the test bootstrap. Installed Blender,
+  `python3-requests`, Xvfb, xauth, and procps only in a fresh standard Wright
+  Intel Linux container.
+Result:
+  All 113 upstream tests passed. Three direct MCP sessions and both Wright
+  gateway layers created identical 684-byte 10 x 8 x 6 mm STL files measured at
+  480 mm3. Object inspection confirmed 8 vertices, 12 edges, 6 polygons, and
+  expected bounds. A controlled exception was reported, a dropped add-on bridge
+  was diagnosed and reconnected after restart, and no live Blender/Xvfb process
+  or listening port remained. Defunct children were visible until the disposable
+  container's init exited; the process group and port were inactive, and the
+  container was removed. Optional network services and native desktop hosts
+  remain follow-up. Evidence:
+  evidence/curation-2026-09-08/blender-linux.json.
+
+Problem:
+  The dashboard's former Environment required category mixed live, healthy MCP
+  endpoints awaiting ordinary user authentication with servers needing CAD/CAE
+  hosts, commercial licenses, GPU hardware, or a lab.
+Solution:
+  Added Connect and verify as a distinct portfolio category. It records a current
+  endpoint or server reaching the expected key, login, or OAuth boundary without
+  treating the challenge as proof of post-login behavior. Product release
+  eligibility now requires full qualification.
+Result:
+  The dashboard reports 10 Available servers, 4 Preview servers, 10 Connect and
+  verify candidates, and 26 Lab integrations. Only the 10 fully Qualified
+  servers are release eligible.
+
+Problem:
+  Twenty catalog entries had no useful current execution classification.
+Solution:
+  Ran one isolated attempt per server: seven hosted MCP protocol probes, nine
+  publisher-source/host-boundary probes, pinned stdio preflights for Partuno and
+  Playwright, a digest-pinned read-only Grafana stdio session, and an isolated
+  Fusion desktop command-boundary check. No credentials, paid jobs, external
+  writes, CAD mutations, or hardware operations were used.
+Result:
+  All 20 left Untested: 6 are Connect and verify, 1 Preflight passed, 10
+  Environment required, 1 Failed, and 2 Excluded archive. Exact per-server JSON
+  and the reviewed result manifest are under
+  `evidence/curation-2026-09-09/`.
+
+Problem:
+  The Web OpenSCAD source built and registered 16 tools in Chromium, but the
+  documented extension-free relay exposed only its four management tools and
+  never attached the page. Wright could not call `get_render_status` or reach an
+  STL export through MCP.
+Solution:
+  Pinned source commit `a3acb68578701001f0251459c75716a55aadfa10` and relay
+  5.1.0, installed Git, pnpm, Playwright, and Chromium only in a disposable
+  Wright-derived container, and instrumented both the browser WebMCP surface and
+  stdio relay boundary. No base-image dependency changed.
+Result:
+  The page, 16 browser tools, and OpenSCAD worker passed. Browser-to-relay
+  attachment failed, so the integration remains In progress / Needs repair with
+  exact follow-up and cleanup evidence in
+  `evidence/curation-2026-09-10/webmcp-openscad-linux-x64.json`.
+
+Problem:
+  kernelCAD 0.11.2 could not install because Wright's clean npm policy rejects
+  its GitHub-fetched OpenCascade runtime. A newer release was available, so the
+  old failure no longer established the current package state.
+Solution:
+  Reviewed and attempted the integrity-pinned `kernelcad@0.15.0` tarball in a
+  fresh standard Wright Intel Linux container without weakening npm policy.
+Result:
+  Version 0.15.0 still fails with `EALLOWGIT` on
+  `replicad-opencascadejs#kcad-v0.24.0`; protocol and CAD stages remain
+  unreachable. After the same policy failure in two reviewed releases, the
+  record is Abandoned and points to
+  `evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json`.
+
+Problem:
+  OpenFOAM MCP advertised a successful circular pipe-flow operation, but its
+  published container omitted a build package, failed to load OpenFOAM runtime
+  libraries, and wrote to a hard-coded workspace path unavailable to its
+  non-root user.
+Solution:
+  Pinned source revision `8d14e2031146e4130d4e9f500146379dad19eb49`,
+  applied only the minimum disposable-container repairs, initialized MCP,
+  listed nine tools, ran the documented pipe-flow operation directly and
+  through Wright, and independently inspected the mesh, solver log, and field.
+Result:
+  The solver converged, but `blockMesh` created a 1 x 1 x 0.1 m rectangular
+  block instead of the requested 0.1 m diameter, 1 m long circular pipe. The
+  reported pressure drop came from a theoretical correlation rather than the
+  computed pressure field. This false engineering success closes the current
+  candidate as Abandoned. Evidence:
+  `evidence/curation-2026-09-10/openfoam-mcp-webworn-qualification.json`.
+
+Problem:
+  The sergiudanstan FreeCAD MCP documented a Linux headless fallback, but only
+  its source boundary had been checked.
+Solution:
+  Installed FreeCAD 1.0 in a fresh Wright-derived Intel Linux image, pinned
+  source revision `688b6349f3befdc90702a46d3cb7d369ca239621`, installed its
+  lockfile, built it, initialized MCP, listed tools, and attempted a 10 x 8 x 6
+  mm box.
+Result:
+  MCP listed 165 tools, but the first modeling call failed because the bridge
+  ignored `FREECAD_CMD=/usr/bin/freecadcmd` and spawned a hard-coded macOS
+  Python path. npm audit also reported four high, three moderate, and one low
+  vulnerability. The duplicate candidate is Abandoned; Wright already has a
+  qualified FreeCAD path. Evidence:
+  `evidence/curation-2026-09-10/freecad-mcp-sergiudanstan-qualification.json`.
+## 10 September classification correction: SolidEdgeMCP and SimScale
+
+- **Problem:** SolidEdgeMCP was placed in Excluded archive because its public
+  repository URL returned 404, despite active Wright-owned development and
+  recorded native Solid Edge and Wright integration evidence.
+- **Resolution:** Restored SolidEdgeMCP to Works. Source visibility and
+  redistribution are now recorded as release boundaries instead of runtime
+  failures.
+- **Problem:** The SimScale watchlist entry said no public MCP existed.
+- **Resolution:** Identified the public community SimScale Edge MCP at commit
+  `2fe7421965f1610418202bf4de9fcefa56058437`. Its locked install and all 26
+  tests passed in a clean Wright container, including MCP and loopback HTTP
+  checks. It is In progress pending a real Edge/SimScale session and Wright
+  workflow; it is not an official SimScale server.
+
+## 10 September overnight release disposition
+
+Problem:
+  Twenty-one records remained In progress after their practical clean-runtime
+  boundary was already known. Leaving them yellow made the queue imply active
+  executable work even where the required licensed host was unavailable or a
+  stronger qualified integration already covered the scope.
+Solution:
+  Reconciled every record against the preserved package, protocol, dependency,
+  host, artifact, and gateway observations. Applied the release-facing rule:
+  Requires login only when package and protocol checks passed and the licensed
+  host is the sole execution boundary; otherwise exclude the current candidate
+  with an objective re-entry qualification. No proprietary host, credential,
+  customer system, or paid service was accessed.
+Result:
+  Five records moved to Requires login and sixteen moved to the Excluded
+  archive. In progress is zero. Detailed decisions and re-entry conditions are
+  preserved in
+  `evidence/curation-2026-09-10/overnight-final-dispositions.json`.
+
+## 11 September OpenSCAD source and dependency isolation
+
+Problem:
+  A clean Linux ARM image could not fetch the OpenSCAD MCP commit because the
+  revision was no longer advertised by an upstream branch or tag. The current
+  v0.6.1 release installed, but its MCP 2.x stack conflicted with FreeCAD's
+  pinned MCP 1.x stack when both were installed into the Hermes environment.
+Solution:
+  Updated OpenSCAD to canonical v0.6.1 commit
+  `258c8a4553b62d0d1df1a37aa54c218ef3de5689` and installed it in a dedicated
+  uv tool environment. Shared Python tools are now resolved in one transaction
+  so their constraints cannot overwrite one another sequentially.
+Result:
+  The corrected clean Linux x64 image built. A direct MCP session initialized,
+  listed 12 tools, found OpenSCAD 2021.01, and exported a valid 1467-byte STL.
+  OpenSCAD is In progress until a real product-design workflow renews repeat
+  direct and Wright gateway evidence; this follow-up does not block other
+  workflows.

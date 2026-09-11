@@ -1,0 +1,13 @@
+# Final evidence and delivery metadata review
+
+Independent reviewer: `/root/native_candidate_review`. Reviewed at 2026-09-05 10:11:41Z. **Passed bounded correspondence review** of `7e484be79d0aebd35559302f41d886598f61862c` (tree `469e6cf099d20f137881fa317ee07e691919656c`). The entire-candidate verdict for `28efd6cc` remains the separate, unchanged typed record; this review executed no new gate, test, build or scan.
+
+All four completed-e15 public files match their imported Git bytes, the manifest, and all 14 retained raw evidence hashes. The receipt preserves the actual complete gate exit 0, 170 passed/5 skipped browser cases, 15 Python invocation summaries, warnings, distribution hashes and image scan. It truthfully retains `source_clean_after=false` and separately identifies the later restoration. It makes no new push-gate, H2 CI, published-dev, human or release claim. Public manifest SHA-256: `d05c597ed1cfaf38045fdaad6b72d17bf1a734dfc5165672bc7d675bcec5edff`.
+
+The earlier `f8d31616` import also passed: four OCI files have only Git CRLF-to-LF normalization; seven CodeQL files are byte-identical. The committed correspondence map preserves original hashes and distinguishes them from Git blob hashes. The 29-path suffix from frozen `e15c0749` contains only program evidence/state metadata. Product, tests, tasks, registry, frozen task partition and typed-review bytes are unchanged. Independently verified TR-0121–TR-0123 introducing commits, complete sorted manifests, input/output hashes, canonical state chains and exact review binding.
+
+Keep H2 at **PR_READY** with current CI pending. The coordinator table, lifecycle actions and dev-push runbook require current green CI before merge readiness; the scoped amendment preserves that obligation. After actual terminal H2 CI and current integration/gate checks pass, ordinary readiness/integration evidence may be retained locally while merging the exact tested remote H2 head. No policy requires a bookkeeping-only H3 push. Later local metadata must remain distinct from the CI-tested and merged Git subject.
+
+One nonblocking labeling issue remains: new transition records copy the older repair blocker text, and the checkpoint retains its original frozen reason. The new action reasons and digest-bound review correctly show completed local corrections and pending H2 CI. Clarify this carried-forward text in the next ordinary post-CI receipt; preserve existing records and the current gate subject.
+
+Reproducible read-only probes and detailed results: `review-final-evidence-and-delivery-7e484be7.py`, `final-evidence-and-delivery-7e484be7-review.json`, `review-public-import-f8d31616.py`, and `public-import-f8d31616-review.json` in the same scratch directory.

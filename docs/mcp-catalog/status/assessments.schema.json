@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.engineering/schemas/mcp-status-assessments-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_version", "assessments"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "policy_version": {"const": "engineering-integrations-v2"},
+    "assessments": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9][a-z0-9-]*$"},
+      "additionalProperties": {"$ref": "#/$defs/assessment"}
+    }
+  },
+  "$defs": {
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "substatus", "reason", "reviewed_at", "priority"],
+      "properties": {
+        "category": {"enum": ["works", "preview", "requires_login", "in_progress", "abandoned", "vendor_blocked"]},
+        "substatus": {"enum": ["qualified", "verification_incomplete", "authentication_needed", "planned", "testing", "needs_repair", "environment_needed", "evidence_review", "renewal_due", "closed", "restricted"]},
+        "reason": {"type": "string", "minLength": 20, "maxLength": 2000},
+        "reviewed_at": {"type": "string", "format": "date"},
+        "priority": {"enum": ["low", "normal", "high", "urgent"]},
+        "tests_completed": {"type": "array", "items": {"type": "string", "minLength": 3}, "uniqueItems": true},
+        "tests_remaining": {"type": "array", "items": {"type": "string", "minLength": 3}, "uniqueItems": true},
+        "limitations": {"type": "array", "items": {"type": "string", "minLength": 3}, "uniqueItems": true},
+        "restriction_reference": {"type": "string", "minLength": 8}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"category": {"const": "vendor_blocked"}}, "required": ["category"]},
+          "then": {"required": ["restriction_reference"]}
+        }
+      ]
+    }
+  }
+}

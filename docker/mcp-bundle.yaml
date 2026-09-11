@@ -160,15 +160,16 @@ mcp_servers:
     availability: local_enabled
     mcp_source:
       type: git
-      url: https://github.com/quellant/openscad-mcp
-      ref: d438b84fff8af9d646c2bcb76fe58fa4ad387de0
-      tag: v0.2.0
+      url: https://github.com/robertcoop/openscad-mcp
+      ref: 258c8a4553b62d0d1df1a37aa54c218ef3de5689
+      tag: v0.6.1
       license: MIT
     compliance_profile:
       id: permissive
     install:
-      python_tools:
-        - git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+      isolated_python_tools:
+        - requirement: git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
+          executable: openscad-mcp
     launch:
       command:
         - /opt/wright/mcp/bin/openscad-mcp
@@ -189,7 +190,7 @@ mcp_servers:
       expected_artifacts:
         - model.scad
         - model.stl
-    docs_summary: OpenSCAD MCP server from the validated Quellant source.
+    docs_summary: OpenSCAD MCP server from the validated upstream release.
 
   - id: freecad-mcp
     catalog_id: freecad-mcp-nekanat
@@ -211,6 +212,7 @@ mcp_servers:
           target: /opt/wright/mcp/src/freecad-mcp
       python_tools:
         - git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f
+        - mcp[cli]==1.28.1
       freecad_addon:
         source: /opt/wright/mcp/src/freecad-mcp/addon/FreeCADMCP
     launch:

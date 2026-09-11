@@ -1,0 +1,218 @@
+{
+  "server_id": "autocad-mcp-u-c4n",
+  "observed_at": "2026-09-08T23:36:32.679185+00:00",
+  "wright_revision": "610d2fcd",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/U-C4N/Autocad-MCP",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_path_boundary_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "AutoCAD headless mechanical DXF authoring",
+  "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+  "installed_items": [
+    "autocad-mcp-pro 1.5.1 source abc2a82e7128358b9e228a7d9442b37019aa3fe5; upstream locked suite 1359 passed, 9 skipped, 1 xfailed"
+  ],
+  "source_references": [
+    "https://github.com/U-C4N/Autocad-MCP/tree/abc2a82e7128358b9e228a7d9442b37019aa3fe5"
+  ],
+  "prerequisites": [
+    "git installed only in disposable container; ezdxf backend; lean tool profile; workspace-scoped ALLOWED_PATHS stored through Wright configuration"
+  ],
+  "server_info": {
+    "name": "AutoCAD MCP Pro",
+    "title": null,
+    "version": "3.4.7",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "04d85c86a8331dd9f96b6edf3434fe0cb36735934032fce0fe08a8f369f89bf2",
+  "tool_count": 47,
+  "save_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "path": {
+        "description": "Full destination path including extension",
+        "type": "string"
+      },
+      "format": {
+        "default": "",
+        "description": "Output format override: dwg, dxf, dwt. Default: derive from the path extension (the extension is authoritative).",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 15714,
+    "sha256": "d4392752cc2b9846ac686c1f921dcf851d5b4364a2c5b9270e863e3c1671e6d7",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_outcome": {
+    "bytes": 15713,
+    "sha256": "bb44f12c7bbf83da23b30bc62e1a0132a19ae3a2476e464c62d5fcbc4bdffc0c",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 15713,
+    "sha256": "660300f914db8d1638e192577cb205c54f0a860dddd68ddeb63ca3d5ee6ff04e",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "cleanup": "passed"
+}

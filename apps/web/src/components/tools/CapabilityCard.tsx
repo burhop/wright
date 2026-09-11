@@ -27,6 +27,17 @@ export function CapabilityCard({
         style={{ display: "flex", gap: "var(--space-xs)", flexWrap: "wrap" }}
       >
         <EvidenceBadge value={capability.evidence_class} />
+        {capability.curation && (
+          <span data-testid="capability-curation-status">
+            {
+              {
+                curated: "Curated",
+                follow_up: "Follow up",
+                removed: "Removed from discovery",
+              }[capability.curation.effective_disposition]
+            }
+          </span>
+        )}
         <CompatibilityBadge capability={capability} />
       </div>
       <div>
@@ -36,6 +47,18 @@ export function CapabilityCard({
         </p>
       </div>
       <p style={{ margin: 0, lineHeight: 1.5 }}>{capability.description}</p>
+      {capability.curation && (
+        <p
+          style={{
+            margin: 0,
+            color: "var(--color-text-muted)",
+            fontSize: "0.85rem",
+          }}
+        >
+          {capability.curation.reason}
+          {capability.curation.review_overdue && " Review overdue."}
+        </p>
+      )}
       {firstReason && (
         <p
           data-testid="capability-primary-reason"

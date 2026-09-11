@@ -192,6 +192,7 @@ class McpApiService:
             observation,
             workspace_membership=load_workspace_membership(self.db_path),
             known_catalog_ids=frozenset(known_catalog_server_ids(self.db_path)),
+            now=self.capability_dependencies.clock(),
         )
         now = self.capability_dependencies.clock()
         for view in views:
@@ -690,6 +691,23 @@ class McpApiService:
         return updated
 
     async def install_server(self, server_id: str, session_id: str | None = None):
+        entry = next(
+            (
+                item
+                for item in self._capability_entries()
+                if server_id == item.id or server_id in item.aliases
+            ),
+            None,
+        )
+        if entry is not None and (
+            entry.curation.disposition == "removed"
+            or entry.integration_kind not in {"mcp_server", "webmcp_application"}
+            or entry.hardware_standard != "none"
+        ):
+            raise McpInvalidOperationError(
+                "Catalog installation is unavailable for this reviewed record. "
+                + entry.curation.reason
+            )
         result = await registry_services.install_server(
             self.engine,
             server_id,

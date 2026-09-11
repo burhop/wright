@@ -264,9 +264,9 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
     PROGRAM_PUSH_STATE="$($GATE_PYTHON -c 'import json; print(json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["feature_state"])')"
     PROGRAM_LEASE_STATE="$($GATE_PYTHON -c 'import json; print("closed" if json.load(open("docs/programs/engineering-process-platform/program-state.json", encoding="utf-8"))["active_mutating_lease"] is None else "open")')"
     case "$PROGRAM_PUSH_STATE" in
-      PUSH_AUTHORIZATION_PENDING|PR_READY|DEV_MERGE_READY) ;;
+      PUSH_AUTHORIZATION_PENDING|PR_READY|DEV_MERGE_READY|DEV_INTEGRATED) ;;
       *)
-        echo "Program-control changes may be pushed only after the governed feature reaches PUSH_AUTHORIZATION_PENDING, PR_READY, or DEV_MERGE_READY; found $PROGRAM_PUSH_STATE."
+        echo "Program-control changes may be pushed only after the governed feature reaches PUSH_AUTHORIZATION_PENDING, PR_READY, DEV_MERGE_READY, or DEV_INTEGRATED; found $PROGRAM_PUSH_STATE."
         exit 1
         ;;
     esac

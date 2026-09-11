@@ -16,9 +16,23 @@ servers:
   - scikit-fem
   transport: stdio
   command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780
+  - --with
+  - mcp[cli]==1.28.1
+  - --with
+  - scikit-fem==12.0.2
   - python
   - -m
   - server
+  launch_env:
+    PYVISTA_OFF_SCREEN: 'true'
+    PYTHONPATH: ''
   source_url: https://github.com/Hereon-InstituteMS/OASiS
   image_url: https://avatars.githubusercontent.com/u/139527664?s=64
   locality: local
@@ -32,8 +46,10 @@ servers:
   dependencies:
     system: []
     python:
-    - oasis-mcp
-    - scikit-fem
+    - python==3.12.*
+    - oasis-mcp@7c184d5b7ca5cda6086f3912d1c7923c58307780
+    - mcp[cli]==1.28.1
+    - scikit-fem==12.0.2
     node: []
   aliases:
   - open-fem-agent
@@ -51,7 +67,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation passed with scikit-fem backend
+      notes: Clean Wright Intel Linux qualification passed three direct sessions and both Wright gateway layers with the pinned scikit-fem configuration and independent VTU inspection.
     linux_arm64:
       status: unknown
       tested: false
@@ -73,11 +89,41 @@ servers:
   - execute_code_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: Clean Intel Ubuntu validation passed with source install, 15 MCP tools, scikit-fem discovery, Poisson prepare_simulation, Poisson run_simulation, result.vtu output, and upstream MCP stdio tests 5/5.
-    environment: ubuntu-linux-x64-container
+    message: Clean Wright Intel Linux qualification pinned Python 3.12, OASiS commit 7c184d5b7ca5cda6086f3912d1c7923c58307780, MCP SDK 1.28.1, and scikit-fem 12.0.2. Three direct sessions and both Wright gateway layers solved a unit-square Poisson problem; independent VTU inspection found 2,113 finite solution nodes, zero boundary values, and max phi 0.0735750773202. A controlled solver error produced no result artifact, and Wright killed the complete process group after a one-second timeout.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The pinned scikit-fem configuration passed three fresh direct solves and both Wright gateway layers with independent numerical and artifact checks. The recommendation covers only this Linux backend configuration; the other advertised solvers and repeat user adoption remain unproven.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the pinned Poisson workflow by 8 October; ask upstream to constrain its MCP and Python compatibility, namespace its packages, and accept a tool-level timeout.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e
+      workflow: OASiS scikit-fem Poisson solve
+      source_revision: 7c184d5b7ca5cda6086f3912d1c7923c58307780; Python 3.12.12; MCP SDK 1.28.1; scikit-fem 12.0.2
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/oasis-linux.json
+      evidence_sha256: 3a7a664bfcbb7ccaca97cd2963b32270dd9d7093f2a1b63ab18b1501bf2b158e
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: freecad-mcp-sandraschi
   name: FreeCAD Engineering
   vendor: sandraschi
@@ -168,6 +214,22 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/freecad-engineering-sandraschi.md
   install_blocked_reason: Clean Intel Ubuntu validation found incorrect success reporting and failed STL creation through the MCP server; see follow-up record.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  - simulation
+  - manufacturing
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Current validation reports successful STL creation when no artifact exists. Wright already qualifies the maintained FreeCAD Python Server for the same core modeling workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; reconsider only after an upstream release fixes artifact verification and is materially better than the qualified FreeCAD integration.
+    adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: jarvis-onshape-mcp
   name: Jarvis OnShape MCP
   vendor: ReshefElisha
@@ -214,7 +276,7 @@ servers:
   - onshape-mcp-jarvis
   - Jarvis Onshape MCP
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: tested
   risk_level: medium
   deployment_mode: cloud-saas
   credentials_required:
@@ -252,6 +314,18 @@ servers:
     - ONSHAPE_API_KEY
     - ONSHAPE_API_SECRET
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    adoption: unknown
 - id: onshape-mcp-hedless
   name: Onshape MCP
   vendor: hedless
@@ -329,6 +403,18 @@ servers:
     missing_dependencies:
     - ONSHAPE_ACCESS_KEY
     - ONSHAPE_SECRET_KEY
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    adoption: unknown
 - id: aps-mcp-server-nodejs
   name: Autodesk Platform Services Node MCP
   vendor: Autodesk
@@ -464,6 +550,21 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: no_executable_action
+  engineering_stages:
+  - design
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The publisher repository is archived and no current backend/gateway qualification establishes a supported workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - autodesk-fusion-data-mcp
 - id: aps-mcp-server-petr
   name: Autodesk APS Community MCP
   vendor: petrbroz
@@ -570,6 +671,21 @@ servers:
     - APS_SA_KEY_ID
     - APS_SA_PRIVATE_KEY
   install_blocked_reason: Repository README says this project moved to https://github.com/autodesk-platform-services/aps-mcp-server-nodejs.
+  engineering_stages:
+  - design
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The source is archived and this entry is blocked without a qualified workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - autodesk-fusion-data-mcp
 - id: fusion360-mcp-server
   name: Fusion 360 MCP
   vendor: faust-machines
@@ -650,6 +766,19 @@ servers:
     - Fusion 360 desktop
     - Fusion360MCP add-in
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  - manufacturing
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The maintained package passes its suite, protocol discovery, mock operations, and the missing-add-in diagnostic; licensed Fusion plus its desktop add-in is the sole unavailable execution boundary.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable licensed Fusion, create, inspect, export, and independently verify one part through Wright.
+    adoption: unknown
 - id: autodesk-fusion-mcp-python
   name: Fusion 360 Python API Bridge
   vendor: sockcymbal
@@ -743,6 +872,20 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/autodesk-fusion-mcp-python.md
   install_blocked_reason: MCP backend call fails before APS/Fusion validation because the upstream auth helper uses a removed/invalid httpx BasicAuth.auth_header attribute.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The current package fails its only advertised modeling call before any Autodesk request because it uses a nonexistent httpx BasicAuth API; a better-maintained Fusion bridge remains under evaluation.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; reconsider only after a tested upstream authentication fix and a current Fusion backend workflow are available.
+    adoption: unknown
+    replacement_ids:
+    - fusion360-mcp-server
 - id: revit-mcp
   name: Revit BIM MCP
   vendor: mcp-servers-for-revit
@@ -821,6 +964,19 @@ servers:
     - Revit
     - revit-mcp-plugin
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The repository is archived; the desktop-dependent integration has no current Wright workflow qualification.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids: []
 - id: siemens-element-mcp
   name: Siemens Element Design System
   vendor: Siemens
@@ -896,6 +1052,18 @@ servers:
     missing_dependencies:
     - OPENAI_API_KEY
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Arrange the documented prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    adoption: unknown
 - id: wincc-unified-mcp
   name: Siemens WinCC Unified SCADA
   vendor: Siemens
@@ -971,6 +1139,18 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/wincc-unified-mcp.md
   install_blocked_reason: Official Siemens support artifact for Entry ID 110002407 is login-gated and no public npm/PyPI/GitHub package or Linux command could be verified.
   headless_ok: 'no'
+  engineering_stages:
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: hardware_mcp
+  curation:
+    disposition: removed
+    reason: The official Siemens artifact is account-gated, no public package or executable command is available, and no MCP protocol or WinCC runtime query can be tested for this release.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after authorized access to the official artifact and a disposable WinCC Unified host permits read-only gateway qualification.
+    adoption: unknown
 - id: thingworx-mcp
   name: PTC ThingWorx IoT Platform
   vendor: PTC
@@ -1059,6 +1239,19 @@ servers:
     - THINGWORX_BASE_URL
     - THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN
   headless_ok: 'yes'
+  engineering_stages:
+  - release
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: hardware_mcp
+  curation:
+    disposition: removed
+    reason: PTC documents a product-hosted MCP endpoint, but no accessible disposable ThingWorx deployment exists for endpoint authentication, discovery, resource access, gateway routing, or cleanup.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter when an authorized disposable ThingWorx 10.1+ endpoint can pass read-only resource discovery through Wright.
+    adoption: unknown
 - id: creo-mcp
   name: Creo/CadQuery MCP
   vendor: yangkunyi
@@ -1155,6 +1348,19 @@ servers:
     - VOLCENGINE_AUTHORIZATION
     - VOLCENGINE_SERVICE_RESOURCE_ID
   headless_ok: partial
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The three-tool server can execute local CadQuery code but does not prove Creo automation; it also depends on absent CREOSON and Volcengine credentials and lacks gateway evidence.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a maintained release performs a bounded Creo operation through CREOSON and Wright with an independently inspected artifact.
+      prerequisites in a dedicated test environment; do not treat a missing host as an upstream failure.
+    adoption: unknown
 - id: creoson-mcp-bridge
   name: CREOSON JSON-RPC Server
   vendor: SimplifiedLogic
@@ -1237,6 +1443,18 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/creoson-mcp-bridge.md
   install_blocked_reason: CREOSON is a valid Creo JSON/JLINK bridge but does not implement MCP; it needs an MCP wrapper and a Windows Creo/JLINK host before Wright can expose it as an MCP server.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: capability_alias
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: CREOSON is a Creo JSON/JLINK dependency, not an MCP server; retain its decision and validation evidence in the excluded archive.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if a maintained MCP wrapper is published; use CREOSON as a dependency for qualified Creo MCP integrations.
+    adoption: unknown
 - id: solidworks-mcp-python
   name: SolidWorks Python COM
   vendor: andrewbartels1
@@ -1320,6 +1538,21 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/solidworks-mcp-python.md
   install_blocked_reason: Current declared dependency range resolves to pydantic-ai 2.0.0, which breaks server import before MCP startup.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  - test_quality
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The current declared dependency range cannot import the server, so MCP never initializes. The TypeScript SolidWorks integration has a healthy test suite and reaches the expected host boundary.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the import-failure evidence; reconsider after an upstream dependency fix and live Windows/SolidWorks proof.
+    adoption: unknown
+    replacement_ids:
+    - solidworks-mcp-ts
 - id: solidworks-mcp-ts
   name: SolidWorks TypeScript COM
   vendor: vespo92
@@ -1396,6 +1629,18 @@ servers:
     - working winax native module
   install_blocked_reason: Ubuntu can install, build, test, initialize, and list tools, but every meaningful tool call requires the Windows-only winax/SolidWorks COM backend.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The package builds, passes its suite, initializes, lists tools, and clearly reports the unavailable Windows COM host; licensed SolidWorks is the sole unavailable execution boundary.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable Windows SolidWorks, inspect and modify one bounded part through Wright and verify the export.
+    adoption: unknown
 - id: solidworks-mcp-alisamsam
   name: SolidWorks Document Manager
   vendor: alisamsam
@@ -1476,6 +1721,20 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/solidworks-mcp-alisamsam.md
   install_blocked_reason: The documented requirements file references an unavailable package and unconditionally requires Windows-only COM modules.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The documented requirements include an unavailable package and unconditional Windows COM imports, preventing installation and MCP initialization. The TypeScript SolidWorks integration is the stronger follow-up candidate.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the install-failure evidence; reconsider after corrected dependency metadata and live Windows/SolidWorks proof.
+    adoption: unknown
+    replacement_ids:
+    - solidworks-mcp-ts
 - id: solidworks-api-mcp
   name: SolidWorks API Knowledge Base
   vendor: kilwizac
@@ -1548,6 +1807,19 @@ servers:
     message: Clean Intel Ubuntu validation passed with Bun install, typecheck, 40/40 upstream tests, 6 MCP tools, corpus search, ISldWorks member listing, OpenDoc6 lookup, and OpenDoc6 examples.
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
+  engineering_stages:
+  - requirements
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    adoption: unknown
 - id: freecad-mcp-contextform
   name: FreeCAD Copilot Workbench
   vendor: contextform
@@ -1622,6 +1894,20 @@ servers:
   follow_up_url: docs/mcp-catalog/followups/freecad-copilot-contextform.md
   install_blocked_reason: The MCP bridge reaches a running FreeCAD workbench socket, but the first backend modeling operation hangs with Qt cross-thread errors.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: With FreeCAD installed and connected, the first modeling call hangs on invalid GUI-thread dispatch. Wright already qualifies the maintained FreeCAD Python Server for the same core workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the thread-failure evidence; reconsider only after upstream provides a safe host-thread implementation with artifact proof.
+    adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: freecad-addon-robust
   name: FreeCAD Robust Server
   vendor: spkane
@@ -1715,6 +2001,18 @@ servers:
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Verify the current source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    adoption: unknown
 - id: freecad-mcp-nekanat
   name: FreeCAD Python Server
   vendor: neka-nat
@@ -1729,7 +2027,13 @@ servers:
   - tested
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
+  - --with
+  - mcp[cli]==1.28.1
+  - --from
+  - git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f
   - freecad-mcp
   - --only-text-feedback
   source_url: https://github.com/neka-nat/freecad-mcp
@@ -1785,7 +2089,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box
+      notes: Clean Wright Intel Linux qualification installed FreeCAD 1.1.1, Xvfb, and the pinned FreeCADMCP addon; direct and both Wright gateway paths created a Part::Box and exported an independently verified STL.
     linux_arm64:
       status: likely
       tested: false
@@ -1809,12 +2113,42 @@ servers:
   - machine_control_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: cloned neka-nat/freecad-mcp at commit 63acb305573194a011641ab13ccfb391fe95769f; package `freecad-mcp` version 0.1.18 exposes console script `freecad-mcp`; no upstream tests were present. `uv tool run --from /tmp/freecad-nekanat-src freecad-mcp --help` built and installed the source package and showed `--only-text-feedback` and `--host`. Ubuntu apt had no `freecad` package candidate, so validation installed FreeCAD 1.1.1 revision 20260414 from the Linux x86_64 AppImage, copied `addon/FreeCADMCP` into FreeCAD user Mod paths, wrote localhost-only `freecad_mcp_settings.json` with `auto_start_rpc: true`, and launched FreeCAD under Xvfb. MCP stdio initialized as serverInfo `FreeCADMCP` version 1.28.1 and listed 14 tools. `list_documents` returned `[]`; backend operations passed: `create_document` created `WrightDoc`, `create_object` created `WrightBox` as `Part::Box`, and `get_objects` reported `WrightBox` with volume 480.0.'
-    environment: ubuntu-linux-x64-container
+    message: 'Fresh installation exposed an upstream dependency defect because the server allows incompatible MCP SDK 2.x. Wright now pins MCP SDK 1.28.1 with server commit 63acb305573194a011641ab13ccfb391fe95769f. In a clean standard Wright Intel Linux container with only FreeCAD 1.1.1 and its selected prerequisites, three direct sessions and both Wright gateway layers created a 10 by 8 by 6 mm Part::Box and exported STL files independently measured at 480 mm3. The server listed 14 tools, returned a controlled backend exception in tool content, and disposable cleanup passed.'
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   headless_ok: yes-with-xvfb
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: After pinning the compatible MCP SDK, three fresh direct sessions and both Wright gateway layers created real FreeCAD geometry and exported independently verified STL artifacts in a clean Intel Linux container. The recommendation is limited to this pinned headless configuration; errors are returned in tool content and repeat user adoption is unknown.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the workflow by 8 October; test cancellation and require upstream to constrain its MCP SDK dependency and expose structured tool errors.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: a0a8a5eed836de890672310b8e92926c6d3ee18cb0452f0ce2dae5d210d6bbe8
+      workflow: FreeCAD box creation and STL export
+      source_revision: 63acb305573194a011641ab13ccfb391fe95769f; FreeCAD 1.1.1; MCP SDK 1.28.1
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/freecad-linux.json
+      evidence_sha256: 4f8d760d7991331470c0d0801310d01e3faab73faff47a1a0d332f3de6d6caad
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: caid-mcp
   name: CAiD OCCT Kernel Bridge
   vendor: dreliq9
@@ -1849,7 +2183,7 @@ servers:
   - CAiD OpenCASCADE
   - CAiD OCCT
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: blocked
   risk_level: medium
   deployment_mode: local-only
   platform_support:
@@ -1860,7 +2194,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed libGL, CAiD from GitHub source, and caid-mcp; tests passed and create_box returned validated geometry
+      notes: Historical clean-container validation passed, but the source repository is now unavailable and every PyPI release is yanked.
     linux_arm64:
       status: unknown
       tested: false
@@ -1880,13 +2214,29 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: passed
+    status: blocked
     validated_at: '2026-07-10'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: installed libgl1, CAiD from GitHub commit 840d9ece24499dca4d1cc6b7a7aef2b88a203f14, and caid-mcp from commit bb863e9fe64f951fac9d59daed26254544682bc3; upstream MCP tests passed 72/72, MCP initialized, listed 107 tools, create_box returned ok with volume 480 mm^3, and scene query reported the 10 x 8 x 6 mm box.'
+    message: 'Historical clean Intel Ubuntu validation passed 72 tests and a 480 mm^3 box workflow at source commit bb863e9fe64f951fac9d59daed26254544682bc3. Current qualification is blocked: the repository is unavailable, all five PyPI releases are yanked, and the latest wheel has no console entry point.'
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
+  install_blocked_reason: The source repository is unavailable; all PyPI releases are yanked and the latest wheel has no server entry point.
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The source repository is unavailable, every PyPI release is yanked, and the latest wheel has no server entry point.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve historical evidence; review a maintained successor before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - brep-mcp
+    - freecad-mcp-nekanat
 - id: autocad-mcp
   name: AutoCAD MCP
   vendor: puran-water
@@ -1971,6 +2321,154 @@ servers:
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: This proof-of-concept implementation is superseded by the maintained U-C4N headless drafting integration.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; use autocad-mcp-u-c4n for new headless drafting setups.
+    adoption: unknown
+    replacement_ids:
+    - autocad-mcp-u-c4n
+- id: autocad-mcp-u-c4n
+  name: AutoCAD MCP Pro
+  vendor: U-C4N
+  description: Headless engineering DXF authoring and inspection through ezdxf, with an optional Windows COM backend for live AutoCAD.
+  domains:
+  - drafting
+  - cad
+  tags:
+  - autocad
+  - dxf
+  - ezdxf
+  - drafting
+  - 2D
+  - headless
+  transport: stdio
+  command:
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.11'
+  - --from
+  - git+https://github.com/U-C4N/Autocad-MCP.git@abc2a82e7128358b9e228a7d9442b37019aa3fe5
+  - autocad-mcp
+  source_url: https://github.com/U-C4N/Autocad-MCP
+  repository_url: https://github.com/U-C4N/Autocad-MCP
+  license: MIT
+  auth_model: none
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Lean 47-tool drafting and inspection profile
+  - Headless DXF create, edit, validate, and export workflows
+  - Optional live AutoCAD COM backend on Windows
+  - Scoped filesystem access through ALLOWED_PATHS
+  source_records:
+  - url: https://github.com/U-C4N/Autocad-MCP
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-08'
+    notes: Revision abc2a82e7128358b9e228a7d9442b37019aa3fe5 declares MIT and provides locked dependencies, an ezdxf backend, a 47-tool lean profile, and Windows COM as an optional extra.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: ALLOWED_PATHS
+    label: Allowed drawing paths
+    description: Comma-separated workspace roots that the server may read and write.
+    required: true
+    secret: false
+  launch_env:
+    AUTOCAD_MCP_BACKEND: ezdxf
+    TOOL_PROFILE: lean
+    EZDXF_CALL_TIMEOUT: '120'
+  dependencies:
+    system:
+    - git
+    python:
+    - autocad-mcp-pro from pinned source revision
+    - ezdxf>=1.4,<2
+    node: []
+  aliases:
+  - AutoCAD MCP Pro
+  verification_state: community_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: standard CPU for headless drafting; CAD workstation CPU for optional COM mode
+    gpu: not required for the qualified headless workflow
+    docker: 'yes'
+    notes: The curated scope uses only the credential-free ezdxf backend and lean tool profile.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf is expected to work; live COM automation remains unqualified and requires AutoCAD.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Pinned headless ezdxf source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, file reopen, path-boundary, and independent DXF geometry checks.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Python wheel availability has not been checked on Linux ARM64.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf should be host-independent but is not qualified on macOS.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Headless ezdxf should be host-independent but is not qualified on macOS ARM64.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  validation_result:
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned source passed 1,359 upstream tests plus three direct Wright sessions, the gateway service, and Hermes-facing gateway. Each route wrote the expected 100 x 60 outline, two radius-5 holes, and centerline; out-of-workspace writes were rejected.
+    environment: fresh-standard-linux-x64-container
+    missing_dependencies: []
+  engineering_stages:
+  - design
+  - manufacturing
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The pinned 47-tool lean profile passed a useful headless mechanical DXF workflow through direct MCP and both Wright gateway paths with independent artifact inspection.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the pinned headless qualification by 2026-10-08; evaluate Windows COM mode separately before making any live AutoCAD claim.
+    adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: 18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee
+      workflow: Create a 100 x 60 mechanical DXF with two radius-5 holes and a centerline; save, reopen, reject an out-of-workspace write, and inspect the DXF geometry independently.
+      source_revision: abc2a82e7128358b9e228a7d9442b37019aa3fe5
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/autocad-u-c4n-linux.json
+      evidence_sha256: 7d691ad806e792b089095df67a6141b081d1ab8e76c5b436c51bf3a5ab7a8c46
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: easy-mcp-autocad
   name: Easy-MCP-AutoCAD
   vendor: zh19980811
@@ -1988,6 +2486,13 @@ servers:
   - python
   - server.py
   source_url: https://github.com/zh19980811/Easy-MCP-AutoCad
+  source_records:
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/easy-mcp-autocad-closure.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Current source describes limited maintenance and a learning-oriented, incomplete implementation; Wright already qualifies overlapping AutoCAD capability.
   locality: local
   weight: medium
   env_vars: []
@@ -2005,8 +2510,8 @@ servers:
   aliases:
   - AutoCAD SQLite Exporter
   - Easy-MCP-AutoCad
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   platform_support:
@@ -2047,6 +2552,20 @@ servers:
     - pywin32
     - AutoCAD 2018+
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Current publisher documentation describes a lightly maintained learning project with incomplete tools, duplicating Wright's qualified AutoCAD coverage.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover only after sustained maintenance and complete tools provide a clear advantage over Wright's qualified AutoCAD integration.
+    adoption: unknown
+    replacement_ids:
+    - autocad-mcp-u-c4n
 - id: multicad-mcp
   name: multiCAD COM Bridge
   vendor: AnCode666
@@ -2129,6 +2648,18 @@ servers:
     - pywin32
     - AutoCAD 2018+ or ZWCAD 2020+ or GstarCAD 2020+ or BricsCAD 21+
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The package cannot install or initialize outside Windows COM and duplicates existing AutoCAD coverage without a qualified multi-host advantage.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after one maintained Windows release passes the same read-only/export workflow on at least two claimed CAD hosts.
+    adoption: unknown
 - id: cad-mcp-daobataotie
   name: CAD-MCP Universal COM
   vendor: daobataotie
@@ -2206,10 +2737,22 @@ servers:
     - pywin32
     - AutoCAD/GstarCAD/ZWCAD
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The source has no tests, cannot initialize without Windows COM, and overlaps the qualified AutoCAD path without evidence of a material advantage.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a maintained Windows release passes protocol, read-only inspection, export, gateway, and comparison against the qualified AutoCAD integration.
+    adoption: unknown
 - id: openscad-mcp
   name: OpenSCAD Rendering Engine
-  vendor: quellant
-  description: Background OpenSCAD compilation rendering previews as Base64 arrays or animations.
+  vendor: robertcoop
+  description: OpenSCAD model creation, inspection, rendering, and engineering artifact export.
   domains:
   - code-cad
   tags:
@@ -2220,12 +2763,13 @@ servers:
   transport: stdio
   command:
   - uv
+  - tool
   - run
-  - --with
-  - git+https://github.com/quellant/openscad-mcp.git
+  - --from
+  - git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
   - openscad-mcp
-  source_url: https://github.com/quellant/openscad-mcp
-  repository_url: https://github.com/quellant/openscad-mcp
+  source_url: https://github.com/robertcoop/openscad-mcp
+  repository_url: https://github.com/robertcoop/openscad-mcp
   license: MIT
   auth_model: none
   install_method: source
@@ -2235,11 +2779,11 @@ servers:
   - Headless Linux container workflow with Xvfb and workspace-bound artifact output
   - Validated Linux x64 cube export and Wright/Hermes gateway tool calls
   source_records:
-  - url: https://github.com/quellant/openscad-mcp
+  - url: https://github.com/robertcoop/openscad-mcp
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Upstream MCP server source pinned by the Docker bundle.
+    observed_at: '2026-09-11'
+    notes: Canonical upstream MCP server source pinned to the advertised v0.6.1 release by the Docker bundle.
   - url: docs/mcp-catalog/evidence/openscad-mcp-server-validation.md
     kind: evidence
     primary: false
@@ -2256,16 +2800,17 @@ servers:
   env_vars: []
   dependencies:
     system:
+    - git
     - openscad
     - xvfb
     python:
-    - git+https://github.com/quellant/openscad-mcp.git
+    - git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
     node: []
   aliases:
   - openscad-mcp-server
   - OpenSCAD Geometry
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: might_work
   risk_level: medium
   deployment_mode: local-bridge
   platform_support:
@@ -2275,8 +2820,8 @@ servers:
       notes: OpenSCAD host available on Windows; Wright validation not run there
     linux_x64:
       status: 'yes'
-      tested: true
-      notes: clean Intel Ubuntu container installed OpenSCAD/Xvfb only for this MCP, exported STL, and verified Wright/Hermes gateway tool calls
+      tested: false
+      notes: v0.6.1 installed in an isolated image environment and exported a 1467-byte STL directly; repeat and Wright gateway qualification remain to be renewed
     linux_arm64:
       status: likely
       tested: false
@@ -2294,13 +2839,28 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: passed
-    validated_at: '2026-07-10'
-    evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed: installed OpenSCAD/Xvfb only for this MCP, initialized openscad-mcp, listed 15 tools, check_openscad reported OpenSCAD 2021.01, export_model produced a 1449-byte cube STL, and the Wright/Hermes gateway exposed and called the prefixed tools.'
+    status: not_tested
+    validated_at: '2026-09-11'
+    evidence_status: partial
+    message: 'The current v0.6.1 release installed in an isolated image environment, initialized, listed 12 tools, found OpenSCAD 2021.01, and exported an independently checked 1467-byte cube STL. Repeat sessions and the Wright gateway were intentionally deferred to workflow validation.'
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The current advertised v0.6.1 release passed a direct MCP cube export after isolation from FreeCAD's incompatible SDK, but its repeat and Wright gateway qualification has not been renewed.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-11'
+    review_due: '2026-10-11'
+    next_action: Use the next real OpenSCAD product-design workflow to renew repeat direct and Wright gateway evidence without blocking other workflow work.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications: []
 - id: trikos529-openscad
   name: OpenSCAD Code Linter
   vendor: trikos529
@@ -2358,6 +2918,20 @@ servers:
     missing_dependencies: []
   follow_up_url: docs/mcp-catalog/followups/openscad-linter-trikos529.md
   install_blocked_reason: Exact MCP source URL/package is not verified; current URL is only a topic/reference page and the configured package name does not resolve.
+  engineering_stages:
+  - design
+  integration_kind: capability_alias
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The listing points to a GitHub topic instead of a verified implementation and failed prior validation.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - openscad-mcp
 - id: blender-mcp
   name: Blender 3D Mesh Copilot
   vendor: ahujasid
@@ -2373,11 +2947,33 @@ servers:
   - xvfb
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
   - --python
   - '3.11'
+  - --from
+  - git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477
   - blender-mcp
+  launch_env:
+    BLENDER_MCP_DISABLE_TELEMETRY: 'true'
+    BLENDER_MCP_SAFE_MODE: 'true'
   source_url: https://github.com/ahujasid/blender-mcp
+  repository_url: https://github.com/ahujasid/blender-mcp
+  license: MIT
+  auth_model: local-host
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Blender scene and object inspection through a localhost add-on bridge
+  - Polygonal mesh creation and workspace-bound STL export
+  - Optional network asset and generation services excluded from core qualification
+  source_records:
+  - url: https://github.com/ahujasid/blender-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-09-08'
+    notes: Current 1.9.1 source has a pinned MCP 1.x constraint, upstream tests, explicit telemetry disable controls, and an opt-in safe mode for code execution.
   locality: local
   weight: medium
   env_vars:
@@ -2402,7 +2998,7 @@ servers:
     - python3-requests
     - xvfb
     python:
-    - blender-mcp
+    - git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477
     node: []
   aliases:
   - blender-mcp-ahujasid
@@ -2419,7 +3015,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: clean Intel Ubuntu validation installed Blender 4.0.2, python3-requests, and Xvfb; add-on socket started and MCP executed read/write Blender operations
+      notes: clean Wright Linux validation pinned source commit 5f8ddaf6e987c4aa0c3467fcc548838b28f64477, installed Blender 4.3.2 with python3-requests and Xvfb, and passed direct and gateway geometry workflows
     linux_arm64:
       status: unknown
       tested: false
@@ -2438,15 +3034,46 @@ servers:
   approval_gates:
   - workspace_write_approval
   - machine_control_approval
+  - execute_code_approval
   - network_asset_approval
   validation_result:
     status: passed
-    validated_at: '2026-07-10'
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: Clean Intel Ubuntu validation cloned commit 6e99eb5a442b83766a5796975ec7bb5bfc791341, found no upstream tests, installed Blender 4.0.2, python3-requests, Xvfb, and uvx 0.11.25 only for this MCP, and launched the add-on under Xvfb. Without the add-on socket, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, and get_scene_info/execute_blender_code returned the expected diagnostic that the Blender add-on is not running. With the add-on socket live, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, get_scene_info returned the default Cube/Light/Camera scene, execute_blender_code created WrightValidationCube at (1.0, 2.0, 3.0), and get_object_info verified the cube mesh with 8 vertices, 12 edges, and 6 polygons.
-    environment: ubuntu-linux-x64-container
+    message: Exact source commit 5f8ddaf6e987c4aa0c3467fcc548838b28f64477 passed all 113 upstream tests, then initialized three fresh direct MCP sessions plus Wright GatewayService and the Hermes-facing gateway in a clean Linux container. Every path created the same 10x8x6 mm STL with independently verified 480 mm3 volume; object inspection confirmed 8 vertices, 12 edges, 6 polygons, and expected bounds. A controlled backend error was surfaced, a dropped add-on connection was diagnosed, the MCP reconnected after restart, and the Blender/Xvfb process group and port were cleaned up.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   headless_ok: yes-with-xvfb
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The exact source revision passed its 113-test upstream suite, three fresh direct MCP sessions, both Wright gateway layers, independent mesh and STL checks, controlled-error handling, add-on restart recovery, and cleanup. The recommendation is limited to Linux, local polygonal mesh inspection and workspace-bound STL export; optional network services and repeat user adoption remain unproven.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the pinned local-mesh workflow by 8 October; test Windows and macOS hosts, cancellation, and native add-on installation before broadening the recommendation.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: d86d79c78bc685db520975d0ac644d51634dda834bab97e0e66a8fe5546b9a38
+      workflow: Blender dimensioned box STL export
+      source_revision: 5f8ddaf6e987c4aa0c3467fcc548838b28f64477; package 1.9.1; BlenderMCP 1.30.0; Blender 4.3.2
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/blender-linux.json
+      evidence_sha256: b4d3a088ec0dad4c1a2730732cb02753070bf48a07ccf1b9634e836834f75a40
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: rhino-mcp
   name: Rhino NURBS C# MCP
   vendor: jingcheng-chen
@@ -2526,6 +3153,18 @@ servers:
     - RhinoMCP plugin
     - mcpstart bridge on 127.0.0.1:1999
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The package passes its suite and protocol discovery and consistently reports the absent Rhino bridge; licensed Rhino 8 plus its plugin is the sole unavailable execution boundary.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: On disposable Rhino 8, inspect and edit one object through Wright and verify the saved model independently.
+    adoption: unknown
 - id: sketchup-mcp
   name: SketchUp Ruby Server
   vendor: mhyrr
@@ -2538,6 +3177,7 @@ servers:
   - python
   - local
   - dependency-missing
+  - needs-repair
   transport: stdio
   command:
   - uvx
@@ -2597,6 +3237,18 @@ servers:
     - SketchUp
     - SketchupMCP extension server on port 9876
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The server initializes, but its repository has no usable automated suite and the advertised get_scene_info tool is absent from discovery; a missing desktop extension is not the only blocker.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a release reconciles documentation/tool schemas, adds tests, and passes a bounded desktop scene workflow through Wright.
+    adoption: unknown
 - id: zoo-mcp
   name: Zoo.dev Cloud CAD API
   vendor: KittyCAD
@@ -2615,7 +3267,7 @@ servers:
   command:
   - uvx
   - zoo-mcp
-  source_url: https://github.com/KittyCAD/zoo-mcp
+  source_url: https://github.com/KittyCAD/mcp
   locality: remote
   weight: light
   env_vars:
@@ -2670,6 +3322,18 @@ servers:
     missing_dependencies:
     - ZOO_API_TOKEN
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: A host application, account, license, or dependency is needed before Wright can verify the workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: The publisher moved the repository to KittyCAD/mcp; pin a current release and qualify using a dedicated Zoo account.
+    adoption: unknown
 - id: webmcp-openscad
   name: Web OpenSCAD
   vendor: jherr
@@ -2688,6 +3352,19 @@ servers:
   - -y
   - '@mcp-b/webmcp-local-relay@latest'
   source_url: https://github.com/jherr/webmcp-openscad
+  source_records:
+  - url: https://github.com/jherr/webmcp-openscad
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Commit a3acb68578701001f0251459c75716a55aadfa10 documents the browser surface and local relay path.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/webmcp-openscad-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: The browser registered all 16 tools and started the OpenSCAD worker, but relay 5.1.0 exposed only four management tools and did not attach the page.
   locality: local
   weight: light
   env_vars: []
@@ -2703,7 +3380,7 @@ servers:
   - webmcp-openscad-jherr
   - scad-webmcp
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: non_working
   risk_level: medium
   deployment_mode: browser-bridge
   platform_support:
@@ -2712,9 +3389,9 @@ servers:
       tested: false
       notes: requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge
     linux_x64:
-      status: host-dependent
+      status: 'no'
       tested: true
-      notes: clean Intel Ubuntu validation installed Node 22 and pnpm, built the app, initialized the local relay MCP, and confirmed page tools require a connected browser source
+      notes: The page registered 16 tools in Chromium, but the documented local relay did not attach the browser source or expose those tools to MCP.
     linux_arm64:
       status: unknown
       tested: false
@@ -2733,14 +3410,28 @@ servers:
   approval_gates:
   - workspace_write_approval
   validation_result:
-    status: dependency_missing
-    message: 'Clean Intel Ubuntu validation cloned jherr/webmcp-openscad at commit a3acb68578701001f0251459c75716a55aadfa10. Ubuntu''s default Node 18 could not run pnpm 11.9.0, so validation installed Node 22.23.1 with `n` after adding curl. `pnpm install --frozen-lockfile` succeeded with pnpm 11.9.0. `pnpm test` did not find any test files and exited 1, with additional Vitest/Vite shutdown noise `ReferenceError: module is not defined`; this repo does not currently provide a usable upstream test suite. `pnpm build` succeeded for the TanStack/Nitro app. Serving `node .output/server/index.mjs` produced a 7156-byte HTML page titled `scad-webmcp · agent-driven parametric CAD` that embeds `@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js`. MCP stdio probing `npx -y @mcp-b/webmcp-local-relay@latest` initialized serverInfo `webmcp-local-relay` version 0.0.0, listed 4 relay tools, and calls to `webmcp_list_sources` and `webmcp_list_tools` returned zero sources/tools because no browser page
-      was connected. Full validation of the advertised 16 OpenSCAD browser tools requires a browser tab connected through MCP-B or native WebMCP.'
-    environment: ubuntu-linux-x64-container
+    status: failed
+    message: Fresh Intel Linux validation built the pinned page, loaded it in Chromium, observed all 16 tools on navigator.modelContext, and observed the OpenSCAD worker mount 56 BOSL2 files. The pinned relay 5.1.0 initialized and listed four management tools, but it did not attach the page or expose get_render_status to MCP or Wright GatewayService.
+    environment: clean-wright-derived-linux-x64-container
     missing_dependencies:
-    - browser tab running scad-webmcp
-    - MCP-B extension or native WebMCP bridge
+    - functioning browser-to-relay attachment
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  follow_up_url: docs/mcp-catalog/followups/webmcp-openscad.md
+  install_blocked_reason: The browser WebMCP surface registers correctly, but the documented local relay path does not attach the page or project its CAD tools to MCP clients.
   headless_ok: 'no'
+  engineering_stages:
+  - design
+  integration_kind: webmcp_application
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The browser application and worker run, but the documented relay does not attach the page or expose its 16 OpenSCAD tools to MCP clients, so the current integration path is unusable.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a supported relay release exposes page tools and passes STL geometry, gateway, failure, and cleanup checks.
+    adoption: unknown
 - id: web3d-mcp
   name: React Three Fiber Web3D
   vendor: dev261004
@@ -2808,6 +3499,18 @@ servers:
     environment: ubuntu-linux-x64-container
     missing_dependencies: []
   headless_ok: 'yes'
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Historical success includes dependency vulnerabilities and a Node version mismatch that need current review.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Assess current dependency advisories and supported Node version before repeating artifact and gateway probes.
+    adoption: unknown
 - id: autodesk-product-help-mcp
   name: Autodesk Product Help MCP
   vendor: help.autodesk.com
@@ -2816,7 +3519,7 @@ servers:
   - utilities
   tags:
   - canonical-migration
-  transport: sse
+  transport: streamable_http
   command: https://developer.api.autodesk.com/knowledge/public/v1/mcp
   source_url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html
   repository_url: null
@@ -2851,7 +3554,7 @@ servers:
     cpu: standard CPU
     gpu: not required
     docker: 'yes'
-    notes: Remote public MCP endpoint; Docker image needs only MCP HTTP client support.
+    notes: Remote public MCP endpoint; native or container Wright requires MCP HTTP client support.
   platform_support:
     windows_11_x64:
       status: 'yes'
@@ -2924,6 +3627,53 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: isolated_root_removed
+  engineering_stages:
+  - requirements
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: Three fresh direct MCP sessions and the Hermes-facing Wright gateway passed the recorded workflow. Recommendation applies only
+      to the listed environments; repeat user adoption is unknown.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the scoped workflow by 8 October; test cancellation, recovery, and additional tasks before broadening the recommendation.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 5bcfe938ca239b10cb6067ce975185b99ca286cb72fb9ac0d948021f56f106bf
+      workflow: Autodesk help product discovery
+      source_revision: service 3.2.0; schema 8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-help-linux.json
+      evidence_sha256: 6aaa435055430675864953d6c7a3cafebfe77f8470ccda375fbbb78b3db98d4d
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
+    - platform: windows_11_x64
+      environment: windows-native-disposable
+      distribution_mode: native
+      configuration_sha256: 5bcfe938ca239b10cb6067ce975185b99ca286cb72fb9ac0d948021f56f106bf
+      workflow: Autodesk help product discovery
+      source_revision: service 3.2.0; schema 8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61
+      wright_revision: 1ada5de0-plus-curation
+      verified_at: '2026-09-08'
+      expires_at: '2026-10-08'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-08/autodesk-help-windows.json
+      evidence_sha256: bac35d609c99dd1d350571b9a3951d990ed50308c622fd1f4ef30aa2606ebd0e
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: freecad-booleans-lucygoodchild
   name: FreeCAD Booleans
   vendor: github.com
@@ -2987,8 +3737,145 @@ servers:
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: null
-- id: rosbag-mcp-binabik
+  engineering_stages:
+  - design
+  integration_kind: capability_alias
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Overlapping FreeCAD capability with recorded protocol stdout contamination.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
+    - freecad-addon-robust
+- id: rosbag-mcp-pypi
   name: ROSBag MCP
+  vendor: Junhyeok Choi
+  description: Packaged MCP server for offline ROS 1, ROS 2 SQLite, and MCAP inspection, message queries, analysis, filtering, and export.
+  domains:
+  - robotics
+  - engineering-data
+  tags:
+  - open-source
+  - local
+  - rosbag
+  - test-data
+  transport: stdio
+  command:
+  - uv
+  - run
+  - --isolated
+  - --python
+  - '3.12'
+  - --with
+  - rosbag-mcp==0.2.0
+  - --with
+  - mcp==1.28.1
+  - --with
+  - rosbags==0.11.5
+  - --with
+  - numpy==2.5.3
+  - --with
+  - matplotlib==3.11.1
+  - --with
+  - pillow==12.3.0
+  - rosbag-mcp
+  launch_env:
+    PYTHONPATH: ''
+  source_url: https://pypi.org/project/rosbag-mcp/
+  package_url: https://pypi.org/project/rosbag-mcp/0.2.0/
+  image_url: https://pypi.org/static/images/logo-small.8998e9d1.svg
+  locality: local
+  weight: medium
+  env_vars: []
+  dependencies:
+    system: []
+    python:
+    - python==3.12.*
+    - rosbag-mcp==0.2.0
+    - mcp==1.28.1
+    - rosbags==0.11.5
+    - numpy==2.5.3
+    - matplotlib==3.11.1
+    - pillow==12.3.0
+    node: []
+  aliases:
+  - rosbag-mcp
+  verification_state: community_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-only
+  platform_support:
+    windows_11_x64:
+      status: unknown
+      tested: false
+      notes: Package publishes a universal wheel, but Wright has not qualified Windows path and artifact behavior.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Clean Wright Intel Linux qualification passed three direct known-message queries and both Wright gateway layers with independent SQLite and CDR inspection.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Python wheel availability and ROS bag behavior are not tested.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Universal wheel is published; Wright qualification is pending.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Universal wheel is published; Wright qualification is pending.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_read_approval
+  - workspace_write_approval
+  validation_result:
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Clean Wright Intel Linux qualification installed the exact rosbag-mcp 0.2.0 wheel and pinned MCP SDK 1.28.1 plus its data stack. Three direct sessions and both Wright gateway layers retrieved a known std_msgs/msg/String from a generated ROS 2 bag. Independent SQLite and CDR inspection confirmed the topic, type, two timestamps, and hello/world payloads. A missing bag was reported in tool content and disposable cleanup passed.
+    environment: clean-wright-linux-x64-container
+    missing_dependencies: []
+  engineering_stages:
+  - test_quality
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The exact PyPI package and data-stack pins passed three fresh direct queries and both Wright gateway layers against an independently inspected ROS 2 bag. The recommendation is limited to Linux and known-message retrieval; repeat user adoption and broader analysis/export tools remain unproven.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the known-message workflow by 8 October; test large-bag performance and require structured error signaling before qualifying write/export tools.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 19d05ad7f64df544ef24f19dab69dc09c196e5a4517f36a8c83bac1b63c59649
+      workflow: ROS 2 known-message retrieval
+      source_revision: rosbag-mcp 0.2.0 wheel 92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0; Python 3.12.12; MCP SDK 1.28.1; rosbags 0.11.5
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/rosbag-pypi-linux.json
+      evidence_sha256: 780ea67288e2e909ee351393af112c872e49e4dfee9276967e24da669287a5db
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
+- id: rosbag-mcp-binabik
+  name: ROSBag MCP (historical source)
   vendor: github.com
   description: Community MCP for offline ROS bag file inspection and robotics data analysis. Optional ROS 2 extras may be needed for some workflows.
   domains:
@@ -3010,7 +3897,7 @@ servers:
     node: []
   aliases: []
   verification_state: community_mcp
-  installability_tier: tested
+  installability_tier: non_working
   risk_level: low
   deployment_mode: local-only
   platform_support:
@@ -3040,14 +3927,29 @@ servers:
   approval_gates:
   - workspace_read_approval
   validation_result:
-    status: passed
-    validated_at: '2026-07-10'
+    status: failed
+    validated_at: '2026-09-08'
     evidence_status: recorded
-    message: 'Clean Intel Ubuntu validation passed with caveat: cloned binabik-ai/mcp-rosbags at 9b6b3b7a7b10d2ef004c1b50d38395d07e0b47b6, installed `requirements.txt`, then pinned `rosbags==0.10.10` because the current unpinned rosbags release no longer exports `deserialize_cdr`. The source command `python src/server.py` initialized MCP serverInfo `rosbag-memory` 1.28.1, listed 15 tools, discovered generated ROS 2 bag `wright_chatter`, `bag_info` reported `/chatter` with 2 messages over 1 second, and `get_message_at_time` returned `std_msgs/msg/String` data `hello`.'
-    environment: ubuntu-linux-x64-container
+    message: Fresh packaging review confirmed that commit 9b6b3b7a7b10d2ef004c1b50d38395d07e0b47b6 still pins neither MCP nor rosbags. Its setup.py advertises mcp-rosbag-server=server:main but omits top-level server.py from the built package, so a clean installed launch fails with ModuleNotFoundError. Historical source-checkout operation remains recorded, but the distributable is not dependable.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: null
+  engineering_stages:
+  - test_quality
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The package omits its advertised server module and its unpinned dependencies resolve incompatible APIs. A separately packaged replacement passed the same known-message workflow.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed source checkouts and historical evidence; use rosbag-mcp-pypi unless upstream repairs and releases the package.
+    adoption: unknown
+    replacement_ids:
+    - rosbag-mcp-pypi
 - id: calculix-simulation
   name: CalculiX Simulation
   vendor: github.com
@@ -3109,6 +4011,20 @@ servers:
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: No verified standalone CalculiX MCP source/package; track as a FreeCAD FEM capability alias or wrapper candidate.
+  engineering_stages:
+  - simulation
+  integration_kind: capability_alias
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: No standalone MCP source was established; the recorded source returns 404. CalculiX remains a solver capability.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - oasis-open-fem-agent
 - id: mcp-ui-shopify
   name: MCP-UI (Shopify)
   vendor: github.com
@@ -3165,6 +4081,19 @@ servers:
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: Tracked as UI infrastructure, not an engineering MCP server.
+  engineering_stages:
+  - requirements
+  integration_kind: protocol_reference
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: MCP Apps/UI infrastructure is not a standalone engineering MCP server.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids: []
 - id: siemens-xcelerator-developer-portal-mcp
   name: Siemens Xcelerator Developer Portal MCP
   vendor: developer.siemens.com
@@ -3185,8 +4114,8 @@ servers:
     python: []
     node: []
   aliases: []
-  verification_state: verified_docs_mcp
-  installability_tier: blocked
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: read-only
   deployment_mode: docs-only
   platform_support:
@@ -3215,12 +4144,34 @@ servers:
   default_enabled: true
   approval_gates: []
   validation_result:
-    status: not_tested
-    message: Not yet validated in this environment
-    environment: null
-    missing_dependencies: []
+    status: failed
+    message: The catalog points to the Siemens developer web portal, which terminated an MCP session and is not an MCP endpoint.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - Publisher-documented MCP endpoint
+    validated_at: '2026-09-09'
+    evidence_status: recorded
   follow_up_url: null
   install_blocked_reason: Exact client configuration URL still needs to be captured from Siemens docs.
+  engineering_stages:
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The catalog points to the Siemens developer web portal, which terminated an MCP session and is not an MCP endpoint.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/siemens-xcelerator-developer-portal-mcp-remote.json. Correct the endpoint or source identity before another execution attempt.
+    adoption: unknown
+  source_records:
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/siemens-xcelerator-developer-portal-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 068609a3dbd277067800b958772531f46211c48b404b830b7c5f8fa1e2e27d57; portfolio category: Excluded archive.'
 - id: webmcp-standard
   name: WebMCP Standard
   vendor: github.com
@@ -3277,6 +4228,19 @@ servers:
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: Tracked as a web-agent standard, not an engineering MCP server.
+  engineering_stages:
+  - requirements
+  integration_kind: protocol_reference
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: WebMCP is a browser standard; its former cookbook link is not an installable server.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids: []
 - id: kicad-mcp-lamaalrajih
   name: KiCad MCP
   vendor: github.com
@@ -3343,6 +4307,153 @@ servers:
     - KiCad 9.0+
   follow_up_url: docs/mcp-catalog/followups/kicad-mcp-lamaalrajih.md
   install_blocked_reason: Most advertised tools require a `ctx` argument in the MCP input schema and fail normal client validation; see follow-up record.
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Eleven of sixteen advertised tools expose an unusable required context argument and normal MCP clients cannot call them. Wright already qualifies the blwfish KiCad integration.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the schema-failure evidence; reconsider after upstream removes the client-visible context argument and demonstrates KiCad 9 backend calls.
+    adoption: unknown
+    replacement_ids:
+    - kicad-mcp-blwfish
+- id: kicad-mcp-blwfish
+  name: KiCad MCP by blwfish
+  vendor: blwfish
+  description: Community KiCad electronics-design MCP with consolidated tools for schematic capture, PCB layout, libraries, audit, DRC, autorouting, and manufacturing export.
+  domains:
+  - ecad
+  - pcb
+  - manufacturing
+  tags:
+  - open-source
+  - kicad
+  - electronics
+  - pcb
+  - manufacturing
+  transport: stdio
+  command:
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.13'
+  - --from
+  - git+https://github.com/blwfish/kicad-mcp.git@bcc6f11de92e5f47cb7dde1d24565f7779b2fbed
+  - kicad-mcp
+  source_url: https://github.com/blwfish/kicad-mcp
+  repository_url: https://github.com/blwfish/kicad-mcp
+  license: MIT
+  auth_model: none
+  install_method: source
+  maturity: community
+  capability_summary:
+  - Seventeen consolidated tools spanning schematic, PCB, library, audit, DRC, routing, and export operations
+  - KiCad-native PCB creation, footprint placement, board inspection, and Gerber generation
+  - Locked Python dependency graph and real KiCad integration tests
+  - Optional FreeRouter workflow requires Java and a separately installed router JAR
+  - DRC is excluded from the candidate scope because release 0.13.0 writes a history message to stdout and corrupts the MCP stream
+  source_records:
+  - url: https://github.com/blwfish/kicad-mcp
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-08'
+    notes: Release 0.13.0 at bcc6f11de92e5f47cb7dde1d24565f7779b2fbed provides a locked Python environment, 17-tool MCP surface, and real KiCad integration tests.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - KiCad 9 with pcbnew Python bindings
+    - KiCad symbol libraries
+    - KiCad footprint libraries
+    - git
+    python:
+    - kicad-mcp 0.13.0 from pinned source revision
+    node: []
+  aliases:
+  - blwfish/kicad-mcp
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: engineering workstation CPU
+    gpu: not required for the candidate headless PCB workflow
+    docker: 'yes'
+    notes: Qualification installs KiCad and its standard symbol and footprint libraries only inside a disposable container. DRC, Java, and FreeRouter are outside the candidate scope.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Upstream documents Windows support; Wright qualification is pending.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Pinned source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, native PCB reopen, audit, manufacturing export, and independent KiCad/Gerber checks. DRC remains excluded because it contaminates stdout.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: KiCad and locked Python dependency availability have not been checked.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Upstream is developed for macOS; Wright qualification is pending.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Upstream is developed for macOS ARM64; Wright qualification is pending.
+  host_software_required:
+  - KiCad 9
+  - KiCad symbol and footprint libraries
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned release passed 2,503 upstream tests, seven real KiCad 9 integration tests, three direct Wright sessions, the gateway service, and Hermes-facing gateway. Each Wright route created and reopened a 40 x 30 mm native PCB with a searched two-pad footprint, audited it, and produced an independently checked fabrication archive. DRC remains excluded because it prints to stdout and corrupts the MCP stream.
+    environment: fresh-standard-linux-x64-container
+    missing_dependencies: []
+  engineering_stages:
+  - design
+  - manufacturing
+  - test_quality
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The pinned release passed a useful native PCB authoring, audit, and fabrication-export workflow through direct MCP and both Wright gateway paths. The recommendation explicitly excludes DRC and FreeRouter.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the pinned PCB and fabrication-export qualification by 2026-10-08; recheck the DRC stdout defect and qualify FreeRouter separately before expanding scope.
+    adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: d9eae6b7b548648cd2d0af1a56d638698965241dd4fd432d04c8d92e2f72dffc
+      workflow: Search the installed footprint libraries, create a 40 x 30 mm native PCB, place a two-pad resistor at 20 x 15 mm, reopen and audit the board, reject a missing board, export Gerbers and drill data, and independently inspect the KiCad file and fabrication archive.
+      source_revision: bcc6f11de92e5f47cb7dde1d24565f7779b2fbed
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/kicad-blwfish-linux.json
+      evidence_sha256: 16edf15a0905f255adc1c6cd6e88829dfc7298d6da9a4a0842b36c57f5df8ca9
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: brep-mcp
   name: BREP MCP
   vendor: andymai
@@ -3389,7 +4500,7 @@ servers:
     node:
     - brepjs-cad
   verification_state: verified_mcp
-  installability_tier: tested
+  installability_tier: might_work
   risk_level: medium
   deployment_mode: local-bundled
   runtime_requirements:
@@ -3405,7 +4516,7 @@ servers:
     linux_x64:
       status: 'yes'
       tested: true
-      notes: Wright Linux MCP bundle declares brepjs-cad 0.103.0 and a launcher wrapper.
+      notes: Clean Wright Intel Linux qualification installed only brepjs-cad 0.103.0, used the reviewed launcher, and passed direct and Wright-gateway STEP/STL export with independent geometry inspection.
     linux_arm64:
       status: likely
       tested: false
@@ -3426,9 +4537,11 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Catalog entry added from Wright bundle metadata; run clean-container MCP protocol and safe STEP export probes before marking passed.
-    environment: null
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Clean Wright Intel Linux qualification initialized brepjs-cad 0.103.0, listed two tools, exported a 40 by 20 by 10 mm box as STEP and STL in three fresh direct sessions and through both Wright gateway layers, and independently measured 8000 mm3 STL volume. Controlled invalid input produced no artifact, the sandbox bounded an infinite program by timeout, and disposable state cleanup passed.
+    environment: clean-wright-linux-x64-container
     missing_dependencies: []
   windows_qualification:
     observed_at: '2026-08-14T03:13:43.976756Z'
@@ -3468,6 +4581,36 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: isolated_root_removed
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: Three fresh direct MCP sessions and both Wright gateway layers exported valid STEP and STL artifacts in a clean Intel Linux container. The recommendation is scoped to the reviewed launcher and Linux configuration; Windows still has a recorded upstream-entry failure and repeat user adoption is unknown.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the Linux export workflow by 8 October and resolve the Windows entry-point failure before adding a Windows recommendation.
+    replacement_ids: []
+    adoption: unknown
+    adoption_evidence: []
+    qualifications:
+    - platform: linux_x64
+      environment: clean-wright-container
+      distribution_mode: docker
+      configuration_sha256: 676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b
+      workflow: BREP box STEP and STL export
+      source_revision: brepjs-cad 0.103.0; 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/brep-linux.json
+      evidence_sha256: dbbd0722fc1515dfeec44a9c9865a2b1a1aab289f324f702681e6b7f2967b917
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: solid-edge-mcp-burhop
   name: SolidEdgeMCP
   vendor: burhop
@@ -3498,11 +4641,18 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Wright Windows bundle pins this source through configured Git metadata.
-  - url: docker/mcp-bundle.windows-amd64.yaml
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/solid-edge-mcp-burhop-source-boundary.json
     kind: evidence
     primary: false
-    observed_at: '2026-08-12'
-    notes: Windows MCP bundle builds the server and documents that Solid Edge itself is externally installed and licensed.
+    authority: community
+    observed_at: '2026-09-09'
+    notes: Historical public-source check only; it must not override working Windows runtime evidence.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/solid-edge-classification-correction.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Reconciles native Solid Edge execution and Wright gateway evidence with the separate private-source distribution boundary.
   locality: local
   weight: heavy
   env_vars:
@@ -3517,8 +4667,8 @@ servers:
     - .NET SDK
     python: []
     node: []
-  verification_state: verified_api_wrapper_candidate
-  installability_tier: might_work
+  verification_state: verified_mcp
+  installability_tier: tested
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -3528,9 +4678,9 @@ servers:
     notes: Server can be built in the Windows image, but Solid Edge must be licensed and available outside Wright redistribution.
   platform_support:
     windows_11_x64:
-      status: host-dependent
+      status: 'yes'
       tested: true
-      notes: Native Windows qualification built pinned source, initialized MCP, and listed 12 tools without launching or changing Solid Edge; cad.get_status fails output validation when no active document is open because activeDocument is omitted despite being schema-required.
+      notes: The actively developed server has completed native Solid Edge creation, inspection, export, and regression workflows; Wright has a tested provider-neutral gateway contract for it.
     linux_x64:
       status: 'no'
       tested: true
@@ -3556,11 +4706,12 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Catalog entry added from Wright Windows bundle metadata; validate on a licensed Windows host before enabling by default.
-    environment: null
-    missing_dependencies:
-    - Solid Edge
+    status: passed
+    message: Native Windows Solid Edge workflows and Wright's provider-neutral MCP gateway contract are working; public repository visibility remains a separate distribution concern.
+    environment: windows-11-x64-solid-edge
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
   windows_qualification:
     observed_at: '2026-08-14T03:14:37.293030Z'
     evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/solid-edge-mcp-burhop-windows-qualification.json
@@ -3599,6 +4750,34 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: isolated_root_removed
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: Wright's actively developed Windows integration works with native Solid Edge; public source visibility is tracked separately from technical status.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Keep the Windows qualification current and resolve the public distribution/source-access policy before customer release.
+    adoption: unknown
+    qualifications:
+    - platform: windows_11_x64
+      environment: native-windows-solid-edge-and-wright-contract
+      distribution_mode: native
+      configuration_sha256: 009ac2a039139baf29dec2b313160f8aba099cf120ab99662a1b0ddfc0681cde
+      workflow: Solid Edge part creation, inspection, export, and Wright gateway execution
+      source_revision: f58a783d2bfad4cff97c818bb63d42c1485d305a
+      wright_revision: 75c6cdc384095cca6f6ded8bf3630bb3400bba36
+      verified_at: '2026-09-10'
+      expires_at: '2026-10-10'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-10/solid-edge-classification-correction.json
+      evidence_sha256: 4f439cc3f9ba1b64b1c07931aa4bda994e2cd1b3419f1734fe4e4f216628401f
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: matlab-mcp-server
   name: MATLAB MCP Server
   vendor: MathWorks
@@ -3616,7 +4795,7 @@ servers:
   - matlab-mcp-server
   source_url: https://github.com/matlab/matlab-mcp-server
   repository_url: https://github.com/matlab/matlab-mcp-server
-  package_url: https://github.com/matlab/matlab-mcp-server/releases/latest
+  package_url: https://github.com/matlab/matlab-mcp-server/releases/tag/v0.13.0
   license: MathWorks repository license
   auth_model: license-server
   install_method: packaged-binary
@@ -3630,8 +4809,13 @@ servers:
   - url: https://github.com/matlab/matlab-mcp-server
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Official MathWorks MCP server repository and README.
+    observed_at: '2026-09-09'
+    notes: Official MathWorks repository; release v0.13.0 is the reviewed candidate.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/matlab-v0.13.0-linux.json
+    kind: evidence
+    primary: false
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux preflight of the immutable v0.13.0 vendor binary.
   locality: local
   weight: heavy
   env_vars:
@@ -3665,9 +4849,9 @@ servers:
       tested: false
       notes: Official release provides Windows setup; requires local licensed MATLAB and WINDIR passthrough for Codex on Windows.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Official release supports Linux setup; requires local licensed MATLAB.
+      status: host-dependent
+      tested: true
+      notes: Vendor binary v0.13.0 initialized and listed five tools in a fresh Wright container; a useful task remains blocked without licensed MATLAB.
     linux_arm64:
       status: unknown
       tested: false
@@ -3688,11 +4872,28 @@ servers:
   - execute_code_approval
   - proprietary_license_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; requires licensed MATLAB host installation.
-    environment: null
+    status: dependency_missing
+    validated_at: '2026-09-09'
+    evidence_status: partial
+    message: Fresh Intel Linux preflight verified the SHA-256-pinned official v0.13.0 binary, MCP initialization, and five tool schemas. The read-only detect_matlab_toolboxes call returned "no valid MATLAB environments found". No MATLAB computation or Wright gateway path was claimed.
+    environment: fresh-disposable-wright-engineering-container
     missing_dependencies:
-    - MATLAB
+    - licensed MATLAB R2021a or later
+    - Wright gateway and numerical artifact evidence
+  follow_up_url: docs/mcp-catalog/followups/matlab-mcp-server.md
+  engineering_stages:
+  - concept
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The SHA-pinned official binary initializes, exposes its five tools, and reaches the expected MATLAB detection boundary; licensed MATLAB is the sole unavailable execution dependency.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Run a deterministic calculation and independently inspect its artifact through Wright on licensed MATLAB.
+    adoption: unknown
 - id: simulink-agentic-toolkit
   name: Simulink Agentic Toolkit
   vendor: MathWorks
@@ -3730,6 +4931,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Simulink toolkit calls through the MATLAB MCP Server.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/simulink-agentic-toolkit-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 5b80115ba32efe2d36a246dc2c56380c55ffea42a289a4e14df00091526d2a60; portfolio category: Environment required.'
   locality: local
   weight: heavy
   env_vars:
@@ -3783,12 +4990,27 @@ servers:
   - execute_code_approval
   - proprietary_license_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; requires licensed MATLAB and Simulink host installation.
-    environment: null
+    status: dependency_missing
+    message: The current MathWorks source was resolved; licensed MATLAB and Simulink execution requires a dedicated host.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - MATLAB
+    - MATLAB R2023a or later
     - Simulink
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - concept
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The official source is identifiable, but no MCP startup, tool discovery, Simulink execution, result artifact, or Wright gateway behavior is reproducible without a licensed host.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after the official pinned server initializes independently of the host and a deterministic model runs through Wright on licensed MATLAB/Simulink.
+    adoption: unknown
 - id: autodesk-fusion-desktop-mcp
   name: Autodesk Fusion MCP
   vendor: Autodesk
@@ -3819,6 +5041,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Autodesk MCP documentation lists Autodesk Fusion MCP as a local server exposed by Fusion.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-desktop-mcp-host-boundary.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 e6951828038449eef2694eb3acc42f67d4a4af7e4177a9d0b229a40d187abec8; portfolio category: Environment required.'
   locality: local
   weight: heavy
   env_vars: []
@@ -3866,11 +5094,13 @@ servers:
   - cloud_upload_approval
   - proprietary_license_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; requires a live Autodesk Fusion desktop session.
-    environment: null
+    status: dependency_missing
+    message: The proprietary Fusion desktop MCP command is absent from the clean runtime as expected; a disposable Fusion session is required.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
     - Autodesk Fusion
+    validated_at: '2026-09-09'
+    evidence_status: recorded
   windows_qualification:
     observed_at: '2026-08-14T03:14:38.952365Z'
     evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/autodesk-fusion-desktop-mcp-windows-qualification.json
@@ -3909,6 +5139,19 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: no_executable_action
+  engineering_stages:
+  - design
+  - manufacturing
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The official product documentation is credible, but the proprietary command is unavailable outside a licensed Fusion host and no protocol, backend artifact, or Wright gateway call can be reproduced for this release.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after obtaining an authorized disposable Fusion host and passing protocol, model inspection/export, gateway, and cleanup checks.
+    adoption: unknown
 - id: autodesk-fusion-data-mcp
   name: Autodesk Fusion Data MCP
   vendor: Autodesk
@@ -3941,6 +5184,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Autodesk documentation describes the cloud-hosted Fusion Data MCP server and requirements.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/autodesk-fusion-data-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 d40b8619faf155fe6763caa1c960b69be9689dd67b152b28c7c44a579010f6f2; portfolio category: Failed.'
   locality: remote
   weight: light
   env_vars: []
@@ -3986,11 +5235,14 @@ servers:
   - cloud_upload_approval
   - secrets_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; requires Autodesk account OAuth flow.
-    environment: null
+    status: failed
+    message: The catalog command is an Autodesk API origin, not a usable MCP endpoint; the client session terminated before initialize.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - Autodesk account
+    - Exact Autodesk Fusion Data MCP endpoint
+    - Autodesk account OAuth
+    validated_at: '2026-09-09'
+    evidence_status: recorded
   windows_qualification:
     observed_at: '2026-08-14T03:14:39.083892Z'
     evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/autodesk-fusion-data-mcp-windows-qualification.json
@@ -4029,6 +5281,21 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: no_executable_action
+  engineering_stages:
+  - design
+  - manufacturing
+  - release
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The configured Autodesk API origin is not an MCP endpoint and no installable server or corrected endpoint identity was found, so this record cannot initialize.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the endpoint evidence; reinstate only when Autodesk publishes a concrete MCP endpoint or distributable server with current documentation.
+    adoption: unknown
+    replacement_ids: []
 - id: openfoam-mcp-webworn
   name: OpenFOAM MCP Server
   vendor: webworn
@@ -4062,6 +5329,18 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Repository README reports JSON-RPC MCP server with 12 tools and partial OpenFOAM integration.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/openfoam-mcp-webworn-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 55a36d93f1203d7904155f4bf16cb23b7309ba6165b23d3a3ea8f385a18dd37a; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/openfoam-mcp-webworn-qualification.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Pinned-source OpenFOAM 12 qualification; protocol and solver ran, but independent artifact inspection proved the successful pipe-flow result used the wrong geometry.
   locality: local
   weight: heavy
   env_vars: []
@@ -4070,8 +5349,8 @@ servers:
     - OpenFOAM
     python: []
     node: []
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-only
   runtime_requirements:
@@ -4085,9 +5364,9 @@ servers:
       tested: false
       notes: OpenFOAM support on Windows is host-dependent and not validated.
     linux_x64:
-      status: likely
-      tested: false
-      notes: OpenFOAM is Linux-friendly, but this MCP has not been validated by Wright.
+      status: 'no'
+      tested: true
+      notes: A repaired disposable image initialized and ran, but the advertised pipe-flow operation solved a rectangular block rather than the requested circular pipe.
     linux_arm64:
       status: unknown
       tested: false
@@ -4108,11 +5387,24 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; run clean-container OpenFOAM status, tools/list, and safe mesh/STL probes.
-    environment: null
-    missing_dependencies:
-    - OpenFOAM
+    status: failed
+    message: The server reported a successful circular-pipe result after OpenFOAM solved a 1 x 1 x 0.1 m rectangular block; its pressure drop came from a theoretical correlation rather than the computed field.
+    environment: repaired disposable Ubuntu 22.04/OpenFOAM 12 container, image sha256:17e00da96c5c7f7d695ab415a77e3765d9ec23ea504792f0639f89b2eefb540e
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Independent result inspection found a false engineering success in the advertised pipe-flow path, after three packaging and startup defects were repaired for qualification.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the failure evidence; rediscover only after upstream fixes installation and proves requested geometry plus field-derived engineering results.
+    adoption: unknown
 - id: freecad-mcp-sergiudanstan
   name: FreeCAD MCP Full-Module Server
   vendor: sergiudanstan
@@ -4147,6 +5439,18 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: README advertises 165 tools across 15 modules and requires Node.js plus FreeCAD 0.21 or later.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-sergiudanstan-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 a37b8a58563e217d69deed81684055f24d55352abf8d2c27fc903c8c171376a3; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/freecad-mcp-sergiudanstan-qualification.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Pinned Linux qualification initialized MCP and listed 165 tools, but the first modeling call failed because the headless bridge ignored FREECAD_CMD and spawned a hard-coded macOS path.
   locality: local
   weight: heavy
   env_vars: []
@@ -4156,8 +5460,8 @@ servers:
     python: []
     node:
     - npm
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4171,9 +5475,9 @@ servers:
       tested: false
       notes: Requires local FreeCAD and Node.js.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Requires local FreeCAD 0.21+ and Node.js; not validated by Wright.
+      status: 'no'
+      tested: true
+      notes: With FreeCAD 1.0 and Node.js installed, MCP initialized and listed tools but the first modeling call tried a hard-coded macOS Python path and failed.
     linux_arm64:
       status: unknown
       tested: false
@@ -4195,11 +5499,27 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; run clean-container startup and safe FreeCAD status/list-object probes.
-    environment: null
-    missing_dependencies:
-    - FreeCAD
+    status: failed
+    message: Source revision 688b6349f3befdc90702a46d3cb7d369ca239621 initialized and listed 165 tools, but freecad_create_box failed with spawn /Applications/FreeCAD.app/Contents/Resources/bin/python ENOENT even when FREECAD_CMD=/usr/bin/freecadcmd and FreeCAD 1.0 was installed.
+    environment: disposable Wright-derived Debian 13 Linux x64 container, image sha256:f18cb4e97908c609e6c43f28172c379030571d84b5651677e844b9b15a0a2ff9
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  engineering_stages:
+  - design
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The advertised Linux headless bridge fails before its first modeling operation because it ignores the configured FreeCAD command and uses a hard-coded macOS runtime path; Wright already qualifies a FreeCAD integration.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover after a release fixes non-macOS headless startup, resolves dependency-audit findings, and passes a real exported-artifact qualification.
+    adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: freecad-mcp-proximile
   name: FreeCAD MCP AI 3D Server
   vendor: proximile
@@ -4235,6 +5555,18 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: README advertises 57 MCP tools, Dockerized FreeCAD, VLM/segmentation, and dual GPU optimization.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/freecad-mcp-proximile-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 29a32defbcde0f055b09ef7d59686b7e0c170beec6823c61a3ca1be072b89a42; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/freecad-mcp-proximile-closure.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Product-scope review closed the single-commit experimental stack because it exposes broad machine and network controls alongside CAD operations and duplicates qualified FreeCAD coverage.
   locality: local
   weight: heavy
   env_vars: []
@@ -4244,8 +5576,8 @@ servers:
     - FreeCAD
     python: []
     node: []
-  verification_state: community_mcp
-  installability_tier: might_work
+  verification_state: excluded
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-only
   runtime_requirements:
@@ -4284,12 +5616,28 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; start with non-GPU FreeCAD status/list tools before attempting AI generation services.
-    environment: null
+    status: dependency_missing
+    message: The current authoritative source was resolved; FreeCAD host execution remains a dedicated-environment test.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - Docker
     - FreeCAD
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - concept
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The single-commit stack combines CAD mutation, arbitrary Python, Docker management, public tunnels, and multi-GPU AI services without a dependable product boundary; Wright already qualifies FreeCAD.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover only after the project establishes sustained maintenance and a bounded capability that is safer or materially stronger than Wright's qualified FreeCAD integration.
+    adoption: unknown
+    replacement_ids:
+    - freecad-mcp-nekanat
 - id: rhino-mcp-easehee
   name: Rhino MCP
   vendor: EaseHee
@@ -4306,7 +5654,13 @@ servers:
   - docker
   transport: stdio
   command:
-  - uvx
+  - uv
+  - tool
+  - run
+  - --python
+  - '3.11'
+  - --from
+  - git+https://github.com/EaseHee/rhino-mcp.git@3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46
   - rhino3dm-mcp
   source_url: https://github.com/easehee/rhino-mcp
   repository_url: https://github.com/easehee/rhino-mcp
@@ -4314,12 +5668,13 @@ servers:
   container_url: https://github.com/easehee/rhino-mcp/tree/main/docker
   license: MIT
   auth_model: local-host
-  install_method: uvx
+  install_method: source
   maturity: community
   capability_summary:
   - Standalone rhino3dm geometry authoring
   - Rhino 8 and Grasshopper bridge automation
-  - STEP, IGES, STL, OBJ, IFC, and gbXML workflows
+  - Standalone 3DM authoring plus OBJ and STL export for mesh objects
+  - Bridge-only STEP, IGES, IFC, gbXML, and advanced modeling workflows
   - Geometry validation and schedule extraction
   source_records:
   - url: https://github.com/easehee/rhino-mcp
@@ -4335,15 +5690,18 @@ servers:
     description: Optional runtime mode such as standalone, bridge, or auto.
     required: false
     secret: false
+  launch_env:
+    RHINO_MCP_FORCE_MODE: standalone
   dependencies:
     system:
     - optional Rhino 8
     - optional .NET 8 SDK
     python:
-    - rhino3dm-mcp
+    - rhino3dm-mcp from pinned source revision
+    - rhino3dm>=8.9,<9
     node: []
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: tested
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4357,9 +5715,9 @@ servers:
       tested: false
       notes: Standalone Python expected; full bridge requires Rhino 8 and optional .NET plugin.
     linux_x64:
-      status: likely
-      tested: false
-      notes: Standalone rhino3dm mode and Docker path are documented upstream; not validated by Wright.
+      status: 'yes'
+      tested: true
+      notes: Pinned standalone source passed repeated direct MCP, Wright gateway, Hermes-facing gateway, reopen, schema-error, and independent 3DM solid inspection checks.
     linux_arm64:
       status: unknown
       tested: false
@@ -4381,10 +5739,40 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; validate standalone rhino3dm mode before bridge mode.
-    environment: null
+    status: passed
+    validated_at: '2026-09-08'
+    evidence_status: recorded
+    message: Pinned source passed 296 upstream tests plus three direct Wright sessions, the gateway service, and Hermes-facing gateway for a solid 3DM workflow. Independent rhino3dm inspection confirmed millimetre units, exact 10 x 8 x 6 bounds, a valid closed six-face/twelve-edge Brep, and file reopen. Standalone mesh volume/STL and live bridge features remain unqualified.
+    environment: fresh-standard-linux-x64-container
     missing_dependencies: []
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: curated
+    reason: The pinned standalone server passed a useful solid 3DM workflow through direct MCP and both Wright gateway paths with independent file inspection. The recommendation excludes standalone mesh-volume/STL and live bridge features.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Renew the pinned solid 3DM qualification by 2026-10-08; recheck the mesh winding defect and qualify live Rhino/Grasshopper separately.
+    adoption: unknown
+    qualifications:
+    - platform: linux_x64
+      environment: fresh-standard-linux-x64-container
+      distribution_mode: docker
+      configuration_sha256: cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18
+      workflow: Author and save a millimetre 10 x 8 x 6 solid Brep, reopen it in fresh sessions, reject an invalid dimension, and independently inspect the 3DM object, topology, units, validity, and bounds.
+      source_revision: 3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46
+      wright_revision: e55dedd8a200819ddf7258debbdba0108584e442
+      verified_at: '2026-09-09'
+      expires_at: '2026-10-09'
+      evidence_path: docs/mcp-catalog/evidence/curation-2026-09-09/rhino-easehee-linux.json
+      evidence_sha256: 757f967b3bf7b495b0a746ce8caf48e79933e2369f83a669bde455ce901fd14a
+      protocol: passed
+      backend: passed
+      gateway: passed
+      outcome: passed
 - id: blender-mcp-harveyxiacn
   name: Blender MCP Comprehensive Server
   vendor: harveyxiacn
@@ -4421,6 +5809,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: README advertises 359 tools, Blender 4.x/5.x compatibility, and install from source or PyPI.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/blender-mcp-harveyxiacn-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 5e9efbc8ca92c5c06802d493bda9a29d5715997edf710199a5b63f0799203a0a; portfolio category: Environment required.'
   locality: local
   weight: heavy
   env_vars: []
@@ -4468,11 +5862,25 @@ servers:
   - workspace_write_approval
   - execute_code_approval
   validation_result:
-    status: not_tested
-    message: Not yet validated by Wright; run clean-container protocol probes and safe scene read/primitive creation before enabling.
-    environment: null
+    status: dependency_missing
+    message: The current authoritative source was resolved, but Blender 4+ is deliberately absent from the clean Wright image.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - Blender
+    - Blender 4+
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: This alternative has no current differentiated backend qualification and duplicates Wright's already qualified Blender integration, so it is excluded from the current shortlist.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter only after demonstrating a material capability absent from the qualified Blender server and passing full artifact qualification.
+    adoption: unknown
 - id: playwright-mcp
   name: Playwright MCP
   vendor: Microsoft
@@ -4512,6 +5920,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Package metadata identifies @playwright/mcp 0.0.78 and Apache-2.0 licensing.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/playwright-mcp-0.0.80-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 608175a51637b7ac0e2fbd17fdacc39309e5368409db50e87748c2c33deebde3; portfolio category: Preflight passed.'
   locality: local
   weight: medium
   env_vars:
@@ -4527,7 +5941,7 @@ servers:
     node:
     - '@playwright/mcp'
   verification_state: verified_docs_mcp
-  installability_tier: tested
+  installability_tier: might_work
   risk_level: medium
   deployment_mode: local-bundled
   runtime_requirements:
@@ -4564,10 +5978,24 @@ servers:
   approval_gates:
   - browser_automation_approval
   validation_result:
-    status: not_tested
-    message: Catalog entry added from official package metadata and Wright bundle metadata; run browser_navigate/browser_snapshot probes in each managed image.
-    environment: null
+    status: passed
+    message: The pinned official package passed initialize and tools/list in a clean Wright container; local-page browser and gateway proof remains.
+    environment: wright-clean-debian13-x64
     missing_dependencies: []
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - test_quality
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Official maintained browser integration; current clean-environment and gateway evidence is required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/playwright-mcp-0.0.80-preflight.json. Complete a deterministic local-page browser task through Wright.
+    adoption: unknown
 - id: backflip-ai-watchlist
   name: Backflip AI CAD Candidate
   vendor: Backflip AI
@@ -4661,6 +6089,18 @@ servers:
     environment: null
     missing_dependencies:
     - public MCP server
+  engineering_stages:
+  - design
+  integration_kind: api_candidate
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: No public Backflip MCP server exists; retain the vendor integration lead in the excluded archive rather than presenting it as an MCP.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if Backflip publishes an MCP server or Wright approves development of a maintained wrapper.
+    adoption: unknown
 - id: rescale-mcp-hosted
   name: Rescale Hosted MCP Server
   vendor: Rescale
@@ -4699,6 +6139,12 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Rescale API docs cover cloud job submission, simulation file management, and VDI/workstation operations.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/rescale-mcp-hosted-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 9ada8321a7cc97be1123dec04758a0a0a94764a90e7a99407e35357a0819b10f; portfolio category: Connect and verify.'
   locality: remote
   weight: medium
   env_vars:
@@ -4750,11 +6196,25 @@ servers:
   - cloud_job_submission_approval
   - workspace_write_approval
   validation_result:
-    status: not_tested
-    message: Added from official Rescale MCP documentation; run a credential-limited tools/list and read-only job status probe before enabling.
-    environment: null
+    status: blocked
+    message: The official hosted endpoint is live and returned 401 to an anonymous MCP client; a Rescale API key is the next boundary.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
     - Rescale API key
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/rescale-mcp-hosted-remote.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
 - id: ansys-fluent-mcp
   name: PyFluent MCP
   vendor: Ansys
@@ -4773,7 +6233,7 @@ servers:
   - ansys-fluent-mcp
   source_url: https://github.com/ansys/pyfluent-mcp
   repository_url: https://github.com/ansys/pyfluent-mcp
-  package_url: https://pypi.org/project/ansys-fluent-mcp/
+  package_url: https://pypi.org/project/ansys-fluent-mcp/0.4.0/
   license: Apache-2.0
   auth_model: license-server
   install_method: pip
@@ -4787,8 +6247,8 @@ servers:
   - url: https://github.com/ansys/pyfluent-mcp
     kind: repository
     primary: true
-    observed_at: '2026-08-12'
-    notes: Official Ansys repository documents PyFluent-MCP, supported transports, requirements, and tool surface.
+    observed_at: '2026-09-09'
+    notes: Official Ansys repository; package 0.4.0 is the reviewed candidate.
   - url: https://fluent-mcp.docs.pyansys.com/
     kind: vendor_docs
     primary: true
@@ -4804,6 +6264,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Clean Wright ARM64 container installed the package, initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/ansys-fluent-0.4.0-offline.json
+    kind: evidence
+    primary: false
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux preflight of package 0.4.0 and its offline Fluent code validator.
   locality: local
   weight: heavy
   env_vars:
@@ -4821,8 +6286,8 @@ servers:
     system:
     - Ansys Fluent 2024 R1 or newer for live solver tools
     python:
-    - ansys-fluent-mcp
-    - ansys-fluent-core
+    - ansys-fluent-mcp==0.4.0
+    - ansys-fluent-core>=0.27
     node: []
   verification_state: verified_mcp
   installability_tier: might_work
@@ -4841,8 +6306,8 @@ servers:
       notes: Requires licensed Fluent/PyFluent environment or remote Fluent.
     linux_x64:
       status: host-dependent
-      tested: false
-      notes: MCP package should run on Linux x64; live solver tools require licensed Fluent or remote Fluent.
+      tested: true
+      notes: Package 0.4.0 initialized, listed 25 tools, and validated a small PyFluent script offline in a fresh Wright container; live solver tools require licensed Fluent or remote Fluent.
     linux_arm64:
       status: host-dependent
       tested: false
@@ -4866,13 +6331,26 @@ servers:
   - license_server_approval
   validation_result:
     status: dependency_missing
-    message: Clean Wright ARM64 container installed PyFluent MCP, initialized it, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires Wright/Hermes gateway evidence and a licensed local or remote Fluent session for live solver tools.
-    environment: gb10-linux-arm64-clean-container
+    message: Fresh Intel Linux validation pinned the official 0.4.0 wheel digest, initialized MCP, listed 25 tools, and used validate_code to parse a small PyFluent launch script successfully. No solver was connected, so CFD correctness, artifacts, and Wright gateway operation remain unproven.
+    environment: fresh-disposable-wright-engineering-container
     missing_dependencies:
     - Ansys Fluent license for live solve tools
-    - gateway proxy evidence
-    validated_at: '2026-08-12'
+    - Wright gateway and solver artifact evidence
+    validated_at: '2026-09-09'
     evidence_status: partial
+  follow_up_url: docs/mcp-catalog/followups/ansys-fluent-mcp.md
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The official pinned package, MCP discovery, and safe code validation pass; a licensed Fluent solver is the only unavailable boundary, so customer exposure must remain credential-gated and unqualified for CFD results.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Connect licensed Fluent 2024 R1 or newer and pass a deterministic CFD artifact and gateway qualification.
+    adoption: unknown
 - id: ansys-mcp-server-community
   name: Ansys MCP Server
   vendor: vorobjewsen30-max
@@ -4980,6 +6458,20 @@ servers:
     - Ansys solver license for live tools after startup is fixed
     validated_at: '2026-08-12'
     evidence_status: partial
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The community server cannot import against current MCP SDK releases and never initializes; the official PyFluent MCP is the stronger maintained Ansys path.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the import-failure evidence; reconsider after a compatible upstream release demonstrates capabilities beyond the official PyFluent server.
+    adoption: unknown
+    replacement_ids:
+    - ansys-fluent-mcp
 - id: comsol-multiphysics-mcp-wjc9011
   name: COMSOL MCP Server
   vendor: wjc9011
@@ -5089,6 +6581,19 @@ servers:
     - COMSOL Multiphysics license
     validated_at: '2026-08-12'
     evidence_status: partial
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The candidate has no reproducible minimal install or MCP initialization; its heavyweight ML/CUDA dependency path and bundled COMSOL documents/models require review before any licensed-host test.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after an immutable slim release separates bundled content and initializes before licensed COMSOL qualification.
+      source and prerequisites, then run the documented clean-environment backend and gateway scenario.
+    adoption: unknown
 - id: comsol-multiphysics-mcp-suzysa
   name: COMSOL Multiphysics MCP
   vendor: Suzy-Sa
@@ -5191,6 +6696,20 @@ servers:
     - COMSOL Multiphysics license
     validated_at: '2026-08-12'
     evidence_status: partial
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The package tests pass but the server imports a removed MCP SDK module and cannot initialize; the other COMSOL candidate remains the active evaluation path.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Preserve the startup evidence; reconsider after an upstream MCP SDK compatibility release and licensed COMSOL backend proof.
+    adoption: unknown
+    replacement_ids:
+    - comsol-multiphysics-mcp-wjc9011
 - id: nvidia-omniverse-kit-mcp
   name: NVIDIA Omniverse Kit MCP
   vendor: NVIDIA Omniverse
@@ -5224,6 +6743,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Official NVIDIA Omniverse repository lists Kit MCP as one of four standalone MCP servers and documents Docker/Python deployment.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-kit-mcp-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 3f5bf8dc388c24a12f4d9866e3ebf1d9c161b8b2ea22df7926c9aa7b8e3e0967; portfolio category: Environment required.'
   locality: local
   weight: medium
   env_vars:
@@ -5275,11 +6800,27 @@ servers:
   approval_gates:
   - network_access_approval
   validation_result:
-    status: not_tested
-    message: Added from official NVIDIA Omniverse repository; validate Docker compose startup and tools/list before image inclusion.
-    environment: null
+    status: dependency_missing
+    message: The current NVIDIA source was resolved; Omniverse Kit execution requires a dedicated host.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
+    - NVIDIA Omniverse Kit
     - NVIDIA API key
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - design
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Current source exists, but no reproducible Kit server startup, tool discovery, backend query, or Wright gateway call is available in the supported environment.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a pinned deployment passes extension discovery and one useful read-only Kit task through Wright.
+    adoption: unknown
 - id: nvidia-omniverse-usd-code-mcp
   name: NVIDIA USD Code MCP
   vendor: NVIDIA Omniverse
@@ -5377,6 +6918,18 @@ servers:
     - Docker/MCP startup evidence
     validated_at: '2026-08-12'
     evidence_status: partial
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Source wheels build only after Git LFS data is resolved, but the recommended credentialed deployment has no recorded startup, tool discovery, USD query, or Wright gateway result.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after an immutable release starts without mutable LFS fetches and passes read-only USD search through Wright.
+    adoption: unknown
 - id: nvidia-omniverse-omniui-mcp
   name: NVIDIA OmniUI MCP
   vendor: NVIDIA Omniverse
@@ -5408,6 +6961,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Official repository describes OmniUI MCP with ten specialized OmniUI development tools.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-omniui-mcp-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 5be6927db78fc16c3e58238c2f84391216b4d3349818c31986a6714fffd7000c; portfolio category: Environment required.'
   locality: local
   weight: medium
   env_vars:
@@ -5459,11 +7018,26 @@ servers:
   approval_gates:
   - network_access_approval
   validation_result:
-    status: not_tested
-    message: Added from official NVIDIA Omniverse repository; validate read-only tool calls before enabling.
-    environment: null
+    status: dependency_missing
+    message: The current NVIDIA source was resolved; OmniUI execution requires a dedicated Omniverse host.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
+    - NVIDIA Omniverse Kit
     - NVIDIA API key
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: No executable OmniUI workflow or differentiated value beyond the broader Kit candidate has been proven, so the duplicate is excluded from the current shortlist.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter only after proving a distinct engineering UI workflow and complete Wright qualification.
+    adoption: unknown
 - id: nvidia-omniverse-isaac-sim-mcp
   name: NVIDIA Isaac Sim MCP
   vendor: NVIDIA Omniverse
@@ -5497,6 +7071,12 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Official repository describes Isaac Sim MCP with five specialized Isaac Sim development tools.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-omniverse-isaac-sim-mcp-source-boundary.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 f1e3c675b6a7c6aafaafba83c2e60ccd94c9ee321aa47c14de0712162290facd; portfolio category: Environment required.'
   locality: local
   weight: medium
   env_vars:
@@ -5548,11 +7128,29 @@ servers:
   approval_gates:
   - network_access_approval
   validation_result:
-    status: not_tested
-    message: Added from official NVIDIA Omniverse repository; validate docs/search tool calls before live Isaac Sim integration work.
-    environment: null
+    status: dependency_missing
+    message: The current NVIDIA source was resolved; Isaac Sim and NVIDIA GPU execution require a dedicated lab host.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
+    - NVIDIA Isaac Sim
+    - NVIDIA GPU
     - NVIDIA API key
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - simulation
+  - test_quality
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Current source exists, but no reproducible server startup, tool discovery, Isaac Sim backend result, or Wright gateway call is available without a dedicated GPU lab and credentialed NVIDIA stack.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a pinned deployable release passes a read-only scene/simulation inspection on a supported GPU host through Wright.
+    adoption: unknown
 - id: nvidia-cuda-docs-mcp
   name: NVIDIA CUDA Docs MCP
   vendor: NVIDIA
@@ -5589,6 +7187,12 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Registry metadata points to NVIDIA Nsight AI as the product site.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-cuda-docs-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 499cdcfe145b266feb18aa9d7c31abcb6d93e41a2519172af65849f84eb99548; portfolio category: Connect and verify.'
   locality: remote
   weight: light
   env_vars: []
@@ -5627,15 +7231,32 @@ servers:
       tested: false
       notes: Remote endpoint is client-platform neutral.
   host_software_required: []
-  credentials_required: []
+  credentials_required:
+  - NVIDIA account authentication
   default_enabled: false
   approval_gates:
   - network_access_approval
   validation_result:
-    status: not_tested
-    message: Added from official MCP Registry metadata; run tools/list and sample CUDA docs search before enabling.
-    environment: null
-    missing_dependencies: []
+    status: blocked
+    message: The documented CUDA Docs endpoint is live and returned 401 to an anonymous MCP client; NVIDIA authentication is the next boundary.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - NVIDIA account authentication
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+  engineering_stages:
+  - requirements
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/nvidia-cuda-docs-mcp-remote.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
 - id: nvidia-elements-mcp
   name: NVIDIA Elements MCP
   vendor: NVIDIA
@@ -5651,7 +7272,8 @@ servers:
   transport: stdio
   command:
   - npx
-  - '@nvidia-elements/cli'
+  - --yes
+  - '@nvidia-elements/cli@2.2.2'
   - mcp
   source_url: https://nvidia.github.io/elements/docs/mcp/
   repository_url: https://github.com/NVIDIA/elements
@@ -5685,6 +7307,12 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/nvidia-elements-2.2.2-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Pinned npm 2.2.2 passed MCP discovery and skills_list directly and through Wright GatewayService on Intel Linux.
   locality: local
   weight: light
   env_vars: []
@@ -5694,8 +7322,8 @@ servers:
     python: []
     node:
     - '@nvidia-elements/cli'
-  verification_state: verified_docs_mcp
-  installability_tier: might_work
+  verification_state: verified_mcp
+  installability_tier: tested
   risk_level: read-only
   deployment_mode: local-docs
   runtime_requirements:
@@ -5709,9 +7337,9 @@ servers:
       tested: false
       notes: npm command should run with Node.js; validation needed.
     linux_x64:
-      status: likely
-      tested: false
-      notes: npm command should run with Node.js; validation needed.
+      status: 'yes'
+      tested: true
+      notes: Pinned npm 2.2.2 listed 18 tools and returned identical skills_list results directly and through Wright GatewayService.
     linux_arm64:
       status: likely
       tested: false
@@ -5724,19 +7352,30 @@ servers:
       status: likely
       tested: false
       notes: npm command should run with Node.js; validation needed.
-  host_software_required:
-  - Node.js
+  host_software_required: []
   credentials_required: []
   default_enabled: false
   approval_gates: []
   validation_result:
-    status: dependency_missing
-    message: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs Wright/Hermes gateway evidence.
-    environment: gb10-linux-arm64-clean-container
-    missing_dependencies:
-    - gateway proxy evidence
-    validated_at: '2026-08-12'
-    evidence_status: partial
+    status: passed
+    message: Pinned NVIDIA Elements CLI 2.2.2 initialized in a clean Wright Intel Linux container, listed 18 tools, and returned the same skills_list result directly and through Wright GatewayService. The qualified scope is read-only design-system guidance; repeat user adoption is unknown.
+    environment: clean-wright-container-linux-x64
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  engineering_stages:
+  - test_quality
+  - operations
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: The pinned current package passed protocol discovery and a read-only design-system call directly and through Wright's gateway. The useful but narrow documentation scope is released as Preview.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Renew the pinned package qualification and add a representative NVIDIA engineering UI guidance task before promoting beyond Preview.
+    adoption: unknown
 - id: nvidia-kit-cae-agent-skills
   name: NVIDIA Omniverse Kit-CAE Agent Skills
   vendor: NVIDIA Omniverse
@@ -5826,100 +7465,140 @@ servers:
     environment: null
     missing_dependencies:
     - Omniverse Kit SDK
-- id: simscale-api-candidate
-  name: SimScale Simulation API Candidate
-  vendor: SimScale
-  description: SimScale exposes cloud CFD, FEA, thermal, electromagnetics, and multiphysics workflows through REST APIs and official SDKs, but no public MCP server was found in the sweep.
+  engineering_stages:
+  - design
+  - simulation
+  - operations
+  integration_kind: agent_skills
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Agent skills and host tooling are not a separately installable MCP server.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-08'
+    review_due: '2026-10-08'
+    next_action: Preserve installed configurations and historical evidence; review a maintained implementation before reinstatement.
+    adoption: unknown
+    replacement_ids:
+    - nvidia-omniverse-kit-mcp
+- id: simscale-edge-mcp-getanirao
+  name: SimScale Edge MCP
+  vendor: getanirao (community; unaffiliated with SimScale)
+  description: Community MCP server that automates the SimScale Workbench through a locally authenticated Microsoft Edge session and Playwright.
   domains:
   - cfd
   - fea
   - simulation
   - cloud-cae
   tags:
-  - api-candidate
+  - community
   - cloud-simulation
-  - no-public-mcp
-  transport: stdio
+  - browser-automation
+  transport: streamable_http
   command:
-  - simscale-mcp-not-public
-  source_url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
-  repository_url: https://github.com/SimScaleGmbH/simscale-python-sdk
-  package_url: https://pypi.org/project/simscale-sdk/
-  license: SimScale service terms
-  auth_model: api-key
-  install_method: unknown
+  - node
+  - src/http.js
+  source_url: https://github.com/getanirao/SimscaleMCP
+  repository_url: https://github.com/getanirao/SimscaleMCP
+  license: No license declared
+  auth_model: desktop-session
+  install_method: source
   maturity: watchlist
   capability_summary:
-  - CAD import, simulation setup, runs, parameter sweeps, and results through API/SDK
-  - Cloud CFD, structural, thermal, electromagnetics, and multiphysics analyses
-  - No verified public MCP server as of the latest sweep
+  - Navigate and inspect the SimScale Workbench through Microsoft Edge
+  - Upload CAD, operate visible controls, capture screenshots, and download results with confirmation gates
+  - Community browser automation; it does not use the official SimScale API
   source_records:
+  - url: https://github.com/getanirao/SimscaleMCP
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Public version 0.2.0 at commit 2fe7421965f1610418202bf4de9fcefa56058437; the project has two commits and no declared license.
   - url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
     kind: vendor_docs
-    primary: true
-    observed_at: '2026-08-12'
-    notes: Official docs link API documentation and Python/C# SDKs.
-  - url: https://www.simscale.com/technology/simulation-api/
-    kind: vendor_docs
     primary: false
-    observed_at: '2026-08-12'
-    notes: SimScale describes API-driven geometry upload, simulation setup, execution, sweeps, and result access.
-  locality: remote
+    observed_at: '2026-09-10'
+    notes: Official SimScale documentation covers the API and SDK, not this community MCP.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/simscale-edge-mcp-0.2.0-preflight.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-10'
+    notes: Exact source, locked dependency install, and 26-test clean-container preflight.
+  locality: local
   weight: medium
   env_vars:
-  - name: SIMSCALE_API_KEY
-    label: SimScale API key
-    description: API key for a future MCP/API wrapper.
+  - name: SIMSCALE_FILE_ROOT
+    label: Allowed file root
+    description: Directory root allowed for SimScale uploads and downloaded results.
     required: true
-    secret: true
+    secret: false
   dependencies:
-    system: []
-    python:
-    - simscale-sdk
-    node: []
-  verification_state: verified_api_wrapper_candidate
+    system:
+    - Microsoft Edge
+    python: []
+    node:
+    - playwright-core@1.62.1
+  verification_state: verified_mcp
   installability_tier: blocked
   risk_level: high
-  deployment_mode: cloud-saas-wrapper-candidate
+  deployment_mode: local-browser-bridge
   runtime_requirements:
     cpu: standard CPU locally
     gpu: not required locally
-    docker: 'yes'
-    notes: API wrapper should be container-friendly, but no public MCP server is verified.
+    docker: partial
+    notes: Protocol and tests run in a clean container; full operation requires a Windows Edge session authenticated to SimScale.
   platform_support:
     windows_11_x64:
-      status: likely
+      status: host-dependent
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      notes: Intended platform; requires Microsoft Edge with remote debugging and a SimScale login.
     linux_x64:
-      status: likely
-      tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      status: 'no'
+      tested: true
+      notes: Clean Linux validation passed source, install, and tests, but did not provide the required Microsoft Edge session.
     linux_arm64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped; Python SDK support should be checked on GB10.
+      notes: The documented Microsoft Edge attachment workflow has not been validated on ARM64 Linux.
     macos_x64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
+      notes: Upstream documentation describes Windows Edge; macOS has not been evaluated.
     macos_arm64:
-      status: likely
+      status: unknown
       tested: false
-      notes: REST/SDK integration should be platform-neutral once wrapped.
-  host_software_required: []
+      notes: Upstream documentation describes Windows Edge; macOS has not been evaluated.
+  host_software_required:
+  - Microsoft Edge
   credentials_required:
-  - SimScale API key
+  - SimScale account login
   default_enabled: false
   approval_gates:
   - network_access_approval
   - cloud_job_submission_approval
   validation_result:
-    status: blocked
-    message: No public SimScale MCP server was found; keep as a high-priority API wrapper candidate.
-    environment: null
+    status: dependency_missing
+    message: Version 0.2.0 installed from its lockfile and all 26 upstream tests passed in a clean Wright container, including MCP initialize, tools/list, and loopback Streamable HTTP; a real Edge/SimScale session remains untested.
+    environment: wright-clean-debian13-x64
     missing_dependencies:
-    - public MCP server
+    - Microsoft Edge session with remote debugging
+    - SimScale account login
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+  engineering_stages:
+  - simulation
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: The small unlicensed community project passes its test suite but relies on brittle browser automation and has no authenticated SimScale engineering result, download oracle, or Wright gateway proof.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Re-enter after a licensed maintained release completes a bounded SimScale workflow in an isolated browser profile with output and gateway verification.
+    adoption: unknown
 - id: flexcompute-flow360-api-candidate
   name: Flexcompute Flow360 API Candidate
   vendor: Flexcompute
@@ -6019,6 +7698,18 @@ servers:
     environment: null
     missing_dependencies:
     - public MCP server
+  engineering_stages:
+  - simulation
+  integration_kind: api_candidate
+  hardware_standard: none
+  curation:
+    disposition: removed
+    reason: Flow360 provides an API and SDK but no public MCP server; retain the wrapper lead in the excluded archive rather than presenting it as an MCP.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-12-09'
+    next_action: Reassess only if Flexcompute publishes an MCP server or Wright approves development of a maintained wrapper.
+    adoption: unknown
 - id: onshape-labs-featurescript-mcp
   name: Onshape Labs FeatureScript MCP
   vendor: Onshape / PTC
@@ -6058,6 +7749,12 @@ servers:
     authority: vendor
     observed_at: '2026-08-12'
     notes: Onshape's official announcement identifies the Labs preview, its MCP endpoint, and the App Store subscription prerequisite.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/onshape-labs-featurescript-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 82ff6de9816ae2c03b0d1d869e5ebccfebea98804e2a6522a532baab4a984733; portfolio category: Connect and verify.'
   runtime_requirements:
     cpu: standard CPU locally
     gpu: not required locally
@@ -6099,18 +7796,21 @@ servers:
       tested: false
       notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
   host_software_required: []
-  credentials_required: []
+  credentials_required:
+  - Onshape account authentication
   default_enabled: false
   approval_gates:
   - external_license_acceptance
   - network_access_approval
   - cloud_data_approval
   validation_result:
-    status: not_tested
-    message: Official preview existence is vendor-confirmed; Wright has not contacted the endpoint, authenticated, accepted terms, subscribed, or performed live validation.
-    environment: null
-    missing_dependencies: []
-    evidence_status: unverified
+    status: blocked
+    message: The official Labs endpoint is live and returned 401 to an anonymous MCP client; Onshape authentication is the next boundary.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - Onshape account authentication
+    validated_at: '2026-09-09'
+    evidence_status: recorded
   windows_qualification:
     observed_at: '2026-08-14T03:14:39.243338Z'
     evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/onshape-labs-featurescript-mcp-windows-qualification.json
@@ -6149,4 +7849,360 @@ servers:
       result: passed
       label: Cleanup complete
       reason_code: no_executable_action
+  engineering_stages:
+  - design
+  integration_kind: mcp_server
+  hardware_standard: none
+  curation:
+    disposition: follow_up
+    reason: Source and historical evidence reviewed; a current scoped Wright workflow qualification is still required.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/onshape-labs-featurescript-mcp-remote.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
+- id: github-official-mcp
+  name: GitHub MCP
+  vendor: GitHub
+  description: Repository, issue, engineering change, and release evidence through GitHub official MCP.
+  domains:
+  - requirements
+  - design
+  - test_quality
+  - release
+  engineering_stages:
+  - requirements
+  - design
+  - test_quality
+  - release
+  transport: streamable_http
+  command: https://api.githubcopilot.com/mcp/
+  source_url: https://github.com/github/github-mcp-server
+  locality: remote
+  weight: light
+  maturity: official
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: medium
+  default_enabled: false
+  install_method: remote-http
+  auth_model: oauth
+  source_records:
+  - url: https://github.com/github/github-mcp-server
+    kind: vendor_docs
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-08'
+    notes: Primary publisher instructions establish the implementation; Wright qualification and MCP adoption are not established.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/github-official-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 0ab2440a23d01d82f645b4675b7356d08418793fead39253bf3621dbd81f4919; portfolio category: Connect and verify.'
+  curation:
+    disposition: follow_up
+    reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/github-official-mcp-remote.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
+  repository_url: https://github.com/github/github-mcp-server
+  credentials_required:
+  - GitHub authorization
+  validation_result:
+    status: blocked
+    message: The official hosted endpoint is live and returned 401 to an anonymous MCP client; GitHub authorization is the next boundary.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - GitHub authorization
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+- id: atlassian-rovo-mcp
+  name: Atlassian Rovo MCP
+  vendor: Atlassian
+  description: Jira requirements and engineering work items, Confluence knowledge, and change traceability.
+  domains:
+  - requirements
+  - release
+  - operations
+  engineering_stages:
+  - requirements
+  - release
+  - operations
+  transport: streamable_http
+  command: https://mcp.atlassian.com/v2/mcp?tools=all
+  source_url: https://support.atlassian.com/atlassian-ai-gateway/docs/how-to-upgrade-from-atlassian-rovo-mcp-v1-to-atlassian-rovo-mcp-v2/
+  locality: remote
+  weight: light
+  maturity: official
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: medium
+  default_enabled: false
+  install_method: remote-http
+  auth_model: oauth
+  source_records:
+  - url: https://support.atlassian.com/atlassian-ai-gateway/docs/how-to-upgrade-from-atlassian-rovo-mcp-v1-to-atlassian-rovo-mcp-v2/
+    kind: vendor_docs
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-08'
+    notes: Primary publisher instructions establish the implementation; Wright qualification and MCP adoption are not established.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/atlassian-rovo-mcp-remote.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 67df25fa5a29b22abace76ab6324defc6abad439ffcb4c4eece27ee45addc332; portfolio category: Connect and verify.'
+  curation:
+    disposition: follow_up
+    reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/atlassian-rovo-mcp-remote.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
+  credentials_required:
+  - Atlassian OAuth authorization
+  validation_result:
+    status: blocked
+    message: The documented v2 endpoint is live and returned 401 to an anonymous MCP client; OAuth is the next boundary.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - Atlassian OAuth authorization
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+- id: grafana-official-mcp
+  name: Grafana MCP
+  vendor: Grafana
+  description: Read-only observability queries for engineering operations and service diagnostics.
+  domains:
+  - test_quality
+  - operations
+  engineering_stages:
+  - test_quality
+  - operations
+  transport: stdio
+  command:
+  - docker
+  - run
+  - --rm
+  - -i
+  - -e
+  - GRAFANA_URL
+  - -e
+  - GRAFANA_SERVICE_ACCOUNT_TOKEN
+  - grafana/mcp-grafana@sha256:5efeafd01cd7e1aea9c4b0f03305951f2944db8f43e5ae290cce9578c977f241
+  - -t
+  - stdio
+  - --disable-write
+  source_url: https://github.com/grafana/mcp-grafana/blob/main/docs/sources/set-up/install-with-docker.md
+  locality: local
+  weight: light
+  maturity: official
+  verification_state: verified_mcp
+  installability_tier: tested
+  risk_level: medium
+  default_enabled: false
+  install_method: docker
+  auth_model: api-key
+  source_records:
+  - url: https://github.com/grafana/mcp-grafana/blob/main/docs/sources/set-up/install-with-docker.md
+    kind: vendor_docs
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-08'
+    notes: Primary publisher instructions establish the implementation; Wright qualification and MCP adoption are not established.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/grafana-official-mcp-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 ec5f0e08abcb3f413830c83140444f742629995ead54e04e2a308b8573efa84b; portfolio category: Environment required.'
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/grafana-mcp-1.0.0-linux-x64.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Pinned 1.0.0 image authenticated to disposable Grafana 13.2 and passed list_datasources directly and through Wright GatewayService.
+  curation:
+    disposition: follow_up
+    reason: The pinned read-only server authenticated to Grafana 13.2 and passed protocol discovery plus a backend datasource query directly and through Wright's gateway.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-10-10'
+    next_action: Renew the pinned read-only qualification against a seeded engineering dashboard and add independent query-result assertions.
+    adoption: unknown
+  repository_url: https://github.com/grafana/mcp-grafana
+  credentials_required:
+  - GRAFANA_SERVICE_ACCOUNT_TOKEN
+  host_software_required:
+  - Docker
+  - Grafana 9 or later
+  validation_result:
+    status: passed
+    message: The digest-pinned Grafana MCP 1.0.0 server authenticated with a short-lived service token to disposable Grafana 13.2, listed 52 read-only tools, and returned identical list_datasources results directly and through Wright GatewayService.
+    environment: clean-wright-container-linux-x64
+    missing_dependencies: []
+    validated_at: '2026-09-10'
+    evidence_status: recorded
+- id: partuno-mcp
+  name: Partuno component sourcing MCP
+  vendor: JPMarhefka
+  description: Community DigiKey and Mouser component research, BOM analysis, and sourcing comparison using operator-owned credentials.
+  domains:
+  - design
+  - sourcing
+  engineering_stages:
+  - design
+  - sourcing
+  transport: stdio
+  command:
+  - uvx
+  - --from
+  - partuno==4.0.1
+  - partuno-mcp
+  source_url: https://github.com/JPMarhefka/partuno
+  locality: local
+  weight: light
+  maturity: community
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: medium
+  default_enabled: false
+  install_method: uvx
+  auth_model: api-key
+  source_records:
+  - url: https://github.com/JPMarhefka/partuno
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-08'
+    notes: Primary publisher instructions establish the implementation; Wright qualification and MCP adoption are not established.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/partuno-4.0.1-task-attempt.json
+    kind: evidence
+    primary: false
+    authority: community
+    observed_at: '2026-09-09'
+    notes: 'SHA-256 815ec01328df9071edd1c538279114b758663011d927f5f8e1fc34346b0083cc; portfolio category: Connect and verify.'
+  curation:
+    disposition: follow_up
+    reason: New lifecycle coverage candidate with primary-source evidence; Wright workflow qualification is pending.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-09'
+    review_due: '2026-10-09'
+    next_action: Review exact evidence at docs/mcp-catalog/evidence/curation-2026-09-09/partuno-4.0.1-task-attempt.json. Complete authentication and a read-only Wright gateway task.
+    adoption: unknown
+  repository_url: https://github.com/JPMarhefka/partuno
+  package_url: https://pypi.org/project/partuno/
+  credentials_required:
+  - DigiKey and/or Mouser API credentials
+  validation_result:
+    status: blocked
+    message: Partuno 4.0.1 passed initialize and tools/list with 50 tools; a harmless manufacturer read returned the expected DigiKey authorization requirement.
+    environment: wright-clean-debian13-x64
+    missing_dependencies:
+    - DigiKey and/or Mouser API credentials
+    validated_at: '2026-09-09'
+    evidence_status: recorded
+- id: kernelcad-mcp
+  name: kernelCAD MCP
+  vendor: w1ne
+  description: Open-source, source-first mechanical CAD runtime with MCP review tools and deterministic STEP/STL export workflows.
+  domains:
+  - cad
+  - mechanical
+  - manufacturing
+  engineering_stages:
+  - concept
+  - design
+  - manufacturing
+  transport: stdio
+  command:
+  - npx
+  - --yes
+  - kernelcad@0.15.0
+  - mcp
+  source_url: https://github.com/w1ne/kernelCAD-web
+  repository_url: https://github.com/w1ne/kernelCAD-web
+  package_url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.15.0.tgz
+  license: MIT
+  auth_model: none
+  install_method: npm
+  maturity: community
+  evidence_class: blocked_validation
+  capability_summary:
+  - Evaluate editable .kcad.ts mechanical models
+  - Review CAD constraints and geometry through MCP tools
+  - Export deterministic STEP and STL manufacturing artifacts
+  data_touched:
+  - Workspace-scoped CAD source and generated geometry
+  examples:
+  - Create and review a parameterized mounting bracket, then export STEP and STL
+  source_records:
+  - url: https://github.com/w1ne/kernelCAD-web
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-09-09'
+    notes: Publisher repository documents the local MCP command, editable source, deterministic review, and STEP/STL exports.
+  - url: https://registry.npmjs.org/kernelcad/-/kernelcad-0.11.2.tgz
+    kind: package
+    primary: true
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: Reviewed npm 0.11.2 tarball; SHA-256 faf3b230d45c1d0095a8555312719cc64b969e37d88b43c30108ad857bf1488a.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-09/kernelcad-0.11.2-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-09'
+    notes: Fresh Intel Linux attempt records the clean-container package-install blocker and cleanup.
+  - url: docs/mcp-catalog/evidence/curation-2026-09-10/kernelcad-0.15.0-preflight.json
+    kind: evidence
+    primary: false
+    authority: publisher
+    observed_at: '2026-09-10'
+    notes: Current npm 0.15.0 still fails with EALLOWGIT before MCP startup because its OpenCascade runtime is fetched from GitHub.
+  runtime_requirements:
+    cpu: standard x64 workstation CPU
+    gpu: not required for headless evaluation
+    docker: partial
+    notes: The reviewed npm release cannot currently install under Wright's clean-container package policy because it fetches a GitHub dependency.
+  locality: local
+  weight: medium
+  dependencies:
+    node:
+    - kernelcad@0.15.0
+    - replicad-opencascadejs@github:w1ne/replicad-opencascadejs#kcad-v0.24.0
+  verification_state: excluded
+  installability_tier: non_working
+  risk_level: medium
+  deployment_mode: local-stdio
+  platform_support:
+    linux_x64:
+      status: host-dependent
+      tested: true
+      notes: Package initialization failed before MCP startup because npm rejected the package's GitHub dependency under the clean-container policy.
+  default_enabled: false
+  validation_result:
+    status: failed
+    message: Current kernelCAD 0.15.0 could not initialize in the fresh Wright container because npm rejected its replicad-opencascadejs GitHub dependency with EALLOWGIT; no protocol or CAD task was executed.
+    environment: fresh-disposable-wright-engineering-container
+    missing_dependencies:
+    - Registry-published immutable replicad-opencascadejs dependency
+    validated_at: '2026-09-10'
+    evidence_status: partial
+  follow_up_url: docs/mcp-catalog/followups/kernelcad-mcp.md
+  install_blocked_reason: The reviewed npm package depends on a GitHub fetch that Wright's clean-container npm policy rejects; publishing that dependency as an immutable registry artifact is required before MCP qualification.
+  curation:
+    disposition: removed
+    reason: Two reviewed releases fail before MCP startup because a mutable GitHub runtime dependency conflicts with Wright's product installation policy.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-09-10'
+    review_due: '2026-12-10'
+    next_action: Rediscover only after the publisher ships every runtime dependency as an immutable registry artifact.
+    adoption: unknown
 format_version: 1

@@ -1,0 +1,91 @@
+{
+  "observed_at": "2026-09-10T15:37:14.659Z",
+  "dashboard_url": "http://127.0.0.1:18765/index.html",
+  "status": "passed",
+  "counts": {
+    "curated": 10,
+    "follow_up": 50,
+    "removed": 18
+  },
+  "category_counts": {
+    "qualified": 10,
+    "preflight_passed": 4,
+    "authentication_required": 10,
+    "environment_required": 26,
+    "untested": 0,
+    "failed": 10,
+    "excluded_archive": 18
+  },
+  "qualification_counts": {
+    "passing": 10,
+    "failing": 14,
+    "blocked": 48,
+    "stale": 0,
+    "untested": 6
+  },
+  "chains": [
+    {
+      "chain_id": "mechanical-cad-fea-review",
+      "status": "passed",
+      "call_count": 8
+    },
+    {
+      "chain_id": "electronics-ecad-enclosure-thermal-test",
+      "status": "passed",
+      "call_count": 15
+    },
+    {
+      "chain_id": "field-evidence-controlled-revision",
+      "status": "passed",
+      "call_count": 7
+    }
+  ],
+  "protocol_status": [
+    {
+      "protocol": "mcp",
+      "label": "MCP",
+      "known": 73,
+      "curated": 10,
+      "passing": 10,
+      "physical_operation_qualified": null,
+      "status": "implemented"
+    },
+    {
+      "protocol": "webmcp",
+      "label": "WebMCP",
+      "known": 3,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": null,
+      "status": "implemented"
+    },
+    {
+      "protocol": "hardware_mcp",
+      "label": "Hardware MCP",
+      "known": 2,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": false,
+      "status": "qualification_required"
+    },
+    {
+      "protocol": "mhs",
+      "label": "Anthropic Model Hardware Standard",
+      "known": 0,
+      "curated": 0,
+      "passing": 0,
+      "physical_operation_qualified": false,
+      "status": "research_preview"
+    }
+  ],
+  "evidence_server_id": "kernelcad-mcp",
+  "evidence_sha256": "d79a75be699827d7ccfc992c177148c5f3ec363253478a876079e337ad190f3d",
+  "console_errors": [],
+  "page_errors": [],
+  "failed_responses": [],
+  "screenshots": [
+    "engineering-mcp-dashboard.png",
+    "engineering-mcp-changes.png",
+    "engineering-mcp-server-evidence.png"
+  ]
+}

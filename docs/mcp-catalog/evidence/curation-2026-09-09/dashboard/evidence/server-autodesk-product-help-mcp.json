@@ -1,0 +1,62 @@
+{
+  "server_id": "autodesk-product-help-mcp",
+  "observed_at": "2026-09-09T21:18:29.770641+00:00",
+  "finished_at": "2026-09-09T21:18:47.576856+00:00",
+  "duration_seconds": 17.806,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "Autodesk help product discovery",
+  "configuration_sha256": "5bcfe938ca239b10cb6067ce975185b99ca286cb72fb9ac0d948021f56f106bf",
+  "installed_items": [],
+  "source_references": [],
+  "prerequisites": [],
+  "server_info": {
+    "name": "autodesk-knowledge-public-v1-mcp-server",
+    "title": null,
+    "version": "3.2.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61",
+  "tool_count": 2,
+  "outcome": {
+    "result_sha256": "30b6bb26bf053812254a3020ff4843a02a062a69b8ab40483f03a8bf861dbc57",
+    "contains_fusion": true
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "cleanup": "passed"
+}

@@ -868,6 +868,15 @@ def test_history_series_have_fixed_semantics_and_causal_committed_order(
     assert use_case["acceptance_evidence"][0]["evidence"] in development["evidence"]
 
 
+def test_canonical_timestamp_makes_mixed_offsets_lexically_causal() -> None:
+    earlier = publisher._canonical_timestamp("2026-09-05T07:01:47-04:00")
+    later = publisher._canonical_timestamp("2026-09-05T11:01:54Z")
+
+    assert earlier == "2026-09-05T11:01:47Z"
+    assert later == "2026-09-05T11:01:54Z"
+    assert earlier < later
+
+
 def test_delivery_lanes_are_derived_from_closed_committed_sources() -> None:
     # Retain the closed historical checkpoint even while native implementation
     # opens a new lease or advances to later delivery states.

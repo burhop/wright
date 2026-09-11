@@ -1,0 +1,91 @@
+{
+  "server_id": "openfoam-mcp-webworn",
+  "observed_at": "2026-09-10T21:28:30Z",
+  "source_url": "https://github.com/webworn/openfoam-mcp-server",
+  "source_revision": "8d14e2031146e4130d4e9f500146379dad19eb49",
+  "platform": "linux_x64",
+  "container_base": "ubuntu:22.04",
+  "repaired_image_digest": "sha256:17e00da96c5c7f7d695ab415a77e3765d9ec23ea504792f0639f89b2eefb540e",
+  "status": "failed",
+  "decision": "abandoned",
+  "steps": [
+    {
+      "stage": "upstream_container_build",
+      "status": "failed",
+      "diagnostic": "CMake requires pkg-config, but the published Dockerfile does not install it."
+    },
+    {
+      "stage": "narrow_build_repair",
+      "status": "passed",
+      "change": "Installed pkg-config in the disposable qualification image only."
+    },
+    {
+      "stage": "published_container_start",
+      "status": "failed",
+      "diagnostic": "libPstream.so is outside the effective runtime loader path."
+    },
+    {
+      "stage": "openfoam_environment_start",
+      "status": "failed",
+      "diagnostic": "The non-root process cannot create the hard-coded /workspaces/openfoam-mcp-server/results directory."
+    },
+    {
+      "stage": "workspace_mounted_start",
+      "status": "passed",
+      "diagnostic": "Sourcing OpenFOAM and mounting a writable results directory allowed startup."
+    },
+    {
+      "stage": "mcp_protocol",
+      "status": "passed",
+      "protocol_version": "2024-11-05",
+      "tool_count": 9,
+      "safe_tool": "run_pipe_flow"
+    },
+    {
+      "stage": "solver_execution",
+      "status": "failed",
+      "diagnostic": "The MCP reported a successful circular-pipe analysis, but blockMesh created a 1 x 1 x 0.1 m rectangular block with 400 cells for the requested 0.1 m diameter, 1 m long pipe. The returned 88.672 Pa pressure drop is the server's theoretical correlation rather than a value extracted from the computed field."
+    },
+    {
+      "stage": "wright_gateway",
+      "status": "failed",
+      "diagnostic": "Wright initialized the server, listed 9 tools, and completed both direct and proxied calls, but the evidence harness rejected differing direct and gateway payloads; each run embeds a new random case identifier."
+    },
+    {
+      "stage": "cleanup",
+      "status": "passed",
+      "diagnostic": "Temporary containers exited and the server removed its generated case directories."
+    }
+  ],
+  "request": {
+    "fluid": "water",
+    "velocity_m_per_s": 1.0,
+    "diameter_m": 0.1,
+    "length_m": 1.0,
+    "kinematic_viscosity_m2_per_s": 0.000001,
+    "density_kg_per_m3": 998.0
+  },
+  "reported_result": {
+    "success": true,
+    "reynolds_number": 100000.0,
+    "friction_factor": 0.01776998587601503,
+    "pressure_drop_pa": 88.67222952131499
+  },
+  "independent_checks": {
+    "solver_converged_iterations": 157,
+    "mesh_bounding_box_m": [[0, 0, 0], [1, 1, 0.1]],
+    "mesh_cells": 400,
+    "expected_geometry": "circular pipe, diameter 0.1 m, length 1 m",
+    "geometry_matches_request": false
+  },
+  "artifacts": [
+    {"path": "openfoam-case/blockMesh.log", "sha256": "2604f4442b05ceee42f62274f8b97ecc0f295c64fe37eb3759be4eefe91d7d4c"},
+    {"path": "openfoam-case/blockMeshDict", "sha256": "141da3dd9877ebaf4954fa5ac150b990b2e0d796fe827b46cf01698a054a53f3"},
+    {"path": "openfoam-case/final-p", "sha256": "fe01263e7ae8970c000a1e76d439f27fe277e391b2f4ee969ab6680268209fe0"},
+    {"path": "openfoam-case/solver.log", "sha256": "acf3eebf4340adc26d38976c41ba293c4f33ff74789c42cec6fb8e594b99e2ad"}
+  ],
+  "limitations": [
+    "Only the advertised pipe-flow path was executed.",
+    "The disposable build repair is evidence, not a supported Wright distribution."
+  ]
+}

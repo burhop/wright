@@ -1,0 +1,141 @@
+{
+  "server_id": "brep-mcp",
+  "observed_at": "2026-09-08T20:19:40.052898+00:00",
+  "wright_revision": "deec4940-plus-engineering-qualification",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/andymai/brepjs",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_error_behavior",
+      "status": "passed"
+    },
+    {
+      "stage": "bounded_timeout_cancellation",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "BREP box STEP and STL export",
+  "configuration_sha256": "676bcfd06bb4d29a877297784c561cc0684a5486cd1fec8f4a708fb07b14b52b",
+  "installed_items": [
+    "brepjs-cad@0.103.0"
+  ],
+  "source_references": [
+    "github.com/andymai/brepjs@2cfc880f517e82cfc4bbafed36ce55afa27daa12"
+  ],
+  "prerequisites": [
+    "Node.js v26.7.0"
+  ],
+  "server_info": {
+    "name": "brepjs-cad",
+    "title": null,
+    "version": "0.103.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "b7c2642da0b8ba55de9296f330dd52b1ca04b25d263f103c002d231382c911f4",
+  "tool_count": 2,
+  "export_schema": {
+    "type": "object",
+    "properties": {
+      "code": {
+        "type": "string",
+        "description": "A brepjs .brep.ts module with a default-exported part function."
+      },
+      "outDir": {
+        "type": "string",
+        "description": "Directory to write artifacts into."
+      },
+      "formats": {
+        "type": "object",
+        "description": "Which artifacts to write; omit for all.",
+        "properties": {
+          "step": {
+            "type": "boolean"
+          },
+          "glb": {
+            "type": "boolean"
+          },
+          "stl": {
+            "type": "boolean"
+          }
+        }
+      },
+      "timeoutMs": {
+        "type": "number",
+        "description": "Optional wall-clock budget in ms (default 30000)."
+      }
+    },
+    "required": [
+      "code",
+      "outDir"
+    ]
+  },
+  "outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "93b4c0c5bfbc34a372748aa85a7d486766ee82ac1d1e77cfd31d9eed2521e7bf"
+  },
+  "gateway_outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "246d0fc9e69d386ed2d6a5893a1697cc8f59070b63e52f45c2fb058e6ffd4a2f"
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 1121,
+    "sha256": "99273a95244a599a287d870b5fb9fe836aaa41f92aac920dccfeaae20d35ac80",
+    "dimensions_mm": [
+      40.0,
+      20.0,
+      10.0
+    ],
+    "volume_mm3": 7999.999999999999,
+    "step_bytes": 15416,
+    "step_sha256": "d961595addf846f45859128fefb413feb2f46bb2bb81ca4e3d6216d79913ed9e"
+  },
+  "cleanup": "passed"
+}

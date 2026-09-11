@@ -3,7 +3,10 @@ from __future__ import annotations
 import sqlite3
 from datetime import UTC, datetime
 
+import pytest
 from data_vault import upgrade_database
+from tool_registry import catalog_snapshots
+from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.catalog_signing import CatalogTrustRoot, verify_catalog_envelope
 from tool_registry.catalog_snapshots import (
     bootstrap_bundled_snapshot,
@@ -22,6 +25,26 @@ from catalog_update_fixtures import (
 )
 
 NOW = datetime(2026, 8, 12, 12, 0, tzinfo=UTC)
+
+
+def test_catalog_contexts_close_database_connections(tmp_path, monkeypatch) -> None:
+    database = tmp_path / "state.db"
+    upgrade_database(database)
+    real_connect = catalog_snapshots.sqlite3.connect
+    connections = []
+
+    def tracked_connect(*args, **kwargs):
+        connection = real_connect(*args, **kwargs)
+        connections.append(connection)
+        return connection
+
+    monkeypatch.setattr(catalog_snapshots.sqlite3, "connect", tracked_connect)
+    bootstrap_bundled_snapshot(database, payload=prior_69_catalog())
+
+    assert connections
+    for connection in connections:
+        with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+            connection.execute("SELECT 1")
 
 
 def test_bootstrap_is_idempotent_and_active_payload_survives_restart(tmp_path) -> None:
@@ -71,6 +94,6 @@ def test_corrupt_active_snapshot_falls_back_read_only_to_packaged_catalog(
         )
 
     document, diagnostic = load_active_catalog(database)
-    assert len(document["servers"]) == 70
+    assert len(document["servers"]) == len(load_catalog_document()["servers"])
     assert diagnostic["code"] == "catalog_recovery_bundled"
     assert get_catalog_state(database)["active_snapshot_id"] == bundled.snapshot_id

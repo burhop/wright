@@ -1,0 +1,27 @@
+{
+  "server_id": "blender-mcp-harveyxiacn",
+  "observed_at": "2026-09-10T01:44:22.836003+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/harveyxiacn/blender-mcp",
+  "credentials_supplied": false,
+  "host_requirements": [
+    "Blender 4+"
+  ],
+  "command": "uv",
+  "command_available_in_clean_image": true,
+  "cleanup": "passed",
+  "source_status": "available",
+  "source_revision": "1a04d16819dcc283b14de94aa5fb4983251a6578",
+  "source_etag_sha256": "2d06fa3b4fbc0eb93dfe485b99af92e87aade22e071659f5f671010f8acb055e",
+  "archived": false,
+  "disabled": false,
+  "pushed_at": "2026-06-03T02:22:58Z",
+  "license_spdx": "MIT",
+  "status": "blocked",
+  "blocking_requirement": "host_or_license",
+  "protocol": "not_reached",
+  "message": "Authoritative source is current; clean runtime lacks the recorded host dependency."
+}

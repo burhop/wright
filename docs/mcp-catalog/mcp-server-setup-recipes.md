@@ -63,7 +63,7 @@ external server adds a neutral command-line binding, change only this record.
 
 ## OpenSCAD Geometry (`openscad-mcp-server`)
 
-Source: https://github.com/quellant/openscad-mcp
+Source: https://github.com/robertcoop/openscad-mcp
 
 Install selected-server dependencies:
 
@@ -75,7 +75,7 @@ sudo apt-get install -y --no-install-recommends openscad xvfb
 Run MCP:
 
 ```bash
-uv run --with git+https://github.com/quellant/openscad-mcp.git openscad-mcp
+uv run --with git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689 openscad-mcp
 ```
 
 Validation probes:
@@ -303,9 +303,9 @@ Source: https://github.com/neka-nat/freecad-mcp
 Run MCP:
 
 ```bash
-uvx freecad-mcp --only-text-feedback
-# Equivalent in the Wright Ubuntu validation container:
-uv tool run freecad-mcp --only-text-feedback
+uv tool run --with 'mcp[cli]==1.28.1' \
+  --from 'git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f' \
+  freecad-mcp --only-text-feedback
 ```
 
 Install selected-server FreeCAD dependency:
@@ -326,7 +326,9 @@ chmod +x FreeCAD.AppImage
 Install the addon into FreeCAD user Mod paths and enable the local RPC server:
 
 ```bash
-git clone --depth 1 https://github.com/neka-nat/freecad-mcp /tmp/mcp-freecad-core
+git clone https://github.com/neka-nat/freecad-mcp /tmp/mcp-freecad-core
+git -C /tmp/mcp-freecad-core checkout --detach \
+  63acb305573194a011641ab13ccfb391fe95769f
 
 mkdir -p ~/.local/share/FreeCAD/Mod ~/.local/share/FreeCAD/v1-1/Mod ~/.FreeCAD/Mod
 cp -R /tmp/mcp-freecad-core/addon/FreeCADMCP ~/.local/share/FreeCAD/Mod/FreeCADMCP
@@ -356,6 +358,10 @@ Validation probes:
 - `create_object` with `doc_name=WrightDoc`, `obj_type=Part::Box`,
   `obj_name=WrightBox`, and `obj_properties` of 10 x 8 x 6 mm.
 - `get_objects` with `{"doc_name":"WrightDoc"}`.
+- Run the fixed `execute_code` probe to create a 10 x 8 x 6 mm `Part::Box`,
+  export STL, and independently measure its dimensions and 480 mm3 volume.
+- Repeat that export in three fresh direct sessions, the Wright gateway service,
+  and the Hermes-facing `wrightgateway` MCP.
 
 Known result:
 
@@ -368,6 +374,8 @@ Known result:
 - Ubuntu 24.04 `apt install freecad` had no package candidate in the clean
   validation container, so validation used the FreeCAD Linux x86_64 AppImage.
 - FreeCAD 1.1.1 AppImage reported revision `20260414`.
+- The AppImage SHA-256 was
+  `e2006138400b2fa85fa2e160e872d00767eb32964e85075830f7e198a3a876e1`.
 - FreeCAD RPC became ready on localhost port 9875 after 4 seconds.
 - MCP serverInfo was `FreeCADMCP` version `1.28.1`.
 - MCP listed 14 tools.
@@ -375,6 +383,10 @@ Known result:
 - `create_document` created `WrightDoc`.
 - `create_object` created `WrightBox`.
 - `get_objects` reported `WrightBox` as `Part::Box` with volume `480.0`.
+- On 8 September 2026, the clean standard Wright image passed all five direct
+  and gateway export paths; every independently parsed STL measured 10 x 8 x 6
+  mm and 480 mm3. Evidence is
+  `evidence/curation-2026-09-08/freecad-linux.json`.
 
 Known notes:
 
@@ -383,6 +395,10 @@ Known notes:
   diagnostic when FreeCAD is not installed or the addon is not running.
 - The FreeCAD AppImage emitted locale/fontconfig warnings in the minimal Ubuntu
   container, but those warnings did not block RPC startup or modeling commands.
+- The server's declared `mcp[cli]>=1.12.2` range currently resolves incompatible
+  MCP SDK 2.x. Keep the Wright launch and bundle pin at `mcp[cli]==1.28.1` until
+  upstream migrates or constrains its dependency. Controlled backend exceptions
+  are returned in tool content rather than with MCP `isError`.
 
 ## FreeCAD Robust (`freecad-robust-spkane`)
 
@@ -1066,7 +1082,10 @@ Source: https://github.com/ahujasid/blender-mcp
 Run MCP from a clean Wright container:
 
 ```bash
-uvx --python 3.11 blender-mcp
+BLENDER_MCP_DISABLE_TELEMETRY=true BLENDER_MCP_SAFE_MODE=true \
+  uv tool run --python 3.11 \
+  --from git+https://github.com/ahujasid/blender-mcp.git@5f8ddaf6e987c4aa0c3467fcc548838b28f64477 \
+  blender-mcp
 ```
 
 Install selected-server Blender dependencies:
@@ -1080,9 +1099,15 @@ sudo apt-get install -y --no-install-recommends \
 Start the Blender add-on under Xvfb:
 
 ```bash
-git clone --depth 1 https://github.com/ahujasid/blender-mcp /tmp/mcp-blender
+git clone https://github.com/ahujasid/blender-mcp /tmp/mcp-blender
+git -C /tmp/mcp-blender checkout 5f8ddaf6e987c4aa0c3467fcc548838b28f64477
 cat >/tmp/start_blendermcp.py <<'PY'
 import sys
+from pathlib import Path
+
+debian_packages = Path("/usr/lib/python3/dist-packages")
+if debian_packages.is_dir():
+    sys.path.insert(0, str(debian_packages))
 sys.path.insert(0, "/tmp/mcp-blender")
 import addon
 addon.register()
@@ -1096,30 +1121,39 @@ Validation probes:
 - `initialize`
 - `notifications/initialized`
 - `tools/list`
-- Without Blender/add-on socket: `get_scene_info` should return
-  `Could not connect to Blender. Make sure the Blender addon is running.`
-- With Blender/add-on socket: `get_scene_info` should return the default
-  scene containing `Cube`, `Light`, and `Camera`.
-- With Blender/add-on socket: `execute_blender_code` can create a temporary
-  cube and `get_object_info` should verify its mesh data.
+- Three fresh direct MCP sessions, Wright `GatewayService`, and the Hermes-facing
+  `wrightgateway` MCP each create and export a 10 x 8 x 6 mm mesh.
+- Parse each STL independently and require dimensions 10 x 8 x 6 mm, volume
+  480 mm3, and identical 684-byte output.
+- Require `get_object_info` to report 8 vertices, 12 edges, 6 polygons, and world
+  bounds `[-5, -4, -3]` to `[5, 4, 3]`.
+- Raise a controlled Blender exception and require its diagnostic in MCP content.
+- Stop the add-on bridge, require a connection-loss diagnostic, restart it,
+  verify reconnection, and confirm port and process-group cleanup.
 
 Known notes:
 
-- Repository commit `6e99eb5a442b83766a5796975ec7bb5bfc791341`.
-- There are no upstream test files in the cloned repository.
-- Clean Intel Ubuntu validation installed `uv`/`uvx` 0.11.25 using the official
-  installer and used `uvx --python 3.11 blender-mcp`.
-- The package downloaded CPython 3.11.15 and installed 37 Python packages.
-- MCP initialized as server `BlenderMCP` version `1.28.1`.
-- MCP lists 22 tools, including `get_scene_info`, `get_object_info`,
+- Current qualification pins repository commit
+  `5f8ddaf6e987c4aa0c3467fcc548838b28f64477` and source package 1.9.1.
+- All 113 upstream tests passed before Wright's integration scenario ran.
+- The clean standard Wright container used Blender 4.3.2,
+  `python3-requests 2.32.3+dfsg-5+deb13u1`, uv 0.9.26, and uv-managed
+  CPython 3.11.14. The base image was not modified.
+- MCP initialized as server `BlenderMCP` version `1.30.0`.
+- MCP lists 28 tools, including `get_scene_info`, `get_object_info`,
   `get_viewport_screenshot`, `execute_blender_code`, Poly Haven tools,
   Sketchfab tools, Hyper3D tools, and Hunyuan3D tools.
 - The add-on refuses `blender -b` background mode because commands would not
   execute. Use a normal Blender process inside `xvfb-run`.
-- Ubuntu 24.04 installed Blender 4.0.2. Its Python environment did not include
-  `requests` by default. Install `python3-requests` before loading `addon.py`.
-- Backend validation created `WrightValidationCube` at `(1.0, 2.0, 3.0)` and
-  verified it with `get_object_info`: 8 vertices, 12 edges, 6 polygons.
+- Debian's Blender interpreter does not include `/usr/lib/python3/dist-packages`
+  on its default path. The clean-container bootstrap exposes that directory so
+  the declared `python3-requests` package is the dependency under test.
+- The server warns that the add-on is not installed because the qualification
+  mounts the exact reviewed `addon.py` read-only and imports it directly. Its
+  protocol handshake still confirmed add-on protocol 5, add-on 1.6, and Blender
+  4.3.2.
+- `get_scene_info` currently requires a `user_prompt` field in its published tool
+  schema; the qualification sends an empty value.
 - Cloud/asset features such as Poly Haven, Sketchfab, Hyper3D, and Hunyuan3D
   were disabled for this local backend validation and still need separate
   credential/network testing.
@@ -1547,7 +1581,7 @@ Known problems:
 
 Follow-up: `docs/mcp-catalog/followups/kicad-mcp-lamaalrajih.md`
 
-## ROSBag MCP (`rosbag-mcp-binabik`)
+## ROSBag MCP, historical source checkout (`rosbag-mcp-binabik`)
 
 Source: https://github.com/binabik-ai/mcp-rosbags
 
@@ -1590,16 +1624,68 @@ Known result:
 - `bag_info` reported `/chatter`, 2 messages, and 1 second duration.
 - `get_message_at_time` returned message data `hello`.
 
-Known notes:
+Known problems:
 
-- No published `mcp-rosbags` or `mcp_rosbags` tool package was found in the
-  Python registry during validation.
-- The documented source path works, but `PYTHONPATH` must include
-  `/tmp/rosbag-mcp/src`.
-- `requirements.txt` currently leaves `rosbags` unpinned. The latest resolved
-  version, `rosbags==0.11.3`, failed at MCP startup because
-  `rosbags.serde.deserialize_cdr` is no longer exported.
-- Pinning `rosbags==0.10.10` restored the API and read the generated ROS 2 bag.
+- The documented source-checkout path works only when `PYTHONPATH` includes
+  `/tmp/rosbag-mcp/src` and `rosbags==0.10.10` restores the removed
+  `deserialize_cdr` API.
+- `requirements.txt` leaves both MCP and rosbags unpinned.
+- `setup.py` advertises `mcp-rosbag-server=server:main`, but its package layout
+  omits top-level `server.py`. A clean install therefore fails with
+  `ModuleNotFoundError: No module named 'server'`.
+- This entry is removed from ordinary discovery. Preserve existing source
+  checkouts and historical evidence; use `rosbag-mcp-pypi` for new setups.
+
+## ROSBag MCP, packaged replacement (`rosbag-mcp-pypi`)
+
+Package: https://pypi.org/project/rosbag-mcp/0.2.0/
+
+Run MCP:
+
+```bash
+PYTHONPATH= uv run --isolated --python 3.12 \
+  --with rosbag-mcp==0.2.0 \
+  --with mcp==1.28.1 \
+  --with rosbags==0.11.5 \
+  --with numpy==2.5.3 \
+  --with matplotlib==3.11.1 \
+  --with pillow==12.3.0 \
+  rosbag-mcp
+```
+
+Validation probes:
+
+- `initialize`, `notifications/initialized`, and `tools/list`
+- Three fresh `bag_info` and `get_message_at_time` queries against a generated
+  ROS 2 SQLite bag with two `/chatter` `std_msgs/msg/String` messages
+- The same known-message query through Wright `GatewayService` and
+  `api.gateway_stdio`
+- Direct SQLite and CDR inspection for topic, type, timestamps, and `hello` /
+  `world` payloads
+- A controlled missing-bag call and disposable-container cleanup
+
+Known result:
+
+- `rosbag-mcp==0.2.0` wheel SHA256:
+  `92f8538df74b7f73ed797d25d0242fa6c03ea68978ac221757fa211337ee1ed0`.
+- MCP initialized and listed 31 tools.
+- Three direct sessions and both Wright gateway layers returned the known
+  `/chatter` message `hello` at `1700000000.0` seconds.
+- Independent inspection found one SQLite topic, two messages at
+  `1700000000000000000` and `1700000001000000000` nanoseconds, and matching CDR
+  strings `hello` and `world`.
+- No MCP-specific host package was installed in the standard Wright base image.
+
+Known limits:
+
+- Keep the MCP 1.28.1 pin. An unconstrained install resolves MCP SDK 2.x, while
+  this server expects the 1.x `Server` API.
+- The PyPI source repository link was unavailable during review. The immutable
+  wheel and its hash support this narrow qualification, but source recovery,
+  maintenance continuity, broader analysis/export behavior, large-bag
+  performance, and repeat user adoption remain follow-up.
+- Missing-bag failures are returned in normal tool content rather than MCP
+  `isError` metadata.
 
 ## OASiS Open FEM Agent (`oasis-open-fem-agent`)
 
@@ -1613,24 +1699,17 @@ Legacy/search names:
 Setup:
 
 ```bash
-git clone --depth 1 https://github.com/Hereon-InstituteMS/OASiS /tmp/oasis
-cd /tmp/oasis
-python3 -m venv .venv
-. .venv/bin/activate
-pip install --upgrade pip
-pip install -e .
-```
-
-Validated lightweight backend:
-
-```bash
-pip install scikit-fem
+apt-get update
+apt-get install -y --no-install-recommends git
 ```
 
 Run MCP:
 
 ```bash
-PYVISTA_OFF_SCREEN=true /tmp/oasis/.venv/bin/python -m server
+PYTHONPATH= PYVISTA_OFF_SCREEN=true uv run --isolated --python 3.12 \
+  --with git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780 \
+  --with 'mcp[cli]==1.28.1' --with 'scikit-fem==12.0.2' \
+  python -m server
 ```
 
 Validation probes:
@@ -1638,32 +1717,38 @@ Validation probes:
 - `initialize`
 - `notifications/initialized`
 - `tools/list`
-- `discover`
-- `prepare_simulation` with `solver=skfem`, `physics=poisson`
-- `run_simulation` with `solver=skfem` and a fixed Poisson smoke script
-- Upstream focused tests: `PYTHONPATH=src PYVISTA_OFF_SCREEN=true pytest tests/test_mcp_stdio.py -q`
+- Three fresh `run_simulation` calls with `solver=skfem` and a fixed unit-square
+  Poisson script
+- Independent ASCII VTU parsing for mesh bounds, node count, finite values,
+  Dirichlet boundary values, and expected maximum solution range
+- The same solve through Wright `GatewayService` and `api.gateway_stdio`
+- Controlled invalid Python with no result artifact
+- A one-second Wright deadline followed by `/proc` inspection for an orphaned
+  solver process
 
 Known result:
 
-- Repository commit `117c35769c0eb00181db003e8dcdc305546b08b7`.
+- Repository commit `7c184d5b7ca5cda6086f3912d1c7923c58307780`.
 - MCP initialized as server `OASiS` version `1.28.1`.
-- MCP listed 15 tools.
-- With only the base package installed, `discover` returned clear
-  not-installed diagnostics for optional backends including FEniCSx, deal.II,
-  FEBio, NGSolve, scikit-fem, Kratos, DUNE-fem, and 4C.
-- After installing `scikit-fem==12.0.2`, `discover` reported `skfem`
-  available.
-- `prepare_simulation` returned Poisson knowledge and pitfalls for `skfem`.
-- `run_simulation` completed a scikit-fem Poisson solve in 0.46 seconds,
-  wrote `result.vtu`, and reported `max_phi 0.07389930610869422`.
-- Upstream focused MCP stdio tests passed: 5 passed.
+- MCP listed 17 tools.
+- Direct and gateway solves produced byte-identical 237,184-byte VTU files with
+  2,113 solution nodes, `[0,1] x [0,1]` bounds, zero Z extent, finite values,
+  minimum phi 0, and maximum phi 0.0735750773202.
+- The server's own verification gate attested each fixed solve, and the separate
+  Wright oracle verified the artifact rather than trusting that attestation.
+- A controlled solver failure produced no VTU. Wright's one-second timeout
+  retired the OASiS process group and left no matching solver process.
 
 Known notes:
 
 - The original research name `Open FEM Agent` now redirects to the canonical
   OASiS repository.
-- `pip install -e .` does not install the upstream test runner. Install
-  `pytest` before running upstream tests.
+- OASiS currently allows MCP SDK 2.x although its imports require the 1.x
+  `mcp.server.fastmcp` API. Keep the exact 1.28.1 pin.
+- OASiS requires NumPy below 2; use Python 3.12 because the selected NumPy has no
+  Python 3.13 wheel. Do not add a compiler to Wright's base image for this.
+- Clear the child `PYTHONPATH`. OASiS publishes generic top-level `core`, `tools`,
+  and `server` packages which otherwise collide with Wright's `core` package.
 - Do not install every advertised solver backend by default. Install only the
   backend the user selects. The Linux x64 catalog validation fully tested the
   lightweight `scikit-fem` backend; other backends remain optional and
@@ -2357,26 +2442,36 @@ SQLite state, and generated geometry under the ignored
 ### BREP MCP (`brep-mcp`)
 
 - Install only `brepjs-cad@0.103.0` with the recorded npm integrity and
-  `--ignore-scripts` into the disposable root.
+  blocked install scripts into the disposable root.
 - MCP initialization and `tools/list` pass on native Windows; the server reports
   version `0.103.0` and publishes 2 tools.
 - The source-controlled 1 mm cube probe fails in the upstream package because
   its entry point passes a `data:` URL to Node's `fileURLToPath`, which requires
   a `file:` URL. Do not patch the installed package during qualification.
+- On clean Intel Linux, copy Wright's reviewed
+  `docker/mcp/brep-mcp-launcher.cjs` to `brep-mcp-wrapped` on `PATH`. With the
+  third-party package still unmodified, three direct sessions and both Wright
+  gateway layers exported a 40 x 20 x 10 mm box as STEP and STL. The STL oracle
+  measured 8000 mm3; the STEP oracle verified complete ISO-10303-21 framing.
+  Invalid input left no artifact, and an infinite program was stopped by the
+  server's 250 ms sandbox timeout. Evidence is
+  `evidence/curation-2026-09-08/brep-linux.json`.
 
 ### SolidEdgeMCP (`solid-edge-mcp-burhop`)
 
-- Check out exactly `2aad5bd24df6ce1ac9578ad35c4da7ac241b5330`.
+- Check out the exact internally reviewed SolidEdgeMCP revision selected for the
+  Wright release; record the revision because the source is not publicly
+  accessible.
 - Restore only from `https://api.nuget.org/v3/index.json` into the disposable
   package directory, then build only
   `src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj`.
-- Launch with an allowed root inside the disposable directory and the upstream
-  `creation` tool mode. Call only `cad.get_status` with
-  `providerId: solid_edge`; never call connect, create, export, close, or other
-  document-affecting tools.
-- Install, startup, and tool listing pass. With no active Solid Edge document,
-  the status result omits `activeDocument` even though the published output
-  schema requires the nullable property, so an MCP client rejects the result.
+- Launch on an isolated Windows workstation with licensed Solid Edge and a
+  disposable allowed root. Verify status and discovery before running a small
+  part creation, inspection, export, reopen, and cleanup workflow through
+  Wright/Hermes.
+- Preserve the native artifact hashes and Wright gateway transcript. Public
+  repository visibility and redistribution approval are release concerns, not
+  evidence that the running MCP is broken.
 
 ### Autodesk Platform Services (`aps-mcp-server-nodejs`)
 
@@ -2410,3 +2505,147 @@ SQLite state, and generated geometry under the ignored
   labels the MCP as **Coming Soon**.
 - Do not authenticate, accept subscription terms, submit FeatureScript, or bind
   an Onshape document during this qualification.
+
+## September curation qualification recipes
+
+The current opt-in runner and container mounts are documented in
+[curation-runbook.md](curation-runbook.md#initial-qualification-runner).
+
+- Autodesk Product Help: launch the public Streamable HTTP URL recorded in the
+  catalog. The safe call is get_available_products with empty arguments; verify
+  the result contains Fusion, then repeat through
+  autodesk-product-help-mcp__get_available_products on Wright's actual stdio MCP.
+  Windows native and Linux x64 container evidence passed on 8 September. User
+  onboarding must still independently satisfy applicable publisher terms.
+- OpenSCAD: install git, openscad, xvfb and xauth only in the selected disposable
+  Intel Linux container. Launch `uv tool run --from
+  git+https://github.com/robertcoop/openscad-mcp.git@258c8a4553b62d0d1df1a37aa54c218ef3de5689
+  openscad-mcp`. The export_model call uses scad_content `cube([10,8,6]);`,
+  output_format `stl`, and an output_path in the disposable workspace. Verify
+  actual triangles, dimensions 10 x 8 x 6 mm and volume 480 mm3, then repeat through
+  openscad-mcp__export_model. The 8 September run passed with a 1467-byte STL.
+  The validated source is now also published as PyPI package `openscad-mcp` 0.6.1,
+  but Wright pins the reviewed Git revision. Source pinning alone does not lock
+  transitive dependencies, so review resolved dependencies during each retest.
+
+## 9 September previously-untested batch
+
+Use one disposable container per row. Hosted probes send only MCP initialize and
+tools/list without credentials. Host-bound rows resolve the publisher source and
+stop when the selected CAD/CAE host is absent; never add that host to Wright's
+base image. Exact commands, revisions, digests, and diagnostics are in the
+evidence linked from each catalog entry.
+
+| Servers | Launch or probe | Safe backend proof | Current boundary |
+|---|---|---|---|
+| Atlassian Rovo, GitHub, NVIDIA CUDA Docs, Onshape Labs, Rescale | `python scripts/probe-mcp-remote-http.py --endpoint <catalog-url> ...` | After guided authentication, list tools and perform one read-only fetch in a dedicated test account | Anonymous endpoint returned 401; **Connect and verify** |
+| Partuno 4.0.1 | `uv tool run --from partuno==4.0.1 partuno-mcp` | `list_manufacturers {"limit":1,"offset":0}` | Initialize and 50 tools passed; DigiKey returned structured 401; **Connect and verify** |
+| Playwright MCP 0.0.80 | `npx -y @playwright/mcp@0.0.80 --headless --isolated --browser chromium` | Navigate to a deterministic local page, snapshot, then repeat through Wright | Initialize and tools/list passed; **Preflight passed** |
+| Grafana MCP | `docker run --rm -i grafana/mcp-grafana@sha256:5114852743e450fe5186b6c1712419843eb4bd295e47e64c452c3aa0fab3c42e -t stdio --disable-write` | Query one known metric and log stream with a read-only service token | Initialize and tools/list passed; Grafana backend absent; **Environment required** |
+| Fusion desktop, Blender, FreeCAD (Proximile and Danstan), OpenFOAM, Simulink, Omniverse Kit/OmniUI/Isaac Sim | Resolve the pinned publisher source, install only in the selected host/lab, then launch the catalog command | Status/list first; then the smallest disposable model or solver fixture | Required desktop, solver, license, or GPU host absent; **Environment required** |
+| Autodesk Fusion Data | Replace the API origin with the publisher-documented MCP endpoint before retrying | Read one project/document metadata record | Current catalog URL terminates before MCP initialize; **Failed** |
+| Siemens Xcelerator Developer Portal | Do not launch the web portal URL as MCP | None until the publisher documents an MCP endpoint | Non-MCP URL; **Excluded archive** |
+| SolidEdgeMCP (burhop) | Use the internally reviewed exact source revision on Windows with licensed Solid Edge | Run the bounded Wright/Hermes creation, inspection, export, reopen, and cleanup workflow | Native Solid Edge and Wright integration evidence exists; public distribution remains separate; **Works** |
+
+## 10 September focused qualification recipes
+
+### NVIDIA Elements MCP
+
+- Launch the integrity-pinned npm package with `npx --yes
+  @nvidia-elements/cli@2.2.2 mcp` in a fresh standard Wright container.
+- Require initialization, exactly 18 tools, and `skills_list {}` directly and
+  through `nvidia-elements-mcp__skills_list` on Wright GatewayService.
+- Hash the tool schemas and both results; require matching direct and gateway
+  result hashes and disposable-container cleanup.
+- The released Preview scope is read-only NVIDIA Elements design-system
+  guidance. It does not claim a solver, CAD backend, or repeat user adoption.
+
+### Grafana MCP
+
+- Pin `grafana/mcp-grafana:1.0.0` by digest and launch with `-t stdio
+  --disable-write`.
+- Start a disposable official Grafana 13.2 container on a private Docker network,
+  create a Viewer service account and short-lived token, and never record the
+  token in evidence or logs.
+- Require 52-tool discovery and `list_datasources {}` directly and through
+  `grafana-official-mcp__list_datasources` on Wright GatewayService. Require
+  matching result hashes, then remove the token, backend, network, extracted
+  binary, and containers.
+- The Works scope is authenticated read-only observability. A seeded engineering
+  dashboard query and independent result assertion remain useful renewal work.
+
+### Web OpenSCAD
+
+- Pin source commit `a3acb68578701001f0251459c75716a55aadfa10`, pnpm 11.9.0,
+  relay 5.1.0, and a recorded Chromium/Playwright version in a disposable
+  Wright-derived container. Do not add browser or OpenSCAD dependencies to the
+  base image.
+- Build and serve the app, start the stdio relay first, then load the page. Check
+  both `navigator.modelContext.listTools()` and MCP `tools/list`.
+- The current page boundary passes with 16 tools, while the relay exposes only
+  four management tools. Diagnose that attachment before attempting
+  `get_render_status`, deterministic render, STL export, independent mesh
+  inspection, and Wright gateway calls.
+
+### SimScale Edge MCP
+
+- Pin community source commit
+  `2fe7421965f1610418202bf4de9fcefa56058437` and use `npm ci`; the
+  lockfile resolves only `playwright-core@1.62.1`.
+- The clean Wright container must pass all 26 upstream tests, including MCP
+  initialize, tool discovery, project guards, confirmation-sensitive actions,
+  redaction, and loopback Streamable HTTP.
+- For live qualification, use an isolated Windows Edge profile with remote
+  debugging, a dedicated SimScale test account, and a known project. Start with
+  read-only status and page-state calls, then run one bounded engineering task
+  through Wright and verify downloaded output and cleanup.
+- Treat it as community browser automation. It is unaffiliated with SimScale,
+  has only two observed commits, and declares no license.
+
+### OpenFOAM MCP Server
+
+- Do not offer source revision
+  `8d14e2031146e4130d4e9f500146379dad19eb49` as a Wright integration.
+- Its published container needs an omitted `pkg-config` build dependency, the
+  OpenFOAM loader environment, and a writable mount at a hard-coded workspace
+  path before MCP startup.
+- The advertised pipe-flow operation can report success after solving a
+  rectangular block instead of the requested circular pipe. Its returned
+  pressure drop is computed by a theoretical correlation rather than extracted
+  from the solved field.
+- Reopen qualification only after upstream fixes installation and supplies a
+  deterministic case whose mesh matches the request and whose reported
+  engineering quantities independently match exported solver fields.
+
+### FreeCAD MCP Full-Module Server
+
+- Do not offer source revision
+  `688b6349f3befdc90702a46d3cb7d369ca239621` on Linux.
+- It initializes and lists 165 tools, but the headless bridge ignores
+  `FREECAD_CMD=/usr/bin/freecadcmd` and tries to spawn
+  `/Applications/FreeCAD.app/Contents/Resources/bin/python` on the first backend
+  operation.
+- Reopen only after a published revision fixes non-macOS headless startup,
+  clears the recorded dependency audit, and passes a parameterized model plus
+  independently checked STEP/STL output through Wright.
+
+## Overnight current-release dispositions
+
+The 10 September final review closes the former In progress queue. Existing
+install commands and boundary probes in this document remain the reproducible
+recipes; the final release action is:
+
+- **Requires login:** `ansys-fluent-mcp`, `fusion360-mcp-server`,
+  `matlab-mcp-server`, `rhino-mcp`, and `solidworks-mcp-ts`. Their package and
+  MCP surfaces passed. Keep them credential-gated until the documented licensed
+  host scenario produces an independently checked artifact through Wright.
+- **Excluded archive:** `autodesk-fusion-desktop-mcp`,
+  `blender-mcp-harveyxiacn`, `cad-mcp-daobataotie`,
+  `comsol-multiphysics-mcp-wjc9011`, `creo-mcp`, `multicad-mcp`, the four
+  Omniverse/Isaac/USD candidates, `simscale-edge-mcp-getanirao`,
+  `simulink-agentic-toolkit`, `sketchup-mcp`, `thingworx-mcp`,
+  `webmcp-openscad`, and `wincc-unified-mcp`. Do not offer these records until
+  their entry-specific re-entry test in the dated disposition evidence passes.
+
+The decision matrix is
+`evidence/curation-2026-09-10/overnight-final-dispositions.json`.

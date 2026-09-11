@@ -43,6 +43,11 @@ elif query == "python_tools":
     for _, install in installs():
         values.extend(install.get("python_tools") or [])
     print("\n".join(dict.fromkeys(str(value) for value in values)))
+elif query == "isolated_python_tools":
+    values = []
+    for _, install in installs():
+        values.extend(install.get("isolated_python_tools") or [])
+    print(json.dumps(values))
 elif query == "npm_tools":
     values = []
     for _, install in installs():
@@ -286,16 +291,55 @@ PY
 }
 
 install_python_tools() {
+  local tools=()
   while IFS= read -r tool; do
     [ -n "$tool" ] || continue
-    "$UV_BIN" pip install --python "$PYTHON_BIN" "$tool"
+    tools+=("$tool")
   done < <(bundle_query python_tools)
+  if [ "${#tools[@]}" -gt 0 ]; then
+    "$UV_BIN" pip install --python "$PYTHON_BIN" "${tools[@]}"
+  fi
 
   for executable in openscad-mcp freecad-mcp; do
     if [ -x "${VENV_BIN}/${executable}" ]; then
       ln -sf "${VENV_BIN}/${executable}" "${BIN_DIR}/${executable}"
     fi
   done
+}
+
+install_isolated_python_tools() {
+  local tools_json
+  tools_json="$(bundle_query isolated_python_tools)"
+  ISOLATED_PYTHON_TOOLS_JSON="$tools_json" "$PYTHON_BIN" - "$UV_BIN" "$PYTHON_BIN" "$MCP_ROOT" "$BIN_DIR" <<'PY'
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+uv_bin, python_bin, mcp_root, bin_dir = sys.argv[1:]
+tool_dir = Path(mcp_root) / "python-tools"
+tool_dir.mkdir(parents=True, exist_ok=True)
+env = os.environ.copy()
+env["UV_TOOL_DIR"] = str(tool_dir)
+env["UV_TOOL_BIN_DIR"] = bin_dir
+for tool in json.loads(os.environ["ISOLATED_PYTHON_TOOLS_JSON"]):
+    subprocess.run(
+        [
+            uv_bin,
+            "tool",
+            "install",
+            "--force",
+            "--python",
+            python_bin,
+            "--from",
+            tool["requirement"],
+            tool["executable"],
+        ],
+        env=env,
+        check=True,
+    )
+PY
 }
 
 install_python_projects() {
@@ -498,6 +542,7 @@ install_release_assets
 install_git_sources
 install_configured_git_sources
 install_python_tools
+install_isolated_python_tools
 install_python_projects
 install_dotnet_projects
 install_npm_tools

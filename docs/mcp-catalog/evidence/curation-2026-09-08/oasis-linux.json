@@ -1,0 +1,171 @@
+{
+  "server_id": "oasis-open-fem-agent",
+  "observed_at": "2026-09-08T21:18:58.446680+00:00",
+  "wright_revision": "deec4940-plus-engineering-qualification",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_solver_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "wright_timeout_process_tree_cleanup",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "OASiS scikit-fem Poisson solve",
+  "configuration_sha256": "58c960317881fd4bfe4bb1916a0b8b207915c66691b53ff175b42b2c2d70c69e",
+  "installed_items": [
+    "Python 3.12.12 (uv-managed)",
+    "OASiS@7c184d5b7ca5cda6086f3912d1c7923c58307780",
+    "mcp[cli]==1.28.1",
+    "scikit-fem==12.0.2"
+  ],
+  "source_references": [
+    "https://github.com/Hereon-InstituteMS/OASiS/tree/7c184d5b7ca5cda6086f3912d1c7923c58307780"
+  ],
+  "prerequisites": [
+    "git 2.47.3"
+  ],
+  "server_info": {
+    "name": "OASiS",
+    "title": null,
+    "version": "1.28.1",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "17f3b66aa945789ef483a910a9319398baf3e2e8b7c1ae878457227e1e2be4a4",
+  "tool_count": 17,
+  "run_schema": {
+    "properties": {
+      "solver": {
+        "title": "Solver",
+        "type": "string"
+      },
+      "input_content": {
+        "title": "Input Content",
+        "type": "string"
+      },
+      "job_name": {
+        "default": "",
+        "title": "Job Name",
+        "type": "string"
+      },
+      "np": {
+        "default": 1,
+        "title": "Np",
+        "type": "integer"
+      },
+      "critic_approved": {
+        "default": false,
+        "title": "Critic Approved",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "solver",
+      "input_content"
+    ],
+    "title": "run_simulationArguments",
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 237184,
+    "sha256": "338ece55f1453587afaf47d3d04dec1c3ab72dd66e657224144069771883014e",
+    "nodes": 2113,
+    "bounds": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "min_phi": 0.0,
+    "max_phi": 0.0735750773202,
+    "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself."
+  },
+  "gateway_outcome": {
+    "bytes": 237184,
+    "sha256": "338ece55f1453587afaf47d3d04dec1c3ab72dd66e657224144069771883014e",
+    "nodes": 2113,
+    "bounds": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "min_phi": 0.0,
+    "max_phi": 0.0735750773202,
+    "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself."
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 237184,
+    "sha256": "338ece55f1453587afaf47d3d04dec1c3ab72dd66e657224144069771883014e",
+    "nodes": 2113,
+    "bounds": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "min_phi": 0.0,
+    "max_phi": 0.0735750773202,
+    "verification": "VERIFIED \u2014 critic-approved and passed OASiS verification-gate checks (attestation + numerical checks). This is verification, not validation: confirm physical validity against reality yourself."
+  },
+  "cleanup": "passed"
+}

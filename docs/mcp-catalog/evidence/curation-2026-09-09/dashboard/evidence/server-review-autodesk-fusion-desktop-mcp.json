@@ -1,0 +1,15 @@
+{
+  "server_id": "autodesk-fusion-desktop-mcp",
+  "observed_at": "2026-09-10T01:43:00Z",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "command": "autodesk-fusion-local-mcp",
+  "command_exit_code": 1,
+  "observed_output": "AUTODESK_FUSION_HOST_COMMAND_NOT_PRESENT",
+  "status": "blocked",
+  "blocking_requirement": "Autodesk Fusion desktop session on a supported host",
+  "protocol": "not_reached",
+  "credentials_supplied": false,
+  "cleanup": "passed"
+}

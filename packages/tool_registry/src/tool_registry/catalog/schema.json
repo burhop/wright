@@ -1,32 +1,5 @@
 {
   "$defs": {
-    "DependencySpec": {
-      "properties": {
-        "system": {
-          "items": {
-            "type": "string"
-          },
-          "title": "System",
-          "type": "array"
-        },
-        "python": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Python",
-          "type": "array"
-        },
-        "node": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Node",
-          "type": "array"
-        }
-      },
-      "title": "DependencySpec",
-      "type": "object"
-    },
     "CatalogSourceRecord": {
       "properties": {
         "url": {
@@ -89,6 +62,130 @@
       "title": "CatalogSourceRecord",
       "type": "object"
     },
+    "CurationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "disposition": {
+          "default": "follow_up",
+          "enum": [
+            "curated",
+            "follow_up",
+            "removed"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "reason": {
+          "default": "Wright qualification has not been reviewed.",
+          "maxLength": 2000,
+          "title": "Reason",
+          "type": "string"
+        },
+        "owner": {
+          "default": "Wright catalog maintainers",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Owner",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewed At"
+        },
+        "review_due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Due"
+        },
+        "next_action": {
+          "default": "Review sources and qualify a useful workflow through Wright.",
+          "maxLength": 2000,
+          "title": "Next Action",
+          "type": "string"
+        },
+        "replacement_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Replacement Ids",
+          "type": "array"
+        },
+        "adoption": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "publisher_reported",
+            "independent_reports",
+            "wright_repeat_use"
+          ],
+          "title": "Adoption",
+          "type": "string"
+        },
+        "adoption_evidence": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Adoption Evidence",
+          "type": "array"
+        },
+        "qualifications": {
+          "items": {
+            "$ref": "#/$defs/QualificationScope"
+          },
+          "maxItems": 30,
+          "title": "Qualifications",
+          "type": "array"
+        }
+      },
+      "title": "CurationDecision",
+      "type": "object"
+    },
+    "DependencySpec": {
+      "properties": {
+        "system": {
+          "items": {
+            "type": "string"
+          },
+          "title": "System",
+          "type": "array"
+        },
+        "python": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Python",
+          "type": "array"
+        },
+        "node": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Node",
+          "type": "array"
+        }
+      },
+      "title": "DependencySpec",
+      "type": "object"
+    },
     "EnvVarDefinition": {
       "description": "Metadata about an environment variable an MCP server needs.",
       "properties": {
@@ -149,6 +246,119 @@
         }
       },
       "title": "PlatformSupportRecord",
+      "type": "object"
+    },
+    "QualificationScope": {
+      "additionalProperties": false,
+      "properties": {
+        "platform": {
+          "enum": [
+            "windows_11_x64",
+            "linux_x64",
+            "linux_arm64",
+            "macos_x64",
+            "macos_arm64"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "environment": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string"
+        },
+        "distribution_mode": {
+          "enum": [
+            "native",
+            "docker"
+          ],
+          "title": "Distribution Mode",
+          "type": "string"
+        },
+        "configuration_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Configuration Sha256",
+          "type": "string"
+        },
+        "workflow": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Workflow",
+          "type": "string"
+        },
+        "source_revision": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "wright_revision": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Wright Revision",
+          "type": "string"
+        },
+        "verified_at": {
+          "format": "date",
+          "title": "Verified At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "evidence_path": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Evidence Path",
+          "type": "string"
+        },
+        "evidence_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Evidence Sha256",
+          "type": "string"
+        },
+        "protocol": {
+          "const": "passed",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "backend": {
+          "const": "passed",
+          "title": "Backend",
+          "type": "string"
+        },
+        "gateway": {
+          "const": "passed",
+          "title": "Gateway",
+          "type": "string"
+        },
+        "outcome": {
+          "const": "passed",
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "platform",
+        "environment",
+        "distribution_mode",
+        "configuration_sha256",
+        "workflow",
+        "source_revision",
+        "wright_revision",
+        "verified_at",
+        "expires_at",
+        "evidence_path",
+        "evidence_sha256",
+        "protocol",
+        "backend",
+        "gateway",
+        "outcome"
+      ],
+      "title": "QualificationScope",
       "type": "object"
     },
     "RuntimeRequirements": {
@@ -259,6 +469,128 @@
       },
       "title": "ValidationSummary",
       "type": "object"
+    },
+    "WindowsQualificationStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "enum": [
+            "passed",
+            "partial",
+            "failed",
+            "safety_blocked",
+            "obsolete_or_unavailable",
+            "not_applicable",
+            "not_tested"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "reason_code": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result",
+        "label",
+        "reason_code"
+      ],
+      "title": "WindowsQualificationStatus",
+      "type": "object"
+    },
+    "WindowsQualificationSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "evidence_path": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Evidence Path",
+          "type": "string"
+        },
+        "evidence_digest": {
+          "title": "Evidence Digest",
+          "type": "string"
+        },
+        "current": {
+          "default": true,
+          "title": "Current",
+          "type": "boolean"
+        },
+        "stale_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Stale Reasons",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "package_or_registration": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "startup": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "protocol": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "host_or_backend": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "wright_setup": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "gateway": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "cleanup": {
+          "$ref": "#/$defs/WindowsQualificationStatus"
+        },
+        "claim": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Claim"
+        }
+      },
+      "required": [
+        "observed_at",
+        "evidence_path",
+        "evidence_digest",
+        "source",
+        "package_or_registration",
+        "startup",
+        "protocol",
+        "host_or_backend",
+        "wright_setup",
+        "gateway",
+        "cleanup"
+      ],
+      "title": "WindowsQualificationSummary",
+      "type": "object"
     }
   },
   "properties": {
@@ -285,6 +617,50 @@
       "title": "Domains",
       "type": "array"
     },
+    "engineering_stages": {
+      "items": {
+        "enum": [
+          "requirements",
+          "concept",
+          "design",
+          "simulation",
+          "sourcing",
+          "manufacturing",
+          "test_quality",
+          "release",
+          "operations"
+        ],
+        "type": "string"
+      },
+      "title": "Engineering Stages",
+      "type": "array"
+    },
+    "integration_kind": {
+      "default": "mcp_server",
+      "enum": [
+        "mcp_server",
+        "webmcp_application",
+        "protocol_reference",
+        "api_candidate",
+        "capability_alias",
+        "agent_skills"
+      ],
+      "title": "Integration Kind",
+      "type": "string"
+    },
+    "hardware_standard": {
+      "default": "none",
+      "enum": [
+        "none",
+        "hardware_mcp",
+        "mhs_preview"
+      ],
+      "title": "Hardware Standard",
+      "type": "string"
+    },
+    "curation": {
+      "$ref": "#/$defs/CurationDecision"
+    },
     "tags": {
       "items": {
         "type": "string"
@@ -301,21 +677,6 @@
       ],
       "title": "Transport",
       "type": "string"
-    },
-    "evidence_class": {
-      "enum": [
-        "official_production",
-        "official_preview",
-        "verified_community",
-        "community_candidate",
-        "user_reported_source_needed",
-        "api_wrapper_candidate",
-        "documentation_only",
-        "blocked_validation",
-        "excluded_or_stale"
-      ],
-      "type": ["string", "null"],
-      "default": null
     },
     "command": {
       "anyOf": [
@@ -434,6 +795,29 @@
       ],
       "title": "Maturity",
       "type": "string"
+    },
+    "evidence_class": {
+      "anyOf": [
+        {
+          "enum": [
+            "official_production",
+            "official_preview",
+            "verified_community",
+            "community_candidate",
+            "user_reported_source_needed",
+            "api_wrapper_candidate",
+            "documentation_only",
+            "blocked_validation",
+            "excluded_or_stale"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Class"
     },
     "capability_summary": {
       "items": {
@@ -598,6 +982,17 @@
     },
     "validation_result": {
       "$ref": "#/$defs/ValidationSummary"
+    },
+    "windows_qualification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WindowsQualificationSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "follow_up_url": {
       "anyOf": [

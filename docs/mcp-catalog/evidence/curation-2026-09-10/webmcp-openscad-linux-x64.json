@@ -1,0 +1,50 @@
+{
+  "server_id": "webmcp-openscad",
+  "observed_at": "2026-09-10T20:15:41Z",
+  "environment": "disposable-wright-derived-container",
+  "platform": "linux_x64",
+  "base_container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/jherr/webmcp-openscad",
+  "source_revision": "a3acb68578701001f0251459c75716a55aadfa10",
+  "relay_revision": "@mcp-b/webmcp-local-relay@5.1.0",
+  "relay_integrity": "sha512-C5Q5DPgXLoLlQQ3VlIvUnDbnxX5Xh1t4byXpwqJbkayqmekW1luEj69Zo36rsSN6bVlKlrgPsEaJIacjhdSsFw==",
+  "status": "partial",
+  "steps": [
+    {"stage": "source_install_and_build", "status": "passed"},
+    {
+      "stage": "browser_page_and_openscad_worker",
+      "status": "passed",
+      "observed": "The page registered 16 tools and mounted 56 BOSL2 files in the OpenSCAD worker."
+    },
+    {"stage": "browser_webmcp_surface", "status": "passed", "tool_count": 16},
+    {"stage": "stdio_relay_protocol", "status": "passed", "tool_count": 4},
+    {
+      "stage": "browser_to_relay_attachment",
+      "status": "failed",
+      "observed": "The relay continued to expose only its four management tools; get_render_status was not listed through MCP."
+    },
+    {"stage": "wright_gateway_backend_call", "status": "not_reached"}
+  ],
+  "browser_tool_names": [
+    "edit_source",
+    "export_stl",
+    "get_history",
+    "get_parameter",
+    "get_project_name",
+    "get_render_status",
+    "get_source",
+    "list_parameters",
+    "load_from_text",
+    "load_from_url",
+    "render",
+    "reset_parameters",
+    "revert_source",
+    "set_parameter",
+    "set_parameters",
+    "set_project_name"
+  ],
+  "cleanup": "passed",
+  "limitations": [
+    "The browser surface works, but Wright cannot release the integration until the documented relay path exposes the browser tools to MCP clients."
+  ]
+}

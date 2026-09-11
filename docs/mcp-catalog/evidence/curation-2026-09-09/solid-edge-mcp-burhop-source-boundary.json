@@ -1,0 +1,21 @@
+{
+  "server_id": "solid-edge-mcp-burhop",
+  "observed_at": "2026-09-10T01:44:20.615612+00:00",
+  "wright_revision": "a2ff89b8d3eba552aeda01c8c986d3c853a983e6",
+  "environment": "wright-clean-debian13-x64",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/burhop/SolidEdgeMCP",
+  "credentials_supplied": false,
+  "host_requirements": [
+    "Solid Edge",
+    "Windows COM"
+  ],
+  "command": "SolidEdgeMcpServer.exe",
+  "command_available_in_clean_image": false,
+  "cleanup": "passed",
+  "source_status": "unavailable",
+  "status": "failed",
+  "protocol": "not_reached",
+  "observed_error": "HTTP Error 404: Not Found"
+}

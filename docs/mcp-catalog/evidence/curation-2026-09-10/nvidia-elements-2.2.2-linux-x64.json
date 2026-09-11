@@ -1,0 +1,42 @@
+{
+  "server_id": "nvidia-elements-mcp",
+  "observed_at": "2026-09-10T19:58:21Z",
+  "finished_at": "2026-09-10T19:58:42Z",
+  "duration_seconds": 20.907,
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "source_url": "https://github.com/NVIDIA/elements",
+  "source_revision": "2.2.2",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "package_integrity": "sha512-W58/oEsGkm0s2W9EQy8VO1y2+ByFcfldfYYxT6MbCwQDkFLXA5AuohaStd65pdD4UKclhA/DCgJAwLHNZjso0Q==",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_and_discovery",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_safe_backend_call",
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_discovery",
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_safe_backend_call",
+      "status": "passed"
+    }
+  ],
+  "tool_count": 18,
+  "tool_schema_sha256": "648ef1e2588dff0e545fc71744c7fc1748fca827b29bb8d4653200692215155f",
+  "safe_tool": "skills_list",
+  "safe_result_sha256": "67299a7d8ebe696134db49fb643333eff9ab15a6c553fcdcd6a893f1b7c5c91c",
+  "gateway_tool_count": 18,
+  "gateway_result_sha256": "67299a7d8ebe696134db49fb643333eff9ab15a6c553fcdcd6a893f1b7c5c91c",
+  "audit_event_count": 38,
+  "cleanup": "passed",
+  "limitations": [
+    "This run proves the selected read-only scope; it does not establish repeat user adoption."
+  ]
+}

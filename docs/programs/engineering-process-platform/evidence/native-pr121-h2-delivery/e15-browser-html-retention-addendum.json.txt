@@ -1,0 +1,37 @@
+{
+  "kind": "Actual evidence-retention addendum",
+  "observed_at": "2026-09-05T10:39:11.7722248Z",
+  "source_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+  "original_html": {
+    "sha256": "f9ef58bf63af4f2bafa5753c5699d92f44c96db9d998e35ec204668278cf7772",
+    "current_availability": "No surviving identical copy located in seven likely task evidence/report locations",
+    "filename": "index.html",
+    "bytes": 784443
+  },
+  "cause": "The later H2 push gate reused the Playwright report directory and replaced its HTML. The earlier manifest and independent review reflect actual contemporaneous observation and remain unchanged.",
+  "retained_support": [
+    {
+      "sha256": "c8434a942852c669e7a4a8ace9fd93de2dca902d4143c3d11e7fa6238450ed06",
+      "filename": "dev-merge-gate-e15c0749-20260905T091833Z.log",
+      "bytes": 504047
+    },
+    {
+      "sha256": "c96151f756bd18b28ea6c0f83be7b1db1a5bd51d7c4806cc7523612f3bbddcf5",
+      "filename": "dev-merge-gate-e15c0749-20260905T091833Z.log.observation.json",
+      "bytes": 848
+    },
+    {
+      "sha256": "3e2c49e95defe02ed26adeb8048f8c1adfb6febf26611802060b40ec067dd151",
+      "filename": "terminal-browser-cases.json.txt",
+      "bytes": 83485
+    }
+  ],
+  "classification": "Raw HTML attachment retention loss. The actual complete-gate result and independent review remain supported by retained raw log, observation and contemporaneous175-case projection. No rerun, reconstruction or result relabeling occurred.",
+  "limits": "The complete original HTML and any unpreserved attached payload cannot be fetched from this receipt. Do not claim continued availability of every original listed at assembly time.",
+  "independent_classification_sha256": "714ade486c0a5e135b3b795abe7b78364f57e87057cc03a77a2cfed8a513ec17",
+  "later_push_report_copy": {
+    "sha256": "14584c1a1029e74f765bf60115fbe861ed43752237f86ce8d052b18994dfef1d",
+    "meaning": "Separately preserved H2 smoke report; never substituted for e15 full-gate HTML.",
+    "filename": "pr121-h2-push-browser-report/index.html"
+  }
+}

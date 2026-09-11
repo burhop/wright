@@ -1,0 +1,56 @@
+{
+  "server_id": "autodesk-product-help-mcp",
+  "observed_at": "2026-09-08T19:35:46.210209+00:00",
+  "wright_revision": "1ada5de0-plus-curation",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:70df876f46133fc44bf6f448ca37a16fade3bbb3f5293290065b0a3e1e559d29",
+  "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "Autodesk help product discovery",
+  "configuration_sha256": "5bcfe938ca239b10cb6067ce975185b99ca286cb72fb9ac0d948021f56f106bf",
+  "server_info": {
+    "name": "autodesk-knowledge-public-v1-mcp-server",
+    "title": null,
+    "version": "3.2.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8e5575f29e2828fba92b5cd81b459cfaa718f27ff9e8ac5300d36cf0b70bcd61",
+  "tool_count": 2,
+  "outcome": {
+    "result_sha256": "30b6bb26bf053812254a3020ff4843a02a062a69b8ab40483f03a8bf861dbc57",
+    "contains_fusion": true
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "cleanup": "passed"
+}

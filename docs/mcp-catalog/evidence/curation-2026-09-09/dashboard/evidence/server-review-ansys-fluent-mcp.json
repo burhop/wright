@@ -1,0 +1,614 @@
+{
+  "server_id": "ansys-fluent-mcp",
+  "observed_at": "2026-09-09T22:31:03.099343+00:00",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "fresh-disposable-wright-engineering-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://pypi.org/project/ansys-fluent-mcp/0.4.0/",
+  "source_revision": "0.4.0",
+  "source_sha256": "59e0e5d9613e5254830ccf5a919d7ec61affbe19608a11ccf4e296764d0fd72a",
+  "installed_items": [
+    "ansys-fluent-mcp=0.4.0"
+  ],
+  "prerequisites": [
+    "no-licensed-fluent-host"
+  ],
+  "recovery_steps": [
+    "Connect a licensed Fluent 2024 R1 or newer session and run a deterministic CFD case through Wright GatewayService with mesh, residual, field, and exported-result oracles."
+  ],
+  "implementation_mode": "native_vendor_binary",
+  "status": "partial",
+  "protocol": "passed",
+  "startup": "passed",
+  "server_info": {
+    "name": "ansys-fluent-mcp",
+    "title": null,
+    "version": "4.0.3",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_count": 25,
+  "tool_schema_sha256": "b09c05c5f2d51ae550a4ba5b20d661eaae48dd21f3fc2c0041e8f183522543ff",
+  "tools": [
+    {
+      "name": "compare_files",
+      "description": "Open two Fluent case/mesh files in two SEPARATE ephemeral PyFluent sessions and summarize the differences between them. Both sessions are launched headless (no_gui) and the cases are read with lightweight_setup=True for speed; the live workspace session, if any, is NOT touched. Returns a structured diff of global model state and per-family named-object name lists. Use for questions like 'what changed between these two cases?', 'compare A.cas.h5 and B.cas.h5'. The response includes a pre-rendered markdown table in the 'summary' field grouped by hierarchy. Reply with that 'summary' string verbatim — its column headers ARE the actual file names and a '—' cell means 'not present in that file'. Do NOT re-label files as 'File A' / 'File B', do NOT add a 'Change' column back, and do NOT paraphrase the table into bullet lists.",
+      "input_schema": {
+        "properties": {
+          "path_a": {
+            "type": "string"
+          },
+          "path_b": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path_a",
+          "path_b"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "connect",
+      "description": "Connect the solve leaf to a backend. Available backend kinds: ['pyfluent']. Pass `backend_kind` to choose, or omit it to auto-select. Backend-specific options (url/token/ip/port/...) go in `connect_kwargs` as a dict and are forwarded to the backend.",
+      "input_schema": {
+        "properties": {
+          "backend_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Backend kind to select from the configured backends."
+          },
+          "connect_kwargs": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Backend-specific connection options."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "describe_named_object_template",
+      "description": "Describe the field shape of a fresh child under a NamedObject collection (boundary conditions, cell-zone conditions, report definitions, materials, surfaces, expressions, ...). Returns ``{child_class, fields, is_active, is_user_creatable, create_command}`` where ``fields`` carries per-field ``{type_hint, is_active, is_read_only, is_user_creatable, allowed_values, min, max, default, units}``. Use BEFORE proposing ``set_named`` / ``multi_edit`` to learn which fields are required, which are read-only (computed by Fluent), and which carry an allowed-values constraint. Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "describe_path",
+      "description": "Batch unified descriptor for one or more Fluent settings paths. Composes the ``probe_path`` + ``get_allowed_values`` (+ ``describe_named_object_template`` / ``get_command_arguments`` when the path is a NamedObject collection or a Command) probes into a single ``PathDescriptor`` per path — one round-trip on the wire, one shape on the wire, ready to feed the recipe / validator grounder without stitching four different envelopes together. Every field defaults to ``null`` (meaning 'unknown / unavailable'); an empty ``allowed_values`` list carries 'the backend explicitly reports no allowed values', which is different from ``null`` (probe skipped or failed). Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "include_template": {
+            "default": true,
+            "type": "boolean"
+          },
+          "include_command_arguments": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "paths"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "disconnect",
+      "description": "Disconnect the solve leaf's active backend.",
+      "input_schema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_api",
+      "description": "Retrieve candidate Fluent settings APIs for a query from the bundled Fluent API catalog. Returns ranked hits as {path, kind, score, ...}. Use this to locate the dotted settings path that implements a property (e.g. query 'temperature wall' returns wall.thermal.temperature variants). Optional filters: `kinds` (Parameter, Command, Object, Group) and `under` (path prefix to scope the search).",
+      "input_schema": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search text or user request to evaluate."
+          },
+          "top_k": {
+            "default": 10,
+            "type": "integer",
+            "description": "Maximum number of results to return."
+          },
+          "kinds": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional result kinds used to narrow the operation."
+          },
+          "under": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional path prefix used to scope the operation."
+          },
+          "compact": {
+            "default": false,
+            "type": "boolean",
+            "description": "Whether to enable or apply compact."
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_named_object",
+      "description": "Resolve a symbolic name (e.g. 'inlet-1') across every named-object collection. Returns a list of {collection_path, name, exact} matches sorted with exact matches first. Use this BEFORE generating code so you know which collection (wall, velocity_inlet, fluid_zone, ...) the user actually meant; if multiple matches exist, ask a follow-up question.",
+      "input_schema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the object, module, or setting being processed."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_active_status",
+      "description": "Batch active-status probe for one or more Fluent settings paths. Returns ``{path: bool}``. Inactive paths cannot be written — Fluent either silently ignores the write or raises ``InactiveObjectError`` at apply. Use this tool to gate URF / discretization / model-sub-knob writes whose activity depends on a sibling model toggle (e.g. ``setup.models.viscous.k_omega_model`` is inactive unless ``viscous.model='k-omega'``, ``solution.controls.p_v_controls.explicit_*`` is inactive under SIMPLE / SIMPLEC / PISO). Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "paths"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_allowed_values",
+      "description": "Batch allowed-values probe for one or more Fluent enum / menu-style settings paths. Returns ``{path: [allowed_values]}``; paths with no allowed-values constraint return an empty list. Use BEFORE writing to an enum field (``viscous.model``, ``wall.thermal.thermal_condition``, ``spatial_discretization.discretization_scheme['mom']``, ...) so the chosen value is guaranteed to be accepted by Fluent. Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "paths"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_help",
+      "description": "Return docstring + child names + allowed values for a specific Fluent settings path. Use this to confirm semantics of an ambiguous parameter (e.g. 'turbulent_intensity' vs 'intensity') before emitting code.",
+      "input_schema": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Filesystem path or API path to process."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_state",
+      "description": "Return the current state of the requested settings paths. If `paths` is omitted, returns the global Fluids state summary. FAST PATH: pass `key` together with a single collection path in `paths` (e.g. paths=['setup.boundary_conditions.wall'], key='outer-wall') to fetch JUST that one named-object slice without dumping every sibling — saves substantial prompt tokens on big cases.",
+      "input_schema": {
+        "properties": {
+          "paths": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Fluent object paths supplied to the operation."
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Key used to look up or store the associated value."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_targeted_context",
+      "description": "Fetch active-status, state, named-objects, child-names, and allowed values for a focused set of paths in a single call. Use this for fast disambiguation before generating code.",
+      "input_schema": {
+        "properties": {
+          "paths_to_check": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Fluent object paths to validate or inspect."
+          },
+          "named_object_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Named-object families that should be considered during lookup."
+          },
+          "instance_state_fetch": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Whether named-object instance state should be fetched."
+          }
+        },
+        "required": [
+          "paths_to_check"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_fields",
+      "description": "Enumerate the scalar / vector fields available in the loaded Fluent case (pressure, temperature, velocity-magnitude, wall-shear, …). Optional ``scope`` filters to cell/node/face domains (default 'any'). Returns a flat list ready to use in a report-definition, contour, vector, or one-shot integral. Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "scope": {
+            "default": "any",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_named_objects",
+      "description": "Return a mapping of named-object collection paths to the names of the objects currently defined. Cached briefly to keep follow-up tool calls fast. Supports pagination: pass `limit` (>=1) and optional `offset` to slice the names of each collection; the response then includes a `_pagination` envelope with the original totals so the caller can request more if needed.",
+      "input_schema": {
+        "properties": {
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of items to include in the response."
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer",
+            "description": "Number of items to skip before returning results."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_fluent",
+      "description": "Manage the fluent component lifecycle in Fluids One. Actions:\n  • activate — start or resume the fluent component.\n  • deactivate — cleanly stop fluent and free resources.\n  • update — apply pending configuration changes.\n  • refresh — force reload state from the server.\nReturns a status dict.",
+      "input_schema": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Action name requested by the caller."
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mesh_quality",
+      "description": "Return live mesh quality metrics (skewness, orthogonal quality, aspect-ratio histograms) for the connected Fluent solver. When ``include_check`` is true the response also embeds the output of Fluent's ``mesh.check()`` command. Use this tool whenever the user asks 'show mesh quality', 'skewness', 'orthogonal quality', 'aspect ratio', or 'check mesh' — never route those intents through ``query_reports``.",
+      "input_schema": {
+        "properties": {
+          "include_check": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "probe_path",
+      "description": "Batch pre-flight probe for one or more Fluent settings paths. Returns ``{path: {exists, is_active, is_user_creatable, kind}}`` in a single round-trip. Use BEFORE writing to a path to verify (a) the path is a real schema node, (b) it is ACTIVE in the current solver mode (paths gated by other model toggles return ``is_active=false``), and (c) you may ``.create()`` under a NamedObject collection (``is_user_creatable``). Inactive paths are silently ignored by Fluent or raise ``InactiveObjectError`` at apply — this tool catches both cases up front. Requires a live session.",
+      "input_schema": {
+        "properties": {
+          "paths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "paths"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "run_code",
+      "description": "Execute Python code against the connected PyFluent solver session. The code runs with `solver` (and `session` alias) pre-injected in scope — use `solver.settings.<path>` to read or mutate the model. Returns stdout, stderr, and any `__return__` value. Prefer `get_state` / `get_targeted_context` for read-only queries.",
+      "input_schema": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python code or command text to execute or validate."
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "screenshot",
+      "description": "Capture a PNG screenshot of the current model view. Returns `{format: 'png', data: <base64>}`.",
+      "input_schema": {
+        "properties": {
+          "view": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Graphics view or camera preset requested by the caller."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "select_named_objects",
+      "description": "Expand a glob pattern over a single named-object collection and return the matching names. Use this instead of hand-curating a long list when the user asks for 'all walls', 'all inlets', 'every fluid zone', etc. — it makes the selection reproducible and survives mesh re-numbering. Arguments: `collection` is the dotted path of the named-object family (e.g. 'setup.boundary_conditions.wall'); `pattern` is a Unix-shell-style glob (default `*`); `include_shadows` defaults to `true` for thermal wall families and is silently ignored for non-wall collections; `exclude` is an optional list of glob patterns to subtract from the result.",
+      "input_schema": {
+        "properties": {
+          "collection": {
+            "type": "string",
+            "description": "Named-object collection or API collection to search."
+          },
+          "pattern": {
+            "default": "*",
+            "type": "string",
+            "description": "Glob pattern used to select matching names."
+          },
+          "include_shadows": {
+            "default": true,
+            "type": "boolean",
+            "description": "Whether shadow objects should be included when applicable."
+          },
+          "exclude": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional glob patterns to remove from the selection."
+          }
+        },
+        "required": [
+          "collection"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "session_status",
+      "description": "Report whether the solve leaf has an active backend. Safe to call before `connect`. Returns the connected endpoint, backend kind, and the list of tools available in the current state.",
+      "input_schema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "simulation_report",
+      "description": "Generate or export a rich simulation report from the connected solver session. Actions:\n  • generate — create a named simulation report.\n  • export_html — export an existing report as HTML.\n  • export_pdf — export as PDF.\n  • export_pptx — export as PowerPoint.\n  • list — list previously generated reports.\nReturns the output path or report list.",
+      "input_schema": {
+        "properties": {
+          "action": {
+            "default": "list",
+            "type": "string",
+            "description": "Action name requested by the caller."
+          },
+          "report_name": {
+            "default": "default-report",
+            "type": "string",
+            "description": "Report definition name targeted by the operation."
+          },
+          "output_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path for the output."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "solver_status",
+      "description": "Return solver readiness summary: initialized, iterations, residuals, solver_mode (steady|transient). Use this before deciding whether to emit run_calculation.iterate(...).",
+      "input_schema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "summarize_setup",
+      "description": "Return the full solver setup summary — models, materials, boundary conditions, solver settings, discretization schemes, and limits — in a single call. Equivalent to Fluent's Report > Summary. Use this FIRST when the user asks 'show me my setup' or 'what is configured?'. Read-only.",
+      "input_schema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_code",
+      "description": "Dry-run / validate the generated code without applying side effects. Returns parse / type / semantic feedback for callers.",
+      "input_schema": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python code or command text to execute or validate."
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    }
+  ],
+  "task": {
+    "tool": "validate_code",
+    "arguments_sha256": "f47a101bcee680df6d49105a0c8dee127c43a9640417bec8f6dabcf39e17cece",
+    "is_error": false,
+    "content": "{\"status\":\"ok\",\"stdout\":\"\",\"stderr\":\"\",\"return_value\":null,\"message\":\"parse_ok\",\"error_code\":null,\"warnings\":[]}"
+  },
+  "failure_stage": null,
+  "cleanup": "passed",
+  "finished_at": "2026-09-09T22:31:20.132273+00:00",
+  "duration_seconds": 17.033,
+  "duration_source": "monotonic_clock"
+}

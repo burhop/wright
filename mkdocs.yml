@@ -32,6 +32,11 @@ theme:
 plugins:
   - search
 
+# The status bundle keeps its own README beside a directly served index.html.
+# MkDocs maps both files to the same route, so publish only the HTML surface here.
+exclude_docs: |
+  mcp-status/README.md
+
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -122,6 +127,8 @@ nav:
   - API Reference: api/api-reference.md
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md
+      - Integration Status Maintenance: mcp-catalog/status/README.md
+      - Integration Status Publishing: mcp-status/PUBLISHING.md
       - Custom MCP Tools: mcp-catalog/custom-tools.md
       - Offline Caching: mcp-catalog/offline-cache.md
   - Admin:

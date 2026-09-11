@@ -59,7 +59,7 @@ const MOCK_SERVERS = [
     image_url: "https://github.com/openscad.png?size=64",
     description:
       "OpenSCAD 3D CAD modeler. Fast, script-based solid modeling tool.",
-    source_url: "https://github.com/quellant/openscad-mcp",
+    source_url: "https://github.com/robertcoop/openscad-mcp",
     installed_version: "1.0.0",
   },
 ];

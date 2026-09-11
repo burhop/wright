@@ -1,0 +1,154 @@
+{
+  "server_id": "blender-mcp",
+  "observed_at": "2026-09-08T22:38:53.106777+00:00",
+  "wright_revision": "cc11341f-plus-blender-qualification",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_error_reported_in_content",
+      "status": "passed"
+    },
+    {
+      "stage": "addon_disconnect_and_recovery",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "blender_process_group_cleanup",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "Blender dimensioned box STL export",
+  "configuration_sha256": "d86d79c78bc685db520975d0ac644d51634dda834bab97e0e66a8fe5546b9a38",
+  "installed_items": [
+    "Blender 4.3.2",
+    "python3-requests 2.32.3+dfsg-5+deb13u1",
+    "uv 0.9.26",
+    "CPython 3.11.14"
+  ],
+  "source_references": [
+    "5f8ddaf6e987c4aa0c3467fcc548838b28f64477"
+  ],
+  "prerequisites": [
+    "git",
+    "blender",
+    "python3-requests",
+    "xvfb",
+    "xauth",
+    "procps"
+  ],
+  "server_info": {
+    "name": "BlenderMCP",
+    "title": null,
+    "version": "1.30.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "8ba9b104413d6338422678ad9d1052960a90d7b4d04770a87401ee16a80a6ed3",
+  "tool_count": 28,
+  "execute_schema": {
+    "properties": {
+      "code": {
+        "title": "Code",
+        "type": "string"
+      },
+      "user_prompt": {
+        "default": "",
+        "title": "User Prompt",
+        "type": "string"
+      }
+    },
+    "required": [
+      "code"
+    ],
+    "title": "execute_blender_codeArguments",
+    "type": "object"
+  },
+  "outcome": {
+    "artifact": {
+      "bytes": 684,
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+      "dimensions_mm": [
+        10.0,
+        8.0,
+        6.0
+      ],
+      "volume_mm3": 480.0
+    },
+    "object": {
+      "name": "WrightDirect2",
+      "type": "MESH",
+      "mesh": {
+        "vertices": 8,
+        "edges": 12,
+        "polygons": 6
+      },
+      "world_bounding_box": [
+        [
+          -5.0,
+          -4.0,
+          -3.0
+        ],
+        [
+          5.0,
+          4.0,
+          3.0
+        ]
+      ]
+    }
+  },
+  "disconnect_diagnostic": "{\"meta\":null,\"content\":[{\"type\":\"text\",\"text\":\"error getting scene info: connection to blender lost: [errno 104] connection reset by peer\",\"annotations\":null,\"meta\":null}],\"structuredcontent\":{\"result\":\"error getting scene info: connection to blender lost: [errno 104] connection reset by peer\"},\"iserror\":false}",
+  "gateway_outcome": {
+    "bytes": 684,
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 684,
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "dimensions_mm": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume_mm3": 480.0
+  },
+  "blender_log_sha256": "1a94f4273c695a679166239103173a1aaa38c50503a35aa172ba3ecf95c143fa",
+  "cleanup": "passed"
+}

@@ -192,7 +192,12 @@ def test_program_control_push_requires_closed_non_mutating_state() -> None:
     assert "CHECK_PROGRAM_CONTROL=1" in push
     assert "PROGRAM_PUSH_STATE" in push
     assert "PROGRAM_LEASE_STATE" in push
-    for state in ("PUSH_AUTHORIZATION_PENDING", "PR_READY", "DEV_MERGE_READY"):
+    for state in (
+        "PUSH_AUTHORIZATION_PENDING",
+        "PR_READY",
+        "DEV_MERGE_READY",
+        "DEV_INTEGRATED",
+    ):
         assert state in push
         assert state in runbook
     assert "active mutating lease" in push

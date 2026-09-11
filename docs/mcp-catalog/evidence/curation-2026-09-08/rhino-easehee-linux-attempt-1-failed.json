@@ -1,0 +1,89 @@
+{
+  "server_id": "rhino-mcp-easehee",
+  "observed_at": "2026-09-08T23:39:10.280016+00:00",
+  "wright_revision": "610d2fcd",
+  "environment": "fresh-standard-linux-x64-container",
+  "platform": "linux_x64",
+  "container_image": "wright:standard-linux-amd64-mcp-isolated",
+  "source_url": "https://github.com/easehee/rhino-mcp",
+  "status": "failed",
+  "steps": [],
+  "adoption": "unknown",
+  "scope": "Rhino standalone 3DM and mesh authoring",
+  "configuration_sha256": "cb34d77de66c01b83619748640a11a68b2283a3d66db7f67b21b391ba94b0a18",
+  "installed_items": [
+    "rhino3dm-mcp 0.6.0 source 3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46; upstream locked suite 296 passed"
+  ],
+  "source_references": [
+    "https://github.com/EaseHee/rhino-mcp/tree/3e10efb9963be36ee1209f8f9ebd2cc6efcfcc46"
+  ],
+  "prerequisites": [
+    "git installed only in disposable container; RHINO_MCP_FORCE_MODE=standalone; no Rhino desktop host"
+  ],
+  "server_info": {
+    "name": "rhino-mcp",
+    "title": null,
+    "version": "1.30.0",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "c37a6fb99c95eebd7b67fcd56baa8a448d518f2d919a0ba69464448adde9406b",
+  "tool_count": 244,
+  "save_schema": {
+    "$defs": {
+      "_SaveIn": {
+        "properties": {
+          "doc_id": {
+            "default": "active",
+            "description": "Document handle id; 'active' targets the current document.",
+            "title": "Doc Id",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Absolute path; defaults to the previously opened file.",
+            "title": "Path"
+          },
+          "version": {
+            "default": 8,
+            "maximum": 8,
+            "minimum": 2,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "_SaveIn",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "args": {
+        "$ref": "#/$defs/_SaveIn"
+      }
+    },
+    "required": [
+      "args"
+    ],
+    "title": "rhino_saveArguments",
+    "type": "object"
+  },
+  "error": "ExceptionGroup",
+  "diagnostic": "unhandled errors in a TaskGroup (1 sub-exception)",
+  "causes": [],
+  "sub_errors": [
+    {
+      "type": "AssertionError",
+      "message": "Incorrect mesh volume",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 65, in client_session\n    yield client\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 1070, in run\n    report[\"outcome\"] = rhino_artifact_oracle(model_output, output)\n                        ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 196, in rhino_artifact_oracle\n    \"mesh\": cube_oracle(mesh_path),\n            ~~~~~~~~~~~^^^^^^^^^^^\n  File \"/workspace/scripts/qualify-catalog-scenarios.py\", line 101, in cube_oracle\n    assert abs(abs(volume) - expected_volume) < 0.01, \"Incorrect mesh volume\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Incorrect mesh volume\n"
+    }
+  ],
+  "cleanup": "passed"
+}

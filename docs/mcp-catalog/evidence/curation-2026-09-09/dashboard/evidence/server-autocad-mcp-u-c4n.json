@@ -1,0 +1,221 @@
+{
+  "server_id": "autocad-mcp-u-c4n",
+  "observed_at": "2026-09-09T21:24:01.161494+00:00",
+  "finished_at": "2026-09-09T21:25:37.123349+00:00",
+  "duration_seconds": 95.962,
+  "duration_source": "evidence-file-write-time-minus-observed-at",
+  "wright_revision": "e55dedd8a200819ddf7258debbdba0108584e442",
+  "environment": "clean-wright-container",
+  "platform": "linux_x64",
+  "container_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "source_url": "https://github.com/U-C4N/Autocad-MCP",
+  "status": "passed",
+  "steps": [
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 1,
+      "status": "passed"
+    },
+    {
+      "stage": "controlled_path_boundary_error",
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 2,
+      "status": "passed"
+    },
+    {
+      "stage": "direct_protocol_backend_outcome",
+      "attempt": 3,
+      "status": "passed"
+    },
+    {
+      "stage": "wright_gateway_backend_outcome",
+      "status": "passed"
+    },
+    {
+      "stage": "hermes_facing_gateway_mcp_backend_outcome",
+      "status": "passed"
+    }
+  ],
+  "adoption": "unknown",
+  "scope": "AutoCAD headless mechanical DXF authoring",
+  "configuration_sha256": "18dbe17e5bf853a4a6d2d851036e14980d7ef11b48d5b3c53d8850d1fe443fee",
+  "installed_items": [
+    "git=2.47.3"
+  ],
+  "source_references": [
+    "Autocad-MCP@abc2a82e7128358b9e228a7d9442b37019aa3fe5"
+  ],
+  "prerequisites": [
+    "workspace-scoped-ALLOWED_PATHS"
+  ],
+  "server_info": {
+    "name": "AutoCAD MCP Pro",
+    "title": null,
+    "version": "3.4.7",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "tool_schema_sha256": "04d85c86a8331dd9f96b6edf3434fe0cb36735934032fce0fe08a8f369f89bf2",
+  "tool_count": 47,
+  "save_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "path": {
+        "description": "Full destination path including extension",
+        "type": "string"
+      },
+      "format": {
+        "default": "",
+        "description": "Output format override: dwg, dxf, dwt. Default: derive from the path extension (the extension is authoritative).",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "type": "object"
+  },
+  "outcome": {
+    "bytes": 15714,
+    "sha256": "fe1ed9eb4b27f41d9691ab4d5134e8348fcad8c475030cd575f569c9160bf9c9",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_outcome": {
+    "bytes": 15713,
+    "sha256": "0075b401db745ada95a7d64d9a0b765324252a267339298a62021ee9699466e1",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "gateway_child": {
+    "status": "active",
+    "diagnostic": null
+  },
+  "gateway_mcp_outcome": {
+    "bytes": 15713,
+    "sha256": "1810e216fe337b1d9ffe5727bfe4f857f552659f7c4b30230a650e9b153068d7",
+    "entity_counts": {
+      "LWPOLYLINE": 1,
+      "CIRCLE": 2,
+      "LINE": 1
+    },
+    "rectangle": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        60.0
+      ],
+      [
+        100.0,
+        0.0
+      ],
+      [
+        100.0,
+        60.0
+      ]
+    ],
+    "circles": [
+      [
+        20.0,
+        30.0,
+        5.0
+      ],
+      [
+        80.0,
+        30.0,
+        5.0
+      ]
+    ],
+    "centerline": [
+      50.0,
+      0.0,
+      50.0,
+      60.0
+    ]
+  },
+  "cleanup": "passed"
+}

@@ -1,0 +1,107 @@
+{
+  "as_of": "2026-09-09",
+  "release_policy": {
+    "eligible_categories": ["Qualified"],
+    "qualified_count": 10,
+    "connect_and_verify_count": 10,
+    "rule": "Only Qualified servers are release eligible. Connect-and-verify servers remain hidden from ordinary product discovery until authenticated tools/list, one safe backend read, and a Wright gateway call pass."
+  },
+  "processes": [
+    {
+      "id": "ecad-bom-sourcing-review",
+      "status": "lab-ready",
+      "engineer_task": "Release an electronics BOM only after availability, lifecycle, lead-time, and alternate-part review.",
+      "lifecycle_stages": ["design", "sourcing", "manufacturing"],
+      "mcp_roles": [
+        {"server": "kicad-mcp-blwfish", "category": "Qualified", "role": "Read the reviewed schematic/PCB BOM and reference designators."},
+        {"server": "partuno-mcp", "category": "Connect and verify", "role": "Analyze DigiKey/Mouser stock, lifecycle, lead time, compliance, packaging, and substitutes."}
+      ],
+      "inputs": ["KiCad project", "approved quantities", "target build date", "approved distributors"],
+      "outputs": ["CSV/JSON sourcing report", "risk-ranked BOM", "substitution proposals"],
+      "handoff": "Partuno receives normalized manufacturer part numbers and quantities; proposed substitutes return to an engineer for ECAD fit and approval.",
+      "requirements": ["DigiKey or Mouser read credentials"],
+      "approvals": ["Engineer approves each substitute and any distributor write action"],
+      "oracles": ["Every line item accounted for", "No unapproved MPN mutation", "Stock and lifecycle timestamps recorded", "Package and electrical constraints preserved"],
+      "evidence": ["dashboard/evidence/server-kicad-mcp-blwfish.json", "partuno-4.0.1-task-attempt.json"],
+      "limitations": ["Partuno backend data and Wright gateway remain untested without credentials"],
+      "next_qualification": "Authenticate a read-only distributor test account, analyze a five-line synthetic BOM, and compare returned MPNs and quantities through the Wright gateway."
+    },
+    {
+      "id": "requirements-to-cad-change-control",
+      "status": "lab-ready",
+      "engineer_task": "Turn an approved requirement change into a traceable CAD revision and review package.",
+      "lifecycle_stages": ["requirements", "design", "test_quality", "release"],
+      "mcp_roles": [
+        {"server": "atlassian-rovo-mcp", "category": "Connect and verify", "role": "Read the approved Jira requirement and linked Confluence rationale."},
+        {"server": "openscad-mcp", "category": "Qualified", "role": "Apply a parameterized geometry change and export a review artifact."},
+        {"server": "github-official-mcp", "category": "Connect and verify", "role": "Read or stage traceability between requirement, model revision, checks, and review."}
+      ],
+      "inputs": ["Approved requirement ID", "parameterized CAD source", "acceptance limits"],
+      "outputs": ["Revised CAD source", "STL/PNG review artifact", "change evidence JSON"],
+      "handoff": "Requirement fields become named CAD parameters and deterministic checks; GitHub records the evidence only after explicit approval.",
+      "requirements": ["Atlassian OAuth", "GitHub authorization"],
+      "approvals": ["Engineer approves the requirement interpretation and external repository write"],
+      "oracles": ["Requirement ID preserved", "Only named parameters changed", "Geometry export succeeds", "Acceptance dimensions remain within tolerance"],
+      "evidence": ["atlassian-rovo-mcp-remote.json", "dashboard/evidence/server-openscad-mcp.json", "github-official-mcp-remote.json"],
+      "limitations": ["Atlassian and GitHub post-login tool schemas and gateway calls are not yet proven"],
+      "next_qualification": "Use dedicated read-only projects to fetch one requirement and one repository file, then run the existing OpenSCAD fixture through Wright without external writes."
+    },
+    {
+      "id": "featurescript-part-review",
+      "status": "lab-ready",
+      "engineer_task": "Create a parameterized Onshape feature, evaluate the resulting part, and retain a reproducible design review.",
+      "lifecycle_stages": ["concept", "design", "test_quality"],
+      "mcp_roles": [
+        {"server": "onshape-labs-featurescript-mcp", "category": "Connect and verify", "role": "Generate or inspect FeatureScript in the official Labs service."},
+        {"server": "onshape-mcp-hedless", "category": "Qualified", "role": "Exercise the reviewed Onshape document workflow and inspect resulting model properties."}
+      ],
+      "inputs": ["Part intent", "dimensions and units", "Onshape test document"],
+      "outputs": ["FeatureScript", "Onshape feature/part reference", "dimension and mass-property evidence"],
+      "handoff": "FeatureScript is reviewed as text before execution; the resulting part reference is passed to read-only model inspection.",
+      "requirements": ["Onshape account authentication", "Disposable Onshape test document"],
+      "approvals": ["Engineer approves generated FeatureScript before document mutation"],
+      "oracles": ["Script compiles", "Expected feature count", "Named dimensions and units match", "Mass properties within stated bounds"],
+      "evidence": ["onshape-labs-featurescript-mcp-remote.json"],
+      "limitations": ["Labs endpoint was proven only to its authentication boundary"],
+      "next_qualification": "Authenticate, list tools, compile a minimal parameterized boss in a disposable document, and verify dimensions through Wright."
+    },
+    {
+      "id": "simulation-submit-monitor-review",
+      "status": "lab-ready",
+      "engineer_task": "Prepare a simulation case, submit it only after cost approval, monitor status, and review solver outputs against acceptance limits.",
+      "lifecycle_stages": ["simulation", "test_quality", "release"],
+      "mcp_roles": [
+        {"server": "oasis-open-fem-agent", "category": "Qualified", "role": "Run the deterministic local FEA screening case and produce VTU evidence."},
+        {"server": "rescale-mcp-hosted", "category": "Connect and verify", "role": "Read cloud job capabilities and status; submission remains approval-gated."}
+      ],
+      "inputs": ["Solver deck", "material allowables", "mesh policy", "budget ceiling"],
+      "outputs": ["Local baseline VTU", "cloud job status", "solver result manifest", "comparison report"],
+      "handoff": "The local baseline establishes numerical expectations before any paid cloud submission; result manifests are compared after completion.",
+      "requirements": ["Rescale API key", "Approved project and spending limit"],
+      "approvals": ["Engineer approves solver, hardware, estimated cost, and submission"],
+      "oracles": ["Mesh and material hashes match", "Solver exits successfully", "Displacement/stress units explicit", "Cloud values agree with baseline within declared tolerance"],
+      "evidence": ["dashboard/evidence/server-oasis-open-fem-agent.json", "rescale-mcp-hosted-remote.json"],
+      "limitations": ["No paid Rescale job or post-login tool call was run"],
+      "next_qualification": "With a zero-cost or preapproved test project, list job types and read one existing completed job through Wright; do not submit work."
+    },
+    {
+      "id": "engineering-service-telemetry-triage",
+      "status": "speculative",
+      "engineer_task": "Correlate a failed engineering automation run with dashboards, logs, alerts, and the owning change.",
+      "lifecycle_stages": ["test_quality", "operations"],
+      "mcp_roles": [
+        {"server": "grafana-official-mcp", "category": "Environment required", "role": "Query read-only dashboards, alerts, Prometheus, and Loki evidence."},
+        {"server": "github-official-mcp", "category": "Connect and verify", "role": "Read the workflow run and owning revision."}
+      ],
+      "inputs": ["Run ID", "time window", "service labels", "revision SHA"],
+      "outputs": ["Incident timeline", "query evidence", "suspect revision links"],
+      "handoff": "The run timestamp and labels constrain telemetry queries; observations are linked to source history without changing alerts or dashboards.",
+      "requirements": ["Grafana 9+ test instance", "read-only service token", "GitHub authorization"],
+      "approvals": ["No approval for reads; explicit approval for any issue or incident write"],
+      "oracles": ["Time zones normalized", "Queries and datasource UIDs recorded", "No write-capable Grafana tools enabled", "Revision correlation is evidence-backed"],
+      "evidence": ["grafana-official-mcp-preflight.json", "github-official-mcp-remote.json"],
+      "limitations": ["Grafana initialized and listed tools, but no backend instance was connected"],
+      "next_qualification": "Connect a disposable Grafana instance with a read-only token and query one known metric and one known log stream through Wright."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "server_id": "easy-mcp-autocad",
+  "observed_at": "2026-09-10",
+  "source_url": "https://github.com/zh19980811/Easy-MCP-AutoCad",
+  "previously_tested_revision": "332215b91e976c1738dfd3940e9f9770c0fd5856",
+  "status": "closed",
+  "decision": "abandoned",
+  "current_source_findings": [
+    "The publisher says active maintenance is limited.",
+    "The repository describes itself as open-source learning work and says the specific tool implementation is incomplete.",
+    "The documented tools overlap Wright's already qualified AutoCAD integration."
+  ],
+  "prior_execution_boundary": "Clean Linux package and startup attempts reached the expected Windows pywin32 and AutoCAD COM boundary.",
+  "replacement_ids": ["autocad-mcp-u-c4n"],
+  "reopen_when": "Sustained maintenance and complete tools demonstrate a material advantage over Wright's qualified AutoCAD scope."
+}

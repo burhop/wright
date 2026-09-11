@@ -6,6 +6,12 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .windows_qualification_models import WindowsQualificationSummary
+from .curation_models import (
+    CurationView,
+    EngineeringStage,
+    HardwareStandard,
+    IntegrationKind,
+)
 
 Digest = str
 EvidenceClass = Literal[
@@ -213,6 +219,11 @@ class CapabilityView(StrictModel):
     vendor: str
     description: str
     domains: list[str] = Field(default_factory=list)
+    engineering_stages: list[EngineeringStage] = Field(default_factory=list)
+    integration_kind: IntegrationKind = "mcp_server"
+    hardware_standard: HardwareStandard = "none"
+    protocol_family: Literal["mcp", "webmcp", "mhs"] = "mcp"
+    curation: CurationView = Field(default_factory=CurationView)
     tags: list[str] = Field(default_factory=list)
     aliases: list[str] = Field(default_factory=list)
     capability_summary: list[str] = Field(default_factory=list)
@@ -252,6 +263,8 @@ class CapabilityList(StrictModel):
     capabilities: list[CapabilityView]
     next_cursor: str | None = None
     total: int = Field(ge=0)
+    curation_counts: dict[str, int] = Field(default_factory=dict)
+    lifecycle_coverage: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class LicenseRequirement(StrictModel):
