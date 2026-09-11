@@ -1,0 +1,105 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0125",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "DEV_MERGE_READY",
+  "to_state": "DEV_INTEGRATED",
+  "prior_revision": 125,
+  "new_revision": 126,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "8782c0b580c69754aa569d2e55b757e08ad904e2bb5d4ddc139b30f4db0b17ab",
+  "new_state_digest": "5c051eacee85b01e3ba96d600514a84cb2711a592148e243042d56cbbb3651c6",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Actual PR121 merged at10:53:43Z as211c2598, parents7404a549 and testedH2 7e484be7, with identical H2 tree. Complete H2 CI29pass/1legitimate skip and exact local gates/review passed. Bind actual dev baseline separately from the one local readiness receipt. Published dev image verification and human follow-up remain pending.",
+  "started_at": "2026-09-05T10:57:57.41961Z",
+  "finished_at": "2026-09-05T10:57:57.41961Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "f5a0bfb6667e77746045f4394c7154ba1b9073d7",
+    "source_tree": "9fe740323b34e0e39bf5232b20aea323028500c4",
+    "source_program_tree": "d8acc289442c8e1b3bc992fdaeb7c81a5bd7abae",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0126.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0125.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0125.json",
+      "sha256": "b364037e5abaea9f50811a34d8cbc4909eb0f3dad2daf65a316b5c188c967162",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0126.json",
+      "sha256": "878a2daf16dc3c6018e286d2c84e81e29cea5bab405a120d2868358029b49e82",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Actual PR121 merged at10:53:43Z as211c2598, parents7404a549 and testedH2 7e484be7, with identical H2 tree. Complete H2 CI29pass/1legitimate skip and exact local gates/review passed. Bind actual dev baseline separately from the one local readiness receipt. Published dev image verification and human follow-up remain pending.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "f5a0bfb6667e77746045f4394c7154ba1b9073d7",
+        "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211"
+      ]
+    },
+    {
+      "check_id": "NATIVE-ACTUAL-MERGED-DEV-BASELINE",
+      "method": "Verify the exact fetched dev merge through the original direct-merge guard or one exact local readiness-only successor, retaining actual merge/PR parents, candidate/baseline, trees and readiness blob manifests. External terminal PR/CI evidence remains coordinator-supplied; matching Git identities do not infer CI or deployment.",
+      "environment": "Read-only local Git objects and fetched origin/dev; no remote action",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+        "469e6cf099d20f137881fa317ee07e691919656c",
+        "7404a549ae244cc05d89e062c60276e8862f53c9",
+        "7e484be79d0aebd35559302f41d886598f61862c",
+        "f5a0bfb6667e77746045f4394c7154ba1b9073d7",
+        "9fe740323b34e0e39bf5232b20aea323028500c4"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": "NATIVE-PR121-CI-SECURITY-20260905",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "Required published development image verification is pending; actual human study remains the separate FOLLOWUP-NATIVE-HUMAN-01 obligation. OCI/CodeQL corrections and current H2 CI are closed by their actual evidence."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0125.json",
+  "next_action": "VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT"
+}

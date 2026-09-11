@@ -1,0 +1,46 @@
+{
+  "format": "wright-native-dev-registry-equivalence-v1",
+  "source_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+  "source_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+  "workflow_run_id": 33961863967,
+  "workflow_run_attempt": 1,
+  "platform": "linux/arm64",
+  "ghcr_digest": "sha256:13ec37a3ca870ee3d1b0ecac2ebfeede3fcbbc07d63a544dc25b18d7297defcf",
+  "dockerhub_digest": "sha256:f6b83378ec247581ab1f707472efe6a799132f9f81305f67b989a5f66200848e",
+  "ghcr_manifest": {
+    "file": "ghcr-digest-bytes.json",
+    "sha256": "13ec37a3ca870ee3d1b0ecac2ebfeede3fcbbc07d63a544dc25b18d7297defcf",
+    "bytes": 11187
+  },
+  "dockerhub_manifest": {
+    "file": "dockerhub-digest-bytes.json",
+    "sha256": "f6b83378ec247581ab1f707472efe6a799132f9f81305f67b989a5f66200848e",
+    "bytes": 11187
+  },
+  "ghcr_config": {
+    "file": "raw-config-byte-proof/ghcr-config-raw.json",
+    "sha256": "e37b681f77137c8a473ccc90c010f1cf39b5b3ef4d7cc2508f231ddea4918e21",
+    "bytes": 30420
+  },
+  "dockerhub_config": {
+    "file": "raw-config-byte-proof/dockerhub-config-raw.json",
+    "sha256": "e37b681f77137c8a473ccc90c010f1cf39b5b3ef4d7cc2508f231ddea4918e21",
+    "bytes": 30420
+  },
+  "differing_layers": [
+    {
+      "index": 0,
+      "ghcr_blob": {
+        "file": "differing-layer-bytes/ghcr-layer-0.tar.gz",
+        "sha256": "a6f7c193dd1ef7ce02f4e6baed6f3718cb8799c86adfb058d902e35dd75fef77",
+        "bytes": 31381582
+      },
+      "dockerhub_blob": {
+        "file": "differing-layer-bytes/dockerhub-layer-0.tar.gz",
+        "sha256": "1b7200988f192e72703c70486d494e2457935ac9b0f031ac09eb115b01a12d45",
+        "bytes": 30143609
+      }
+    }
+  ],
+  "scope": "development_only_registry_payload_equivalence"
+}

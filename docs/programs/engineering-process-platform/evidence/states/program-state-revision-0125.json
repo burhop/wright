@@ -2,12 +2,12 @@
   "$schema": "https://wright.local/programs/epp/program-state.schema.json",
   "schema_version": "2.0",
   "program_id": "EPP-2026",
-  "revision": 126,
+  "revision": 125,
   "state": "PROGRAM_ACTIVE",
   "baseline": {
     "ref": "dev",
-    "commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
-    "tree": "469e6cf099d20f137881fa317ee07e691919656c",
+    "commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
+    "tree": "9dcf9017c09b7df6b5eb96c5dae6c2c981e4e1c8",
     "observed_clean": true
   },
   "prototype_evidence": {
@@ -26,7 +26,7 @@
   },
   "current_feature": "EPP-N01",
   "active_mutating_lease": null,
-  "last_transition": "TR-0125",
+  "last_transition": "TR-0124",
   "readiness": {
     "product": {
       "status": "not_started",
@@ -85,10 +85,10 @@
   ],
   "next_eligible_actions": [
     {
-      "action": "VERIFY_CURRENT_FEATURE_DEV_DEPLOYMENT",
+      "action": "MERGE_CURRENT_FEATURE_TO_DEV",
       "roadmap_item": "EPP-N01",
       "requires_human_approval": false,
-      "reason": "Actual PR121 merged at10:53:43Z as211c2598, parents7404a549 and testedH2 7e484be7, with identical H2 tree. Complete H2 CI29pass/1legitimate skip and exact local gates/review passed. Bind actual dev baseline separately from the one local readiness receipt. Published dev image verification and human follow-up remain pending."
+      "reason": "Record actual premerge clearance after complete H2 capture10:51:36Z:29 passed,1 legitimate docs skip,0 blockers; exact7e push gate and28efd review passed. Remote PR121 merged exact7e at10:53:43Z as211c2598. This is a local readiness receipt above the actual merge, not a third push or a different CI-tested source."
     }
   ],
   "approval": {
@@ -98,7 +98,7 @@
     "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
     "exact_subject_approval": false
   },
-  "feature_state": "DEV_INTEGRATED",
+  "feature_state": "DEV_MERGE_READY",
   "policy_version": "EPP-LIFECYCLE-1",
   "scoped_checkpoint": {
     "status": "independently_verified",

@@ -1,0 +1,236 @@
+{
+  "observed_at": "2026-09-05T10:51:36.350826Z",
+  "target_branch": "dev",
+  "inventory_complete": true,
+  "branch_protection": {
+    "status": "absent",
+    "http_status": 404,
+    "source_url": "https://api.github.com/repos/burhop/wright/branches/dev/protection",
+    "configured_required_contexts": null,
+    "checks": []
+  },
+  "ruleset_policy": {
+    "http_status": 200,
+    "source_url": "https://api.github.com/repos/burhop/wright/rules/branches/dev",
+    "required_checks": []
+  },
+  "triggered_jobs": [
+    {
+      "context": "build-smoke-scan",
+      "job_id": 101292029472,
+      "workflow_run_id": 33960721648,
+      "applicable": true
+    },
+    {
+      "context": "dependency-review",
+      "job_id": 101292028035,
+      "workflow_run_id": 33960721088,
+      "applicable": true
+    },
+    {
+      "context": "build",
+      "job_id": 101292027876,
+      "workflow_run_id": 33960721064,
+      "applicable": true
+    },
+    {
+      "context": "deploy",
+      "job_id": 101292070425,
+      "workflow_run_id": 33960721064,
+      "applicable": false,
+      "skip_policy_reason": "Exact docs-deploy.yml jobs.deploy condition is false for this pull_request event; no deploy input or main push occurred."
+    },
+    {
+      "context": "validate",
+      "job_id": 101292027981,
+      "workflow_run_id": 33960721061,
+      "applicable": true
+    },
+    {
+      "context": "analyze (python)",
+      "job_id": 101292028249,
+      "workflow_run_id": 33960721139,
+      "applicable": true
+    },
+    {
+      "context": "analyze (javascript-typescript)",
+      "job_id": 101292028331,
+      "workflow_run_id": 33960721139,
+      "applicable": true
+    },
+    {
+      "context": "build-native-candidate",
+      "job_id": 101292028290,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "native-base-platform-matrix (ubuntu-24.04, 3.13)",
+      "job_id": 101292129087,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "native-base-platform-matrix (windows-latest, 3.13)",
+      "job_id": 101292129088,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "native-lifecycle-contract",
+      "job_id": 101292129102,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "native-base-platform-matrix (macos-14, 3.13)",
+      "job_id": 101292129121,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "native-candidate-required",
+      "job_id": 101292379744,
+      "workflow_run_id": 33960721154,
+      "applicable": true
+    },
+    {
+      "context": "Build linux-amd64",
+      "job_id": 101292028409,
+      "workflow_run_id": 33960721208,
+      "applicable": true
+    },
+    {
+      "context": "Build linux-arm64",
+      "job_id": 101292028436,
+      "workflow_run_id": 33960721208,
+      "applicable": true
+    },
+    {
+      "context": "leak-scan",
+      "job_id": 101292028281,
+      "workflow_run_id": 33960721196,
+      "applicable": true
+    },
+    {
+      "context": "frontend-quality",
+      "job_id": 101292028355,
+      "workflow_run_id": 33960721207,
+      "applicable": true
+    },
+    {
+      "context": "Playwright E2E",
+      "job_id": 101292028435,
+      "workflow_run_id": 33960721207,
+      "applicable": true
+    },
+    {
+      "context": "python-quality",
+      "job_id": 101292028564,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (windows-latest, 3.14)",
+      "job_id": 101292028678,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (ubuntu-latest, 3.14)",
+      "job_id": 101292028679,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (ubuntu-latest, 3.11)",
+      "job_id": 101292028680,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (windows-latest, 3.13)",
+      "job_id": 101292028695,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (ubuntu-latest, 3.13)",
+      "job_id": 101292028702,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (ubuntu-latest, 3.12)",
+      "job_id": 101292028708,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (windows-latest, 3.12)",
+      "job_id": 101292028732,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "public-package-matrix (windows-latest, 3.11)",
+      "job_id": 101292028773,
+      "workflow_run_id": 33960721175,
+      "applicable": true
+    },
+    {
+      "context": "Backend Tests (Windows)",
+      "job_id": 101292028172,
+      "workflow_run_id": 33960721072,
+      "applicable": true
+    },
+    {
+      "context": "Frontend Tests (Windows)",
+      "job_id": 101292028256,
+      "workflow_run_id": 33960721072,
+      "applicable": true
+    }
+  ],
+  "triggered_checks": [
+    {
+      "context": "CodeQL",
+      "check_run_id": 101292191403,
+      "check_app_id": 57789,
+      "check_app_slug": "github-advanced-security",
+      "applicable": true
+    }
+  ],
+  "non_executing_suite_observations": [
+    {
+      "classification": "unexecuted_pages_suite_outside_publishing_source",
+      "suite": {
+        "id": 92031894210,
+        "head_branch": "codex/079-native-process-milestone",
+        "head_sha": "7e484be79d0aebd35559302f41d886598f61862c",
+        "status": "queued",
+        "conclusion": null,
+        "latest_check_runs_count": 0,
+        "app": {
+          "id": 34598,
+          "slug": "github-pages"
+        }
+      },
+      "pages": {
+        "build_type": "legacy",
+        "source": {
+          "branch": "gh-pages",
+          "path": "/"
+        },
+        "html_url": "https://burhop.github.io/wright/"
+      },
+      "actual_check_runs": [],
+      "workflow_source": {
+        "path": ".github/workflows/docs-deploy.yml",
+        "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+        "sha256": "90f97d9e73952fce6c56f34d6485b9cef4f96682b375dd8f9a85dda44210b2a6"
+      },
+      "required_contexts": [],
+      "reason": "This exact empty legacy Pages suite belongs to a feature-branch commit outside gh-pages publishing. No workflow/check run was triggered for the suite; docs build passed and its actual PR deploy job was conditionally skipped. Queued/null is preserved and grants no pass or execution credit."
+    }
+  ]
+}

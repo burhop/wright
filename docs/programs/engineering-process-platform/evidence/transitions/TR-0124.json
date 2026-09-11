@@ -1,0 +1,89 @@
+{
+  "$schema": "../../schemas/transition-evidence.schema.json",
+  "schema_version": "2.0",
+  "transition_id": "TR-0124",
+  "program_id": "EPP-2026",
+  "feature_id": "EPP-N01",
+  "state_domain": "feature",
+  "event_kind": "lifecycle_transition",
+  "from_state": "PR_READY",
+  "to_state": "DEV_MERGE_READY",
+  "prior_revision": 124,
+  "new_revision": 125,
+  "state_digest_algorithm": "wright-json-c14n-v1-sha256",
+  "prior_state_digest": "6ff5412c2e5397365e9c878cbe45a26ce49187325e66784ea961f13ba2b95464",
+  "new_state_digest": "8782c0b580c69754aa569d2e55b757e08ad904e2bb5d4ddc139b30f4db0b17ab",
+  "actor": {
+    "role": "coordinator",
+    "identity": "Codex native milestone coordinator"
+  },
+  "action": "Record actual premerge clearance after complete H2 capture10:51:36Z:29 passed,1 legitimate docs skip,0 blockers; exact7e push gate and28efd review passed. Remote PR121 merged exact7e at10:53:43Z as211c2598. This is a local readiness receipt above the actual merge, not a third push or a different CI-tested source.",
+  "started_at": "2026-09-05T10:57:49.005842Z",
+  "finished_at": "2026-09-05T10:57:49.005842Z",
+  "duration_ms": 0,
+  "classification": "passed",
+  "git": {
+    "source_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+    "source_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+    "source_program_tree": "f6b8cb56f5eb8d6415a228690567520b3e6105be",
+    "containing_commit": null,
+    "containing_commit_rule": "transition_blob_container",
+    "worktree_clean_before": true,
+    "worktree_clean_after": false,
+    "diff_check_passed": true,
+    "changed_paths_manifest": [
+      "docs/programs/engineering-process-platform/evidence/states/program-state-revision-0125.json",
+      "docs/programs/engineering-process-platform/program-state.json"
+    ],
+    "transition_path": "evidence/transitions/TR-0124.json"
+  },
+  "inputs": [
+    {
+      "path": "evidence/states/program-state-revision-0124.json",
+      "sha256": "54c15431b1c5be448959dfc675a9cb6f1edc6210dccdd0d134e24194cf8f7c84",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "evidence/states/program-state-revision-0125.json",
+      "sha256": "b364037e5abaea9f50811a34d8cbc4909eb0f3dad2daf65a316b5c188c967162",
+      "schema_version": "2.0",
+      "role": "append_only_evidence"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "NATIVE-SCOPED-DELIVERY-EDGE",
+      "method": "Validate the existing lifecycle edge, exact unchanged candidate and recorded scope/review. Evidence supplied by the coordinator: Record actual premerge clearance after complete H2 capture10:51:36Z:29 passed,1 legitimate docs skip,0 blockers; exact7e push gate and28efd review passed. Remote PR121 merged exact7e at10:53:43Z as211c2598. This is a local readiness receipt above the actual merge, not a third push or a different CI-tested source.",
+      "environment": "Committed local Git and typed program records",
+      "duration_ms": 0,
+      "result": "passed",
+      "failure_class": null,
+      "evidence": [
+        "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+        "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211"
+      ]
+    }
+  ],
+  "authority": {
+    "authority_kind": "standing_user_scope",
+    "status": "authorized_scope",
+    "record": "evidence/authorizations/AUTH-EPP-N01-2026-001.json",
+    "record_digest": "711773bb1de8e7bf6a1d7d8b046bfe5cea93b50438acf433bda35480656702ca",
+    "exact_subject_approval": false
+  },
+  "independent_verifier": "Independent technical review is required only when the exact candidate review record is attached; this transition does not manufacture a verdict.",
+  "repair": {
+    "stable_cause_id": "NATIVE-PR121-CI-SECURITY-20260905",
+    "attempt": 2,
+    "maximum": 2,
+    "remaining": 0
+  },
+  "blockers": [
+    "Required published development image verification is pending; actual human study remains the separate FOLLOWUP-NATIVE-HUMAN-01 obligation. OCI/CodeQL corrections and current H2 CI are closed by their actual evidence."
+  ],
+  "rollback_subject": "evidence/states/program-state-revision-0124.json",
+  "next_action": "MERGE_CURRENT_FEATURE_TO_DEV"
+}

@@ -81,7 +81,7 @@
         "observed_at": "2026-09-04T23:58:03.057374Z",
         "added_task_ids": [],
         "removed_task_ids": [],
-        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02–AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
+        "reason": "Keep the 32-task denominator; add a combined implementation dependency check to AC02\u2013AC08 so narrow historical subsystem checks cannot alone establish current native acceptance."
       }
     ],
     "language_authority": "The Wright native process language is the semantic authority for AI/programmatic clients, canvas, readable text and runtime. Autonomous AI authoring and Rivet migration/retirement remain separate work.",
@@ -2217,6 +2217,308 @@
             "sha256": "bba40076517e89fa6415f763470a014541229468a8367c8997e7b5fd2193833a"
           }
         ]
+      },
+      {
+        "id": "Q-DASHBOARD-e15c0749-6",
+        "check_id": "Q-DASHBOARD",
+        "attempt": 6,
+        "result": "passed",
+        "observed_at": "2026-09-05T09:51:29.1779068Z",
+        "tested_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+        "tested_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+        "scope_sha256": "b58465c69bd6eba09dd07497e6e2ae7f8af904339af6f1957c4413ec35949f6e",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual e15 full gate ended 2026-09-05 09:51:29Z: control-plane 376 passed/1 declared skip, frontend 547 passed and browser 170 passed/5 specialized skips; these overlapping invocations are not a unique denominator. Dashboard reader/page cases passed; the changed server boundary also has the independently reviewed 18-test correction. Raw e15 HTML was later overwritten; unchanged raw log/observation and contemporaneous 175-case projection retain outcomes. No CI, dev, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-complete-gate-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "5265a09cef7eaedad336290167b0c4c9385b9428e0ce6a7f19bc11401550d043"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-candidate-preparation-28efd6cc.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "461a1439c23cbb7caaeb401535433a7f4e23ffaa2ab260adb5e1c0b6eba38671"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          }
+        ]
+      },
+      {
+        "id": "Q-PERSISTENCE-e15c0749-3",
+        "check_id": "Q-PERSISTENCE",
+        "attempt": 3,
+        "result": "passed",
+        "observed_at": "2026-09-05T09:51:29.1779068Z",
+        "tested_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+        "tested_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+        "scope_sha256": "1d9347b8241c6b6811cfc4131c4223cd50f200fe43315a1122445c78fb18d470",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual e15 full gate passed: API 449 passed/1 skip, data-vault 126 passed/1 skip and workspace-service 485 passed/9 skips, with exact native persistence/recovery tests included. Current native error-message boundary is independently reviewed and tested; migration/run/artifact behavior retains the prior accepted scope. Counts overlap and optional skips remain in the receipt. Original packaged predecessor recovery is attributed to schema16 build7404 and current build40, not a new e15 run. No CI, dev or human credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-complete-gate-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "5265a09cef7eaedad336290167b0c4c9385b9428e0ce6a7f19bc11401550d043"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-predecessor-recovery-20260905/independent-packaged-recovery-closure-40ebc645.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "0ef0a297d4c23a985b1f08a11a8e1d86b9a60066b6855e82b6210bbe8e23242d"
+          }
+        ]
+      },
+      {
+        "id": "Q-RUNTIME-e15c0749-6",
+        "check_id": "Q-RUNTIME",
+        "attempt": 6,
+        "result": "passed",
+        "observed_at": "2026-09-05T09:51:29.1779068Z",
+        "tested_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+        "tested_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+        "scope_sha256": "ba4f448bd9c738f7fede7100cabea63f8ab016fcd89293fc0f1a1d1bd417893f",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual e15 API/core/vault/workspace and frontend suites passed; current browser stage is 170 passed/5 unchanged specialized skips. Native runtime/cancellation/restart/tracing cases are covered; changed domain error serialization has independent current boundary tests. The two actual native browser journeys remain original build40 evidence; e15 skipped them and does not claim fresh live execution. Full28 source review carries unchanged runtime/UI behavior. Overlapping counts are not summed. No CI, deployment or human credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-complete-gate-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "5265a09cef7eaedad336290167b0c4c9385b9428e0ce6a7f19bc11401550d043"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/docker-browser-public-projection.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "d6dc82d5d5a002fc2d7725ad3032b401d3b924a06507099e60342b032c2499a1"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "a586bc540e21556f747d9524341662ceb21d566ce7742defb62dff5173494c96"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-tracing-40ebc645/independent-docker-otel-closure-40ebc645.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "41cbef7de9bf71ce82f54c1e5968b6fbd3f8646d9fa610180dcf1e40bb866e35"
+          }
+        ]
+      },
+      {
+        "id": "Q-REVIEW-28efd6cc-8",
+        "check_id": "Q-REVIEW",
+        "attempt": 8,
+        "result": "passed",
+        "observed_at": "2026-09-05T10:00:01.037762Z",
+        "tested_commit": "28efd6ccdc4a9e7900a4e50f9f323fd0865b9211",
+        "tested_tree": "50900ed4a7a93c5018b9cd85660f7d7aa6d10c49",
+        "scope_sha256": "d3532e1c2303529872251fabf88b5016e09bac02e24b04906cae8bd59458f5b3",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Actual independent entire-candidate review of exact28efd passed at 2026-09-05T10:00:01.037762Z with zero open actionable P1/P2 findings. The distinct reviewer authored no implementation; reviewed source, completed e15 gate, current archives/image, error-boundary and scanner corrections are bound in the typed record. Prior execution/review subjects remain historical. Later loss of raw e15 HTML does not relabel the retained log/observation/175-case projection. Human study is false; no H2 CI, dev or whole-milestone credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-candidate-preparation-28efd6cc.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "461a1439c23cbb7caaeb401535433a7f4e23ffaa2ab260adb5e1c0b6eba38671"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-complete-gate-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "5265a09cef7eaedad336290167b0c4c9385b9428e0ce6a7f19bc11401550d043"
+          }
+        ]
+      },
+      {
+        "id": "Q-PACKAGING-e15c0749-7",
+        "check_id": "Q-PACKAGING",
+        "attempt": 7,
+        "result": "passed",
+        "observed_at": "2026-09-05T10:00:01.037762Z",
+        "tested_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+        "tested_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+        "scope_sha256": "bb2a5d60bcbfeed85dd8874f6a5e1cd54d9c20bc3da355b394aec9127e8cc94d",
+        "author_id": "Codex native implementation team",
+        "verifier_id": "/root/native_candidate_review",
+        "verification_actor_kind": "agent",
+        "summary": "Current acceptance combines fresh e15 wheel/sdist correspondence and clean-install gates with exact Git-LF image336 from40b1, whose Docker inputs match28efd: standard cold-offline smoke and fresh current-DB scan passed. Prior build40 packaged predecessor16/current17 recovery and Docker diagnostic tracing retain their actual source/image identities; neither was newly run on336. Only current native public error-message storage differs in those persistence/service paths and is reviewed/tested. Windows native/Linux-amd64 Docker limits, CRLF provenance, five specialized browser skips and no publication/other-platform claim remain explicit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-fresh-distribution-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "00178dda6bfcf6d382ed0e9af1fed9c94a75edfc8784b0af9f5792764f03634f"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-e15-image-and-oci-history-review.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "0e3df692cee37fd6838b1cb24266bef83ab1e6e9c9893088e188d1419ac369d3"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-predecessor-recovery-20260905/independent-packaged-recovery-closure-40ebc645.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "0ef0a297d4c23a985b1f08a11a8e1d86b9a60066b6855e82b6210bbe8e23242d"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-tracing-40ebc645/independent-docker-otel-closure-40ebc645.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "41cbef7de9bf71ce82f54c1e5968b6fbd3f8646d9fa610180dcf1e40bb866e35"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/oci-history/oci-correction-history.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "6d9cadcb641006f4a61d91e3e7d3bbd96e033f8f432300224c44b9e5e5190e09"
+          }
+        ]
+      },
+      {
+        "id": "Q-COMBINED-e15c0749-6",
+        "check_id": "Q-COMBINED",
+        "attempt": 6,
+        "result": "passed",
+        "observed_at": "2026-09-05T09:51:29.1779068Z",
+        "tested_commit": "e15c07497e0440d243ea61b1b7e2e4d0a9f1bd25",
+        "tested_tree": "b7dad8c29c9ae447a1cf60750ff4bf1512a0706b",
+        "scope_sha256": "cd5ad24c488a2a31d6de2aae6830cd232682d8dcb2935644dbf3ba788e6564ee",
+        "author_id": "Codex native implementation team",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Current combined coverage uses actual e15 API/core/vault/workspace suites, frontend547 and browser170 passed/5 unchanged specialized skips, plus exact28 entire-candidate review. The only native runtime/persistence deltas from the prior combined checkpoint are three reviewed public-error-message changes, covered by current tests; runtime/UI/MCP/quantities/artifact behavior is preserved. Two original actual native browser journeys remain build40 evidence, never counted as e15 executions. Prior fixed populations are historical; overlapping new invocations have no fabricated unique total. No CI, dev, human or benchmark credit.",
+        "counts": null,
+        "artifacts": [
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/full-gate-e15/full-gate-e15-receipt.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "306dcd552365b674dee6712b5a19018c6dee64a28d2c74304b618698022f152e"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-complete-gate-review-e15.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "5265a09cef7eaedad336290167b0c4c9385b9428e0ce6a7f19bc11401550d043"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-correction/independent-review/independent-candidate-preparation-28efd6cc.md",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "461a1439c23cbb7caaeb401535433a7f4e23ffaa2ab260adb5e1c0b6eba38671"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/NATIVE-REVIEW-20260905-28EFD6CC.json",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "12207ce34271c8009f5e67011c8f9d712c386e1076b4d60b26257e4c03298655"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/docker-browser-public-projection.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "d6dc82d5d5a002fc2d7725ad3032b401d3b924a06507099e60342b032c2499a1"
+          },
+          {
+            "path": "docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map.json.txt",
+            "commit": "7e484be79d0aebd35559302f41d886598f61862c",
+            "sha256": "a586bc540e21556f747d9524341662ceb21d566ce7742defb62dff5173494c96"
+          }
+        ]
+      },
+      {
+        "id": "Q-GATES-delivery-7e484be7-7",
+        "check_id": "Q-GATES",
+        "attempt": 7,
+        "result": "passed",
+        "observed_at": "2026-09-05T11:03:44.647228Z",
+        "tested_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+        "tested_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+        "scope_sha256": "0ad5063eab41749b659611fe67b1bd952123f4dc7772965e7f73189a531f6b65",
+        "author_id": "Codex delivery coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Observed local/composed verification, exact-head push gate and actual required CI contexts. Original failed full-script attempts remain historical. Missing, skipped or nonterminal required results receive no pass.",
+        "counts": {
+          "total": 31,
+          "passed": 31,
+          "failed": 0,
+          "skipped": 0,
+          "not_run": 0
+        },
+        "artifacts": [
+          {
+            "commit": "a7443e1f2753085cbc0c8eaedc7f59d63e35aa2c",
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-h2-delivery/delivery-observation-ci-and-merge.json.txt",
+            "sha256": "77bff56886076a6e91359c37f8dcf4b6889ae3433370ad8ab4887f8f0695a4df"
+          }
+        ]
+      },
+      {
+        "id": "Q-INTEGRATION-delivery-7e484be7-1",
+        "check_id": "Q-INTEGRATION",
+        "attempt": 1,
+        "result": "passed",
+        "observed_at": "2026-09-05T11:03:44.647228Z",
+        "tested_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
+        "tested_tree": "469e6cf099d20f137881fa317ee07e691919656c",
+        "scope_sha256": "0ad5063eab41749b659611fe67b1bd952123f4dc7772965e7f73189a531f6b65",
+        "author_id": "Codex delivery coordinator",
+        "verifier_id": null,
+        "verification_actor_kind": "automated",
+        "summary": "Actual merged dev PR and Git parent/baseline evidence recorded. Only already implemented tasks receive integration credit; human and whole-milestone acceptance remain pending.",
+        "counts": null,
+        "artifacts": [
+          {
+            "commit": "a7443e1f2753085cbc0c8eaedc7f59d63e35aa2c",
+            "path": "docs/programs/engineering-process-platform/evidence/native-pr121-h2-delivery/delivery-observation-ci-and-merge.json.txt",
+            "sha256": "77bff56886076a6e91359c37f8dcf4b6889ae3433370ad8ab4887f8f0695a4df"
+          }
+        ]
       }
     ],
     "blockers": [
@@ -2246,24 +2548,20 @@
       },
       {
         "id": "B-FRESH-NATIVE-CANDIDATE",
-        "summary": "The frozen candidate passed independent review and bounded packaging acceptance. Required push checks, terminal CI and dev delivery remain pending.",
+        "summary": "Actual local gates and all H2 CI passed; PR #121 merged to dev. Published-image acceptance remains pending.",
         "owner": "coordinator and independent reviewer",
-        "required_action": "Run the required push gate, inspect all terminal PR CI, merge through the dev PR and verify the actual published development image. Human usability remains a separate follow-up.",
+        "required_action": "Verify actual immutable published development image source, service health and real browser journeys. Human usability remains a separate follow-up.",
         "task_ids": [
-          "T030",
           "T031",
           "T032"
         ],
         "check_ids": [
-          "Q-GATES",
-          "Q-INTEGRATION",
           "Q-DEV"
         ],
-        "observed_at": "2026-09-05T06:28:45.782409Z"
+        "observed_at": "2026-09-05T11:16:38.318006Z"
       }
     ],
     "next_task_ids": [
-      "T030",
       "T031",
       "T032"
     ],
@@ -2300,9 +2598,15 @@
       "branch": "codex/079-native-process-milestone",
       "target_branch": "dev",
       "baseline_commit": "7404a549ae244cc05d89e062c60276e8862f53c9",
-      "candidate_commit": "6d57d8b2a3bb7c424b3ac591ecb60d9b9aead0ef",
-      "pull_requests": [],
-      "merged_commit": null,
+      "candidate_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+      "pull_requests": [
+        {
+          "url": "https://github.com/burhop/wright/pull/121",
+          "head_commit": "7e484be79d0aebd35559302f41d886598f61862c",
+          "observed_at": "2026-09-05T11:03:44.647228Z"
+        }
+      ],
+      "merged_commit": "211c2598ca803c70d0bff0bb2c7ba9c468132b7b",
       "deployment_check_ids": [
         "Q-DEV"
       ]
