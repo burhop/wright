@@ -3891,7 +3891,7 @@ servers:
       gateway: passed
       outcome: passed
 - id: rosbag-mcp-binabik
-  name: ROSBag MCP
+  name: ROSBag MCP (historical source)
   vendor: github.com
   description: Community MCP for offline ROS bag file inspection and robotics data analysis. Optional ROS 2 extras may be needed for some workflows.
   domains:

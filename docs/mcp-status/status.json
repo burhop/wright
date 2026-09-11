@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2026-09-10-5d6c35259286",
-  "generated_at": "2026-09-11T01:29:30.421944+00:00",
+  "snapshot_id": "2026-09-10-e1582435ecac",
+  "generated_at": "2026-09-11T15:07:50.751388+00:00",
   "assessed_as_of": "2026-09-10",
   "policy_version": "engineering-integrations-v2",
-  "catalog_sha256": "098cfadcd1057f88503a2cc3daa4f4f7f889eef2d797cb3c5bee48742612ffa1",
+  "catalog_sha256": "4cb0fd36302e2eca234c318e236eaea68bba6edb1fbaa9f09e610ce40c659867",
   "total": 78,
   "category_counts": {
     "works": 11,
@@ -3291,7 +3291,7 @@
     },
     {
       "server_id": "rosbag-mcp-binabik",
-      "name": "ROSBag MCP",
+      "name": "ROSBag MCP (historical source)",
       "vendor": "github.com",
       "source_url": "https://github.com/binabik-ai/mcp-rosbags",
       "scope": "Community MCP for offline ROS bag file inspection and robotics data analysis. Optional ROS 2 extras may be needed for some workflows.",

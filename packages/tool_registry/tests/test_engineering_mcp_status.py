@@ -366,3 +366,34 @@ def test_invalid_input_preserves_last_good_output(tmp_path):
     )
     assert process.returncode != 0
     assert sentinel.read_text("utf-8") == '{"last_good": true}\n'
+
+
+def test_public_output_includes_publishing_handoff(tmp_path):
+    destination = tmp_path / "published"
+    process = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "generate-engineering-mcp-status.py"),
+            "--as-of",
+            "2026-09-10",
+            "--history",
+            str(ROOT / "docs" / "mcp-status" / "history.json"),
+            "--public-output",
+            str(destination),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+
+    assert process.returncode == 0, process.stderr
+    assert (
+        (destination / "PUBLISHING.md")
+        .read_text("utf-8")
+        .startswith("# Publishing the Wright integration status display")
+    )
+    assert "[PUBLISHING.md](PUBLISHING.md)" in (destination / "README.md").read_text(
+        "utf-8"
+    )

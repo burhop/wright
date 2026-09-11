@@ -94,7 +94,14 @@ def _write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def _stage_output(destination: Path, *, status: dict, history: dict, evidence_payloads: dict | None) -> Path:
+def _stage_output(
+    destination: Path,
+    *,
+    status: dict,
+    history: dict,
+    evidence_payloads: dict | None,
+    include_publishing_handoff: bool = False,
+) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
     # tempfile.mkdtemp intentionally creates a private directory. On Windows its
     # restrictive ACL survives the atomic rename and prevents the standalone
@@ -110,6 +117,11 @@ def _stage_output(destination: Path, *, status: dict, history: dict, evidence_pa
     public_readme = STATUS_DIR / "public-readme.md"
     if public_readme.exists():
         shutil.copyfile(public_readme, stage / "README.md")
+    if include_publishing_handoff:
+        shutil.copyfile(
+            ROOT / "docs" / "mcp-status" / "PUBLISHING.md",
+            stage / "PUBLISHING.md",
+        )
     if evidence_payloads:
         evidence_dir = stage / "evidence"
         evidence_dir.mkdir()
@@ -208,7 +220,16 @@ def main() -> int:
             staged.append((_stage_output(destination, status=qa, history=history, evidence_payloads=evidence_payloads), destination))
         if args.public_output:
             destination = args.public_output.resolve()
-            staged.append((_stage_output(destination, status=public, history=history, evidence_payloads=None), destination))
+            staged.append((
+                _stage_output(
+                    destination,
+                    status=public,
+                    history=history,
+                    evidence_payloads=None,
+                    include_publishing_handoff=True,
+                ),
+                destination,
+            ))
         for stage, destination in staged:
             _publish(stage, destination)
     finally:
