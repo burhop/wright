@@ -10,7 +10,7 @@ Start with a planning target of **15–20 curated integration families**, with o
 
 ## Evidence established in this research pass
 
-The local bundled [engineering catalog](../../packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml) contains **70 records**. This is a count of that file, not of the user's active installation or of unique usable MCP implementations. Wright also has [managed servers](../../packages/tool_registry/src/tool_registry/wright_managed_servers.py), and deployments can have active catalog updates and custom entries. Reconciliation with the approximately 75 shown in the product belongs in the first inventory step.
+The local bundled engineering catalog at `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml` contains **70 records**. This is a count of that file, not of the user's active installation or of unique usable MCP implementations. Wright also has managed servers in `packages/tool_registry/src/tool_registry/wright_managed_servers.py`, and deployments can have active catalog updates and custom entries. Reconciliation with the approximately 75 shown in the product belongs in the first inventory step.
 
 | Current bundled installability label | Records |
 |---|---:|
@@ -24,18 +24,18 @@ The separate validation-status counts are 12 passed, 22 not_tested, 19 dependenc
 
 Several examples explain why existing labels cannot become recommendations automatically:
 
-- `brep-mcp` and `playwright-mcp` are labeled tested but have top-level validation status not_tested. BREP additionally has a [Windows qualification record](../../docs/mcp-catalog/evidence/windows-qualification-2026-08-13/brep-mcp-windows-qualification.md) reporting a backend failure after successful protocol discovery. These are different evidence scopes that need a coherent presentation.
+- `brep-mcp` and `playwright-mcp` are labeled tested but have top-level validation status not_tested. BREP additionally has a [Windows qualification record](evidence/windows-qualification-2026-08-13/brep-mcp-windows-qualification.md) reporting a backend failure after successful protocol discovery. These are different evidence scopes that need a coherent presentation.
 - `openscad-mcp` explicitly records a generated STL and a successful Wright/Hermes gateway call. That is stronger evidence than package startup alone, although it remains historical and platform-specific.
 - `freecad-mcp-sandraschi` records success being reported without the requested STL being produced. Artifact verification must be a blocking acceptance check.
 - `freecad-booleans-lucygoodchild` has a passing status with a caveat about operational logging on protocol stdout. A successful permissive-client probe does not establish reliable stdio behavior.
 - `web3d-mcp` has a historical passing record that also reports dependency vulnerabilities and a Node version mismatch. Their current severity, applicability, and resolution need review; the historical vulnerability count alone is insufficient to declare it unsafe today.
 - `rosbag-mcp-binabik` required a dependency pin to work. Preserve and retest the working dependency set, and check whether upstream has repaired the issue.
 - `autocad-mcp` passed using an ezdxf backend on Linux. That does not establish Windows AutoCAD automation. `solidworks-api-mcp` records documentation-corpus operations, not SolidWorks model editing.
-- The [GB10 evidence](../../docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md) explicitly calls its Ansys/NVIDIA results partial because gateway probes were not performed. A disconnected solver status is not a successful simulation.
+- The [GB10 evidence](evidence/gb10-clean-container-mcp-validation-2026-08-12.md) explicitly calls its Ansys/NVIDIA results partial because gateway probes were not performed. A disconnected solver status is not a successful simulation.
 
 These observations are a planning sample, not a completed audit of every record or a newly qualified shortlist.
 
-Wright already has [signed catalog updates, exact previews, activation, and rollback](../../docs/mcp-catalog/dynamic-engineering-catalog.md), a [clean-container validation process](../../docs/mcp-catalog/mcp-server-testing-process.md), [native Windows qualification](../../docs/mcp-catalog/windows-mcp-qualification.md), and [MCP Apps/scoped WebMCP support](../../docs/workspace-surfaces/mcp-and-webmcp.md). The [weekly catalog workflow](../../.github/workflows/mcp-catalog.yml) checks catalog and bundle consistency; it does not establish that every upstream integration still works. Reuse these foundations.
+Wright already has [signed catalog updates, exact previews, activation, and rollback](dynamic-engineering-catalog.md), a [clean-container validation process](mcp-server-testing-process.md), [native Windows qualification](windows-mcp-qualification.md), and [MCP Apps/scoped WebMCP support](../workspace-surfaces/mcp-and-webmcp.md). The weekly catalog workflow at `.github/workflows/mcp-catalog.yml` checks catalog and bundle consistency; it does not establish that every upstream integration still works. Reuse these foundations.
 
 Baseline for reproduction: repository HEAD observed as `1ada5de0aaa608baadafa41031e5877eb685bed3`; bundled catalog SHA-256 `d76edd32a1a94c8755c225ab3bee071b09dfe8bb7bf618730d03ed365b7d9d7f`. The checkout had pre-existing changes and another agent is working in it. Findings describe the files read during this pass, rather than a deployed-release certification.
 
@@ -133,11 +133,11 @@ Current official [MATLAB documentation](https://github.com/matlab/matlab-mcp-ser
 
 ### Requalify with the existing Wright process
 
-Follow the [required clean-container loop](../../docs/mcp-catalog/mcp-server-testing-process.md): a clean Intel Linux Wright container for applicable servers, only the selected server's prerequisites, protocol probes, a safe real backend call, a gateway proxy call, redacted evidence, a reusable setup recipe, and reset before the next server. Do not add CAD applications, vendor SDKs, licenses, or hardware drivers to Wright's base image.
+Follow the [required clean-container loop](mcp-server-testing-process.md): a clean Intel Linux Wright container for applicable servers, only the selected server's prerequisites, protocol probes, a safe real backend call, a gateway proxy call, redacted evidence, a reusable setup recipe, and reset before the next server. Do not add CAD applications, vendor SDKs, licenses, or hardware drivers to Wright's base image.
 
-Use the [Windows qualification process](../../docs/mcp-catalog/windows-mcp-qualification.md) for desktop/vendor integrations; retain its reviewed recipe boundaries. Add separate native/macOS/ARM64 qualification where those environments will be advertised. Linux x64 does not imply GB10 ARM64, and a container pass does not imply a native desktop bridge pass. Test remote services from the relevant Wright client environment without installing irrelevant hosts.
+Use the [Windows qualification process](windows-mcp-qualification.md) for desktop/vendor integrations; retain its reviewed recipe boundaries. Add separate native/macOS/ARM64 qualification where those environments will be advertised. Linux x64 does not imply GB10 ARM64, and a container pass does not imply a native desktop bridge pass. Test remote services from the relevant Wright client environment without installing irrelevant hosts.
 
-Add scenario and user-experience evidence to these existing tests rather than replacing them. If a scenario uses the workflow editor, future verification must enter the served application through the workspace Workflow/Workflows control and preserve the reviewed authoring capabilities, as required by [workflow UI integration guidance](../../docs/contributing/workflow-ui-integration.md).
+Add scenario and user-experience evidence to these existing tests rather than replacing them. If a scenario uses the workflow editor, future verification must enter the served application through the workspace Workflow/Workflows control and preserve the reviewed authoring capabilities described in `docs/contributing/workflow-ui-integration.md`.
 
 ### Retirement and repair rules
 

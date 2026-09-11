@@ -37,7 +37,9 @@ HISTORY_SCHEMA = STATUS_DIR / "history.schema.json"
 def _validate(payload: dict, schema_path: Path, label: str) -> None:
     schema = json.loads(schema_path.read_text("utf-8"))
     errors = sorted(
-        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(payload),
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(
+            payload
+        ),
         key=lambda item: list(item.absolute_path),
     )
     if errors:
@@ -55,7 +57,9 @@ def _assert_accounting(status: dict, catalog_ids: set[str]) -> None:
     if set(record_ids) != catalog_ids:
         raise ValueError("Status membership differs from the canonical catalog")
     derived = {
-        item["id"]: sum(record["portfolio_category"] == item["id"] for record in status["records"])
+        item["id"]: sum(
+            record["portfolio_category"] == item["id"] for record in status["records"]
+        )
         for item in status["category_key"]
     }
     if derived != status["category_counts"] or sum(derived.values()) != status["total"]:
@@ -69,16 +73,33 @@ def _assert_accounting(status: dict, catalog_ids: set[str]) -> None:
 def _assert_public_safe(payload: dict) -> None:
     serialized = json.dumps(payload, ensure_ascii=False)
     forbidden_keys = {
-        "owner", "evidence_href", "evidence_sha256", "failure", "restriction_reference",
-        "command", "log", "raw_log", "tenant_id", "account_id",
+        "owner",
+        "evidence_href",
+        "evidence_sha256",
+        "failure",
+        "restriction_reference",
+        "command",
+        "log",
+        "raw_log",
+        "tenant_id",
+        "account_id",
     }
-    forbidden_fragments = ("file://", "D:\\\\", "C:\\\\", "/home/", "/Users/", "\\\\.\\pipe\\")
+    forbidden_fragments = (
+        "file://",
+        "D:\\\\",
+        "C:\\\\",
+        "/home/",
+        "/Users/",
+        "\\\\.\\pipe\\",
+    )
 
     def walk(value):
         if isinstance(value, dict):
             overlap = forbidden_keys & set(value)
             if overlap:
-                raise ValueError(f"Public projection contains QA-only fields: {sorted(overlap)}")
+                raise ValueError(
+                    f"Public projection contains QA-only fields: {sorted(overlap)}"
+                )
             for item in value.values():
                 walk(item)
         elif isinstance(value, list):
@@ -91,7 +112,9 @@ def _assert_public_safe(payload: dict) -> None:
 
 
 def _write_json(path: Path, value: dict) -> None:
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
 
 def _stage_output(
@@ -111,13 +134,22 @@ def _stage_output(
     stage.mkdir()
     _write_json(stage / "status.json", status)
     _write_json(stage / "history.json", history)
-    shutil.copyfile(ROOT / "scripts" / "engineering-mcp-dashboard.html", stage / "index.html")
+    shutil.copyfile(
+        ROOT / "scripts" / "engineering-mcp-dashboard.html", stage / "index.html"
+    )
     shutil.copyfile(STATUS_SCHEMA, stage / "status.schema.json")
     shutil.copyfile(HISTORY_SCHEMA, stage / "history.schema.json")
     public_readme = STATUS_DIR / "public-readme.md"
     if public_readme.exists():
         shutil.copyfile(public_readme, stage / "README.md")
     if include_publishing_handoff:
+        readme = stage / "README.md"
+        readme.write_text(
+            readme.read_text(encoding="utf-8").replace(
+                "../../mcp-status/PUBLISHING.md", "PUBLISHING.md"
+            ),
+            encoding="utf-8",
+        )
         shutil.copyfile(
             ROOT / "docs" / "mcp-status" / "PUBLISHING.md",
             stage / "PUBLISHING.md",
@@ -126,7 +158,9 @@ def _stage_output(
         evidence_dir = stage / "evidence"
         evidence_dir.mkdir()
         for evidence_id, payload in evidence_payloads.items():
-            (evidence_dir / f"{evidence_id}.json").write_text(payload["content"], encoding="utf-8")
+            (evidence_dir / f"{evidence_id}.json").write_text(
+                payload["content"], encoding="utf-8"
+            )
     return stage
 
 
@@ -148,7 +182,9 @@ def _publish(stage: Path, destination: Path) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--as-of", type=date.fromisoformat, default=datetime.now(UTC).date())
+    parser.add_argument(
+        "--as-of", type=date.fromisoformat, default=datetime.now(UTC).date()
+    )
     parser.add_argument("--process-chains", type=Path)
     parser.add_argument("--previous-report", type=Path)
     parser.add_argument("--assessments", type=Path, default=DEFAULT_ASSESSMENTS)
@@ -168,14 +204,22 @@ def main() -> int:
     entries = load_canonical_entries()
     catalog_ids = {entry.id for entry in entries}
     assessments = load_assessments(
-        args.assessments.resolve(), catalog_ids=catalog_ids, schema_path=ASSESSMENTS_SCHEMA
+        args.assessments.resolve(),
+        catalog_ids=catalog_ids,
+        schema_path=ASSESSMENTS_SCHEMA,
     )
-    previous = json.loads(args.previous_report.read_text("utf-8")) if args.previous_report else None
+    previous = (
+        json.loads(args.previous_report.read_text("utf-8"))
+        if args.previous_report
+        else None
+    )
     result = build_engineering_status(
         entries,
         as_of=args.as_of,
         repository_root=ROOT,
-        process_chains_path=args.process_chains.resolve() if args.process_chains else None,
+        process_chains_path=args.process_chains.resolve()
+        if args.process_chains
+        else None,
         previous_report=previous,
         assessments=assessments,
     )
@@ -190,7 +234,11 @@ def main() -> int:
     if qa["category_counts"] != public["category_counts"]:
         raise ValueError("Public and QA category counts differ")
 
-    history = json.loads(args.history.read_text("utf-8")) if args.history and args.history.exists() else None
+    history = (
+        json.loads(args.history.read_text("utf-8"))
+        if args.history and args.history.exists()
+        else None
+    )
     if args.record_snapshot:
         snapshot = history_snapshot(qa, observed_at=result["generated_at"])
         snapshot_already_recorded = bool(
@@ -200,9 +248,16 @@ def main() -> int:
                 for item in history.get("snapshots", [])
             )
         )
-        if history and history.get("snapshots") and not args.correction_for and not snapshot_already_recorded:
+        if (
+            history
+            and history.get("snapshots")
+            and not args.correction_for
+            and not snapshot_already_recorded
+        ):
             if not args.change_reason:
-                raise ValueError("A new snapshot after the initial observation requires --change-reason")
+                raise ValueError(
+                    "A new snapshot after the initial observation requires --change-reason"
+                )
             snapshot["change_reason"] = args.change_reason
         history, _ = record_history(
             history,
@@ -217,19 +272,31 @@ def main() -> int:
     try:
         if qa_output:
             destination = qa_output.resolve()
-            staged.append((_stage_output(destination, status=qa, history=history, evidence_payloads=evidence_payloads), destination))
+            staged.append(
+                (
+                    _stage_output(
+                        destination,
+                        status=qa,
+                        history=history,
+                        evidence_payloads=evidence_payloads,
+                    ),
+                    destination,
+                )
+            )
         if args.public_output:
             destination = args.public_output.resolve()
-            staged.append((
-                _stage_output(
+            staged.append(
+                (
+                    _stage_output(
+                        destination,
+                        status=public,
+                        history=history,
+                        evidence_payloads=None,
+                        include_publishing_handoff=True,
+                    ),
                     destination,
-                    status=public,
-                    history=history,
-                    evidence_payloads=None,
-                    include_publishing_handoff=True,
-                ),
-                destination,
-            ))
+                )
+            )
         for stage, destination in staged:
             _publish(stage, destination)
     finally:
@@ -237,17 +304,24 @@ def main() -> int:
             if stage.exists():
                 shutil.rmtree(stage)
 
-    print(json.dumps({
-        "snapshot_id": qa["snapshot_id"],
-        "total": qa["total"],
-        "category_counts": qa["category_counts"],
-        "green": qa["green"],
-        "qa_semantic_sha256": semantic_sha256(qa),
-        "public_semantic_sha256": semantic_sha256(public),
-        "history_points": len(history["snapshots"]),
-        "qa_output": str(qa_output.resolve()) if qa_output else None,
-        "public_output": str(args.public_output.resolve()) if args.public_output else None,
-    }, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "snapshot_id": qa["snapshot_id"],
+                "total": qa["total"],
+                "category_counts": qa["category_counts"],
+                "green": qa["green"],
+                "qa_semantic_sha256": semantic_sha256(qa),
+                "public_semantic_sha256": semantic_sha256(public),
+                "history_points": len(history["snapshots"]),
+                "qa_output": str(qa_output.resolve()) if qa_output else None,
+                "public_output": str(args.public_output.resolve())
+                if args.public_output
+                else None,
+            },
+            sort_keys=True,
+        )
+    )
     return 0
 
 

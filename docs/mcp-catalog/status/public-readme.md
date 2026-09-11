@@ -9,7 +9,7 @@ integrations in one accounting model.
 - `history.json` contains explicit evidence-backed observations for the chart.
 - `status.schema.json` and `history.schema.json` define the feed contracts.
 
-See [PUBLISHING.md](PUBLISHING.md) for the implementation handoff, external-site
+See [PUBLISHING.md](../../mcp-status/PUBLISHING.md) for the implementation handoff, external-site
 hosting options, cache and privacy requirements, deployment verification, and
 rollback procedure.
 

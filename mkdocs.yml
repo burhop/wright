@@ -32,6 +32,11 @@ theme:
 plugins:
   - search
 
+# The status bundle keeps its own README beside a directly served index.html.
+# MkDocs maps both files to the same route, so publish only the HTML surface here.
+exclude_docs: |
+  mcp-status/README.md
+
 markdown_extensions:
   - admonition
   - pymdownx.details
